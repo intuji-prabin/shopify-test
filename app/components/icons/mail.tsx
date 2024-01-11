@@ -1,4 +1,3 @@
-
 export default function Mail({fillColor = '#636969'}: {fillColor?: string}) {
   return (
     <svg

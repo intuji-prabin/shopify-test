@@ -1,5 +1,5 @@
-import { Link } from '@remix-run/react';
-import { Children, Fragment } from 'react';
+import {Link} from '@remix-run/react';
+import {Children, Fragment} from 'react';
 
 type Props = {
   children?: React.ReactNode;
@@ -10,7 +10,7 @@ type ItemsProps = Props & {
   className?: string;
 };
 
-const Breadcrumb = ({ children }: Props) => {
+const Breadcrumb = ({children}: Props) => {
   const childrenArray = Children.toArray(children);
   const childrenWithSeperator = childrenArray.map((child, index) => {
     if (index !== childrenArray.length - 1) {
@@ -35,7 +35,7 @@ const Breadcrumb = ({ children }: Props) => {
   );
 };
 
-const BreadcrumbItem = ({ children, className, href, ...props }: ItemsProps) => {
+const BreadcrumbItem = ({children, className, href, ...props}: ItemsProps) => {
   return (
     <li {...props}>
       {href ? (
@@ -49,4 +49,4 @@ const BreadcrumbItem = ({ children, className, href, ...props }: ItemsProps) => 
   );
 };
 
-export { Breadcrumb, BreadcrumbItem };
+export {Breadcrumb, BreadcrumbItem};

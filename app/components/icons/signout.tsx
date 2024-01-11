@@ -1,4 +1,4 @@
-export function Signout({ fillColor = '#FFFFFF' }: { fillColor?: string }) {
+export function Signout({fillColor = '#FFFFFF'}: {fillColor?: string}) {
   return (
     <svg
       width="20"

@@ -12,7 +12,13 @@
     "preview": "npm run build && shopify hydrogen preview --worker",
     "lint": "eslint --no-error-on-unmatched-pattern --ext .js,.ts,.jsx,.tsx .",
     "typecheck": "tsc --noEmit",
-    "codegen": "shopify hydrogen codegen"
+    "codegen": "shopify hydrogen codegen",
+    "check-types": "tsc --pretty --noEmit",
+    "check-format": "prettier --check .",
+    "check-lint": "eslint . --ext ts --ext tsx --ext js",
+    "format": "prettier --write .",
+    "test-all": "npm run check-format && npm run check-lint && npm run check-types && npm run build",
+    "prepare": "husky install"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
@@ -49,9 +55,9 @@
     "isbot": "^3.6.6",
     "lucide-react": "^0.294.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "react-colorful": "^5.6.1",
     "react-day-picker": "^8.9.1",
+    "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "remix-validated-form": "^5.1.5",
     "tailwind-merge": "^2.2.0",
@@ -70,12 +76,13 @@
     "@types/react-dom": "^18.2.7",
     "eslint": "^8.20.0",
     "eslint-plugin-hydrogen": "0.12.2",
+    "husky": "^8.0.0",
     "postcss": "^8.4.21",
     "postcss-import": "^15.1.0",
     "postcss-preset-env": "^8.2.0",
     "prettier": "^2.8.4",
-    "typescript": "^5.2.2",
-    "tailwindcss": "^3.3.0"
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5.2.2"
   },
   "browserslist": [
     "defaults"
