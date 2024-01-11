@@ -1,129 +1,505 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,500;1,700&display=swap');
+
+@tailwind base;
+@layer base {
+  img {
+    @apply inline-block;
+  }
+}
+@tailwind components;
+@tailwind utilities;
+
+/* Style css start */
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  margin: 0;
-  padding: 0;
+  font-family: 'Barlow Condensed';
+  @apply bg-primary-25;
+}
+
+section {
+  @apply mt-6;
 }
 
 h1,
 h2,
-p {
-  margin: 0;
-  padding: 0;
+h3,
+h4,
+h5 {
+  @apply font-bold italic tracking-normal;
 }
 
 h1 {
-  font-size: 1.6rem;
-  font-weight: 700;
-  line-height: 1.4;
-  margin-bottom: 2rem;
-  margin-top: 2rem;
+  @apply text-3xl lg:text-4xl xl:text-5xl xl:leading-14;
 }
 
 h2 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  line-height: 1.4;
-  margin-bottom: 1rem;
+  @apply text-2xl lg:text-3xl xl:text-4.5xl xl:leading-11;
+}
+
+h3 {
+  @apply text-xl lg:text-2xl xl:text-3xl xl:leading-9;
 }
 
 h4 {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  @apply text-lg lg:text-xl xl:text-2xl leading-7.5;
 }
 
 h5 {
-  margin-bottom: 1rem;
-  margin-top: 0.5rem;
+  @apply text-base xl:text-lg leading-6;
 }
 
 p {
-  font-size: 1rem;
-  line-height: 1.4;
+  @apply text-base not-italic font-normal leading-5.5 text-grey-700;
 }
 
-a {
-  color: #000;
+button {
+  @apply font-bold italic tracking-normal;
+}
+
+button:disabled svg path {
+  @apply fill-neutral-white;
+}
+
+label {
+  @apply font-normal text-base capitalize leading-5 block pb-1 text-grey-800;
+}
+input,
+textarea,
+select {
+  @apply !border-grey-300 border !px-3 !py-2 !leading-5 font-normal text-base text-grey-700;
+}
+input:active,
+textarea:active,
+select:active {
+  @apply !border-primary-500;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  @apply !border !border-primary-500 !outline-none !ring-0 bg-primary-50;
+}
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+  @apply text-grey-500 capitalize !leading-5;
+}
+input:active::placeholder,
+input:focus::placeholder,
+textarea:active::placeholder,
+textarea:focus::placeholder,
+select:active::placeholder,
+select:focus::placeholder {
+  @apply text-grey-700;
+}
+input.invalid,
+textarea.invalid,
+select.invalid {
+  @apply !border-semantic-danger-500;
+}
+input.with-icon,
+textarea.with-icon,
+select.with-icon {
+  @apply !pl-10;
+}
+input:active + span:not(.eyeIcon) svg path,
+textarea:active + span:not(.eyeIcon) svg path,
+select:active + span:not(.eyeIcon) svg path {
+  @apply fill-primary-500;
+}
+input:focus + span:not(.eyeIcon) svg path,
+textarea:focus + span:not(.eyeIcon) svg path,
+select:focus + span:not(.eyeIcon) svg path {
+  @apply fill-grey-800;
+}
+input.invalid + span svg path,
+textarea.invalid + span svg path,
+select.invalid + span svg path {
+  @apply fill-semantic-danger-500;
+}
+label .required {
+  @apply text-semantic-danger-500;
+}
+.error-msg {
+  @apply flex items-center leading-5 text-semantic-danger-500 text-sm;
+}
+.steps li.active span {
+  @apply bg-status-back_order;
+}
+.steps li.active span:first-of-type {
+  @apply bg-primary-500;
+}
+.steps li.active p {
+  @apply text-status-back_order;
+}
+.steps li.active p:first-of-type {
+  @apply text-[#202223];
+}
+.steps__order li:first-of-type,
+.steps li:last-of-type {
+  @apply before:bg-inherit before:w-[calc(50%_-_32px)] before:h-full before:content-[''] before:absolute before:left-0 before:-z-10;
+}
+.steps li:last-of-type {
+  @apply before:left-[unset] before:right-0;
+}
+.steps:not(.steps__order) li:last-of-type {
+  @apply before:w-[calc(100%_-_32px)];
+}
+.otp-field::-webkit-inner-spin-button,
+.otp-field::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.embla__button:disabled {
+  @apply opacity-60 cursor-not-allowed;
+}
+.react-colorful__alpha,
+.react-colorful__hue,
+.react-colorful {
+  @apply mt-4;
+}
+.react-colorful__alpha,
+.react-colorful__hue {
+  @apply !h-2;
+}
+.react-colorful__pointer {
+  @apply cursor-pointer !h-[9px] !w-[9px];
+}
+.react-colorful__saturation,
+.react-colorful__last-control,
+.react-colorful__hue {
+  @apply !rounded;
+}
+.promotion__edit label {
+  @apply block text-grey-700 pb-0;
+}
+.promotion__edit label button {
+  @apply mb-1;
+}
+.promotion__edit img {
+  @apply object-contain p-2.5 w-20 h-20;
+}
+.accordion__section > div:last-of-type {
+  @apply border-b-0;
+}
+.loader {
+  animation: rotate 1s linear infinite;
+}
+.loader::before,
+.loader::after {
+  animation: prixClipFix 2s linear infinite;
+}
+.loader::after {
+  animation: prixClipFix 2s linear infinite, rotate 0.5s linear infinite reverse;
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes prixClipFix {
+  0% {
+    clip-path: polygon(50% 50%, 0 0, 0 0, 0 0, 0 0, 0 0);
+  }
+  25% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 0, 100% 0, 100% 0);
+  }
+  50% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 100% 100%, 100% 100%);
+  }
+  75% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 100%);
+  }
+  100% {
+    clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 0);
+  }
+}
+
+.progress-ring__circle {
+  stroke-dasharray: 400, 400;
+  transition: stroke-dashoffset 0.35s;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+/* Style css end */
+
+/* Header css */
+.container .background-none {
+  @apply bg-transparent hover:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-transparent focus:bg-transparent;
+}
+.container .subnav-header {
+  @apply text-white italic font-bold text-lg flex gap-1 p-0;
+}
+.container .background-hf {
+  @apply hover:text-secondary-500 focus:text-secondary-500 outline-none focus:outline-none;
+}
+
+.menu-hov {
+  @apply hover:bg-primary-100 hover:text-primary-500 active:bg-primary-100 active:text-primary-500;
+}
+.menu-hov:hover span svg {
+  @apply !fill-primary-500;
+}
+
+.logo {
   text-decoration: none;
+  font-size: 25px;
+  color: inherit;
+  margin-right: 20px;
 }
 
-a:hover {
-  text-decoration: underline;
+/* menu on desktop */
+.desktop-nav .menus {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  list-style: none;
+}
+
+.desktop-nav .arrow::after {
+  content: '';
+  display: inline-block;
+  margin-left: 0.28em;
+  vertical-align: 0.09em;
+  border-top: 0.42em solid;
+  border-right: 0.32em solid transparent;
+  border-left: 0.32em solid transparent;
+}
+
+.desktop-nav .dropdown {
+  position: absolute;
+  right: 0;
+  left: auto;
+  box-shadow: 0 10px 15px -3px rgba(46, 41, 51, 0.08),
+    0 4px 6px -2px rgba(71, 63, 79, 0.16);
+  font-size: 0.875rem;
+  z-index: 9999;
+  min-width: 10rem;
+  padding: 0.5rem 0;
+  list-style: none;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  display: none;
+}
+
+.desktop-nav .dropdown.show {
+  display: block;
+}
+
+.desktop-nav .dropdown .dropdown-submenu {
+  position: absolute;
+  left: 100%;
+  top: -7px;
+}
+
+.dropdown-content:before {
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 23px solid;
+  content: '';
+  left: 16%;
+  top: -14%;
+  position: absolute;
+  border-top-color: #fff;
+  transform: rotate(180deg);
+  height: 14px;
+  width: 26px;
+}
+.megamenu-content:before {
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 23px solid;
+  content: '';
+  left: 40px;
+  top: -5%;
+  margin-left: -20px;
+  margin-left: -23px;
+  position: absolute;
+  border-top-color: #fff;
+  transform: rotate(180deg);
+  height: 14px;
+  width: 26px;
+}
+.menu-hov {
+  @apply hover:bg-primary-100 hover:text-primary-500 active:bg-primary-100 active:text-primary-500 z-10;
+}
+.user-login-dropdown:after {
+  content: '';
+  top: 10%;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 23px solid;
+  content: '';
+  right: 16%;
+  top: 9%;
+  position: absolute;
+  border-top-color: #fff;
+  transform: rotate(180deg);
+  height: 14px;
+  width: 26px;
+}
+
+/* HEADER CSS ENDS HERE */
+
+.arrow-toggle:hover svg {
+  @apply !fill-secondary-500;
+}
+.layout-breadcrumb li {
+  @apply text-grey-400;
+}
+.layout-breadcrumb li:last-child {
+  @apply text-grey-900;
+}
+.profile__details > div:after:last-child {
+  @apply content-none;
+}
+.cta__btn:hover .arrow__animation svg {
+  animation: arrow-movement 0.7s ease-out;
+}
+@keyframes arrow-movement {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  33% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  66% {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+/* Responsive CSS */
+@media (min-width: 320px) {
+  .container {
+    @apply max-w-full;
+  }
+}
+@media (min-width: 1280px) {
+  .container {
+    @apply max-w-[1344px];
+  }
+}
+@media (max-width: 1023px) {
+  .profile__date svg {
+    @apply h-5;
+  }
+}
+@media (max-width: 767px) {
+  .container {
+    @apply px-4;
+  }
+}
+@media (max-width: 639px) {
+  .embla__button svg {
+    @apply h-3;
+  }
+}
+/* Responsive CSS */
+.setting-card-info .settings-card-detail {
+  @apply flex gap-1 items-center;
+}
+.setting-card-info .settings-card-detail svg {
+  @apply min-h-5 min-w-5;
+}
+.order-status-title {
+  @apply text-lg font-medium;
+}
+.order-status-info {
+  @apply text-lg font-normal;
+}
+
+/* Active Class Tabs */
+
+.active__tab {
+  @apply bg-secondary-500 border-b-2 border-b-grey-900 text-grey-900;
+}
+.menu-icon.active button svg {
+  @apply fill-secondary-500;
+}
+.menu-links:hover button svg {
+  @apply fill-secondary-500;
+}
+.menu-links:hover .menu-icon svg {
+  @apply fill-secondary-500;
+}
+.product-card-btn {
+  @apply px-6 py-2 max-w-[131px] 
+  italic font-bold leading-4 uppercase text-[14px];
+}
+.product-card-btn:first-child:hover {
+  @apply bg-primary-600;
+}
+.product-card-btn:last-child:hover {
+  @apply bg-primary-100;
+}
+/* tooltip for product card starts here */
+
+/* Tooltip attribute for product product card*/
+.info-block [data-tooltip] {
+  position: relative;
+  z-index: 2;
   cursor: pointer;
 }
 
-hr {
-  border-bottom: none;
-  border-top: 1px solid #000;
-  margin: 0;
+/* Tooltip content hidden by default(product card)*/
+.info-block [data-tooltip]:before,
+.info-block [data-tooltip]:after {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
 }
 
-pre {
-  white-space: pre-wrap;
+/* Tooltip position (product card)*/
+.info-block [data-tooltip]:before {
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  margin-bottom: 5px;
+  margin-left: -54px;
+  padding: 12px;
+  min-width: 130px;
+  border-radius: 3px;
+  background-color: #191a1a;
+  color: white;
+  content: attr(data-tooltip);
+  text-align: center;
+  font-size: 14px;
+  line-height: 21px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
 }
 
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+/* Triangle hack for Tooltip bubble (product card)*/
+.info-block [data-tooltip]:after {
+  position: absolute;
+  bottom: 107%;
+  left: 50%;
+  margin-left: -15px;
+  width: 0;
+  border-top: 15px solid #191a1a;
+  border-top: 15px solid #191a1a;
+  border-right: 15px solid transparent;
+  border-left: 15px solid transparent;
+  content: ' ';
 }
 
-body > main {
-  margin: 0 1rem 1rem 1rem;
+/* Tooltip visible on hover (product card)*/
+.info-block [data-tooltip]:hover:before,
+.info-block [data-tooltip]:hover:after {
+  visibility: visible;
+  opacity: 1;
 }
-
-section {
-  padding: 1rem 0;
-  @media (min-width: 768px) {
-    padding: 2rem 0;
-  }
-}
-
-fieldset {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0.5rem;
-  padding: 1rem;
-}
-
-form {
-  max-width: 100%;
-  @media (min-width: 768px) {
-    max-width: 400px;
-  }
-}
-
-input {
-  border-radius: 4px;
-  border: 1px solid #000;
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-  margin-top: 0.25rem;
-  padding: 0.5rem;
-}
-
-legend {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-li {
-  margin-bottom: 0.5rem;
-}
-
-dl {
-  margin: 0.5rem 0;
-}
-
-code {
-  background: #ddd;
-  border-radius: 4px;
-  font-family: monospace;
-  padding: 0.25rem;
-}
+/* tooltip for product card ends here */

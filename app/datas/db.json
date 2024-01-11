@@ -1,0 +1,124 @@
+{
+  "teams" : [
+  {
+    "id": "05911c52-d1c0-4b3f-81ee-c8d2dc6f74f6",
+    "name": "Louise Lowe-Emmerich",
+    "email": "Dock_Lesch@hotmail.com",
+    "department": "Admin",
+    "contactNumber": "(308) 324-6777 x342",
+    "createdAt": "2024-09-11T08:39:40.273Z"
+  },
+  {
+    "id": "d86e3b84-da25-436d-ae54-55285d497bf0",
+    "name": "Juanita Turcotte",
+    "email": "Reggie98@gmail.com",
+    "department": "Warehouse",
+    "contactNumber": "1-711-272-2668 x4760",
+    "createdAt": "2024-05-17T04:17:13.633Z"
+  },
+  {
+    "id": "09437f19-2e29-4d8e-a103-588ae74d1173",
+    "name": "Ervin Barton",
+    "email": "Lola_Beer65@gmail.com",
+    "department": "Marketing",
+    "contactNumber": "672-571-7753 x369",
+    "createdAt": "2023-09-06T13:12:21.847Z"
+  },
+  {
+    "id": "333148fe-236a-4108-a7d3-9e6a07e39ef8",
+    "name": "Miss Nina Prohaska",
+    "email": "Rashad51@gmail.com",
+    "department": "Admin",
+    "contactNumber": "430-481-9566 x10501",
+    "createdAt": "2024-07-13T05:14:51.810Z"
+  },
+  {
+    "id": "2e32e60e-f345-4960-9163-1afe89445236",
+    "name": "Alan Streich PhD",
+    "email": "Henriette_Wiegand68@gmail.com",
+    "department": "Sales",
+    "contactNumber": "(993) 916-8293 x48956",
+    "createdAt": "2023-08-05T13:40:34.349Z"
+  },
+  {
+    "id": "61c55016-75c8-4c30-83b5-77cf31c5008c",
+    "name": "Jessica Hartmann III",
+    "email": "Faye.Schamberger12@yahoo.com",
+    "department": "Admin",
+    "contactNumber": "(521) 536-4079 x598",
+    "createdAt": "2023-05-23T13:55:46.197Z"
+  },
+  {
+    "id": "d43873de-ae81-408a-b9a4-7f6ec2fe2998",
+    "name": "Terence Wyman",
+    "email": "Jacinto21@hotmail.com",
+    "department": "Admin",
+    "contactNumber": "(560) 553-4540 x86819",
+    "createdAt": "2024-12-12T04:22:05.729Z"
+  },
+  {
+    "id": "0864e853-eaae-427d-a7ff-cee13ba97b38",
+    "name": "Vanessa Hermiston",
+    "email": "Marjory79@yahoo.com",
+    "department": "Marketing",
+    "contactNumber": "580.376.2553",
+    "createdAt": "2024-06-04T20:27:07.048Z"
+  },
+  {
+    "id": "c8c7f293-0cf1-4960-af98-020c3d55b062",
+    "name": "Jacquelyn Bayer",
+    "email": "Mallory59@yahoo.com",
+    "department": "Admin",
+    "contactNumber": "262.632.8167 x4517",
+    "createdAt": "2024-07-25T11:14:04.755Z"
+  },
+  {
+    "id": "f389eb70-5487-4391-a115-b0e3267f47b8",
+    "name": "Rosie Block",
+    "email": "Freda74@yahoo.com",
+    "department": "Admin",
+    "contactNumber": "(805) 724-1941 x55463",
+    "createdAt": "2024-07-04T10:25:08.774Z"
+  },
+  {
+    "id": "a155da13-211a-4c92-b696-e8b3f14ba624",
+    "name": "Mr. Chris Mills",
+    "email": "Abraham.Marquardt53@hotmail.com",
+    "department": "Account",
+    "contactNumber": "1-290-779-0658 x534",
+    "createdAt": "2024-02-08T18:18:19.057Z"
+  },
+  {
+    "id": "e70c0a83-588a-45ab-8314-7aecc51b92e2",
+    "name": "Arturo Gottlieb",
+    "email": "Raleigh89@gmail.com",
+    "department": "Warehouse",
+    "contactNumber": "1-742-900-3830 x4804",
+    "createdAt": "2024-04-12T07:42:11.189Z"
+  },
+  {
+    "id": "b49b20d0-4f40-403f-a486-c2384495cb7d",
+    "name": "Harold Auer Jr.",
+    "email": "Kaleigh3@hotmail.com",
+    "department": "Sales",
+    "contactNumber": "(945) 597-8058 x887",
+    "createdAt": "2023-09-25T01:06:40.029Z"
+  },
+  {
+    "id": "5bf18ab7-6e79-4fcf-95f3-e2f6b5d2e0b0",
+    "name": "Sheri Zemlak",
+    "email": "Hattie.Kulas@hotmail.com",
+    "department": "Admin",
+    "contactNumber": "1-366-853-0000 x0916",
+    "createdAt": "2024-06-24T17:39:55.706Z"
+  },
+  {
+    "id": "f3751c7c-2763-4eaf-bf11-88efe5427951",
+    "name": "Essie Skiles",
+    "email": "Ray70@hotmail.com",
+    "department": "Admin",
+    "contactNumber": "(502) 320-0169 x52059",
+    "createdAt": "2024-04-16T17:55:50.666Z"
+  }
+]
+}

@@ -471,3 +471,6 @@ aside li {
 .account-logout {
   display: inline-block;
 }
+.search-bar input::placeholder {
+  color: #999; /* Change this to your desired color */
+}
