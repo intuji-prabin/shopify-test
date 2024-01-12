@@ -8,6 +8,7 @@ module.exports = {
     'plugin:hydrogen/typescript',
     'prettier',
     'eslint:recommended',
+    'airbnb-typescript',
   ],
   rules: {
     '@typescript-eslint/ban-ts-comment': 'off',
