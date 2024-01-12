@@ -1,8 +1,3 @@
-export const ACCESSLEVEL = Object.freeze({
-  ADMIN: 'admin',
-  USER: 'user',
-});
-
 export const USER_STATUS = Object.freeze({
   ACTIVE: 'active',
   INACTIVE: 'inactive',
