@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "types": ["@shopify/oxygen-workers-types"],
     "paths": {
+      "~/*": ["app/*"],
       "~/components/*": ["app/components/*"],
       "~/datas/*": ["app/datas/*"],
       "~/hooks/*": ["app/hooks/*"],
@@ -23,8 +24,7 @@
       "~/routes/*": ["app/routes/*"],
       "~/services/*": ["app/services/*"],
       "~/styles/*": ["app/styles/*"],
-      "~/utils/*": ["app/utils/*"]
-      // "~/*": ["app/*"]
+      "~/utils/*": ["app/utils/*"],
     },
     "noEmit": true
   },
