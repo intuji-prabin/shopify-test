@@ -1,0 +1,60 @@
+import {TicketColumn} from './use-column';
+
+export const TicketsData: TicketColumn[] = [
+  {
+    ticketId: '12345',
+    contactName: 'John Doe',
+    reason: 'Order issue',
+    department: 'Customer service',
+    createdOn: '2023-10-26',
+    status: 'processing',
+  },
+  {
+    ticketId: '54321',
+    contactName: 'Jane Smith',
+    reason: 'Product return',
+    department: 'Returns',
+    createdOn: '2023-10-27',
+    status: 'invoice',
+  },
+  {
+    ticketId: '98765',
+    contactName: 'Mike Lee',
+    reason: 'Technical issue',
+    department: 'IT support',
+    createdOn: '2023-10-28',
+    status: 'partially-invoiced',
+  },
+  {
+    ticketId: '98765',
+    contactName: 'Mike Lee',
+    reason: 'Technical issue',
+    department: 'IT support',
+    createdOn: '2023-10-28',
+    status: 'delivered',
+  },
+  {
+    ticketId: '98765',
+    contactName: 'Mike Lee',
+    reason: 'Technical issue',
+    department: 'IT support',
+    createdOn: '2023-10-28',
+    status: 'fully-picked',
+  },
+  {
+    ticketId: '98765',
+    contactName: 'Mike Lee',
+    reason: 'Technical issue',
+    department: 'IT support',
+    createdOn: '2023-10-28',
+    status: 'in-transit',
+  },
+  {
+    ticketId: '98765',
+    contactName: 'Mike Lee',
+    reason: 'Technical issue',
+    department: 'IT support',
+    createdOn: '2023-10-28',
+    status: 'order-picked',
+  },
+];
