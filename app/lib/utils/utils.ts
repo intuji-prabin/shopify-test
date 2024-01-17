@@ -50,29 +50,3 @@ export function getVariantUrl({
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
-/**
- * @param {Function} func
- * @param {number} delay
- * @param {{ leading?: boolean }} options
- */
-export function debounce(
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  func: Function,
-  delay: number,
-  {leading}: {leading?: boolean} = {},
-) {
-  //@ts-ignore
-  let timerId: NodeJS.Timeout | null;
-
-  return (...args: any[]) => {
-    if (!timerId && leading) {
-      func(...args);
-    }
-    if (timerId) {
-      clearTimeout(timerId);
-    }
-
-    timerId = setTimeout(() => func(...args), delay);
-  };
-}

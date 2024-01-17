@@ -1,9 +1,10 @@
 import {useField} from 'remix-validated-form';
-import {TeamFormFieldNameType} from '~/routes/team_.add-team/team-form';
+
 import {Button} from '~/components/ui/button';
 import {DangerAlert} from '~/components/icons/alert';
-import {DEFAULT_IMAGE} from '~/lib/constants';
-import {EditFormFieldNameType} from '~/routes/promotion_.edit';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {TeamFormFieldNameType} from '~/routes/_app.team_.add/team-form';
+import {EditFormFieldNameType} from '~/routes/_app.promotion_.edit/route';
 
 type ImageUploadInputProps = {
   name: TeamFormFieldNameType | EditFormFieldNameType;
@@ -53,7 +54,7 @@ export default function ImageUploadInput({
     <div className={className}>
       <div className="flex flex-wrap items-center space-x-4">
         <img
-          src={imageUrl ?? defaultImage ?? DEFAULT_IMAGE}
+          src={imageUrl ?? defaultImage ?? DEFAULT_IMAGE.DEFAULT}
           alt="image-preview"
           className="object-cover w-16 h-16 border border-solid rounded-full image-preview border-gray_C3C1BF place-content-start"
         />

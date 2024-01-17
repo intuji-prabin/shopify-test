@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {cva, type VariantProps} from 'class-variance-authority';
-import {cn} from '~/lib/utils';
+import {cn} from '~/lib/utils/utils';
 
 const statusVariants = cva(
   'inline-flex items-center justify-center p-2 min-w-[96px] text-sm font-medium capitalize leading-4',
