@@ -24,7 +24,7 @@
       "~/routes/*": ["app/routes/*"],
       "~/services/*": ["app/services/*"],
       "~/styles/*": ["app/styles/*"],
-      "~/utils/*": ["app/utils/*"],
+      "~/utils/*": ["app/utils/*"]
     },
     "noEmit": true
   },

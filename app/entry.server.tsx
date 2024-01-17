@@ -10,7 +10,35 @@ export default async function handleRequest(
   responseHeaders: Headers,
   remixContext: EntryContext,
 ) {
-  const {nonce, header, NonceProvider} = createContentSecurityPolicy();
+  const localDirectives =
+    process.env.NODE_ENV === 'development' ? ['localhost:*'] : [];
+
+  const {nonce, header, NonceProvider} = createContentSecurityPolicy({
+    defaultSrc: [
+      "'self'",
+      'fonts.gstatic.com',
+      'cdn.shopify.com',
+      'shopify.com',
+      ...localDirectives,
+    ],
+    styleSrc: [
+      "'self'",
+      "'unsafe-inline'",
+      'fonts.googleapis.com',
+      'cdn.shopify.com',
+      ...localDirectives,
+    ],
+    imgSrc: [
+      "'self'",
+      'data:',
+      'cdn.shopify.com',
+      'picsum.photos',
+      'fastly.picsum.photos',
+      'swiperjs.com',
+      'shermacbucket.sgp1.digitaloceanspaces.com', // For default images domain, can be removed
+      ...localDirectives,
+    ],
+  });
 
   const body = await renderToReadableStream(
     <NonceProvider>
