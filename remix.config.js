@@ -4,6 +4,11 @@ module.exports = {
   ignoredRouteFiles: ['**/.*'],
   watchPaths: ['./public', './.env'],
   server: './server.ts',
+  serverNodeBuiltinsPolyfill: {
+    modules: {
+      crypto: true, // Provide a JSPM polyfill
+    },
+  },
   /**
    * The following settings are required to deploy Hydrogen apps to Oxygen:
    */
