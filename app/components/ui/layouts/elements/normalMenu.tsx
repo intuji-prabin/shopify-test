@@ -23,7 +23,7 @@ export const NormalMenuList = ({isOpen}: {isOpen: boolean}) => {
     <>
       <ul
         className={`${
-          isOpen ? 'opacity-100' : 'opacity-0'
+          isOpen ? 'opacity-100' : 'hidden'
         } transition-opacity flex min-w-[233px] flex-col border-2 bg-white p-3 shadow-xl md:min-w-[233px] mt-3 submenu-nav -ml-[46px] absolute text-black top-10 dropdown-content gap-4`}
       >
         {menus.map((component) => (

@@ -47,7 +47,7 @@ export const SingleNavItem = ({
               <button
                 type="button"
                 aria-haspopup="menu"
-                className={`flex gap-2 items-center font-bold italic text-lg arrow-toggle  hover:text-secondary-500 focus:text-secondary-500 outline-none  active:text-secondary-500 focus:outline-none ${
+                className={`flex gap-2 items-center font-bold italic text-lg arrow-toggle  focus:outline-none ${
                   isDropdownOpen ? 'text-secondary-500' : ''
                 }`}
                 aria-expanded={isDropdownOpen ? 'true' : 'false'}
@@ -71,7 +71,7 @@ export const SingleNavItem = ({
               />
             </>
           ) : (
-            <span>{menu.title}</span>
+            <Link to="">{menu.title}</Link>
           )}
         </Link>
       </li>
