@@ -331,7 +331,7 @@ label .required {
   }
 }
 .expenditure > div:last-child {
-  @apply after:content-none;
+  @apply after:mxs:content-none;
 }
 .expenditure > div:nth-child(3n-2) p {
   @apply text-primary-500;
