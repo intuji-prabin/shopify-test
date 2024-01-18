@@ -613,3 +613,6 @@ input[type='checkbox']:before {
 .menus li {
   @apply px-4 py-3;
 }
+.selectProductItem:hover {
+  @apply bg-primary-50 text-base font-normal text-grey-800;
+}

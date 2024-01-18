@@ -1,15 +1,108 @@
-import React from 'react';
+import {useState} from 'react';
 import {
+  CircleInformationMajor,
   Compare,
-  Heart,
   InStock,
   Pdf,
   ProductLoveWhite,
 } from '~/components/icons/orderStatus';
 import {Button} from '~/components/ui/button';
-import Carousel from '~/components/ui/carousel';
+import {ProductInfoTable} from './productInfoTable';
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '~/components/ui/select';
+
+type ProductCardInfoProps = {
+  sku: string;
+  productName: string;
+  buyPrice: number;
+  rppPrice: number;
+};
+function ProductCardInfo({
+  sku,
+  productName,
+  buyPrice,
+  rppPrice,
+}: ProductCardInfoProps) {
+  return (
+    <>
+      <div className="p-4 flex flex-col gap-6">
+        <div className="tag flex flex-col gap-[11px]">
+          <div>
+            <p className="text-base font-medium text-primary-500">{sku}</p>
+            <h5 className="text-lg italic font-bold leading-6 text-grey-900 line-clamp-2 text-ellipsis whitespace-normal h-12">
+              {productName}
+            </h5>
+          </div>
+          <div className="flex gap-6">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-1">
+                <p className="text-semantic-success-500 text-base font-bold uppercase leading-[21px]">
+                  BUY PRICE
+                </p>
+              </div>
+              <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
+                ${buyPrice}
+              </h3>
+              <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
+            </div>
+            <div className="flex flex-col border-grey-50 border-l-2 border-y-0 border-r-0 pl-6">
+              <div className="flex items-center ">
+                <p className="text-grey-300 not-italic text-base font-bold uppercase leading-[21px]">
+                  rrp
+                </p>
+              </div>
+              <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
+                ${rppPrice}
+              </h3>
+              <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export function SelectDemo() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a fruit" />
+      </SelectTrigger>
+      <SelectContent className="product-names">
+        <SelectGroup>
+          <SelectItem value="apple">Apple</SelectItem>
+          <SelectItem value="banana">Banana</SelectItem>
+          <SelectItem value="blueberry">Blueberry</SelectItem>
+          <SelectItem value="grapes">Grapes</SelectItem>
+          <SelectItem value="pineapple">Pineapple</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+}
 export default function productInformation() {
+  const [quantity, setQuantity] = useState(0);
+
+  function decreaseQuantity() {
+    setQuantity(quantity - 1);
+  }
+  function increaseQuantity() {
+    setQuantity(quantity + 1);
+  }
+  function handleInputChange(event?: any) {
+    const inputQuantity = parseInt(event.target.value, 10);
+    setQuantity(isNaN(inputQuantity) ? 0 : inputQuantity);
+  }
+
   return (
     <section className="bg-white">
       <div className="container">
@@ -40,22 +133,24 @@ export default function productInformation() {
                 </h3>
                 <div className="flex justify-between">
                   <div className="flex gap-5">
-                    <div>
-                      <p>sku: </p>
-                      <p className="text-Grey-500">1-1601-EC</p>
+                    <div className="flex text-base items-center gap-1">
+                      <p className=" font-semibold leading-6">sku: </p>
+                      <p className="text-Grey-500 font-normal">1-1601-EC</p>
                     </div>
-                    <div className="flex">
-                      <p>Unit Of Measurement:</p>
-                      <p>1 Box</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-base font-semibold leading-6 text-grey-600">
+                        Unit Of Measurement:
+                      </p>
+                      <p className="text-Grey-500 font-normal">1 Box</p>
                       <Button
-                        className="uppercase bg-primary-200 text-primary-600 font-medium leading-4 text-[14px] not-italic"
+                        className="uppercase bg-primary-200 text-primary-500 font-medium leading-4 text-[14px] not-italic hover:text-white"
                         size="default"
                       >
                         Default
                       </Button>
                     </div>
                   </div>
-                  <div className="flex gap-2 bg-semantic-success-100">
+                  <div className="flex gap-2 bg-semantic-success-100 items-center p-2">
                     <InStock />
                     <p className="uppercase text-[14px] font-medium text-semantic-success-500">
                       IN STOCK
@@ -64,6 +159,52 @@ export default function productInformation() {
                 </div>
               </div>
               <div></div>
+            </div>
+            <div className="flex flex-col">
+              <div className="flex flex-col">
+                <div className="flex gap-8 ">
+                  <ProductCardInfo
+                    sku={''}
+                    productName={''}
+                    buyPrice={649.22}
+                    rppPrice={799.87}
+                  />
+
+                  <ProductInfoTable />
+                </div>
+                <div className="py-2 px-4 bg-semantic-info-100 flex gap-2 border-semantic-info-500 border-l-4 border-y-0 border-r-0 mb-2">
+                  <CircleInformationMajor />
+                  <p className="text-base font-normal leading-[21px]">
+                    Price will change if you increase quantity of items.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="flex">
+                  <button
+                    className=" border-[1px] border-grey-500 h-[56px] flex justify-center items-center w-[56px]"
+                    onClick={decreaseQuantity}
+                  >
+                    -
+                  </button>
+                  <input
+                    type="text"
+                    className=" max-w-[61px] h-full text-center"
+                    value={quantity}
+                    onChange={handleInputChange}
+                  />
+                  <button
+                    className="border-[1px] border-grey-500 h-[56px] flex justify-center items-center  w-[56px]"
+                    onClick={increaseQuantity}
+                  >
+                    +
+                  </button>
+                </div>
+                <SelectDemo />
+                <Button className="uppercase" variant="primary">
+                  Add to cart
+                </Button>
+              </div>
             </div>
           </div>
           <div className="pickup-available"></div>
