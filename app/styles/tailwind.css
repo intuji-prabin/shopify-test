@@ -460,6 +460,62 @@ label .required {
 .product-card-btn:last-child:hover {
   @apply bg-primary-100;
 }
+/* Tooltip attribute for header notifications*/
+.navbar .info-block [data-tooltip] {
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+
+/* Tooltip content hidden by default(header notifications)*/
+.navbar .info-block [data-tooltip]:before,
+.navbar .info-block [data-tooltip]:after {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Tooltip position (header notifications)*/
+.navbar .info-block [data-tooltip]:before {
+  position: absolute;
+  top: 164%;
+  left: 50%;
+  margin-bottom: 5px;
+  margin-left: -54px;
+  padding: 12px;
+  min-width: 130px;
+  border-radius: 3px;
+  background-color: white;
+  color: black;
+  content: attr(data-tooltip);
+  text-align: center;
+  font-size: 16px;
+  line-height: 21px;
+  font-weight: 400;
+  min-height: 55px;
+}
+
+/* Triangle hack for Tooltip bubble (header notifications)*/
+.navbar .info-block [data-tooltip]:after {
+  position: absolute;
+  bottom: -94% !important;
+  left: 50%;
+  margin-left: -15px;
+  width: 0;
+  border-top: 15px solid white;
+  border-right: 15px solid transparent;
+  border-left: 15px solid transparent;
+  content: ' ';
+  transform: rotate(180deg);
+}
+
+/* Tooltip visible on hover (header notification)*/
+.navbar .info-block [data-tooltip]:hover:before,
+.navbar .info-block [data-tooltip]:hover:after {
+  visibility: visible;
+  opacity: 1;
+}
+
 /* tooltip for product card starts here */
 
 /* Tooltip attribute for product product card*/
@@ -520,10 +576,8 @@ label .required {
 }
 .product-accordion {
   cursor: pointer;
-
   width: 100%;
   border: none;
-
   outline: none;
   font-size: 15px;
   transition: 0.4s;
@@ -549,4 +603,13 @@ input[type='checkbox']:checked {
 
 input[type='checkbox']:before {
   @apply content-[""] absolute right-1/2 top-1/2 w-1 h-2.5 border-solid border-neutral-white border-t-0 border-r-2 border-b-2 border-l-0 -m-px -mx-1 mb-0  rotate-45 -translate-x-1/2 -translate-y-1/2 z-10;
+}
+.nav-list li:last-child div {
+  right: -5px;
+}
+.menus li:active {
+  @apply bg-primary-600;
+}
+.menus li {
+  @apply px-4 py-3;
 }

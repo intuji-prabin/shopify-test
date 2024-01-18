@@ -1,9 +1,9 @@
 import {RefObject} from 'react';
-import {DEFAULT_LOGO} from '~/lib/constants';
 import {Call} from '../icons/call';
 import {Fax} from '../icons/fax';
 import {Globe} from '../icons/globe';
 import Mail from '../icons/mail';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 
 interface ImageEditProps {
   canvasRef?: RefObject<HTMLDivElement>;
@@ -61,7 +61,7 @@ const ImageEdit = ({
             <div className="flex flex-wrap items-center gap-2">
               <div className="flex items-center justify-center w-12 h-12 p-1 bg-white border border-solid rounded-full border-grey-50">
                 <img
-                  src={DEFAULT_LOGO}
+                  src={DEFAULT_IMAGE.DEFAULT}
                   alt="view"
                   className="rounded-full image-preview"
                 />

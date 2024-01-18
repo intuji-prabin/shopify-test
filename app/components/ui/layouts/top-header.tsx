@@ -18,6 +18,25 @@ import {
 } from '~/components/ui/dropdown-menu';
 import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
 
+const notificationTitle = [
+  {
+    id: 0,
+    title: 'cart',
+  },
+  {
+    id: 1,
+    title: 'Pending Order',
+  },
+  {
+    id: 2,
+    title: 'Wishlist',
+  },
+  {
+    id: 3,
+    title: 'Notifications',
+  },
+];
+
 export default function TopHeader() {
   const [isClicked, setIsClicked] = useState(false);
 
@@ -66,15 +85,18 @@ export default function TopHeader() {
               <nav className="navbar">
                 <ul className="nav-list flex gap-3 items-center h-full">
                   {navIcons.map((navIcon) => (
-                    <li className="nav-item relative" key={navIcon.id}>
-                      <div className="absolute bg-semantic-danger-500 h-[14px] w-[14px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium p-2">
-                        {navIcon.notification}
-                      </div>
-                      <Link to="/" className="nav-link">
-                        {navIcon.icon}
+                    <div className="info-block">
+                      <Link to="" data-tooltip="Recommended retail price">
+                        <li className="nav-item relative" key={navIcon.id}>
+                          <div className="absolute bg-semantic-danger-500 h-[14px] w-[14px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium p-2">
+                            {navIcon.notification}
+                          </div>
+                          <Link to="/" className="nav-link">
+                            {navIcon.icon}
+                          </Link>
+                        </li>
                       </Link>
-                      <div className=""></div>
-                    </li>
+                    </div>
                   ))}
                 </ul>
               </nav>

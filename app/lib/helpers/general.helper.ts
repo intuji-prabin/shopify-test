@@ -1,5 +1,5 @@
-import { twMerge } from "tailwind-merge";
-import { Config } from "./config.helper";
+import {twMerge} from 'tailwind-merge';
+import {Config} from './config.helper';
 
 /**
  *  Replace trailing slash with backslash
@@ -7,7 +7,7 @@ import { Config } from "./config.helper";
  * @returns string
  */
 export const removeTrailingSlash = (str: string): string => {
-  return str.replace(/\/$/, "");
+  return str.replace(/\/$/, '');
 };
 
 /**
@@ -20,7 +20,7 @@ export const isEmptyObject = (obj: {}): boolean => {
 };
 
 /**
- * Check if the array is empty 
+ * Check if the array is empty
  * @param arr array
  * @returns boolean
  */
@@ -34,13 +34,13 @@ export const isEmptyArray = (arr: any[]): boolean => {
  * @returns URLSearchParams
  */
 export const getQueryString = (urlString: string) => {
-  let paramString = urlString.split("?")[1];
+  let paramString = urlString.split('?')[1];
   let queryString = new URLSearchParams(paramString);
   return queryString;
 };
 
 /**
- * Test the value against the regex 
+ * Test the value against the regex
  * @param value any value to be tested
  * @param regex regex to be tested
  * @returns boolean
@@ -55,10 +55,10 @@ export const testRegEx = (value: any, regex: RegExp) => {
  * @returns string
  */
 export const getFileFormat = (file: string): string => {
-  if (!file) return "";
+  if (!file) return '';
 
-  const fileFormat = file.split(".").pop();
-  return fileFormat || "";
+  const fileFormat = file.split('.').pop();
+  return fileFormat || '';
 };
 
 /**
@@ -69,9 +69,9 @@ export const getFileFormat = (file: string): string => {
  */
 export const checkFileExtension = (
   file: File,
-  allowedExtensions: string[] = ["jpeg", "png", "pdf", "jpg", "docx", "txt"]
+  allowedExtensions: string[] = ['jpeg', 'png', 'pdf', 'jpg', 'docx', 'txt'],
 ): boolean => {
-  const fileExtension = file.name.split(".").pop()?.toLowerCase();
+  const fileExtension = file.name.split('.').pop()?.toLowerCase();
   const isSupported =
     fileExtension && allowedExtensions.includes(fileExtension);
   return isSupported || false;
@@ -79,19 +79,30 @@ export const checkFileExtension = (
 
 /**
  * Debounce function to delay the function call
- * @param func function to be called
- * @param timeout number of milliseconds to delay, default 700
- * @returns function
+ * @param {Function} func
+ * @param {number} delay number of milliseconds to delay
+ * @param {{ leading?: boolean }} options
  */
-export const debounce = (func: Function, timeout: number = 700) => {
-  let timer: any;
-  return (...args: any) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func.apply(this, args);
-    }, timeout);
+export function debounce(
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  func: Function,
+  delay: number,
+  {leading}: {leading?: boolean} = {},
+) {
+  //@ts-ignore
+  let timerId: NodeJS.Timeout | null;
+
+  return (...args: any[]) => {
+    if (!timerId && leading) {
+      func(...args);
+    }
+    if (timerId) {
+      clearTimeout(timerId);
+    }
+
+    timerId = setTimeout(() => func(...args), delay);
   };
-};
+}
 
 /**
  * Split cookies into an object
@@ -102,9 +113,9 @@ export const splitCookies = (cookies: string): {} => {
   const cookieObject: any = {};
 
   if (cookies) {
-    const cookieArray = cookies.split(";");
+    const cookieArray = cookies.split(';');
     cookieArray.forEach((cookie: string) => {
-      const [key, value] = cookie.split("=");
+      const [key, value] = cookie.split('=');
       cookieObject[key] = value;
     });
   }
@@ -117,7 +128,7 @@ export const splitCookies = (cookies: string): {} => {
  * @returns string
  */
 export const mergeClasses = (...classes: string[]): string => {
-  return twMerge(classes.join(" "));
+  return twMerge(classes.join(' '));
 };
 
 /**
@@ -125,7 +136,7 @@ export const mergeClasses = (...classes: string[]): string => {
  * @returns boolean
  */
 export const isClientSide = (): boolean => {
-  return typeof window !== "undefined";
+  return typeof window !== 'undefined';
 };
 
 /**
@@ -142,7 +153,7 @@ export const checkNumber = (num: string | number): number => {
 };
 
 /**
- * Pluralize a string 
+ * Pluralize a string
  * @param count number
  * @param singular string
  * @param plural strng
@@ -151,7 +162,7 @@ export const checkNumber = (num: string | number): number => {
 export const pluralize = (
   count: number,
   singular: string,
-  plural: string
+  plural: string,
 ): string => {
   return count === 1 ? singular : plural;
 };
@@ -163,15 +174,15 @@ export const pluralize = (
  * @returns string
  */
 export const formatBytes = (bytes: number, decimals: number = 2): string => {
-  if (bytes === 0) return "0 Bytes";
+  if (bytes === 0) return '0 Bytes';
 
   const k = 1024;
   const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 };
 
 /**
@@ -185,14 +196,17 @@ export const toTwoDecimalPlaces = (num: number): number => {
 
 // Format product price with currency
 /**
- * 
+ *
  * @param price number
  * @param currency string
- * @returns 
+ * @returns
  */
-export const formatPrice = (price: number, currency: string = Config.currency.symbol) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
+export const formatPrice = (
+  price: number,
+  currency: string = Config.currency.symbol,
+) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
     currency,
   }).format(price / 100);
 };

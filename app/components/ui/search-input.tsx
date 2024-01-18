@@ -1,7 +1,7 @@
 import {FormEvent} from 'react';
 import {Form, useSearchParams, useSubmit} from '@remix-run/react';
-import {debounce} from '~/lib/utils';
 import {SearchIcon} from 'lucide-react';
+import {debounce} from '~/lib/helpers/general.helper';
 
 export function SearchInput() {
   const submit = useSubmit();
