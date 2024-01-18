@@ -1,19 +1,21 @@
-import {DEFAULT_IMAGE} from '~/lib/constants';
-import {CalendarIconBlue} from '../icons/calendar-icon';
-import {Designation} from '../icons/designation';
-import {Office} from '../icons/office';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { CalendarIconBlue } from '../icons/calendar-icon';
+import { Designation } from '../icons/designation';
+import { Office } from '../icons/office';
+import useDate from '~/hooks/useDate';
 
 type PropType = {
   sectionClass?: string;
 };
 
-const Profile = ({sectionClass}: PropType) => {
+const Profile = ({ sectionClass }: PropType) => {
+  const currentDate = useDate();
   return (
     <section className={`container ${sectionClass}`}>
-      <div className="flex flex-wrap justify-between gap-x-5 gap-y-2">
+      <div className="flex flex-wrap items-start justify-between gap-x-5 gap-y-2">
         <div className="flex flex-wrap items-center justify-center order-2 w-full gap-x-4 gap-y-2 sm:w-auto sm:order-1 xs:justify-start">
           <div className="border-4 border-white border-solid rounded-full max-w-28 aspect-square">
-            <img src={DEFAULT_IMAGE} alt="profile" className="rounded-full" />
+            <img src={DEFAULT_IMAGE.DEFAULT} alt="profile" className="rounded-full" />
           </div>
           <div className="text-center xs:space-y-1 xs:text-left">
             <p className="text-base italic font-bold leading-7 lg:text-lg xl:text-2xl text-grey-500">
@@ -41,7 +43,7 @@ const Profile = ({sectionClass}: PropType) => {
         <div className="flex flex-wrap items-center justify-center order-1 w-full gap-1 lg:gap-2 sm:w-auto sm:order-2 profile__date xs:justify-start sm:justify-end">
           <CalendarIconBlue />
           <span className="text-lg italic font-bold leading-9 lg:text-xl xl:text-3xl">
-            5th January, 2023
+            {currentDate.currentDate} {currentDate.currentLongMonth}, {currentDate.currentYear}
           </span>
         </div>
       </div>

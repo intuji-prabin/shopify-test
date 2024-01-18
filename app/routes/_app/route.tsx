@@ -1,4 +1,4 @@
-import {Outlet} from '@remix-run/react';
+import { Outlet } from '@remix-run/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
 import TopHeader from '~/components/ui/layouts/top-header';
@@ -15,17 +15,17 @@ export default function PublicPageLayout() {
   );
 }
 
-const Layout = ({children}: {children: any}) => {
+const Layout = ({ children }: { children: any }) => {
   return (
     <>
-      <header>
+      {/* <header>
         <TopHeader />
         <BottomHeader />
-      </header>
+      </header> */}
       {children}
-      <footer className="mt-12">
+      {/* <footer className="mt-12">
         <DesktopFooter />
-      </footer>
+      </footer> */}
     </>
   );
 };

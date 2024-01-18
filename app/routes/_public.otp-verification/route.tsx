@@ -37,7 +37,6 @@ type ActionData = {
 const OtpVerification = () => {
   const [tempOtp, setTempOtp] = useState<string[]>(new Array(5).fill(''));
   const [activeOtpIndex, setActiveOtpIndex] = useState<number>(0);
-  const [error, setError] = useState(false);
   let [otp, setOtp] = useState<number>(0);
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -79,6 +78,7 @@ const OtpVerification = () => {
 
   const actionData = useActionData<ActionData>();
   console.log('actionData', actionData);
+
   return (
     <div className='md:w-[398px] w-full'>
       <div className="flex flex-col p-8 space-y-8 bg-white shadow-3xl">
