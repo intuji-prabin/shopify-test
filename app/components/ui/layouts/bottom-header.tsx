@@ -4,7 +4,7 @@ import {SingleNavItem} from './elements/single-nav-item';
 const BottomHeader = () => {
   const depthLevel = 0;
   return (
-    <nav className="desktop-nav bg-primary-500 py-5 relative">
+    <nav className="desktop-nav bg-primary-500  relative">
       <div className="container">
         <ul className="menus flex flex-row justify-between">
           {menuItemsData.map((menu, index) => {

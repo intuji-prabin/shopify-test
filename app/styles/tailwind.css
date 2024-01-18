@@ -480,19 +480,19 @@ label .required {
   position: absolute;
   top: 164%;
   left: 50%;
-  margin-bottom: 5px;
-  margin-left: -54px;
   padding: 12px;
   min-width: 130px;
-  border-radius: 3px;
-  background-color: white;
-  color: black;
-  content: attr(data-tooltip);
+  border-radius: 2px;
+  background-color: #191a1a;
+  color: white;
   text-align: center;
   font-size: 16px;
   line-height: 21px;
   font-weight: 400;
   min-height: 55px;
+  border: 1px solid #636969;
+  box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.2);
+  bottom: unset;
 }
 
 /* Triangle hack for Tooltip bubble (header notifications)*/
@@ -500,9 +500,7 @@ label .required {
   position: absolute;
   bottom: -94% !important;
   left: 50%;
-  margin-left: -15px;
-  width: 0;
-  border-top: 15px solid white;
+  border-top: 15px solid #191a1a;
   border-right: 15px solid transparent;
   border-left: 15px solid transparent;
   content: ' ';
@@ -606,10 +604,4 @@ input[type='checkbox']:before {
 }
 .nav-list li:last-child div {
   right: -5px;
-}
-.menus li:active {
-  @apply bg-primary-600;
-}
-.menus li {
-  @apply px-4 py-3;
 }
