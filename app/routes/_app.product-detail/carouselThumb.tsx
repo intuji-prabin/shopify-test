@@ -100,7 +100,7 @@ const CarouselThumb = ({
       {/* Thumbnail Carousel Ends Here */}
 
       {/* Main Product Image Carousel Begins Here */}
-      <div className="overflow-hidden embla max-w-[492px] max-h-[489px]">
+      <div className="overflow-hidden embla max-h-[489px] max-w-[400px]  lg:max-w-[492px]">
         <div className="embla__viewport" ref={emblaMainRef}>
           <div className="flex embla__container">
             {images.map((image, index) => (

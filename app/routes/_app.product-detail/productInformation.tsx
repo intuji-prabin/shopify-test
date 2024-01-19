@@ -76,8 +76,8 @@ function ProductCardInfo({
 export function SelectDemo() {
   return (
     <Select>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select a fruit" />
+      <SelectTrigger className="w-[120px] h-full text-base font-normal leading-[21px] not-italic">
+        <SelectValue placeholder="UOM" />
       </SelectTrigger>
       <SelectContent className="product-names">
         <SelectGroup>
@@ -107,7 +107,7 @@ export default function productInformation() {
 
   return (
     <section className="bg-white">
-      <div className="container flex gap-14">
+      <div className="container flex gap-14 flex-col lg:flex-row">
         <CarouselThumb
           images={SliderImageData}
           thumbNailCarouseloptions={{axis: 'y'}}
@@ -137,7 +137,7 @@ export default function productInformation() {
                   ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of
                   CIGWELD Edition
                 </h3>
-                <div className="flex justify-between">
+                <div className="flex justify-between flex-col xl:flex-row items-baseline">
                   <div className="flex gap-5">
                     <div className="flex text-base items-center gap-1">
                       <p className=" font-semibold leading-6">sku: </p>
@@ -195,7 +195,7 @@ export default function productInformation() {
                   </button>
                   <input
                     type="text"
-                    className=" max-w-[61px] h-full text-center"
+                    className=" max-w-[61px] h-full text-center border-x-0"
                     value={quantity}
                     onChange={handleInputChange}
                   />
@@ -207,7 +207,7 @@ export default function productInformation() {
                   </button>
                 </div>
                 <SelectDemo />
-                <Button className="uppercase" variant="primary">
+                <Button className="uppercase flex-grow" variant="primary">
                   Add to cart
                 </Button>
               </div>
