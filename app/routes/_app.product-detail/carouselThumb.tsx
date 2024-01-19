@@ -1,5 +1,7 @@
 import useEmblaCarousel, {EmblaOptionsType} from 'embla-carousel-react';
 import React, {useCallback, useEffect, useState} from 'react';
+import {BlueArrowDown} from '~/components/icons/arrowDown';
+import {BlueArrowForward} from '~/components/icons/arrowForward';
 import {LeftBlueArrow} from '~/components/icons/left';
 
 type ImageType = {
@@ -55,27 +57,27 @@ const CarouselThumb = ({
   }, [emblaMainApi, onSelect]);
 
   return (
-    <section className="flex flex-row">
+    <section className="flex flex-row gap-[17px]  max-h-[489px] overflow-y-hidden">
       {/* Thumbnail Carousel Begins Here */}
-      <div className="relative mt-2 embla-thumbs max-h-[489px]">
+      <div className="relative  embla-thumbs max-h-[489px] overflow-y-hidden">
         <div
           className="overflow-hidden embla-thumbs__viewport"
           ref={emblaThumbsRef}
         >
           <div className="flex flex-col embla-thumbs__container gap-y-2">
             {images.map((image, index) => (
-              <div key={index} className="min-w-20 embla__slide flex-quarter">
+              <div key={index} className=" embla__slide flex-quarter">
                 <button
                   onClick={() => onThumbClick(index)}
-                  className={'block w-full p-0 m-0 transition-opacity delay-75 bg-transparent border-0 appearance-none cursor-pointer embla-thumbs__slide__button touch-manipulation decoration-0 '.concat(
-                    index === selectedIndex ? 'opacity-100' : 'opacity-20',
-                  )}
+                  className={
+                    'block w-full p-0 m-0 transition-opacity delay-75 bg-transparent appearance-none cursor-pointer embla-thumbs__slide__button touch-manipulation decoration-0 px-4 py-[10px] border-[1px] border-grey-50 max-h-[85px] '
+                  }
                   type="button"
                 >
                   <img
                     src={image.src}
                     alt={image.alt}
-                    className="object-cover w-full h-20"
+                    className="object-cover w-full max-h-[66px]"
                   />
                 </button>
               </div>
@@ -83,16 +85,16 @@ const CarouselThumb = ({
           </div>
         </div>
         <button
-          className="absolute z-10 flex items-center justify-center h-auto -translate-y-1/2 bg-white rounded-full cursor-pointer embla__button embla__prev -left-4 w-9 aspect-square top-1/2 swiper-button image-swiperthumb-button-next shadow-base"
+          className="absolute z-10 flex items-center justify-center h-auto transform translate-x-[-50%] bg-white rounded-full cursor-pointer embla__button embla__prev w-9 aspect-square top-[2%] swiper-button image-swiperthumb-button-next shadow-base left-[50%] "
           onClick={scrollPrev}
         >
-          <LeftBlueArrow />
+          <BlueArrowForward />
         </button>
         <button
-          className="absolute z-10 flex items-center justify-center h-auto rotate-180 -translate-y-1/2 bg-white rounded-full cursor-pointer embla__button embla__next -right-4 w-9 aspect-square top-1/2 swiper-button image-swiperthumb-button-next shadow-base"
+          className="absolute z-10 flex items-center justify-center h-auto transform translate-x-[-50%] bg-white rounded-full cursor-pointer embla__button embla__next  w-9 aspect-square  swiper-button image-swiperthumb-button-next shadow-base top-[90%] left-[50%] "
           onClick={scrollNext}
         >
-          <LeftBlueArrow />
+          <BlueArrowDown />
         </button>
       </div>
       {/* Thumbnail Carousel Ends Here */}
@@ -106,7 +108,7 @@ const CarouselThumb = ({
                 <img
                   src={image.src}
                   alt={image.alt}
-                  className="object-cover w-full max-h-[420px]"
+                  className="object-cover w-full h-full"
                 />
               </div>
             ))}

@@ -1,19 +1,14 @@
-import React from 'react';
 import ProductTab from './productTabs';
 import ProductInformation from './productInformation';
-import CarouselThumb from './carouselThumb';
+import ProductsRelatedProduct from './productsRelatedProduct';
 
 export default function route() {
   return (
     <>
       <div className="container">
-        {/* <ProductInformation />
-        <ProductTab /> */}
-        <CarouselThumb
-          images={images}
-          thumbNailCarouseloptions={{axis: 'y'}}
-          mainCarouseloptions={{}}
-        />
+        <ProductInformation />
+        <ProductTab />
+        <ProductsRelatedProduct />
       </div>
     </>
   );

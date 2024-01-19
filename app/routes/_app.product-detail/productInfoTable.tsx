@@ -49,7 +49,7 @@ export function ProductInfoTable() {
     : invoices.slice(0, defaultRowCount);
 
   return (
-    <Table className="min-w-[266px] border-[1px] border-grey-50 ">
+    <Table className="min-w-[266px] border-[1px] border-grey-50 h-full">
       <TableHeader>
         <TableRow className="bg-secondary-500">
           <TableHead className="text-base font-medium leading-[21px] text-grey-900 text-center">

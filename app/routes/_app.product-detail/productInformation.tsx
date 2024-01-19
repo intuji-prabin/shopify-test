@@ -19,7 +19,8 @@ import {
   SelectValue,
 } from '~/components/ui/select';
 import {Link} from '@remix-run/react';
-
+import CarouselThumb from './carouselThumb';
+import {SliderImageData} from './slider-image-date';
 type ProductCardInfoProps = {
   sku: string;
   productName: string;
@@ -106,9 +107,13 @@ export default function productInformation() {
 
   return (
     <section className="bg-white">
-      <div className="container">
-        <div></div>
-        <div className="right-side-info flex flex-col gap-6">
+      <div className="container flex gap-14">
+        <CarouselThumb
+          images={SliderImageData}
+          thumbNailCarouseloptions={{axis: 'y'}}
+          mainCarouseloptions={{}}
+        />
+        <div className="right-side-info flex flex-col gap-6 max-w-[588px] py-8">
           <div className="top flex flex-col gap-6">
             <div className="">
               <div className="flex justify-between">
@@ -162,7 +167,7 @@ export default function productInformation() {
               <div></div>
             </div>
             <div className="flex flex-col">
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-2">
                 <div className="flex gap-8 ">
                   <ProductCardInfo
                     sku={''}
