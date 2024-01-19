@@ -72,7 +72,36 @@ export async function loader({ request }: LoaderFunctionArgs) {
     ],
   };
 
-  return { areaChartData, barChartData, lineChartData };
+  const doughnutChartData = {
+    labels: labels,
+    datasets: [
+      {
+        label: "My First dataset",
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+          'rgba(222, 123, 4, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(222, 123, 4, 1)'
+        ],
+        data: [10, 10, 10, 10, 10, 10, 40],
+        cutout: '80%'
+      },
+    ],
+  };
+
+  return { areaChartData, barChartData, lineChartData, doughnutChartData };
 }
 
 type ImageType = {
@@ -101,7 +130,7 @@ export default function Homepage() {
       <CtaHome />
       <SpendCard data={data.areaChartData} />
       <DetailChart barChartData={data.barChartData} lineChartData={data.lineChartData} />
-      <ExpenditureCard />
+      <ExpenditureCard doughnutChartData={data.doughnutChartData} />
     </article>
   );
 }

@@ -17,6 +17,7 @@ import { ArrowUp } from './arrow';
 import Expenditure from './expenditure';
 import ExpenditureTab from './expenditure-tab';
 import { Separator } from './separator';
+import ChartFallback from './chartFallback';
 
 ChartJS.register(
     CategoryScale,
@@ -141,7 +142,7 @@ const DetailChart = ({ barChartData, lineChartData }: { barChartData: any, lineC
                     <Separator />
                     <div className='overflow-x-auto'>
                         <div className='min-w-[580px] min-h-[290px]'>
-                            <ClientOnly fallback={<Fallback />}>
+                            <ClientOnly fallback={<ChartFallback />}>
                                 {() => <Bar options={options} data={barChartData} />}
                             </ClientOnly>
                         </div>
@@ -175,7 +176,7 @@ const DetailChart = ({ barChartData, lineChartData }: { barChartData: any, lineC
                     <Separator />
                     <div className='overflow-x-auto'>
                         <div className='min-w-[580px] min-h-[290px]'>
-                            <ClientOnly fallback={<Fallback />}>
+                            <ClientOnly fallback={<ChartFallback />}>
                                 {() => <Line options={options} data={lineChartData} />}
                             </ClientOnly>
                         </div>
@@ -188,7 +189,3 @@ const DetailChart = ({ barChartData, lineChartData }: { barChartData: any, lineC
 }
 
 export default DetailChart;
-
-function Fallback() {
-    return <div>Generating Chart</div>;
-}
