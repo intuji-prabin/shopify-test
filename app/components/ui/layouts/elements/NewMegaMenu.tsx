@@ -1001,7 +1001,7 @@ export const NewMegaMenu = ({isOpen}: {isOpen: boolean}) => {
                   : ''
               }
             `}
-            onClick={() => setActiveMenu({menu: menu.id, subMenu: 1})}
+            onMouseOver={() => setActiveMenu({menu: menu.id, subMenu: 1})}
           >
             <span className="rounded px-2 py-1 font-medium text-lg flex flex-row-reverse items-center menu-hov w-full justify-between">
               {' '}
