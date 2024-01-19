@@ -52,7 +52,20 @@ export const SingleNavItem = ({
                 }`}
                 aria-expanded={isDropdownOpen ? 'true' : 'false'}
                 onClick={() => {
+                  if (menu.title === 'Product') {
+                    return;
+                  }
                   setIsDropdownOpen(!isDropdownOpen);
+                }}
+                onMouseEnter={() => {
+                  if (menu.title === 'Product') {
+                    setIsDropdownOpen(true);
+                  }
+                }}
+                onMouseLeave={() => {
+                  if (menu.title === 'Product') {
+                    setIsDropdownOpen(false);
+                  }
                 }}
               >
                 {menu.title}{' '}
