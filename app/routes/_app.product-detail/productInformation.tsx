@@ -4,6 +4,7 @@ import {
   Compare,
   InStock,
   Pdf,
+  PickupLocation,
   ProductLoveWhite,
 } from '~/components/icons/orderStatus';
 import {Button} from '~/components/ui/button';
@@ -14,10 +15,10 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
+import {Link} from '@remix-run/react';
 
 type ProductCardInfoProps = {
   sku: string;
@@ -107,7 +108,7 @@ export default function productInformation() {
     <section className="bg-white">
       <div className="container">
         <div></div>
-        <div className="right-side-info">
+        <div className="right-side-info flex flex-col gap-6">
           <div className="top flex flex-col gap-6">
             <div className="">
               <div className="flex justify-between">
@@ -207,7 +208,21 @@ export default function productInformation() {
               </div>
             </div>
           </div>
-          <div className="pickup-available"></div>
+          <div className="flex max-w-[483px] gap-2">
+            <PickupLocation />
+            <div>
+              <p>
+                Pickup available at <span>SUPERCHEAP AUTO NZ PTY LTD</span>
+              </p>
+              <p>Usually ready in 4 hours</p>
+              <Link
+                to=""
+                className="text-[14px] italic font-bolf leading-6 uppercase underline decoration-primary-500"
+              >
+                View WAREHOUSE information
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>

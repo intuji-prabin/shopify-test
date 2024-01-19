@@ -774,3 +774,17 @@ export function InStock({fillColor = '#3A8348'}: {fillColor?: string}) {
     </svg>
   );
 }
+export function PickupLocation({fillColor = '#ffff'}: {fillColor?: string}) {
+  return (
+    <svg
+      width="20"
+      height="25"
+      viewBox="0 0 20 25"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="10" cy="12" r="10" fill="#CFEED5" />
+      <circle cx="10" cy="12" r="3" fill="#3A8348" />
+    </svg>
+  );
+}
