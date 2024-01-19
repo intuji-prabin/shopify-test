@@ -1028,7 +1028,7 @@ export const NewMegaMenu = ({isOpen}: {isOpen: boolean}) => {
                    : ''
                }
               `}
-              onClick={() =>
+              onMouseOver={() =>
                 setActiveMenu({menu: activeMenu.menu, subMenu: subMenu.id})
               }
             >
