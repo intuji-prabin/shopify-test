@@ -21,13 +21,43 @@ import {
 import {Link} from '@remix-run/react';
 import CarouselThumb from './carouselThumb';
 import {SliderImageData} from './slider-image-date';
+import {Product} from './route';
 
-export default function ProductInformation({
-  isFavorited,
-}: {
+export default function ProductInformation({product}: {product: Product}) {
+  return (
+    <section className="bg-white">
+      <div className="container flex gap-14 flex-col lg:flex-row">
+        <CarouselThumb
+          images={SliderImageData}
+          thumbNailCarouseloptions={{axis: 'y'}}
+          mainCarouseloptions={{}}
+        />
+        <ProductDetailsSection isFavorited={product.isFavorited} />
+      </div>
+    </section>
+  );
+}
+
+type ProductDetailsProps = {
+  productName: string;
   isFavorited: boolean;
-}) {
+  productBuyPrice: number;
+  productRRP: number;
+  sku: string;
+  unitOfMeasurement: string;
+  isInStock: boolean;
+};
+const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
+  const [heartFill, setHeartFill] = useState(isFavorited);
   const [quantity, setQuantity] = useState(0);
+
+  const handleHeartClick = () => {
+    setHeartFill(!heartFill);
+  };
+
+  const handlePrintPDF = () => {
+    window.print();
+  };
 
   function decreaseQuantity() {
     setQuantity(quantity - 1);
@@ -40,153 +70,137 @@ export default function ProductInformation({
     setQuantity(isNaN(inputQuantity) ? 0 : inputQuantity);
   }
 
-  const [heartFill, setHeartFill] = useState(isFavorited);
-
-  const handleHeartClick = () => {
-    setHeartFill(!heartFill);
-  };
-
-  const handlePrintPDF = () => {
-    window.print();
-  };
   return (
-    <section className="bg-white">
-      <div className="container flex gap-14 flex-col lg:flex-row">
-        <CarouselThumb
-          images={SliderImageData}
-          thumbNailCarouseloptions={{axis: 'y'}}
-          mainCarouseloptions={{}}
-        />
-        <div className="right-side-info flex flex-col gap-6 max-w-[588px] py-8">
-          <div className="top flex flex-col gap-6">
-            <div className="">
-              <div className="flex justify-between">
-                <figure>
-                  <img src="Logo.png" alt="" />
-                </figure>
-                <ul className="flex gap-[7px]">
-                  <li className="w-[36px] h-[36px] flex justify-center items-center border-grey-50 border-[1px]">
-                    <Link to="">
-                      {' '}
-                      <Compare />
-                    </Link>
-                  </li>
-                  <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]">
-                    <button onClick={handlePrintPDF}>
-                      <Pdf />
-                    </button>
-                  </li>
-                  <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]">
-                    <button onClick={handleHeartClick}>
-                      {heartFill ? <ProductLoveRed /> : <ProductLoveWhite />}
-                    </button>
-                  </li>
-                </ul>
-              </div>
-              <div className="">
-                <h3>
-                  ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of
-                  CIGWELD Edition
-                </h3>
-                <div className="flex justify-between flex-col xl:flex-row items-baseline">
-                  <div className="flex gap-5">
-                    <div className="flex text-base items-center gap-1">
-                      <p className=" font-semibold leading-6">sku: </p>
-                      <p className="text-Grey-500 font-normal">1-1601-EC</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <p className="text-base font-semibold leading-6 text-grey-600">
-                        Unit Of Measurement:
-                      </p>
-                      <p className="text-Grey-500 font-normal">1 Box</p>
-                      <Button
-                        className="uppercase bg-primary-200 text-primary-500 font-medium leading-4 text-[14px] not-italic hover:text-white"
-                        size="default"
-                      >
-                        Default
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 bg-semantic-success-100 items-center p-2">
-                    <InStock />
-                    <p className="uppercase text-[14px] font-medium text-semantic-success-500">
-                      IN STOCK
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div></div>
+    <>
+      <div className="right-side-info flex flex-col gap-6 max-w-[588px] py-8">
+        <div className="top flex flex-col gap-6">
+          <div className="">
+            <div className="flex justify-between">
+              <figure>
+                <img src="Logo.png" alt="" />
+              </figure>
+              <ul className="flex gap-[7px]">
+                <li className="w-[36px] h-[36px] flex justify-center items-center border-grey-50 border-[1px]">
+                  <Link to="">
+                    {' '}
+                    <Compare />
+                  </Link>
+                </li>
+                <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]">
+                  <button onClick={handlePrintPDF}>
+                    <Pdf />
+                  </button>
+                </li>
+                <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]">
+                  <button onClick={handleHeartClick}>
+                    {heartFill ? <ProductLoveRed /> : <ProductLoveWhite />}
+                  </button>
+                </li>
+              </ul>
             </div>
-            <div className="flex flex-col">
-              <div className="flex flex-col gap-2">
-                <div className="flex gap-8 ">
-                  <ProductCardInfo
-                    sku={''}
-                    productName={''}
-                    buyPrice={649.22}
-                    rppPrice={799.87}
-                  />
-
-                  <ProductInfoTable />
+            <div className="">
+              <h3>
+                ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of
+                CIGWELD Edition
+              </h3>
+              <div className="flex justify-between flex-col xl:flex-row items-baseline">
+                <div className="flex gap-5">
+                  <div className="flex text-base items-center gap-1">
+                    <p className=" font-semibold leading-6">sku: </p>
+                    <p className="text-Grey-500 font-normal">1-1601-EC</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-base font-semibold leading-6 text-grey-600">
+                      Unit Of Measurement:
+                    </p>
+                    <p className="text-Grey-500 font-normal">1 Box</p>
+                    <Button
+                      className="uppercase bg-primary-200 text-primary-500 font-medium leading-4 text-[14px] not-italic hover:text-white"
+                      size="default"
+                    >
+                      Default
+                    </Button>
+                  </div>
                 </div>
-                <div className="py-2 px-4 bg-semantic-info-100 flex gap-2 border-semantic-info-500 border-l-4 border-y-0 border-r-0 mb-2">
-                  <CircleInformationMajor />
-                  <p className="text-base font-normal leading-[21px]">
-                    Price will change if you increase quantity of items.
+                <div className="flex gap-2 bg-semantic-success-100 items-center p-2">
+                  <InStock />
+                  <p className="uppercase text-[14px] font-medium text-semantic-success-500">
+                    IN STOCK
                   </p>
                 </div>
               </div>
-              <div className="flex gap-4">
-                <div className="flex">
-                  <button
-                    className=" border-[1px] border-grey-500  flex justify-center items-center w-[56px]"
-                    onClick={decreaseQuantity}
-                  >
-                    -
-                  </button>
-                  <input
-                    type="text"
-                    className=" max-w-[61px] h-full text-center border-x-0 border-[1px] border-grey-500"
-                    value={quantity}
-                    onChange={handleInputChange}
-                  />
-                  <button
-                    className="border-[1px] border-grey-500  flex justify-center items-center  w-[56px]"
-                    onClick={increaseQuantity}
-                  >
-                    +
-                  </button>
-                </div>
-                <SelectACountryDropdown
-                  placeHolder="Country"
-                  items={['Nepal', 'UK', 'Australia']}
+            </div>
+            <div></div>
+          </div>
+          <div className="flex flex-col">
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-8 ">
+                <ProductCardInfo
+                  sku={''}
+                  productName={''}
+                  buyPrice={649.22}
+                  rppPrice={799.87}
                 />
-                <Button className="uppercase flex-grow" variant="primary">
-                  Add to cart
-                </Button>
+
+                <ProductInfoTable />
+              </div>
+              <div className="py-2 px-4 bg-semantic-info-100 flex gap-2 border-semantic-info-500 border-l-4 border-y-0 border-r-0 mb-2">
+                <CircleInformationMajor />
+                <p className="text-base font-normal leading-[21px]">
+                  Price will change if you increase quantity of items.
+                </p>
               </div>
             </div>
-          </div>
-          <div className="flex max-w-[483px] gap-2">
-            <PickupLocation />
-            <div>
-              <p>
-                Pickup available at <span>SUPERCHEAP AUTO NZ PTY LTD</span>
-              </p>
-              <p>Usually ready in 4 hours</p>
-              <Link
-                to=""
-                className="text-[14px] italic font-bolf leading-6 uppercase underline decoration-primary-500"
-              >
-                View WAREHOUSE information
-              </Link>
+            <div className="flex gap-4">
+              <div className="flex">
+                <button
+                  className=" border-[1px] border-grey-500  flex justify-center items-center w-[56px]"
+                  onClick={decreaseQuantity}
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  className=" max-w-[61px] h-full text-center border-x-0 border-[1px] border-grey-500"
+                  value={quantity}
+                  onChange={handleInputChange}
+                />
+                <button
+                  className="border-[1px] border-grey-500  flex justify-center items-center  w-[56px]"
+                  onClick={increaseQuantity}
+                >
+                  +
+                </button>
+              </div>
+              <SelectACountryDropdown
+                placeHolder="Country"
+                items={['Nepal', 'UK', 'Australia']}
+              />
+              <Button className="uppercase flex-grow" variant="primary">
+                Add to cart
+              </Button>
             </div>
           </div>
         </div>
+        <div className="flex max-w-[483px] gap-2">
+          <PickupLocation />
+          <div>
+            <p>
+              Pickup available at <span>SUPERCHEAP AUTO NZ PTY LTD</span>
+            </p>
+            <p>Usually ready in 4 hours</p>
+            <Link
+              to=""
+              className="text-[14px] italic font-bolf leading-6 uppercase underline decoration-primary-500"
+            >
+              View WAREHOUSE information
+            </Link>
+          </div>
+        </div>
       </div>
-    </section>
+    </>
   );
-}
+};
 
 type ProductCardInfoProps = {
   sku: string;

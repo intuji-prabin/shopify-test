@@ -86,7 +86,7 @@ function ProductCardInfo({
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
-                ${buyPrice}
+                ${buyPrice.toFixed(2)}
               </h3>
               <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
             </div>
@@ -109,7 +109,7 @@ function ProductCardInfo({
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-                ${rppPrice}
+                ${rppPrice.toFixed(2)}
               </h3>
               <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
             </div>
