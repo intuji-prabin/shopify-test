@@ -57,18 +57,18 @@ const CarouselThumb = ({
   }, [emblaMainApi, onSelect]);
 
   return (
-    <section className="flex flex-row gap-[17px]  max-h-[489px] overflow-y-hidden">
+    <section className="flex flex-row gap-[17px]   overflow-y-hidden">
       {/* Thumbnail Carousel Begins Here */}
-      <div className="relative  embla-thumbs  overflow-y-hidden">
+      <div className="relative  embla-thumbs h-full overflow-y-hidden">
         <div
-          className="overflow-hidden embla-thumbs__viewport"
+          className="overflow-hidden embla-thumbs__viewport max-h-[489px]"
           ref={emblaThumbsRef}
         >
-          <div className="flex flex-col h-[489px] embla-thumbs__container gap-y-2">
+          <div className="flex flex-col  embla-thumbs__container gap-y-2 h-[489px]">
             {images.map((image, index) => (
               <div
                 key={index}
-                className=" embla__slide flex justify-center items-center flex-quarter"
+                className=" embla__slide flex justify-center items-center "
               >
                 <button
                   onClick={() => onThumbClick(index)}
@@ -96,7 +96,7 @@ const CarouselThumb = ({
           <BlueArrowForward />
         </button>
         <button
-          className="absolute z-10 flex items-center justify-center h-auto transform translate-x-[-50%] bg-white rounded-full cursor-pointer embla__button embla__next  w-9 aspect-square  swiper-button image-swiperthumb-button-next shadow-base top-[90%] left-[50%] "
+          className="absolute z-10 flex items-center justify-center h-auto transform translate-x-[-50%] bg-white rounded-full cursor-pointer embla__button embla__next  w-9 aspect-square  swiper-button image-swiperthumb-button-next shadow-base top-[80%] left-[50%] "
           onClick={scrollNext}
         >
           <BlueArrowDown />
@@ -105,9 +105,9 @@ const CarouselThumb = ({
       {/* Thumbnail Carousel Ends Here */}
 
       {/* Main Product Image Carousel Begins Here */}
-      <div className="overflow-hidden embla max-h-[489px] max-w-[400px]  lg:max-w-[492px]">
-        <div className="embla__viewport" ref={emblaMainRef}>
-          <div className="flex embla__container">
+      <div className="overflow-hidden embla max-h-[532px] max-w-[400px]  lg:max-w-[492px]">
+        <div className="embla__viewport h-full" ref={emblaMainRef}>
+          <div className="flex embla__container h-full">
             {images.map((image, index) => (
               <div key={index} className="min-w-0 embla__slide flex-full">
                 <img
