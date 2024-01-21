@@ -26,7 +26,7 @@ export default function route() {
             </BreadcrumbItem>
           </Breadcrumb>
         </div>
-        <ProductInformation />
+        <ProductInformation isFavorited={false} />
         <ProductTab />
         <ProductsRelatedProduct />
       </div>

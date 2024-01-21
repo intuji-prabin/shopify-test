@@ -59,26 +59,31 @@ const CarouselThumb = ({
   return (
     <section className="flex flex-row gap-[17px]  max-h-[489px] overflow-y-hidden">
       {/* Thumbnail Carousel Begins Here */}
-      <div className="relative  embla-thumbs max-h-[489px] overflow-y-hidden">
+      <div className="relative  embla-thumbs  overflow-y-hidden">
         <div
           className="overflow-hidden embla-thumbs__viewport"
           ref={emblaThumbsRef}
         >
-          <div className="flex flex-col embla-thumbs__container gap-y-2">
+          <div className="flex flex-col h-[489px] embla-thumbs__container gap-y-2">
             {images.map((image, index) => (
-              <div key={index} className=" embla__slide flex-quarter">
+              <div
+                key={index}
+                className=" embla__slide flex justify-center items-center flex-quarter"
+              >
                 <button
                   onClick={() => onThumbClick(index)}
                   className={
-                    'block w-full p-0 m-0 transition-opacity delay-75 bg-transparent appearance-none cursor-pointer embla-thumbs__slide__button touch-manipulation decoration-0 px-4 py-[10px] border-[1px] border-grey-50 max-h-[85px] '
+                    'p-0 m-0 transition-opacity delay-75 bg-transparent appearance-none cursor-pointer embla-thumbs__slide__button touch-manipulation decoration-0 px-4 py-[10px] border-[1px] border-grey-50 max-h-[85px] w-full flex items-center justify-center'
                   }
                   type="button"
                 >
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    className="object-cover w-full max-h-[66px]"
-                  />
+                  <figure>
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      className="object-cover object-center"
+                    />
+                  </figure>
                 </button>
               </div>
             ))}

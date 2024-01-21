@@ -12,11 +12,11 @@ const ProductTab = () => (
   <section className="tab-wrapper bg-white">
     <Tabs.Root className="flex flex-col p-6" defaultValue="tab1">
       <Tabs.List
-        className="shrink-0 flex tab-header border-b-grey-50 border-x-0 border-t-0 border-2 justify-between flex-col md:flex-row"
+        className="shrink-0 flex tab-header border-b-grey-50 border-x-0 border-t-0 border-2 justify-between flex-col flex-wrap lg:flex-row"
         aria-label="Manage your account"
       >
         <Tabs.Trigger
-          className="bg-white px-4 py-3 h-[45px] flex items-left justify-start text-lg font-bold leading-[24px] text-mauve11 text-grey-500 select-none first:rounded-tl-md last:rounded-tr-md  data-[state=active]:text-primary-500 data-[state=active]:border-b-4 border-primary-500 data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:bottom-border-tabs data-[state=active]:focus:red outline-none cursor-default"
+          className="bg-white px-4 py-3  flex items-left justify-start text-lg font-bold leading-[24px] text-mauve11 text-grey-500 select-none first:rounded-tl-md last:rounded-tr-md  data-[state=active]:text-primary-500 data-[state=active]:border-b-4 border-primary-500 data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:bottom-border-tabs data-[state=active]:focus:red outline-none cursor-default"
           value="tab1"
         >
           <h5 className="cursor-pointer">Description</h5>
