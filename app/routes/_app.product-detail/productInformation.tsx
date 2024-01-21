@@ -5,6 +5,7 @@ import {
   InStock,
   Pdf,
   PickupLocation,
+  ProductLoveRed,
   ProductLoveWhite,
 } from '~/components/icons/orderStatus';
 import {Button} from '~/components/ui/button';
@@ -23,6 +24,7 @@ import CarouselThumb from './carouselThumb';
 import {SliderImageData} from './slider-image-date';
 type ProductCardInfoProps = {
   sku: string;
+
   productName: string;
   buyPrice: number;
   rppPrice: number;
@@ -30,6 +32,7 @@ type ProductCardInfoProps = {
 function ProductCardInfo({
   sku,
   productName,
+
   buyPrice,
   rppPrice,
 }: ProductCardInfoProps) {
@@ -91,7 +94,11 @@ export function SelectDemo() {
     </Select>
   );
 }
-export default function productInformation() {
+export default function productInformation({
+  isFavorited,
+}: {
+  isFavorited: boolean;
+}) {
   const [quantity, setQuantity] = useState(0);
 
   function decreaseQuantity() {
@@ -105,6 +112,11 @@ export default function productInformation() {
     setQuantity(isNaN(inputQuantity) ? 0 : inputQuantity);
   }
 
+  const [heartFill, setHeartFill] = useState(isFavorited);
+
+  const handleHeartClick = () => {
+    setHeartFill(!heartFill);
+  };
   return (
     <section className="bg-white">
       <div className="container flex gap-14 flex-col lg:flex-row">
@@ -121,14 +133,19 @@ export default function productInformation() {
                   <img src="Logo.png" alt="" />
                 </figure>
                 <ul className="flex gap-[7px]">
-                  <li className="p-2 border-grey-50 border-[1px]">
-                    <Compare />
+                  <li className="w-[36px] h-[36px] flex justify-center items-center border-grey-50 border-[1px]">
+                    <Link to="">
+                      {' '}
+                      <Compare />
+                    </Link>
                   </li>
-                  <li className="p-2 border-grey-50 border-[1px]">
+                  <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]">
                     <Pdf />
                   </li>
-                  <li className="p-2 border-grey-50 border-[1px]">
-                    <ProductLoveWhite />
+                  <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]">
+                    <button onClick={handleHeartClick}>
+                      {heartFill ? <ProductLoveRed /> : <ProductLoveWhite />}
+                    </button>
                   </li>
                 </ul>
               </div>
