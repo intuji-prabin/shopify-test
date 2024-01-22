@@ -15,7 +15,9 @@ const VideoLink = () => (
     <img src="YouTube.png" alt="" />
   </Link>
 );
-
+type packageProps = {
+  mainTitle: string;
+};
 const videosData = [
   {id: 1, title: 'Video 1'},
   {id: 2, title: 'Video 2'},
@@ -24,10 +26,10 @@ const videosData = [
   {id: 5, title: 'Video 5'},
 ];
 
-const ProductVideos = () => (
+const ProductVideos = ({mainTitle}: packageProps) => (
   <>
     <h3 className="text-[30px] italic font-bold leading-[36px] mb-8 uppercase ">
-      Videos
+      {mainTitle}
     </h3>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 product-tab-video ">
       {videosData.map((video) => (

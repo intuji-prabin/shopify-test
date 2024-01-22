@@ -22,16 +22,19 @@ import {Link} from '@remix-run/react';
 import CarouselThumb from './carouselThumb';
 import {SliderImageData} from './slider-image-date';
 import {Product} from './route';
+import {useMediaQuery} from '../../hooks/useMediaQuery';
 
 export default function ProductInformation({product}: {product: Product}) {
+  const matches = useMediaQuery('(min-width: 1025px)');
   return (
     <section className="bg-white">
       <div className="container flex gap-14 flex-col lg:flex-row">
         <CarouselThumb
           images={SliderImageData}
-          thumbNailCarouseloptions={{axis: 'y'}}
+          thumbNailCarouseloptions={{axis: matches ? 'y' : 'x'}}
           mainCarouseloptions={{}}
         />
+
         <ProductDetailsSection isFavorited={product.isFavorited} />
       </div>
     </section>
@@ -218,12 +221,6 @@ function ProductCardInfo({
     <>
       <div className="p-4 flex flex-col gap-6">
         <div className="tag flex flex-col gap-[11px]">
-          <div>
-            <p className="text-base font-medium text-primary-500">{sku}</p>
-            <h5 className="text-lg italic font-bold leading-6 text-grey-900 line-clamp-2 text-ellipsis whitespace-normal h-12">
-              {productName}
-            </h5>
-          </div>
           <div className="flex gap-6">
             <div className="flex flex-col">
               <div className="flex items-center gap-1">
@@ -249,6 +246,9 @@ function ProductCardInfo({
             </div>
           </div>
         </div>
+        <p className="text-lg font-normal leading-[22px]">
+          Minimum Order (500 pieces)
+        </p>
       </div>
     </>
   );

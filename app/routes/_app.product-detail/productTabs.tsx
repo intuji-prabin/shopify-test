@@ -80,43 +80,56 @@ const ProductTab = () => (
         className="grow py-8 bg-white rounded-b-md outline-none "
         value="tab1"
       >
-        <ProductDescripion />
+        <ProductDescripion
+          productImageUrl={'cigweld100yr.png'}
+          productDescLogo={'productDesc.png'}
+          descriptionHeading={'PRODUCT DESCRIPTION'}
+        />
       </Tabs.Content>
       <Tabs.Content
         className="grow py-8 bg-white rounded-b-md outline-none  focus:none"
         value="tab2"
       >
-        <ProductFeatures />
+        <ProductFeatures featureHeading={'Features'} />
       </Tabs.Content>
       <Tabs.Content
         className="grow py-8 bg-white rounded-b-md outline-none  focus:none"
         value="tab3"
       >
-        <PackageContents />
+        <PackageContents
+          mainTitle={'Optional Extras'}
+          packageTitleFirst={'PLASMA ACCESSORIES'}
+          packageTitleSecond={'SAFETY EQUIPMENT'}
+          tableTitle={'option'}
+        />
       </Tabs.Content>
       <Tabs.Content
         className="grow py-8 bg-white rounded-b-md outline-none  focus:none"
         value="tab4"
       >
-        <Specifications />
+        <Specifications mainTitle={'PRODUCT SPECIFICATIONS'} />
       </Tabs.Content>
       <Tabs.Content
         className="grow py-8 bg-white rounded-b-md outline-none  focus:none"
         value="tab5"
       >
-        <ProductDownloads />
+        <ProductDownloads
+          mainTitle={'FILES FOR DOWNLOADS'}
+          download={'downloadFiles.png'}
+          btnTitle={'Download'}
+        />
       </Tabs.Content>
       <Tabs.Content
         className="grow py-8 bg-white rounded-b-md outline-none  focus:none"
         value="tab6"
       >
-        <ProductVideos />
+        <ProductVideos mainTitle={'Videos'} />
       </Tabs.Content>
       <Tabs.Content
         className="grow py-8 bg-white rounded-b-md outline-none  focus:none"
         value="tab7"
       >
-        <ProductFaq />
+        <ProductFaq mainTitle={' FREQUENTLY ASKED QUESTIONS'} />
       </Tabs.Content>
       <Tabs.Content
         className="grow py-8 bg-white rounded-b-md outline-none  focus:none"
