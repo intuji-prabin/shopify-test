@@ -607,14 +607,6 @@ input[type='checkbox']:before {
   right: -5px;
 }
 
-.menus li:active {
-  @apply bg-primary-600;
-}
-
-.menus li {
-  @apply px-4 py-3;
-}
-
 input[type='radio']:checked + label {
   @apply bg-primary-400 border-transparent;
 }
