@@ -10,6 +10,7 @@ export const SliderImageData = [
         {src: 'https://swiperjs.com/demos/images/nature-8.jpg', alt: 'Nature 8'},
         {src: 'https://swiperjs.com/demos/images/nature-9.jpg', alt: 'Nature 9'},
         {src: 'https://swiperjs.com/demos/images/nature-10.jpg', alt: 'Nature 10'},
-        {src: 'https://swiperjs.com/demos/images/nature-2.jpg', alt: 'Nature 2'},
-      
+        {src: 'https://swiperjs.com/demos/images/nature-2.jpg', alt: 'Nature 11'},
+        {src: 'https://swiperjs.com/demos/images/nature-2.jpg', alt: 'Nature 12'}, 
+        {src: 'https://swiperjs.com/demos/images/nature-2.jpg', alt: 'Nature 13'},
 ];

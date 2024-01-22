@@ -26,8 +26,10 @@ const AccordionItem = ({
     </div>
   );
 };
-
-const ProductFaq = () => {
+type packageProps = {
+  mainTitle: string;
+};
+const ProductFaq = ({mainTitle}: packageProps) => {
   const accordionData = [
     {
       title: 'Tempus magna risus interdum ultricies sed urna?',
@@ -56,7 +58,7 @@ const ProductFaq = () => {
   return (
     <div>
       <h3 className="text-[30px] italic font-bold leading-[36px] mb-8 uppercase ">
-        FREQUENTLY ASKED QUESTIONS
+        {mainTitle}
       </h3>
 
       <div className="product-accordion">
