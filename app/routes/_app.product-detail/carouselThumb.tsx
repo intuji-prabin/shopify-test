@@ -57,7 +57,7 @@ const CarouselThumb = ({
   }, [emblaMainApi, onSelect]);
 
   return (
-    <section className="flex flex-row gap-[17px]   overflow-y-hidden">
+    <section className="flex flex-col-reverse gap-[17px]   overflow-y-hidden lg:flex-row">
       {/* Thumbnail Carousel Begins Here */}
       <div className="relative  embla-thumbs h-full overflow-y-hidden">
         <div
@@ -105,7 +105,7 @@ const CarouselThumb = ({
       {/* Thumbnail Carousel Ends Here */}
 
       {/* Main Product Image Carousel Begins Here */}
-      <div className="overflow-hidden embla max-h-[532px] max-w-[400px]  lg:max-w-[492px]">
+      <div className="overflow-hidden embla max-h-[532px] max-w-full  lg:max-w-[492px]">
         <div className="embla__viewport h-full" ref={emblaMainRef}>
           <div className="flex embla__container h-full">
             {images.map((image, index) => (

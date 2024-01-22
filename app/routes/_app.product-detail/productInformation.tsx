@@ -22,16 +22,19 @@ import {Link} from '@remix-run/react';
 import CarouselThumb from './carouselThumb';
 import {SliderImageData} from './slider-image-date';
 import {Product} from './route';
+import {useMediaQuery} from '../../hooks/useMediaQuery';
 
 export default function ProductInformation({product}: {product: Product}) {
+  const matches = useMediaQuery('(min-width: 1025px)');
   return (
     <section className="bg-white">
       <div className="container flex gap-14 flex-col lg:flex-row">
         <CarouselThumb
           images={SliderImageData}
-          thumbNailCarouseloptions={{axis: 'y'}}
+          thumbNailCarouseloptions={{axios: matches ? 'y' : 'x'}}
           mainCarouseloptions={{}}
         />
+
         <ProductDetailsSection isFavorited={product.isFavorited} />
       </div>
     </section>
