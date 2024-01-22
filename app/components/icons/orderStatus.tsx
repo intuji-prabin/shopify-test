@@ -724,3 +724,19 @@ export function TooltipInfo({fillColor = '#ffff'}: {fillColor?: string}) {
     </svg>
   );
 }
+export function TooltipTop({fillColor = '#ffff'}: {fillColor?: string}) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="17"
+      height="9"
+      viewBox="0 0 17 9"
+      fill="none"
+    >
+      <path
+        d="M8.5 8.49951L16.5 8.49951L8.5 0.499512L0.5 8.49951L8.5 8.49951Z"
+        fill="#191A1A"
+      />
+    </svg>
+  );
+}

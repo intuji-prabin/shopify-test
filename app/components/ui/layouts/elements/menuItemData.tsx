@@ -95,7 +95,7 @@ export const menuItemsData = [
     ],
   },
   {
-    title: 'Settings',
+    title: 'Company Information',
     type: 'link',
     url: '/settings',
     icon: <Settings />,

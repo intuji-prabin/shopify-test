@@ -34,8 +34,8 @@ export const SingleNavItem = ({
   return (
     <>
       <li
-        className=" flex flex-row items-center justify-center
-          text-white italic font-bold text-lg gap-1 p-0 menu-items"
+        className=" flex flex-row items-center justify-center p-3
+          text-white italic font-bold text-lg gap-1  menu-items active:bg-primary-600 hover:bg-transparent"
         ref={menuRef}
       >
         <Link to="" className="flex items-center gap-1 relative menu-links">
