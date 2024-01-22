@@ -619,3 +619,6 @@ input[type='radio']:checked + label {
   @apply bg-primary-400 border-transparent;
 }
 
+.selectProductItem:hover {
+  @apply bg-primary-50 text-base font-normal text-grey-800;
+}

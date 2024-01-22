@@ -17,14 +17,16 @@ export function ProductCard({
   productName,
   rppPrice,
   sku,
+  imageBackgroundColor,
 }: ProductCardProps) {
   return (
     <>
-      <div className="bg-white">
+      <div>
         <ProductCardImage
           isBuyQtyAvailable={isBuyQtyAvailable}
           isFavorited={isFavorited}
           productImageUrl={productImageUrl}
+          imageBackgroundColor={imageBackgroundColor}
         />
         <ProductCardInfo
           sku={sku}
@@ -48,6 +50,7 @@ type ProductCardImageProps = {
   productImageUrl: string;
   isBuyQtyAvailable: boolean;
   isFavorited: boolean;
+  imageBackgroundColor: string;
 };
 
 function ProductCardInfo({
@@ -61,7 +64,7 @@ function ProductCardInfo({
       <div className="p-4 flex flex-col gap-6">
         <div className="tag flex flex-col gap-[11px]">
           <div>
-            <p className="text-base font-medium text-primary-500">{sku}</p>
+            <p className="text-base font-medium text-primary-500">SKU:{sku}</p>
             <h5 className="text-lg italic font-bold leading-6 text-grey-900 line-clamp-2 text-ellipsis whitespace-normal h-12">
               {productName}
             </h5>
@@ -83,7 +86,7 @@ function ProductCardInfo({
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
-                {buyPrice}
+                ${buyPrice.toFixed(2)}
               </h3>
               <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
             </div>
@@ -106,7 +109,7 @@ function ProductCardInfo({
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-                {rppPrice}
+                ${rppPrice.toFixed(2)}
               </h3>
               <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
             </div>
@@ -122,6 +125,7 @@ function ProductCardImage({
   productImageUrl,
   isBuyQtyAvailable,
   isFavorited,
+  imageBackgroundColor,
 }: ProductCardImageProps) {
   const [heartFill, setHeartFill] = useState(isFavorited);
   const [isBuyQtyAvailableState, setIsBuyQtyAvailable] =
@@ -132,7 +136,11 @@ function ProductCardImage({
   };
 
   return (
-    <div className="relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0">
+    <div
+      className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 ${
+        imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
+      }`}
+    >
       {isBuyQtyAvailableState && (
         <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px]">
           QTY Buy Available
@@ -158,7 +166,7 @@ function ProductCardButtons() {
   }
 
   return (
-    <div className="flex gap-2 justify-center items-center">
+    <div className="flex gap-2 justify-center items-center flex-col sm:flex-row">
       <Button
         variant="primary"
         size="default"
