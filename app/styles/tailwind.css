@@ -622,3 +622,6 @@ input[type='radio']:checked + label {
 .selectProductItem:hover {
   @apply bg-primary-50 text-base font-normal text-grey-800;
 }
+.embla-thumbs__container button svg {
+  @apply h-5 w-5;
+}
