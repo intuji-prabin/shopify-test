@@ -1,5 +1,5 @@
 import {FaSearch} from 'react-icons/fa';
-import {Link} from '@remix-run/react';
+import {Form, Link} from '@remix-run/react';
 import {
   Cart,
   Note,
@@ -127,10 +127,14 @@ export default function TopHeader() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56 user-login max-w-[172px] rounded-none mr-4">
                   <DropdownMenuLabel className="flex items-center user-login-dropdown  ">
-                    <Logout />
-                    <h5 className="text-lg font-bold italic text-grey-900">
-                      Logout
-                    </h5>
+                    <Form method="post" action="/logout">
+                      <Button type="submit">
+                        <Logout />
+                        <h5 className="text-lg font-bold italic text-grey-900">
+                          Logout
+                        </h5>
+                      </Button>
+                    </Form>
                   </DropdownMenuLabel>
                 </DropdownMenuContent>
               </DropdownMenu>

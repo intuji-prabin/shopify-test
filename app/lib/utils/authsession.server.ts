@@ -1,12 +1,14 @@
 import {createCookieSessionStorage, redirect} from '@shopify/remix-oxygen';
-import {SESSION_SECRET} from '~/lib/constants';
+import {SESSION_SECRET} from '~/lib/constants/auth.constent';
 import {
   getMessageSession,
   messageCommitSession,
   setSuccessMessage,
-} from '~/toast-message.server';
+} from '~/lib/utils/toastsession.server';
+
 const USER_SESSION_KEY = 'accessToken';
 const USER_DETAILS_KEY = 'userDetails';
+
 const sessionStorage = createCookieSessionStorage({
   cookie: {
     name: '__session',
@@ -23,28 +25,18 @@ export async function getSession(request: Request) {
   return sessionStorage.getSession(cookie);
 }
 
-export async function logout(request: Request) {
-  const session = await getSession(request);
-  return redirect('/', {
-    headers: {'Set-Cookie': await sessionStorage.destroySession(session)},
-  });
-}
-
 export async function createUserSession({
   request,
-  payload,
+  accessToken,
   rememberMe,
 }: {
   request: Request;
-  payload: any;
+  accessToken: string;
   rememberMe: 'on' | undefined;
 }) {
-  const {token, ...userDetails} = payload;
-
   const session = await getSession(request);
   const messageSession = await getMessageSession(request);
-  session.set(USER_SESSION_KEY, token);
-  session.set(USER_DETAILS_KEY, userDetails);
+  session.set(USER_SESSION_KEY, accessToken);
   setSuccessMessage(messageSession, 'Login successfully');
 
   return redirect('/', {
@@ -81,4 +73,11 @@ export async function getUserDetails(request: Request) {
   const session = await getSession(request);
   const userDetails = session.get(USER_DETAILS_KEY);
   return {userDetails};
+}
+
+export async function logout(request: Request) {
+  const session = await getSession(request);
+  return redirect('/', {
+    headers: {'Set-Cookie': await sessionStorage.destroySession(session)},
+  });
 }

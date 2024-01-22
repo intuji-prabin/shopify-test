@@ -1,8 +1,16 @@
+import {useEffect} from 'react';
+import {displayToast} from '~/components/ui/toast';
+import {Toaster} from '~/components/ui/toaster';
 import {useNonce} from '@shopify/hydrogen';
+import tailwindStyles from '~/styles/tailwind.css';
+import type {CustomerAccessToken} from '@shopify/hydrogen/storefront-api-types';
+import favicon from '../public/favicon.svg';
+import {Layout} from '~/components/Layout';
 import {
   defer,
   type SerializeFrom,
   type LoaderFunctionArgs,
+  json,
 } from '@shopify/remix-oxygen';
 import {
   Links,
@@ -17,10 +25,11 @@ import {
   isRouteErrorResponse,
   type ShouldRevalidateFunction,
 } from '@remix-run/react';
-import type {CustomerAccessToken} from '@shopify/hydrogen/storefront-api-types';
-import favicon from '../public/favicon.svg';
-import tailwindStyles from './styles/tailwind.css';
-import {Layout} from '~/components/Layout';
+import {
+  ToastMessage,
+  getMessageSession,
+  messageCommitSession,
+} from '~/lib/utils/toastsession.server';
 
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
@@ -63,51 +72,89 @@ export const useRootLoaderData = () => {
   return root?.data as SerializeFrom<typeof loader>;
 };
 
-export async function loader({context}: LoaderFunctionArgs) {
-  const {storefront, session, cart} = context;
-  const customerAccessToken = await session.get('customerAccessToken');
-  const publicStoreDomain = context.env.PUBLIC_STORE_DOMAIN;
+export async function loader({context, request}: LoaderFunctionArgs) {
+  const messageSession = await getMessageSession(request);
 
-  // validate the customer access token is valid
-  const {isLoggedIn, headers} = await validateCustomerAccessToken(
-    session,
-    customerAccessToken,
-  );
+  const toastMessage = messageSession.get('toastMessage') as ToastMessage;
 
-  // defer the cart query by not awaiting it
-  const cartPromise = cart.get();
+  if (!toastMessage) {
+    return json({toastMessage: null});
+  }
 
-  // defer the footer query (below the fold)
-  const footerPromise = storefront.query(FOOTER_QUERY, {
-    cache: storefront.CacheLong(),
-    variables: {
-      footerMenuHandle: 'footer', // Adjust to your footer menu handle
-    },
-  });
+  if (!toastMessage.type) {
+    throw new Error('Message should have a type');
+  }
 
-  // await the header query (above the fold)
-  const headerPromise = storefront.query(HEADER_QUERY, {
-    cache: storefront.CacheLong(),
-    variables: {
-      headerMenuHandle: 'main-menu', // Adjust to your header menu handle
-    },
-  });
+  // Use this while integrating the cart, footer and header functionality
 
-  return defer(
-    {
-      cart: cartPromise,
-      footer: footerPromise,
-      header: await headerPromise,
-      isLoggedIn,
-      publicStoreDomain,
-    },
-    {headers},
+  // const {storefront, session, cart} = context;
+
+  // const customerAccessToken = await session.get('customerAccessToken');
+  // const publicStoreDomain = context.env.PUBLIC_STORE_DOMAIN;
+
+  // // validate the customer access token is valid
+  // const {isLoggedIn, headers} = await validateCustomerAccessToken(
+  //   session,
+  //   customerAccessToken,
+  // );
+
+  // // defer the cart query by not awaiting it
+  // const cartPromise = cart.get();
+
+  // // defer the footer query (below the fold)
+  // const footerPromise = storefront.query(FOOTER_QUERY, {
+  //   cache: storefront.CacheLong(),
+  //   variables: {
+  //     footerMenuHandle: 'footer', // Adjust to your footer menu handle
+  //   },
+  // });
+
+  // // await the header query (above the fold)
+  // const headerPromise = storefront.query(HEADER_QUERY, {
+  //   cache: storefront.CacheLong(),
+  //   variables: {
+  //     headerMenuHandle: 'main-menu', // Adjust to your header menu handle
+  //   },
+  // });
+
+  // return defer(
+  //   {
+  //     cart: cartPromise,
+  //     footer: footerPromise,
+  //     header: await headerPromise,
+  //     isLoggedIn,
+  //     publicStoreDomain,
+  //   },
+  //   {headers},
+  // );
+
+  return json(
+    {toastMessage},
+    {headers: {'Set-Cookie': await messageCommitSession(messageSession)}},
   );
 }
 
 export default function App() {
   const nonce = useNonce();
-  const data = useLoaderData<typeof loader>();
+  const {toastMessage} = useLoaderData<typeof loader>();
+
+  useEffect(() => {
+    if (!toastMessage) {
+      return;
+    }
+    const {message, type} = toastMessage;
+
+    switch (type) {
+      case 'success':
+        displayToast({message, type});
+        break;
+      case 'error':
+        displayToast({message, type});
+        break;
+      default:
+        throw new Error(`${type} is not handled`);
+    }
+  }, [toastMessage]);
 
   return (
     <html lang="en">
@@ -123,6 +170,7 @@ export default function App() {
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
         <LiveReload nonce={nonce} />
+        <Toaster />
       </body>
     </html>
   );
@@ -151,7 +199,7 @@ export function ErrorBoundary() {
         <Links />
       </head>
       <body>
-        <Layout {...rootData}>
+        {/* <Layout {...rootData}>
           <div className="route-error">
             <h1>Oops</h1>
             <h2>{errorStatus}</h2>
@@ -161,7 +209,8 @@ export function ErrorBoundary() {
               </fieldset>
             )}
           </div>
-        </Layout>
+        </Layout> */}
+        <Outlet />
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
         <LiveReload nonce={nonce} />

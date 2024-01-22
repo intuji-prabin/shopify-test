@@ -1472,6 +1472,19 @@ export type StoreRobotsQueryVariables = StorefrontAPI.Exact<{
 
 export type StoreRobotsQuery = {shop: Pick<StorefrontAPI.Shop, 'id'>};
 
+export type CustomerAccessTokenDeleteMutationVariables = StorefrontAPI.Exact<{
+  customerAccessToken: StorefrontAPI.Scalars['String']['input'];
+}>;
+
+export type CustomerAccessTokenDeleteMutation = {
+  customerAccessTokenDelete?: StorefrontAPI.Maybe<
+    Pick<
+      StorefrontAPI.CustomerAccessTokenDeletePayload,
+      'deletedAccessToken' | 'deletedCustomerAccessTokenId'
+    > & {userErrors: Array<Pick<StorefrontAPI.UserError, 'field' | 'message'>>}
+  >;
+};
+
 export type MoneyFragment = Pick<
   StorefrontAPI.MoneyV2,
   'currencyCode' | 'amount'
@@ -1697,6 +1710,10 @@ interface GeneratedMutationTypes {
   '#graphql\n  mutation customerReset(\n    $id: ID!,\n    $input: CustomerResetInput!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(country: $country, language: $language) {\n    customerReset(id: $id, input: $input) {\n      customerAccessToken {\n        accessToken\n        expiresAt\n      }\n      customerUserErrors {\n        code\n        field\n        message\n      }\n    }\n  }\n': {
     return: CustomerResetMutation;
     variables: CustomerResetMutationVariables;
+  };
+  '#graphql \nmutation customerAccessTokenDelete($customerAccessToken: String!) {\n  customerAccessTokenDelete(customerAccessToken: $customerAccessToken) {\n    deletedAccessToken\n    deletedCustomerAccessTokenId\n    userErrors {\n      field\n      message\n    }\n  }\n}\n': {
+    return: CustomerAccessTokenDeleteMutation;
+    variables: CustomerAccessTokenDeleteMutationVariables;
   };
 }
 

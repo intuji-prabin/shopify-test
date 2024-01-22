@@ -1,5 +1,7 @@
-import { Eye, EyeOff } from 'lucide-react';
-import { useState } from 'react';
+import {Eye, EyeOff} from 'lucide-react';
+import {useState} from 'react';
+import {useField} from 'remix-validated-form';
+import {DangerAlert} from '~/components/icons/alert';
 
 type passwordType = {
   name: string;
@@ -12,9 +14,10 @@ export default function Password({
   name,
   placeholder,
   handlePasswordChange,
-  label
+  label,
 }: passwordType) {
   const [isVisible, setVisible] = useState(false);
+  const {error, getInputProps} = useField(name);
 
   const toggle = () => {
     setVisible(!isVisible);
@@ -25,10 +28,10 @@ export default function Password({
       <label>{label}</label>
       <div className="relative">
         <input
-          type={!isVisible ? 'password' : 'text'}
           name={name}
+          {...getInputProps({id: name})}
+          type={!isVisible ? 'password' : 'text'}
           placeholder={placeholder}
-          onChange={handlePasswordChange}
           className="w-full !pr-14"
         />
         <span
@@ -38,6 +41,12 @@ export default function Password({
           {isVisible ? <Eye /> : <EyeOff />}
         </span>
       </div>
+      {error && (
+        <p className="pt-1 error-msg">
+          <DangerAlert />
+          <span className="pl-2">{error}</span>
+        </p>
+      )}
     </div>
   );
 }
