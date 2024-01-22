@@ -1,16 +1,14 @@
 import React from 'react';
 import {useField} from 'remix-validated-form';
 import {DangerAlert} from '~/components/icons/alert';
+import {ScheduleCallFormFieldNameType} from '~/routes/_app.support_.schedule-call/schedule-call-form';
+import {TeamFormFieldNameType} from '~/routes/_app.team_.add/team-form';
 import {LoginFormFieldNameType} from '~/routes/_public.login/login-form';
-import {OrderFilterFormFieldNameType} from '~/routes/order/filter-form';
-import {ScheduleCallFormFieldNameType} from '~/routes/support_.schedule-call/schedule-call-form';
-import {TeamFormFieldNameType} from '~/routes/team_.add-team/team-form';
 
 interface InputType extends React.ComponentPropsWithoutRef<'input'> {
   name:
     | TeamFormFieldNameType
     | LoginFormFieldNameType
-    | OrderFilterFormFieldNameType
     | ScheduleCallFormFieldNameType;
   label: string;
   placeholder?: string;
