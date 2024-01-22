@@ -10,7 +10,8 @@ import {
 } from '~/routes/_app.categories_.$categoryId.$subCategoryId.$childCategoryId/filter-form-data';
 
 export function FilterForm() {
-  const [range, setRange] = useState([3, 24]);
+  const initialRange = [3, 100];
+  const [range, setRange] = useState(initialRange);
 
   const handleRangeChange = (newValues: number[]) => {
     setRange(newValues);
@@ -70,15 +71,17 @@ export function FilterForm() {
           <h5 className="mb-16">Price</h5>
           <Slider
             minStepsBetweenThumbs={2}
-            max={48}
-            min={0}
+            max={initialRange[1]}
+            min={initialRange[0]}
             step={1}
             value={range}
             onValueChange={handleRangeChange}
             formatLabel={(value) => `$${value}`}
           />
         </div>
-        <Button type="submit">Submit</Button>
+        <Button type="submit" className="w-full">
+          Submit
+        </Button>
       </Form>
     </>
   );
