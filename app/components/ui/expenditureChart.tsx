@@ -7,21 +7,7 @@ const options = {
     borderWidth: 0,
     plugins: {
         legend: {
-            position: 'top' as const,
-            align: 'end' as const,
-            labels: {
-                usePointStyle: true,
-                boxWidth: 40,
-                font: {
-                    size: 14,
-                    family: "Barlow Condensed, sans-serif",
-                    weight: 500,
-                },
-            },
-            reverse: true,
-            onHover: (event: any) => {
-                event.chart.canvas.style.cursor = "pointer";
-            },
+            display: false
         },
         afterDatasetsDraw: ({ chart }: { chart: any }) => {
             // Your custom logic after datasets are drawn

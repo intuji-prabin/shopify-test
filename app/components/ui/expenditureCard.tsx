@@ -44,7 +44,15 @@ const ExpenditureCard = ({ doughnutChartData }: { doughnutChartData: any }) => {
                             </span>
                             <h4>Expenditure by Categories</h4>
                         </div>
-                        <ExpenditureChart doughnutChartData={doughnutChartData} />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-5">
+                            <div className="relative">
+                                <ExpenditureChart doughnutChartData={doughnutChartData} />
+                                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                    <p>Total Spending</p>
+                                </div>
+                            </div>
+                            <div>test</div>
+                        </div>
                     </div>
                     <div className="p-6 space-y-3 bg-white mxs:space-y-6">
                         <div className="flex items-center gap-x-2 gap-y-1">
@@ -53,7 +61,12 @@ const ExpenditureCard = ({ doughnutChartData }: { doughnutChartData: any }) => {
                             </span>
                             <h4>Expenditure by Brands</h4>
                         </div>
-                        <ExpenditureChart doughnutChartData={doughnutChartData} />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-5">
+                            <div>
+                                <ExpenditureChart doughnutChartData={doughnutChartData} />
+                            </div>
+                            <div>test</div>
+                        </div>
                     </div>
                 </div>
             </section>
