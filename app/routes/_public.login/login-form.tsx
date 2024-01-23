@@ -5,7 +5,7 @@ import {z} from 'zod';
 import {Button} from '~/components/ui/button';
 import CheckboxInput from '~/components/ui/checkbox-input';
 import {Input} from '~/components/ui/input';
-import Password from '~/components/ui/password';
+import ValidatedFormPassword from '~/components/ui/validated-form-password';
 
 const LoginFormFieldSchema = z.object({
   email: z
@@ -44,7 +44,11 @@ export default function LoginForm() {
               label="Email"
               placeholder="email"
             />
-            <Password name="password" placeholder="password" label="password" />
+            <ValidatedFormPassword
+              name="password"
+              placeholder="password"
+              label="password"
+            />
             <div className="flex flex-wrap items-center justify-between gap-x-2">
               <CheckboxInput
                 name="rememberMe"
