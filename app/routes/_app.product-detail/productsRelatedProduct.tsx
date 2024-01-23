@@ -19,6 +19,7 @@ export default function ProductsRelatedProduct({
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-[18px]">
             {products.map((product) => (
               <ProductCard
+                key={product.sku}
                 productImageUrl={product.imageUrl}
                 isBuyQtyAvailable={product.isQtyBuyAvailable}
                 isFavorited={product.isFavorited}

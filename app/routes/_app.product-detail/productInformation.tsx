@@ -76,10 +76,10 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
 
   return (
     <>
-      <div className="right-side-info flex flex-col gap-6 max-w-[588px] py-8">
+      <div className="right-side-info flex flex-col gap-6  max-w-[unset] lg::max-w-[480px] xl:max-w-[588px] py-8">
         <div className="top flex flex-col gap-6">
           <div className="">
-            <div className="flex justify-between">
+            <div className="flex justify-between mb-[26px]">
               <figure>
                 <img src="cigweld-logo.png" alt="" />
               </figure>

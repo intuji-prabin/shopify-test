@@ -52,7 +52,7 @@ today`,
       more powerful stick and MIG jobs.`,
     },
     {
-      id: 1,
+      id: 7,
       desc: ` The ProLite range is fully compliant with Australian standards,
       which means you’re buying from a brand you can trust.`,
     },

@@ -47,34 +47,42 @@ async function getAProduct() {
     isInStock: true,
     bulkPricings: [
       {
+        id: 1,
         quantity: '1-50',
         price: 732,
       },
       {
+        id: 2,
         quantity: '100+',
         price: 500,
       },
       {
+        id: 3,
         quantity: '1-50',
         price: 732,
       },
       {
+        id: 4,
         quantity: '100+',
         price: 500,
       },
       {
+        id: 5,
         quantity: '1-50',
         price: 732,
       },
       {
+        id: 6,
         quantity: '100+',
         price: 500,
       },
       {
+        id: 7,
         quantity: '1-50',
         price: 732,
       },
       {
+        id: 8,
         quantity: '100+',
         price: 500,
       },
