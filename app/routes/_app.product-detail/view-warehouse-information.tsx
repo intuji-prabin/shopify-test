@@ -38,8 +38,6 @@ export function WarehouseInformation({
   coordinates,
   directionLink,
 }: ProductInfoProps) {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  // setIsDrawerOpen(!isDrawerOpen);
   return (
     <Drawer.Root direction="right">
       <Drawer.Trigger asChild>
@@ -57,9 +55,9 @@ export function WarehouseInformation({
               <Drawer.Title className="font-bold text-[30px] italic leading-[36px] p-6 text-[#001328] flex items-start justify-between">
                 {pickupTitle}
 
-                <CloseMenu fillColor="#636969" />
-
-                {/* <CloseMenu fillColor="#636969" /> */}
+                <Drawer.Close>
+                  <CloseMenu fillColor="#636969" />
+                </Drawer.Close>
               </Drawer.Title>
               <div className="border-2  border-t-grey-50 border-x-0 border-b-0 p-6 flex flex-col gap-10">
                 <div className="flex gap-2">

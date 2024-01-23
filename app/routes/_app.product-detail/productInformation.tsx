@@ -29,7 +29,7 @@ export default function ProductInformation({product}: {product: Product}) {
   const matches = useMediaQuery('(min-width: 1025px)');
   return (
     <section className="bg-white">
-      <div className="container flex gap-14 flex-col lg:flex-row">
+      <div className="container flex gap-6 lg:gap-14 flex-col lg:flex-row">
         <CarouselThumb
           images={SliderImageData}
           thumbNailCarouseloptions={{axis: matches ? 'y' : 'x'}}
@@ -81,7 +81,7 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
           <div className="">
             <div className="flex justify-between">
               <figure>
-                <img src="Logo.png" alt="" />
+                <img src="cigweld-logo.png" alt="" />
               </figure>
               <ul className="flex gap-[7px]">
                 <li className="w-[36px] h-[36px] flex justify-center items-center border-grey-50 border-[1px]">
@@ -137,7 +137,7 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
           </div>
           <div className="flex flex-col">
             <div className="flex flex-col gap-2">
-              <div className="flex gap-8 ">
+              <div className="flex gap-3 lg:gap-8 flex-col lg:flex-row">
                 <ProductCardInfo
                   sku={''}
                   productName={''}
@@ -154,7 +154,7 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
                 </p>
               </div>
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-col lg:flex-row">
               <div className="flex">
                 <button
                   className=" border-[1px] border-grey-500  flex justify-center items-center w-[56px]"
