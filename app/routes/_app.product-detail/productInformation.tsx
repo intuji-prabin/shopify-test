@@ -23,6 +23,7 @@ import CarouselThumb from './carouselThumb';
 import {SliderImageData} from './slider-image-date';
 import {Product} from './route';
 import {useMediaQuery} from '../../hooks/useMediaQuery';
+import {WarehouseInformation} from './view-warehouse-information';
 
 export default function ProductInformation({product}: {product: Product}) {
   const matches = useMediaQuery('(min-width: 1025px)');
@@ -133,7 +134,6 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
                 </div>
               </div>
             </div>
-            <div></div>
           </div>
           <div className="flex flex-col">
             <div className="flex flex-col gap-2">
@@ -192,12 +192,20 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
               Pickup available at <span>SUPERCHEAP AUTO NZ PTY LTD</span>
             </p>
             <p>Usually ready in 4 hours</p>
-            <Link
-              to=""
-              className="text-[14px] italic font-bolf leading-6 uppercase underline decoration-primary-500"
-            >
-              View WAREHOUSE information
-            </Link>
+            <WarehouseInformation
+              pickupTitle={'Pick Availability'}
+              productImageUrl={'weld-helment.png'}
+              productName={
+                'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition'
+              }
+              placeitle={''}
+              pickupTime={''}
+              customerName={''}
+              street={''}
+              city={''}
+              location={0}
+              coordinates={0}
+            />
           </div>
         </div>
       </div>
