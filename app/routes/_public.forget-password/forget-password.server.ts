@@ -6,13 +6,13 @@ export async function customerRecover({email, context}: CustomerRecoverParams) {
   const {storefront} = context;
   return await storefront.mutate(FORGET_PASSWORD_MUTATION, {
     variables: {
-      input: {email},
+      email,
     },
   });
 }
 
-const FORGET_PASSWORD_MUTATION =
-  `#graphql mutation customerRecover($email: String!) {
+const FORGET_PASSWORD_MUTATION = `#graphql 
+  mutation customerRecover($email: String!) {
   customerRecover(email: $email) {
     customerUserErrors {
       field
