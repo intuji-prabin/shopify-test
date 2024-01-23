@@ -7,6 +7,7 @@ import {
   Notification,
   Ordertrack,
   Logout,
+  UserProfile,
 } from '~/components/icons/orderStatus';
 import {useState} from 'react';
 import {Button} from '~/components/ui/button';
@@ -126,9 +127,21 @@ export default function TopHeader() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56 user-login max-w-[172px] rounded-none mr-4">
-                  <DropdownMenuLabel className="flex items-center user-login-dropdown  ">
-                    <Form method="post" action="/logout">
-                      <Button type="submit">
+                  <DropdownMenuLabel className="flex items-center user-login-dropdown p-0 ">
+                    <Form method="post" action="/logout" className="w-full">
+                      <Button
+                        type="submit"
+                        className="bg-white  w-full items-center justify-start hover:bg-primary-100 px-2 "
+                      >
+                        <UserProfile />
+                        <h5 className="text-lg font-bold italic text-grey-900">
+                          My profile
+                        </h5>
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="bg-white px-2 w-full items-center justify-start hover:bg-primary-100 "
+                      >
                         <Logout />
                         <h5 className="text-lg font-bold italic text-grey-900">
                           Logout

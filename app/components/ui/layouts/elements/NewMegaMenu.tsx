@@ -987,7 +987,7 @@ export const NewMegaMenu = ({isOpen}: {isOpen: boolean}) => {
     <div
       className={`${
         isOpen ? 'opacity-100' : 'hidden'
-      } transition-opacity megamenu-content p-3  text-black shadow-xl absolute bg-white top-12 -left-8 -mt-2 flex flex-row z-10`}
+      } transition-opacity megamenu-content p-3  text-black shadow-xl absolute bg-white top-12 -left-8  flex flex-row z-10 mt-0`}
     >
       {/* Level 1 Menus Begin Here */}
       <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10">

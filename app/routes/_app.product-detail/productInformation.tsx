@@ -198,13 +198,15 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
               productName={
                 'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition'
               }
-              placeitle={''}
-              pickupTime={''}
-              customerName={''}
-              street={''}
-              city={''}
-              location={0}
-              coordinates={0}
+              placetitle={'SUPERCHEAP AUTO NZ PTY LTD'}
+              pickupTime={'Pickup available at, usually ready in 4 hours'}
+              customerName={'15 Robinson Ave'}
+              street={'Belmont WA 6104'}
+              city={'Australia'}
+              location={'5.7 km'}
+              coordinates={'08 9277 1444'}
+              warehouseLink={'     View WAREHOUSE information'}
+              directionLink={'GET DIRECTION'}
             />
           </div>
         </div>

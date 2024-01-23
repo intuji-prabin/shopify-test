@@ -248,8 +248,8 @@ label .required {
 }
 
 .dropdown-content:before {
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
   border-top: 23px solid;
   content: '';
   left: 16%;
@@ -287,12 +287,13 @@ label .required {
   border-top: 23px solid;
   content: '';
   right: 16%;
-  top: 9%;
+  top: 4%;
   position: absolute;
   border-top-color: #fff;
   transform: rotate(180deg);
   height: 14px;
   width: 26px;
+  z-index: -1;
 }
 
 /* HEADER CSS ENDS HERE */
@@ -632,3 +633,16 @@ input[type='radio']:checked + label {
   }
 }
 /* Product Detail Page Embla Carousel Styles End Here */
+
+/* user login hover styles */
+.user-login-dropdown form button:hover h5 {
+  @apply text-primary-500;
+}
+
+.user-login-dropdown form button:hover svg path {
+  @apply fill-primary-500;
+}
+/* z-index for the view warehouse info drawer */
+div[data-state='open'].fixed.inset-0 {
+  z-index: 10;
+}
