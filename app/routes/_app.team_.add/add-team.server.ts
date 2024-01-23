@@ -1,5 +1,6 @@
 import {AppLoadContext} from '@shopify/remix-oxygen';
 import {ADMIN_ACCESS_TOKEN} from '~/lib/constants/auth.constent';
+import {customerRecover} from '../_public.forget-password/forget-password.server';
 
 type AddTeamParams = {
   fullName: string;
@@ -115,24 +116,3 @@ const UPDATE_TEAM_MUTATION = `
     }
   }
 ` as const;
-
-type CustomerRecoverParams = {email: string; context: AppLoadContext};
-
-export async function customerRecover({email, context}: CustomerRecoverParams) {
-  const {storefront} = context;
-  return await storefront.mutate(FORGET_PASSWORD_MUTATION, {
-    variables: {
-      email,
-    },
-  });
-}
-
-const FORGET_PASSWORD_MUTATION =
-  `#graphql mutation customerRecover($email: String!) {
-  customerRecover(email: $email) {
-    customerUserErrors {
-      field
-      message
-    }
-  }
-}` as const;
