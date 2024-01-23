@@ -57,18 +57,20 @@ const CarouselThumb = ({
     emblaMainApi.on('select', onSelect);
     emblaMainApi.on('reInit', onSelect);
   }, [emblaMainApi, onSelect]);
-  const matches = useMediaQuery('(min-width: 1025px)');
+  const matches = useMediaQuery('(min-width: 1024px)');
   return (
     <section className="flex flex-col-reverse gap-[17px]   overflow-y-hidden lg:flex-row">
       {/* Thumbnail Carousel Begins Here */}
-      <div className="relative  embla-thumbs h-full overflow-y-hidden">
+      <div className="relative  embla-thumbs h-full lg:min-w-[85px] overflow-y-hidden">
         <div
           className="overflow-hidden embla-thumbs__viewport max-h-[489px]"
           ref={emblaThumbsRef}
         >
           <div
-            className={`flex  embla-thumbs__container gap-x-2 h-[unset] lg:h-[489px] lg:gap-y-2  ${
-              matches ? 'flex-col' : 'flex-row'
+            className={`flex embla-thumbs__container ${
+              matches
+                ? 'flex-col gap-y-2 h-[489px]'
+                : 'flex-row gap-x-2 h-[unset]'
             }`}
           >
             {images.map((image, index) => (
@@ -80,7 +82,7 @@ const CarouselThumb = ({
               >
                 <button
                   onClick={() => onThumbClick(index)}
-                  className={`p-0 m-0 transition-opacity delay-75 bg-transparent appearance-none cursor-pointer embla-thumbs__slide__button touch-manipulation decoration-0 px-4 py-[10px] border-[1px] border-grey-50 max-h-[85px] w-full flex items-center justify-center `}
+                  className={`p-0 m-0 transition-opacity delay-75 bg-transparent appearance-none cursor-pointer embla-thumbs__slide__button touch-manipulation decoration-0 lg:px-4 lg:py-[10px] border-[1px] border-grey-50  w-full flex items-center justify-center `}
                   type="button"
                 >
                   <figure>

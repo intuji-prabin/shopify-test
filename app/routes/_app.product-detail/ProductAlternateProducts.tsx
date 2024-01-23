@@ -70,7 +70,6 @@ type ProductCardImageProps = {
 export function ProductCardInfo({
   sku,
   product_name,
-  buy_price,
   rpp_price,
 }: ProductCardInfoProps) {
   return (

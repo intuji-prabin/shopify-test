@@ -1,4 +1,4 @@
-export function Recieved({ fillColor = '#969C9C' }: { fillColor?: string }) {
+export function Recieved({fillColor = '#969C9C'}: {fillColor?: string}) {
   return (
     <svg
       width="19"
@@ -17,7 +17,7 @@ export function Recieved({ fillColor = '#969C9C' }: { fillColor?: string }) {
   );
 }
 
-export function Processing({ fillColor = '#969C9C' }: { fillColor?: string }) {
+export function Processing({fillColor = '#969C9C'}: {fillColor?: string}) {
   return (
     <svg
       width="33"
@@ -46,7 +46,7 @@ export function Processing({ fillColor = '#969C9C' }: { fillColor?: string }) {
   );
 }
 
-export function BackOrder({ fillColor = '#969C9C' }: { fillColor?: string }) {
+export function BackOrder({fillColor = '#969C9C'}: {fillColor?: string}) {
   return (
     <svg
       width="17"
@@ -71,7 +71,7 @@ export function BackOrder({ fillColor = '#969C9C' }: { fillColor?: string }) {
   );
 }
 
-export function Picked({ fillColor = '#969C9C' }: { fillColor?: string }) {
+export function Picked({fillColor = '#969C9C'}: {fillColor?: string}) {
   return (
     <svg
       width="30"
@@ -96,7 +96,7 @@ export function Picked({ fillColor = '#969C9C' }: { fillColor?: string }) {
   );
 }
 
-export function Dispatched({ fillColor = '#969C9C' }: { fillColor?: string }) {
+export function Dispatched({fillColor = '#969C9C'}: {fillColor?: string}) {
   return (
     <svg
       width="33"
@@ -125,7 +125,7 @@ export function Dispatched({ fillColor = '#969C9C' }: { fillColor?: string }) {
   );
 }
 
-export function Transit({ fillColor = '#969C9C' }: { fillColor?: string }) {
+export function Transit({fillColor = '#969C9C'}: {fillColor?: string}) {
   return (
     <svg
       width="33"
@@ -162,7 +162,7 @@ export function Transit({ fillColor = '#969C9C' }: { fillColor?: string }) {
   );
 }
 
-export function Delivered({ fillColor = '#969C9C' }: { fillColor?: string }) {
+export function Delivered({fillColor = '#969C9C'}: {fillColor?: string}) {
   return (
     <svg
       width="25"
@@ -179,7 +179,7 @@ export function Delivered({ fillColor = '#969C9C' }: { fillColor?: string }) {
   );
 }
 
-export function Cart({ fillColor = '#969C9C' }: { fillColor?: string }) {
+export function Cart({fillColor = '#969C9C'}: {fillColor?: string}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -217,7 +217,7 @@ export function Cart({ fillColor = '#969C9C' }: { fillColor?: string }) {
     </svg>
   );
 }
-export function Note({ fillColor = '#969C9C' }: { fillColor?: string }) {
+export function Note({fillColor = '#969C9C'}: {fillColor?: string}) {
   return (
     <svg
       width="20"
@@ -238,7 +238,7 @@ export function Note({ fillColor = '#969C9C' }: { fillColor?: string }) {
     </svg>
   );
 }
-export function Heart({ fillColor = '#969C9C' }: { fillColor?: string }) {
+export function Heart({fillColor = '#969C9C'}: {fillColor?: string}) {
   return (
     <svg
       width="20"
@@ -255,7 +255,7 @@ export function Heart({ fillColor = '#969C9C' }: { fillColor?: string }) {
     </svg>
   );
 }
-export function Notification({ fillColor = '#969C9C' }: { fillColor?: string }) {
+export function Notification({fillColor = '#969C9C'}: {fillColor?: string}) {
   return (
     <svg
       width="20"
@@ -273,7 +273,7 @@ export function Notification({ fillColor = '#969C9C' }: { fillColor?: string }) 
     </svg>
   );
 }
-export function Ordertrack({ fillColor = '#0F1010' }: { fillColor?: string }) {
+export function Ordertrack({fillColor = '#0F1010'}: {fillColor?: string}) {
   return (
     <svg
       width="20"
@@ -297,7 +297,7 @@ export function Ordertrack({ fillColor = '#0F1010' }: { fillColor?: string }) {
     </svg>
   );
 }
-export function Logout({ fillColor = '#969C9C' }: { fillColor?: string }) {
+export function Logout({fillColor = '#969C9C'}: {fillColor?: string}) {
   return (
     <svg
       width="20"
@@ -318,7 +318,7 @@ export function Logout({ fillColor = '#969C9C' }: { fillColor?: string }) {
   );
 }
 
-export function Order({ fillColor = '#0F1010' }: { fillColor?: string }) {
+export function Order({fillColor = '#0F1010'}: {fillColor?: string}) {
   return (
     <svg
       width="20"
@@ -344,7 +344,7 @@ export function Order({ fillColor = '#0F1010' }: { fillColor?: string }) {
     </svg>
   );
 }
-export function Invoice({ fillColor = '#0F1010' }: { fillColor?: string }) {
+export function Invoice({fillColor = '#0F1010'}: {fillColor?: string}) {
   return (
     <svg
       width="20"
@@ -374,7 +374,7 @@ export function Invoice({ fillColor = '#0F1010' }: { fillColor?: string }) {
     </svg>
   );
 }
-export function Statements({ fillColor = '#0F1010' }: { fillColor?: string }) {
+export function Statements({fillColor = '#0F1010'}: {fillColor?: string}) {
   return (
     <svg
       width="20"
@@ -434,7 +434,7 @@ export function CircleInformationMajor({
     </svg>
   );
 }
-export function Email({ fillColor = '#0F1010' }: { fillColor?: string }) {
+export function Email({fillColor = '#0F1010'}: {fillColor?: string}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -456,7 +456,7 @@ export function Email({ fillColor = '#0F1010' }: { fillColor?: string }) {
     </svg>
   );
 }
-export function PrintMinor({ fillColor = '#0F1010' }: { fillColor?: string }) {
+export function PrintMinor({fillColor = '#0F1010'}: {fillColor?: string}) {
   return (
     <svg
       width="20"
@@ -482,7 +482,7 @@ export function PrintMinor({ fillColor = '#0F1010' }: { fillColor?: string }) {
     </svg>
   );
 }
-export function PhoneMajor({ fillColor = '#0F1010' }: { fillColor?: string }) {
+export function PhoneMajor({fillColor = '#0F1010'}: {fillColor?: string}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -500,7 +500,7 @@ export function PhoneMajor({ fillColor = '#0F1010' }: { fillColor?: string }) {
     </svg>
   );
 }
-export function LocationsMinor({ fillColor = '#0F1010' }: { fillColor?: string }) {
+export function LocationsMinor({fillColor = '#0F1010'}: {fillColor?: string}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -524,7 +524,7 @@ export function LocationsMinor({ fillColor = '#0F1010' }: { fillColor?: string }
     </svg>
   );
 }
-export function InventoryMajor({ fillColor = '#0F1010' }: { fillColor?: string }) {
+export function InventoryMajor({fillColor = '#0F1010'}: {fillColor?: string}) {
   return (
     <svg
       width="20"
@@ -546,7 +546,7 @@ export function InventoryMajor({ fillColor = '#0F1010' }: { fillColor?: string }
     </svg>
   );
 }
-export function Orderstats({ fillColor = '#0F1010' }: { fillColor?: string }) {
+export function Orderstats({fillColor = '#0F1010'}: {fillColor?: string}) {
   return (
     <svg
       width="20"
@@ -571,7 +571,7 @@ export function Orderstats({ fillColor = '#0F1010' }: { fillColor?: string }) {
   );
 }
 
-export function Carrier({ fillColor = '#0F1010' }: { fillColor?: string }) {
+export function Carrier({fillColor = '#0F1010'}: {fillColor?: string}) {
   return (
     <svg
       width="24"
@@ -593,7 +593,7 @@ export function Carrier({ fillColor = '#0F1010' }: { fillColor?: string }) {
     </svg>
   );
 }
-export function Printblue({ fillColor = '#0F1010' }: { fillColor?: string }) {
+export function Printblue({fillColor = '#0F1010'}: {fillColor?: string}) {
   return (
     <svg
       width="24"
@@ -619,7 +619,7 @@ export function Printblue({ fillColor = '#0F1010' }: { fillColor?: string }) {
     </svg>
   );
 }
-export function CurrentStatus({ fillColor = '#0F1010' }: { fillColor?: string }) {
+export function CurrentStatus({fillColor = '#0F1010'}: {fillColor?: string}) {
   return (
     <svg
       width="24"
@@ -641,7 +641,7 @@ export function CurrentStatus({ fillColor = '#0F1010' }: { fillColor?: string })
     </svg>
   );
 }
-export function CopyLink({ fillColor = '#0F1010' }: { fillColor?: string }) {
+export function CopyLink({fillColor = '#0F1010'}: {fillColor?: string}) {
   return (
     <svg
       width="20"
@@ -659,7 +659,7 @@ export function CopyLink({ fillColor = '#0F1010' }: { fillColor?: string }) {
     </svg>
   );
 }
-export function ProductLoveWhite({ fillColor = '#ffff' }: { fillColor?: string }) {
+export function ProductLoveWhite({fillColor = '#ffff'}: {fillColor?: string}) {
   return (
     <svg
       width="20"
@@ -678,7 +678,7 @@ export function ProductLoveWhite({ fillColor = '#ffff' }: { fillColor?: string }
     </svg>
   );
 }
-export function ProductLoveRed({ fillColor = '#D92F28' }: { fillColor?: string }) {
+export function ProductLoveRed({fillColor = '#D92F28'}: {fillColor?: string}) {
   return (
     <svg
       width="21"
@@ -698,7 +698,7 @@ export function ProductLoveRed({ fillColor = '#D92F28' }: { fillColor?: string }
     </svg>
   );
 }
-export function TooltipInfo({ fillColor = '#ffff' }: { fillColor?: string }) {
+export function TooltipInfo({fillColor = '#ffff'}: {fillColor?: string}) {
   return (
     <svg
       width="20"
@@ -801,6 +801,54 @@ export function PickupLocation({fillColor = '#ffff'}: {fillColor?: string}) {
     >
       <circle cx="10" cy="12" r="10" fill="#CFEED5" />
       <circle cx="10" cy="12" r="3" fill="#3A8348" />
+    </svg>
+  );
+}
+export function Distance({fillColor = '#0092CF'}: {fillColor?: string}) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill={fillColor}
+    >
+      <path
+        d="M2 5C2.16 5 2.31636 4.92857 2.41818 4.80714C2.78909 4.37143 4 2.875 4 1.96429C4 0.882143 3.10182 0 2 0C0.898182 0 0 0.882143 0 1.96429C0 2.875 1.21091 4.37143 1.58182 4.80714C1.68364 4.92857 1.84 5 2 5ZM2 1.07143C2.50182 1.07143 2.90909 1.47143 2.90909 1.96429C2.90909 2.24286 2.49091 2.94286 2 3.59643C1.50909 2.94286 1.09091 2.24286 1.09091 1.96429C1.09091 1.47143 1.49818 1.07143 2 1.07143Z"
+        fill={fillColor}
+      />
+      <path
+        d="M14 11C12.8982 11 12 11.8821 12 12.9643C12 13.875 13.2109 15.3714 13.5818 15.8071C13.6873 15.9286 13.84 16 14 16C14.16 16 14.3164 15.9286 14.4182 15.8071C14.7891 15.3714 16 13.875 16 12.9643C16 11.8821 15.1018 11 14 11ZM14 14.5964C13.5091 13.9429 13.0909 13.2429 13.0909 12.9643C13.0909 12.4714 13.4982 12.0714 14 12.0714C14.5018 12.0714 14.9091 12.4714 14.9091 12.9643C14.9091 13.2429 14.4909 13.9429 14 14.5964Z"
+        fill={fillColor}
+      />
+      <path
+        d="M11.3793 14.8889H3.10345C2.07724 14.8889 1.24138 14.1407 1.24138 13.2222C1.24138 12.3037 2.07724 11.5556 3.10345 11.5556H8.06897C9.78207 11.5556 11.1724 10.3111 11.1724 8.77778C11.1724 7.24444 9.78207 6 8.06897 6H3.51724C3.17379 6 2.89655 6.24815 2.89655 6.55556C2.89655 6.86296 3.17379 7.11111 3.51724 7.11111H8.06897C9.09517 7.11111 9.93104 7.85926 9.93104 8.77778C9.93104 9.6963 9.09517 10.4444 8.06897 10.4444H3.10345C1.39034 10.4444 0 11.6889 0 13.2222C0 14.7556 1.39034 16 3.10345 16H11.3793C11.7228 16 12 15.7519 12 15.4444C12 15.137 11.7228 14.8889 11.3793 14.8889Z"
+        fill={fillColor}
+      />
+    </svg>
+  );
+}
+export function UserProfile({fillColor = '#0F1010'}: {fillColor?: string}) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill={fillColor}
+    >
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M7 8.25C7 7.45435 7.31607 6.69129 7.87868 6.12868C8.44129 5.56607 9.20435 5.25 10 5.25C10.7956 5.25 11.5587 5.56607 12.1213 6.12868C12.6839 6.69129 13 7.45435 13 8.25C13 9.04565 12.6839 9.80871 12.1213 10.3713C11.5587 10.9339 10.7956 11.25 10 11.25C9.20435 11.25 8.44129 10.9339 7.87868 10.3713C7.31607 9.80871 7 9.04565 7 8.25ZM10 6.75C9.60218 6.75 9.22064 6.90804 8.93934 7.18934C8.65804 7.47064 8.5 7.85218 8.5 8.25C8.5 8.64782 8.65804 9.02936 8.93934 9.31066C9.22064 9.59196 9.60218 9.75 10 9.75C10.3978 9.75 10.7794 9.59196 11.0607 9.31066C11.342 9.02936 11.5 8.64782 11.5 8.25C11.5 7.85218 11.342 7.47064 11.0607 7.18934C10.7794 6.90804 10.3978 6.75 10 6.75Z"
+        fill={fillColor}
+      />
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M15.1675 15.4354C14.4553 16.1218 13.6143 16.6605 12.693 17.0206C11.7717 17.3807 10.7883 17.5549 9.79934 17.5334C8.81041 17.5118 7.83551 17.2948 6.93079 16.8949C6.02606 16.495 5.20938 15.9201 4.52777 15.2033C3.84615 14.4864 3.31307 13.6419 2.95921 12.7182C2.60536 11.7945 2.43772 10.8099 2.46595 9.82111C2.49418 8.83235 2.71772 7.85894 3.1237 6.95693C3.52968 6.05492 4.11009 5.24213 4.83149 4.56536C6.27579 3.21041 8.19737 2.4817 10.1769 2.53821C12.1565 2.59473 14.0334 3.4319 15.398 4.86704C16.7627 6.30219 17.5043 8.21881 17.4611 10.1987C17.4179 12.1786 16.5934 14.0611 15.1675 15.4354ZM5.33749 13.7764C4.62437 12.8957 4.17523 11.831 4.04206 10.7057C3.9089 9.58031 4.09715 8.44024 4.58502 7.41743C5.0729 6.39462 5.84045 5.53088 6.79885 4.92619C7.75724 4.3215 8.86728 4.00059 10.0005 4.00059C11.1337 4.00059 12.2437 4.3215 13.2021 4.92619C14.1605 5.53088 14.9281 6.39462 15.416 7.41743C15.9038 8.44024 16.0921 9.58031 15.9589 10.7057C15.8258 11.831 15.3766 12.8957 14.6635 13.7764C13.3784 12.6339 11.719 12.002 9.99949 12.0004C8.28029 12.0023 6.62237 12.6341 5.33749 13.7764ZM6.42349 14.8194C7.45696 15.5883 8.71133 16.0026 9.99949 16.0004C11.3395 16.0004 12.5765 15.5604 13.5755 14.8194C12.5775 13.9698 11.3101 13.5024 9.99949 13.5004C8.68885 13.5024 7.42152 13.9698 6.42349 14.8194Z"
+        fill={fillColor}
+      />
     </svg>
   );
 }

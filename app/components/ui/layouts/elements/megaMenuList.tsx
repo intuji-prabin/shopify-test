@@ -170,7 +170,7 @@ export const MegaMenuList = ({isOpen}: {isOpen: boolean}) => {
     <nav
       className={`${
         isOpen ? 'opacity-100' : 'hidden'
-      } transition-opacity megamenu-content p-4  text-black shadow-xl absolute bg-white top-0 -mt-2`}
+      } transition-opacity megamenu-content p-4  text-black shadow-xl absolute bg-white top-0 -mt-2 z-10`}
     >
       <ul className="flex flex-col space-y-2 text-white submenu-nav z-10">
         {subMenus?.map((subMenu) => (

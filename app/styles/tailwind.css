@@ -248,8 +248,8 @@ label .required {
 }
 
 .dropdown-content:before {
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
   border-top: 23px solid;
   content: '';
   left: 16%;
@@ -287,12 +287,13 @@ label .required {
   border-top: 23px solid;
   content: '';
   right: 16%;
-  top: 9%;
+  top: 4%;
   position: absolute;
   border-top-color: #fff;
   transform: rotate(180deg);
   height: 14px;
   width: 26px;
+  z-index: -1;
 }
 
 /* HEADER CSS ENDS HERE */
@@ -610,6 +611,34 @@ input[type='radio']:checked + label {
 .selectProductItem:hover {
   @apply bg-primary-50 text-base font-normal text-grey-800;
 }
+/* Product Detail Page Embla Carousel Styles Begin Here */
 .embla-thumbs__container button svg {
   @apply h-5 w-5;
+}
+
+/* Styling Single Embla Slide */
+.embla-thumbs__container .embla__slide {
+  flex: 0 0 100%; /* Default slide covers 100% of the viewport */
+  max-height: 85px;
+  max-width: 85px;
+}
+@media (min-width: 1024px) {
+  .embla-thumbs__container .embla__slide {
+    flex: 0 0 50%; /* Breakpoint SM slide covers 50% of the viewport */
+    max-height: 85px;
+  }
+}
+/* Product Detail Page Embla Carousel Styles End Here */
+
+/* user login hover styles */
+.user-login-dropdown form button:hover h5 {
+  @apply text-primary-500;
+}
+
+.user-login-dropdown form button:hover svg path {
+  @apply fill-primary-500;
+}
+/* z-index for the view warehouse info drawer */
+div[data-state='open'].fixed.inset-0 {
+  z-index: 10;
 }
