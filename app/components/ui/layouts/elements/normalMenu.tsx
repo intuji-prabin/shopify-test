@@ -25,7 +25,7 @@ export const NormalMenuList = ({isOpen}: {isOpen: boolean}) => {
       <ul
         className={`${
           isOpen ? 'opacity-100' : 'hidden'
-        } transition-opacity flex min-w-[233px] flex-col border-2 bg-white p-3 shadow-xl md:min-w-[233px] mt-2 submenu-nav -ml-[46px] absolute text-black top-10 dropdown-content gap-2 z-10`}
+        } transition-opacity flex min-w-[233px] flex-col border-2 bg-white p-3 shadow-xl md:min-w-[233px] mt-2 submenu-nav -ml-[46px] absolute text-black top-10 dropdown-content gap-2 z-10 left-0`}
       >
         {menus.map((component) => (
           <li

@@ -1054,7 +1054,7 @@ export const NewMegaMenu = ({isOpen}: {isOpen: boolean}) => {
               className="relative  text-grey-900 menu-hov font-medium not-italic text-lg flex  items-center"
             >
               <Link to={subMenu.link}>
-                <span className="rounded px-2 py-1 font-medium text-lg flex items-center menu-hov justify- w-full">
+                <span className="rounded px-2 py-1 font-medium text-lg flex items-center menu-hov justify- w-full text-grey-900">
                   {' '}
                   {subMenu.title}
                 </span>
