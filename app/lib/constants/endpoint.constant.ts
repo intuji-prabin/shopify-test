@@ -80,4 +80,7 @@ export const ENDPOINT = {
     GET: '/shipping/get',
     GET_ALL: '/shipping/get-all',
   },
+  ADMIN: {
+    URL: 'https://intuji-test.myshopify.com/admin/api/2024-01/graphql.json',
+  },
 };

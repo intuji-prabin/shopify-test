@@ -24,13 +24,14 @@ type TeamFormProps = {
   defaultValues?: Omit<TeamFormType, 'profileImage'> & {
     profileImageUrl: string;
   };
+  options: SelectInputType[];
 };
 
-const options: SelectInputType[] = [
-  {label: 'Marketing', value: 'marketing'},
-  {label: 'Sales', value: 'sales'},
-  {label: 'Accountant', value: 'accountant'},
-];
+// const options: SelectInputType[] = [
+//   {label: 'Marketing', value: 'marketing'},
+//   {label: 'Sales', value: 'sales'},
+//   {label: 'Accountant', value: 'accountant'},
+// ];
 
 const TeamFormSchema = z.object({
   profileImage: zfd.file(
@@ -84,7 +85,7 @@ export type TeamFormType = z.infer<typeof TeamFormSchema>;
 
 export type TeamFormFieldNameType = keyof TeamFormType;
 
-export default function TeamForm({defaultValues}: TeamFormProps) {
+export default function TeamForm({defaultValues, options}: TeamFormProps) {
   return (
     <ValidatedForm
       method="post"

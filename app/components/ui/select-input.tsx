@@ -14,7 +14,7 @@ import {OrderFilterFormFieldNameType} from '~/routes/order/filter-form';
 import {ScheduleCallFormFieldNameType} from '~/routes/support_.schedule-call/schedule-call-form';
 import {TicketsFilterFormFieldNameType} from '~/routes/support_.tickets/filter-form';
 
-export type SelectInputType = {value: string; label: string};
+export type SelectInputType = {value: string; title: string};
 
 export type SelectInputProps = {
   name:
@@ -48,7 +48,7 @@ export default function SelectInput({name, label, options}: SelectInputProps) {
                     key={index}
                     className="p-2 focus:bg-primary-50"
                   >
-                    {item.label}
+                    {item.title}
                   </SelectItem>
                 ))}
               </SelectGroup>
