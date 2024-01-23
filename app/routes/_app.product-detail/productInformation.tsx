@@ -194,7 +194,7 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
             <p>Usually ready in 4 hours</p>
             <WarehouseInformation
               pickupTitle={'Pick Availability'}
-              productImageUrl={'weld-helment.png'}
+              productImageUrl={'product.png'}
               productName={
                 'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition'
               }
@@ -271,9 +271,6 @@ export function SelectACountryDropdown({
 }) {
   return (
     <div className="flex flex-col">
-      <h3 className="text-base font-normal not-italic text-grey-800">
-        Country
-      </h3>
       <Select>
         <SelectTrigger className="w-[120px] h-full text-base font-normal leading-[21px] not-italic">
           <SelectValue placeholder={placeHolder} />
