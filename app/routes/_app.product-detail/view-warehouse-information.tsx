@@ -49,8 +49,8 @@ export function WarehouseInformation({
       </Drawer.Trigger>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/40" />
-        <Drawer.Content className="bg-white flex flex-col rounded-t-[10px] h-full w-[400px] mt-24 fixed bottom-0 right-0 z-50">
-          <div className=" bg-white flex-1 h-full w-[410px]  z-50">
+        <Drawer.Content className="bg-white flex flex-col rounded-t-[10px] h-full w-[400px] mt-24 fixed bottom-0 right-0 z-50 transition-all duration-700 ease-in-out delay-200">
+          <div className=" bg-white flex-1 h-full w-[410px]  z-50 ">
             <div className="max-w-md mx-auto">
               <Drawer.Title className="font-bold text-[30px] italic leading-[36px] p-6 text-[#001328] flex items-start justify-between">
                 {pickupTitle}

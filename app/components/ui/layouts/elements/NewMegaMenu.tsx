@@ -993,7 +993,7 @@ export const NewMegaMenu = ({isOpen}: {isOpen: boolean}) => {
       <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10">
         {menus?.map((menu) => (
           <li
-            key={menu.id}
+            key={'list' + menu.id}
             className={`relative italic font-bold text-lg text-grey-900 flex menu-hov justify-between
               ${
                 activeMenu.menu === menu.id
@@ -1049,17 +1049,17 @@ export const NewMegaMenu = ({isOpen}: {isOpen: boolean}) => {
           ?.find((menu) => menu?.id === activeMenu?.menu)
           ?.items?.find((subMenu) => subMenu?.id === activeMenu?.subMenu)
           ?.items?.map((subMenu) => (
-            <Link to={subMenu.link}>
-              <li
-                key={subMenu.id}
-                className="relative  text-grey-900 menu-hov font-medium not-italic text-lg flex  items-center"
-              >
-                <span className="rounded px-2 py-1 font-medium text-lg flex items-center menu-hov justify- w-full">
+            <li
+              key={subMenu.id}
+              className="relative  text-grey-900 menu-hov font-medium not-italic text-lg flex  items-center"
+            >
+              <Link to={subMenu.link}>
+                <span className="rounded px-2 py-1 font-medium text-lg flex items-center menu-hov justify- w-full text-grey-900">
                   {' '}
                   {subMenu.title}
                 </span>
-              </li>
-            </Link>
+              </Link>
+            </li>
           ))}
       </ul>
       {/* Level 3 i.e Final Level Menus End Here */}
