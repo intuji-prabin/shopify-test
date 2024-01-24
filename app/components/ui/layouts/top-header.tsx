@@ -1,7 +1,6 @@
 import {FaSearch} from 'react-icons/fa';
 import {Form, Link} from '@remix-run/react';
 import {
-  Note,
   Heart,
   Notification,
   Ordertrack,
@@ -20,6 +19,8 @@ import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
 import {Routes} from '~/lib/constants/routes.constent';
 import {CartIcon} from '~/components/icons/cartIcon';
 import {TrackAnOrderButton} from './elements/track-an-order-dialog';
+import {Note} from '~/components/icons/note';
+import {NotificationIcon} from '~/components/icons/notification';
 
 export default function TopHeader() {
   const [isClicked, setIsClicked] = useState(false);
@@ -34,7 +35,7 @@ export default function TopHeader() {
     },
     {
       id: 2,
-      icon: <Note />,
+      icon: <Note width={'20px'} height={'20px'} />,
       url: '/note',
       title: 'Note',
       notification: '3',
@@ -48,7 +49,7 @@ export default function TopHeader() {
     },
     {
       id: 4,
-      icon: <Notification />,
+      icon: <NotificationIcon width={'20px'} height={'20px'} />,
       url: '/notification',
       title: 'Notification',
       notification: '3',
@@ -76,7 +77,7 @@ export default function TopHeader() {
               />
             </div>
             <nav className="navbar">
-              <ul className="nav-list flex gap-3 items-center h-full">
+              <ul className="nav-list flex gap-4 items-center h-full">
                 {navIcons.map((navIcon) => (
                   <li className="nav-item relative" key={navIcon.id}>
                     <div className="info-block">
