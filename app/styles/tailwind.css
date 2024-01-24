@@ -340,6 +340,12 @@ label .required {
 .expenditure > div:nth-child(3n-1) p {
   @apply text-semantic-warning-500;
 }
+.promotion-view .dialog-close {
+  @apply right-4 top-4 shadow-none;
+}
+.promotion-view .dialog-close svg {
+  stroke: #636969;
+}
 /* Responsive CSS */
 @media (min-width: 320px) {
   .container {

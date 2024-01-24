@@ -1,3 +1,4 @@
+import { spawn } from "isbot";
 import { Expenditure } from "../icons/expenditure";
 import ExpenditureChart from "./expenditureChart";
 import { SelectInputType } from "./select-input";
@@ -44,14 +45,24 @@ const ExpenditureCard = ({ doughnutChartData }: { doughnutChartData: any }) => {
                             </span>
                             <h4>Expenditure by Categories</h4>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-5">
+                        <div className="grid items-start grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-5">
                             <div className="relative">
                                 <ExpenditureChart doughnutChartData={doughnutChartData} />
-                                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                                    <p>Total Spending</p>
+                                <div className="absolute space-y-2 transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+                                    <p className="text-center">Total Spending</p>
+                                    <p className="text-2xl italic font-bold text-center">$ <span className="text-[40px]">780.4</span> K</p>
                                 </div>
                             </div>
-                            <div>test</div>
+                            <div>
+                                <ul>
+                                    {doughnutChartData.labels.map((label: string, index: number) => (
+                                        <li className="flex items-center justify-between pb-2 mb-2 border-b border-solid border-gray-50" key={'label' + index}>
+                                            <p><span className="inline-block w-3 h-3 mr-2 rounded-full" style={{ backgroundColor: doughnutChartData.datasets[0].backgroundColor[index] }}></span>{label}</p>
+                                            <h5>${doughnutChartData.datasets[0].price[index]}</h5>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
                     </div>
                     <div className="p-6 space-y-3 bg-white mxs:space-y-6">
@@ -61,12 +72,45 @@ const ExpenditureCard = ({ doughnutChartData }: { doughnutChartData: any }) => {
                             </span>
                             <h4>Expenditure by Brands</h4>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-5">
-                            <div>
+                        <div className="grid items-start grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-5">
+                            <div className="relative">
                                 <ExpenditureChart doughnutChartData={doughnutChartData} />
+                                <div className="absolute space-y-2 transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+                                    <p className="text-center">Total Spending</p>
+                                    <p className="text-2xl italic font-bold text-center">$ <span className="text-[40px]">780.4</span> K</p>
+                                </div>
                             </div>
-                            <div>test</div>
+                            <div>
+                                <ul>
+                                    {doughnutChartData.labels.map((label: string, index: number) => (
+                                        <li className="flex items-center justify-between pb-2 mb-2 border-b border-solid border-gray-50" key={'label' + index}>
+                                            <p><span className="inline-block w-3 h-3 mr-2 rounded-full" style={{ backgroundColor: doughnutChartData.datasets[0].backgroundColor[index] }}></span>{label}</p>
+                                            <h5>${doughnutChartData.datasets[0].price[index]}</h5>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
+                    </div>
+                </div>
+            </section>
+            <section className="container">
+                <div className="p-6 space-y-3 bg-white mxs:space-y-6">
+                    <div className="flex items-center gap-x-2 gap-y-1">
+                        <span className='flex items-center justify-center w-12 h-12 bg-primary-200'>
+                            <Expenditure />
+                        </span>
+                        <h4>Spending by products</h4>
+                    </div>
+                </div>
+            </section>
+            <section className="container">
+                <div className="p-6 space-y-3 bg-white mxs:space-y-6">
+                    <div className="flex items-center gap-x-2 gap-y-1">
+                        <span className='flex items-center justify-center w-12 h-12 bg-primary-200'>
+                            <Expenditure />
+                        </span>
+                        <h4>Transaction History</h4>
                     </div>
                 </div>
             </section>
