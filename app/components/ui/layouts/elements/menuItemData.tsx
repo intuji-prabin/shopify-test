@@ -85,14 +85,10 @@ export const menuItemsData = [
     icon: <Support />,
   },
   {
-    title: 'Resourcs',
+    title: 'Resources',
     type: 'normal',
     icon: <Resources />,
-    submenu: [
-      {title: 'Orders', url: '/orders'},
-      {title: 'Orders', url: '/orders'},
-      {title: 'Orders', url: '/orders'},
-    ],
+    submenu: [{title: 'Certificate Generation', url: '/orders'}],
   },
   {
     title: 'Company Information',
