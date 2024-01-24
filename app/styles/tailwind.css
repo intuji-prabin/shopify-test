@@ -246,7 +246,9 @@ label .required {
 .menu-hov:hover span svg {
   @apply !fill-primary-500;
 }
-
+.menu-hov:hover h5 {
+  @apply text-primary-500;
+}
 .dropdown-content:before {
   border-left: 18px solid transparent;
   border-right: 18px solid transparent;
