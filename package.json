@@ -48,7 +48,6 @@
     "@shopify/hydrogen": "~2023.10.3",
     "@shopify/remix-oxygen": "^2.0.2",
     "@tanstack/react-table": "^8.11.6",
-    "axios": "^1.6.5",
     "chart.js": "^4.4.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
