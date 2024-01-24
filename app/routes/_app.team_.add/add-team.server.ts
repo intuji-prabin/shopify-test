@@ -1,6 +1,8 @@
 import {AppLoadContext} from '@shopify/remix-oxygen';
-import {ADMIN_ACCESS_TOKEN} from '~/lib/constants/auth.constent';
-import {customerRecover} from '../_public.forget-password/forget-password.server';
+import {customerRecover} from '~/routes/_public.forget-password/forget-password.server';
+import {useFetch} from '~/hooks/useFetch';
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 
 type AddTeamParams = {
   fullName: string;
@@ -21,6 +23,7 @@ export async function addTeam({
   const {storefront} = context;
   const firstName = fullName.split(' ')[0];
   const lastName = fullName.split(' ')[1];
+
   const team = await storefront.mutate(CREATE_TEAM_MUTATION, {
     variables: {
       input: {
@@ -33,58 +36,52 @@ export async function addTeam({
     },
   });
 
-  if (team.customerCreate.customerUserErrors.length > 0) {
-    console.log(
-      'error on creating user',
-      team.customerCreate.customerUserErrors[0],
-    );
-    return;
+  if ((team.customerCreate?.customerUserErrors.length as number) > 0) {
+    throw new Error(team.customerCreate?.customerUserErrors[0].message);
   }
-  const BODY = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': ADMIN_ACCESS_TOKEN,
-    },
-    body: JSON.stringify({
-      query: UPDATE_TEAM_MUTATION,
-      variables: {
-        customer: {
-          id: team?.customerCreate?.customer?.id,
-          addresses: {
-            address1: address,
-          },
+
+  const body = JSON.stringify({
+    query: UPDATE_TEAM_MUTATION,
+    variables: {
+      customer: {
+        id: team?.customerCreate?.customer?.id,
+        addresses: {
+          address1: address,
         },
-        meta: [
-          {
-            ownerId: team?.customerCreate?.customer?.id,
-            namespace: 'auth',
-            key: 'role',
-            value: userRole,
-            type: 'string',
-          },
-          {
-            ownerId: team?.customerCreate?.customer?.id,
-            namespace: 'company',
-            key: 'company_id',
-            value: 'abc123',
-            type: 'string',
-          },
-        ],
       },
-    }),
-  };
-  const response = await fetch(
-    'https://intuji-test.myshopify.com/admin/api/2023-10/graphql.json',
-    BODY,
-  );
-  const data = await response.json();
-  console.log('data', data);
-  const emailSend = await customerRecover({email, context});
-  if (!emailSend) {
-    throw new Error('email not send');
+      meta: [
+        {
+          ownerId: team?.customerCreate?.customer?.id,
+          namespace: 'auth',
+          key: 'role',
+          value: userRole,
+          type: 'string',
+        },
+        {
+          ownerId: team?.customerCreate?.customer?.id,
+          namespace: 'company',
+          key: 'company_id',
+          value: 'abc123',
+          type: 'string',
+        },
+      ],
+    },
+  });
+
+  const results = await useFetch({
+    method: AllowedHTTPMethods.POST,
+    url: ENDPOINT.ADMIN.URL,
+    body,
+  });
+
+  if (!results) {
+    throw new Error("Couldn't create user");
   }
-  return team;
+  const emailSend = await customerRecover({email, context});
+
+  if (!emailSend) {
+    throw new Error("Email couldn't send");
+  }
 }
 
 const CREATE_TEAM_MUTATION = `#graphql 
