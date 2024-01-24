@@ -154,7 +154,7 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
                 </p>
               </div>
             </div>
-            <div className="flex gap-4 flex-col lg:flex-row">
+            <div className="flex gap-4 flex-col lg:flex-row min-h-0 lg:min-h-14">
               <div className="flex">
                 <button
                   className=" border-[1px] border-grey-500  flex justify-center items-center w-[56px]"
@@ -262,7 +262,7 @@ export function SelectACountryDropdown({
   return (
     <div className="flex flex-col">
       <Select>
-        <SelectTrigger className="w-[120px] h-full text-base font-normal leading-[21px] not-italic">
+        <SelectTrigger className="w-[120px] h-full text-base font-normal leading-[21px] not-italic border-[1px] border-grey-500 rounded-none">
           <SelectValue placeholder={placeHolder} />
         </SelectTrigger>
         <SelectContent className="product-names">
