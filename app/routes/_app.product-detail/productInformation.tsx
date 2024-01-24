@@ -193,20 +193,8 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
             </p>
             <p>Usually ready in 4 hours</p>
             <WarehouseInformation
+              warehouseLink={'View WAREHOUSE information'}
               pickupTitle={'Pick Availability'}
-              productImageUrl={'product.png'}
-              productName={
-                'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition'
-              }
-              placetitle={'SUPERCHEAP AUTO NZ PTY LTD'}
-              pickupTime={'Pickup available at, usually ready in 4 hours'}
-              customerName={'15 Robinson Ave'}
-              street={'Belmont WA 6104'}
-              city={'Australia'}
-              location={'5.7 km'}
-              coordinates={'08 9277 1444'}
-              warehouseLink={'     View WAREHOUSE information'}
-              directionLink={'GET DIRECTION'}
             />
           </div>
         </div>
