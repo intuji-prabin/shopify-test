@@ -639,3 +639,7 @@ input[type='radio']:checked + label {
 div[data-state='open'].fixed.inset-0 {
   z-index: 10;
 }
+
+.track-an-order .track-order {
+  @apply !top-[10%] !right-4 shadow-[unset];
+}

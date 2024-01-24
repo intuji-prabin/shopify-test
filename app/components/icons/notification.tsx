@@ -12,7 +12,7 @@ export const NotificationIcon = ({
       height={height}
       viewBox="0 0 20 20"
       className={className}
-      fill="none"
+      fill={fill}
       xmlns="http://www.w3.org/2000/svg"
     >
       <path

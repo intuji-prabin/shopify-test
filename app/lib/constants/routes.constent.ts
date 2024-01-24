@@ -12,4 +12,5 @@ export const Routes = {
   SUPPORT_CONTACT_US: '/support/contact-us',
   SUPPORT_TICKETS: '/support/tickets',
   SUPPORT_SCHEDULE_CALL: '/support/schedule-call',
+  PLACE_AN_ORDER: '/place-an-order',
 };
