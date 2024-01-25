@@ -1,15 +1,15 @@
-import {useLoaderData} from '@remix-run/react';
-import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
-import {ProductCard} from '~/components/ui/product-card';
-import {ProductCardData} from './product-card-data';
-import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
-import {FilterForm, SortByFilterForm} from './filter-form';
+import { useLoaderData } from '@remix-run/react';
+import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
+import { ProductCard } from '~/components/ui/product-card';
+import { ProductCardData } from './product-card-data';
+import { PaginationWrapper } from '~/components/ui/pagination-wrapper';
+import { FilterForm, SortByFilterForm } from './filter-form';
 
-export async function loader({params}: LoaderFunctionArgs) {
-  return json({id: params.childCategoryId});
+export async function loader({ params }: LoaderFunctionArgs) {
+  return json({ id: params.childCategoryId });
 }
 export default function ProductPage() {
-  const {id} = useLoaderData<typeof loader>();
+  const { id } = useLoaderData<typeof loader>();
   return (
     <div className="grid grid-cols-4 gap-6">
       <div className="col-span-1">
