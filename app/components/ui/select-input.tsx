@@ -10,8 +10,15 @@ import {
   SelectValue,
 } from '~/components/ui/select';
 import {TeamFormFieldNameType} from '~/routes/_app.team_.add/team-form';
+import {useState} from 'react';
 
-export type SelectInputType = {value: string; title: string};
+type SelectInputType = {value: string; title: string};
+
+type PermissionsType = SelectInputType & {id: number};
+
+export type SelectInputOptions = SelectInputType & {
+  permissions?: PermissionsType[];
+};
 
 export type SelectInputProps = {
   name: TeamFormFieldNameType;
@@ -19,15 +26,28 @@ export type SelectInputProps = {
   // | ScheduleCallFormFieldNameType
   // | TicketsFilterFormFieldNameType;
   label: string;
-  options: SelectInputType[];
+  options: SelectInputOptions[];
+  updatePermissions?: (value: string) => void;
 };
 
-export default function SelectInput({name, label, options}: SelectInputProps) {
+export default function SelectInput({
+  name,
+  label,
+  options,
+  updatePermissions,
+}: SelectInputProps) {
   const {getInputProps, error, clearError} = useField(name);
+
   return (
-    <div>
+    <>
       <div className="relative">
-        <Select {...getInputProps()} onValueChange={() => clearError()}>
+        <Select
+          {...getInputProps()}
+          onValueChange={(value) => {
+            updatePermissions && updatePermissions(value);
+            clearError();
+          }}
+        >
           <SelectTrigger
             className={`${
               error ? 'border-semantic-danger-500' : 'border-grey-300'
@@ -38,7 +58,7 @@ export default function SelectInput({name, label, options}: SelectInputProps) {
           <SelectContent className="rounded-none shadow-base">
             <ScrollArea className="max-h-[238px] w-full p-2">
               <SelectGroup>
-                {options.map((item, index) => (
+                {options?.map((item, index) => (
                   <SelectItem
                     value={item.value}
                     key={index}
@@ -58,6 +78,6 @@ export default function SelectInput({name, label, options}: SelectInputProps) {
           </p>
         )}
       </div>
-    </div>
+    </>
   );
 }

@@ -13,11 +13,7 @@ export const ENDPOINT = {
     DELETE: '/user/delete',
   },
   ROLE: {
-    CREATE: '/role/create',
-    GET: '/role/get',
-    GET_ALL: '/role/get-all',
-    UPDATE: '/role/update',
-    DELETE: '/role/delete',
+    GET: 'https://relaxing-hawk-ace.ngrok-free.app/api/customer-roles',
   },
   PERMISSION: {
     CREATE: '/permission/create',
