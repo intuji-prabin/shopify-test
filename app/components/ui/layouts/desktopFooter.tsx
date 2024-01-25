@@ -73,7 +73,7 @@ export default function DesktopFooter() {
   return (
     <div className="bg-grey-900 ">
       <div className="container">
-        <div className=" flex justify-between py-20 flex-col md:flex-row gap-5 lg:gap-0">
+        <div className=" flex justify-between py-20 flex-col md:flex-row gap-10 ">
           <div className="flex flex-col gap-10">
             <figure>
               <img src="footerlogo.png" alt="" />
@@ -81,20 +81,20 @@ export default function DesktopFooter() {
             <div className="flex flex-col gap-[23px]">
               <div className="flex">
                 <Enquire />
-                <h4 className="italic font-bold text-2xl leading-[29px] text-white">
+                <h4 className="italic font-bold text-lg md:text-2xl leading-[29px] text-white">
                   enquire@cigweld.com.au
                 </h4>
               </div>
               <div className="flex">
                 <Phone />
-                <h4 className="italic font-bold text-2xl leading-[29px] text-white">
+                <h4 className="italic font-bold text-lg md:text-2xl leading-[29px] text-white">
                   1300 654 674
                 </h4>
               </div>
             </div>
           </div>
 
-          <div className="flex gap-8 lg:gap-[108px]">
+          <div className="grid gap-8 grid-cols-2 md:grid-cols-4">
             <div className="">
               <ul className="flex gap-8 flex-col">
                 {footerNavs.map((nav) => (
@@ -151,7 +151,7 @@ export default function DesktopFooter() {
             </div>
           </div>
         </div>
-        <div className="flex border border-t-2 border-grey-700 border-x-0 border-b-0 pt-4 justify-between py-4">
+        <div className="flex border border-t-2 border-grey-700 border-x-0 border-b-0 pt-4 md:justify-between py-4 flex-col-reverse md:flex-row gap-6 justify-center items-center md:items-baseline ">
           <p className="text-base text-white font-normal">
             Cigweld © 2024 All Rights Reserved
           </p>

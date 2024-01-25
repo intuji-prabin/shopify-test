@@ -33,9 +33,9 @@ const Layout = ({children,categories}: {children: any,categories:any}) => {
         <BottomHeader categories={categories}/>
       </header>
       {children}
-      {/* <footer className="mt-12">
+      <footer className="mt-12">
         <DesktopFooter />
-      </footer> */}
+      </footer>
     </>
   );
 };
