@@ -1,4 +1,3 @@
-import { spawn } from "isbot";
 import { Expenditure } from "../icons/expenditure";
 import ExpenditureChart from "./expenditureChart";
 import { SelectInputType } from "./select-input";
@@ -27,7 +26,7 @@ const ExpenditureCard = ({ doughnutChartData }: { doughnutChartData: any }) => {
                         <select
                             name="dateRange"
                             onChange={handleOnchange}
-                            className="w-full !border-grey-100"
+                            className="w-full !border-grey-100 filter-select"
                         >
                             {dateOptions.map((date, index) => (
                                 <option value={date.value} key={index + 'date'}>{date.label}</option>
