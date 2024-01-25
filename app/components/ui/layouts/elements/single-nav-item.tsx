@@ -18,12 +18,17 @@ export const SingleNavItem = ({
 }) => {
   const menuRef = useRef<HTMLLIElement>(null);
   const navigate = useNavigate();
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      if ((event.target as Node).nodeName.toLowerCase() === 'span') {
+        return;
+      }
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setActiveMenu('');
       }
     };
+
     // Bind the event listener
     document.addEventListener('mousedown', (event) =>
       handleClickOutside(event),
@@ -74,7 +79,7 @@ export const SingleNavItem = ({
                 }}
               >
                 {menu.title === 'Product' ? (
-                  <Link to="/products">{menu.title}</Link>
+                  <Link to="/categories">{menu.title}</Link>
                 ) : (
                   <>{menu.title} </>
                 )}
