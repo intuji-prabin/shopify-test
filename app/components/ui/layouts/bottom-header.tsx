@@ -1,8 +1,8 @@
 import {useState} from 'react';
-import {menuItemsData} from './elements/menuItemData';
-import {SingleNavItem} from './elements/single-nav-item';
+import {menuItemsData} from './elements/bottom-header-menu-items';
+import {SingleNavItem} from './elements/bottom-header-single-Menus';
 
-const BottomHeader = () => {
+const BottomHeader = ({categories}: {categories: any}) => {
   const depthLevel = 0;
   const [activeMenu, setActiveMenu] = useState('');
   return (
@@ -17,6 +17,7 @@ const BottomHeader = () => {
                 depthLevel={depthLevel}
                 activeMenu={activeMenu}
                 setActiveMenu={setActiveMenu}
+                categories={categories}
               />
             );
           })}

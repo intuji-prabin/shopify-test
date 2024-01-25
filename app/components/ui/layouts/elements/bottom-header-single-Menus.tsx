@@ -3,25 +3,32 @@ import {MenuItems} from '../bottom-header';
 import ArrowUp from '~/components/icons/arrowUp';
 import ArrowDown from '~/components/icons/arrowDown';
 import {Link, useNavigate} from '@remix-run/react';
-import {DropdownMenu} from './dropdownItems';
+import {DropdownMenu} from './bottom-header-dropdown-list';
 export const SingleNavItem = ({
   menu,
   activeMenu,
   setActiveMenu,
+  categories,
 }: {
   menu: MenuItems;
   depthLevel: number;
   activeMenu: string;
   setActiveMenu: React.Dispatch<React.SetStateAction<string>>;
+  categories: any;
 }) => {
   const menuRef = useRef<HTMLLIElement>(null);
   const navigate = useNavigate();
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      if ((event.target as Node).nodeName.toLowerCase() === 'span') {
+        return;
+      }
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setActiveMenu('');
       }
     };
+
     // Bind the event listener
     document.addEventListener('mousedown', (event) =>
       handleClickOutside(event),
@@ -72,7 +79,7 @@ export const SingleNavItem = ({
                 }}
               >
                 {menu.title === 'Product' ? (
-                  <Link to="/products">{menu.title}</Link>
+                  <Link to="/categories">{menu.title}</Link>
                 ) : (
                   <>{menu.title} </>
                 )}
@@ -88,6 +95,7 @@ export const SingleNavItem = ({
                 activeMenu={activeMenu}
                 closeMenu={() => setActiveMenu('')}
                 type={menu.type === 'megamenu' ? 'megamenu' : 'normal'}
+                categories={categories}
               />
             </>
           ) : (
