@@ -64,6 +64,13 @@ export async function addTeam({
           value: 'abc123',
           type: 'string',
         },
+        {
+          ownerId: team?.customerCreate?.customer?.id,
+          namespace: 'active',
+          key: 'status',
+          value: 'true',
+          type: 'string',
+        },
       ],
     },
   });

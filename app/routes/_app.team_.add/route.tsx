@@ -1,17 +1,19 @@
-import {useActionData, useLoaderData, useNavigate} from '@remix-run/react';
+import {useLoaderData} from '@remix-run/react';
 import {validationError} from 'remix-validated-form';
+import {useFetch} from '~/hooks/useFetch';
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   json,
+  redirect,
 } from '@remix-run/server-runtime';
 import TeamForm, {
   TeamFormSchemaValidator,
 } from '~/routes/_app.team_.add/team-form';
 import {BackButton} from '~/components/ui/back-button';
-import {addTeam} from './add-team.server';
+import {addTeam} from '~/routes/_app.team_.add/add-team.server';
 import {isAuthenticate} from '~/lib/utils/authsession.server';
-import {SelectInputType} from '~/components/ui/select-input';
 import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
 import {Routes} from '~/lib/constants/routes.constent';
 import {
@@ -21,14 +23,26 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
 
+export interface Role {
+  title: string;
+  value: string;
+  permissions: Permission[];
+}
+
+export interface Permission {
+  id: number;
+  title: string;
+  value: string;
+}
+
 export async function loader({request}: LoaderFunctionArgs) {
-  // await isAuthenticate(request);
-  // const results = await fetch(
-  //   'https://relaxing-hawk-ace.ngrok-free.app/api/customer-roles',
-  // );
-  // const roles = await results.json();
-  // console.log('roles', roles);
-  return json({roles: [{title: 'Admin', value: 'admin'}]});
+  try {
+    // await isAuthenticate(request);
+    const roles = (await useFetch({url: ENDPOINT.ROLE.GET})) as Role[];
+    return json({roles});
+  } catch (error) {
+    console.log('error', error);
+  }
 }
 
 export async function action({request, context}: ActionFunctionArgs) {
@@ -56,14 +70,11 @@ export async function action({request, context}: ActionFunctionArgs) {
 
     setSuccessMessage(messageSession, 'Email sent successfully to customer');
 
-    return json(
-      {},
-      {
-        headers: {
-          'Set-Cookie': await messageCommitSession(messageSession),
-        },
+    return redirect(Routes.TEAM, {
+      headers: {
+        'Set-Cookie': await messageCommitSession(messageSession),
       },
-    );
+    });
   } catch (error) {
     if (error instanceof Error) {
       setErrorMessage(messageSession, error.message);
@@ -82,7 +93,6 @@ export async function action({request, context}: ActionFunctionArgs) {
 
 export default function AddTeam() {
   const {roles} = useLoaderData<typeof loader>();
-  console.log('roles', roles);
   return (
     <section className="container">
       <div className="py-6">
@@ -94,7 +104,7 @@ export default function AddTeam() {
           </BreadcrumbItem>
         </Breadcrumb>
       </div>
-      <TeamForm options={roles as SelectInputType[]} />
+      <TeamForm options={roles} />
     </section>
   );
 }

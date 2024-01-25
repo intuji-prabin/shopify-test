@@ -3,7 +3,7 @@ import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 
 type FetchParams = {
   method?: AllowedHTTPMethods;
-  body: string;
+  body?: string;
   url: string;
 };
 

@@ -1,13 +1,13 @@
+import {useState} from 'react';
 import {z} from 'zod';
 import {withZod} from '@remix-validated-form/with-zod';
 import {ValidatedForm, useFormContext} from 'remix-validated-form';
-import SelectInput, {SelectInputType} from '~/components/ui/select-input';
+import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
 import {Input} from '~/components/ui/input';
 import {Separator} from '~/components/ui/separator';
 import {zfd} from 'zod-form-data';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import {Button} from '~/components/ui/button';
-import {useState} from 'react';
 import {
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE_MB,
@@ -18,7 +18,7 @@ type TeamFormProps = {
   defaultValues?: Omit<TeamFormType, 'profileImage'> & {
     profileImageUrl: string;
   };
-  options: SelectInputType[];
+  options: SelectInputOptions[];
 };
 
 const TeamFormSchema = z.object({
@@ -66,7 +66,19 @@ export type TeamFormFieldNameType = keyof TeamFormType;
 
 export default function TeamForm({defaultValues, options}: TeamFormProps) {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+
   const {reset} = useFormContext('add-team-form');
+
+  const updatePermissions = (value: string) => {
+    setSelectedRole(value);
+  };
+
+  const roles = options?.find(
+    (option) => option.value === selectedRole,
+  )?.permissions;
+
   return (
     <ValidatedForm
       method="post"
@@ -135,9 +147,26 @@ export default function TeamForm({defaultValues, options}: TeamFormProps) {
                 name="userRole"
                 options={options}
                 label="Select Roles"
+                updatePermissions={(value: string) => updatePermissions(value)}
               />
             </div>
-            <div></div>
+            {selectedRole && (
+              <div className="bg-primary-50 p-6">
+                <h4 className="capitalize pb-4">
+                  {selectedRole} role permissions
+                </h4>
+                <ul className="pl-5">
+                  {roles?.map((role) => (
+                    <li
+                      key={role.id}
+                      className="list-disc text-grey-700 font-normal text-base"
+                    >
+                      {role.title}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </div>
