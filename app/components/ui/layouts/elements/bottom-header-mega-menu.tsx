@@ -986,7 +986,7 @@ const menus = [
   },
 ];
 
-export const NewMegaMenu = ({
+export const MegaMenu = ({
   isOpen,
   categories,
 }: {

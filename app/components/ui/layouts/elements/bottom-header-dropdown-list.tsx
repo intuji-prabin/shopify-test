@@ -1,6 +1,8 @@
 import useOutsideHover from '~/hooks/useOutsideHover';
-import {NewMegaMenu} from './NewMegaMenu';
-import {NormalMenuList} from './normalMenu';
+
+import {NormalMenuList} from './bottom-header-dropdown-menu';
+import {MegaMenu} from './Bottom-header-mega-menu';
+
 export const DropdownMenu = ({
   activeMenu,
   isOpen,
@@ -25,7 +27,7 @@ export const DropdownMenu = ({
   return (
     <div ref={targetRef}>
       {type === 'megamenu' ? (
-        <NewMegaMenu isOpen={isOpen} categories={categories} />
+        <MegaMenu isOpen={isOpen} categories={categories} />
       ) : (
         <NormalMenuList isOpen={isOpen} />
       )}

@@ -3,7 +3,7 @@ import {MenuItems} from '../bottom-header';
 import ArrowUp from '~/components/icons/arrowUp';
 import ArrowDown from '~/components/icons/arrowDown';
 import {Link, useNavigate} from '@remix-run/react';
-import {DropdownMenu} from './dropdownItems';
+import {DropdownMenu} from './bottom-header-dropdown-list';
 export const SingleNavItem = ({
   menu,
   activeMenu,
