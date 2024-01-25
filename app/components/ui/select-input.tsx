@@ -9,19 +9,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
-import {TeamFormFieldNameType} from '~/routes/team_.add-team/team-form';
-import {OrderFilterFormFieldNameType} from '~/routes/order/filter-form';
-import {ScheduleCallFormFieldNameType} from '~/routes/support_.schedule-call/schedule-call-form';
-import {TicketsFilterFormFieldNameType} from '~/routes/support_.tickets/filter-form';
+import {TeamFormFieldNameType} from '~/routes/_app.team_.add/team-form';
 
-export type SelectInputType = {value: string; label: string};
+export type SelectInputType = {value: string; title: string};
 
 export type SelectInputProps = {
-  name:
-    | TeamFormFieldNameType
-    | OrderFilterFormFieldNameType
-    | ScheduleCallFormFieldNameType
-    | TicketsFilterFormFieldNameType;
+  name: TeamFormFieldNameType;
+  // | OrderFilterFormFieldNameType
+  // | ScheduleCallFormFieldNameType
+  // | TicketsFilterFormFieldNameType;
   label: string;
   options: SelectInputType[];
 };
@@ -48,7 +44,7 @@ export default function SelectInput({name, label, options}: SelectInputProps) {
                     key={index}
                     className="p-2 focus:bg-primary-50"
                   >
-                    {item.label}
+                    {item.title}
                   </SelectItem>
                 ))}
               </SelectGroup>

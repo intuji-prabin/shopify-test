@@ -246,7 +246,9 @@ label .required {
 .menu-hov:hover span svg {
   @apply !fill-primary-500;
 }
-
+.menu-hov:hover h5 {
+  @apply text-primary-500;
+}
 .dropdown-content:before {
   border-left: 18px solid transparent;
   border-right: 18px solid transparent;
@@ -620,9 +622,6 @@ input[type='radio']:checked + label {
   @apply bg-primary-400 border-transparent;
 }
 
-.selectProductItem:hover {
-  @apply bg-primary-50 text-base font-normal text-grey-800;
-}
 /* Product Detail Page Embla Carousel Styles Begin Here */
 .embla-thumbs__container button svg {
   @apply h-5 w-5;
@@ -653,4 +652,8 @@ input[type='radio']:checked + label {
 /* z-index for the view warehouse info drawer */
 div[data-state='open'].fixed.inset-0 {
   z-index: 10;
+}
+
+.track-an-order .track-order {
+  @apply !top-[10%] !right-4 shadow-[unset];
 }

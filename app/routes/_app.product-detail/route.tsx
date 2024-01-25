@@ -47,34 +47,42 @@ async function getAProduct() {
     isInStock: true,
     bulkPricings: [
       {
+        id: 1,
         quantity: '1-50',
         price: 732,
       },
       {
+        id: 2,
         quantity: '100+',
         price: 500,
       },
       {
+        id: 3,
         quantity: '1-50',
         price: 732,
       },
       {
+        id: 4,
         quantity: '100+',
         price: 500,
       },
       {
+        id: 5,
         quantity: '1-50',
         price: 732,
       },
       {
+        id: 6,
         quantity: '100+',
         price: 500,
       },
       {
+        id: 7,
         quantity: '1-50',
         price: 732,
       },
       {
+        id: 8,
         quantity: '100+',
         price: 500,
       },
@@ -89,7 +97,7 @@ async function getAProduct() {
         isQtyBuyAvailable: true,
         productBuyPrice: 649.23423,
         productRRP: 79.234234,
-        sku: '1-1601-EC',
+        sku: '1-1901-EC',
       },
       {
         name: 'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition',
@@ -98,7 +106,7 @@ async function getAProduct() {
         isQtyBuyAvailable: true,
         productBuyPrice: 649.23423,
         productRRP: 79.234234,
-        sku: '1-1601-EC',
+        sku: '1-1201-EC',
       },
       {
         name: 'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition',
@@ -107,7 +115,7 @@ async function getAProduct() {
         isQtyBuyAvailable: true,
         productBuyPrice: 649.23423,
         productRRP: 79.234234,
-        sku: '1-1601-EC',
+        sku: '1-1801-EC',
       },
       {
         name: 'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition',
@@ -116,7 +124,7 @@ async function getAProduct() {
         isQtyBuyAvailable: true,
         productBuyPrice: 649.23423,
         productRRP: 79.234234,
-        sku: '1-1601-EC',
+        sku: '1-1701-EC',
       },
     ],
   };

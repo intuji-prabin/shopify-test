@@ -4,10 +4,8 @@ import ArrowUp from '~/components/icons/arrowUp';
 import ArrowDown from '~/components/icons/arrowDown';
 import {Link, useNavigate} from '@remix-run/react';
 import {DropdownMenu} from './dropdownItems';
-
 export const SingleNavItem = ({
   menu,
-  depthLevel,
   activeMenu,
   setActiveMenu,
 }: {
@@ -28,7 +26,6 @@ export const SingleNavItem = ({
     document.addEventListener('mousedown', (event) =>
       handleClickOutside(event),
     );
-
     //Clean up function => Cleaning up our Event Listeners
     return () => {
       // Unbind the event listener on clean up
@@ -42,7 +39,7 @@ export const SingleNavItem = ({
           text-white italic font-bold text-lg gap-1  menu-items active:bg-primary-600 hover:bg-transparent"
         ref={menuRef}
       >
-        <Link to="" className="flex items-center gap-1 relative menu-links">
+        <div className="flex items-center gap-1 relative menu-links">
           <div
             className={`${activeMenu === menu.title ? 'active' : ''} menu-icon`}
           >
@@ -59,8 +56,6 @@ export const SingleNavItem = ({
                 aria-expanded={activeMenu === menu.title ? 'true' : 'false'}
                 onClick={() => {
                   if (menu.title === 'Product') {
-                    //Bug: navigate not working here
-                    // navigate('/products');
                     setActiveMenu('');
                     return;
                   }
@@ -69,6 +64,10 @@ export const SingleNavItem = ({
                 onMouseEnter={() => {
                   if (menu.title === 'Product') {
                     setActiveMenu(menu.title);
+                  } else {
+                    if (activeMenu === 'Product') {
+                      setActiveMenu('');
+                    }
                   }
                 }}
               >
@@ -83,18 +82,18 @@ export const SingleNavItem = ({
                   <ArrowDown />
                 )}
               </button>
-
               <DropdownMenu
                 submenus={menu.submenu}
                 isOpen={activeMenu === menu.title}
-                depthLevel={depthLevel}
+                activeMenu={activeMenu}
+                closeMenu={() => setActiveMenu('')}
                 type={menu.type === 'megamenu' ? 'megamenu' : 'normal'}
               />
             </>
           ) : (
             <Link to={menu.url}>{menu.title}</Link>
           )}
-        </Link>
+        </div>
       </li>
     </>
   );

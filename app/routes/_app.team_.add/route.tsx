@@ -1,44 +1,100 @@
-import {useActionData, useNavigate} from '@remix-run/react';
-import {Separator} from '~/components/ui/separator';
+import {useActionData, useLoaderData, useNavigate} from '@remix-run/react';
 import {validationError} from 'remix-validated-form';
-import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  json,
+} from '@remix-run/server-runtime';
 import TeamForm, {
   TeamFormSchemaValidator,
 } from '~/routes/_app.team_.add/team-form';
 import {BackButton} from '~/components/ui/back-button';
+import {addTeam} from './add-team.server';
+import {isAuthenticate} from '~/lib/utils/authsession.server';
+import {SelectInputType} from '~/components/ui/select-input';
+import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import {Routes} from '~/lib/constants/routes.constent';
+import {
+  getMessageSession,
+  messageCommitSession,
+  setErrorMessage,
+  setSuccessMessage,
+} from '~/lib/utils/toastsession.server';
 
-export async function action({request}: ActionFunctionArgs) {
-  const result = await TeamFormSchemaValidator.validate(
-    await request.formData(),
-  );
-  console.log('result', result);
+export async function loader({request}: LoaderFunctionArgs) {
+  // await isAuthenticate(request);
+  // const results = await fetch(
+  //   'https://relaxing-hawk-ace.ngrok-free.app/api/customer-roles',
+  // );
+  // const roles = await results.json();
+  // console.log('roles', roles);
+  return json({roles: [{title: 'Admin', value: 'admin'}]});
+}
 
-  if (result.error) {
-    return validationError(result.error);
+export async function action({request, context}: ActionFunctionArgs) {
+  const messageSession = await getMessageSession(request);
+
+  try {
+    const result = await TeamFormSchemaValidator.validate(
+      await request.formData(),
+    );
+
+    if (result.error) {
+      return validationError(result.error);
+    }
+
+    const {email, fullName, address, phoneNumber, userRole} = result.data;
+
+    await addTeam({
+      address,
+      email,
+      fullName,
+      userRole,
+      phoneNumber,
+      context,
+    });
+
+    setSuccessMessage(messageSession, 'Email sent successfully to customer');
+
+    return json(
+      {},
+      {
+        headers: {
+          'Set-Cookie': await messageCommitSession(messageSession),
+        },
+      },
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      setErrorMessage(messageSession, error.message);
+      return json(
+        {},
+        {
+          headers: {
+            'Set-Cookie': await messageCommitSession(messageSession),
+          },
+        },
+      );
+    }
+    return json({error}, {status: 400});
   }
-  const formData = new FormData();
-  formData.append('file', result.submittedData.profileImage);
-
-  console.log('File details:', {
-    name: result.submittedData.profileImage.name,
-    size: result.submittedData.profileImage.size,
-    type: result.submittedData.profileImage.type,
-  });
-
-  return json({data: result});
 }
 
 export default function AddTeam() {
-  const navigate = useNavigate();
-  const actionData = useActionData<typeof action>();
-  console.log(actionData);
+  const {roles} = useLoaderData<typeof loader>();
+  console.log('roles', roles);
   return (
     <section className="container">
-      <div className=" pt-6 pb-4">
+      <div className="py-6">
         <BackButton title="Add Team Memeber" />
-        <Separator className="mt-4 mb-8" />
+        <Breadcrumb>
+          <BreadcrumbItem href={Routes.TEAM}>My Team</BreadcrumbItem>
+          <BreadcrumbItem href={Routes.TEAM_ADD} className="text-grey-900">
+            Add Team Member
+          </BreadcrumbItem>
+        </Breadcrumb>
       </div>
-      <TeamForm />
+      <TeamForm options={roles as SelectInputType[]} />
     </section>
   );
 }

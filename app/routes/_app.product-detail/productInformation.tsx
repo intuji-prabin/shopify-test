@@ -76,10 +76,10 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
 
   return (
     <>
-      <div className="right-side-info flex flex-col gap-6 max-w-[588px] py-8">
+      <div className="right-side-info flex flex-col gap-6  max-w-[unset] lg::max-w-[480px] xl:max-w-[588px] py-8">
         <div className="top flex flex-col gap-6">
           <div className="">
-            <div className="flex justify-between">
+            <div className="flex justify-between mb-[26px]">
               <figure>
                 <img src="cigweld-logo.png" alt="" />
               </figure>
@@ -154,7 +154,7 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
                 </p>
               </div>
             </div>
-            <div className="flex gap-4 flex-col lg:flex-row">
+            <div className="flex gap-4 flex-col lg:flex-row min-h-0 lg:min-h-14">
               <div className="flex">
                 <button
                   className=" border-[1px] border-grey-500  flex justify-center items-center w-[56px]"
@@ -193,20 +193,8 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
             </p>
             <p>Usually ready in 4 hours</p>
             <WarehouseInformation
+              warehouseLink={'View WAREHOUSE information'}
               pickupTitle={'Pick Availability'}
-              productImageUrl={'product.png'}
-              productName={
-                'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition'
-              }
-              placetitle={'SUPERCHEAP AUTO NZ PTY LTD'}
-              pickupTime={'Pickup available at, usually ready in 4 hours'}
-              customerName={'15 Robinson Ave'}
-              street={'Belmont WA 6104'}
-              city={'Australia'}
-              location={'5.7 km'}
-              coordinates={'08 9277 1444'}
-              warehouseLink={'     View WAREHOUSE information'}
-              directionLink={'GET DIRECTION'}
             />
           </div>
         </div>
@@ -274,7 +262,7 @@ export function SelectACountryDropdown({
   return (
     <div className="flex flex-col">
       <Select>
-        <SelectTrigger className="w-[120px] h-full text-base font-normal leading-[21px] not-italic">
+        <SelectTrigger className="w-[120px] h-full text-base font-normal leading-[21px] not-italic border-[1px] border-grey-500 rounded-none">
           <SelectValue placeholder={placeHolder} />
         </SelectTrigger>
         <SelectContent className="product-names">
