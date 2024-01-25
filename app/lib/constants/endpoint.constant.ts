@@ -83,4 +83,7 @@ export const ENDPOINT = {
   ADMIN: {
     URL: 'https://intuji-test.myshopify.com/admin/api/2024-01/graphql.json',
   },
+  CUSTOM: {
+    URL: 'https://casual-mink-routinely.ngrok-free.app/api',
+  },
 };

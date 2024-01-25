@@ -1,13 +1,10 @@
-import {Form, useSearchParams, useSubmit} from '@remix-run/react';
-import {FormEvent, Fragment, useEffect, useState} from 'react';
+import { Form, useSearchParams, useSubmit } from '@remix-run/react';
+import { FormEvent, Fragment, useState } from 'react';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import {Button} from '~/components/ui/button';
-import {Separator} from '~/components/ui/separator';
-import {Slider} from '~/components/ui/slider';
-import {
-  CheckboxInputData,
-  RadioInputData,
-} from '~/routes/_app.categories_.$categoryId.$subCategoryId.$childCategoryId/filter-form-data';
+import { Button } from '~/components/ui/button';
+import { Separator } from '~/components/ui/separator';
+import { Slider } from '~/components/ui/slider';
+import { CheckboxInputData, RadioInputData } from './filter-form-data';
 
 export function FilterForm() {
   const initialRange = [3, 100];
@@ -111,7 +108,7 @@ export function SortByFilterForm() {
         <select
           name="sort-by"
           value={queryParams.get('sort-by') as string}
-          onChange={() => {}}
+          onChange={() => { }}
           className="!p-2 !border-grey-50 text-base font-medium bg-transparent text-grey-900"
         >
           <option value="">Sort By</option>
