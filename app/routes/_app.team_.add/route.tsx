@@ -22,23 +22,30 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
+import {SelectInputOptions} from '~/components/ui/select-input';
 
-export interface Role {
+interface Role {
   title: string;
   value: string;
   permissions: Permission[];
 }
 
-export interface Permission {
+interface Permission {
   id: number;
   title: string;
   value: string;
 }
 
+interface RolesResponse {
+  data: Role[];
+  msg: string;
+  status: boolean;
+}
+
 export async function loader({request}: LoaderFunctionArgs) {
   try {
-    // await isAuthenticate(request);
-    const roles = (await useFetch({url: ENDPOINT.ROLE.GET})) as Role[];
+    await isAuthenticate(request);
+    const roles = (await useFetch({url: ENDPOINT.ROLE.GET})) as RolesResponse;
     return json({roles});
   } catch (error) {
     console.log('error', error);
@@ -93,6 +100,8 @@ export async function action({request, context}: ActionFunctionArgs) {
 
 export default function AddTeam() {
   const {roles} = useLoaderData<typeof loader>();
+  console.log('roles', roles);
+
   return (
     <section className="container">
       <div className="py-6">
@@ -104,7 +113,7 @@ export default function AddTeam() {
           </BreadcrumbItem>
         </Breadcrumb>
       </div>
-      <TeamForm options={roles} />
+      <TeamForm options={roles.data as SelectInputOptions[]} />
     </section>
   );
 }
