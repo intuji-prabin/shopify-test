@@ -13,6 +13,7 @@ export type TeamColumn = {
   email: string;
   department: string;
   contactNumber: string;
+  status: boolean;
 };
 
 export function useColumn() {
@@ -47,14 +48,20 @@ export function useColumn() {
         header: 'Status',
         enableSorting: false,
         cell: (info) => {
+          const status = info.row.original.status;
+          const customerId = info.row.original.id;
           const [isChecked, setIsChecked] = useState<boolean>(false);
           return (
             <>
               <Switch
-                checked={isChecked}
+                checked={status}
                 onCheckedChange={() => setIsChecked((prevState) => !prevState)}
               />
-              <DeactivateDialog isOpen={isChecked} setIsOpen={setIsChecked} />
+              <DeactivateDialog
+                isOpen={isChecked}
+                setIsOpen={setIsChecked}
+                customerId={customerId}
+              />
             </>
           );
         },

@@ -7,55 +7,59 @@ import {Button} from '~/components/ui/button';
 import {DialogClose} from '~/components/ui/dialog';
 import {Label} from '~/components/ui/label';
 
-export const validator = withZod(
-  z.object({
-    confirmation: z.enum(['deactivate'], {
-      errorMap: (issue, ctx) => ({message: 'You must type deactivate'}),
-    }),
+const ConfirmationFormSchema = z.object({
+  customerId: z.string().trim(),
+  confirmation: z.enum(['deactivate'], {
+    errorMap: (issue, ctx) => ({message: 'You must type deactivate'}),
   }),
-);
+});
+
+export const ConfirmationFormSchemaValidator = withZod(ConfirmationFormSchema);
 
 export default function ConfirmationForm({
+  customerId,
   setIsOpen,
 }: {
+  customerId: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const fetcher = useFetcher();
   const isConfirm = useIsValid('confirmation-form');
 
   const handleClick = () => {
-    console.log('deactivated');
     setIsOpen(false);
   };
+
   return (
     <>
       <ValidatedForm
         fetcher={fetcher}
         method="post"
-        validator={validator}
+        validator={ConfirmationFormSchemaValidator}
         id="confirmation-form"
       >
+        <input type="hidden" name="customerId" value={customerId} />
         <Label className="text-lg font-normal leading-5.5 normal-case pb-4">
           To confirm deactivation, type “deactivate” below
         </Label>
         <ConfirmationInput name="confirmation" placeholder="type deactivate" />
-      </ValidatedForm>
-      <div className="flex justify-end items-center space-x-2 pt-4">
-        <DialogClose asChild>
-          <Button className="uppercase" variant="ghost">
-            cancel
-          </Button>
-        </DialogClose>
+        <div className="flex justify-end items-center space-x-2 pt-4">
+          <DialogClose asChild>
+            <Button type="button" className="uppercase" variant="ghost">
+              cancel
+            </Button>
+          </DialogClose>
 
-        <Button
-          className="uppercase"
-          variant="primary"
-          disabled={!isConfirm}
-          onClick={handleClick}
-        >
-          deactivate user
-        </Button>
-      </div>
+          <Button
+            type="submit"
+            className="uppercase"
+            variant="primary"
+            disabled={!isConfirm}
+          >
+            deactivate user
+          </Button>
+        </div>
+      </ValidatedForm>
     </>
   );
 }
