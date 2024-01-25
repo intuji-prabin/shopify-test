@@ -1,18 +1,18 @@
-import {useLoaderData, type MetaFunction} from '@remix-run/react';
-import {type LoaderFunctionArgs} from '@shopify/remix-oxygen';
+import { useLoaderData, type MetaFunction } from '@remix-run/react';
+import { type LoaderFunctionArgs } from '@shopify/remix-oxygen';
 import Carousel from '~/components/ui/carousel';
 import CtaHome from '~/components/ui/cta-home';
 import DetailChart from '~/components/ui/detailChart';
 import ExpenditureCard from '~/components/ui/expenditureCard';
 import Profile from '~/components/ui/profile';
 import SpendCard from '~/components/ui/spend-card';
-import {isAuthenticate} from '~/lib/utils/authsession.server';
+import { isAuthenticate } from '~/lib/utils/authsession.server';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Hydrogen | Home'}];
+  return [{ title: 'Hydrogen | Home' }];
 };
 
-export async function loader({request}: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   await isAuthenticate(request);
   const labels = [
     'January',
@@ -93,7 +93,7 @@ export async function loader({request}: LoaderFunctionArgs) {
     labels: labels,
     datasets: [
       {
-        label: 'My First dataset',
+        label: 'Expenditure',
         backgroundColor: [
           'rgba(255, 99, 132, 0.2)',
           'rgba(54, 162, 235, 0.2)',
@@ -103,22 +103,14 @@ export async function loader({request}: LoaderFunctionArgs) {
           'rgba(255, 159, 64, 0.2)',
           'rgba(222, 123, 4, 0.2)',
         ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-          'rgba(222, 123, 4, 1)',
-        ],
         data: [10, 10, 10, 10, 10, 10, 40],
         cutout: '80%',
+        price: [120, 1330, 1550, 1120, 19980, 123230, 4440]
       },
     ],
   };
 
-  return {areaChartData, barChartData, lineChartData, doughnutChartData};
+  return { areaChartData, barChartData, lineChartData, doughnutChartData };
 }
 
 type ImageType = {
@@ -127,15 +119,15 @@ type ImageType = {
 };
 
 const images: ImageType[] = [
-  {src: 'https://swiperjs.com/demos/images/nature-3.jpg', alt: 'Nature 3'},
-  {src: 'https://swiperjs.com/demos/images/nature-4.jpg', alt: 'Nature 4'},
-  {src: 'https://swiperjs.com/demos/images/nature-5.jpg', alt: 'Nature 5'},
-  {src: 'https://swiperjs.com/demos/images/nature-6.jpg', alt: 'Nature 6'},
-  {src: 'https://swiperjs.com/demos/images/nature-7.jpg', alt: 'Nature 7'},
-  {src: 'https://swiperjs.com/demos/images/nature-8.jpg', alt: 'Nature 8'},
-  {src: 'https://swiperjs.com/demos/images/nature-9.jpg', alt: 'Nature 9'},
-  {src: 'https://swiperjs.com/demos/images/nature-10.jpg', alt: 'Nature 10'},
-  {src: 'https://swiperjs.com/demos/images/nature-2.jpg', alt: 'Nature 2'},
+  { src: 'https://swiperjs.com/demos/images/nature-3.jpg', alt: 'Nature 3' },
+  { src: 'https://swiperjs.com/demos/images/nature-4.jpg', alt: 'Nature 4' },
+  { src: 'https://swiperjs.com/demos/images/nature-5.jpg', alt: 'Nature 5' },
+  { src: 'https://swiperjs.com/demos/images/nature-6.jpg', alt: 'Nature 6' },
+  { src: 'https://swiperjs.com/demos/images/nature-7.jpg', alt: 'Nature 7' },
+  { src: 'https://swiperjs.com/demos/images/nature-8.jpg', alt: 'Nature 8' },
+  { src: 'https://swiperjs.com/demos/images/nature-9.jpg', alt: 'Nature 9' },
+  { src: 'https://swiperjs.com/demos/images/nature-10.jpg', alt: 'Nature 10' },
+  { src: 'https://swiperjs.com/demos/images/nature-2.jpg', alt: 'Nature 2' },
 ];
 
 export default function Homepage() {

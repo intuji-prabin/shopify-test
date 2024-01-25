@@ -7,54 +7,10 @@ const options = {
     borderWidth: 0,
     plugins: {
         legend: {
-            position: 'top' as const,
-            align: 'end' as const,
-            labels: {
-                usePointStyle: true,
-                boxWidth: 40,
-                font: {
-                    size: 14,
-                    family: "Barlow Condensed, sans-serif",
-                    weight: 500,
-                },
-            },
-            reverse: true,
-            onHover: (event: any) => {
-                event.chart.canvas.style.cursor = "pointer";
-            },
-        },
-        afterDatasetsDraw: ({ chart }: { chart: any }) => {
-            // Your custom logic after datasets are drawn
-            console.log("Datasets are drawn!");
-            const { ctx, doughnutChartData } = chart;
-            const centerX = chart.getDatasetMeta(0).data[0].x;
-            const centerY = chart.getDatasetMeta(0).data[0].y;
-            console.log(centerX)
-            ctx.save();
-            ctx.font = 'bold 10px sans-serif';
-            ctx.fillStyle = 'black';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('Text', centerX, centerY);
-        },
+            display: false
+        }
     },
 }
-
-// const doughnutLabel = {
-//     id: "doughnutLabel",
-//     afterDatasetsDraw({ chart }: { chart: any }) {
-//         const { ctx, doughnutChartData } = chart;
-//         const centerX = chart.getDatasetMeta(0).data[0].x;
-//         const centerY = chart.getDatasetMeta(0).data[0].y;
-//         console.log(centerX)
-//         ctx.save();
-//         ctx.font = 'bold 10px sans-serif';
-//         ctx.fillStyle = 'black';
-//         ctx.textAlign = 'center';
-//         ctx.textBaseline = 'middle';
-//         ctx.fillText('Text', centerX, centerY);
-//     }
-// }
 
 const ExpenditureChart = ({ doughnutChartData }: { doughnutChartData: any }) => {
     return (
