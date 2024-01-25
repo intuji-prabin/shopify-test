@@ -1076,7 +1076,7 @@ export const MegaMenu = ({
               className="relative  text-grey-900 menu-hov font-medium not-italic text-lg flex  items-center"
             >
               <Link
-                to={`/categories/${activeMenu?.menu?.identifier}/${activeMenu?.subMenu?.identifier}`}
+                to={`/categories/${subMenu?.identifier}`}
                 className="w-full"
               >
                 <span className="rounded px-2 py-1 font-medium text-lg flex items-center menu-hov justify- w-full text-grey-900">
