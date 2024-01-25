@@ -183,13 +183,13 @@ export const MegaMenuList = ({isOpen}: {isOpen: boolean}) => {
               <ArrowForward />
               {subMenu.menu}
             </span>
-            <ul className="absolute left-full top-0 mt-0 flex hidden  space-y-2 rounded  px-3 group-hover/menu:block">
+            <ul className="absolute left-full top-0 mt-0 flex  space-y-2 rounded  px-3 group-hover/menu:block">
               <li className="group/submenu relative normal text-lg text-grey-900 flex menu-hov">
                 <span className="px-2 py-1 menu-hover font-medium not-italic text-lg flex  items-center">
                   {subMenu.subMenu}
                   <ArrowForward />
                 </span>
-                <ul className="absolute left-full top-0 mt-0 flex hidden flex-col space-y-2 rounded bg-gray-700 p-2 group-hover/menu:block">
+                <ul className="absolute left-full top-0 mt-0 flex flex-col space-y-2 rounded bg-gray-700 p-2 group-hover/menu:block">
                   {subMenu.items?.map((item) => (
                     <Link to={item.link}>
                       <li className="px-2 py-1 hover:bg-grey-600">

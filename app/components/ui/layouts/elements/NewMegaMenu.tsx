@@ -2,6 +2,23 @@ import {Link} from '@remix-run/react';
 import {useState} from 'react';
 import ArrowForward from '~/components/icons/arrowForward';
 
+export interface ICategory {
+  id: number;
+  title: string;
+  child_categories: ICategoryChildCategory[];
+}
+
+export interface ICategoryChildCategory {
+  id: number;
+  title: string;
+  child_categories: ChildCategoryChildCategory[];
+}
+
+export interface ChildCategoryChildCategory {
+  id: number;
+  title: string;
+}
+
 const menus = [
   {
     id: 1,
@@ -977,7 +994,13 @@ const menus = [
   },
 ];
 
-export const NewMegaMenu = ({isOpen}: {isOpen: boolean}) => {
+export const NewMegaMenu = ({
+  isOpen,
+  categories,
+}: {
+  isOpen: boolean;
+  categories: any;
+}) => {
   //State to store the selected/active menu and submenu IDs
   const [activeMenu, setActiveMenu] = useState({
     menu: 1,
@@ -991,7 +1014,7 @@ export const NewMegaMenu = ({isOpen}: {isOpen: boolean}) => {
     >
       {/* Level 1 Menus Begin Here */}
       <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10">
-        {menus?.map((menu) => (
+        {categories?.map((menu: ICategory) => (
           <li
             key={'list' + menu.id}
             className={`relative italic font-bold text-lg text-grey-900 flex menu-hov justify-between
@@ -1016,9 +1039,9 @@ export const NewMegaMenu = ({isOpen}: {isOpen: boolean}) => {
       {/* Level 2 Menus Begin Here */}
       <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] border border-x-2 border-[#F5F5F5] px-2 border-y-0 ">
         {/* Finding the currently active Level 1 Menu and displaying only its items */}
-        {menus
-          ?.find((menu) => menu?.id === activeMenu?.menu)
-          ?.items?.map((subMenu) => (
+        {categories
+          ?.find((menu: ICategory) => menu?.id === activeMenu?.menu)
+          ?.child_categories?.map((subMenu: ICategory) => (
             <li
               key={subMenu.id}
               className={`relative text-grey-900 flex menu-hov font-medium not-italic text-lg items-center
@@ -1045,15 +1068,19 @@ export const NewMegaMenu = ({isOpen}: {isOpen: boolean}) => {
       {/* Level 3 i.e Final Level Menus Begin Here */}
       <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] ">
         {/* Finding the currently active Level 1 Menu & Level 2 Sub Menu and displaying only its items */}
-        {menus
-          ?.find((menu) => menu?.id === activeMenu?.menu)
-          ?.items?.find((subMenu) => subMenu?.id === activeMenu?.subMenu)
-          ?.items?.map((subMenu) => (
+        {categories
+          ?.find((menu: ICategory) => menu?.id === activeMenu?.menu)
+          ?.child_categories?.find(
+            (subMenu: ICategory) => subMenu?.id === activeMenu?.subMenu,
+          )
+          ?.child_categories?.map((subMenu: ICategory) => (
             <li
               key={subMenu.id}
               className="relative  text-grey-900 menu-hov font-medium not-italic text-lg flex  items-center"
             >
-              <Link to={subMenu.link}>
+              <Link
+                to={`/categories/${activeMenu?.menu}/${activeMenu.subMenu}`}
+              >
                 <span className="rounded px-2 py-1 font-medium text-lg flex items-center menu-hov justify- w-full text-grey-900">
                   {' '}
                   {subMenu.title}

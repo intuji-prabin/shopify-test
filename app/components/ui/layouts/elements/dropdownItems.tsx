@@ -6,6 +6,7 @@ export const DropdownMenu = ({
   isOpen,
   closeMenu,
   type,
+  categories,
 }: {
   activeMenu: string;
   submenus: {
@@ -15,6 +16,7 @@ export const DropdownMenu = ({
   isOpen: boolean;
   closeMenu: () => void;
   type: 'normal' | 'megamenu';
+  categories: any;
 }) => {
   const {targetRef} = useOutsideHover({
     handleOutsideHover: closeMenu,
@@ -23,7 +25,7 @@ export const DropdownMenu = ({
   return (
     <div ref={targetRef}>
       {type === 'megamenu' ? (
-        <NewMegaMenu isOpen={isOpen} />
+        <NewMegaMenu isOpen={isOpen} categories={categories} />
       ) : (
         <NormalMenuList isOpen={isOpen} />
       )}

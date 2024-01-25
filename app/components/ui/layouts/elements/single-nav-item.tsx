@@ -8,11 +8,13 @@ export const SingleNavItem = ({
   menu,
   activeMenu,
   setActiveMenu,
+  categories,
 }: {
   menu: MenuItems;
   depthLevel: number;
   activeMenu: string;
   setActiveMenu: React.Dispatch<React.SetStateAction<string>>;
+  categories: any;
 }) => {
   const menuRef = useRef<HTMLLIElement>(null);
   const navigate = useNavigate();
@@ -88,6 +90,7 @@ export const SingleNavItem = ({
                 activeMenu={activeMenu}
                 closeMenu={() => setActiveMenu('')}
                 type={menu.type === 'megamenu' ? 'megamenu' : 'normal'}
+                categories={categories}
               />
             </>
           ) : (
