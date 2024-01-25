@@ -11,14 +11,6 @@ import {
 } from '~/components/ui/dialog';
 
 export function TrackAnOrderButton() {
-  const [orderNumber, setOrderNumber] = useState('');
-
-  const handleClick = () => {
-    if (orderNumber === '') {
-      setOrderNumber('1001');
-    }
-  };
-
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -47,16 +39,13 @@ export function TrackAnOrderButton() {
             id="orderNumber"
             name="orderNumber"
             placeholder="Order Number"
-            value={orderNumber}
-            onClick={handleClick}
-            onChange={(e) => setOrderNumber(e.target.value)}
             className="active:!border-grey-100 focus:!border-grey-100 hover:!border-grey-100 focu:bg-white active:bg-white hover:bg-white !bg-white"
           />
         </div>
-        <DialogFooter className="block">
+        <DialogFooter className="block p-4">
           <Button
             type="submit"
-            className="w-full italic font-bold uppercase leading6 text-sm"
+            className="w-full italic font-bold uppercase leading6 text-sm "
           >
             Track Order
           </Button>

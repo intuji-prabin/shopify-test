@@ -137,7 +137,7 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
           </div>
           <div className="flex flex-col">
             <div className="flex flex-col gap-2">
-              <div className="flex gap-3 lg:gap-8 flex-col lg:flex-row">
+              <div className="flex gap-3 lg:gap-8 flex-col lg:flex-row ">
                 <ProductCardInfo
                   sku={''}
                   productName={''}

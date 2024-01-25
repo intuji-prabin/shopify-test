@@ -61,16 +61,16 @@ const CarouselThumb = ({
   return (
     <section className="flex flex-col-reverse gap-[17px]   overflow-y-hidden lg:flex-row">
       {/* Thumbnail Carousel Begins Here */}
-      <div className="relative  embla-thumbs h-full lg:min-w-[85px] overflow-y-hidden">
+      <div className="relative  embla-thumbs  lg:min-w-[85px] overflow-y-hidden max-h-[489px]">
         <div
-          className="overflow-hidden embla-thumbs__viewport max-h-[489px]"
+          className="overflow-hidden embla-thumbs__viewport "
           ref={emblaThumbsRef}
         >
           <div
             className={`flex embla-thumbs__container ${
               matches
-                ? 'flex-col gap-y-2 h-[489px]'
-                : 'flex-row gap-x-2 h-[unset]'
+                ? 'flex-col gap-y-2 max-h-[489px]'
+                : 'flex-row gap-x-2 max-h-[unset]'
             }`}
           >
             {images.map((image, index) => (
@@ -106,7 +106,7 @@ const CarouselThumb = ({
           {matches ? <BlueArrowForward /> : <ArrowPrevious />}
         </button>
         <button
-          className={`absolute z-10 flex items-center justify-center h-auto transform translate-x-[-50%] bg-white rounded-full cursor-pointer embla__button embla__next  w-9 aspect-square  swiper-button image-swiperthumb-button-next shadow-base top-1/2 -translate-y-1/2 right-0  lg:top-[80%] lg:left-[50%] lg:-translate-y-0 ${
+          className={`absolute z-10 flex items-center justify-center h-auto transform translate-x-[-50%] bg-white rounded-full cursor-pointer embla__button embla__next  w-9 aspect-square  swiper-button image-swiperthumb-button-next shadow-base top-1/2 -translate-y-1/2 right-0  lg:top-[92%] lg:left-[50%] lg:-translate-y-0 ${
             matches ? 'flex-col' : 'flex-row'
           }`}
           onClick={scrollNext}
