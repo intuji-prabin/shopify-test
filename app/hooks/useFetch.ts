@@ -7,7 +7,7 @@ type FetchParams = {
   url: string;
 };
 
-export async function useFetch({
+export async function useFetch<T>({
   method = AllowedHTTPMethods.GET,
   body,
   url,
@@ -22,5 +22,5 @@ export async function useFetch({
   };
 
   const response = await fetch(url, fetchOptions);
-  return await response.json();
+  return await response.json<T>();
 }
