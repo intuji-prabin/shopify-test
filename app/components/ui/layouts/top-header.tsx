@@ -1,12 +1,6 @@
 import {FaSearch} from 'react-icons/fa';
 import {Form, Link} from '@remix-run/react';
-import {
-  Heart,
-  Notification,
-  Ordertrack,
-  Logout,
-  UserProfile,
-} from '~/components/icons/orderStatus';
+import {Heart, Logout, UserProfile} from '~/components/icons/orderStatus';
 import {useState} from 'react';
 import {Button} from '~/components/ui/button';
 import {
