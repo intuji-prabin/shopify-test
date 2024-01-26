@@ -19,31 +19,11 @@ export const SingleNavItem = ({
   const menuRef = useRef<HTMLLIElement>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if ((event.target as Node).nodeName.toLowerCase() === 'span') {
-        return;
-      }
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setActiveMenu('');
-      }
-    };
-
-    // Bind the event listener
-    document.addEventListener('mousedown', (event) =>
-      handleClickOutside(event),
-    );
-    //Clean up function => Cleaning up our Event Listeners
-    return () => {
-      // Unbind the event listener on clean up
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
   return (
     <>
       <li
         className=" flex flex-row items-center justify-center p-3
-          text-white italic font-bold text-lg gap-1  menu-items active:bg-primary-600 hover:bg-transparent"
+          text-white italic font-bold text-lg gap-1  menu-items active:bg-primary-600 hover:bg-transparent group"
         ref={menuRef}
       >
         <div className="flex items-center gap-1 relative menu-links">
@@ -76,14 +56,16 @@ export const SingleNavItem = ({
                   <ArrowDown />
                 )}
               </button>
-              <DropdownMenu
-                submenus={menu.submenu}
-                isOpen={activeMenu === menu.title}
-                activeMenu={activeMenu}
-                closeMenu={() => setActiveMenu('')}
-                type={menu.type === 'megamenu' ? 'megamenu' : 'normal'}
-                categories={categories}
-              />
+              <div className={'group-hover:inline-block hidden absolute'}>
+                <DropdownMenu
+                  submenus={menu.submenu}
+                  isOpen={activeMenu === menu.title}
+                  activeMenu={activeMenu}
+                  closeMenu={() => setActiveMenu('')}
+                  type={menu.type === 'megamenu' ? 'megamenu' : 'normal'}
+                  categories={categories}
+                />
+              </div>
             </>
           ) : (
             <Link to={menu.url}>{menu.title}</Link>

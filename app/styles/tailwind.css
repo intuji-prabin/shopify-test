@@ -262,6 +262,16 @@ label .required {
   height: 14px;
   width: 26px;
 }
+
+.dropdown-content:after {
+  content: '';
+  display: block;
+  height: 20px;
+  position: absolute;
+  top: -20px;
+  width: 100%;
+}
+
 .megamenu-content:before {
   border-left: 20px solid transparent;
   border-right: 20px solid transparent;
@@ -276,6 +286,15 @@ label .required {
   transform: rotate(180deg);
   height: 14px;
   width: 26px;
+}
+
+.megamenu-content:after {
+  content: '';
+  display: block;
+  height: 20px;
+  position: absolute;
+  top: -20px;
+  width: 100%;
 }
 .menu-hov {
   @apply hover:bg-primary-100 hover:text-primary-500 active:bg-primary-100 active:text-primary-500 z-10;
