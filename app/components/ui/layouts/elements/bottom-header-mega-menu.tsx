@@ -11,13 +11,7 @@ export interface ICategory {
   child_categories?: ICategory[];
 }
 
-export const MegaMenu = ({
-  isOpen,
-  categories,
-}: {
-  isOpen: boolean;
-  categories: any;
-}) => {
+export const MegaMenu = ({categories}: {categories: any}) => {
   //State to store the selected/active menu and submenu IDs
   const [activeMenu, setActiveMenu] = useState<{
     menu: ICategory;
@@ -28,9 +22,7 @@ export const MegaMenu = ({
   });
   return (
     <div
-      className={`${
-        isOpen ? 'opacity-100' : 'hidden'
-      } transition-opacity megamenu-content p-3  text-black shadow-xl absolute bg-white top-12 -left-8  flex flex-row z-10 mt-0`}
+      className={`transition-opacity megamenu-content p-3  text-black shadow-xl absolute bg-white top-8 -left-8  flex flex-row z-10`}
     >
       {/* Level 1 Menus Begin Here */}
       <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10 pr-2">

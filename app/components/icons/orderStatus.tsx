@@ -218,15 +218,25 @@ export function Cart({fillColor = '#969C9C'}: {fillColor?: string}) {
   );
 }
 
-export function Heart({fillColor = '#969C9C'}: {fillColor?: string}) {
+export function Heart({
+  fillColor = '#969C9C',
+  width = '20',
+  height = '20',
+  className,
+}: {
+  fillColor?: string;
+  width?: string;
+  height?: string;
+  className?: string;
+}) {
   return (
     <svg
-      width="20"
-      height="20"
+      width={width}
+      height={height}
       viewBox="0 0 20 20"
       fill={fillColor}
       xmlns="http://www.w3.org/2000/svg"
-      className="min-h-5 min-w-5"
+      className={className}
     >
       <path
         d="M17.048 3.82611C16.6408 3.40569 16.1573 3.07219 15.6251 2.84465C15.0929 2.61711 14.5225 2.5 13.9464 2.5C13.3704 2.5 12.7999 2.61711 12.2677 2.84465C11.7356 3.07219 11.252 3.40569 10.8448 3.82611L9.99963 4.69821L9.15446 3.82611C8.33186 2.9773 7.21618 2.50044 6.05285 2.50044C4.88952 2.50044 3.77383 2.9773 2.95123 3.82611C2.12864 4.67492 1.6665 5.82616 1.6665 7.02656C1.6665 8.22696 2.12864 9.37819 2.95123 10.227L3.7964 11.0991L9.99963 17.5L16.2029 11.0991L17.048 10.227C17.4555 9.80679 17.7787 9.30785 17.9992 8.75871C18.2197 8.20957 18.3332 7.62097 18.3332 7.02656C18.3332 6.43214 18.2197 5.84355 17.9992 5.2944C17.7787 4.74526 17.4555 4.24633 17.048 3.82611Z"

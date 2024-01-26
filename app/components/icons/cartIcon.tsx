@@ -3,8 +3,8 @@ import type {SVGProps} from 'react';
 export const CartIcon = ({
   fill = '#FFE600',
   className,
-  width = 16,
-  height = 16,
+  width = 20,
+  height = 20,
 }: SVGProps<SVGSVGElement>) => {
   return (
     <svg

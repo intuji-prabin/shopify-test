@@ -19,31 +19,11 @@ export const SingleNavItem = ({
   const menuRef = useRef<HTMLLIElement>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if ((event.target as Node).nodeName.toLowerCase() === 'span') {
-        return;
-      }
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setActiveMenu('');
-      }
-    };
-
-    // Bind the event listener
-    document.addEventListener('mousedown', (event) =>
-      handleClickOutside(event),
-    );
-    //Clean up function => Cleaning up our Event Listeners
-    return () => {
-      // Unbind the event listener on clean up
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
   return (
     <>
       <li
         className=" flex flex-row items-center justify-center p-3
-          text-white italic font-bold text-lg gap-1  menu-items active:bg-primary-600 hover:bg-transparent"
+          text-white italic font-bold text-lg gap-1  menu-items active:bg-primary-600 hover:bg-transparent group"
         ref={menuRef}
       >
         <div className="flex items-center gap-1 relative menu-links">
@@ -57,25 +37,11 @@ export const SingleNavItem = ({
               <button
                 type="button"
                 aria-haspopup="menu"
-                className={`flex gap-2 items-center font-bold italic text-lg arrow-toggle  focus:outline-none ${
-                  activeMenu === menu.title ? 'text-secondary-500' : ''
+                className={`flex gap-2 items-center font-bold italic text-lg arrow-toggle  focus:outline-none 
                 }`}
                 aria-expanded={activeMenu === menu.title ? 'true' : 'false'}
-                onClick={() => {
-                  if (menu.title === 'Product') {
-                    setActiveMenu('');
-                    return;
-                  }
-                  setActiveMenu(menu.title);
-                }}
                 onMouseEnter={() => {
-                  if (menu.title === 'Product') {
-                    setActiveMenu(menu.title);
-                  } else {
-                    if (activeMenu === 'Product') {
-                      setActiveMenu('');
-                    }
-                  }
+                  setActiveMenu(menu.title);
                 }}
               >
                 {menu.title === 'Product' ? (
@@ -83,20 +49,24 @@ export const SingleNavItem = ({
                 ) : (
                   <>{menu.title} </>
                 )}
-                {activeMenu === menu.title ? (
+                <span className="hidden group-hover:block">
                   <ArrowUp fillColor="#FFE600" />
-                ) : (
+                </span>
+
+                <span className="block group-hover:hidden ">
                   <ArrowDown />
-                )}
+                </span>
               </button>
-              <DropdownMenu
-                submenus={menu.submenu}
-                isOpen={activeMenu === menu.title}
-                activeMenu={activeMenu}
-                closeMenu={() => setActiveMenu('')}
-                type={menu.type === 'megamenu' ? 'megamenu' : 'normal'}
-                categories={categories}
-              />
+              <div className={'group-hover:inline-block hidden absolute'}>
+                <DropdownMenu
+                  submenus={menu.submenu}
+                  isOpen={activeMenu === menu.title}
+                  activeMenu={activeMenu}
+                  closeMenu={() => setActiveMenu('')}
+                  type={menu.type === 'megamenu' ? 'megamenu' : 'normal'}
+                  categories={categories}
+                />
+              </div>
             </>
           ) : (
             <Link to={menu.url}>{menu.title}</Link>
