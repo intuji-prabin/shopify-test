@@ -63,9 +63,12 @@ function transformCustomer(customer: Customer): TeamColumn {
   };
 }
 
-export async function getAllTeams() {
+export async function getAllTeams({query}: {query: string | null}) {
   const body = JSON.stringify({
     query: GET_TEAM_MEMBER_QUERY,
+    variables: {
+      name: query,
+    },
   });
   const results = await useFetch<ResponseData>({
     method: AllowedHTTPMethods.POST,
@@ -109,8 +112,8 @@ export async function updateStatus({
   return results;
 }
 
-const GET_TEAM_MEMBER_QUERY = `query {
-  customers(first:40) {
+const GET_TEAM_MEMBER_QUERY = `query getCustomers($name:String){
+  customers(first:40, query:$name) {
     nodes {
         id
       email

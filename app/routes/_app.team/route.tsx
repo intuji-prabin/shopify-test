@@ -25,7 +25,9 @@ import {validationError} from 'remix-validated-form';
 
 export async function loader({request, context}: LoaderFunctionArgs) {
   try {
-    const results = await getAllTeams();
+    const {searchParams} = new URL(request.url);
+    const query = searchParams.get('search');
+    const results = await getAllTeams({query});
     return json({results});
   } catch (error) {
     console.log('error', error);
