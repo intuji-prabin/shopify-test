@@ -14,4 +14,5 @@ export const Routes = {
   SUPPORT_SCHEDULE_CALL: '/support/schedule-call',
   PROMOTION: '/promotions',
   PLACE_AN_ORDER: '/place-an-order',
+  COMPANY_INFORMATION:'/company-info'
 };

@@ -93,7 +93,7 @@ export const menuItemsData = [
   {
     title: 'Company Information',
     type: 'link',
-    url: '/settings',
+    url: '/company-info',
     icon: <Settings />,
   },
 ];
