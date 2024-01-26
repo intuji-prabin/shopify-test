@@ -75,7 +75,7 @@ export const menuItemsData = [
   {
     title: 'My Team',
     type: 'link',
-    url: '/about',
+    url: '/team',
     icon: <MyTeam />,
   },
   {
@@ -93,7 +93,7 @@ export const menuItemsData = [
   {
     title: 'Company Information',
     type: 'link',
-    url: '/settings',
+    url: '/company-info',
     icon: <Settings />,
   },
 ];
