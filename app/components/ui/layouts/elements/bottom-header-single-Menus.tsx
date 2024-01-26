@@ -61,21 +61,8 @@ export const SingleNavItem = ({
                   activeMenu === menu.title ? 'text-secondary-500' : ''
                 }`}
                 aria-expanded={activeMenu === menu.title ? 'true' : 'false'}
-                onClick={() => {
-                  if (menu.title === 'Product') {
-                    setActiveMenu('');
-                    return;
-                  }
-                  setActiveMenu(menu.title);
-                }}
                 onMouseEnter={() => {
-                  if (menu.title === 'Product') {
-                    setActiveMenu(menu.title);
-                  } else {
-                    if (activeMenu === 'Product') {
-                      setActiveMenu('');
-                    }
-                  }
+                  setActiveMenu(menu.title);
                 }}
               >
                 {menu.title === 'Product' ? (

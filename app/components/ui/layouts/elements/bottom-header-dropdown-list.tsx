@@ -1,7 +1,8 @@
 import useOutsideHover from '~/hooks/useOutsideHover';
 
 import {NormalMenuList} from './bottom-header-dropdown-menu';
-import {MegaMenu} from './Bottom-header-mega-menu';
+import {MegaMenu} from './bottom-header-mega-menu';
+import {menuItemsData} from './bottom-header-menu-items';
 
 export const DropdownMenu = ({
   activeMenu,
@@ -22,8 +23,9 @@ export const DropdownMenu = ({
 }) => {
   const {targetRef} = useOutsideHover({
     handleOutsideHover: closeMenu,
-    condition: activeMenu === 'Product',
+    condition: menuItemsData.some((item) => item && activeMenu === item.title),
   });
+
   return (
     <div ref={targetRef}>
       {type === 'megamenu' ? (

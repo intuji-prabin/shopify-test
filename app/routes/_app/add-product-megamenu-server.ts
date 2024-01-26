@@ -1,11 +1,12 @@
 import {useFetch} from '~/hooks/useFetch';
+import { ENDPOINT } from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 
 
 export async function getCategories() {
   const results:any= await useFetch({
     method: AllowedHTTPMethods.GET,
-    url: "https://casual-mink-routinely.ngrok-free.app/api/product/category",
+    url: ENDPOINT.  CUSTOM.CATEGORY_URL,
   });
 
   if (!results) {
