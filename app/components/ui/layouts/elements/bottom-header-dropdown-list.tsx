@@ -1,7 +1,7 @@
 import useOutsideHover from '~/hooks/useOutsideHover';
 
 import {NormalMenuList} from './bottom-header-dropdown-menu';
-import {MegaMenu} from './Bottom-header-mega-menu';
+import {MegaMenu} from './bottom-header-mega-menu';
 
 export const DropdownMenu = ({
   activeMenu,

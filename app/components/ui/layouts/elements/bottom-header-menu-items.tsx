@@ -75,7 +75,7 @@ export const menuItemsData = [
   {
     title: 'My Team',
     type: 'link',
-    url: '/about',
+    url: '/team',
     icon: <MyTeam />,
   },
   {
