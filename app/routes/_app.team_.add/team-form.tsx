@@ -1,27 +1,28 @@
-import {useState} from 'react';
-import {z} from 'zod';
-import {withZod} from '@remix-validated-form/with-zod';
-import {ValidatedForm, useFormContext} from 'remix-validated-form';
-import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
-import {Input} from '~/components/ui/input';
-import {Separator} from '~/components/ui/separator';
-import {zfd} from 'zod-form-data';
+import { withZod } from '@remix-validated-form/with-zod';
+import { useState } from 'react';
+import { ValidatedForm, useFormContext } from 'remix-validated-form';
+import { z } from 'zod';
+import { zfd } from 'zod-form-data';
+import { Button } from '~/components/ui/button';
 import ImageUploadInput from '~/components/ui/image-upload-input';
-import {Button} from '~/components/ui/button';
+import { Input } from '~/components/ui/input';
+import SelectInput, { SelectInputOptions } from '~/components/ui/select-input';
+import { Separator } from '~/components/ui/separator';
 import {
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE_MB,
 } from '~/lib/constants/form.constant';
-import {AustralianPhoneNumberValidationRegex} from '~/lib/constants/regex.constant';
+import { AustralianPhoneNumberValidationRegex } from '~/lib/constants/regex.constant';
 
 type TeamFormProps = {
-  defaultValues?: Omit<TeamFormType, 'profileImage'> & {
+  defaultValues?: Omit<AddTeamFormType, 'profileImage'> & {
     profileImageUrl: string;
   };
   options: SelectInputOptions[];
+  companyId?: string;
 };
 
-const TeamFormSchema = z.object({
+const EditTeamFormSchema = z.object({
   profileImage: zfd.file(
     z
       .custom<File | undefined>()
@@ -39,37 +40,47 @@ const TeamFormSchema = z.object({
         return true;
       }, 'Max file size is 15MB.'),
   ),
-  fullName: z.string().trim().min(1, {message: 'Full Name is required'}),
+  fullName: z.string().trim().min(1, { message: 'Full Name is required' }),
   email: z
     .string()
-    .min(1, {message: 'Email is required'})
+    .min(1, { message: 'Email is required' })
     .email()
     .trim()
     .toLowerCase(),
   phoneNumber: z
     .string()
-    .min(1, {message: 'Phone Number is required'})
+    .min(1, { message: 'Phone Number is required' })
     .trim()
     .refine(
       (value) => AustralianPhoneNumberValidationRegex.test(value),
       'Invalid Phone Number',
     ),
-  address: z.string().min(1, {message: 'Address is required'}).trim(),
-  userRole: z.string().min(1, {message: 'User Role is required'}).trim(),
+  address: z.string().min(1, { message: 'Address is required' }).trim(),
+  userRole: z.string().min(1, { message: 'User Role is required' }).trim(),
+  customerId: z.string()
 });
+const AddTeamFormSchema = EditTeamFormSchema.omit({ customerId: true }).extend({
+  customerID: z.string().optional()
+})
 
-export const TeamFormSchemaValidator = withZod(TeamFormSchema);
+export const EditTeamFormSchemaValidator = withZod(EditTeamFormSchema);
+export const AddTeamFormSchemaValidator = withZod(AddTeamFormSchema);
 
-export type TeamFormType = z.infer<typeof TeamFormSchema>;
 
-export type TeamFormFieldNameType = keyof TeamFormType;
+export type EditTeamFormType = z.infer<typeof EditTeamFormSchema>;
+export type AddTeamFormType = z.infer<typeof AddTeamFormSchema>;
 
-export default function TeamForm({defaultValues, options}: TeamFormProps) {
+
+export type EditTeamFormFieldNameType = keyof EditTeamFormType;
+export type AddTeamFormFieldNameType = keyof AddTeamFormType;
+
+
+export default function TeamForm({ defaultValues, options, companyId }: TeamFormProps) {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
-  const {reset} = useFormContext('add-team-form');
+  const { reset } = useFormContext('add-team-form');
 
   const updatePermissions = (value: string) => {
     setSelectedRole(value);
@@ -84,12 +95,12 @@ export default function TeamForm({defaultValues, options}: TeamFormProps) {
       method="post"
       encType="multipart/form-data"
       id="add-team-form"
-      className="bg-neutral-white p-6 relative"
+      className="relative p-6 bg-neutral-white"
       defaultValues={defaultValues}
-      validator={TeamFormSchemaValidator}
+      validator={AddTeamFormSchemaValidator}
       onChange={() => setHasUnsavedChanges(true)}
     >
-      <div className="grid sm:grid-cols-4 gap-4">
+      <div className="grid gap-4 sm:grid-cols-4">
         <div className="sm:col-start-1 sm:col-end-2">
           <h5>Basic Information</h5>
           <p>View and change the user information</p>
@@ -128,11 +139,17 @@ export default function TeamForm({defaultValues, options}: TeamFormProps) {
               label="Address"
               placeholder="address"
             />
+            <Input
+              type="hidden"
+              name="customerId"
+              value={companyId}
+              placeholder="member full name"
+            />
           </div>
         </div>
       </div>
       <Separator className="my-8" />
-      <div className="grid sm:grid-cols-4 gap-4">
+      <div className="grid gap-4 sm:grid-cols-4">
         <div className="sm:col-start-1 sm:col-end-2">
           <h5>User Roles</h5>
           <p>Set the user roles, change teams</p>
@@ -151,15 +168,15 @@ export default function TeamForm({defaultValues, options}: TeamFormProps) {
               />
             </div>
             {selectedRole && (
-              <div className="bg-primary-50 p-6">
-                <h4 className="capitalize pb-4">
+              <div className="p-6 bg-primary-50">
+                <h4 className="pb-4 capitalize">
                   {selectedRole} role permissions
                 </h4>
                 <ul className="pl-5">
                   {roles?.map((role) => (
                     <li
                       key={role.id}
-                      className="list-disc text-grey-700 font-normal text-base"
+                      className="text-base font-normal list-disc text-grey-700"
                     >
                       {role.title}
                     </li>
