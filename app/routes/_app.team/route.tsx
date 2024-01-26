@@ -1,18 +1,61 @@
-import {Link, useSearchParams} from '@remix-run/react';
+import {Link, useLoaderData} from '@remix-run/react';
 import {BackButton} from '~/components/ui/back-button';
 import {Button} from '~/components/ui/button';
 import {SearchInput} from '~/components/ui/search-input';
 import {useColumn} from '~/routes/_app.team/use-column';
-import {TeamData} from './team-data';
 import {DataTable} from '~/components/ui/data-table';
-import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
 import {useTable} from '~/hooks/useTable';
 import {Routes} from '~/lib/constants/routes.constent';
 import {Separator} from '~/components/ui/separator';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  json,
+} from '@remix-run/server-runtime';
+import {getAllTeams, updateStatus} from './team.server';
+import {ConfirmationFormSchemaValidator} from './confirmation-form';
+import {validationError} from 'remix-validated-form';
+
+export async function loader({request, context}: LoaderFunctionArgs) {
+  try {
+    const {searchParams} = new URL(request.url);
+    const query = searchParams.get('search');
+    const results = await getAllTeams({query});
+    return json({results});
+  } catch (error) {
+    console.log('error', error);
+
+    // return json({});
+  }
+}
+
+export async function action({request}: ActionFunctionArgs) {
+  try {
+    const result = await ConfirmationFormSchemaValidator.validate(
+      await request.formData(),
+    );
+
+    if (result.error) {
+      return validationError(result.error);
+    }
+    console.log('value', result.data);
+    if (result.data.confirmation === 'deactivate') {
+      const customerId = result.data.customerId;
+      const value = 'true';
+      await updateStatus({customerId, value});
+    }
+
+    return json({});
+  } catch (error) {
+    console.log('error', error);
+    return json({});
+  }
+}
 
 export default function TeamPage() {
+  const {results} = useLoaderData<typeof loader>();
   const {columns} = useColumn();
-  const {table} = useTable(columns, TeamData);
+  const {table} = useTable(columns, results);
 
   return (
     <section className="container">
@@ -31,12 +74,6 @@ export default function TeamPage() {
         </div>
       </div>
       <DataTable table={table} />
-      <div className="bg-neutral-white py-4 px-6 border-t flex items-center justify-between">
-        <p className="w-40 text-grey-400 font-medium">
-          1-7 of {TeamData.length} Items
-        </p>
-        <PaginationWrapper pageSize={5} totalCount={TeamData.length} />
-      </div>
     </section>
   );
 }
