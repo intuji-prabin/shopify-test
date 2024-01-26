@@ -422,11 +422,11 @@ label .required {
 .menu-icon.active button svg {
   @apply fill-secondary-500;
 }
-
+/* 
 .menu-icon.active svg,
 .menu-icon.active svg path {
   @apply fill-secondary-500;
-}
+} */
 .menu-links:hover button svg {
   @apply fill-secondary-500;
 }

@@ -37,8 +37,7 @@ export const SingleNavItem = ({
               <button
                 type="button"
                 aria-haspopup="menu"
-                className={`flex gap-2 items-center font-bold italic text-lg arrow-toggle  focus:outline-none ${
-                  activeMenu === menu.title ? 'text-secondary-500' : ''
+                className={`flex gap-2 items-center font-bold italic text-lg arrow-toggle  focus:outline-none 
                 }`}
                 aria-expanded={activeMenu === menu.title ? 'true' : 'false'}
                 onMouseEnter={() => {
@@ -50,11 +49,13 @@ export const SingleNavItem = ({
                 ) : (
                   <>{menu.title} </>
                 )}
-                {activeMenu === menu.title ? (
+                <span className="hidden group-hover:block">
                   <ArrowUp fillColor="#FFE600" />
-                ) : (
+                </span>
+
+                <span className="block group-hover:hidden ">
                   <ArrowDown />
-                )}
+                </span>
               </button>
               <div className={'group-hover:inline-block hidden absolute'}>
                 <DropdownMenu
