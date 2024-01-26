@@ -1,16 +1,9 @@
-import {
-  Link,
-  useActionData,
-  useLoaderData,
-  useSearchParams,
-} from '@remix-run/react';
+import {Link, useLoaderData} from '@remix-run/react';
 import {BackButton} from '~/components/ui/back-button';
 import {Button} from '~/components/ui/button';
 import {SearchInput} from '~/components/ui/search-input';
 import {useColumn} from '~/routes/_app.team/use-column';
-import {TeamData} from './team-data';
 import {DataTable} from '~/components/ui/data-table';
-import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
 import {useTable} from '~/hooks/useTable';
 import {Routes} from '~/lib/constants/routes.constent';
 import {Separator} from '~/components/ui/separator';
