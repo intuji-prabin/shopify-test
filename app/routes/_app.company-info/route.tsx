@@ -1,7 +1,7 @@
 import {Link} from '@remix-run/react';
 import {settingCards} from './settingCards';
 
-export default function Settings() {
+export default function CompanySettings() {
   return (
     <>
       <div className="bg-primary-25 container py-12 ">

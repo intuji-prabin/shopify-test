@@ -1,12 +1,6 @@
 import {FaSearch} from 'react-icons/fa';
 import {Form, Link} from '@remix-run/react';
-import {
-  Heart,
-  Notification,
-  Ordertrack,
-  Logout,
-  UserProfile,
-} from '~/components/icons/orderStatus';
+import {Heart, Logout, UserProfile} from '~/components/icons/orderStatus';
 import {useState} from 'react';
 import {Button} from '~/components/ui/button';
 import {
@@ -24,11 +18,10 @@ import {NotificationIcon} from '~/components/icons/notification';
 
 export default function TopHeader() {
   const [isClicked, setIsClicked] = useState(false);
-  const [isTrackAnOrderOpen, setTrackAnOrderOpen] = useState(false);
   const navIcons = [
     {
       id: 1,
-      icon: <CartIcon />,
+      icon: <CartIcon width={'20px'} height={'20px'} />,
       url: '/cart',
       title: 'cart',
       notification: '3',
@@ -42,7 +35,7 @@ export default function TopHeader() {
     },
     {
       id: 3,
-      icon: <Heart />,
+      icon: <Heart width={'20px'} height={'20px'} />,
       url: '/heart',
       title: 'Heart',
       notification: '3',
@@ -86,7 +79,9 @@ export default function TopHeader() {
                         <div className="absolute bg-semantic-danger-500 h-[14px] w-[14px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium p-2">
                           {navIcon.notification}
                         </div>
-                        <span className="nav-link">{navIcon.icon}</span>
+                        <Link to="" className="nav-link">
+                          {navIcon.icon}
+                        </Link>
                       </Link>
                     </div>
                   </li>

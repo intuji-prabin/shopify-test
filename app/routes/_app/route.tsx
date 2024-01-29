@@ -2,7 +2,7 @@ import { Outlet, useLoaderData } from '@remix-run/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
 import TopHeader from '~/components/ui/layouts/top-header';
-import { getCategories } from './app.server';
+import { getCategories } from './add-product-megamenu-server';
 import { json } from '@remix-run/server-runtime';
 
 export async function loader() {
