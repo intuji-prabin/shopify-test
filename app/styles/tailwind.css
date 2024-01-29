@@ -255,7 +255,7 @@ label .required {
   border-top: 23px solid;
   content: '';
   left: 16%;
-  top: -11%;
+  top: -1rem;
   position: absolute;
   border-top-color: #fff;
   transform: rotate(180deg);
@@ -675,6 +675,10 @@ div[data-state='open'].fixed.inset-0 {
 
 .track-an-order .track-order {
   @apply !top-[10%] !right-4 shadow-[unset];
+}
+/* underline for lsubmenu  of reosurces in bottom header */
+.menus li:nth-child(7):hover ul li a h5 {
+  text-decoration: underline;
 }
 
 /* whislist table css starts here */
