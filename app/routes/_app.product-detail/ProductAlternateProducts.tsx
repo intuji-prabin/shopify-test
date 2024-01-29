@@ -8,6 +8,7 @@ type ProductCardInfoProps = {
   product_name: string;
   buy_price: number;
   rpp_price: number;
+  gst_rrp: string;
 };
 
 // Product Card Image Props
@@ -17,11 +18,17 @@ type ProductCardImageProps = {
   is_favorited: boolean;
 };
 
+// product cards button
+type ProductCartButtons = {
+  view_details: string;
+  add_to_cart: string;
+};
 // Product Card Info Component
 export function ProductCardInfo({
   sku,
   product_name,
   rpp_price,
+  gst_rrp,
 }: ProductCardInfoProps) {
   return (
     <div className="p-4 flex flex-col gap-6">
@@ -39,11 +46,14 @@ export function ProductCardInfo({
             <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
               ${rpp_price}
             </h3>
-            <p className="text-[14px] font-normal leading-4">Inc. GST RRP</p>
+            <p className="text-[14px] font-normal leading-4">{gst_rrp}</p>
           </div>
         </div>
       </div>
-      <ProductCardButtons />
+      <ProductCardButtons
+        view_details={'view details'}
+        add_to_cart={'add to cart'}
+      />
     </div>
   );
 }
@@ -51,7 +61,6 @@ export function ProductCardInfo({
 // Product Card Image Component
 export function ProductCardImage({
   product_image_url,
-  is_buy_qty_available,
   is_favorited,
 }: ProductCardImageProps) {
   const [heartFill, setHeartFill] = useState(is_favorited);
@@ -76,33 +85,18 @@ export function ProductCardImage({
 }
 
 // Product Card Buttons Component
-export function ProductCardButtons() {
-  function handleViewDetail() {
-    console.log('view detail');
-  }
-
-  function handleAddToCart() {
-    console.log('add to cart');
-  }
-
+export function ProductCardButtons({
+  view_details,
+  add_to_cart,
+}: ProductCartButtons) {
   return (
     <div className="flex gap-2 justify-center items-center">
-      <Button
-        variant="primary"
-        size="default"
-        className="w-full"
-        onClick={handleViewDetail}
-      >
-        View Detail
+      <Button variant="primary" size="default" className="w-full">
+        {view_details}
       </Button>
 
-      <Button
-        variant="ghost"
-        size="default"
-        className="w-full"
-        onClick={handleAddToCart}
-      >
-        Add to Cart
+      <Button variant="ghost" size="default" className="w-full">
+        {add_to_cart}
       </Button>
     </div>
   );
@@ -128,6 +122,7 @@ export default function AlternativeProduct() {
               product_name="ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition"
               buy_price={649.22}
               rpp_price={799.87}
+              gst_rrp={'inc.gst'}
             />
           </div>
         ))}

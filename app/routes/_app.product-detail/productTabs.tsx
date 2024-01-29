@@ -6,7 +6,7 @@ import Specifications from './productSpecifications';
 import * as Tabs from '@radix-ui/react-tabs';
 import ProductFeatures from './productFeatures';
 import ProductFaq from './productFaq';
-import AlternativeProduct from './ProductAlternateProducts';
+import AlternativeProduct from './productAlternateProducts';
 
 const ProductTab = () => (
   <section className="tab-wrapper bg-white">

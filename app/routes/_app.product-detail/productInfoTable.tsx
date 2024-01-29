@@ -36,7 +36,13 @@ const invoices = [
   },
 ];
 
-export function ProductInfoTable() {
+export function ProductInfoTable({
+  quantity,
+  price,
+}: {
+  quantity: string;
+  price: string;
+}) {
   const [showAllRows, setShowAllRows] = useState(false);
   const defaultRowCount = 2;
 
@@ -53,10 +59,10 @@ export function ProductInfoTable() {
       <TableHeader>
         <TableRow className="bg-secondary-500 hover:bg-secondary-500">
           <TableHead className="text-base font-medium leading-[21px] text-grey-900 text-center">
-            Quantity
+            {quantity}
           </TableHead>
           <TableHead className="text-base font-medium leading-[21px] text-grey-900 text-center uppercase">
-            Price
+            {price}
           </TableHead>
         </TableRow>
       </TableHeader>
