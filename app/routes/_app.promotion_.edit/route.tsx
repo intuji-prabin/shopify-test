@@ -1,24 +1,24 @@
-import {useActionData, useNavigate} from '@remix-run/react';
-import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
-import {withZod} from '@remix-validated-form/with-zod';
+import { useActionData } from '@remix-run/react';
+import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
+import { withZod } from '@remix-validated-form/with-zod';
 import html2canvas from 'html2canvas';
-import {useRef, useState} from 'react';
-import {ValidatedForm, validationError} from 'remix-validated-form';
-import {z} from 'zod';
-import {zfd} from 'zod-form-data';
-import {ExportUp} from '~/components/icons/export';
-import {FullScreen} from '~/components/icons/full-screen';
+import { useRef, useState } from 'react';
+import { ValidatedForm, validationError } from 'remix-validated-form';
+import { z } from 'zod';
+import { zfd } from 'zod-form-data';
+import { ExportUp } from '~/components/icons/export';
+import { FullScreen } from '~/components/icons/full-screen';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import {BackButton} from '~/components/ui/back-button';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {Button} from '~/components/ui/button';
+import { BackButton } from '~/components/ui/back-button';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { Button } from '~/components/ui/button';
 import ColorPicker from '~/components/ui/color-picker';
-import {Dialog, DialogContent, DialogTrigger} from '~/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import ImageEdit from '~/components/ui/imageEdit';
 import Loader from '~/components/ui/loader';
-import {Separator} from '~/components/ui/separator';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import { Separator } from '~/components/ui/separator';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -60,7 +60,7 @@ export type EditFormType = z.infer<typeof EditFormValidator>;
 
 export type EditFormFieldNameType = keyof EditFormType;
 
-export async function action({request}: ActionFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const result = await EditFormSchemaValidator.validate(
     await request.formData(),
   );
@@ -72,10 +72,10 @@ export async function action({request}: ActionFunctionArgs) {
   const formData = new FormData();
   formData.append('file', result.submittedData.companyLogo);
 
-  return json({data: result});
+  return json({ data: result });
 }
 
-const PromotionEdit = ({defaultValues}: EditFormProps) => {
+const PromotionEdit = ({ defaultValues }: EditFormProps) => {
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState('');
@@ -89,7 +89,6 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
     textColor: '#0F1010',
     bgColor: '#f5f5f5',
   });
-  const navigate = useNavigate();
   const canvasRef = useRef<any>();
 
   const printDocument = (canvasRef: HTMLElement) => {
@@ -170,9 +169,8 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
             type="button"
             size="small"
             variant="ghost"
-            className={`border-primary-500 hover:bg-inherit ${
-              loading && 'pointer-events-none'
-            }`}
+            className={`border-primary-500 hover:bg-inherit ${loading && 'pointer-events-none'
+              }`}
             onClick={() => printDocument(canvasRef.current)}
           >
             {loading ? <Loader /> : <ExportUp />}Export
@@ -208,9 +206,8 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
                   style={{
                     width: renderedImageWidth && renderedImageWidth + 50,
                   }}
-                  className={`max-w-4xl ${
-                    !image && 'flex items-center justify-center'
-                  }`}
+                  className={`max-w-4xl ${!image && 'flex items-center justify-center'
+                    }`}
                 >
                   {image && renderedImageWidth ? (
                     <img

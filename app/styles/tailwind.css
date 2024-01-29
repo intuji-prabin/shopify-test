@@ -246,10 +246,12 @@ label .required {
 .menu-hov:hover span svg {
   @apply !fill-primary-500;
 }
-
+.menu-hov:hover h5 {
+  @apply text-primary-500;
+}
 .dropdown-content:before {
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
   border-top: 23px solid;
   content: '';
   left: 16%;
@@ -260,13 +262,23 @@ label .required {
   height: 14px;
   width: 26px;
 }
+
+.dropdown-content:after {
+  content: '';
+  display: block;
+  height: 20px;
+  position: absolute;
+  top: -20px;
+  width: 100%;
+}
+
 .megamenu-content:before {
   border-left: 20px solid transparent;
   border-right: 20px solid transparent;
   border-top: 23px solid;
   content: '';
   left: 40px;
-  top: -5%;
+  top: -56%;
   margin-left: -20px;
   margin-left: -23px;
   position: absolute;
@@ -274,6 +286,15 @@ label .required {
   transform: rotate(180deg);
   height: 14px;
   width: 26px;
+}
+
+.megamenu-content:after {
+  content: '';
+  display: block;
+  height: 20px;
+  position: absolute;
+  top: -20px;
+  width: 100%;
 }
 .menu-hov {
   @apply hover:bg-primary-100 hover:text-primary-500 active:bg-primary-100 active:text-primary-500 z-10;
@@ -287,12 +308,13 @@ label .required {
   border-top: 23px solid;
   content: '';
   right: 16%;
-  top: 9%;
+  top: 4%;
   position: absolute;
   border-top-color: #fff;
   transform: rotate(180deg);
   height: 14px;
   width: 26px;
+  z-index: -1;
 }
 
 /* HEADER CSS ENDS HERE */
@@ -331,13 +353,25 @@ label .required {
   }
 }
 .expenditure > div:last-child {
-  @apply after:content-none;
+  @apply after:mxs:content-none;
 }
 .expenditure > div:nth-child(3n-2) p {
   @apply text-primary-500;
 }
 .expenditure > div:nth-child(3n-1) p {
   @apply text-semantic-warning-500;
+}
+.promotion-view .dialog-close {
+  @apply right-4 top-4 shadow-none;
+}
+.promotion-view .dialog-close svg {
+  stroke: #636969;
+}
+.filter-select {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="11" height="6" viewBox="0 0 11 6" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M0.720316 0.469178C0.860942 0.328727 1.05157 0.249837 1.25032 0.249837C1.44907 0.249837 1.63969 0.328727 1.78032 0.469178L5.25032 3.93918L8.72032 0.469178C8.78898 0.395491 8.87178 0.336388 8.96378 0.295396C9.05578 0.254404 9.15509 0.232362 9.25579 0.230585C9.3565 0.228809 9.45653 0.247334 9.54991 0.285055C9.6433 0.322776 9.72814 0.378921 9.79935 0.450139C9.87057 0.521358 9.92672 0.606191 9.96444 0.69958C10.0022 0.792968 10.0207 0.892997 10.0189 0.993699C10.0171 1.0944 9.99509 1.19372 9.9541 1.28572C9.91311 1.37771 9.854 1.46052 9.78032 1.52918L5.78032 5.52918C5.63969 5.66963 5.44907 5.74852 5.25032 5.74852C5.05157 5.74852 4.86094 5.66963 4.72032 5.52918L0.720316 1.52918C0.579866 1.38855 0.500977 1.19793 0.500977 0.999177C0.500977 0.800427 0.579866 0.609803 0.720316 0.469178Z" fill="%23636969"/></svg>');
+  background-position-x: calc(100% - 16px);
+  background-position-y: 50%;
+  @apply !pr-10 appearance-none bg-no-repeat;
 }
 /* Responsive CSS */
 @media (min-width: 320px) {
@@ -388,11 +422,11 @@ label .required {
 .menu-icon.active button svg {
   @apply fill-secondary-500;
 }
-
+/* 
 .menu-icon.active svg,
 .menu-icon.active svg path {
   @apply fill-secondary-500;
-}
+} */
 .menu-links:hover button svg {
   @apply fill-secondary-500;
 }
@@ -592,33 +626,53 @@ label .required {
 
 /* Checkbox Input */
 input[type='checkbox'] {
-  @apply appearance-none w-4 h-4 align-text-top !p-0 outline-none leading-[0px] cursor-pointer bg-none border border-solid border-grey-200 relative;
-}
-
-input[type='checkbox']:checked {
-  @apply bg-primary-500 border border-solid border-primary-500 outline-none;
+  @apply appearance-none w-5 h-5 align-text-top !p-0 rounded-[4px] outline-none leading-[0px] cursor-pointer bg-none border-2 border-solid border-grey-200 relative checked:bg-primary-500 checked:border checked:border-solid checked:border-primary-500 checked:outline-none active:bg-neutral-white active:border-2 active:border-solid active:border-grey-200;
 }
 
 input[type='checkbox']:before {
-  @apply content-[""] absolute right-1/2 top-1/2 w-1 h-2.5 border-solid border-neutral-white border-t-0 border-r-2 border-b-2 border-l-0 -m-px -mx-1 mb-0  rotate-45 -translate-x-1/2 -translate-y-1/2 z-10;
+  @apply content-[""] absolute right-1/2 top-[45%] w-1 h-2.5 border-solid border-neutral-white border-t-0 border-r-2 border-b-2 border-l-0 -m-px -mx-1 mb-0  rotate-45 -translate-x-1/2 -translate-y-1/2 z-10;
 }
 
 .nav-list li:last-child div {
   right: -5px;
 }
 
-.menus li:active {
-  @apply bg-primary-600;
-}
-
-.menus li {
-  @apply px-4 py-3;
-}
-
 input[type='radio']:checked + label {
   @apply bg-primary-400 border-transparent;
 }
 
-.selectProductItem:hover {
-  @apply bg-primary-50 text-base font-normal text-grey-800;
+/* Product Detail Page Embla Carousel Styles Begin Here */
+.embla-thumbs__container button svg {
+  @apply h-5 w-5;
+}
+
+/* Styling Single Embla Slide */
+.embla-thumbs__container .embla__slide {
+  flex: 0 0 100%; /* Default slide covers 100% of the viewport */
+  max-height: 85px;
+  max-width: 85px;
+}
+@media (min-width: 1024px) {
+  .embla-thumbs__container .embla__slide {
+    flex: 0 0 50%; /* Breakpoint SM slide covers 50% of the viewport */
+    max-height: 85px;
+  }
+}
+/* Product Detail Page Embla Carousel Styles End Here */
+
+/* user login hover styles */
+.user-login-dropdown form button:hover h5 {
+  @apply text-primary-500;
+}
+
+.user-login-dropdown form button:hover svg path {
+  @apply fill-primary-500;
+}
+/* z-index for the view warehouse info drawer */
+div[data-state='open'].fixed.inset-0 {
+  z-index: 10;
+}
+
+.track-an-order .track-order {
+  @apply !top-[10%] !right-4 shadow-[unset];
 }

@@ -13,11 +13,7 @@ export const ENDPOINT = {
     DELETE: '/user/delete',
   },
   ROLE: {
-    CREATE: '/role/create',
-    GET: '/role/get',
-    GET_ALL: '/role/get-all',
-    UPDATE: '/role/update',
-    DELETE: '/role/delete',
+    GET: 'https://relaxing-hawk-ace.ngrok-free.app/api/customer-roles',
   },
   PERMISSION: {
     CREATE: '/permission/create',
@@ -79,5 +75,13 @@ export const ENDPOINT = {
     CREATE: '/shipping/create',
     GET: '/shipping/get',
     GET_ALL: '/shipping/get-all',
+  },
+  ADMIN: {
+    URL: 'https://intuji-test.myshopify.com/admin/api/2024-01/graphql.json',
+  },
+  CUSTOM: {
+    URL: 'https://casual-mink-routinely.ngrok-free.app/api',
+    CATEGORY_URL: 'https://casual-mink-routinely.ngrok-free.app/api/product/category',
+
   },
 };

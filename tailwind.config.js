@@ -15,6 +15,7 @@ module.exports = {
     extend: {
       screens: {
         '2xl': '1400px',
+        mxs: '480px',
         xs: '320px',
       },
       spacing: {
@@ -73,7 +74,7 @@ module.exports = {
           },
           success: {
             100: '#CFEED5',
-            500: '#3A8348',
+            500: '#3BBA53',
           },
           info: {
             100: '#ECEEF6',

@@ -11,11 +11,13 @@ import ConfirmationForm from '~/routes/_app.team/confirmation-form';
 
 type DeactivateDialogProps = {
   isOpen: boolean;
+  customerId: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export default function DeactivateDialog({
   isOpen,
+  customerId,
   setIsOpen,
 }: DeactivateDialogProps) {
   return (
@@ -54,7 +56,7 @@ export default function DeactivateDialog({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex !flex-col">
-          <ConfirmationForm setIsOpen={setIsOpen} />
+          <ConfirmationForm setIsOpen={setIsOpen} customerId={customerId} />
         </DialogFooter>
       </DialogContent>
     </Dialog>

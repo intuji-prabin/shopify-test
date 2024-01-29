@@ -144,3 +144,11 @@ export const responseMessage = {
   requestCancelled: 'The request has been cancelled.',
   itemNotFound: 'Item not found.',
 };
+
+export const MAX_FILE_SIZE_MB = 15;
+export const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+];

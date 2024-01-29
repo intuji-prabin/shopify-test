@@ -1,10 +1,10 @@
-import {Link} from '@remix-run/react';
-import {ColumnDef} from '@tanstack/react-table';
-import {useMemo, useState} from 'react';
-import {EditIcon} from '~/components/icons/edit';
-import {Button} from '~/components/ui/button';
-import {Switch} from '~/components/ui/switch';
-import {Routes} from '~/lib/constants/routes.constent';
+import { Form, Link } from '@remix-run/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { useMemo, useState } from 'react';
+import { EditIcon } from '~/components/icons/edit';
+import { Button } from '~/components/ui/button';
+import { Switch } from '~/components/ui/switch';
+import { Routes } from '~/lib/constants/routes.constent';
 import DeactivateDialog from '~/routes/_app.team/cell-action';
 
 export type TeamColumn = {
@@ -13,6 +13,7 @@ export type TeamColumn = {
   email: string;
   department: string;
   contactNumber: string;
+  status: boolean;
 };
 
 export function useColumn() {
@@ -32,7 +33,7 @@ export function useColumn() {
       },
       {
         accessorKey: 'department',
-        header: 'Deparment',
+        header: 'Department',
         enableSorting: false,
         cell: (info) => info.getValue(),
       },
@@ -47,14 +48,26 @@ export function useColumn() {
         header: 'Status',
         enableSorting: false,
         cell: (info) => {
+          const status = info.row.original.status;
+          const customerId = info.row.original.id;
           const [isChecked, setIsChecked] = useState<boolean>(false);
           return (
             <>
-              <Switch
-                checked={isChecked}
-                onCheckedChange={() => setIsChecked((prevState) => !prevState)}
+              <Form method="post">
+                <Switch
+                  type="submit"
+                  value="activate-customer"
+                  checked={status}
+                  onCheckedChange={() =>
+                    setIsChecked((prevState) => !prevState)
+                  }
+                />
+              </Form>
+              <DeactivateDialog
+                isOpen={isChecked}
+                setIsOpen={setIsChecked}
+                customerId={customerId}
               />
-              <DeactivateDialog isOpen={isChecked} setIsOpen={setIsChecked} />
             </>
           );
         },
@@ -64,7 +77,7 @@ export function useColumn() {
         header: 'Action',
         enableSorting: false,
         cell: (info) => {
-          const teamId = info.row.original.id;
+          const teamId = info.row.original.id.split('/').pop();
           return (
             <Link to={`${Routes.TEAM}/${teamId}`}>
               <Button
@@ -82,5 +95,5 @@ export function useColumn() {
     ],
     [],
   );
-  return {columns};
+  return { columns };
 }

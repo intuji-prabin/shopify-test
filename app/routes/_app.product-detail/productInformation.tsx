@@ -22,16 +22,20 @@ import {Link} from '@remix-run/react';
 import CarouselThumb from './carouselThumb';
 import {SliderImageData} from './slider-image-date';
 import {Product} from './route';
+import {useMediaQuery} from '../../hooks/useMediaQuery';
+import {WarehouseInformation} from './view-warehouse-information';
 
 export default function ProductInformation({product}: {product: Product}) {
+  const matches = useMediaQuery('(min-width: 1025px)');
   return (
     <section className="bg-white">
-      <div className="container flex gap-14 flex-col lg:flex-row">
+      <div className="container flex gap-6 lg:gap-14 flex-col lg:flex-row">
         <CarouselThumb
           images={SliderImageData}
-          thumbNailCarouseloptions={{axis: 'y'}}
+          thumbNailCarouseloptions={{axis: matches ? 'y' : 'x'}}
           mainCarouseloptions={{}}
         />
+
         <ProductDetailsSection isFavorited={product.isFavorited} />
       </div>
     </section>
@@ -72,12 +76,12 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
 
   return (
     <>
-      <div className="right-side-info flex flex-col gap-6 max-w-[588px] py-8">
+      <div className="right-side-info flex flex-col gap-6  max-w-[unset] lg::max-w-[480px] xl:max-w-[588px] py-8">
         <div className="top flex flex-col gap-6">
           <div className="">
-            <div className="flex justify-between">
+            <div className="flex justify-between mb-[26px]">
               <figure>
-                <img src="Logo.png" alt="" />
+                <img src="cigweld-logo.png" alt="" />
               </figure>
               <ul className="flex gap-[7px]">
                 <li className="w-[36px] h-[36px] flex justify-center items-center border-grey-50 border-[1px]">
@@ -130,11 +134,10 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
                 </div>
               </div>
             </div>
-            <div></div>
           </div>
           <div className="flex flex-col">
             <div className="flex flex-col gap-2">
-              <div className="flex gap-8 ">
+              <div className="flex gap-3 lg:gap-8 flex-col lg:flex-row ">
                 <ProductCardInfo
                   sku={''}
                   productName={''}
@@ -151,7 +154,7 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
                 </p>
               </div>
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-col lg:flex-row min-h-0 lg:min-h-14">
               <div className="flex">
                 <button
                   className=" border-[1px] border-grey-500  flex justify-center items-center w-[56px]"
@@ -189,12 +192,10 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
               Pickup available at <span>SUPERCHEAP AUTO NZ PTY LTD</span>
             </p>
             <p>Usually ready in 4 hours</p>
-            <Link
-              to=""
-              className="text-[14px] italic font-bolf leading-6 uppercase underline decoration-primary-500"
-            >
-              View WAREHOUSE information
-            </Link>
+            <WarehouseInformation
+              warehouseLink={'View WAREHOUSE information'}
+              pickupTitle={'Pick Availability'}
+            />
           </div>
         </div>
       </div>
@@ -218,12 +219,6 @@ function ProductCardInfo({
     <>
       <div className="p-4 flex flex-col gap-6">
         <div className="tag flex flex-col gap-[11px]">
-          <div>
-            <p className="text-base font-medium text-primary-500">{sku}</p>
-            <h5 className="text-lg italic font-bold leading-6 text-grey-900 line-clamp-2 text-ellipsis whitespace-normal h-12">
-              {productName}
-            </h5>
-          </div>
           <div className="flex gap-6">
             <div className="flex flex-col">
               <div className="flex items-center gap-1">
@@ -249,6 +244,9 @@ function ProductCardInfo({
             </div>
           </div>
         </div>
+        <p className="text-lg font-normal leading-[22px]">
+          Minimum Order (500 pieces)
+        </p>
       </div>
     </>
   );
@@ -263,11 +261,8 @@ export function SelectACountryDropdown({
 }) {
   return (
     <div className="flex flex-col">
-      <h3 className="text-base font-normal not-italic text-grey-800">
-        Country
-      </h3>
       <Select>
-        <SelectTrigger className="w-[120px] h-full text-base font-normal leading-[21px] not-italic">
+        <SelectTrigger className="w-[120px] h-full text-base font-normal leading-[21px] not-italic border-[1px] border-grey-500 rounded-none">
           <SelectValue placeholder={placeHolder} />
         </SelectTrigger>
         <SelectContent className="product-names">
