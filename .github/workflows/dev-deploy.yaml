@@ -35,5 +35,5 @@ jobs:
           key: ${{secrets.SSH_KEY_DEV}}
           script: |
             cd /home/cigweld/cigweld_front
-            npm install
+            
           
