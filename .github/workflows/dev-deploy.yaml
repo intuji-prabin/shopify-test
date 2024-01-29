@@ -25,7 +25,7 @@ jobs:
           remote_host: ${{secrets.DO_HOST_DEV}}
           remote_user: ${{secrets.SSH_USERNAME_DEV}}
           remote_key: ${{secrets.SSH_KEY_DEV}}
-          remote_path: /home/cigweld/cigweld_front
+          remote_path: /home/cigweld/cigweld_frontend
           
       - name: Deploy
         uses: appleboy/ssh-action@master
@@ -34,6 +34,6 @@ jobs:
           username: ${{secrets.SSH_USERNAME_DEV}}
           key: ${{secrets.SSH_KEY_DEV}}
           script: |
-            cd /home/cigweld/cigweld_front
+            cd /home/cigweld/cigweld_frontend
             
           
