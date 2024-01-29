@@ -1,5 +1,5 @@
-import {NormalMenuList} from './bottom-header-dropdown-menu';
-import {MegaMenu} from './bottom-header-mega-menu';
+import { NormalMenuList } from './bottom-header-dropdown-menu';
+import { MegaMenu } from './bottom-header-mega-menu';
 
 export const DropdownMenu = ({
   type,

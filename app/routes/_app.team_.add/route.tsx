@@ -1,7 +1,7 @@
-import {useLoaderData} from '@remix-run/react';
-import {validationError} from 'remix-validated-form';
-import {useFetch} from '~/hooks/useFetch';
-import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import { useLoaderData } from '@remix-run/react';
+import { validationError } from 'remix-validated-form';
+import { useFetch } from '~/hooks/useFetch';
+import { ENDPOINT } from '~/lib/constants/endpoint.constant';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -9,20 +9,20 @@ import {
   redirect,
 } from '@remix-run/server-runtime';
 import TeamForm, {
-  TeamFormSchemaValidator,
+  AddTeamFormSchemaValidator,
 } from '~/routes/_app.team_.add/team-form';
-import {BackButton} from '~/components/ui/back-button';
-import {addTeam} from '~/routes/_app.team_.add/add-team.server';
-import {isAuthenticate} from '~/lib/utils/authsession.server';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {Routes} from '~/lib/constants/routes.constent';
+import { BackButton } from '~/components/ui/back-button';
+import { addTeam } from '~/routes/_app.team_.add/add-team.server';
+import { isAuthenticate } from '~/lib/utils/authsession.server';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { Routes } from '~/lib/constants/routes.constent';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
-import {SelectInputOptions} from '~/components/ui/select-input';
+import { SelectInputOptions } from '~/components/ui/select-input';
 
 interface Role {
   title: string;
@@ -42,21 +42,21 @@ interface RolesResponse {
   status: boolean;
 }
 
-export async function loader({request}: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   try {
     await isAuthenticate(request);
-    const roles = (await useFetch({url: ENDPOINT.ROLE.GET})) as RolesResponse;
-    return json({roles});
+    const roles = (await useFetch({ url: ENDPOINT.ROLE.GET })) as RolesResponse;
+    return json({ roles });
   } catch (error) {
-    console.log('error', error);
+    return redirect('/login')
   }
 }
 
-export async function action({request, context}: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
   const messageSession = await getMessageSession(request);
 
   try {
-    const result = await TeamFormSchemaValidator.validate(
+    const result = await AddTeamFormSchemaValidator.validate(
       await request.formData(),
     );
 
@@ -64,7 +64,7 @@ export async function action({request, context}: ActionFunctionArgs) {
       return validationError(result.error);
     }
 
-    const {email, fullName, address, phoneNumber, userRole} = result.data;
+    const { email, fullName, address, phoneNumber, userRole } = result.data;
 
     await addTeam({
       address,
@@ -94,13 +94,12 @@ export async function action({request, context}: ActionFunctionArgs) {
         },
       );
     }
-    return json({error}, {status: 400});
+    return json({ error }, { status: 400 });
   }
 }
 
 export default function AddTeam() {
-  const {roles} = useLoaderData<typeof loader>();
-  console.log('roles', roles);
+  const { roles } = useLoaderData<typeof loader>();
 
   return (
     <section className="container">

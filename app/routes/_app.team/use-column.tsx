@@ -1,10 +1,10 @@
-import {Form, Link} from '@remix-run/react';
-import {ColumnDef} from '@tanstack/react-table';
-import {useMemo, useState} from 'react';
-import {EditIcon} from '~/components/icons/edit';
-import {Button} from '~/components/ui/button';
-import {Switch} from '~/components/ui/switch';
-import {Routes} from '~/lib/constants/routes.constent';
+import { Form, Link } from '@remix-run/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { useMemo, useState } from 'react';
+import { EditIcon } from '~/components/icons/edit';
+import { Button } from '~/components/ui/button';
+import { Switch } from '~/components/ui/switch';
+import { Routes } from '~/lib/constants/routes.constent';
 import DeactivateDialog from '~/routes/_app.team/cell-action';
 
 export type TeamColumn = {
@@ -33,7 +33,7 @@ export function useColumn() {
       },
       {
         accessorKey: 'department',
-        header: 'Deparment',
+        header: 'Department',
         enableSorting: false,
         cell: (info) => info.getValue(),
       },
@@ -95,5 +95,5 @@ export function useColumn() {
     ],
     [],
   );
-  return {columns};
+  return { columns };
 }
