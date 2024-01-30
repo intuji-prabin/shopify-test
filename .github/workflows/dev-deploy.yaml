@@ -21,7 +21,7 @@ jobs:
       - name: Rsync files
         uses: burnett01/rsync-deployments@5.2.1
         with:
-          switches: -avzr --delete --exclude=".git/" --exclude=".gitignore" --exclude=".github/" 
+          switches: -avzr --delete --exclude=".git/" --exclude=".gitignore" --exclude=".github/" --exclude="node_modules/"
           remote_host: ${{secrets.DO_HOST_DEV}}
           remote_user: ${{secrets.SSH_USERNAME_DEV}}
           remote_key: ${{secrets.SSH_KEY_DEV}}
@@ -35,5 +35,9 @@ jobs:
           key: ${{secrets.SSH_KEY_DEV}}
           script: |
             cd /home/cigweld/cigweld_frontend
+            npm install 
+            pm2 delete Cigweld_frontend
+            pm2 start "npm run dev" --name Cigweld_frontend
+
             
           
