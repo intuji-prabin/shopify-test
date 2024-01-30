@@ -48,7 +48,8 @@ export async function loader({context}: LoaderFunctionArgs) {
     const roles = (await useFetch({url: ENDPOINT.ROLE.GET})) as RolesResponse;
     return json({roles});
   } catch (error) {
-    return redirect('/login');
+    // return redirect('/login');
+    console.log(error);
   }
 }
 
