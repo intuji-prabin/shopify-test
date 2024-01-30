@@ -132,6 +132,7 @@ export class HydrogenSession {
         path: '/',
         sameSite: 'lax',
         secrets,
+        secure: true,
       },
     });
 
@@ -164,8 +165,11 @@ export class HydrogenSession {
     return this.#sessionStorage.destroySession(this.#session);
   }
 
-  commit() {
-    return this.#sessionStorage.commitSession(this.#session);
+  commit({rememberMe}: {rememberMe: boolean}) {
+    return this.#sessionStorage.commitSession(this.#session, {
+      // 30 days or 7 days => need improvements
+      maxAge: rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24 * 7,
+    });
   }
 }
 

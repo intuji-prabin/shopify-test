@@ -22,5 +22,10 @@ export async function useFetch<T>({
   };
 
   const response = await fetch(url, fetchOptions);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+
   return await response.json<T>();
 }
