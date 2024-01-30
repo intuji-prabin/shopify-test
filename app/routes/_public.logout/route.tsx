@@ -5,16 +5,16 @@ export async function loader() {
   return redirect('/');
 }
 
-export async function action({request, context}: ActionFunctionArgs) {
+export async function action({context}: ActionFunctionArgs) {
   try {
     const {storefront} = context;
-    const accessToken = (await getAccessToken(request)) as string;
+    const accessToken = (await getAccessToken(context)) as string;
     await storefront.mutate(LOGOUT_MUTATION, {
       variables: {
         customerAccessToken: accessToken,
       },
     });
-    return logout(request);
+    return logout(context);
   } catch (error) {
     return json({error}, {status: 400});
   }

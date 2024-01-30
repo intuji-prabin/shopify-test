@@ -1,5 +1,4 @@
-import {createCookieSessionStorage, redirect} from '@shopify/remix-oxygen';
-import {SESSION_SECRET} from '~/lib/constants/auth.constent';
+import {AppLoadContext, redirect} from '@shopify/remix-oxygen';
 import {
   getMessageSession,
   messageCommitSession,
@@ -9,75 +8,60 @@ import {
 const USER_SESSION_KEY = 'accessToken';
 const USER_DETAILS_KEY = 'userDetails';
 
-const sessionStorage = createCookieSessionStorage({
-  cookie: {
-    name: '__session',
-    httpOnly: true,
-    path: '/',
-    sameSite: 'lax',
-    secrets: [SESSION_SECRET],
-    secure: true,
-  },
-});
-
-export async function getSession(request: Request) {
-  const cookie = request.headers.get('cookie');
-  return sessionStorage.getSession(cookie);
-}
-
 export async function createUserSession({
   request,
   accessToken,
   rememberMe,
+  context,
+  customerData,
 }: {
   request: Request;
   accessToken: string;
   rememberMe: 'on' | undefined;
+  context: AppLoadContext;
+  customerData: any;
 }) {
-  const session = await getSession(request);
+  const {session} = context;
   const messageSession = await getMessageSession(request);
   session.set(USER_SESSION_KEY, accessToken);
+  session.set(USER_DETAILS_KEY, customerData);
   setSuccessMessage(messageSession, 'Login successfully');
 
   return redirect('/', {
     headers: [
-      [
-        'Set-Cookie',
-        await sessionStorage.commitSession(session, {
-          // 30 days or 7 days => need improvements
-          maxAge: rememberMe === 'on' ? 60 * 60 * 24 * 30 : 60 * 60 * 24 * 7,
-        }),
-      ],
+      ['Set-Cookie', await session.commit({rememberMe: rememberMe === 'on'})],
       ['Set-Cookie', await messageCommitSession(messageSession)],
     ],
   });
 }
 
 export async function getAccessToken(
-  request: Request,
+  context: AppLoadContext,
 ): Promise<string | undefined> {
-  const session = await getSession(request);
+  const {session} = context;
   const accessToken = session.get(USER_SESSION_KEY);
   return accessToken;
 }
 
-export async function isAuthenticate(request: Request) {
-  const accessToken = await getAccessToken(request);
+export async function isAuthenticate(context: AppLoadContext) {
+  const accessToken = await getAccessToken(context);
   if (!accessToken) {
     throw redirect('/login');
   }
   return accessToken;
 }
 
-export async function getUserDetails(request: Request) {
-  const session = await getSession(request);
+export async function getUserDetails(context: AppLoadContext) {
+  const {session} = context;
   const userDetails = session.get(USER_DETAILS_KEY);
+  console.log('userDetails', userDetails);
+
   return {userDetails};
 }
 
-export async function logout(request: Request) {
-  const session = await getSession(request);
+export async function logout(context: AppLoadContext) {
+  const {session} = context;
   return redirect('/', {
-    headers: {'Set-Cookie': await sessionStorage.destroySession(session)},
+    headers: {'Set-Cookie': await session.destroy()},
   });
 }
