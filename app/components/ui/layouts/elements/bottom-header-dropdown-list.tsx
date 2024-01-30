@@ -4,11 +4,13 @@ import { MegaMenu } from './bottom-header-mega-menu';
 export const DropdownMenu = ({
   type,
   categories,
+  submenus,
 }: {
   activeMenu: string;
   submenus: {
     title: string;
-    url: string;
+    url?: string;
+    icon?: JSX.Element;
   }[];
   isOpen: boolean;
   closeMenu: () => void;
@@ -20,7 +22,7 @@ export const DropdownMenu = ({
       {type === 'megamenu' ? (
         <MegaMenu categories={categories} />
       ) : (
-        <NormalMenuList />
+        <NormalMenuList submenus={submenus} />
       )}
     </>
   );

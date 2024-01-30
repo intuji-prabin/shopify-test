@@ -23,10 +23,10 @@ export const SingleNavItem = ({
     <>
       <li
         className=" flex flex-row items-center justify-center p-3
-          text-white italic font-bold text-lg gap-1  menu-items active:bg-primary-600 hover:bg-transparent group"
+          text-white italic font-bold text-lg gap-1  menu-items hover:bg-transparent group"
         ref={menuRef}
       >
-        <div className="flex items-center gap-1 relative menu-links">
+        <Link to="" className="flex items-center gap-1 relative menu-links">
           <div
             className={`${activeMenu === menu.title ? 'active' : ''} menu-icon`}
           >
@@ -71,7 +71,7 @@ export const SingleNavItem = ({
           ) : (
             <Link to={menu.url}>{menu.title}</Link>
           )}
-        </div>
+        </Link>
       </li>
     </>
   );

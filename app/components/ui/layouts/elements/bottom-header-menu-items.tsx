@@ -1,11 +1,15 @@
+import {Router} from 'lucide-react';
 import {Account} from '~/components/icons/account';
 import {Content} from '~/components/icons/content';
 import {Home} from '~/components/icons/home';
 import {MyTeam} from '~/components/icons/myteam';
+import {Invoice, Order, Statements} from '~/components/icons/orderStatus';
 import {Product} from '~/components/icons/product';
+import Promotions from '~/components/icons/promotions';
 import Resources from '~/components/icons/resources';
 import {Settings} from '~/components/icons/setting';
 import {Support} from '~/components/icons/support';
+import {Routes} from '~/lib/constants/routes.constent';
 
 export const menuItemsData = [
   {
@@ -19,9 +23,21 @@ export const menuItemsData = [
     type: 'normal',
     icon: <Account />,
     submenu: [
-      {title: 'Orders', url: '/orders'},
-      {title: 'Orders', url: '/orders'},
-      {title: 'Orders', url: '/orders'},
+      {
+        title: 'Orders',
+        url: '/orders',
+        icon: <Order />,
+      },
+      {
+        title: 'Invoice',
+        url: Routes.INVOICES,
+        icon: <Invoice />,
+      },
+      {
+        title: 'Statements',
+        url: Routes.STATEMENTS,
+        icon: <Statements />,
+      },
     ],
   },
   {
@@ -67,9 +83,11 @@ export const menuItemsData = [
     type: 'normal',
     icon: <Content />,
     submenu: [
-      {title: 'Orders', url: '/orders'},
-      {title: 'Orders', url: '/orders'},
-      {title: 'Orders', url: '/orders'},
+      {
+        title: 'Promotions',
+        url: Routes.PROMOTIONS,
+        icon: <Promotions />,
+      },
     ],
   },
   {
@@ -88,7 +106,13 @@ export const menuItemsData = [
     title: 'Resources',
     type: 'normal',
     icon: <Resources />,
-    submenu: [{title: 'Certificate Generation', url: '/orders'}],
+    submenu: [
+      {
+        title: 'Certificate Generation',
+        url: Routes.CERTIFICATE_GENERATION,
+        icon: <Invoice />,
+      },
+    ],
   },
   {
     title: 'Company Information',
