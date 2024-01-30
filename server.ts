@@ -132,8 +132,7 @@ export class HydrogenSession {
         path: '/',
         sameSite: 'lax',
         secrets,
-        secure: true,
-      },
+      }
     });
 
     const session = await storage.getSession(request.headers.get('Cookie'));
