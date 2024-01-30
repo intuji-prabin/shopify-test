@@ -38,6 +38,7 @@ jobs:
             npm install 
             pm2 delete Cigweld_frontend
             pm2 start "npm run dev -- --port=3000" --name Cigweld_frontend
+            ss -tulnp
 
             
           
