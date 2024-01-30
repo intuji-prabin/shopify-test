@@ -53,7 +53,7 @@ type ProductCardImageProps = {
   imageBackgroundColor: string;
 };
 
-function ProductCardInfo({
+export function ProductCardInfo({
   sku,
   productName,
   buyPrice,
