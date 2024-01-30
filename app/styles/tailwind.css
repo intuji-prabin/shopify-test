@@ -676,3 +676,36 @@ div[data-state='open'].fixed.inset-0 {
 .track-an-order .track-order {
   @apply !top-[10%] !right-4 shadow-[unset];
 }
+
+/* whislist table css starts here */
+.wishlist table thead tr th:first-child {
+  @apply w-[66px] px-0 flex items-center justify-center;
+}
+.wishlist table tbody tr td:first-child {
+  @apply w-[66px] px-0 flex items-center justify-center;
+}
+.wishlist
+  table
+  thead
+  tr
+  th
+  .data-\[state\=checked\]\:text-slate-50[data-state='checked']:first-child,
+.wishlist
+  table
+  tbody
+  tr
+  td
+  .data-\[state\=checked\]\:text-slate-50[data-state='checked']:first-child {
+  @apply bg-primary-500;
+}
+.wishlist table thead tr th,
+.wishlist table tbody tr td div {
+  @apply text-center justify-center;
+}
+
+.wishlist table tbody tr td:last-child {
+  @apply flex justify-center items-center;
+}
+.wishlist table tbody tr td:last-child button {
+  @apply max-w-[86px] px-0;
+}

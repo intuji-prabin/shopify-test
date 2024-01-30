@@ -209,7 +209,7 @@ type ProductCardInfoProps = {
   buyPrice: number;
   rppPrice: number;
 };
-function ProductCardInfo({
+export function ProductCardInfo({
   sku,
   productName,
   buyPrice,
@@ -231,22 +231,27 @@ function ProductCardInfo({
               </h3>
               <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
             </div>
-            <div className="flex flex-col border-grey-50 border-l-2 border-y-0 border-r-0 pl-6">
-              <div className="flex items-center ">
-                <p className="text-grey-300 not-italic text-base font-bold uppercase leading-[21px]">
-                  rrp
-                </p>
+            {rppPrice ? (
+              <div className="flex flex-col border-grey-50 border-l-2 border-y-0 border-r-0 pl-6">
+                <div className="flex items-center ">
+                  <p className="text-grey-300 not-italic text-base font-bold uppercase leading-[21px]">
+                    rrp
+                  </p>
+                </div>
+                <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
+                  ${rppPrice}
+                </h3>
+                <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
               </div>
-              <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-                ${rppPrice}
-              </h3>
-              <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
-            </div>
+            ) : undefined}
           </div>
         </div>
-        <p className="text-lg font-normal leading-[22px]">
-          Minimum Order (500 pieces)
-        </p>
+
+        {rppPrice ? (
+          <p className="text-lg font-normal leading-[22px]">
+            Minimum Order (500 pieces)
+          </p>
+        ) : undefined}
       </div>
     </>
   );
