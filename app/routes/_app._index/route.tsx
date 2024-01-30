@@ -1,19 +1,19 @@
-import { useLoaderData, type MetaFunction } from '@remix-run/react';
-import { type LoaderFunctionArgs } from '@shopify/remix-oxygen';
+import {useLoaderData, type MetaFunction} from '@remix-run/react';
+import {type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import Carousel from '~/components/ui/carousel';
 import CtaHome from '~/components/ui/cta-home';
 import DetailChart from '~/components/ui/detailChart';
 import ExpenditureCard from '~/components/ui/expenditureCard';
 import Profile from '~/components/ui/profile';
 import SpendCard from '~/components/ui/spend-card';
-import { isAuthenticate } from '~/lib/utils/authsession.server';
+import {isAuthenticate} from '~/lib/utils/authsession.server';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Hydrogen | Home' }];
+  return [{title: 'Hydrogen | Home'}];
 };
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  await isAuthenticate(request);
+export async function loader({context}: LoaderFunctionArgs) {
+  await isAuthenticate(context);
   const labels = [
     'January',
     'February',
@@ -105,12 +105,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
         ],
         data: [10, 10, 10, 10, 10, 10, 40],
         cutout: '80%',
-        price: [120, 1330, 1550, 1120, 19980, 123230, 4440]
+        price: [120, 1330, 1550, 1120, 19980, 123230, 4440],
       },
     ],
   };
 
-  return { areaChartData, barChartData, lineChartData, doughnutChartData };
+  return {
+    areaChartData,
+    barChartData,
+    lineChartData,
+    doughnutChartData,
+  };
 }
 
 type ImageType = {
@@ -119,19 +124,20 @@ type ImageType = {
 };
 
 const images: ImageType[] = [
-  { src: 'https://swiperjs.com/demos/images/nature-3.jpg', alt: 'Nature 3' },
-  { src: 'https://swiperjs.com/demos/images/nature-4.jpg', alt: 'Nature 4' },
-  { src: 'https://swiperjs.com/demos/images/nature-5.jpg', alt: 'Nature 5' },
-  { src: 'https://swiperjs.com/demos/images/nature-6.jpg', alt: 'Nature 6' },
-  { src: 'https://swiperjs.com/demos/images/nature-7.jpg', alt: 'Nature 7' },
-  { src: 'https://swiperjs.com/demos/images/nature-8.jpg', alt: 'Nature 8' },
-  { src: 'https://swiperjs.com/demos/images/nature-9.jpg', alt: 'Nature 9' },
-  { src: 'https://swiperjs.com/demos/images/nature-10.jpg', alt: 'Nature 10' },
-  { src: 'https://swiperjs.com/demos/images/nature-2.jpg', alt: 'Nature 2' },
+  {src: 'https://swiperjs.com/demos/images/nature-3.jpg', alt: 'Nature 3'},
+  {src: 'https://swiperjs.com/demos/images/nature-4.jpg', alt: 'Nature 4'},
+  {src: 'https://swiperjs.com/demos/images/nature-5.jpg', alt: 'Nature 5'},
+  {src: 'https://swiperjs.com/demos/images/nature-6.jpg', alt: 'Nature 6'},
+  {src: 'https://swiperjs.com/demos/images/nature-7.jpg', alt: 'Nature 7'},
+  {src: 'https://swiperjs.com/demos/images/nature-8.jpg', alt: 'Nature 8'},
+  {src: 'https://swiperjs.com/demos/images/nature-9.jpg', alt: 'Nature 9'},
+  {src: 'https://swiperjs.com/demos/images/nature-10.jpg', alt: 'Nature 10'},
+  {src: 'https://swiperjs.com/demos/images/nature-2.jpg', alt: 'Nature 2'},
 ];
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
+
   return (
     <article className="home">
       <Carousel images={images} maxHeight={220} sectionClass="mt-0" />

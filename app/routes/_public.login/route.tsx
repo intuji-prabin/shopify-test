@@ -1,5 +1,9 @@
 import {validationError} from 'remix-validated-form';
-import {verifyLogin} from '~/routes/_public.login/login.server';
+import {
+  isUserActive,
+  getCustomerByEmail,
+  verifyLogin,
+} from '~/routes/_public.login/login.server';
 import {Routes} from '~/lib/constants/routes.constent';
 import {
   ActionFunctionArgs,
@@ -20,8 +24,8 @@ import {
   setErrorMessage,
 } from '~/lib/utils/toastsession.server';
 
-export const loader = async ({request}: LoaderFunctionArgs) => {
-  const accessToken = await getAccessToken(request);
+export const loader = async ({context}: LoaderFunctionArgs) => {
+  const accessToken = await getAccessToken(context);
   if (accessToken) {
     return redirect('/');
   }
@@ -41,11 +45,25 @@ export const action = async ({request, context}: ActionFunctionArgs) => {
 
     const {email, password, rememberMe} = result.data;
 
+    const customerData = await getCustomerByEmail({email});
+
+    const isActive = isUserActive(customerData.meta.status);
+
+    if (!isActive) {
+      throw new Error('User not active');
+    }
+
     const {accessToken} = await verifyLogin({email, password, context});
 
     if (!accessToken) return redirect(Routes.LOGIN);
 
-    return createUserSession({request, accessToken, rememberMe});
+    return createUserSession({
+      request,
+      accessToken,
+      rememberMe,
+      context,
+      customerData,
+    });
   } catch (error: unknown) {
     if (error instanceof Error) {
       setErrorMessage(messageSession, error.message);
