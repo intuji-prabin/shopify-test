@@ -73,9 +73,9 @@ export default function TopHeader() {
               <ul className="nav-list flex gap-4 items-center h-full">
                 {navIcons.map((navIcon) => (
                   <li className="nav-item relative" key={navIcon.id}>
-                    <div className="info-block">
+                    <Link to={navIcon.url} className="info-block">
                       {' '}
-                      <Link to={navIcon.url} data-tooltip={navIcon.title}>
+                      <Link to="" data-tooltip={navIcon.title}>
                         <div className="absolute bg-semantic-danger-500 h-[14px] w-[14px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium p-2">
                           {navIcon.notification}
                         </div>
@@ -83,7 +83,7 @@ export default function TopHeader() {
                           {navIcon.icon}
                         </Link>
                       </Link>
-                    </div>
+                    </Link>
                   </li>
                 ))}
               </ul>

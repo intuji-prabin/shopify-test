@@ -3,8 +3,11 @@ import ProductFeatures from '../_app.product-detail/productFeatures';
 import {Button} from '~/components/ui/button';
 import NewsForYou from './sections/news-for-you';
 import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
+import {TicketsData} from '../_app.support_.tickets/tickets-data';
+import PreviousNotification from './sections/previous-notification';
 
 export default function NotificationPage() {
+  function handleClearAll() {}
   return (
     <section className="tab-wrapper ">
       <div className="container">
@@ -14,7 +17,7 @@ export default function NotificationPage() {
             <p className="text-lg font-bold leading-[22px] text-grey-900 italic">
               6 item
             </p>
-            <Button>clear all</Button>
+            <Button onClick={handleClearAll}>clear all</Button>
           </div>
         </div>
         <Tabs.Root
@@ -30,12 +33,15 @@ export default function NotificationPage() {
               (tabValue, index) => (
                 <Tabs.Trigger
                   key={`tab${index + 1}`}
-                  className={`bg-white px-4 py-3 h-[45px] flex items-left justify-start text-[15px] text-grey-500 text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md data-[state=active]:text-primary-500 data-[state=active]:border-b-4 border-primary-500 data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:bottom-border-tabs data-[state=active]:focus:red outline-none cursor-default`}
+                  className={`bg-white px-4 py-3 h-[45px] justify-start text-[15px] text-grey-500 text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md data-[state=active]:text-primary-500 data-[state=active]:border-b-4 border-primary-500 data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:bottom-border-tabs data-[state=active]:focus:red outline-none cursor-default flex items-center gap-2`}
                   value={`tab${index + 1}`}
                 >
-                  <p className="cursor-pointer active:text-primary-500">
+                  <h5 className="cursor-pointer not-italic leading-[21px] font-normal text-base">
                     {tabValue}
-                  </p>
+                  </h5>
+                  <div className="p-[6px] bg-primary-100 notification-counter">
+                    06
+                  </div>
                 </Tabs.Trigger>
               ),
             )}
@@ -51,11 +57,16 @@ export default function NotificationPage() {
             className="grow py-8 bg-white rounded-b-md outline-none  focus:none"
             value="tab2"
           >
-            <ProductFeatures featureHeading={'Features'} />
+            <PreviousNotification />
           </Tabs.Content>
+          <div className="bg-neutral-white py-4 px-6 border-t flex items-center justify-between">
+            <p className="w-40 text-grey-400 font-medium">
+              1-7 of {TicketsData.length} Items
+            </p>
+            <PaginationWrapper pageSize={5} totalCount={TicketsData.length} />
+          </div>
         </Tabs.Root>
       </div>
-      <PaginationWrapper totalCount={10} pageSize={9} />
     </section>
   );
 }
