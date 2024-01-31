@@ -132,7 +132,8 @@ export class HydrogenSession {
         path: '/',
         sameSite: 'lax',
         secrets,
-      }
+        // secure: true,  Needs to set true in production
+      },
     });
 
     const session = await storage.getSession(request.headers.get('Cookie'));

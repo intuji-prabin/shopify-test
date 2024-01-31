@@ -15,4 +15,9 @@ export const Routes = {
   PROMOTION: '/promotions',
   PLACE_AN_ORDER: '/place-an-order',
   COMPANY_INFORMATION: '/company-info',
+  ORDERS: '/orders',
+  INVOICES: '/invoices',
+  STATEMENTS: './statements',
+  PROMOTIONS: './promotions',
+  CERTIFICATE_GENERATION: '/certificate-generation',
 };

@@ -36,7 +36,24 @@ export default function ProductInformation({product}: {product: Product}) {
           mainCarouseloptions={{}}
         />
 
-        <ProductDetailsSection isFavorited={product.isFavorited} />
+        <ProductDetailsSection
+          productName={
+            'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition'
+          }
+          isFavorited={false}
+          productBuyPrice={0}
+          productRRP={0}
+          sku={'Sku'}
+          skuUnits={'1-1601-EC'}
+          unitOfMeasurement={'Unit Of Measurement:'}
+          box={'1 Box'}
+          isInStock={false}
+          defaultButton={'Default'}
+          addToCart={'Add to cart'}
+          pickupStatus={'Pickup available at '}
+          pickupAddress={' SUPERCHEAP AUTO NZ PTY LTD'}
+          arrivalTime={'Usually ready in 4 hours'}
+        />
       </div>
     </section>
   );
@@ -48,10 +65,30 @@ type ProductDetailsProps = {
   productBuyPrice: number;
   productRRP: number;
   sku: string;
+  skuUnits: string;
   unitOfMeasurement: string;
+  box: string;
   isInStock: boolean;
+  defaultButton: string;
+  addToCart: string;
+  pickupStatus: string;
+  pickupAddress: string;
+  arrivalTime: string;
 };
-const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
+const ProductDetailsSection = ({
+  productName,
+  isFavorited,
+  sku,
+  skuUnits,
+  unitOfMeasurement,
+  box,
+  defaultButton,
+  isInStock,
+  addToCart,
+  pickupStatus,
+  pickupAddress,
+  arrivalTime,
+}: ProductDetailsProps) => {
   const [heartFill, setHeartFill] = useState(isFavorited);
   const [quantity, setQuantity] = useState(0);
 
@@ -103,33 +140,30 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
               </ul>
             </div>
             <div className="">
-              <h3>
-                ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of
-                CIGWELD Edition
-              </h3>
+              <h3>{productName}</h3>
               <div className="flex justify-between flex-col xl:flex-row items-baseline">
                 <div className="flex gap-5">
                   <div className="flex text-base items-center gap-1">
-                    <p className=" font-semibold leading-6">sku: </p>
-                    <p className="text-Grey-500 font-normal">1-1601-EC</p>
+                    <p className=" font-semibold leading-6">{sku}: </p>
+                    <p className="text-Grey-500 font-normal">{skuUnits}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <p className="text-base font-semibold leading-6 text-grey-600">
-                      Unit Of Measurement:
+                      {unitOfMeasurement}:
                     </p>
-                    <p className="text-Grey-500 font-normal">1 Box</p>
+                    <p className="text-Grey-500 font-normal">{box}</p>
                     <Button
                       className="uppercase bg-primary-200 text-primary-500 font-medium leading-4 text-[14px] not-italic hover:text-white"
                       size="default"
                     >
-                      Default
+                      {defaultButton}
                     </Button>
                   </div>
                 </div>
                 <div className="flex gap-2 bg-semantic-success-100 items-center p-2">
                   <InStock />
                   <p className="uppercase text-[14px] font-medium text-semantic-success-500">
-                    IN STOCK
+                    {isInStock}
                   </p>
                 </div>
               </div>
@@ -139,13 +173,20 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
             <div className="flex flex-col gap-2">
               <div className="flex gap-3 lg:gap-8 flex-col lg:flex-row ">
                 <ProductCardInfo
-                  sku={''}
-                  productName={''}
+                  productName={
+                    'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition'
+                  }
                   buyPrice={649.22}
                   rppPrice={799.87}
+                  buyPriceTitle={'BUY PRICE'}
+                  exclGst={'Excl. GST'}
+                  rppTitle={'RRP'}
+                  incGst={'Inc. GST'}
+                  minimumOrder={'Minimum Order'}
+                  minimumPieces={'(500 pieces'}
                 />
 
-                <ProductInfoTable />
+                <ProductInfoTable quantity={'Quantity'} price={'Price'} />
               </div>
               <div className="py-2 px-4 bg-semantic-info-100 flex gap-2 border-semantic-info-500 border-l-4 border-y-0 border-r-0 mb-2">
                 <CircleInformationMajor />
@@ -180,7 +221,7 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
                 items={['Nepal', 'UK', 'Australia']}
               />
               <Button className="uppercase flex-grow" variant="primary">
-                Add to cart
+                {addToCart}
               </Button>
             </div>
           </div>
@@ -189,9 +230,9 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
           <PickupLocation />
           <div>
             <p>
-              Pickup available at <span>SUPERCHEAP AUTO NZ PTY LTD</span>
+              {pickupStatus} <span className="upperase">{pickupAddress}</span>
             </p>
-            <p>Usually ready in 4 hours</p>
+            <p>{arrivalTime}</p>
             <WarehouseInformation
               warehouseLink={'View WAREHOUSE information'}
               pickupTitle={'Pick Availability'}
@@ -204,16 +245,26 @@ const ProductDetailsSection = ({isFavorited}: {isFavorited: boolean}) => {
 };
 
 type ProductCardInfoProps = {
-  sku: string;
+  buyPriceTitle: string;
   productName: string;
   buyPrice: number;
   rppPrice: number;
+  exclGst: string;
+  rppTitle: string;
+  incGst: string;
+  minimumOrder: string;
+  minimumPieces: string;
 };
 export function ProductCardInfo({
-  sku,
   productName,
   buyPrice,
   rppPrice,
+  rppTitle,
+  buyPriceTitle,
+  exclGst,
+  incGst,
+  minimumOrder,
+  minimumPieces,
 }: ProductCardInfoProps) {
   return (
     <>
@@ -223,35 +274,30 @@ export function ProductCardInfo({
             <div className="flex flex-col">
               <div className="flex items-center gap-1">
                 <p className="text-semantic-success-500 text-base font-bold uppercase leading-[21px]">
-                  BUY PRICE
+                  {buyPriceTitle}
                 </p>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
                 ${buyPrice}
               </h3>
-              <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
+              <p className="text-[14px] font-normal leading-4">{exclGst}</p>
             </div>
-            {rppPrice ? (
-              <div className="flex flex-col border-grey-50 border-l-2 border-y-0 border-r-0 pl-6">
-                <div className="flex items-center ">
-                  <p className="text-grey-300 not-italic text-base font-bold uppercase leading-[21px]">
-                    rrp
-                  </p>
-                </div>
-                <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-                  ${rppPrice}
-                </h3>
-                <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
+            <div className="flex flex-col border-grey-50 border-l-2 border-y-0 border-r-0 pl-6">
+              <div className="flex items-center ">
+                <p className="text-grey-300 not-italic text-base font-bold uppercase leading-[21px]">
+                  {rppTitle}
+                </p>
               </div>
-            ) : undefined}
+              <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
+                ${rppPrice}
+              </h3>
+              <p className="text-[14px] font-normal leading-4">{incGst}</p>
+            </div>
           </div>
         </div>
-
-        {rppPrice ? (
-          <p className="text-lg font-normal leading-[22px]">
-            Minimum Order (500 pieces)
-          </p>
-        ) : undefined}
+        <p className="text-lg font-normal leading-[22px]">
+          {minimumOrder} ({minimumPieces})
+        </p>
       </div>
     </>
   );
