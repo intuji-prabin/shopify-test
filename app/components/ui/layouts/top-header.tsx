@@ -36,14 +36,14 @@ export default function TopHeader() {
     {
       id: 3,
       icon: <Heart width={'20px'} height={'20px'} />,
-      url: '/heart',
+      url: Routes.WISHLIST,
       title: 'Heart',
       notification: '3',
     },
     {
       id: 4,
       icon: <NotificationIcon width={'20px'} height={'20px'} />,
-      url: '/notification',
+      url: Routes.NOTIFICATION,
       title: 'Notification',
       notification: '3',
     },
