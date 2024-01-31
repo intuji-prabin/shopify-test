@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {
+  CircleInformationMajor,
   Compare,
   InStock,
   Pdf,
@@ -23,7 +24,6 @@ import {SliderImageData} from './slider-image-date';
 import {Product} from './route';
 import {useMediaQuery} from '../../hooks/useMediaQuery';
 import {WarehouseInformation} from './view-warehouse-information';
-import InfoBar from '~/components/ui/layouts/infoBar';
 
 export default function ProductInformation({product}: {product: Product}) {
   const matches = useMediaQuery('(min-width: 1025px)');
@@ -188,9 +188,12 @@ const ProductDetailsSection = ({
 
                 <ProductInfoTable quantity={'Quantity'} price={'Price'} />
               </div>
-              <InfoBar
-                title={'Price will change if you increase quantity of items.'}
-              />
+              <div className="py-2 px-4 bg-semantic-info-100 flex gap-2 border-semantic-info-500 border-l-4 border-y-0 border-r-0 mb-2">
+                <CircleInformationMajor />
+                <p className="text-base font-normal leading-[21px]">
+                  Price will change if you increase quantity of items.
+                </p>
+              </div>
             </div>
             <div className="flex gap-4 flex-col lg:flex-row min-h-0 lg:min-h-14">
               <div className="flex">
@@ -253,7 +256,6 @@ type ProductCardInfoProps = {
   minimumPieces: string;
 };
 export function ProductCardInfo({
-  sku,
   productName,
   buyPrice,
   rppPrice,
