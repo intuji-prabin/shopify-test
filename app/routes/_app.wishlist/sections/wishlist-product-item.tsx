@@ -12,11 +12,10 @@ export default function WishListProductItem({
   sku,
   inStock,
 }: ProductCardDetail) {
-  //   console.log('HERE', productImageUrl, productName, sku, inStock);
   return (
     <>
-      <div className="flex gap-2 !justify-between">
-        <figure className="max-w-10 bg-grey-25">
+      <div className="flex gap-2 !justify-start">
+        <figure className="w-20 bg-grey-25 p-3">
           <img src={productImageUrl} className="" alt="product-image" />
         </figure>
         <div className="max-w-[261px]">
