@@ -1,5 +1,4 @@
 import {Link} from '@remix-run/react';
-import React from 'react';
 import {TooltipInfo} from '~/components/icons/orderStatus';
 
 export default function WishlistPriceItem({buyPrice}: {buyPrice: number}) {

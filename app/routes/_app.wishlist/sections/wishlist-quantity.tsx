@@ -1,7 +1,7 @@
 import {useState} from 'react';
 
-export default function WishlistQuantity() {
-  const [quantity, setQuantity] = useState(0);
+export default function WishlistQuantity({count}: {count: number}) {
+  const [quantity, setQuantity] = useState(count);
 
   function decreaseQuantity() {
     setQuantity(quantity - 1);
@@ -17,14 +17,16 @@ export default function WishlistQuantity() {
     <div className="flex gap-4 flex-col lg:flex-row min-h-0 lg:min-h-14">
       <div className="flex">
         <button
-          className=" border-[1px] border-grey-500  flex justify-center items-center w-[56px]"
+          className={`border-[1px] border-grey-500  flex justify-center items-center w-[56px] ${
+            quantity === 0 ? 'pointer-events-none' : ''
+          }`}
           onClick={decreaseQuantity}
         >
           -
         </button>
         <input
           type="text"
-          className=" max-w-[61px] h-full text-center border-x-0 border-[1px] border-grey-500"
+          className=" max-w-[61px] h-full text-center border-x-0 border-[1px] border-grey-500 bg-transparent"
           value={quantity}
           onChange={handleInputChange}
         />

@@ -1,7 +1,7 @@
 import {Link} from '@remix-run/react';
 import {news} from './notification';
 
-export default function NewsForYou() {
+export default function PreviousNotification() {
   return (
     <>
       <ul className="flex gap-2 flex-col">

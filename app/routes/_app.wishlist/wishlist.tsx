@@ -25,50 +25,8 @@ import {
 import WishlistPriceItem from './sections/wishlist-price-item';
 import WishlistQuantity from './sections/wishlist-quantity';
 import WishListProductItem from './sections/wishlist-product-item';
-
-const data: WishListItem[] = [
-  {
-    id: 'm5gr84i9',
-    sku: 'W1400190',
-    buyPrice: 200,
-    quantity: 200,
-    action: 'add to cart',
-    productImageUrl: 'product.png',
-    productName:
-      'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition',
-    inStock: false,
-  },
-  {
-    id: 'm5g44i9',
-    sku: 'W1400190',
-    buyPrice: 200,
-    quantity: 200,
-    action: 'add to cart',
-    productImageUrl: 'product.png',
-    productName:
-      'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition',
-    inStock: false,
-  },
-];
-
-type WishListProductType = {
-  productImageUrl: string;
-  productName: string;
-  sku: string;
-  inStock: boolean;
-};
-
-export type WishListItem = {
-  id: string;
-  productImageUrl: string;
-  productName: string;
-  sku: string;
-  inStock: boolean;
-  // product: WishListProductType;
-  buyPrice: number;
-  quantity: number;
-  action: string;
-};
+import {WishListItem, WishListProductType} from './route';
+import RemoveDialogbox from './sections/remove-dialogbox';
 
 export const columns: ColumnDef<WishListItem>[] = [
   {
@@ -76,8 +34,8 @@ export const columns: ColumnDef<WishListItem>[] = [
     header: ({table}) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
+          table.getIsAllPageRowsSelected()
+          // || (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
@@ -94,18 +52,17 @@ export const columns: ColumnDef<WishListItem>[] = [
     enableHiding: false,
   },
   {
-    // accessorKey: 'product',
-    // accessorFn: ({productName, productImageUrl, inStock, skuCode}) => {
-    //   return (
-    //     productName + '$' + productImageUrl + '$' + inStock + '$' + skuCode
-    //   );
-    // },
+    accessorKey: 'product',
     cell: ({row}) => (
       <WishListProductItem
-        productImageUrl={row.getValue('productName')}
-        sku={''}
-        productName={row.getValue('productName')}
-        inStock={false}
+        productImageUrl={
+          (row.getValue('product') as WishListProductType).productImageUrl
+        }
+        sku={(row.getValue('product') as WishListProductType).sku}
+        productName={
+          (row.getValue('product') as WishListProductType).productName
+        }
+        inStock={(row.getValue('product') as WishListProductType).inStock}
       />
     ),
     header: 'Items',
@@ -118,7 +75,7 @@ export const columns: ColumnDef<WishListItem>[] = [
   {
     accessorKey: 'quantity',
     header: 'Quantity',
-    cell: ({row}) => <WishlistQuantity />,
+    cell: ({row}) => <WishlistQuantity count={row.getValue('quantity')} />,
   },
   {
     accessorKey: 'action',
@@ -131,7 +88,13 @@ export const columns: ColumnDef<WishListItem>[] = [
   },
 ];
 
-export function WishListTable({title}: {title: string}) {
+export function WishListTable({
+  title,
+  data,
+}: {
+  title: string;
+  data: WishListItem[];
+}) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -159,9 +122,43 @@ export function WishListTable({title}: {title: string}) {
     },
   });
 
+  function handleAddAllToCart() {
+    table.toggleAllPageRowsSelected(true);
+  }
+
+  function handleRemoveAllItems() {
+    table.toggleAllPageRowsSelected(false);
+  }
+
   return (
-    <div className="container bg-grey-25 py-6">
-      <h3>{title}</h3>
+    <article className="container bg-grey-25 py-6">
+      <section className="flex justify-between">
+        <h3>{title}</h3>
+        {/* Only show this div if there are selected rows */}
+        {table.getSelectedRowModel().rows.length ? (
+          <div className="flex flex-row gap-2 items-center">
+            {/* Get the number of selected rows */}
+            <p className="italic font-bold leading-[22px] text-lg">
+              {table.getSelectedRowModel().rows.length === 1
+                ? '1 item selected'
+                : `${table.getSelectedRowModel().rows.length} items selected`}
+            </p>
+            {/* Toggle select all rows */}
+            <Button
+              onClick={handleAddAllToCart}
+              className="uppercase flex-grow"
+              variant="primary"
+            >
+              Add All to cart
+            </Button>
+            <div className="remove-dialogue">
+              <RemoveDialogbox handleRemoveAllItems={handleRemoveAllItems} />
+            </div>
+          </div>
+        ) : undefined}
+      </section>
+
+      {/* Table Begins Here */}
       <div className="rounded-md border bg-white mt-6  wishlist">
         <Table>
           <TableHeader>
@@ -191,6 +188,7 @@ export function WishListTable({title}: {title: string}) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  className="hover:bg-white"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -215,34 +213,6 @@ export function WishListTable({title}: {title: string}) {
           </TableBody>
         </Table>
       </div>
-
-      {/* TODO */}
-      {/* Table Pagination Begins Here */}
-      {/* <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
-        <div className="space-x-2">
-          <Button
-            variant="ghost"
-            size="medium"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="ghost"
-            size="medium"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div> */}
-      {/* Table Pagination Ends Here */}
-    </div>
+    </article>
   );
 }
