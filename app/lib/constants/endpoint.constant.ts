@@ -1,3 +1,5 @@
+const BASE_URL = 'https://casual-mink-routinely.ngrok-free.app/api';
+
 export const ENDPOINT = {
   AUTH: {
     LOGIN: '/auth/login',
@@ -13,7 +15,7 @@ export const ENDPOINT = {
     DELETE: '/user/delete',
   },
   ROLE: {
-    GET: 'https://relaxing-hawk-ace.ngrok-free.app/api/customer-roles',
+    GET: `${BASE_URL}/customer-roles`,
   },
   PERMISSION: {
     CREATE: '/permission/create',
@@ -81,7 +83,7 @@ export const ENDPOINT = {
   },
   CUSTOM: {
     URL: 'https://casual-mink-routinely.ngrok-free.app/api',
-    CATEGORY_URL: 'https://casual-mink-routinely.ngrok-free.app/api/product/category',
-
+    CATEGORY_URL:
+      'https://casual-mink-routinely.ngrok-free.app/api/product/category',
   },
 };
