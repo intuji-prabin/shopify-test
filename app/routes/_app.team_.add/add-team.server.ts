@@ -3,6 +3,7 @@ import {customerRecover} from '~/routes/_public.forget-password/forget-password.
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {getUserDetails} from '~/lib/utils/authsession.server';
 
 type AddTeamParams = {
   fullName: string;
@@ -23,6 +24,13 @@ export async function addTeam({
   const {storefront} = context;
   const firstName = fullName.split(' ')[0];
   const lastName = fullName.split(' ')[1];
+
+  const {userDetails} = await getUserDetails(context);
+
+  const metaParentValue = userDetails.meta.parent.value;
+
+  const parentId =
+    metaParentValue === 'null' ? userDetails.id : metaParentValue;
 
   const team = await storefront.mutate(CREATE_TEAM_MUTATION, {
     variables: {
@@ -69,6 +77,13 @@ export async function addTeam({
           namespace: 'active',
           key: 'status',
           value: 'true',
+          type: 'string',
+        },
+        {
+          ownerId: team?.customerCreate?.customer?.id,
+          namespace: 'parent',
+          key: 'parent_id',
+          value: parentId,
           type: 'string',
         },
       ],

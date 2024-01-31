@@ -54,8 +54,6 @@ export async function isAuthenticate(context: AppLoadContext) {
 export async function getUserDetails(context: AppLoadContext) {
   const {session} = context;
   const userDetails = session.get(USER_DETAILS_KEY);
-  console.log('userDetails', userDetails);
-
   return {userDetails};
 }
 

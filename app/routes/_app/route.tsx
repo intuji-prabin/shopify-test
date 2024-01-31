@@ -16,6 +16,7 @@ export async function loader() {
 
 export default function PublicPageLayout() {
   const { categories } = useLoaderData<typeof loader>();
+
   console.log({ categories });
 
   return (
