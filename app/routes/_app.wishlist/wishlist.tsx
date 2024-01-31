@@ -126,9 +126,9 @@ export function WishListTable({
     table.toggleAllPageRowsSelected(true);
   }
 
-  // function handleRemoveAllItems() {
-  //   table.toggleAllPageRowsSelected(false);
-  // }
+  function handleRemoveAllItems() {
+    table.toggleAllPageRowsSelected(false);
+  }
 
   return (
     <article className="container bg-grey-25 py-6">
@@ -151,16 +151,9 @@ export function WishListTable({
             >
               Add All to cart
             </Button>
-            {/* Toggle OFF all selected rows*/}
-            {/* <Button
-              onClick={handleRemoveAllItems}
-              className="uppercase flex-grow bg-semantic-danger-500 text-white"
-              variant="danger"
-              size="default"
-            >
-              Remove
-            </Button> */}
-            <RemoveDialogbox />
+            <div className="remove-dialogue">
+              <RemoveDialogbox handleRemoveAllItems={handleRemoveAllItems} />
+            </div>
           </div>
         ) : undefined}
       </section>
@@ -195,6 +188,7 @@ export function WishListTable({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  className="hover:bg-white"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

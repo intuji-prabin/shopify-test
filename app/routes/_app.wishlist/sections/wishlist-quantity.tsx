@@ -26,7 +26,7 @@ export default function WishlistQuantity({count}: {count: number}) {
         </button>
         <input
           type="text"
-          className=" max-w-[61px] h-full text-center border-x-0 border-[1px] border-grey-500"
+          className=" max-w-[61px] h-full text-center border-x-0 border-[1px] border-grey-500 bg-transparent"
           value={quantity}
           onChange={handleInputChange}
         />
