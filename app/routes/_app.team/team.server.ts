@@ -86,7 +86,7 @@ export async function updateStatus({
   value,
 }: {
   customerId: string;
-  value: string;
+  value: 'true' | 'false';
 }) {
   const body = JSON.stringify({
     query: UPDATE_STATUS,

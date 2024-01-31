@@ -1,10 +1,10 @@
-import { Form, Link } from '@remix-run/react';
-import { ColumnDef } from '@tanstack/react-table';
-import { useMemo, useState } from 'react';
-import { EditIcon } from '~/components/icons/edit';
-import { Button } from '~/components/ui/button';
-import { Switch } from '~/components/ui/switch';
-import { Routes } from '~/lib/constants/routes.constent';
+import {Form, Link, useFetcher} from '@remix-run/react';
+import {ColumnDef} from '@tanstack/react-table';
+import {useMemo, useState} from 'react';
+import {EditIcon} from '~/components/icons/edit';
+import {Button} from '~/components/ui/button';
+import {Switch} from '~/components/ui/switch';
+import {Routes} from '~/lib/constants/routes.constent';
 import DeactivateDialog from '~/routes/_app.team/cell-action';
 
 export type TeamColumn = {
@@ -50,19 +50,27 @@ export function useColumn() {
         cell: (info) => {
           const status = info.row.original.status;
           const customerId = info.row.original.id;
+          const fetcher = useFetcher();
           const [isChecked, setIsChecked] = useState<boolean>(false);
           return (
             <>
-              <Form method="post">
+              {status ? (
                 <Switch
-                  type="submit"
-                  value="activate-customer"
+                  type="button"
                   checked={status}
                   onCheckedChange={() =>
                     setIsChecked((prevState) => !prevState)
                   }
                 />
-              </Form>
+              ) : (
+                <fetcher.Form
+                  method="post"
+                  onChange={(event) => fetcher.submit(event.currentTarget)}
+                >
+                  <input type="hidden" name="customerId" value={customerId} />
+                  <Switch type="submit" name="_action" value="activate" />
+                </fetcher.Form>
+              )}
               <DeactivateDialog
                 isOpen={isChecked}
                 setIsOpen={setIsChecked}
@@ -95,5 +103,5 @@ export function useColumn() {
     ],
     [],
   );
-  return { columns };
+  return {columns};
 }
