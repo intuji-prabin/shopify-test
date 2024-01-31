@@ -42,11 +42,11 @@ export default function LoginForm() {
               type="email"
               name="email"
               label="Email"
-              placeholder="email"
+              placeholder="email@example.com"
             />
             <ValidatedFormPassword
               name="password"
-              placeholder="password"
+              placeholder="your password"
               label="password"
             />
             <div className="flex flex-wrap items-center justify-between gap-x-2">
@@ -64,7 +64,7 @@ export default function LoginForm() {
             </div>
           </div>
           <Button type="submit" variant="primary" className="w-full">
-            login
+            log in
           </Button>
         </ValidatedForm>
       </div>

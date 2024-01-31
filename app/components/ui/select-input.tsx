@@ -9,8 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
-import {TeamFormFieldNameType} from '~/routes/_app.team_.add/team-form';
-import {useState} from 'react';
+import {
+  AddTeamFormFieldNameType,
+  EditTeamFormFieldNameType,
+} from '~/routes/_app.team_.add/team-form';
 
 type SelectInputType = {value: string; title: string};
 
@@ -21,7 +23,7 @@ export type SelectInputOptions = SelectInputType & {
 };
 
 export type SelectInputProps = {
-  name: TeamFormFieldNameType;
+  name: AddTeamFormFieldNameType | EditTeamFormFieldNameType;
   // | OrderFilterFormFieldNameType
   // | ScheduleCallFormFieldNameType
   // | TicketsFilterFormFieldNameType;

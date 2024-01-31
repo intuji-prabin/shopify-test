@@ -84,7 +84,7 @@ select:focus {
 input::placeholder,
 textarea::placeholder,
 select::placeholder {
-  @apply text-grey-500 capitalize !leading-5;
+  @apply text-grey-500 !leading-5;
 }
 input:active::placeholder,
 input:focus::placeholder,

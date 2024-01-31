@@ -1,4 +1,4 @@
-import {useFetcher} from '@remix-run/react';
+import {useFetcher, useSubmit} from '@remix-run/react';
 import {withZod} from '@remix-validated-form/with-zod';
 import {ValidatedForm, useField, useIsValid} from 'remix-validated-form';
 import {z} from 'zod';
@@ -9,8 +9,8 @@ import {Label} from '~/components/ui/label';
 
 const ConfirmationFormSchema = z.object({
   customerId: z.string().trim(),
-  confirmation: z.enum(['deactivate'], {
-    errorMap: (issue, ctx) => ({message: 'You must type deactivate'}),
+  confirmation: z.enum(['Deactivate'], {
+    errorMap: (issue, ctx) => ({message: 'You must type Deactivate'}),
   }),
 });
 
@@ -23,7 +23,7 @@ export default function ConfirmationForm({
   customerId: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const fetcher = useFetcher();
+  const submit = useSubmit();
   const isConfirm = useIsValid('confirmation-form');
 
   const handleClick = () => {
@@ -33,14 +33,17 @@ export default function ConfirmationForm({
   return (
     <>
       <ValidatedForm
-        fetcher={fetcher}
         method="post"
         validator={ConfirmationFormSchemaValidator}
         id="confirmation-form"
+        onSubmit={(_, event) => {
+          submit(event.currentTarget);
+          handleClick();
+        }}
       >
         <input type="hidden" name="customerId" value={customerId} />
         <Label className="text-lg font-normal leading-5.5 normal-case pb-4">
-          To confirm deactivation, type “deactivate” below
+          To confirm deactivation, type “Deactivate” below
         </Label>
         <ConfirmationInput name="confirmation" placeholder="type deactivate" />
         <div className="flex justify-end items-center space-x-2 pt-4">
@@ -53,6 +56,8 @@ export default function ConfirmationForm({
           <Button
             type="submit"
             className="uppercase"
+            name="_action"
+            value="deactivate"
             variant="primary"
             disabled={!isConfirm}
           >
