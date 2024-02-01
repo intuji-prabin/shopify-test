@@ -15,10 +15,9 @@ export const SingleNavItem = ({
   depthLevel: number;
   activeMenu: string;
   setActiveMenu: React.Dispatch<React.SetStateAction<string>>;
-  categories: CategoriesType;
+  categories: CategoriesType[];
 }) => {
   const menuRef = useRef<HTMLLIElement>(null);
-  const navigate = useNavigate();
 
   return (
     <>

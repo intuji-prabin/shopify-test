@@ -1,12 +1,11 @@
 import React from 'react';
 import * as Tabs from '@radix-ui/react-tabs';
 import PromotionCard from './promotion-card';
-import {Button} from '~/components/ui/button';
-import {PromotionsResponsePayload} from './promotion-server';
+import { Button } from '~/components/ui/button';
 
 const filterOptions = [
-  {label: 'Newest To Oldest', value: 'Newest To Oldest'},
-  {label: 'Oldest To Newest', value: 'Oldest To Newest'},
+  { label: 'Newest To Oldest', value: 'Newest To Oldest' },
+  { label: 'Oldest To Newest', value: 'Oldest To Newest' },
 ];
 
 const PromotionList = ({

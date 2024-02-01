@@ -1,28 +1,51 @@
-import {LoaderFunctionArgs, json, redirect} from '@remix-run/server-runtime';
-import {isAuthenticate, getUserDetails} from '~/lib/utils/authsession.server';
+import { useLoaderData } from '@remix-run/react';
+import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
+import { useFetch } from '~/hooks/useFetch';
+import { ENDPOINT } from '~/lib/constants/endpoint.constant';
+import { getUserDetails, isAuthenticate } from '~/lib/utils/authsession.server';
 import PromotionHeader from './promotion-header';
 import PromotionList from './promotion-list';
-import {useFetch} from '~/hooks/useFetch';
-import {ENDPOINT} from '~/lib/constants/endpoint.constant';
-import {PromotionsResponse} from './promotion-server';
-import {useLoaderData} from '@remix-run/react';
+import { PromotionsResponse } from './promotion-server';
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({ context }: LoaderFunctionArgs) {
+  await isAuthenticate(context);
+  const { userDetails } = await getUserDetails(context);
+  const companyId = userDetails.meta.company_id.value;
+
+  // try {
+  //   const promotions = (await useFetch({
+  //     url: ENDPOINT.CUSTOM.URL + "/promotion?company_id=" + companyId,
+  //   })) as PromotionsResponse;
+  //   const myPromotions = (await useFetch({
+  //     url: ENDPOINT.CUSTOM.URL + "/promotion?company_id=" + companyId + "&custom_promotion=true",
+  //   })) as PromotionsResponse;
+  //   return json({ promotions, myPromotions });
+  // } catch (error) {
+  //   return json({ promotions: [] });
+  // }
+
   try {
-    await isAuthenticate(context);
-    const userDetails = await getUserDetails(context);
-    // console.log('Extacting Company Id =>', userDetails.userDetails.meta.company_id.id);
-    const promotions = (await useFetch({
-      url: ENDPOINT.CUSTOM.PROMOTIONS + '1',
-    })) as PromotionsResponse;
-    return json({promotions});
+    const fetchPromotions = async (companyId: string, custom: boolean = false): Promise<PromotionsResponse> => {
+      const url = `${ENDPOINT.CUSTOM.URL}/promotion?company_id=${companyId}${custom ? "&custom_promotion=true" : ""}`;
+      return await useFetch({ url }) as PromotionsResponse;
+    };
+
+    const promotionsPromise = fetchPromotions(companyId);
+    const myPromotionsPromise = fetchPromotions(companyId, true);
+
+    const [promotions, myPromotions] = await Promise.all([promotionsPromise, myPromotionsPromise]);
+
+    return json({ promotions, myPromotions });
   } catch (error) {
-    return redirect('/login');
+    return json({ promotions: [] });
   }
+
 }
 
 const Promotions = () => {
-  const {promotions} = useLoaderData<typeof loader>();
+  const { promotions, myPromotions } = useLoaderData<typeof loader>();
+  console.log("test", promotions)
+  console.log("mypromotions", myPromotions)
 
   return (
     <>

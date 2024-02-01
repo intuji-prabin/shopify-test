@@ -3,12 +3,13 @@ import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
 import { CircleInformationMajor } from '~/components/icons/orderStatus';
 import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Routes } from '~/lib/constants/routes.constent';
-import { getUserDetails } from '~/lib/utils/authsession.server';
+import { getUserDetails, isAuthenticate } from '~/lib/utils/authsession.server';
 import CompanyProfileDetail from './company-profile-detail';
 import CompanyInfoHeader from './company-profile-header';
 import { getAllCompanyProfileDetails } from './company-profile.server';
 
 export async function loader({ context }: LoaderFunctionArgs) {
+  await isAuthenticate(context);
   const { userDetails } = await getUserDetails(context);
   const companyId = userDetails.meta.company_id.value;
 

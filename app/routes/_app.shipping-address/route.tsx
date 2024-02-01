@@ -3,12 +3,13 @@ import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
 import { CircleInformationMajor } from '~/components/icons/orderStatus';
 import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Routes } from '~/lib/constants/routes.constent';
-import { getUserDetails } from '~/lib/utils/authsession.server';
+import { getUserDetails, isAuthenticate } from '~/lib/utils/authsession.server';
 import ShippingAddressHeader from './shipping-address-breadcrumb';
 import ShippingAddressCards from './shipping-address-card';
 import { getAllCompanyShippingAddresses } from './shipping-address.server';
 
 export async function loader({ context }: LoaderFunctionArgs) {
+  await isAuthenticate(context);
   const { userDetails } = await getUserDetails(context);
   const metaParentValue = userDetails.meta.parent.value;
   const parentId = metaParentValue === 'null' ? userDetails.id : metaParentValue;

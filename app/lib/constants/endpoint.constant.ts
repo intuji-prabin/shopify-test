@@ -83,7 +83,7 @@ export const ENDPOINT = {
   },
   CUSTOM: {
     URL: 'https://casual-mink-routinely.ngrok-free.app/api',
-    CATEGORY_URL: 'https://casual-mink-routinely.ngrok-free.app/api/product/category',
-    PROMOTIONS:'https://casual-mink-routinely.ngrok-free.app/api/content-management?company_id='
+    CATEGORY_URL:
+      'https://casual-mink-routinely.ngrok-free.app/api/product/category',
   },
 };
