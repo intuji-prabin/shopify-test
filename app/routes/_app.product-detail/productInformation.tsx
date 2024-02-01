@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  CircleInformationMajor,
   Compare,
   InStock,
   Pdf,
@@ -23,7 +24,6 @@ import { SliderImageData } from './slider-image-date';
 import { Product } from './route';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { WarehouseInformation } from './view-warehouse-information';
-import InfoBar from '~/components/ui/layouts/infoBar';
 
 export default function ProductInformation({ product }: { product: Product }) {
   const matches = useMediaQuery('(min-width: 1025px)');
@@ -194,9 +194,6 @@ const ProductDetailsSection = ({
                   Price will change if you increase quantity of items.
                 </p>
               </div>
-              <InfoBar
-                title={'Price will change if you increase quantity of items.'}
-              />
             </div>
             <div className="flex gap-4 flex-col lg:flex-row min-h-0 lg:min-h-14">
               <div className="flex">

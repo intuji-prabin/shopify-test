@@ -1,9 +1,10 @@
-import {useEffect, useRef, useState} from 'react';
-import {MenuItems} from '../bottom-header';
+import { useEffect, useRef, useState } from 'react';
+import { MenuItems } from '../bottom-header';
 import ArrowUp from '~/components/icons/arrowUp';
 import ArrowDown from '~/components/icons/arrowDown';
-import {Link, useNavigate} from '@remix-run/react';
-import {DropdownMenu} from './bottom-header-dropdown-list';
+import { Link, useNavigate } from '@remix-run/react';
+import { DropdownMenu } from './bottom-header-dropdown-list';
+import { CategoriesType } from '~/routes/_app/route';
 export const SingleNavItem = ({
   menu,
   activeMenu,
@@ -14,7 +15,7 @@ export const SingleNavItem = ({
   depthLevel: number;
   activeMenu: string;
   setActiveMenu: React.Dispatch<React.SetStateAction<string>>;
-  categories: any;
+  categories: CategoriesType;
 }) => {
   const menuRef = useRef<HTMLLIElement>(null);
   const navigate = useNavigate();

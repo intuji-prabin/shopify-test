@@ -11,7 +11,7 @@ export default function CompanyInfoHeader({ title }: { title: string }) {
           Company Settings
         </BreadcrumbItem>
         <BreadcrumbItem
-          href={Routes.SUPPORT_CONTACT_US}
+          href={Routes.COMPANY_PROFILE}
           className="text-grey-900"
         >
           {title}
