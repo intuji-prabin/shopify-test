@@ -4,7 +4,6 @@ import DesktopFooter from '~/components/ui/layouts/desktopFooter';
 import TopHeader from '~/components/ui/layouts/top-header';
 import {getCategories} from './add-product-megamenu-server';
 import {json} from '@remix-run/server-runtime';
-import BottomHeader from '~/components/ui/layouts/bottom-header';
 
 export async function loader() {
   try {
