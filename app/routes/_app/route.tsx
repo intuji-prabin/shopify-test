@@ -1,10 +1,9 @@
-import { Outlet, useLoaderData } from '@remix-run/react';
+import {Outlet, useLoaderData} from '@remix-run/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
 import TopHeader from '~/components/ui/layouts/top-header';
-<<<<<<< HEAD
-import { getCategories } from './add-product-megamenu-server';
-import { json } from '@remix-run/server-runtime';
+import {getCategories} from './add-product-megamenu-server';
+import {json} from '@remix-run/server-runtime';
 
 export interface CategoriesType {
   id: number;
@@ -12,18 +11,13 @@ export interface CategoriesType {
   identifier: string;
   child_categories?: CategoriesType[];
 }
-=======
-import {getCategories} from './add-product-megamenu-server';
-import {json} from '@remix-run/server-runtime';
-import BottomHeader from '~/components/ui/layouts/bottom-header';
->>>>>>> c065f95 (feat:fix position of the tooltip)
 
 export async function loader() {
   try {
     const categories = await getCategories();
-    return json({ categories });
+    return json({categories});
   } catch (error) {
-    return json({ categories: [] });
+    return json({categories: []});
   }
 }
 
@@ -32,7 +26,7 @@ export async function loader() {
  */
 
 export default function PublicPageLayout() {
-  const { categories } = useLoaderData<typeof loader>();
+  const {categories} = useLoaderData<typeof loader>();
 
   return (
     <Layout categories={categories}>
@@ -41,7 +35,13 @@ export default function PublicPageLayout() {
   );
 }
 
-const Layout = ({ children, categories }: { children: any; categories: CategoriesType[] }) => {
+const Layout = ({
+  children,
+  categories,
+}: {
+  children: any;
+  categories: CategoriesType[];
+}) => {
   return (
     <>
       <header>
