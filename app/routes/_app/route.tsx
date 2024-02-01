@@ -10,7 +10,7 @@ export async function loader() {
     const categories = await getCategories();
     return json({categories});
   } catch (error) {
-    throw new Error('Categories not found');
+    return json({categories: []});
   }
 }
 

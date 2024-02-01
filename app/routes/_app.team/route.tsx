@@ -33,8 +33,8 @@ export async function loader({request}: LoaderFunctionArgs) {
   try {
     const {searchParams} = new URL(request.url);
     const query = searchParams.get('search');
-    const teams = await getAllTeams({query});
 
+    const teams = await getAllTeams({query});
     const rolesList = await getRoles();
 
     const roles = rolesList.data.map((role) => ({
@@ -131,16 +131,11 @@ export default function TeamPage() {
   const {teams, roles} = useLoaderData<typeof loader>();
 
   const [activeDepartmentTab, setActiveDepartmentTab] = useState('all');
+  const params = new URLSearchParams();
 
   const displayedList = useMemo(() => {
     return teams.filter((team) => team.department === activeDepartmentTab);
-  }, [activeDepartmentTab]);
-
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  useEffect(() => {
-    setActiveDepartmentTab('all');
-  }, [searchParams]);
+  }, [activeDepartmentTab, params]);
 
   return (
     <section className="container">
@@ -162,7 +157,7 @@ export default function TeamPage() {
         defaultValue={activeDepartmentTab}
         onValueChange={(value) => setActiveDepartmentTab(value)}
       >
-        <TabsList>
+        <TabsList className="bg-neutral-white w-full justify-start rounded-none border-b not-italic">
           <TabsTrigger value="all">All</TabsTrigger>
           {roles.map((role) => (
             <TabsTrigger key={role.value} value={role.value}>
