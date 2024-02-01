@@ -1,55 +1,38 @@
 import {useLoaderData} from '@remix-run/react';
 import {validationError} from 'remix-validated-form';
-import {useFetch} from '~/hooks/useFetch';
-import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {BackButton} from '~/components/ui/back-button';
+import {
+  RolesResponse,
+  addTeam,
+  getRoles,
+} from '~/routes/_app.team_.add/add-team.server';
+import {isAuthenticate} from '~/lib/utils/authsession.server';
+import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import {Routes} from '~/lib/constants/routes.constent';
+import {SelectInputOptions} from '~/components/ui/select-input';
+import TeamForm, {
+  AddTeamFormSchemaValidator,
+} from '~/routes/_app.team_.add/team-form';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   json,
   redirect,
 } from '@remix-run/server-runtime';
-import TeamForm, {
-  AddTeamFormSchemaValidator,
-} from '~/routes/_app.team_.add/team-form';
-import {BackButton} from '~/components/ui/back-button';
-import {addTeam} from '~/routes/_app.team_.add/add-team.server';
-import {isAuthenticate} from '~/lib/utils/authsession.server';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {Routes} from '~/lib/constants/routes.constent';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
-import {SelectInputOptions} from '~/components/ui/select-input';
-
-interface Role {
-  title: string;
-  value: string;
-  permissions: Permission[];
-}
-
-interface Permission {
-  id: number;
-  title: string;
-  value: string;
-}
-
-interface RolesResponse {
-  data: Role[];
-  msg: string;
-  status: boolean;
-}
 
 export async function loader({context}: LoaderFunctionArgs) {
   try {
     await isAuthenticate(context);
-    const roles = (await useFetch({url: ENDPOINT.ROLE.GET})) as RolesResponse;
+    const roles = await getRoles();
     return json({roles});
   } catch (error) {
-    // return redirect('/login');
-    console.log(error);
+    return json({roles: {} as RolesResponse});
   }
 }
 

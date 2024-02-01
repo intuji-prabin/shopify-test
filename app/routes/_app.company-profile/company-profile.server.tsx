@@ -1,6 +1,14 @@
+import { isRouteErrorResponse, useRouteError } from '@remix-run/react';
 import { useFetch } from '~/hooks/useFetch';
 import { ENDPOINT } from '~/lib/constants/endpoint.constant';
 import { AllowedHTTPMethods } from '~/lib/enums/api.enum';
+
+export type Metafield = {
+  id: string;
+  key: string;
+  value: string;
+  type: string;
+};
 
 export interface CompanyProfileResponse {
   data: Data;
@@ -53,6 +61,8 @@ export interface Metafields {
 }
 
 export interface MetafieldsNode {
+  type: string;
+  id: string;
   key: string;
   value: string;
 }
@@ -73,7 +83,23 @@ export interface ThrottleStatus {
   restoreRate: number;
 }
 
+const profileDataFormat = (data: CompaniesNode) => {
+  const { metafields, ...profileData } = data;
+  const meta: Record<string, Metafield> = {};
 
+  if (metafields.nodes && metafields.nodes.length > 0) {
+    metafields.nodes.forEach((node) => {
+      meta[node.key] = {
+        id: node.id,
+        key: node.key,
+        value: node.value,
+        type: node.type,
+      };
+    });
+  }
+
+  return { ...profileData, meta };
+}
 
 export async function getAllCompanyProfileDetails(companyId: string) {
   const body = JSON.stringify({
@@ -84,7 +110,15 @@ export async function getAllCompanyProfileDetails(companyId: string) {
     url: ENDPOINT.ADMIN.URL,
     body,
   });
-  return results;
+
+  if (!results.data.companies.nodes[0]) {
+    throw new Response("Oh no! Something went wrong!", {
+      status: 404,
+    });
+  }
+
+  const profiledata = profileDataFormat(results.data.companies.nodes[0]);
+  return profiledata;
 }
 
 const GET_COMPANY_PROFILE_QUERY = (companyId: string) => (`query getCompany {
@@ -120,4 +154,15 @@ const GET_COMPANY_PROFILE_QUERY = (companyId: string) => (`query getCompany {
       }
       }
     }
-  }` as const) 
+  }` as const)
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  if (isRouteErrorResponse(error)) {
+    return (
+      <section className='container'>
+        <h1 className='text-center uppercase'>No data found</h1>
+      </section>
+    )
+  }
+}

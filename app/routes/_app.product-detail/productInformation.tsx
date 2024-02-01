@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import {
   CircleInformationMajor,
   Compare,
@@ -8,8 +8,8 @@ import {
   ProductLoveRed,
   ProductLoveWhite,
 } from '~/components/icons/orderStatus';
-import {Button} from '~/components/ui/button';
-import {ProductInfoTable} from './productInfoTable';
+import { Button } from '~/components/ui/button';
+import { ProductInfoTable } from './productInfoTable';
 import {
   Select,
   SelectContent,
@@ -18,21 +18,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
-import {Link} from '@remix-run/react';
+import { Link } from '@remix-run/react';
 import CarouselThumb from './carouselThumb';
-import {SliderImageData} from './slider-image-date';
-import {Product} from './route';
-import {useMediaQuery} from '../../hooks/useMediaQuery';
-import {WarehouseInformation} from './view-warehouse-information';
+import { SliderImageData } from './slider-image-date';
+import { Product } from './route';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { WarehouseInformation } from './view-warehouse-information';
 
-export default function ProductInformation({product}: {product: Product}) {
+export default function ProductInformation({ product }: { product: Product }) {
   const matches = useMediaQuery('(min-width: 1025px)');
   return (
     <section className="bg-white">
       <div className="container flex gap-6 lg:gap-14 flex-col lg:flex-row">
         <CarouselThumb
           images={SliderImageData}
-          thumbNailCarouseloptions={{axis: matches ? 'y' : 'x'}}
+          thumbNailCarouseloptions={{ axis: matches ? 'y' : 'x' }}
           mainCarouseloptions={{}}
         />
 

@@ -1,26 +1,26 @@
+import { Link, useLoaderData } from '@remix-run/react';
+import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
 import { CircleInformationMajor } from '~/components/icons/orderStatus';
-import CompanyProfileDetail from './company-profile-detail';
 import { Alert, AlertDescription } from '~/components/ui/alert';
-import { Link, isRouteErrorResponse, useLoaderData, useRouteError } from '@remix-run/react';
-import { json } from '@remix-run/server-runtime';
 import { Routes } from '~/lib/constants/routes.constent';
-import { getAllCompanyProfileDetails } from './company-profile.server';
+import { getUserDetails } from '~/lib/utils/authsession.server';
+import CompanyProfileDetail from './company-profile-detail';
 import CompanyInfoHeader from './company-profile-header';
+import { getAllCompanyProfileDetails } from './company-profile.server';
 
-export async function loader() {
-  const response = await getAllCompanyProfileDetails("abc123");
-  if (response.data.companies.nodes.length === 0) {
-    throw new Response("Oh no! Something went wrong!", {
-      status: 404,
-    });
-  } else {
-    const results = response?.data;
-    return json({ results });
+export async function loader({ context }: LoaderFunctionArgs) {
+  const { userDetails } = await getUserDetails(context);
+  const companyId = userDetails.meta.company_id.value;
+
+  const response = await getAllCompanyProfileDetails(companyId);
+  if (response) {
+    return json(response);
   }
+  return null;
 }
 
 export default function Company_Profile_Management() {
-  const { results } = useLoaderData<typeof loader>();
+  const results = useLoaderData<typeof loader>();
   return (
     <div className="container py-12 bg-primary-25">
       <CompanyInfoHeader title='Company Profile Management' />
@@ -39,16 +39,4 @@ export default function Company_Profile_Management() {
       <CompanyProfileDetail data={results} />
     </div>
   );
-}
-
-
-export function ErrorBoundary() {
-  const error = useRouteError();
-  if (isRouteErrorResponse(error)) {
-    return (
-      <section className='container'>
-        <h1 className='text-center uppercase'>No data found</h1>
-      </section>
-    )
-  }
 }

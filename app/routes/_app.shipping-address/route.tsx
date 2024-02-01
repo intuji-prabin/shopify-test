@@ -1,21 +1,23 @@
-import { Link, isRouteErrorResponse, useLoaderData, useRouteError } from '@remix-run/react';
+import { Link, useLoaderData } from '@remix-run/react';
+import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
 import { CircleInformationMajor } from '~/components/icons/orderStatus';
 import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Routes } from '~/lib/constants/routes.constent';
+import { getUserDetails } from '~/lib/utils/authsession.server';
 import ShippingAddressHeader from './shipping-address-breadcrumb';
 import ShippingAddressCards from './shipping-address-card';
 import { getAllCompanyShippingAddresses } from './shipping-address.server';
 
-export async function loader() {
-  const response = await getAllCompanyShippingAddresses("7710910808350");
-  if (!response.data.customer.defaultAddress || response.data.customer.addresses.length === 0) {
-    throw new Response("Oh no! Something went wrong!", {
-      status: 404,
-    });
+export async function loader({ context }: LoaderFunctionArgs) {
+  const { userDetails } = await getUserDetails(context);
+  const metaParentValue = userDetails.meta.parent.value;
+  const parentId = metaParentValue === 'null' ? userDetails.id : metaParentValue;
+
+  const response = await getAllCompanyShippingAddresses(parentId);
+  if (response) {
+    return json(response);
   }
-  else {
-    return response?.data?.customer;
-  }
+  return null;
 }
 
 export default function ShippingAddressMgmt() {
@@ -38,15 +40,4 @@ export default function ShippingAddressMgmt() {
       <ShippingAddressCards data={results} />
     </div>
   );
-}
-
-export function ErrorBoundary() {
-  const error = useRouteError();
-  if (isRouteErrorResponse(error)) {
-    return (
-      <section className='container'>
-        <h1 className='text-center uppercase'>No data found</h1>
-      </section>
-    )
-  }
 }

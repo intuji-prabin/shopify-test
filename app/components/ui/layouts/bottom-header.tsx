@@ -1,8 +1,9 @@
-import {useState} from 'react';
-import {menuItemsData} from './elements/bottom-header-menu-items';
-import {SingleNavItem} from './elements/bottom-header-single-Menus';
+import { useState } from 'react';
+import { menuItemsData } from './elements/bottom-header-menu-items';
+import { SingleNavItem } from './elements/bottom-header-single-Menus';
+import { CategoriesType } from '~/routes/_app/route';
 
-const BottomHeader = ({categories}: {categories: any}) => {
+const BottomHeader = ({ categories }: { categories: CategoriesType }) => {
   const depthLevel = 0;
   const [activeMenu, setActiveMenu] = useState('');
   return (

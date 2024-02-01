@@ -1,3 +1,4 @@
+import { isRouteErrorResponse, useRouteError } from '@remix-run/react';
 import { useFetch } from '~/hooks/useFetch';
 import { ENDPOINT } from '~/lib/constants/endpoint.constant';
 import { AllowedHTTPMethods } from '~/lib/enums/api.enum';
@@ -58,11 +59,18 @@ export async function getAllCompanyShippingAddresses(shopifyId: string) {
     url: ENDPOINT.ADMIN.URL,
     body,
   });
-  return results;
+
+  if (!results.data.customer.defaultAddress || results.data.customer.addresses.length === 0) {
+    throw new Response("Oh no! Something went wrong!", {
+      status: 404,
+    });
+  }
+
+  return results.data.customer;
 }
 
 const GET_COMPANY_SHIPING_ADDRESS_QUERY = (shopifyId: string) => (`query getShippingAddress{
- 	customer(id: "gid://shopify/Customer/${shopifyId}"){
+ 	customer(id: "${shopifyId}"){
     defaultAddress{
       address1,
       address2,
@@ -80,4 +88,15 @@ const GET_COMPANY_SHIPING_ADDRESS_QUERY = (shopifyId: string) => (`query getShip
       firstName
     }
   }
-}` as const) 
+}` as const)
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  if (isRouteErrorResponse(error)) {
+    return (
+      <section className='container'>
+        <h1 className='text-center uppercase'>No data found</h1>
+      </section>
+    )
+  }
+}

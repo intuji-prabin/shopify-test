@@ -15,11 +15,13 @@ export const Routes = {
   PROMOTION: '/promotions',
   PLACE_AN_ORDER: '/place-an-order',
   COMPANY_INFORMATION: '/company-info',
+  COMPANY_PROFILE: '/company-profile',
+  SHIPPING_ADDRESS: '/shipping-address',
   ORDERS: '/orders',
   INVOICES: '/invoices',
   STATEMENTS: './statements',
   PROMOTIONS: './promotions',
   CERTIFICATE_GENERATION: '/certificate-generation',
-  WISHLIST:'/wishlist',
-  NOTIFICATION:'/notification'
+  WISHLIST: '/wishlist',
+  NOTIFICATION: '/notification',
 };

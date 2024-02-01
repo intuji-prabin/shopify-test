@@ -11,7 +11,7 @@ export default function ShippingAddressHeader({ title }: { title: string }) {
           Company Settings
         </BreadcrumbItem>
         <BreadcrumbItem
-          href={Routes.SUPPORT_CONTACT_US}
+          href={Routes.SHIPPING_ADDRESS}
           className="text-grey-900"
         >
           {title}
