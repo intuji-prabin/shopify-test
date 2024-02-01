@@ -38,7 +38,7 @@ interface ResponseData {
   data: CustomersData;
 }
 
-function transformCustomer(customer: Customer): TeamColumn {
+function transformCustomerData(customer: Customer): TeamColumn {
   const {id, displayName: name, email, phone, metafields} = customer;
   let department = '';
   let status = false;
@@ -75,8 +75,9 @@ export async function getAllTeams({query}: {query: string | null}) {
     url: ENDPOINT.ADMIN.URL,
     body,
   });
-  const teamColumns: TeamColumn[] =
-    results.data.customers.nodes.map(transformCustomer);
+  const teamColumns: TeamColumn[] = results.data.customers.nodes.map(
+    transformCustomerData,
+  );
 
   return teamColumns;
 }

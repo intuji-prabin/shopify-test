@@ -45,7 +45,7 @@ export default function ConfirmationForm({
         <Label className="text-lg font-normal leading-5.5 normal-case pb-4">
           To confirm deactivation, type “Deactivate” below
         </Label>
-        <ConfirmationInput name="confirmation" placeholder="type deactivate" />
+        <ConfirmationInput name="confirmation" placeholder="type Deactivate" />
         <div className="flex justify-end items-center space-x-2 pt-4">
           <DialogClose asChild>
             <Button type="button" className="uppercase" variant="ghost">
