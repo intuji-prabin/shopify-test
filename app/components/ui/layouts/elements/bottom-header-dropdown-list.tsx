@@ -1,6 +1,11 @@
-import {CategoriesType} from '~/routes/_app/route';
+<<<<<<< HEAD
+import { CategoriesType } from '~/routes/_app/route';
+import { NormalMenuList } from './bottom-header-dropdown-menu';
+import { MegaMenu } from './bottom-header-mega-menu';
+=======
 import {NormalMenuList} from './bottom-header-dropdown-menu';
 import {MegaMenu} from './bottom-header-mega-menu';
+>>>>>>> d2aa4d8 (feat:add conditional rendering for the notification tabs counter)
 
 export const DropdownMenu = ({
   type,
