@@ -11,6 +11,7 @@ export type TeamColumn = {
   id: string;
   name: string;
   email: string;
+  imageUrl: string;
   department: string;
   contactNumber: string;
   status: boolean;

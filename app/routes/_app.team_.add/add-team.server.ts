@@ -4,6 +4,7 @@ import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getUserDetails} from '~/lib/utils/authsession.server';
+import {fileUpload} from '~/lib/utils/file-upload';
 
 interface Role {
   title: string;
@@ -30,11 +31,13 @@ type AddTeamParams = {
   address: string;
   context: AppLoadContext;
   userRole: string;
+  file: File;
 };
 
 export async function addTeam({
   address,
   context,
+  file,
   email,
   fullName,
   userRole,
@@ -66,6 +69,12 @@ export async function addTeam({
   if ((team.customerCreate?.customerUserErrors.length as number) > 0) {
     throw new Error(team.customerCreate?.customerUserErrors[0].message);
   }
+
+  const customerId = team.customerCreate?.customer?.id as string;
+
+  const fileUploadStatus = await fileUpload({customerId, file});
+
+  if (!fileUploadStatus) throw new Error('Image upload unsuccessfull');
 
   const body = JSON.stringify({
     query: UPDATE_TEAM_MUTATION,
@@ -115,9 +124,8 @@ export async function addTeam({
     body,
   });
 
-  if (!results) {
-    throw new Error("Couldn't create user");
-  }
+  if (!results) throw new Error("Couldn't create user");
+
   const emailSend = await customerRecover({email, context});
 
   if (!emailSend) {

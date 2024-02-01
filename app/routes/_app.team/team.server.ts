@@ -42,6 +42,7 @@ function transformCustomerData(customer: Customer): TeamColumn {
   const {id, displayName: name, email, phone, metafields} = customer;
   let department = '';
   let status = false;
+  let imageUrl = '';
 
   // Extracting values from metafields
   metafields.nodes.forEach((node) => {
@@ -49,14 +50,16 @@ function transformCustomerData(customer: Customer): TeamColumn {
       department = node.value;
     } else if (node.key === 'status') {
       status = node.value === 'true';
+    } else if (node.key === 'image_url') {
+      imageUrl = node.value;
     }
   });
 
-  // Return transformed object
   return {
     id,
     name,
     email,
+    imageUrl,
     department,
     contactNumber: phone,
     status,
@@ -75,6 +78,12 @@ export async function getAllTeams({query}: {query: string | null}) {
     url: ENDPOINT.ADMIN.URL,
     body,
   });
+
+  console.log(
+    'resulst',
+    results.data.customers.nodes.map((item) => item.metafields.nodes),
+  );
+
   const teamColumns: TeamColumn[] = results.data.customers.nodes.map(
     transformCustomerData,
   );
