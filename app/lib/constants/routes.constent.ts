@@ -20,4 +20,6 @@ export const Routes = {
   STATEMENTS: './statements',
   PROMOTIONS: './promotions',
   CERTIFICATE_GENERATION: '/certificate-generation',
+  WISHLIST:'/wishlist',
+  NOTIFICATION:'/notification'
 };
