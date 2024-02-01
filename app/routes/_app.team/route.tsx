@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from 'react';
+import {useMemo, useState} from 'react';
 import {validationError} from 'remix-validated-form';
 import {BackButton} from '~/components/ui/back-button';
 import {Button} from '~/components/ui/button';
@@ -15,7 +15,6 @@ import {
   isRouteErrorResponse,
   useLoaderData,
   useRouteError,
-  useSearchParams,
 } from '@remix-run/react';
 import {
   ActionFunctionArgs,
