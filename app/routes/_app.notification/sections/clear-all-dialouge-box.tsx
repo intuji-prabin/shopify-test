@@ -1,3 +1,4 @@
+import React from 'react';
 import {Ordertrack} from '~/components/icons/orderStatus';
 import RemoveItem from '~/components/icons/removeItem';
 import {Button} from '~/components/ui/button';
@@ -10,7 +11,7 @@ import {
   DialogTrigger,
 } from '~/components/ui/dialog';
 import {DialogClose} from '~/components/ui/dialog';
-export default function RemoveDialogbox({
+export default function ClearAllDialouge({
   handleRemoveAllItems,
 }: {
   handleRemoveAllItems: () => void;
@@ -18,20 +19,21 @@ export default function RemoveDialogbox({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="track-time flex gap-1 items-center uppercase flex-grow bg-semantic-danger-500 text-white">
-          Remove
-        </Button>
+        <Button variant="primary">clear all</Button>
       </DialogTrigger>
-      <DialogContent
-        className="sm:max-w-[425px] track-an-order p-0 block"
-        id="wishlist-remove-dialogue"
-      >
+      <DialogContent id='clear-all-notifications-dialogue' className="sm:max-w-[360px] track-an-order p-0 block ">
         <DialogHeader>
-          <DialogTitle className="leading-6 font-bold italic text-lg text-grey-900 flex p-4 justify-center items-center flex-col gap-4">
+          <DialogTitle className="leading-6 font-bold italic text-lg text-grey-900 flex p-4 justify-center items-center flex-col gap-3">
             <div className="bg-semantic-danger-100 p-[10px] rounded-[50%]">
               <RemoveItem />
             </div>
-            Are you sure you want to remove item?
+            <h3 className="font-medium leading-[22px] text-lg text-grey-900 not-italic">
+              CLear all
+            </h3>
+            <p className="font-normal leading-[21px] text-base text-center">
+              Are you sure you want to clear all the notifications? This action
+              cannot be undone.
+            </p>
           </DialogTitle>
         </DialogHeader>
 
@@ -47,7 +49,7 @@ export default function RemoveDialogbox({
             variant="primary"
             onClick={handleRemoveAllItems}
           >
-            Yes! remove
+            Yes, clear
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,6 +1,6 @@
-import { CategoriesType } from '~/routes/_app/route';
-import { NormalMenuList } from './bottom-header-dropdown-menu';
-import { MegaMenu } from './bottom-header-mega-menu';
+import {CategoriesType} from '~/routes/_app/route';
+import {NormalMenuList} from './bottom-header-dropdown-menu';
+import {MegaMenu} from './bottom-header-mega-menu';
 
 export const DropdownMenu = ({
   type,
