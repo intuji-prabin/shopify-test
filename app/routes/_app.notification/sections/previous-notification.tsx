@@ -1,6 +1,5 @@
 import {Link} from '@remix-run/react';
 import {news} from './notification';
-import {Button} from '~/components/ui/button';
 
 export function EmptyInbox() {
   return (

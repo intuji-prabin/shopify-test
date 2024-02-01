@@ -7,7 +7,10 @@ export default function NewsForYou() {
       <ul className="flex gap-2 flex-col">
         {news.map((newsItem) => {
           return (
-            <li className="flex justify-between border-grey-50 border-2 p-4 hover:bg-primary-50  hover:border-primary-400 ">
+            <li
+              className="flex justify-between border-grey-50 border-2 p-4 hover:bg-primary-50  hover:border-primary-400 "
+              key={newsItem.id}
+            >
               <div className="flex">
                 <p className="mr-2 text-grey-900 text-lg italic font-semibold leading-6">
                   {newsItem.date}

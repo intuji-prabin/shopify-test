@@ -20,8 +20,6 @@ export default function NotificationPage({
     // table.toggleAllPageRowsSelected(false);
   }
 
-  console.log('NEWS', news.length);
-
   return (
     <section className="tab-wrapper ">
       <div className="container">

@@ -5,7 +5,7 @@ import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 export async function getCategories() {
   const results: any = await useFetch({
     method: AllowedHTTPMethods.GET,
-    url: ENDPOINT.CUSTOM.CATEGORY_URL,
+    url: ENDPOINT.CUSTOM.URL+ '/product/category'
   });
 
   if (!results) {
