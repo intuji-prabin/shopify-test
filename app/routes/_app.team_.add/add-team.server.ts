@@ -5,6 +5,24 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getUserDetails} from '~/lib/utils/authsession.server';
 
+interface Role {
+  title: string;
+  value: string;
+  permissions: Permission[];
+}
+
+interface Permission {
+  id: number;
+  title: string;
+  value: string;
+}
+
+export interface RolesResponse {
+  data: Role[];
+  msg: string;
+  status: boolean;
+}
+
 type AddTeamParams = {
   fullName: string;
   email: string;
@@ -13,6 +31,7 @@ type AddTeamParams = {
   context: AppLoadContext;
   userRole: string;
 };
+
 export async function addTeam({
   address,
   context,
@@ -104,6 +123,11 @@ export async function addTeam({
   if (!emailSend) {
     throw new Error("Email couldn't send");
   }
+}
+
+export async function getRoles(): Promise<RolesResponse> {
+  const roles = await useFetch<RolesResponse>({url: ENDPOINT.ROLE.GET});
+  return roles;
 }
 
 const CREATE_TEAM_MUTATION = `#graphql 
