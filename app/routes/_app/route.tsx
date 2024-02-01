@@ -1,13 +1,18 @@
-import { Outlet, useLoaderData } from '@remix-run/react';
+import {Outlet, useLoaderData} from '@remix-run/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
 import TopHeader from '~/components/ui/layouts/top-header';
-import { getCategories } from './add-product-megamenu-server';
-import { json } from '@remix-run/server-runtime';
+import {getCategories} from './add-product-megamenu-server';
+import {json} from '@remix-run/server-runtime';
+import BottomHeader from '~/components/ui/layouts/bottom-header';
 
 export async function loader() {
-  const categories = await getCategories();
-  return json({ categories });
+  try {
+    const categories = await getCategories();
+    return json({categories});
+  } catch (error) {
+    throw new Error('Categories not found');
+  }
 }
 
 /**
@@ -24,7 +29,7 @@ export default function PublicPageLayout() {
   );
 }
 
-const Layout = ({ children, categories }: { children: any, categories: any }) => {
+const Layout = ({children, categories}: {children: any; categories: any}) => {
   return (
     <>
       <header>

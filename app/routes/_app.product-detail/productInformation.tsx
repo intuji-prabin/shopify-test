@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import {
   Compare,
   InStock,
@@ -7,8 +7,8 @@ import {
   ProductLoveRed,
   ProductLoveWhite,
 } from '~/components/icons/orderStatus';
-import {Button} from '~/components/ui/button';
-import {ProductInfoTable} from './productInfoTable';
+import { Button } from '~/components/ui/button';
+import { ProductInfoTable } from './productInfoTable';
 import {
   Select,
   SelectContent,
@@ -17,22 +17,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
-import {Link} from '@remix-run/react';
+import { Link } from '@remix-run/react';
 import CarouselThumb from './carouselThumb';
-import {SliderImageData} from './slider-image-date';
-import {Product} from './route';
-import {useMediaQuery} from '../../hooks/useMediaQuery';
-import {WarehouseInformation} from './view-warehouse-information';
+import { SliderImageData } from './slider-image-date';
+import { Product } from './route';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { WarehouseInformation } from './view-warehouse-information';
 import InfoBar from '~/components/ui/layouts/infoBar';
 
-export default function ProductInformation({product}: {product: Product}) {
+export default function ProductInformation({ product }: { product: Product }) {
   const matches = useMediaQuery('(min-width: 1025px)');
   return (
     <section className="bg-white">
       <div className="container flex gap-6 lg:gap-14 flex-col lg:flex-row">
         <CarouselThumb
           images={SliderImageData}
-          thumbNailCarouseloptions={{axis: matches ? 'y' : 'x'}}
+          thumbNailCarouseloptions={{ axis: matches ? 'y' : 'x' }}
           mainCarouseloptions={{}}
         />
 
@@ -188,6 +188,12 @@ const ProductDetailsSection = ({
 
                 <ProductInfoTable quantity={'Quantity'} price={'Price'} />
               </div>
+              <div className="py-2 px-4 bg-semantic-info-100 flex gap-2 border-semantic-info-500 border-l-4 border-y-0 border-r-0 mb-2">
+                <CircleInformationMajor />
+                <p className="text-base font-normal leading-[21px]">
+                  Price will change if you increase quantity of items.
+                </p>
+              </div>
               <InfoBar
                 title={'Price will change if you increase quantity of items.'}
               />
@@ -253,7 +259,6 @@ type ProductCardInfoProps = {
   minimumPieces: string;
 };
 export function ProductCardInfo({
-  sku,
   productName,
   buyPrice,
   rppPrice,

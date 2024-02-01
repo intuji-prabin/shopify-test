@@ -8,7 +8,7 @@ export default function PublicPageLayout() {
     <section className="flex items-center justify-center h-screen mx-auto">
       <div className="flex flex-col gap-y-[103px] items-center p-4">
         <figure>
-          <img src="logo_main.svg" alt="" />
+          <img src="logo_main.svg" alt="Logo" />
         </figure>
         <Outlet />
         <div>

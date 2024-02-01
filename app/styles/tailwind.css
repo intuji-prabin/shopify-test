@@ -84,7 +84,7 @@ select:focus {
 input::placeholder,
 textarea::placeholder,
 select::placeholder {
-  @apply text-grey-500 capitalize !leading-5;
+  @apply text-grey-500 !leading-5;
 }
 input:active::placeholder,
 input:focus::placeholder,
@@ -702,14 +702,20 @@ div[data-state='open'].fixed.inset-0 {
   .data-\[state\=checked\]\:text-slate-50[data-state='checked']:first-child {
   @apply bg-primary-500;
 }
-.wishlist table thead tr th,
-.wishlist table tbody tr td div {
+
+.wishlist table tbody tr td:last-child button {
+  @apply p-4;
+}
+.wishlist table thead tr th:last-child,
+.wishlist table tbody tr td:last-child {
+  @apply text-center items-center flex justify-center;
+}
+.wishlist table thead tr th:nth-child(4) {
   @apply text-center justify-center;
 }
-
-.wishlist table tbody tr td:last-child {
-  @apply flex justify-center items-center;
+.wishlist table tbody tr td:nth-child(4) div {
+  @apply justify-center;
 }
-.wishlist table tbody tr td:last-child button {
-  @apply max-w-[86px] px-0;
+.remove-dialogue .track-order {
+  display: none;
 }

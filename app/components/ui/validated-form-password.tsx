@@ -23,7 +23,10 @@ export default function ValidatedFormPassword({
 
   return (
     <div>
-      <label>{label}</label>
+      <label>
+        {label}
+        <span className="required">*</span>
+      </label>
       <div className="relative">
         <input
           name={name}
