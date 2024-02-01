@@ -58,7 +58,6 @@ export default function NotificationPage({
                       {tabValue}
                     </h5>
                     <div className="p-[6px] bg-primary-100 notification-counter">
-                      {/* {news?.length === 1 ? '1 item ' : `${news.length} items `} */}
                       {news.length <= 9 ? ' 0' + news.length : news.length}
                     </div>
                   </Tabs.Trigger>
