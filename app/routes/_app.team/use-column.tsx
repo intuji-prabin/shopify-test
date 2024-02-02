@@ -2,8 +2,10 @@ import {Form, Link, useFetcher} from '@remix-run/react';
 import {ColumnDef} from '@tanstack/react-table';
 import {useMemo, useState} from 'react';
 import {EditIcon} from '~/components/icons/edit';
+import PersonIcon from '~/components/icons/person-icon';
 import {Button} from '~/components/ui/button';
 import {Switch} from '~/components/ui/switch';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {Routes} from '~/lib/constants/routes.constent';
 import DeactivateDialog from '~/routes/_app.team/cell-action';
 
@@ -17,14 +19,39 @@ export type TeamColumn = {
   status: boolean;
 };
 
-export function useColumn() {
+export function useColumn({currentUser}: {currentUser: string}) {
   const columns = useMemo<ColumnDef<TeamColumn>[]>(
     () => [
       {
         accessorKey: 'name',
         header: 'Name',
         enableSorting: false,
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const {imageUrl, name, id} = info.row.original;
+          const isCurrentUser = currentUser === id;
+          const imageSrc =
+            imageUrl.length > 0 ? imageUrl : DEFAULT_IMAGE.DEFAULT;
+
+          return (
+            <div>
+              <figure className="flex items-center space-x-2 relative">
+                <div className="h-9 w-9 rounded-full">
+                  <img
+                    src={imageSrc}
+                    alt="profile-image"
+                    className="w-full h-full rounded-full object-cover object-center"
+                  />
+                  {isCurrentUser && (
+                    <div className="absolute top-3.5 left-1">
+                      <PersonIcon />
+                    </div>
+                  )}
+                </div>
+                <figcaption>{name}</figcaption>
+              </figure>
+            </div>
+          );
+        },
       },
       {
         accessorKey: 'email',

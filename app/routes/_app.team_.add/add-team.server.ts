@@ -5,6 +5,12 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getUserDetails} from '~/lib/utils/authsession.server';
 import {fileUpload} from '~/lib/utils/file-upload';
+import {
+  getMessageSession,
+  messageCommitSession,
+  setErrorMessage,
+} from '~/lib/utils/toastsession.server';
+import {json} from 'zod-form-data';
 
 interface Role {
   title: string;
@@ -31,7 +37,8 @@ type AddTeamParams = {
   address: string;
   context: AppLoadContext;
   userRole: string;
-  file: File;
+  file: File | undefined;
+  request: Request;
 };
 
 export async function addTeam({
@@ -39,6 +46,7 @@ export async function addTeam({
   context,
   file,
   email,
+  request,
   fullName,
   userRole,
   phoneNumber,
@@ -46,8 +54,11 @@ export async function addTeam({
   const {storefront} = context;
   const firstName = fullName.split(' ')[0];
   const lastName = fullName.split(' ')[1];
+  const messageSession = await getMessageSession(request);
 
   const {userDetails} = await getUserDetails(context);
+
+  const companyId = userDetails.meta.company_id.value;
 
   const metaParentValue = userDetails.meta.parent.value;
 
@@ -72,48 +83,54 @@ export async function addTeam({
 
   const customerId = team.customerCreate?.customer?.id as string;
 
-  const fileUploadStatus = await fileUpload({customerId, file});
-
-  if (!fileUploadStatus) throw new Error('Image upload unsuccessfull');
+  const ownerId = team?.customerCreate?.customer?.id;
 
   const body = JSON.stringify({
     query: UPDATE_TEAM_MUTATION,
     variables: {
       customer: {
-        id: team?.customerCreate?.customer?.id,
+        id: ownerId,
         addresses: {
           address1: address,
         },
+        tags: [`company_id=${companyId}`],
       },
       meta: [
         {
-          ownerId: team?.customerCreate?.customer?.id,
+          ownerId,
           namespace: 'auth',
           key: 'role',
           value: userRole,
           type: 'string',
         },
         {
-          ownerId: team?.customerCreate?.customer?.id,
+          ownerId,
           namespace: 'company',
           key: 'company_id',
-          value: 'abc123',
+          value: companyId,
           type: 'string',
         },
         {
-          ownerId: team?.customerCreate?.customer?.id,
+          ownerId,
           namespace: 'active',
           key: 'status',
           value: 'true',
           type: 'string',
         },
         {
-          ownerId: team?.customerCreate?.customer?.id,
+          ownerId,
           namespace: 'parent',
-          key: 'parent_id',
+          key: 'parent',
           value: parentId,
           type: 'string',
         },
+        // {
+        //   key: 'image_url',
+        //   namespace: 'customer',
+        //   ownerId,
+        //   type: 'string',
+        //   value: imageUrl,
+        // },
       ],
     },
   });
@@ -125,6 +142,16 @@ export async function addTeam({
   });
 
   if (!results) throw new Error("Couldn't create user");
+
+  try {
+    if (typeof file !== 'undefined') {
+      const {status} = await fileUpload({customerId, file});
+
+      if (!status) throw new Error('Image upload unsuccessfull');
+    }
+  } catch (error) {
+    return;
+  }
 
   const emailSend = await customerRecover({email, context});
 

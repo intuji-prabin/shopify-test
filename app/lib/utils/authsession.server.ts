@@ -4,6 +4,7 @@ import {
   messageCommitSession,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
+import {CustomerData} from '~/routes/_public.login/login.server';
 
 const USER_SESSION_KEY = 'accessToken';
 const USER_DETAILS_KEY = 'userDetails';
@@ -19,7 +20,7 @@ export async function createUserSession({
   accessToken: string;
   rememberMe: 'on' | undefined;
   context: AppLoadContext;
-  customerData: any;
+  customerData: CustomerData;
 }) {
   const {session} = context;
   const messageSession = await getMessageSession(request);
@@ -53,7 +54,7 @@ export async function isAuthenticate(context: AppLoadContext) {
 
 export async function getUserDetails(context: AppLoadContext) {
   const {session} = context;
-  const userDetails = session.get(USER_DETAILS_KEY);
+  const userDetails: CustomerData = session.get(USER_DETAILS_KEY);
   return {userDetails};
 }
 

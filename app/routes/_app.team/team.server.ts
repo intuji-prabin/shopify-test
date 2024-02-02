@@ -8,7 +8,7 @@ interface MetaField {
   value: string;
 }
 
-interface Customer {
+export interface Customer {
   id: string;
   email: string;
   displayName: string;
@@ -66,25 +66,24 @@ function transformCustomerData(customer: Customer): TeamColumn {
   };
 }
 
-export async function getAllTeams({query}: {query: string | null}) {
+export async function getAllTeams({
+  companyId,
+  query,
+}: {
+  companyId: string;
+  query: string | null;
+}) {
   const body = JSON.stringify({
-    query: GET_TEAM_MEMBER_QUERY,
-    variables: {
-      name: query,
-    },
+    query: GET_TEAM_MEMBER_QUERY(companyId, query),
   });
+
   const results = await useFetch<ResponseData>({
     method: AllowedHTTPMethods.POST,
     url: ENDPOINT.ADMIN.URL,
     body,
   });
 
-  console.log(
-    'resulst',
-    results.data.customers.nodes.map((item) => item.metafields.nodes),
-  );
-
-  const teamColumns: TeamColumn[] = results.data.customers.nodes.map(
+  const teamColumns: TeamColumn[] = results.data?.customers?.nodes.map(
     transformCustomerData,
   );
 
@@ -122,8 +121,11 @@ export async function updateStatus({
   return results;
 }
 
-const GET_TEAM_MEMBER_QUERY = `query getCustomers($name:String){
-  customers(first:40, query:$name) {
+const GET_TEAM_MEMBER_QUERY = (company_id: string, name: string | null) =>
+  `query getCustomers{
+  customers(first:40, query:"tag:company_id=${company_id} AND ${
+    name ? name : ''
+  }") {
     nodes {
         id
       email

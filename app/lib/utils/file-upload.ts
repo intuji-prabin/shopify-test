@@ -25,5 +25,5 @@ export async function fileUpload({file, customerId}: FileUploadParams) {
 
   const results = (await response.json()) as ImageUploadResponse;
 
-  return results.status;
+  return results;
 }

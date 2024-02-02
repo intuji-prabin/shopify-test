@@ -32,6 +32,16 @@ type Customer = {
   };
 };
 
+export type CustomerData = {
+  meta: Record<string, Metafield>;
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  addresses: CustomerAddress[];
+};
+
 type CustomerResponse = {
   data: {
     customers: {

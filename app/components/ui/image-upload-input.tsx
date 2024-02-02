@@ -3,11 +3,11 @@ import {useField} from 'remix-validated-form';
 import {Button} from '~/components/ui/button';
 import {DangerAlert} from '~/components/icons/alert';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {TeamFormFieldNameType} from '~/routes/_app.team_.add/team-form';
 import {EditFormFieldNameType} from '~/routes/_app.promotion_.edit/route';
+import {AddTeamFormFieldNameType} from '~/routes/_app.team_.add/team-form';
 
 type ImageUploadInputProps = {
-  name: TeamFormFieldNameType | EditFormFieldNameType;
+  name: AddTeamFormFieldNameType | EditFormFieldNameType;
   imageUrl: string | undefined;
   className?: string;
   defaultImage?: string;
@@ -45,7 +45,7 @@ export default function ImageUploadInput({
           });
         };
         reader.readAsDataURL(file);
-        unsavedChanges();
+        unsavedChanges && unsavedChanges();
       }
     });
   };

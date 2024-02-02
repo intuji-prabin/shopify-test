@@ -36,6 +36,7 @@ export default async function handleRequest(
       'fastly.picsum.photos',
       'swiperjs.com',
       'shermacbucket.sgp1.digitaloceanspaces.com', // For default images domain, can be removed
+      'casual-mink-routinely.ngrok-free.app',
       ...localDirectives,
     ],
   });

@@ -27,13 +27,22 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
+import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
 
-export async function loader({request}: LoaderFunctionArgs) {
+export async function loader({request, context}: LoaderFunctionArgs) {
+  await isAuthenticate(context);
+  const {userDetails} = await getUserDetails(context);
+
+  const companyId = userDetails.meta.company_id.value;
+
+  const currentUser = userDetails.id;
+
   try {
     const {searchParams} = new URL(request.url);
     const query = searchParams.get('search');
 
-    const teams = await getAllTeams({query});
+    const teams = await getAllTeams({companyId, query});
+
     const rolesList = await getRoles();
 
     const roles = rolesList.data.map((role) => ({
@@ -41,13 +50,16 @@ export async function loader({request}: LoaderFunctionArgs) {
       value: role.value,
     }));
 
-    return json({teams, roles});
+    return json({teams, roles, currentUser});
   } catch (error) {
-    return json({teams: [], roles: []});
+    console.log('error', error);
+
+    return json({teams: [], roles: [], currentUser});
   }
 }
 
-export async function action({request}: ActionFunctionArgs) {
+export async function action({request, context}: ActionFunctionArgs) {
+  await isAuthenticate(context);
   const messageSession = await getMessageSession(request);
   const formData = await request.formData();
 
@@ -127,7 +139,8 @@ export async function action({request}: ActionFunctionArgs) {
 }
 
 export default function TeamPage() {
-  const {teams, roles} = useLoaderData<typeof loader>();
+  const {teams, roles, currentUser} = useLoaderData<typeof loader>();
+  console.log({teams});
 
   const [activeDepartmentTab, setActiveDepartmentTab] = useState('all');
   const params = new URLSearchParams();
@@ -165,11 +178,11 @@ export default function TeamPage() {
           ))}
         </TabsList>
         <TabsContent value="all">
-          <TabsTable results={teams} />
+          <TabsTable results={teams} currentUser={currentUser} />
         </TabsContent>
         {roles.map((role) => (
           <TabsContent key={role.value} value={role.value}>
-            <TabsTable results={displayedList} />
+            <TabsTable results={displayedList} currentUser={currentUser} />
           </TabsContent>
         ))}
       </Tabs>

@@ -37,6 +37,7 @@ export async function loader({context}: LoaderFunctionArgs) {
 }
 
 export async function action({request, context}: ActionFunctionArgs) {
+  await isAuthenticate(context);
   const messageSession = await getMessageSession(request);
 
   try {
@@ -58,7 +59,8 @@ export async function action({request, context}: ActionFunctionArgs) {
       userRole,
       phoneNumber,
       context,
-      file: profileImage as File,
+      request,
+      file: profileImage,
     });
 
     setSuccessMessage(messageSession, 'Email sent successfully to customer');
