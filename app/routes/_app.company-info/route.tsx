@@ -1,5 +1,12 @@
 import { Link } from '@remix-run/react';
 import { settingCards } from './settingCards';
+import { LoaderFunctionArgs } from '@remix-run/server-runtime';
+import { isAuthenticate } from '~/lib/utils/authsession.server';
+
+export async function loader({ context }: LoaderFunctionArgs) {
+  await isAuthenticate(context);
+  return {}
+}
 
 export default function CompanySettings() {
   return (
