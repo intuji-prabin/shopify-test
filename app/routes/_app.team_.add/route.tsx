@@ -37,6 +37,7 @@ export async function loader({context}: LoaderFunctionArgs) {
 }
 
 export async function action({request, context}: ActionFunctionArgs) {
+  await isAuthenticate(context);
   const messageSession = await getMessageSession(request);
 
   try {
@@ -48,7 +49,8 @@ export async function action({request, context}: ActionFunctionArgs) {
       return validationError(result.error);
     }
 
-    const {email, fullName, address, phoneNumber, userRole} = result.data;
+    const {email, fullName, address, phoneNumber, userRole, profileImage} =
+      result.data;
 
     await addTeam({
       address,
@@ -57,6 +59,8 @@ export async function action({request, context}: ActionFunctionArgs) {
       userRole,
       phoneNumber,
       context,
+      request,
+      file: profileImage,
     });
 
     setSuccessMessage(messageSession, 'Email sent successfully to customer');

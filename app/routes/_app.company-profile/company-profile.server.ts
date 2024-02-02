@@ -1,7 +1,7 @@
-import { isRouteErrorResponse, useRouteError } from '@remix-run/react';
-import { useFetch } from '~/hooks/useFetch';
-import { ENDPOINT } from '~/lib/constants/endpoint.constant';
-import { AllowedHTTPMethods } from '~/lib/enums/api.enum';
+import {isRouteErrorResponse, useRouteError} from '@remix-run/react';
+import {useFetch} from '~/hooks/useFetch';
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 
 export type Metafield = {
   id: string;
@@ -84,7 +84,7 @@ export interface ThrottleStatus {
 }
 
 const profileDataFormat = (data: CompaniesNode) => {
-  const { metafields, ...profileData } = data;
+  const {metafields, ...profileData} = data;
   const meta: Record<string, Metafield> = {};
 
   if (metafields.nodes && metafields.nodes.length > 0) {
@@ -98,8 +98,8 @@ const profileDataFormat = (data: CompaniesNode) => {
     });
   }
 
-  return { ...profileData, meta };
-}
+  return {...profileData, meta};
+};
 
 export async function getAllCompanyProfileDetails(companyId: string) {
   const body = JSON.stringify({
@@ -112,7 +112,7 @@ export async function getAllCompanyProfileDetails(companyId: string) {
   });
 
   if (!results.data.companies.nodes[0]) {
-    throw new Response("Oh no! Something went wrong!", {
+    throw new Response('Oh no! Something went wrong!', {
       status: 404,
     });
   }
@@ -121,7 +121,8 @@ export async function getAllCompanyProfileDetails(companyId: string) {
   return profiledata;
 }
 
-const GET_COMPANY_PROFILE_QUERY = (companyId: string) => (`query getCompany {
+const GET_COMPANY_PROFILE_QUERY = (companyId: string) =>
+  `query getCompany {
     companies(first:10,query:"external_id:${companyId}"){
       nodes{
         id
@@ -154,15 +155,4 @@ const GET_COMPANY_PROFILE_QUERY = (companyId: string) => (`query getCompany {
       }
       }
     }
-  }` as const)
-
-export function ErrorBoundary() {
-  const error = useRouteError();
-  if (isRouteErrorResponse(error)) {
-    return (
-      <section className='container'>
-        <h1 className='text-center uppercase'>No data found</h1>
-      </section>
-    )
-  }
-}
+  }` as const;

@@ -17,6 +17,9 @@ export const ENDPOINT = {
   ROLE: {
     GET: `${BASE_URL}/customer-roles`,
   },
+  FILE: {
+    POST: `${BASE_URL}/customer-image/upload`,
+  },
   PERMISSION: {
     CREATE: '/permission/create',
     GET: '/permission/get',

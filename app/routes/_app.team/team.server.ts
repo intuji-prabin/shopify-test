@@ -8,7 +8,7 @@ interface MetaField {
   value: string;
 }
 
-interface Customer {
+export interface Customer {
   id: string;
   email: string;
   displayName: string;
@@ -42,6 +42,7 @@ function transformCustomerData(customer: Customer): TeamColumn {
   const {id, displayName: name, email, phone, metafields} = customer;
   let department = '';
   let status = false;
+  let imageUrl = '';
 
   // Extracting values from metafields
   metafields.nodes.forEach((node) => {
@@ -49,33 +50,40 @@ function transformCustomerData(customer: Customer): TeamColumn {
       department = node.value;
     } else if (node.key === 'status') {
       status = node.value === 'true';
+    } else if (node.key === 'image_url') {
+      imageUrl = node.value;
     }
   });
 
-  // Return transformed object
   return {
     id,
     name,
     email,
+    imageUrl,
     department,
     contactNumber: phone,
     status,
   };
 }
 
-export async function getAllTeams({query}: {query: string | null}) {
+export async function getAllTeams({
+  companyId,
+  query,
+}: {
+  companyId: string;
+  query: string | null;
+}) {
   const body = JSON.stringify({
-    query: GET_TEAM_MEMBER_QUERY,
-    variables: {
-      name: query,
-    },
+    query: GET_TEAM_MEMBER_QUERY(companyId, query),
   });
+
   const results = await useFetch<ResponseData>({
     method: AllowedHTTPMethods.POST,
     url: ENDPOINT.ADMIN.URL,
     body,
   });
-  const teamColumns: TeamColumn[] = results.data.customers.nodes.map(
+
+  const teamColumns: TeamColumn[] = results.data?.customers?.nodes.map(
     transformCustomerData,
   );
 
@@ -113,8 +121,11 @@ export async function updateStatus({
   return results;
 }
 
-const GET_TEAM_MEMBER_QUERY = `query getCustomers($name:String){
-  customers(first:40, query:$name) {
+const GET_TEAM_MEMBER_QUERY = (company_id: string, name: string | null) =>
+  `query getCustomers{
+  customers(first:40, query:"tag:company_id=${company_id} AND ${
+    name ? name : ''
+  }") {
     nodes {
         id
       email

@@ -37,6 +37,7 @@ export default async function handleRequest(
       'swiperjs.com',
       'casual-mink-routinely.ngrok-free.app',
       'shermacbucket.sgp1.digitaloceanspaces.com', // For default images domain, can be removed
+      'casual-mink-routinely.ngrok-free.app',
       ...localDirectives,
     ],
   });
