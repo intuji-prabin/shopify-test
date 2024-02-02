@@ -16,7 +16,7 @@ export const DropdownMenu = ({
   isOpen: boolean;
   closeMenu: () => void;
   type: 'normal' | 'megamenu';
-  categories: CategoriesType;
+  categories: CategoriesType[];
 }) => {
   return (
     <>

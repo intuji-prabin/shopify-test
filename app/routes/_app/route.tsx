@@ -35,7 +35,7 @@ export default function PublicPageLayout() {
   );
 }
 
-const Layout = ({ children, categories }: { children: any; categories: CategoriesType }) => {
+const Layout = ({ children, categories }: { children: any; categories: CategoriesType[] }) => {
   return (
     <>
       <header>

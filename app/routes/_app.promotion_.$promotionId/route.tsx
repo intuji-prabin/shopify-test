@@ -1,5 +1,5 @@
-import { useActionData } from '@remix-run/react';
-import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
+import { isRouteErrorResponse, useActionData, useLoaderData, useLocation, useRouteError } from '@remix-run/react';
+import { ActionFunctionArgs, DataFunctionArgs, LoaderFunctionArgs, json } from '@remix-run/server-runtime';
 import { withZod } from '@remix-validated-form/with-zod';
 import html2canvas from 'html2canvas';
 import { useRef, useState } from 'react';
@@ -19,6 +19,8 @@ import ImageEdit from '~/components/ui/imageEdit';
 import Loader from '~/components/ui/loader';
 import { Separator } from '~/components/ui/separator';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { createPromotion, getPromotionById } from './promotion.server';
+import { getMessageSession, messageCommitSession, setSuccessMessage } from '~/lib/utils/toastsession.server';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -61,33 +63,63 @@ export type EditFormType = z.infer<typeof EditFormValidator>;
 export type EditFormFieldNameType = keyof EditFormType;
 
 export async function action({ request }: ActionFunctionArgs) {
-  const result = await EditFormSchemaValidator.validate(
-    await request.formData(),
-  );
-  console.log('result', result);
+  const messageSession = await getMessageSession(request);
+  const data = await request.formData()
 
-  if (result.error) {
-    return validationError(result.error);
+  let formData = Object.fromEntries(data);
+  console.log({ formData })
+  const _action = formData.action;
+
+
+  switch (_action) {
+    case "Customise": {
+      console.log("customise")
+      await createPromotion(formData);
+      setSuccessMessage(messageSession, 'New Banner Added Successfully');
+
+      return json(
+        {},
+        {
+          headers: {
+            'Set-Cookie': await messageCommitSession(messageSession),
+          },
+        },
+      );
+    }
+    case "Edit":
+      return "Edit";
+    default:
+      throw new Error("Unknown action");
   }
-  const formData = new FormData();
-  formData.append('file', result.submittedData.companyLogo);
-
-  return json({ data: result });
 }
 
+export async function loader({ params }: LoaderFunctionArgs) {
+  const promotionId = params?.promotionId as string;
+  const response = await getPromotionById(promotionId);
+  if (response?.payload) {
+    const results = response?.payload;
+    return json({ results });
+  }
+  return { response: {} };
+}
+
+
 const PromotionEdit = ({ defaultValues }: EditFormProps) => {
+  const { results } = useLoaderData<any>();
+
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState('');
   const [renderedImageWidth, setRenderedImageWidth] = useState();
   const [companyInfo, setCompanyInfo] = useState({
-    companyName: 'ABC Distributors',
-    companyEmail: 'company@gmail.com',
-    companyWebsite: 'abc.com.au',
-    companyFax: '+61 1 123 456 789',
+    companyLogo: results?.logo_url ?? DEFAULT_IMAGE.DEFAULT,
+    companyName: results?.company_name ?? 'ABC Distributors',
+    companyEmail: results?.company_email ?? 'company@gmail.com',
+    companyWebsite: results?.company_domain ?? 'abc.com.au',
+    companyFax: results?.company_fax ?? '+61 1 123 456 789',
     companyPhone: '+61 1 123 456 789',
-    textColor: '#0F1010',
-    bgColor: '#f5f5f5',
+    textColor: results?.color ?? '#0F1010',
+    bgColor: results?.background_color ?? '#f5f5f5',
   });
   const canvasRef = useRef<any>();
 
@@ -119,9 +151,13 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     }));
     setShowUnsavedChanges(true);
   };
+  const location = useLocation().state;
+
+  console.log({ location });
 
   const resetCompanyInfo = () => {
     setCompanyInfo({
+      companyLogo: DEFAULT_IMAGE.DEFAULT,
       companyName: 'ABC Distributors',
       companyEmail: 'company@gmail.com',
       companyWebsite: 'abc.com.au',
@@ -134,7 +170,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
       '.image-preview',
     ) as unknown as HTMLImageElement[];
     imagePreviews.forEach((imagePreview) => {
-      imagePreview.setAttribute('src', `${DEFAULT_IMAGE.DEFAULT}`);
+      imagePreview.setAttribute('src', `${results?.logo_url ?? DEFAULT_IMAGE.DEFAULT}`);
     });
     setShowUnsavedChanges(false);
   };
@@ -153,6 +189,15 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
       link.download = 'preview.png';
       link.href = canvas.toDataURL();
       setImage(link.href);
+    });
+  };
+
+  const createBlob = (canvasRef: any) => {
+    html2canvas(canvasRef, {
+      useCORS: true,
+      scale: 2,
+    }).then((canvas) => {
+      canvas.toBlob;
     });
   };
 
@@ -225,7 +270,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
               </Dialog>
             </div>
             <img
-              src={'/images/imageEditor.png'}
+              src={results?.image_url}
               alt="previewHidden"
               className="hidden"
               onLoad={(event: any) =>
@@ -234,7 +279,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
             />
             <ImageEdit
               alt={'preview'}
-              imgSrc={'/images/imageEditor.png'}
+              imgSrc={results?.image_url}
               canvasRef={canvasRef}
               companyInfo={companyInfo}
               renderedImageWidth={renderedImageWidth}
@@ -246,24 +291,25 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
               validator={EditFormSchemaValidator}
               encType="multipart/form-data"
               defaultValues={defaultValues}
+              id='promotion-form'
               data-cy="customize-promotion"
             >
               <h5 className="py-4">Company Logo</h5>
               <ImageUploadInput
-                name="companyLogo"
+                name="logo"
                 unsavedChanges={unsavedChanges}
                 imageUrl={defaultValues?.companyLogo}
                 className="pb-4 promotion__edit"
-                defaultImage={DEFAULT_IMAGE.DEFAULT}
+                defaultImage={results?.logo_url ?? DEFAULT_IMAGE.DEFAULT}
               />
               <div className="accordion__section">
                 <AccordionCustom accordionTitle="Company Information">
                   <div className="space-y-6">
                     <div>
-                      <label htmlFor="companyname">Company Name</label>
+                      <label htmlFor="company_name">Company Name</label>
                       <input
                         type="text"
-                        name="companyname"
+                        name="company_name"
                         value={companyInfo.companyName}
                         className="w-full"
                         placeholder="company name"
@@ -273,10 +319,10 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="companyemail">Company Email</label>
+                      <label htmlFor="company_email">Company Email</label>
                       <input
                         type="text"
-                        name="companyemail"
+                        name="company_email"
                         value={companyInfo.companyEmail}
                         className="w-full"
                         placeholder="company email"
@@ -286,10 +332,10 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="companywebsite">Company Website</label>
+                      <label htmlFor="company_domain">Company Website</label>
                       <input
                         type="text"
-                        name="companywebsite"
+                        name="company_domain"
                         value={companyInfo.companyWebsite}
                         className="w-full"
                         placeholder="company website"
@@ -312,10 +358,10 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="companyfax">Company Fax</label>
+                      <label htmlFor="company_fax">Company Fax</label>
                       <input
                         type="tel"
-                        name="companyfax"
+                        name="company_fax"
                         value={companyInfo.companyFax}
                         className="w-full"
                         placeholder="company fax"
@@ -328,14 +374,14 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                 </AccordionCustom>
                 <AccordionCustom accordionTitle="Text Color">
                   <ColorPicker
-                    name="textColor"
+                    name="color"
                     color={companyInfo.textColor}
                     onChange={(color) => handleChange('textColor', color)}
                   />
                 </AccordionCustom>
                 <AccordionCustom accordionTitle="Background">
                   <ColorPicker
-                    name="bgColor"
+                    name="background_color"
                     color={companyInfo.bgColor}
                     onChange={(color) => handleChange('bgColor', color)}
                   />
@@ -355,7 +401,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                         >
                           discard
                         </Button>
-                        <Button type="submit" variant="primary">
+                        <Button type="submit" variant="primary" name='action' value={location.buttonName}>
                           save changes
                         </Button>
                       </div>
@@ -372,3 +418,14 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
 };
 
 export default PromotionEdit;
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  if (isRouteErrorResponse(error)) {
+    return (
+      <section className='container'>
+        <h1 className='text-center uppercase'>No data found</h1>
+      </section>
+    )
+  }
+}
