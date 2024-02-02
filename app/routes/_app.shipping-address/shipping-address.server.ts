@@ -1,8 +1,6 @@
-import { isRouteErrorResponse, useRouteError } from '@remix-run/react';
-import { useFetch } from '~/hooks/useFetch';
-import { ENDPOINT } from '~/lib/constants/endpoint.constant';
-import { AllowedHTTPMethods } from '~/lib/enums/api.enum';
-
+import {useFetch} from '~/hooks/useFetch';
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 
 export interface ShippingAddressResponse {
   data: Data;
@@ -49,7 +47,6 @@ export interface ThrottleStatus {
   restoreRate: number;
 }
 
-
 export async function getAllCompanyShippingAddresses(shopifyId: string) {
   const body = JSON.stringify({
     query: GET_COMPANY_SHIPING_ADDRESS_QUERY(`${shopifyId}`),
@@ -60,8 +57,11 @@ export async function getAllCompanyShippingAddresses(shopifyId: string) {
     body,
   });
 
-  if (!results.data.customer.defaultAddress || results.data.customer.addresses.length === 0) {
-    throw new Response("Oh no! Something went wrong!", {
+  if (
+    !results.data.customer.defaultAddress ||
+    results.data.customer.addresses.length === 0
+  ) {
+    throw new Response('Oh no! Something went wrong!', {
       status: 404,
     });
   }
@@ -69,7 +69,8 @@ export async function getAllCompanyShippingAddresses(shopifyId: string) {
   return results.data.customer;
 }
 
-const GET_COMPANY_SHIPING_ADDRESS_QUERY = (shopifyId: string) => (`query getShippingAddress{
+const GET_COMPANY_SHIPING_ADDRESS_QUERY = (shopifyId: string) =>
+  `query getShippingAddress{
  	customer(id: "${shopifyId}"){
     defaultAddress{
       address1,
@@ -88,15 +89,4 @@ const GET_COMPANY_SHIPING_ADDRESS_QUERY = (shopifyId: string) => (`query getShip
       firstName
     }
   }
-}` as const)
-
-export function ErrorBoundary() {
-  const error = useRouteError();
-  if (isRouteErrorResponse(error)) {
-    return (
-      <section className='container'>
-        <h1 className='text-center uppercase'>No data found</h1>
-      </section>
-    )
-  }
-}
+}` as const;

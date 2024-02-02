@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from '@remix-run/react';
+import { Link, isRouteErrorResponse, useLoaderData, useRouteError } from '@remix-run/react';
 import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
 import { CircleInformationMajor } from '~/components/icons/orderStatus';
 import { Alert, AlertDescription } from '~/components/ui/alert';
@@ -41,4 +41,15 @@ export default function ShippingAddressMgmt() {
       <ShippingAddressCards data={results} />
     </div>
   );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  if (isRouteErrorResponse(error)) {
+    return (
+      <section className='container'>
+        <h1 className='text-center uppercase'>No data found</h1>
+      </section>
+    )
+  }
 }

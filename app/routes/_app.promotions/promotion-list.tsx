@@ -1,7 +1,18 @@
-import React from 'react';
 import * as Tabs from '@radix-ui/react-tabs';
-import PromotionCard from './promotion-card';
+import React from 'react';
 import { Button } from '~/components/ui/button';
+import PromotionCard from './promotion-card';
+
+export interface PromotionDataType {
+  promotions: PromotionType[];
+  myPromotions: PromotionType[];
+}
+
+export interface PromotionType {
+  id: number;
+  title: string;
+  image_url: string;
+}
 
 const filterOptions = [
   { label: 'Newest To Oldest', value: 'Newest To Oldest' },
@@ -9,15 +20,16 @@ const filterOptions = [
 ];
 
 const PromotionList = ({
-  promotions,
+  promotionData,
 }: {
-  promotions: PromotionsResponsePayload[];
+  promotionData: PromotionDataType;
 }) => {
   const handleOnchange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = event.target.value;
     console.log('Selected Date:', selectedValue);
   };
-  console.log('Selected ', promotions);
+  const promotionList = promotionData.promotions;
+  const myPromotionList = promotionData.myPromotions;
 
   return (
     <section className="container">
@@ -57,11 +69,12 @@ const PromotionList = ({
           </div>
           <Tabs.Content className="pt-6" value="tab1">
             <div className="grid grid-cols-1 gap-6 pb-6 border-b sm:grid-cols-2 lg:grid-cols-3 border-b-grey-25">
-              {promotions.map((promotion) => (
+              {promotionList.map((promotion: PromotionType) => (
                 <div key={promotion.id}>
                   <PromotionCard
                     title={promotion.title}
                     imageURL={promotion.image_url}
+                    id={promotion.id}
                   />
                 </div>
               ))}
@@ -79,11 +92,13 @@ const PromotionList = ({
           </Tabs.Content>
           <Tabs.Content className="pt-6" value="tab2">
             <div className="grid grid-cols-1 gap-6 pb-6 border-b sm:grid-cols-2 lg:grid-cols-3 border-b-grey-25">
-              {promotions.map((promotion) => (
+              {myPromotionList.map((promotion: PromotionType) => (
                 <div key={promotion.id}>
                   <PromotionCard
                     title={promotion.title}
                     imageURL={promotion.image_url}
+                    id={promotion.id}
+                    myPromotion={true}
                   />
                 </div>
               ))}
