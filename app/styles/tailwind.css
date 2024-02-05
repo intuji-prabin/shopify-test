@@ -721,3 +721,16 @@ div[data-state='open'].fixed.inset-0 {
 #wishlist-remove-dialogue button.absolute {
   @apply hidden;
 }
+
+.card-wrapper .single-product-card > :first-child {
+  @apply bg-grey-25;
+}
+.card-wrapper .single-product-card div .sku {
+  @apply hidden;
+}
+.card-wrapper .single-product-card > div:nth-child(2) {
+  @apply px-0 py-3;
+}
+.card-wrapper .single-product-card .product-button {
+  @apply hidden;
+}
