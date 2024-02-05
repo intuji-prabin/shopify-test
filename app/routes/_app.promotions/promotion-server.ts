@@ -5,25 +5,17 @@ import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 export interface PromotionsResponse {
   status: boolean;
   message: string;
-  payload: Payload[];
+  payload: Payload;
 }
 
 export interface Payload {
+  promotions: Promotion[];
+}
+
+export interface Promotion {
   id: number;
+  title: null | string;
   image_url: string;
-  title: null;
-  logo_url: string;
-  company_name: string;
-  company_id: string;
-  company_email: string;
-  company_domain: string;
-  company_fax: string;
-  color: string;
-  background_color: string;
-  created_by: string;
-  expaire_at: Date;
-  create_at: Date;
-  updated_at: Date;
 }
 
 export async function getPromotions(companyId: string) {
@@ -36,12 +28,12 @@ export async function getPromotions(companyId: string) {
         method: AllowedHTTPMethods.GET,
         url: url,
       });
-      if (response?.payload.length === 0) {
+      if (response?.payload?.promotions?.length === 0) {
         throw new Response('Oh no! Something went wrong!', {
           status: 404,
         });
       }
-      return response?.payload;
+      return response?.payload?.promotions;
     };
 
     const promotions = await getPromotions(companyId);
