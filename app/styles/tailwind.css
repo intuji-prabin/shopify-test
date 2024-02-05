@@ -278,7 +278,7 @@ label .required {
   border-top: 23px solid;
   content: '';
   left: 40px;
-  top: -56%;
+  top: -31%;
   margin-left: -20px;
   margin-left: -23px;
   position: absolute;
@@ -716,6 +716,8 @@ div[data-state='open'].fixed.inset-0 {
 .wishlist table tbody tr td:nth-child(4) div {
   @apply justify-center;
 }
-.remove-dialogue .track-order {
-  display: none;
+/* removing the close icon from the notification and wishlist dialog box */
+#clear-all-notifications-dialogue button.absolute,
+#wishlist-remove-dialogue button.absolute {
+  @apply hidden;
 }
