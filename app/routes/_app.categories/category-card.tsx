@@ -1,24 +1,24 @@
 import { Link } from '@remix-run/react';
 import { Routes } from '~/lib/constants/routes.constent';
-import { CategoryDataType } from './route';
+import { Payload } from './categories.server';
 
-export function CategoryCard({ category }: { category: CategoryDataType }) {
+export function CategoryCard({ category }: { category: Payload }) {
   const { category_id, title, description, imageUrl, child_categories } = category;
   return (
     <section className="container py-6 mt-0" id={category_id}>
       <div className="grid md:grid-cols-4">
-        <div className=" md:col-span-1 bg-grey-50 p-6">
+        <div className="p-6  md:col-span-1 bg-grey-50">
           <figure className="flex flex-wrap">
-            <figcaption className="space-y-4 mb-20">
-              <h3 className="text-primary-500 uppercase">{title}</h3>
+            <figcaption className="mb-20 space-y-4">
+              <h3 className="uppercase text-primary-500">{title}</h3>
               <p className="text-lg leading-5.5">{description}</p>
             </figcaption>
-            <div className="flex justify-center items-center w-full">
+            <div className="flex items-center justify-center w-full">
               <img src={imageUrl} alt="category-image" />
             </div>
           </figure>
         </div>
-        <div className="md:col-start-2 md:col-end-5 grid sm:grid-cols-3 gap-x-6 bg-neutral-white">
+        <div className="grid md:col-start-2 md:col-end-5 sm:grid-cols-3 gap-x-6 bg-neutral-white">
           {child_categories?.map((subCategoryItem) => (
             <div className="p-6" key={subCategoryItem.id}>
               <h4 className="mb-4">{subCategoryItem.title}</h4>
