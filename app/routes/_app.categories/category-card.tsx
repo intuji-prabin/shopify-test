@@ -5,9 +5,9 @@ import { Payload } from './categories.server';
 export function CategoryCard({ category }: { category: Payload }) {
   const { category_id, title, description, imageUrl, child_categories } = category;
   return (
-    <section className="container py-6 mt-0" id={category_id}>
+    <section className="container py-6 mt-0 category-wrap" id={category_id}>
       <div className="grid md:grid-cols-4">
-        <div className="p-6  md:col-span-1 bg-grey-50">
+        <div className="p-6 md:col-span-1 bg-grey-50">
           <figure className="flex flex-wrap">
             <figcaption className="mb-20 space-y-4">
               <h3 className="uppercase text-primary-500">{title}</h3>
