@@ -18,55 +18,62 @@ export interface Payload {
   child_categories: Payload[];
 }
 
-export async function getProducts(context, params, companyID) {
+export async function getProducts(context : any, params : any, companyID: any) {
   const {storefront} = context;
-  const products = await storefront.query(
-    query({tag: 'abc12345'}, 'tig-welders'),
-  );
-  console.log('products', products);
-  //   try {
-  //     const response = await useFetch<CategoryDetailType>({
-  //       method: AllowedHTTPMethods.GET,
-  //       url: `${ENDPOINT.CUSTOM.URL}/product/category/detail`,
-  //     });
-  //     if (!response?.status) {
-  //       throw new Error(response?.message);
-  //     }
-  //     return formattedResponse(response);
-  //   } catch (e) {
-  //     if (e instanceof Error) {
-  //       return [];
-  //     }
-  //     return [];
-  //   }
-  return '';
-}
+  const { categoryIdentifier } = params
+  const brand = "intuji test"
+  let filterData = `{tag: "${ companyID }" }`
 
-const formattedResponse = (response: CategoryDetailType) => {
-  if (!response.payload || response.payload.length < 1) {
-    return [];
+  if( brand ) {
+    filterData = filterData + ` { productVendor: "${brand}" }`
   }
 
-  const data: Payload[] = response.payload.map((item) => ({
-    id: item?.id,
-    title: item?.title,
-    category_id: item?.category_id,
-    identifier: item?.identifier,
-    description: item?.description,
-    imageUrl: item?.imageUrl,
-    child_categories: item?.child_categories,
+  filterData = `[ ${filterData} ]`
+
+  const products = await storefront.query(
+    query(filterData, categoryIdentifier),
+  );
+
+  const formateData = formattedResponse( products )
+  
+  return formateData
+}
+
+const formattedResponse = (response: any) => {
+  if( !response?.collection ) {
+    return []
+  }
+
+  if( response?.collection?.products?.edges.length < 1 ) {
+    return []
+  }
+  const productList = response?.collection?.products?.edges
+
+  const finalProductList : any = productList.map((item : any ) => ({
+    title : item?.node?.title,
+    variants : productVariantDataFromate(item?.node?.variants)
   }));
 
-  return data;
+  return finalProductList
 };
 
-const query = (params: any, handler: string) => {
+const productVariantDataFromate = ( variant : any ) => {
+  if( variant?.edges.length < 1) {}
+  
+  const finalVariantData =  {
+    sku : variant?.edges[0]?.node?.sku
+  }
+  return finalVariantData
+}
+
+const query = (filterList: any, handler: string) => {
+  
   const produt_query = `query ProductType {
     collection(handle: "${handler}" ) {
           id
           title 
           handle
-          products( first: 10, filters: { tag: "abc12345" } ) {
+          products( first: 10, filters: ${filterList} ) {
               edges {
                   node {
                       handle

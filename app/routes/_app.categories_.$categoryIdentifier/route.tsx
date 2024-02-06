@@ -17,13 +17,14 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
   console.log("first ", params)
   const productList = await getProductList(params, context)
   const categoriesDetail = await getCategoriesDetail();
-  return json({ categoriesDetail });
+  return json({ categoriesDetail, productList });
 }
 const linkStyles =
   'text-center basis-full border-b-2 duration-300 border-b-grey-50 cursor-pointer bg-grey-50 uppercase text-lg italic font-bold leading-6 text-grey-500 py-3 px-5 hover:bg-none';
 
 export default function SubCategoryPage() {
-  const { categoriesDetail } = useLoaderData<typeof loader>();
+  const { categoriesDetail, productList } = useLoaderData<typeof loader>();
+  console.log("products ", productList)
   return (
     <section className="container">
       <div className="pt-6 pb-4">
@@ -55,12 +56,14 @@ export default function SubCategoryPage() {
         )}
       </div>
       <Outlet />
+      
       <div className="grid grid-cols-4 gap-6">
         <div className="col-span-1">
           <h1 className="sticky top-[100px] bg-neutral-white p-4">
             <FilterForm />
           </h1>
         </div>
+        { productList.length > 0 && 
         <div className="col-start-2 col-end-5">
           <SortByFilterForm />
           <div className="grid gap-6 my-6 sm:grid-cols-2 md:grid-cols-3">
@@ -74,8 +77,8 @@ export default function SubCategoryPage() {
             </p>
             <PaginationWrapper pageSize={5} totalCount={ProductCardData.length} />
           </div>
-        </div>
-      </div>
+        </div> || <h1>Product not founds</h1> }
+      </div> 
     </section>
   );
 }
