@@ -1,4 +1,5 @@
 import {useLoaderData, type MetaFunction} from '@remix-run/react';
+import {json} from '@remix-run/server-runtime';
 import {type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import Carousel from '~/components/ui/carousel';
 import CtaHome from '~/components/ui/cta-home';
@@ -7,6 +8,12 @@ import ExpenditureCard from '~/components/ui/expenditureCard';
 import Profile from '~/components/ui/profile';
 import SpendCard from '~/components/ui/spend-card';
 import {isAuthenticate} from '~/lib/utils/authsession.server';
+import {
+  getMessageSession,
+  messageCommitSession,
+  setErrorMessage,
+} from '~/lib/utils/toastsession.server';
+import {getSlides} from './index.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Hydrogen | Home'}];
@@ -110,12 +117,15 @@ export async function loader({context}: LoaderFunctionArgs) {
     ],
   };
 
-  return {
+  const slides = await getSlides({context});
+
+  return json({
+    slides,
     areaChartData,
     barChartData,
     lineChartData,
     doughnutChartData,
-  };
+  });
 }
 
 type ImageType = {
@@ -140,15 +150,11 @@ export default function Homepage() {
 
   return (
     <article className="home">
-      <Carousel images={images} maxHeight={220} sectionClass="mt-0" />
+      {data?.slides.length > 0 ? (
+        <Carousel images={data?.slides} maxHeight={220} sectionClass="mt-0" />
+      ) : null}
       <Profile sectionClass="mt-10" />
       <CtaHome />
-      <SpendCard data={data.areaChartData} />
-      <DetailChart
-        barChartData={data.barChartData}
-        lineChartData={data.lineChartData}
-      />
-      <ExpenditureCard doughnutChartData={data.doughnutChartData} />
     </article>
   );
 }

@@ -1,10 +1,7 @@
-import { useCallback, useState, useEffect } from 'react';
+import {useCallback, useState, useEffect} from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import {
-  EmblaCarouselType,
-  EmblaOptionsType,
-} from 'embla-carousel';
-import { LeftArrow } from '../icons/left';
+import {EmblaCarouselType, EmblaOptionsType} from 'embla-carousel';
+import {LeftArrow} from '../icons/left';
 
 type ImageType = {
   src: string;
@@ -19,7 +16,7 @@ type PropType = {
 };
 
 const Carousel = (props: PropType) => {
-  const { options, images, maxHeight = '500', sectionClass } = props;
+  const {options, images, maxHeight = '500', sectionClass} = props;
   const [emblaRef, emblaApi] = useEmblaCarousel(options);
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
@@ -64,18 +61,22 @@ const Carousel = (props: PropType) => {
       <div
         className="embla__viewport"
         ref={emblaRef}
-        style={{ maxHeight: maxHeight + 'px' }}
+        style={{maxHeight: maxHeight + 'px'}}
       >
         <div className="flex embla__container">
-          {images.map((image, index) => (
-            <div key={index} className="min-w-0 embla__slide flex-full">
-              <img
-                src={image.src}
-                alt={image.alt}
-                className="object-cover w-full"
-              />
-            </div>
-          ))}
+          {images.map((image, index) => {
+            return (
+              image?.image && (
+                <div key={index} className="min-w-0 embla__slide flex-full">
+                  <img
+                    src={image?.image}
+                    alt={image.alt}
+                    className="object-cover w-full"
+                  />
+                </div>
+              )
+            );
+          })}
         </div>
       </div>
       <div className="container absolute inset-0">
