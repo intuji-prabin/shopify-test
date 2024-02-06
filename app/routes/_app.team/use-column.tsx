@@ -77,8 +77,11 @@ export function useColumn({currentUser}: {currentUser: string}) {
         enableSorting: false,
         cell: (info) => {
           const status = info.row.original.status;
+
           const customerId = info.row.original.id;
+
           const fetcher = useFetcher();
+
           const [isChecked, setIsChecked] = useState<boolean>(false);
           return (
             <>
@@ -92,7 +95,7 @@ export function useColumn({currentUser}: {currentUser: string}) {
                 />
               ) : (
                 <fetcher.Form
-                  method="post"
+                  method="POST"
                   onChange={(event) => fetcher.submit(event.currentTarget)}
                 >
                   <input type="hidden" name="customerId" value={customerId} />
