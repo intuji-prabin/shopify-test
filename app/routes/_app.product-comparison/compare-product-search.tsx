@@ -38,7 +38,7 @@ export default function CompareProductSearch({
           }`}
         >
           {searchProduct ? (
-            <figure>
+            <figure className="flex justify-center items-center">
               {' '}
               <img src={imageUrl} className="" alt="product-image" />
               <Button

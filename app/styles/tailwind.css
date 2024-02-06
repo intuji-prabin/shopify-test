@@ -706,8 +706,7 @@ div[data-state='open'].fixed.inset-0 {
 .wishlist table tbody tr td:last-child button {
   @apply p-4;
 }
-.wishlist table thead tr th:last-child,
-.wishlist table tbody tr td:last-child {
+.wishlist table thead tr th:last-child {
   @apply text-center items-center flex justify-center;
 }
 .wishlist table thead tr th:nth-child(4) {
