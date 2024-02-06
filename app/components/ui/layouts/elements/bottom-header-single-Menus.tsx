@@ -1,10 +1,10 @@
-import { Link } from '@remix-run/react';
-import { useRef } from 'react';
+import {Link, useLocation} from '@remix-run/react';
+import {useRef} from 'react';
 import ArrowDown from '~/components/icons/arrowDown';
 import ArrowUp from '~/components/icons/arrowUp';
-import { Payload } from '~/routes/_app/app.server';
-import { MenuItems } from '../bottom-header';
-import { DropdownMenu } from './bottom-header-dropdown-list';
+import {Payload} from '~/routes/_app/app.server';
+import {MenuItems} from '../bottom-header';
+import {DropdownMenu} from './bottom-header-dropdown-list';
 
 export const SingleNavItem = ({
   menu,
@@ -19,13 +19,23 @@ export const SingleNavItem = ({
   categories: Payload[];
 }) => {
   const menuRef = useRef<HTMLLIElement>(null);
+  const location = useLocation();
+  const currentPageRoute = location.pathname;
+  console.log('HERE', currentPageRoute, menu.url);
 
   return (
     <li
-      className="flex flex-row items-center justify-center gap-1 p-3 text-lg italic font-bold text-white menu-items hover:bg-transparent group"
+      className={`flex flex-row items-center justify-center gap-1 p-3 text-lg italic font-bold text-white menu-items group ${
+        currentPageRoute === menu.url
+          ? 'bg-primary-600 [&>a]:text-secondary-500 [&_svg]:fill-secondary-500 hover:bg-primary-600 [&_path]:fill-secondary-500'
+          : ''
+      }`}
       ref={menuRef}
     >
-      <Link to="" className="relative flex items-center gap-1 menu-links">
+      <Link
+        to={menu.url ?? ''}
+        className="relative flex items-center gap-1 menu-links [&>span]:hover:text-secondary-500"
+      >
         <div
           className={`${activeMenu === menu.title ? 'active' : ''} menu-icon`}
         >
@@ -43,7 +53,7 @@ export const SingleNavItem = ({
               }}
             >
               {menu.title === 'Product' && categories.length > 0 ? (
-                <Link to="/categories">{menu.title}</Link>
+                <span>{menu.title}</span>
               ) : (
                 <>{menu.title} </>
               )}
@@ -55,7 +65,12 @@ export const SingleNavItem = ({
                 <ArrowDown />
               </span>
             </button>
-            <div className={'group-hover:inline-block hidden absolute'}>
+            <div
+              onClick={(e) => {
+                e.preventDefault();
+              }}
+              className={'group-hover:inline-block hidden absolute'}
+            >
               <DropdownMenu
                 submenus={menu.submenu}
                 isOpen={activeMenu === menu.title}
@@ -67,7 +82,7 @@ export const SingleNavItem = ({
             </div>
           </>
         ) : (
-          <Link to={menu.url}>{menu.title}</Link>
+          <span>{menu.title}</span>
         )}
       </Link>
     </li>
