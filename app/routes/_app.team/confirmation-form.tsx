@@ -33,7 +33,7 @@ export default function ConfirmationForm({
   return (
     <>
       <ValidatedForm
-        method="post"
+        method="POST"
         validator={ConfirmationFormSchemaValidator}
         id="confirmation-form"
         onSubmit={(_, event) => {
