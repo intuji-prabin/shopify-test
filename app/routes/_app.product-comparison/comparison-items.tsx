@@ -22,6 +22,24 @@ export default function ComparisonItems() {
         rppPrice={0}
         isFavourited={true}
       />
+      <CompareProductSearch
+        imageUrl={'product.png'}
+        productName={
+          'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of'
+        }
+        buyPrice={0}
+        rppPrice={0}
+        isFavourited={true}
+      />
+      <CompareProductSearch
+        imageUrl={'product.png'}
+        productName={
+          'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of'
+        }
+        buyPrice={0}
+        rppPrice={0}
+        isFavourited={true}
+      />
     </div>
   );
 }

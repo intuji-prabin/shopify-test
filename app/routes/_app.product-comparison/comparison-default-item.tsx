@@ -34,14 +34,14 @@ export default function CompareDefaultItem({
     <>
       <div>
         <div
-          className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 bg-grey-25
+          className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 bg-grey-25 h-[261px]
           }`}
         >
           <figure>
             {' '}
             <img src={imageUrl} className="" alt="product-image" />
             <Button
-              className="absolute top-2 right-2 bg-white max-h-8 max-w-8 p-2"
+              className="absolute top-2 right-2 bg-white max-h-8 max-w-8 p-2 hover:bg-white"
               onClick={handleHeartClick}
             >
               <CloseMenu fillColor="#0F1010" />
