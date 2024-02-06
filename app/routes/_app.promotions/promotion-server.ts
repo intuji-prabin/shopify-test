@@ -41,6 +41,6 @@ export async function getPromotions(companyId: string) {
 
     return {promotions, myPromotions};
   } catch (error) {
-    return {promotions: {}, myPromotions: {}};
+    return {promotions: [], myPromotions: []};
   }
 }

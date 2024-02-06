@@ -23,7 +23,7 @@ const Promotions = () => {
   return (
     <>
       <PromotionHeader />
-      <PromotionList promotionData={response} />
+      {response?.promotions.length > 0 || response?.myPromotions.length > 0 ? <PromotionList promotionData={response} /> : "No data found"}
     </>
   );
 };
