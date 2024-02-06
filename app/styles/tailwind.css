@@ -278,14 +278,12 @@ label .required {
   border-top: 23px solid;
   content: '';
   left: 40px;
-  top: -31%;
+  top: -13%;
   margin-left: -20px;
   margin-left: -23px;
   position: absolute;
   border-top-color: #fff;
   transform: rotate(180deg);
-  height: 14px;
-  width: 26px;
 }
 
 .megamenu-content:after {
@@ -418,15 +416,10 @@ label .required {
 .active__tab {
   @apply bg-secondary-500 border-b-2 border-b-grey-900 text-grey-900;
 }
-
 .menu-icon.active button svg {
   @apply fill-secondary-500;
 }
-/* 
-.menu-icon.active svg,
-.menu-icon.active svg path {
-  @apply fill-secondary-500;
-} */
+
 .menu-links:hover button svg {
   @apply fill-secondary-500;
 }

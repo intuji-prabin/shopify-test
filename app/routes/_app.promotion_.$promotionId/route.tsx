@@ -21,6 +21,7 @@ import { Separator } from '~/components/ui/separator';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 import { createPromotion, getPromotionById } from './promotion.server';
 import { getMessageSession, messageCommitSession, setSuccessMessage } from '~/lib/utils/toastsession.server';
+import { isAuthenticate } from '~/lib/utils/authsession.server';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -67,33 +68,35 @@ export async function action({ request }: ActionFunctionArgs) {
   const data = await request.formData()
 
   let formData = Object.fromEntries(data);
-  console.log({ formData })
+  formData = { ...formData }
+  console.log("qwe", { formData })
   const _action = formData.action;
 
+  // switch (_action) {
+  //   case "Customise": {
+  console.log("customise")
+  await createPromotion(formData);
+  setSuccessMessage(messageSession, 'New Banner Added Successfully');
 
-  switch (_action) {
-    case "Customise": {
-      console.log("customise")
-      await createPromotion(formData);
-      setSuccessMessage(messageSession, 'New Banner Added Successfully');
-
-      return json(
-        {},
-        {
-          headers: {
-            'Set-Cookie': await messageCommitSession(messageSession),
-          },
-        },
-      );
-    }
-    case "Edit":
-      return "Edit";
-    default:
-      throw new Error("Unknown action");
-  }
+  return json(
+    {},
+    {
+      headers: {
+        'Set-Cookie': await messageCommitSession(messageSession),
+      },
+    },
+  );
+  //   }
+  //   case "Edit":
+  //     return "Edit";
+  //   default:
+  //     throw new Error("Unknown action");
+  // }
 }
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params, context }: LoaderFunctionArgs) {
+  await isAuthenticate(context);
+
   const promotionId = params?.promotionId as string;
   const response = await getPromotionById(promotionId);
   if (response?.payload) {
@@ -122,6 +125,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     bgColor: results?.background_color ?? '#f5f5f5',
   });
   const canvasRef = useRef<any>();
+  const blobRef = useRef<any>()
 
   const printDocument = (canvasRef: HTMLElement) => {
     setLoading(true);
@@ -144,16 +148,46 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     }
   };
 
+  const createBlob = (canvasRef: any) => {
+    try {
+
+      console.log("firstDamn")
+      console.log("canvasref", canvasRef.current)
+
+      html2canvas(canvasRef, {
+        useCORS: false,
+        scale: 2,
+      }).then((canvas) => {
+        canvas.toBlob((blob) => {
+          console.log("bull", blob)
+          var reader = new FileReader();
+
+          // Closure to capture the file information.
+          reader.onload = function (e) {
+            // Set the value of the input to the file content
+            console.log("ert", e?.target?.result)
+            blobRef.current.value = e?.target?.result;
+            console.log("blValue", blobRef.current.value)
+          };
+          reader.readAsDataURL(blob);
+        })
+      });
+    }
+    catch (err) {
+      console.log("err", err)
+    }
+
+  };
+
   const handleChange = (field: string, value: string) => {
+    console.log("first")
     setCompanyInfo((prevState) => ({
       ...prevState,
       [field]: value,
     }));
+    createBlob(canvasRef.current)
     setShowUnsavedChanges(true);
   };
-  const location = useLocation().state;
-
-  console.log({ location });
 
   const resetCompanyInfo = () => {
     setCompanyInfo({
@@ -189,15 +223,6 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
       link.download = 'preview.png';
       link.href = canvas.toDataURL();
       setImage(link.href);
-    });
-  };
-
-  const createBlob = (canvasRef: any) => {
-    html2canvas(canvasRef, {
-      useCORS: true,
-      scale: 2,
-    }).then((canvas) => {
-      canvas.toBlob;
     });
   };
 
@@ -294,6 +319,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
               id='promotion-form'
               data-cy="customize-promotion"
             >
+              <input ref={blobRef} id="love" accept=".blob" type='file' name="image" />
               <h5 className="py-4">Company Logo</h5>
               <ImageUploadInput
                 name="logo"
@@ -401,7 +427,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                         >
                           discard
                         </Button>
-                        <Button type="submit" variant="primary" name='action' value={location.buttonName}>
+                        <Button type="submit" variant="primary" name='action'>
                           save changes
                         </Button>
                       </div>
