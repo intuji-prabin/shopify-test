@@ -13,7 +13,7 @@ export function useScroll(scrollMenuId: string) {
     event.preventDefault();
 
     const tabLink = document.getElementsByClassName('tab__link');
-    Array.from(tabLink).forEach((el) => el.classList.remove('active__tab'));
+    Array.from(tabLink).forEach((el) => el?.classList.remove('active__tab'));
 
     const currentTarget = event.currentTarget;
     currentTarget.classList.add('active__tab');
@@ -29,7 +29,7 @@ export function useScroll(scrollMenuId: string) {
 
   useEffect(() => {
     const tabLink = document.getElementsByClassName('tab__link');
-    tabLink[0].classList.add('active__tab');
+    tabLink[0]?.classList.add('active__tab');
   }, []);
 
   return {handleScroll};
