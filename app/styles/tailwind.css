@@ -418,15 +418,10 @@ label .required {
 .active__tab {
   @apply bg-secondary-500 border-b-2 border-b-grey-900 text-grey-900;
 }
-
 .menu-icon.active button svg {
   @apply fill-secondary-500;
 }
-/* 
-.menu-icon.active svg,
-.menu-icon.active svg path {
-  @apply fill-secondary-500;
-} */
+
 .menu-links:hover button svg {
   @apply fill-secondary-500;
 }

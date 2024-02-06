@@ -1,10 +1,10 @@
-import { Link } from '@remix-run/react';
-import { useRef } from 'react';
+import {Link} from '@remix-run/react';
+import {useRef} from 'react';
 import ArrowDown from '~/components/icons/arrowDown';
 import ArrowUp from '~/components/icons/arrowUp';
-import { Payload } from '~/routes/_app/app.server';
-import { MenuItems } from '../bottom-header';
-import { DropdownMenu } from './bottom-header-dropdown-list';
+import {Payload} from '~/routes/_app/app.server';
+import {MenuItems} from '../bottom-header';
+import {DropdownMenu} from './bottom-header-dropdown-list';
 
 export const SingleNavItem = ({
   menu,
@@ -25,7 +25,10 @@ export const SingleNavItem = ({
       className="flex flex-row items-center justify-center gap-1 p-3 text-lg italic font-bold text-white menu-items hover:bg-transparent group"
       ref={menuRef}
     >
-      <Link to="" className="relative flex items-center gap-1 menu-links">
+      <Link
+        to={menu.url ?? ''}
+        className="relative flex items-center gap-1 menu-links [&>span]:hover:text-secondary-500"
+      >
         <div
           className={`${activeMenu === menu.title ? 'active' : ''} menu-icon`}
         >
@@ -67,7 +70,7 @@ export const SingleNavItem = ({
             </div>
           </>
         ) : (
-          <Link to={menu.url}>{menu.title}</Link>
+          <span>{menu.title}</span>
         )}
       </Link>
     </li>
