@@ -1,11 +1,7 @@
 import {Link} from '@remix-run/react';
 import {useState} from 'react';
 import CloseMenu from '~/components/icons/closeMenu';
-import {
-  ProductLoveRed,
-  ProductLoveWhite,
-  TooltipInfo,
-} from '~/components/icons/orderStatus';
+import {TooltipInfo} from '~/components/icons/orderStatus';
 import {Button} from '~/components/ui/button';
 type ProductImage = {
   imageUrl: string;

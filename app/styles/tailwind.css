@@ -682,12 +682,7 @@ div[data-state='open'].fixed.inset-0 {
 }
 
 /* whislist table css starts here */
-.wishlist table thead tr th:first-child {
-  @apply w-[66px] px-0 flex items-center justify-center;
-}
-.wishlist table tbody tr td:first-child {
-  @apply w-[66px] px-0 flex items-center justify-center;
-}
+
 .wishlist
   table
   thead
