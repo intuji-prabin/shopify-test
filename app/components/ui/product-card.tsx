@@ -21,7 +21,7 @@ export function ProductCard({
 }: ProductCardProps) {
   return (
     <>
-      <div>
+      <div className="single-product-card">
         <ProductCardImage
           isBuyQtyAvailable={isBuyQtyAvailable}
           isFavorited={isFavorited}
@@ -64,7 +64,9 @@ export function ProductCardInfo({
       <div className="p-4 flex flex-col gap-6">
         <div className="tag flex flex-col gap-[11px]">
           <div>
-            <p className="text-base font-medium text-primary-500">SKU:{sku}</p>
+            <p className="text-base font-medium text-primary-500 sku">
+              SKU:{sku}
+            </p>
             <h5 className="text-lg italic font-bold leading-6 text-grey-900 line-clamp-2 text-ellipsis whitespace-normal h-12">
               {productName}
             </h5>
@@ -166,7 +168,7 @@ function ProductCardButtons() {
   }
 
   return (
-    <div className="flex gap-2 justify-center items-center flex-col sm:flex-row">
+    <div className="flex gap-2 justify-center items-center flex-col sm:flex-row product-button">
       <Button
         variant="primary"
         size="default"

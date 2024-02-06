@@ -113,12 +113,12 @@ export default function TeamForm({
           <p>View and change the user information</p>
         </div>
         <div className="sm:col-start-2 sm:col-end-5">
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid gap-6 lg:grid-cols-2">
             <ImageUploadInput
               name="profileImage"
               imageUrl={defaultValues?.profileImageUrl}
             />
-            <div className="hidden md:block"></div>
+            <div className="hidden lg:block"></div>
             <Input
               required
               type="text"

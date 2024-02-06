@@ -3,11 +3,13 @@ import {useField} from 'remix-validated-form';
 import {Button} from '~/components/ui/button';
 import {DangerAlert} from '~/components/icons/alert';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {EditFormFieldNameType} from '~/routes/_app.promotion_.edit/route';
-import {AddTeamFormFieldNameType} from '~/routes/_app.team_.add/team-form';
+import {
+  AddTeamFormFieldNameType,
+  EditTeamFormFieldNameType,
+} from '~/routes/_app.team_.add/team-form';
 
 type ImageUploadInputProps = {
-  name: AddTeamFormFieldNameType | EditFormFieldNameType;
+  name: AddTeamFormFieldNameType | EditTeamFormFieldNameType;
   imageUrl: string | undefined;
   className?: string;
   defaultImage?: string;
@@ -52,7 +54,7 @@ export default function ImageUploadInput({
 
   return (
     <div className={className}>
-      <div className="flex flex-wrap items-center space-x-4">
+      <div className="flex flex-col items-center gap-y-4 sm:flex-row sm:gap-x-4">
         <img
           src={imageUrl ?? defaultImage ?? DEFAULT_IMAGE.DEFAULT}
           alt="image-preview"
@@ -68,13 +70,17 @@ export default function ImageUploadInput({
           />
           <label
             htmlFor="image-upload"
-            className="flex items-center text-sm font-normal text-grey-400"
+            className="flex flex-col gap-y-4 items-center text-sm font-normal text-grey-400 w-full sm:flex-row"
             onClick={(event) => {
               event.preventDefault();
               handleProfileImageUpload();
             }}
           >
-            <Button type="button" variant="ghost" className="mr-2">
+            <Button
+              type="button"
+              variant="ghost"
+              className="whitespace-nowrap xs:mr-2"
+            >
               upload new picture
             </Button>
             PNG, JPEG under 15MB
