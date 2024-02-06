@@ -12,7 +12,6 @@ export const MegaMenu = ({ categories }: { categories: Payload[] }) => {
     menu: { id: 1, title: '', identifier: '', child_categories: [] },
     subMenu: { id: 1, title: '', identifier: '', child_categories: [] },
   });
-  console.log("categ", categories)
   return (
     <>
       {categories.length > 0 &&

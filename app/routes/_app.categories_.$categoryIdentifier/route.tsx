@@ -11,6 +11,7 @@ import { PaginationWrapper } from '~/components/ui/pagination-wrapper';
 import { ProductCardData } from './product-card-data';
 import { getCustomerDetail } from '../_app.team_.$teamId/edit-team.server';
 import { getUserDetails } from '~/lib/utils/authsession.server';
+import { getProducts } from './product-list.server';
 
 export async function loader({ params, context }: LoaderFunctionArgs) {
   console.log("first ", params)
@@ -32,10 +33,10 @@ export default function SubCategoryPage() {
         </Breadcrumb>
         <Separator className="my-2" />
       </div>
-      <div className="flex items-center gap-3 py-4 sticky top-0 z-10 bg-grey-25">
+      <div className="sticky top-0 z-10 flex items-center gap-3 py-4 bg-grey-25">
         {categoriesDetail?.map((subCategory: any) =>
-          subCategory.child_categories?.map((childCategory : any) => (
-            childCategory.child_categories?.map((subchildCategory : any) => (
+          subCategory.child_categories?.map((childCategory: any) => (
+            childCategory.child_categories?.map((subchildCategory: any) => (
               <NavLink
                 key={childCategory.id}
                 to={`${Routes.CATEGORIES}/${subchildCategory?.identifier}`}
@@ -62,13 +63,13 @@ export default function SubCategoryPage() {
         </div>
         <div className="col-start-2 col-end-5">
           <SortByFilterForm />
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 my-6">
+          <div className="grid gap-6 my-6 sm:grid-cols-2 md:grid-cols-3">
             {ProductCardData.map((product, index) => (
               <ProductCard key={index} {...product} />
             ))}
           </div>
-          <div className="bg-neutral-white py-4 px-6 border-t flex items-center justify-between w-full">
-            <p className="w-40 text-grey-400 font-medium">
+          <div className="flex items-center justify-between w-full px-6 py-4 border-t bg-neutral-white">
+            <p className="w-40 font-medium text-grey-400">
               1-7 of {ProductCardData.length} Items
             </p>
             <PaginationWrapper pageSize={5} totalCount={ProductCardData.length} />
@@ -80,8 +81,16 @@ export default function SubCategoryPage() {
 }
 
 
-const getProductList = async ( params : any, context : any) => {
-  const customerData = await getUserDetails( context )
-  console.log("company id", customerData)
-  return ""
+const getProductList = async (params: any, context: any) => {
+  try {
+    const customerData = await getUserDetails(context)
+    console.log("company id", customerData.userDetails.meta.company_id.value)
+    const results = await getProducts(context, params, customerData.userDetails.meta.company_id.value)
+    return results
+  } catch (error) {
+    if (error instanceof Error) {
+      return [];
+    }
+    return [];
+  }
 }
