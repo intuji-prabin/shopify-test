@@ -1,11 +1,9 @@
 import {Link} from '@remix-run/react';
+
 import {useState} from 'react';
 import CloseMenu from '~/components/icons/closeMenu';
-import {
-  ProductLoveRed,
-  ProductLoveWhite,
-  TooltipInfo,
-} from '~/components/icons/orderStatus';
+import {TooltipInfo} from '~/components/icons/orderStatus';
+import SearchIcon from '~/components/icons/search';
 import {Button} from '~/components/ui/button';
 type ProductImage = {
   imageUrl: string;
@@ -22,32 +20,30 @@ export default function CompareProductSearch({
   productName,
   buyPrice,
   rppPrice,
-  isFavourited,
 }: CompareproductProps) {
-  const [heartFill, setHeartFill] = useState(isFavourited);
   const [searchProduct, setSearchProduct] = useState(false);
 
   const handleSearchResults = () => {
     setSearchProduct(!searchProduct);
   };
-  const handleHeartClick = () => {
-    setHeartFill(!heartFill);
+  const handleCloseItem = () => {
+    setSearchProduct(!searchProduct);
   };
 
   return (
     <>
       <div>
         <div
-          className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 bg-grey-25 min-h-[261px]
+          className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 bg-grey-25 h-[261px]
           }`}
         >
           {searchProduct ? (
-            <figure>
+            <figure className="flex justify-center items-center">
               {' '}
               <img src={imageUrl} className="" alt="product-image" />
               <Button
-                className="absolute top-2 right-2 bg-white max-h-8 max-w-8 p-2"
-                onClick={handleHeartClick}
+                className="absolute top-2 right-2 bg-white max-h-8 max-w-8 p-2 hover:bg-white"
+                onClick={handleCloseItem}
               >
                 <CloseMenu fillColor="#0F1010" />
               </Button>
@@ -114,16 +110,19 @@ export default function CompareProductSearch({
             </div>
           </div>
         ) : (
-          <div>
+          <div className="product-add">
             <p className="text-lg leading-[22px] text-grey-900 font-medium my-4">
               Add a product
             </p>
-            <input
-              type="text"
-              placeholder="Search product"
-              onChange={handleSearchResults}
-              className="before:content-['*'] "
-            />
+            <div className="flex bg-white border-grey-300 border items-center px-3">
+              <SearchIcon />
+              <input
+                type="text"
+                placeholder="Search product"
+                onChange={handleSearchResults}
+                className="w-full outline-none border-none focus:bg-white"
+              />
+            </div>
           </div>
         )}
       </div>

@@ -1,9 +1,11 @@
+
 import { useState } from 'react';
 import { menuItemsData } from './elements/bottom-header-menu-items';
 import { SingleNavItem } from './elements/bottom-header-single-Menus';
 import { Payload } from '~/routes/_app/app.server';
 
 const BottomHeader = ({ categories }: { categories: Payload[] }) => {
+
   const depthLevel = 0;
   const [activeMenu, setActiveMenu] = useState('');
   return (

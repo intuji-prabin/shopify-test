@@ -1,112 +1,11 @@
+import {onOffControl} from './properties/control';
+import {dimensions} from './properties/dimensions';
+import {powerSupply} from './properties/powerSupply';
+import {sensor} from './properties/sensor';
+import {operatingTemp} from './properties/temperature';
+import {weight} from './properties/weight';
+
 export default function ComparisonProperties() {
-  const dimensions = [
-    {
-      id: 0,
-      dimensionOne: '120 x 100 x 18 mm',
-    },
-    {
-      id: 1,
-      dimensionOne: '120 x 100 x 18 mm',
-    },
-    {
-      id: 2,
-      dimensionOne: '120 x 100 x 18 mm',
-    },
-    {
-      id: 3,
-      dimensionOne: '120 x 100 x 18 mm',
-    },
-  ];
-  const onOffControl = [
-    {
-      id: 0,
-      control: 'Automatic',
-    },
-    {
-      id: 1,
-      control: 'Automatic',
-    },
-    {
-      id: 2,
-      control: 'Automatic',
-    },
-    {
-      id: 3,
-      control: 'Automatic',
-    },
-  ];
-  const operatingTemp = [
-    {
-      id: 0,
-      temperature: '-5C to 55C',
-    },
-    {
-      id: 1,
-      temperature: '-5C to 55C',
-    },
-    {
-      id: 2,
-      temperature: '-5C to 55C',
-    },
-    {
-      id: 3,
-      temperature: '-5C to 55C',
-    },
-  ];
-  const powerSupply = [
-    {
-      id: 0,
-      Power: 'Solar Cells/Battery Back Up',
-    },
-    {
-      id: 1,
-      Power: 'Solar Cells/Battery Back Up',
-    },
-    {
-      id: 2,
-      Power: 'Solar Cells/Battery Back Up',
-    },
-    {
-      id: 3,
-      Power: 'Solar Cells/Battery Back Up',
-    },
-  ];
-  const sensor = [
-    {
-      id: 0,
-      sensors: '4 Optical Sensors',
-    },
-    {
-      id: 1,
-      sensors: '3 Optical Sensors',
-    },
-    {
-      id: 2,
-      sensors: '2  Optical Sensors',
-    },
-    {
-      id: 3,
-      sensors: '4 Optical Sensors',
-    },
-  ];
-  const weight = [
-    {
-      id: 0,
-      weightGram: '45g',
-    },
-    {
-      id: 1,
-      weightGram: '47g',
-    },
-    {
-      id: 2,
-      weightGram: '47g',
-    },
-    {
-      id: 3,
-      weightGram: '47g',
-    },
-  ];
   return (
     <>
       <div className="p-6 flex flex-col gap-6">
