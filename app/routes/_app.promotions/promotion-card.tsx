@@ -28,7 +28,7 @@ const PromotionCard = ({ title, imageURL, myPromotion = false, id }: { title: st
                             <img alt="preview" src={imageURL} className="h-auto max-h-[calc(100vh_-_100px)]" />
                         </DialogContent>
                     </Dialog>
-                    <Link state={{ buttonName: myPromotion ? "Edit" : "Customise" }} to={`/promotion/${id}`} className="flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-pointer text-grey-900 border-primary-500 hover:bg-primary-100 disabled:border-none disabled:text-neutral-white disabled:bg-grey-50">
+                    <Link to={`/promotion/${id}`} className="flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-pointer text-grey-900 border-primary-500 hover:bg-primary-100 disabled:border-none disabled:text-neutral-white disabled:bg-grey-50">
                         {myPromotion ? "Edit" : "Customise"}
                     </Link>
                 </div>

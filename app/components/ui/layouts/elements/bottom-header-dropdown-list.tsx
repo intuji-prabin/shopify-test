@@ -1,6 +1,7 @@
-import {CategoriesType} from '~/routes/_app/route';
-import {NormalMenuList} from './bottom-header-dropdown-menu';
-import {MegaMenu} from './bottom-header-mega-menu';
+
+import { Payload } from '~/routes/_app/app.server';
+import { NormalMenuList } from './bottom-header-dropdown-menu';
+import { MegaMenu } from './bottom-header-mega-menu';
 
 export const DropdownMenu = ({
   type,
@@ -16,7 +17,7 @@ export const DropdownMenu = ({
   isOpen: boolean;
   closeMenu: () => void;
   type: 'normal' | 'megamenu';
-  categories: CategoriesType[];
+  categories: Payload[];
 }) => {
   return (
     <>

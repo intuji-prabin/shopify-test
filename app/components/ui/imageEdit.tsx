@@ -37,6 +37,7 @@ const ImageEdit = ({
             renderedImageWidth && renderedImageWidth < 799 ? 'min-content' : '',
         }}
         ref={canvasRef}
+        id="main-image"
       >
         {!!renderedImageWidth && (
           <img

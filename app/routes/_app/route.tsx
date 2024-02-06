@@ -1,32 +1,35 @@
-import {Outlet, useLoaderData} from '@remix-run/react';
+import { Outlet, isRouteErrorResponse, useLoaderData, useRouteError } from '@remix-run/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
 import TopHeader from '~/components/ui/layouts/top-header';
-import {getCategories} from './add-product-megamenu-server';
-import {json} from '@remix-run/server-runtime';
+import { Payload, getCategories } from './app.server';
+import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
+import {
+  getMessageSession,
+  messageCommitSession,
+  setErrorMessage,
+} from '~/lib/utils/toastsession.server';
 
-export interface CategoriesType {
-  id: number;
-  title: string;
-  identifier: string;
-  child_categories?: CategoriesType[];
-}
-
-export async function loader() {
-  try {
-    const categories = await getCategories();
-    return json({categories});
-  } catch (error) {
-    return json({categories: []});
+export async function loader({ request }: ActionFunctionArgs) {
+  const categories = await getCategories();
+  const messageSession = await getMessageSession(request);
+  if (!categories) {
+    setErrorMessage(messageSession, "Category not found");
+    return json(
+      { categories: [] },
+      {
+        headers: {
+          'Set-Cookie': await messageCommitSession(messageSession),
+        },
+      },
+    );
   }
+  return json({ categories });
 }
 
-/**
- * @description layout for protected page
- */
 
 export default function PublicPageLayout() {
-  const {categories} = useLoaderData<typeof loader>();
+  const { categories } = useLoaderData<typeof loader>();
 
   return (
     <Layout categories={categories}>
@@ -35,13 +38,7 @@ export default function PublicPageLayout() {
   );
 }
 
-const Layout = ({
-  children,
-  categories,
-}: {
-  children: any;
-  categories: CategoriesType[];
-}) => {
+const Layout = ({ children, categories }: { children: React.ReactNode; categories: Payload[] }) => {
   return (
     <>
       <header>
@@ -55,3 +52,14 @@ const Layout = ({
     </>
   );
 };
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  if (isRouteErrorResponse(error)) {
+    return (
+      <section className="container">
+        <h1 className="text-center uppercase">No data found</h1>
+      </section>
+    );
+  }
+}
