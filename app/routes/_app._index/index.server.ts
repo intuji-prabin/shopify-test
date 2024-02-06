@@ -1,4 +1,30 @@
-export async function getSlides({context}: {context: any}) {
+export interface SliderType {
+  node: Node;
+}
+
+export interface Node {
+  type: string;
+  slider_title: SliderTitle;
+  slider_image: SliderImage;
+}
+
+export interface SliderImage {
+  reference: Reference;
+}
+
+export interface Reference {
+  previewImage: PreviewImage;
+}
+
+export interface PreviewImage {
+  url: string;
+}
+
+export interface SliderTitle {
+  value: string;
+}
+
+export async function getSlides({context}: any) {
   const {storefront} = context;
   try {
     const response = await storefront.query(SLIDER_DATA_QUERY);
@@ -15,8 +41,8 @@ export async function getSlides({context}: {context: any}) {
   }
 }
 
-const formattedResponse = (response: any) => {
-  const data = response.map((item: any) => ({
+const formattedResponse = (response: SliderType[]) => {
+  const data = response.map((item) => ({
     image: item?.node?.slider_image?.reference?.previewImage?.url,
   }));
 
