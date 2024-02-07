@@ -1,4 +1,5 @@
 import {useLoaderData, type MetaFunction} from '@remix-run/react';
+import {json} from '@remix-run/server-runtime';
 import {type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import Carousel from '~/components/ui/carousel';
 import CtaHome from '~/components/ui/cta-home';
@@ -7,6 +8,7 @@ import ExpenditureCard from '~/components/ui/expenditureCard';
 import Profile from '~/components/ui/profile';
 import SpendCard from '~/components/ui/spend-card';
 import {isAuthenticate} from '~/lib/utils/authsession.server';
+import {getSlides} from './index.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Hydrogen | Home'}];
@@ -110,37 +112,25 @@ export async function loader({context}: LoaderFunctionArgs) {
     ],
   };
 
-  return {
+  const slides = await getSlides({context});
+
+  return json({
+    slides,
     areaChartData,
     barChartData,
     lineChartData,
     doughnutChartData,
-  };
+  });
 }
-
-type ImageType = {
-  src: string;
-  alt: string;
-};
-
-const images: ImageType[] = [
-  {src: 'https://swiperjs.com/demos/images/nature-3.jpg', alt: 'Nature 3'},
-  {src: 'https://swiperjs.com/demos/images/nature-4.jpg', alt: 'Nature 4'},
-  {src: 'https://swiperjs.com/demos/images/nature-5.jpg', alt: 'Nature 5'},
-  {src: 'https://swiperjs.com/demos/images/nature-6.jpg', alt: 'Nature 6'},
-  {src: 'https://swiperjs.com/demos/images/nature-7.jpg', alt: 'Nature 7'},
-  {src: 'https://swiperjs.com/demos/images/nature-8.jpg', alt: 'Nature 8'},
-  {src: 'https://swiperjs.com/demos/images/nature-9.jpg', alt: 'Nature 9'},
-  {src: 'https://swiperjs.com/demos/images/nature-10.jpg', alt: 'Nature 10'},
-  {src: 'https://swiperjs.com/demos/images/nature-2.jpg', alt: 'Nature 2'},
-];
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
 
   return (
     <article className="home">
-      <Carousel images={images} maxHeight={220} sectionClass="mt-0" />
+      {data?.slides.length > 0 ? (
+        <Carousel images={data?.slides} maxHeight={220} sectionClass="mt-0" />
+      ) : null}
       <Profile sectionClass="mt-10" />
       <CtaHome />
       <SpendCard data={data.areaChartData} />
