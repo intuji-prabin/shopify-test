@@ -1,12 +1,16 @@
 export default function SearchIcon({
   fillColor = '#969C9C',
+  width,
+  height,
 }: {
   fillColor?: string;
+  width: string;
+  height: string;
 }) {
   return (
     <svg
-      width="20"
-      height="20"
+      width={width}
+      height={height}
       viewBox="0 0 20 20"
       fill={fillColor}
       xmlns="http://www.w3.org/2000/svg"
