@@ -32,9 +32,9 @@ export default function CompareProductSearch({
 
   return (
     <>
-      <div>
+      <div className="min-w-[132px] md:min-w-[unset]">
         <div
-          className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 bg-grey-25 h-[261px]
+          className={`relative px-0 py-0 border-grey-25 border-b-2 border-x-0 border-top-0 bg-grey-25 h-[261px] md:px-11 md:py-[39px]
           }`}
         >
           {searchProduct ? (
@@ -58,10 +58,10 @@ export default function CompareProductSearch({
                   {productName}
                 </h5>
               </div>
-              <div className="flex gap-6">
+              <div className="flex  gap-2 md:gap-6 ">
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1">
-                    <p className="text-semantic-success-500 text-base font-bold uppercase leading-[21px]">
+                    <p className="text-semantic-success-500 text-sm md:text-base font-bold uppercase leading-[21px]">
                       BUY PRICE
                     </p>
                     <div className="info-block">
@@ -74,7 +74,7 @@ export default function CompareProductSearch({
                       </p>
                     </div>
                   </div>
-                  <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
+                  <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-[#252727]">
                     ${buyPrice.toFixed(2)}
                   </h3>
                   <p className="text-[14px] font-normal leading-4">

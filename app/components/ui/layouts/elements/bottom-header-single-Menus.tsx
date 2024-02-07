@@ -62,7 +62,7 @@ export const SingleNavItem = ({
               </span>
 
               <span className="block group-hover:hidden ">
-                <ArrowDown />
+                <ArrowDown fillColor="#FFF" />
               </span>
             </button>
             <div

@@ -6,8 +6,8 @@ export default function ComparisonWrapper() {
   return (
     <div className="bg-white mt-6">
       <ComparisonItems />
-      {/* <ComparisonProperties /> */}
-      <ComparisonAccordion />
+      <ComparisonProperties />
+      {/* <ComparisonAccordion /> */}
     </div>
   );
 }
