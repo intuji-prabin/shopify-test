@@ -8,78 +8,43 @@ interface MetaField {
   value: string;
 }
 
-interface Customer {
+export interface Customer {
   id: string;
   email: string;
   displayName: string;
   phone: string;
   metafields: {
     nodes: MetaField[];
-  };
-}
-
-interface CustomerNode {
-  id: string;
-  email: string;
-  displayName: string;
-  phone: string;
-  metafields: {
-    nodes: MetaField[];
-  };
-}
-
-interface CustomersData {
-  customers: {
-    nodes: CustomerNode[];
   };
 }
 
 interface ResponseData {
-  data: CustomersData;
+  status: boolean;
+  message: string;
+  payload: TeamColumn[];
 }
 
-function transformCustomerData(customer: Customer): TeamColumn {
-  const {id, displayName: name, email, phone, metafields} = customer;
-  let department = '';
-  let status = false;
-
-  // Extracting values from metafields
-  metafields.nodes.forEach((node) => {
-    if (node.key === 'role') {
-      department = node.value;
-    } else if (node.key === 'status') {
-      status = node.value === 'true';
-    }
-  });
-
-  // Return transformed object
-  return {
-    id,
-    name,
-    email,
-    department,
-    contactNumber: phone,
-    status,
-  };
-}
-
-export async function getAllTeams({query}: {query: string | null}) {
-  const body = JSON.stringify({
-    query: GET_TEAM_MEMBER_QUERY,
-    variables: {
-      name: query,
-    },
-  });
+export async function getAllTeams({
+  companyId,
+  query,
+}: {
+  companyId: string;
+  query: string | null;
+}) {
   const results = await useFetch<ResponseData>({
-    method: AllowedHTTPMethods.POST,
-    url: ENDPOINT.ADMIN.URL,
-    body,
+    method: AllowedHTTPMethods.GET,
+    url: `${ENDPOINT.CUSTOMER_LIST.GET}?company_id=${companyId}${
+      query ? '&search_query=' + query : ''
+    }`,
   });
-  const teamColumns: TeamColumn[] = results.data.customers.nodes.map(
-    transformCustomerData,
-  );
 
-  return teamColumns;
+  if (!results.status) {
+    throw new Error(results.message);
+  }
+
+  console.log('payload', results.payload);
+
+  return results.payload;
 }
 
 export async function updateStatus({
@@ -90,55 +55,19 @@ export async function updateStatus({
   value: 'true' | 'false';
 }) {
   const body = JSON.stringify({
-    query: UPDATE_STATUS,
-    variables: {
-      metafields: [
-        {
-          key: 'status',
-          namespace: 'active',
-          ownerId: customerId,
-          type: 'string',
-          value,
-        },
-      ],
-    },
+    customerId,
+    status: value,
   });
 
   const results = await useFetch<ResponseData>({
     method: AllowedHTTPMethods.POST,
-    url: ENDPOINT.ADMIN.URL,
+    url: ENDPOINT.CUSTOMER.PUT,
     body,
   });
 
-  return results;
+  if (!results.status) {
+    throw new Error(results.message);
+  }
+
+  console.log({results});
 }
-
-const GET_TEAM_MEMBER_QUERY = `query getCustomers($name:String){
-  customers(first:40, query:$name) {
-    nodes {
-        id
-      email
-      displayName
-      phone
-      metafields(first: 10) {
-        nodes {
-          key
-          value
-        }
-      }
-    }
-  }
-}` as const;
-
-const UPDATE_STATUS = `mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
-  metafieldsSet(metafields: $metafields) {
-    metafields {
-      key
-      value
-    }
-    userErrors {
-      field
-      message
-    }
-  }
-}`;

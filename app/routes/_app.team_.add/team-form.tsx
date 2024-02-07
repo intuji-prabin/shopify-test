@@ -1,18 +1,22 @@
-import { withZod } from '@remix-validated-form/with-zod';
-import { useState } from 'react';
-import { ValidatedForm, useFormContext } from 'remix-validated-form';
-import { z } from 'zod';
-import { zfd } from 'zod-form-data';
-import { Button } from '~/components/ui/button';
+import {withZod} from '@remix-validated-form/with-zod';
+import {useState} from 'react';
+import {
+  ValidatedForm,
+  useFormContext,
+  useIsSubmitting,
+} from 'remix-validated-form';
+import {z} from 'zod';
+import {zfd} from 'zod-form-data';
+import {Button} from '~/components/ui/button';
 import ImageUploadInput from '~/components/ui/image-upload-input';
-import { Input } from '~/components/ui/input';
-import SelectInput, { SelectInputOptions } from '~/components/ui/select-input';
-import { Separator } from '~/components/ui/separator';
+import {Input} from '~/components/ui/input';
+import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
+import {Separator} from '~/components/ui/separator';
 import {
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE_MB,
 } from '~/lib/constants/form.constant';
-import { AustralianPhoneNumberValidationRegex } from '~/lib/constants/regex.constant';
+import {AustralianPhoneNumberValidationRegex} from '~/lib/constants/regex.constant';
 
 type TeamFormProps = {
   defaultValues?: Omit<AddTeamFormType, 'profileImage'> & {
@@ -40,47 +44,48 @@ const EditTeamFormSchema = z.object({
         return true;
       }, 'Max file size is 15MB.'),
   ),
-  fullName: z.string().trim().min(1, { message: 'Full Name is required' }),
+  fullName: z.string().trim().min(1, {message: 'Full Name is required'}),
   email: z
     .string()
-    .min(1, { message: 'Email is required' })
+    .min(1, {message: 'Email is required'})
     .email()
     .trim()
     .toLowerCase(),
   phoneNumber: z
     .string()
-    .min(1, { message: 'Phone Number is required' })
+    .min(1, {message: 'Phone Number is required'})
     .trim()
     .refine(
       (value) => AustralianPhoneNumberValidationRegex.test(value),
       'Invalid Phone Number',
     ),
-  address: z.string().min(1, { message: 'Address is required' }).trim(),
-  userRole: z.string().min(1, { message: 'User Role is required' }).trim(),
-  customerId: z.string()
+  address: z.string().min(1, {message: 'Address is required'}).trim(),
+  userRole: z.string().min(1, {message: 'User Role is required'}).trim(),
+  customerId: z.string(),
 });
-const AddTeamFormSchema = EditTeamFormSchema.omit({ customerId: true }).extend({
-  customerID: z.string().optional()
-})
+const AddTeamFormSchema = EditTeamFormSchema.omit({customerId: true}).extend({
+  customerID: z.string().optional(),
+});
 
 export const EditTeamFormSchemaValidator = withZod(EditTeamFormSchema);
 export const AddTeamFormSchemaValidator = withZod(AddTeamFormSchema);
 
-
 export type EditTeamFormType = z.infer<typeof EditTeamFormSchema>;
 export type AddTeamFormType = z.infer<typeof AddTeamFormSchema>;
-
 
 export type EditTeamFormFieldNameType = keyof EditTeamFormType;
 export type AddTeamFormFieldNameType = keyof AddTeamFormType;
 
-
-export default function TeamForm({ defaultValues, options, companyId }: TeamFormProps) {
+export default function TeamForm({
+  defaultValues,
+  options,
+  companyId,
+}: TeamFormProps) {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
-  const { reset } = useFormContext('add-team-form');
+  const {reset} = useFormContext('add-team-form');
 
   const updatePermissions = (value: string) => {
     setSelectedRole(value);
@@ -90,11 +95,13 @@ export default function TeamForm({ defaultValues, options, companyId }: TeamForm
     (option) => option.value === selectedRole,
   )?.permissions;
 
+  const isSubmitting = useIsSubmitting('team-form');
+
   return (
     <ValidatedForm
       method="post"
       encType="multipart/form-data"
-      id="add-team-form"
+      id="team-form"
       className="relative p-6 bg-neutral-white"
       defaultValues={defaultValues}
       validator={AddTeamFormSchemaValidator}
@@ -106,12 +113,12 @@ export default function TeamForm({ defaultValues, options, companyId }: TeamForm
           <p>View and change the user information</p>
         </div>
         <div className="sm:col-start-2 sm:col-end-5">
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid gap-6 lg:grid-cols-2">
             <ImageUploadInput
               name="profileImage"
               imageUrl={defaultValues?.profileImageUrl}
             />
-            <div className="hidden md:block"></div>
+            <div className="hidden lg:block"></div>
             <Input
               required
               type="text"
@@ -204,7 +211,7 @@ export default function TeamForm({ defaultValues, options, companyId }: TeamForm
                 >
                   discard
                 </Button>
-                <Button type="submit" variant="primary">
+                <Button type="submit" variant="primary" disabled={isSubmitting}>
                   save changes
                 </Button>
               </div>

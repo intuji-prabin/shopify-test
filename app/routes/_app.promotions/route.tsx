@@ -1,35 +1,46 @@
-import {LoaderFunctionArgs, json, redirect} from '@remix-run/server-runtime';
-import {isAuthenticate, getUserDetails} from '~/lib/utils/authsession.server';
+import {
+  isRouteErrorResponse,
+  useLoaderData,
+  useRouteError,
+} from '@remix-run/react';
+import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
+import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
 import PromotionHeader from './promotion-header';
 import PromotionList from './promotion-list';
-import {useFetch} from '~/hooks/useFetch';
-import {ENDPOINT} from '~/lib/constants/endpoint.constant';
-import {PromotionsResponse} from './promotion-server';
-import {useLoaderData} from '@remix-run/react';
+import {getPromotions} from './promotion-server';
 
 export async function loader({context}: LoaderFunctionArgs) {
-  try {
-    await isAuthenticate(context);
-    const userDetails = await getUserDetails(context);
-    // console.log('Extacting Company Id =>', userDetails.userDetails.meta.company_id.id);
-    const promotions = (await useFetch({
-      url: ENDPOINT.CUSTOM.PROMOTIONS + '1',
-    })) as PromotionsResponse;
-    return json({promotions});
-  } catch (error) {
-    return redirect('/login');
+  await isAuthenticate(context);
+  const {userDetails} = await getUserDetails(context);
+  const companyId = userDetails.meta.company_id.value;
+
+  const response = await getPromotions(companyId);
+  if (response) {
+    return json({response});
   }
+  return {response: {}};
 }
 
 const Promotions = () => {
-  const {promotions} = useLoaderData<typeof loader>();
+  const {response} = useLoaderData<any>();
 
   return (
     <>
       <PromotionHeader />
-      <PromotionList promotions={promotions.payload} />
+      {response?.promotions.length > 0 || response?.myPromotions.length > 0 ? <PromotionList promotionData={response} /> : "No data found"}
     </>
   );
 };
 
 export default Promotions;
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  if (isRouteErrorResponse(error)) {
+    return (
+      <section className="container">
+        <h1 className="text-center uppercase">No data found</h1>
+      </section>
+    );
+  }
+}

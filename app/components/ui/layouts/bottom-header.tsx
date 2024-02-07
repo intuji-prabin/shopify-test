@@ -1,15 +1,17 @@
+
 import { useState } from 'react';
 import { menuItemsData } from './elements/bottom-header-menu-items';
 import { SingleNavItem } from './elements/bottom-header-single-Menus';
-import { CategoriesType } from '~/routes/_app/route';
+import { Payload } from '~/routes/_app/app.server';
 
-const BottomHeader = ({ categories }: { categories: CategoriesType }) => {
+const BottomHeader = ({ categories }: { categories: Payload[] }) => {
+
   const depthLevel = 0;
   const [activeMenu, setActiveMenu] = useState('');
   return (
-    <nav className="desktop-nav bg-primary-500  relative">
+    <nav className="relative desktop-nav bg-primary-500">
       <div className="container">
-        <ul className="menus flex flex-row justify-between">
+        <ul className="flex flex-row justify-between menus">
           {menuItemsData.map((menu, index) => {
             return (
               <SingleNavItem

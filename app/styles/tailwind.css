@@ -278,14 +278,12 @@ label .required {
   border-top: 23px solid;
   content: '';
   left: 40px;
-  top: -56%;
+  top: -13%;
   margin-left: -20px;
   margin-left: -23px;
   position: absolute;
   border-top-color: #fff;
   transform: rotate(180deg);
-  height: 14px;
-  width: 26px;
 }
 
 .megamenu-content:after {
@@ -418,15 +416,10 @@ label .required {
 .active__tab {
   @apply bg-secondary-500 border-b-2 border-b-grey-900 text-grey-900;
 }
-
 .menu-icon.active button svg {
   @apply fill-secondary-500;
 }
-/* 
-.menu-icon.active svg,
-.menu-icon.active svg path {
-  @apply fill-secondary-500;
-} */
+
 .menu-links:hover button svg {
   @apply fill-secondary-500;
 }
@@ -682,12 +675,7 @@ div[data-state='open'].fixed.inset-0 {
 }
 
 /* whislist table css starts here */
-.wishlist table thead tr th:first-child {
-  @apply w-[66px] px-0 flex items-center justify-center;
-}
-.wishlist table tbody tr td:first-child {
-  @apply w-[66px] px-0 flex items-center justify-center;
-}
+
 .wishlist
   table
   thead
@@ -706,8 +694,7 @@ div[data-state='open'].fixed.inset-0 {
 .wishlist table tbody tr td:last-child button {
   @apply p-4;
 }
-.wishlist table thead tr th:last-child,
-.wishlist table tbody tr td:last-child {
+.wishlist table thead tr th:last-child {
   @apply text-center items-center flex justify-center;
 }
 .wishlist table thead tr th:nth-child(4) {
@@ -716,6 +703,21 @@ div[data-state='open'].fixed.inset-0 {
 .wishlist table tbody tr td:nth-child(4) div {
   @apply justify-center;
 }
-.remove-dialogue .track-order {
-  display: none;
+/* removing the close icon from the notification and wishlist dialog box */
+#clear-all-notifications-dialogue button.absolute,
+#wishlist-remove-dialogue button.absolute {
+  @apply hidden;
+}
+
+.card-wrapper .single-product-card > :first-child {
+  @apply bg-grey-25;
+}
+.card-wrapper .single-product-card div .sku {
+  @apply hidden;
+}
+.card-wrapper .single-product-card > div:nth-child(2) {
+  @apply px-0 py-3;
+}
+.card-wrapper .single-product-card .product-button {
+  @apply hidden;
 }

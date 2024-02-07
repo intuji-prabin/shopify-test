@@ -44,6 +44,7 @@ export const menuItemsData = [
     title: 'Product',
     type: 'megamenu',
     icon: <Product />,
+    url: Routes.CATEGORIES,
     submenu: [
       {
         title: 'Web Design',

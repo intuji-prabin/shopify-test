@@ -51,7 +51,7 @@ export default function TopHeader() {
 
   return (
     <>
-      <header className="bg-grey-900">
+      <div className="bg-grey-900">
         <div className="container py-5 flex  gap-3 justify-between ">
           {/* home icon begins here */}
           <Link to={Routes.HOME}>
@@ -75,14 +75,12 @@ export default function TopHeader() {
                   <li className="nav-item relative" key={navIcon.id}>
                     <Link to={navIcon.url} className="info-block">
                       {' '}
-                      <Link to="" data-tooltip={navIcon.title}>
+                      <div data-tooltip={navIcon.title}>
                         <div className="absolute bg-semantic-danger-500 h-[14px] w-[14px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium p-2">
                           {navIcon.notification}
                         </div>
-                        <Link to="" className="nav-link">
-                          {navIcon.icon}
-                        </Link>
-                      </Link>
+                        <div className="nav-link">{navIcon.icon}</div>
+                      </div>
                     </Link>
                   </li>
                 ))}
@@ -143,7 +141,7 @@ export default function TopHeader() {
             </DropdownMenu>
           </div>
         </div>
-      </header>
+      </div>
     </>
   );
 }
