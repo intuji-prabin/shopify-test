@@ -119,7 +119,7 @@ export default function CompareProductSearch({
               Add a product
             </p>
             <div className="flex bg-white border-grey-300 border items-center px-3">
-              <SearchIcon />
+              <SearchIcon width={''} height={''} />
               <input
                 type="text"
                 placeholder="Search product"
