@@ -14,11 +14,11 @@ export const ENDPOINT = {
     POST: `${BASE_URL}/customer-image/upload`,
   },
   CUSTOMER: {
-    GET: `${ADMIN_URL}/customer`,
-    PUT: `${ADMIN_URL}/customer-status`,
+    GET: `${BASE_URL}/customer`,
+    PUT: `${BASE_URL}/customer-status`,
   },
   CUSTOMER_LIST: {
-    GET: `${ADMIN_URL}/customer-list`,
+    GET: `${BASE_URL}/customer-list`,
   },
   CUSTOM: {
     URL: 'https://casual-mink-routinely.ngrok-free.app/api',
