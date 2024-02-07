@@ -4,7 +4,13 @@ import ArrowUp from '~/components/icons/arrowUp';
 import {Button} from '~/components/ui/button';
 import {useMediaQuery} from '~/hooks/useMediaQuery';
 
-export default function PowerSupply() {
+export default function ComparisionTableRow({
+  title,
+  items,
+}: {
+  title: string;
+  items: {id: number; value: string}[];
+}) {
   const matches = useMediaQuery('(min-width: 768px)');
   const [openAccordion, setOpenAccordion] = useState(true);
   useEffect(() => {
@@ -14,27 +20,10 @@ export default function PowerSupply() {
       setOpenAccordion(false);
     }
   }, [matches]);
+
   function handleshowAccordion() {
     setOpenAccordion(!openAccordion);
   }
-  const powerSupply = [
-    {
-      id: 0,
-      Power: 'Solar Cells/Battery Back Up',
-    },
-    {
-      id: 1,
-      Power: 'Solar Cells/Battery Back Up',
-    },
-    {
-      id: 2,
-      Power: 'Solar Cells/Battery Back Up',
-    },
-    {
-      id: 3,
-      Power: 'Solar Cells/Battery Back Up',
-    },
-  ];
 
   return (
     <div className="flex flex-col">
@@ -42,8 +31,8 @@ export default function PowerSupply() {
         className={`flex justify-between bg-primary-50 md:pointer-events-none`}
         onClick={handleshowAccordion}
       >
-        <p className="text-grey-900 leading-6 font-semibold text-lg bg-primary-50 px-6 py-3">
-          Power Supply
+        <p className="text-grey-900 leading-6 font-semibold text-lg px-6 py-3">
+          {title}
         </p>
         <Button className="block md:hidden bg-primary-50 hover:bg-primary-50 ">
           {openAccordion ? (
@@ -58,13 +47,13 @@ export default function PowerSupply() {
           openAccordion ? 'flex' : 'hidden'
         }`}
       >
-        {powerSupply.map((supply) => {
+        {items.map((item) => {
           return (
             <p
-              className="font-bold text-lg text-grey-400 leading-[26px] md:border-b-0 md:border-0 border-b border-grey-25 border-x-0 border-t-0 p-2"
-              key={supply.id}
+              className="font-bold text-lg text-grey-400 leading-[26px]"
+              key={item.id}
             >
-              {supply.Power}
+              {item.value}
             </p>
           );
         })}

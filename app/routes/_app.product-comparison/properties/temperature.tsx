@@ -61,7 +61,7 @@ export default function Temperature() {
         {operatingTemp.map((temp) => {
           return (
             <p
-              className="font-bold text-lg text-grey-400 leading-[26px]"
+              className="font-bold text-lg text-grey-400 leading-[26px] md:border-b-0 md:border-0 border-b border-grey-25 border-x-0 border-t-0 p-2"
               key={temp.id}
             >
               {temp.temperature}
