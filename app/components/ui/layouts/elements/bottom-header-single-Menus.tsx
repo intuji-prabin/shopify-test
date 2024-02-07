@@ -21,7 +21,6 @@ export const SingleNavItem = ({
   const menuRef = useRef<HTMLLIElement>(null);
   const location = useLocation();
   const currentPageRoute = location.pathname;
-  console.log('HERE', currentPageRoute, menu.url);
 
   return (
     <li

@@ -1,14 +1,17 @@
 import {NotificationIcon} from '../../icons/notification';
-import {Cart, Heart, Note} from '../../icons/orderStatus';
+import {Cart, Heart} from '../../icons/orderStatus';
 import {FaSearch} from 'react-icons/fa';
 import {useState} from 'react';
 import CloseMenu from '~/components/icons/closeMenu';
 import HamburgerIcon from '~/components/icons/hamburgerIcon';
 import {Signout} from '~/components/icons/signout';
 import Search from '~/components/icons/search';
+import {Note} from '~/components/icons/note';
+import {Button} from '../button';
 
 export default function MobileNav() {
   const [isHamOpen, setIsHamOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const navIcons = [
     {
       id: 1,
@@ -57,14 +60,26 @@ export default function MobileNav() {
             <img src="logo.png" alt="" />
           </figure>
         </a>
-        <button
-          className="border border-[#313535] p-2 "
-          onClick={() => {
-            setIsHamOpen(!isHamOpen);
-          }}
-        >
-          {isHamOpen ? <CloseMenu /> : <HamburgerIcon />}
-        </button>
+        <div className="flex gap-2 items-center">
+          <Button
+            className="border border-[#313535] p-2 bg-transparent max-w-10 max-h-10 hover:bg-transparent"
+            onClick={() => {
+              setIsSearchOpen(!isSearchOpen);
+            }}
+          >
+            {' '}
+            <Search fillColor="#FFE600" />
+          </Button>
+
+          <Button
+            className="border border-[#313535] p-2 bg-transparent max-w-10 max-h-10 hover:bg-transparent"
+            onClick={() => {
+              setIsHamOpen(!isHamOpen);
+            }}
+          >
+            {isHamOpen ? <CloseMenu /> : <HamburgerIcon />}
+          </Button>
+        </div>
       </div>
 
       <div

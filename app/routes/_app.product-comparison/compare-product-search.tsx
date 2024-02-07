@@ -34,15 +34,19 @@ export default function CompareProductSearch({
     <>
       <div className="min-w-[132px] md:min-w-[unset]">
         <div
-          className={`relative px-0 py-0 border-grey-25 border-b-2 border-x-0 border-top-0 bg-grey-25 h-[261px] md:px-11 md:py-[39px]
+          className={`relative p-5 border-grey-25 border-b-2 border-x-0 border-top-0 bg-grey-25 h-[175px] md:h-[261px] md:px-11 md:py-[39px] 
           }`}
         >
           {searchProduct ? (
             <figure className="flex justify-center items-center">
               {' '}
-              <img src={imageUrl} className="" alt="product-image" />
+              <img
+                src={imageUrl}
+                className="max-h-[138px] md:max-h-[unset]"
+                alt="product-image"
+              />
               <Button
-                className="absolute top-2 right-2 bg-white max-h-8 max-w-8 p-2 hover:bg-white"
+                className="absolute top-2 right-2 bg-white max-h-5 max-w-5 md:max-h-8 md:max-w-8 p-[3px] md:p-2 hover:bg-white"
                 onClick={handleCloseItem}
               >
                 <CloseMenu fillColor="#0F1010" />
@@ -81,7 +85,7 @@ export default function CompareProductSearch({
                     (Excl. GST)
                   </p>
                 </div>
-                <div className="flex flex-col border-grey-50 border-l-2 border-y-0 border-r-0 pl-6">
+                <div className="flex flex-col  pl-1 md:pl-6">
                   <div className="flex items-center ">
                     <p className="text-grey-300 not-italic text-base font-bold uppercase leading-[21px]">
                       rrp
@@ -99,7 +103,7 @@ export default function CompareProductSearch({
                       </p>
                     </div>
                   </div>
-                  <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
+                  <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-[#252727]">
                     ${rppPrice.toFixed(2)}
                   </h3>
                   <p className="text-[14px] font-normal leading-4">

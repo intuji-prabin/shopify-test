@@ -1,7 +1,9 @@
 export default function SearchIcon({
   fillColor = '#969C9C',
+  className = '',
 }: {
   fillColor?: string;
+  className?: string;
 }) {
   return (
     <svg
@@ -10,6 +12,7 @@ export default function SearchIcon({
       viewBox="0 0 20 20"
       fill={fillColor}
       xmlns="http://www.w3.org/2000/svg"
+      className=""
     >
       <path
         fillRule="evenodd"
