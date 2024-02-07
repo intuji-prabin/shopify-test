@@ -4,40 +4,45 @@ import AccordionCustom from '~/components/ui/accordionCustom';
 import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
 import { Slider } from '~/components/ui/slider';
-import { CheckboxInputData, RadioInputData } from './filter-form-data';
+import { RadioInputData } from './filter-form-data';
 
-export function FilterForm() {
+export function FilterForm(filterList: any) {
+  const { filterdata } = filterList;
   const initialRange = [3, 100];
   const [range, setRange] = useState(initialRange);
 
   const handleRangeChange = (newValues: number[]) => {
     setRange(newValues);
   };
+  // const hello = filterdata.filter(item => item.filterKey === 'material');
+  // console.log("hello", hello)
 
   return (
     <>
-      <h4 className="text-primary-500 py-4">All Filters</h4>
+      <h4 className="py-4 text-primary-500">All Filters</h4>
       <Separator />
       <Form method="get">
-        {CheckboxInputData.map((form, index) => (
+        {filterdata?.map((form: any, index: any) => (
           <Fragment key={index}>
-            <AccordionCustom accordionTitle={form.title}>
-              {form.input.map((input, index) => (
-                <div key={index} className="flex py-2 gap-x-2 items-center">
-                  <input
-                    type="checkbox"
-                    id={input.value}
-                    name={input.name}
-                    value={input.value}
-                  />
-                  <label
-                    htmlFor={input.value}
-                    className="text-grey-700 not-italic font-medium text-lg"
-                  >
-                    {input.label}
-                  </label>
-                </div>
-              ))}
+            <AccordionCustom accordionTitle={form.filterLabel}>
+              {form?.filterValue?.map((input: any, index: any) => {
+                return (
+                  <div key={index} className="flex items-center py-2 gap-x-2">
+                    <input
+                      type="checkbox"
+                      id={input}
+                      name={input}
+                      value={input}
+                    />
+                    <label
+                      htmlFor={input}
+                      className="text-lg not-italic font-medium text-grey-700"
+                    >
+                      {input}
+                    </label>
+                  </div>
+                )
+              })}
             </AccordionCustom>
           </Fragment>
         ))}
@@ -55,7 +60,7 @@ export function FilterForm() {
                 />
                 <label
                   htmlFor={radio.value}
-                  className="border border-solid border-grey-50 p-2 mt-2 text-grey-700 font-medium text-sm not-italic leading-4 cursor-pointer duration-200 hover:border-transparent hover:bg-primary-400 peer-checked:bg-primary-400"
+                  className="p-2 mt-2 text-sm not-italic font-medium leading-4 duration-200 border border-solid cursor-pointer border-grey-50 text-grey-700 hover:border-transparent hover:bg-primary-400 peer-checked:bg-primary-400"
                 >
                   {radio.label}
                 </label>
@@ -88,7 +93,7 @@ export function SortByFilterForm() {
   const submit = useSubmit();
   const [queryParams] = useSearchParams();
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex items-center justify-between">
       <p className="text-lg text-grey-700">
         183 items found for <span className="font-medium">“ Mig Welders ”</span>
       </p>
