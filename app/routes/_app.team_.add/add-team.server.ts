@@ -5,12 +5,7 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getUserDetails} from '~/lib/utils/authsession.server';
 import {fileUpload} from '~/lib/utils/file-upload';
-import {
-  getMessageSession,
-  messageCommitSession,
-  setErrorMessage,
-} from '~/lib/utils/toastsession.server';
-import {json} from 'zod-form-data';
+import {getMessageSession} from '~/lib/utils/toastsession.server';
 
 interface Role {
   title: string;
@@ -54,7 +49,6 @@ export async function addTeam({
   const {storefront} = context;
   const firstName = fullName.split(' ')[0];
   const lastName = fullName.split(' ')[1];
-  const messageSession = await getMessageSession(request);
 
   const {userDetails} = await getUserDetails(context);
 
@@ -83,61 +77,17 @@ export async function addTeam({
 
   const customerId = team.customerCreate?.customer?.id as string;
 
-  const ownerId = team?.customerCreate?.customer?.id;
-
   const body = JSON.stringify({
-    query: UPDATE_TEAM_MUTATION,
-    variables: {
-      customer: {
-        id: ownerId,
-        addresses: {
-          address1: address,
-        },
-        tags: [`company_id=${companyId}`],
-      },
-      meta: [
-        {
-          ownerId,
-          namespace: 'auth',
-          key: 'role',
-          value: userRole,
-          type: 'string',
-        },
-        {
-          ownerId,
-          namespace: 'company',
-          key: 'company_id',
-          value: companyId,
-          type: 'string',
-        },
-        {
-          ownerId,
-          namespace: 'active',
-          key: 'status',
-          value: 'true',
-          type: 'string',
-        },
-        {
-          ownerId,
-          namespace: 'parent',
-          key: 'parent',
-          value: parentId,
-          type: 'string',
-        },
-        // {
-        //   key: 'image_url',
-        //   namespace: 'customer',
-        //   ownerId,
-        //   type: 'string',
-        //   value: imageUrl,
-        // },
-      ],
-    },
+    companyId,
+    customerId,
+    address,
+    parentId,
+    userRole,
   });
 
   const results = await useFetch({
     method: AllowedHTTPMethods.POST,
-    url: ENDPOINT.ADMIN.URL,
+    url: ENDPOINT.CUSTOMER.POST,
     body,
   });
 
@@ -177,20 +127,4 @@ mutation customerCreate($input: CustomerCreateInput!) {
     }
   }
 }
-` as const;
-
-const UPDATE_TEAM_MUTATION = `
-  mutation updateCustomerWithMeta($customer: CustomerInput!, $meta: [MetafieldsSetInput!]!) {
-    customerUpdate(input: $customer) {
-      customer {
-        id
-      }
-    }
-    metafieldsSet(metafields: $meta) {
-      metafields {
-        key
-        value
-      }
-    }
-  }
 ` as const;

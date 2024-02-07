@@ -42,8 +42,6 @@ export async function getAllTeams({
     throw new Error(results.message);
   }
 
-  console.log('payload', results.payload);
-
   return results.payload;
 }
 
@@ -68,6 +66,4 @@ export async function updateStatus({
   if (!results.status) {
     throw new Error(results.message);
   }
-
-  console.log({results});
 }
