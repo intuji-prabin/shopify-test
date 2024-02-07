@@ -72,6 +72,8 @@ export async function action({request, context}: ActionFunctionArgs) {
     });
   } catch (error) {
     if (error instanceof Error) {
+      console.log('error', error);
+
       setErrorMessage(messageSession, error.message);
       return json(
         {},
@@ -82,6 +84,9 @@ export async function action({request, context}: ActionFunctionArgs) {
         },
       );
     }
+
+    console.log({error});
+
     return json({error}, {status: 400});
   }
 }

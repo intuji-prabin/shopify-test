@@ -85,7 +85,7 @@ export default function TeamForm({
 
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
-  const {reset} = useFormContext('add-team-form');
+  const {reset} = useFormContext('team-form');
 
   const updatePermissions = (value: string) => {
     setSelectedRole(value);
@@ -124,7 +124,7 @@ export default function TeamForm({
               type="text"
               name="fullName"
               label="Full Name"
-              placeholder="member full name"
+              placeholder="full name"
             />
             <Input
               required
@@ -146,12 +146,7 @@ export default function TeamForm({
               label="Address"
               placeholder="address"
             />
-            <Input
-              type="hidden"
-              name="customerId"
-              value={companyId}
-              placeholder="member full name"
-            />
+            <Input type="hidden" name="customerId" value={companyId} />
           </div>
         </div>
       </div>
@@ -170,7 +165,7 @@ export default function TeamForm({
               <SelectInput
                 name="userRole"
                 options={options}
-                label="Select Roles"
+                label="select roles"
                 updatePermissions={(value: string) => updatePermissions(value)}
               />
             </div>
