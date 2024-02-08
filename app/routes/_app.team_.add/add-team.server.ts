@@ -41,7 +41,6 @@ export async function addTeam({
   context,
   file,
   email,
-  request,
   fullName,
   userRole,
   phoneNumber,
@@ -108,6 +107,7 @@ export async function addTeam({
   if (!emailSend) {
     throw new Error("Email couldn't send");
   }
+  return results;
 }
 
 export async function getRoles(): Promise<RolesResponse> {

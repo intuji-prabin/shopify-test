@@ -16,6 +16,7 @@ import {
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE_MB,
 } from '~/lib/constants/form.constant';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {AustralianPhoneNumberValidationRegex} from '~/lib/constants/regex.constant';
 
 type TeamFormProps = {
@@ -97,6 +98,11 @@ export default function TeamForm({
 
   const isSubmitting = useIsSubmitting('team-form');
 
+  const defaultImageUrl =
+    defaultValues?.profileImageUrl && defaultValues?.profileImageUrl?.length > 0
+      ? defaultValues?.profileImageUrl
+      : DEFAULT_IMAGE.DEFAULT;
+
   return (
     <ValidatedForm
       method="post"
@@ -114,10 +120,7 @@ export default function TeamForm({
         </div>
         <div className="sm:col-start-2 sm:col-end-5">
           <div className="grid gap-6 lg:grid-cols-2">
-            <ImageUploadInput
-              name="profileImage"
-              imageUrl={defaultValues?.profileImageUrl}
-            />
+            <ImageUploadInput name="profileImage" imageUrl={defaultImageUrl} />
             <div className="hidden lg:block"></div>
             <Input
               required
