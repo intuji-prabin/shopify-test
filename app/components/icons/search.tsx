@@ -1,11 +1,11 @@
 export default function SearchIcon({
   fillColor = '#969C9C',
-  width,
-  height,
+  width = '20px',
+  height = '20px',
 }: {
   fillColor?: string;
-  width: string;
-  height: string;
+  width?: string;
+  height?: string;
 }) {
   return (
     <svg
