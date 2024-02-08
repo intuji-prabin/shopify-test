@@ -1,4 +1,4 @@
-import {InStock} from '~/components/icons/orderStatus';
+import {badgeVariants} from '~/components/ui/badge';
 
 type ProductCardDetail = {
   productImageUrl: string;
@@ -10,33 +10,30 @@ export default function WishListProductItem({
   productImageUrl,
   productName,
   sku,
-  inStock,
 }: ProductCardDetail) {
   return (
     <>
-      <div className="flex gap-2 !justify-start">
-        <figure className="w-20 bg-grey-25 p-3">
-          <img src={productImageUrl} className="" alt="product-image" />
-        </figure>
-        <div className="max-w-[261px]">
-          <div className="flex flex-col gap-2">
-            <h5 className="text-lg italic font-bold leading-6 text-grey-900 line-clamp-2 text-ellipsis whitespace-normal h-12">
-              {productName}
-            </h5>
-            <div className="flex gap-5 !justify-start items-center">
-              <p className="text-base font-medium text-primary-500">
-                SKU:{sku}
-              </p>
-              <div className="flex gap-2 bg-semantic-success-100 items-center p-2">
-                <InStock />
-                <p className="uppercase text-[14px] font-medium text-semantic-success-500">
-                  {`${inStock ? 'in stock' : 'not in stock'}`}
-                </p>
-              </div>
-            </div>
-          </div>
+      <figure className="flex space-x-2">
+        <div className="bg-grey-25 p-3 w-20 h-20">
+          <img src={productImageUrl} alt="item-image" />
         </div>
-      </div>
+        <figcaption className="flex flex-col justify-between max-w-[261px]">
+          <h5 className="">{productName}</h5>
+          <div className="flex space-x-5 items-center max-w-[180px] flex-wrap">
+            <p>
+              <span className="text-grey-900 font-semibold ">SKU: </span>
+              {sku}
+            </p>
+            <div className={badgeVariants({variant: 'inStock'})}>
+              <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>IN
+              STOCK
+            </div>
+            <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize !mt-2">
+              minimum order(500 pieces)
+            </p>
+          </div>
+        </figcaption>
+      </figure>
     </>
   );
 }

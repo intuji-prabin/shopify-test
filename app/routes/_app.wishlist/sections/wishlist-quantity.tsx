@@ -1,4 +1,6 @@
+import {Link} from '@remix-run/react';
 import {useState} from 'react';
+import {TooltipInfo} from '~/components/icons/orderStatus';
 
 export default function WishlistQuantity({count}: {count: number}) {
   const [quantity, setQuantity] = useState(count);
@@ -9,33 +11,39 @@ export default function WishlistQuantity({count}: {count: number}) {
   function increaseQuantity() {
     setQuantity(quantity + 1);
   }
-  function handleInputChange(event?: any) {
-    const inputQuantity = parseInt(event.target.value, 10);
-    setQuantity(isNaN(inputQuantity) ? 0 : inputQuantity);
-  }
+
   return (
-    <div className="flex gap-4 flex-col lg:flex-row min-h-0 lg:min-h-14">
-      <div className="flex">
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center">
         <button
-          className={`border-[1px] border-grey-500  flex justify-center items-center w-[56px] ${
-            quantity === 0 ? 'pointer-events-none' : ''
-          }`}
+          className="border border-solid border-grey-200 flex items-center justify-center  min-h-10 w-10"
           onClick={decreaseQuantity}
         >
           -
         </button>
-        <input
-          type="text"
-          className=" max-w-[61px] h-full text-center border-x-0 border-[1px] border-grey-500 bg-transparent"
-          value={quantity}
-          onChange={handleInputChange}
-        />
+        <p className="border-y border-solid border-grey-200 flex items-center justify-center min-h-10 w-10">
+          {quantity}
+        </p>
         <button
-          className="border-[1px] border-grey-500  flex justify-center items-center  w-[56px]"
+          className="border border-solid border-grey-200 flex items-center justify-center  min-h-10 w-10"
           onClick={increaseQuantity}
         >
           +
         </button>
+      </div>
+      <div className="flex items-center gap-1">
+        <div className="info-block">
+          <p className="h-5 w-5 flex justify-center items-center ">
+            <Link to="" data-tooltip="Recommended retail price">
+              <span>
+                <TooltipInfo fillColor="#0092CF" />
+              </span>
+            </Link>
+          </p>
+        </div>
+        <p className="text-grey-700 text-[14px] font-normal capitalize  leading-[16px]">
+          Minimum Order Quantity
+        </p>
       </div>
     </div>
   );
