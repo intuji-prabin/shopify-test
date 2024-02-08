@@ -2,6 +2,18 @@ import {HTMLProps, useEffect, useMemo, useRef, useState} from 'react';
 import {ColumnDef} from '@tanstack/react-table';
 import {InfoIcon} from '~/components/icons/info-icon';
 import {badgeVariants} from '~/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '~/components/ui/select';
+import {TooltipInfo} from '~/components/icons/orderStatus';
+import {Link} from '@remix-run/react';
+import {Toast} from '@radix-ui/react-toast';
 
 export type BulkOrderColumn = {
   id: string;
@@ -11,9 +23,9 @@ export type BulkOrderColumn = {
     isStock: boolean;
     sku: string;
   };
-  price: string;
   quantity: number;
   total: string;
+  measurement: string;
 };
 
 export function useColumn() {
@@ -52,15 +64,7 @@ export function useColumn() {
           return <ItemsColumn items={product.items} />;
         },
       },
-      {
-        accessorKey: 'price',
-        header: 'Price',
-        enableSorting: false,
-        cell: (info) => {
-          const productPrice = info.row.original.price;
-          return <PriceColumn price={productPrice} />;
-        },
-      },
+
       {
         accessorKey: 'quantity',
         header: 'Quantity',
@@ -71,10 +75,22 @@ export function useColumn() {
         },
       },
       {
+        accessorKey: 'measurement',
+        header: 'Measurement',
+        enableSorting: false,
+        cell: (info) => {
+          const productMeasurement = info.row.original.measurement;
+          return <ProductMeasurement measurement={productMeasurement} />;
+        },
+      },
+      {
         accessorKey: 'total',
         header: 'Total',
         enableSorting: false,
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const productTotal = info.row.original.total;
+          return <ProductTotal total={productTotal} />;
+        },
       },
     ],
     [],
@@ -122,7 +138,7 @@ function ItemsColumn({items}: ItemsColumnType) {
       </div>
       <figcaption className="flex flex-col justify-between">
         <h5 className="">{name}</h5>
-        <div className="flex space-x-5 items-center">
+        <div className="flex space-x-5 items-center max-w-[180px] flex-wrap">
           <p>
             <span className="text-grey-900 font-semibold ">SKU: </span>
             {sku}
@@ -131,33 +147,12 @@ function ItemsColumn({items}: ItemsColumnType) {
             <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>IN
             STOCK
           </div>
+          <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize !mt-2">
+            minimum order(500 pieces)
+          </p>
         </div>
       </figcaption>
     </figure>
-  );
-}
-
-/**
- * @description Price Column Component
- */
-type PriceColumnType = Pick<BulkOrderColumn, 'price'>;
-
-function PriceColumn({price}: PriceColumnType) {
-  return (
-    <div>
-      <div className="">
-        <p className="flex mb-1.5 text-semantic-success-500 font-medium text-sm">
-          BUY PRICE{' '}
-          <span>
-            <InfoIcon />
-          </span>
-        </p>
-      </div>
-      <p className="text-grey-900 text-lg leading-5.5 italic">${price}</p>
-      <p className="text-grey-500 font-bold italic text-sm leading-normal">
-        (Excl. GST)
-      </p>
-    </div>
   );
 }
 
@@ -174,22 +169,91 @@ function QuantityColumn({quantity}: QuantityColumnType) {
   const handleDecreaseQuantity = () =>
     setQuantityCounter((previousState) => previousState - 1);
   return (
-    <div className="flex items-center">
-      <button
-        className="border border-solid border-grey-200 py-3 px-5"
-        onClick={handleDecreaseQuantity}
+    <div className="flex flex-col gap-[11.5px]">
+      <div className="flex items-center">
+        <button
+          className="border border-solid border-grey-200 flex items-center justify-center  min-h-10 w-10"
+          onClick={handleDecreaseQuantity}
+        >
+          -
+        </button>
+        <p className="border-y border-solid border-grey-200 flex items-center justify-center min-h-10 w-10">
+          {quantityCounter}
+        </p>
+        <button
+          className="border border-solid border-grey-200 flex items-center justify-center  min-h-10 w-10"
+          onClick={handleIncreaseQuantity}
+        >
+          +
+        </button>
+      </div>
+      <div className="flex items-center gap-1">
+        <div className="info-block">
+          <p className="h-5 w-5 flex justify-center items-center ">
+            <Link to="" data-tooltip="Recommended retail price">
+              <span>
+                <TooltipInfo fillColor="#0092CF" />
+              </span>
+            </Link>
+          </p>
+        </div>
+        <p className="text-grey-700 text-[14px] font-normal capitalize  leading-[16px]">
+          Minimum Order Quantity
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * @description Measurement Column Component
+ */
+type MeasurementColumnType = Pick<BulkOrderColumn, 'measurement'>;
+function ProductMeasurement({measurement}: MeasurementColumnType) {
+  return (
+    <Select>
+      <SelectTrigger className="w-[116px] place-order rounded-sm">
+        <SelectValue placeholder="boxes" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectItem value="banana">Pieces</SelectItem>
+          <SelectItem value="apple">Boxes</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+}
+
+/**
+ * @description Total Column Component
+ */
+type TotalColumnType = Pick<BulkOrderColumn, 'total'>;
+
+function ProductTotal({total}: TotalColumnType) {
+  return (
+    <div className="flex flex-col gap-4 items-baseline">
+      <div className="flex flex-col gap-1">
+        <div className="">
+          <p className="flex mb-1.5 text-semantic-success-500 font-medium text-sm">
+            BUY PRICE{' '}
+            <span>
+              <InfoIcon />
+            </span>
+          </p>
+        </div>
+
+        <p className="text-grey-900 text-lg leading-5.5 italic">${total}</p>
+        <p className="text-grey-500 font-bold italic text-sm leading-normal">
+          (Excl. GST)
+        </p>
+      </div>
+      <Link
+        to=""
+        className="text-[14px] italic font-bold leading-6 uppercase border-t-0 border-2 border-x-0 border-b-primary-500 mb-[2px]"
       >
-        -
-      </button>
-      <p className="border-y border-solid border-grey-200 p-3 w-12 ">
-        {quantityCounter}
-      </p>
-      <button
-        className="border border-solid border-grey-200 py-3 px-5"
-        onClick={handleIncreaseQuantity}
-      >
-        +
-      </button>
+        VIEW BULK PRICE
+      </Link>
     </div>
   );
 }

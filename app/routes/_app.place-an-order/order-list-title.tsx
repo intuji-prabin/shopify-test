@@ -1,33 +1,8 @@
 import {Button} from '~/components/ui/button';
-import CreateGroup from './create-a-group';
+import CreateGroup from './save-later-dialogbox';
+import {orderList} from './orderList';
 
 export default function OrderlistTitle() {
-  const orderList = [
-    {
-      id: 0,
-      date: 'Oct 12 10:00 AM ',
-      orderList:
-        'New Order Received - Order No. 0005145629 ordered by Catherin McCallum',
-      orderNo: ' 0005145629',
-      customer: 'Catherin McCallum',
-    },
-    {
-      id: 1,
-      date: 'Oct 12 10:00 AM ',
-      orderList:
-        'New Order Received - Order No. 0005145629 ordered by Catherin McCallum',
-      orderNo: ' 0005145629',
-      customer: 'Catherin McCallum',
-    },
-    {
-      id: 2,
-      date: 'Oct 12 10:00 AM ',
-      orderList:
-        'New Order Received - Order No. 0005145629 ordered by Catherin McCallum',
-      orderNo: ' 0005145629',
-      customer: 'Catherin McCallum',
-    },
-  ];
   function handleRemoveAllItems() {
     // table.toggleAllPageRowsSelected(false);
   }

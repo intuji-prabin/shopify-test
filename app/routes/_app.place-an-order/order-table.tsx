@@ -12,6 +12,8 @@ export default function OrderTable() {
     <>
       <div className="container">
         <DataTable table={table} />
+
+        {/* pagination starts here */}
         <div className="bg-neutral-white py-4 px-6 border-t flex items-center justify-between">
           <p className="w-40 text-grey-400 font-medium">
             1-7 of {TicketsData.length} Items
