@@ -59,7 +59,7 @@ export async function updateStatus({
 
   const results = await useFetch<ResponseData>({
     method: AllowedHTTPMethods.POST,
-    url: ENDPOINT.CUSTOMER.PUT,
+    url: ENDPOINT.CUSTOMER.UPDATE_STATUS,
     body,
   });
 

@@ -1,6 +1,6 @@
 import {Link} from '@remix-run/react';
 import {withZod} from '@remix-validated-form/with-zod';
-import {ValidatedForm} from 'remix-validated-form';
+import {ValidatedForm, useIsSubmitting} from 'remix-validated-form';
 import {z} from 'zod';
 import {Button} from '~/components/ui/button';
 import CheckboxInput from '~/components/ui/checkbox-input';
@@ -24,6 +24,7 @@ export type LoginFormType = z.infer<typeof LoginFormFieldSchema>;
 export type LoginFormFieldNameType = keyof LoginFormType;
 
 export default function LoginForm() {
+  const isSubmitting = useIsSubmitting('login-form');
   return (
     <div className="md:w-[398px] w-full">
       <div className="flex flex-col p-8 space-y-8 bg-white shadow-3xl">
@@ -33,6 +34,7 @@ export default function LoginForm() {
         </div>
         <ValidatedForm
           method="post"
+          id="login-form"
           validator={LoginFormFieldValidator}
           className="flex flex-col gap-y-6"
         >
@@ -63,7 +65,12 @@ export default function LoginForm() {
               </Link>
             </div>
           </div>
-          <Button type="submit" variant="primary" className="w-full">
+          <Button
+            type="submit"
+            variant="primary"
+            className="w-full"
+            disabled={isSubmitting}
+          >
             log in
           </Button>
         </ValidatedForm>
