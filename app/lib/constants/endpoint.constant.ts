@@ -24,6 +24,10 @@ export const ENDPOINT = {
   CUSTOMER_LIST: {
     GET: `${BASE_URL}/customer-list`,
   },
+  COMPANY: {
+    GET_PROFILE: `${BASE_URL}/company-profile`,
+    GET_SHIPPING_ADDRESS: `${BASE_URL}/company/shipping-address`,
+  },
   CUSTOM: {
     URL: 'https://casual-mink-routinely.ngrok-free.app/api',
   },
