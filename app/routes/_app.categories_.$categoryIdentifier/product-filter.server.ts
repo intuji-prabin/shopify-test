@@ -23,7 +23,7 @@ const formateResposeFilters = (respose: any) => {
   return formatedFilterDataList;
 };
 
-const STOREFRONT_PRODUCT_FILTER_QUERY = `query getHomepageSlider {
+const STOREFRONT_PRODUCT_FILTER_QUERY = `query getFilterList {
     metaobjects(type : "filter_product_list", first: 10) {
       edges {
           node {

@@ -14,15 +14,15 @@ export function FilterForm(filterList: any) {
   const handleRangeChange = (newValues: number[]) => {
     setRange(newValues);
   };
-  // const hello = filterdata.filter(item => item.filterKey === 'material');
-  // console.log("hello", hello)
+  const warrantyFilter = filterdata.filter(item => item.filterKey === 'warranty');
+  const otherFilters = filterdata.filter(item => item.filterKey !== 'warranty');
 
   return (
     <>
       <h4 className="py-4 text-primary-500">All Filters</h4>
       <Separator />
       <Form method="get">
-        {filterdata?.map((form: any, index: any) => (
+        {otherFilters?.map((form: any, index: any) => (
           <Fragment key={index}>
             <AccordionCustom accordionTitle={form.filterLabel}>
               {form?.filterValue?.map((input: any, index: any) => {
@@ -31,7 +31,7 @@ export function FilterForm(filterList: any) {
                     <input
                       type="checkbox"
                       id={input}
-                      name={input}
+                      name={form?.filterKey}
                       value={input}
                     />
                     <label
@@ -49,23 +49,27 @@ export function FilterForm(filterList: any) {
         <div className="py-4">
           <h5>Warranty</h5>
           <div className="flex flex-wrap gap-1">
-            {RadioInputData.map((radio, index) => (
-              <Fragment key={index}>
-                <input
-                  type="radio"
-                  id={radio.value}
-                  className="hidden"
-                  value={radio.value}
-                  name={radio.name}
-                />
-                <label
-                  htmlFor={radio.value}
-                  className="p-2 mt-2 text-sm not-italic font-medium leading-4 duration-200 border border-solid cursor-pointer border-grey-50 text-grey-700 hover:border-transparent hover:bg-primary-400 peer-checked:bg-primary-400"
-                >
-                  {radio.label}
-                </label>
-              </Fragment>
-            ))}
+            {warrantyFilter.map((radio: any) =>
+              radio?.filterValue.map((value: any, index: any) => {
+                return (
+                  <Fragment key={index}>
+                    <input
+                      type="radio"
+                      id={value}
+                      className="hidden"
+                      value={value}
+                      name={radio?.filterKey}
+                    />
+                    <label
+                      htmlFor={value}
+                      className="p-2 mt-2 text-sm not-italic font-medium leading-4 duration-200 border border-solid cursor-pointer border-grey-50 text-grey-700 hover:border-transparent hover:bg-primary-400 peer-checked:bg-primary-400"
+                    >
+                      {value}
+                    </label>
+                  </Fragment>
+                )
+              }
+              ))}
           </div>
         </div>
         <Separator />

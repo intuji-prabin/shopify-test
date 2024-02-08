@@ -1,13 +1,10 @@
-export async function getProducts(
-  context: any,
-  params: any,
-  companyID: any,
-  filterList: any,
-) {
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+
+export async function getProducts(context: any, params: any, filterList: any) {
   const {storefront} = context;
   const {categoryIdentifier} = params;
 
-  const filters = filterBuilder(filterList, companyID);
+  const filters = filterBuilder(filterList);
 
   const products = await storefront.query(
     STOREFRONT_PRODUCT_GET_QUERY(filters, categoryIdentifier),
@@ -17,13 +14,19 @@ export async function getProducts(
   return formattedData;
 }
 
-const filterBuilder = (filterList: any, companyID: any) => {
+const filterBuilder = (filterList: any) => {
   let filterData = `{}`;
   if (filterList.length > 0) {
     filterList.map((item: any) => {
-      if (item?.brand) {
-        item?.brand.map((filterValue: any) => {
+      if (item?.key == 'brand') {
+        item?.value.map((filterValue: any) => {
           filterData = filterData + ` { productVendor: "${filterValue}"}`;
+        });
+      } else {
+        item?.value.map((filterValue: any) => {
+          filterData =
+            filterData +
+            ` { productMetafield: { namespace: "${item?.key}" key: "${item?.key}" value: "${filterValue}"}  }`;
         });
       }
     });
@@ -40,16 +43,18 @@ const formattedResponse = (response: any) => {
     return [];
   }
   const productList = response?.collection?.products?.edges;
-
+  const pageInfo = response?.collection?.products?.pageInfo;
+  console.log('pageInfo', pageInfo);
   const finalProductList: any = productList.map((item: any) => ({
     title: item?.node?.title,
-    variants: productVariantDataFromate(item?.node?.variants),
+    variants: productVariantDataFormat(item?.node?.variants),
+    featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.DEFAULT,
   }));
 
   return finalProductList;
 };
 
-const productVariantDataFromate = (variant: any) => {
+const productVariantDataFormat = (variant: any) => {
   const finalVariantData = {
     sku: variant?.edges[0]?.node?.sku,
   };
@@ -63,20 +68,27 @@ const STOREFRONT_PRODUCT_GET_QUERY = (filterList: any, handler: string) => {
           title 
           handle
           products( first: 10, filters: ${filterList} ) {
-              edges {
-                  node {
-                      handle
-                      id
-                      title
-                      variants(first:2) {
-                          edges {
-                              node {
-                                  sku
-                              }
-                          }
-                      }
-                  }
-              }
+            pageInfo {
+              hasNextPage
+              hasPreviousPage
+            }
+            edges {
+                node {
+                    handle
+                    id
+                    title
+                    featuredImage {
+                      url
+                    }
+                    variants(first:2) {
+                        edges {
+                            node {
+                                sku
+                            }
+                        }
+                    }
+                }
+            }
           }
         }
         

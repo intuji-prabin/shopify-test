@@ -6,12 +6,12 @@ import { PaginationWrapper } from '~/components/ui/pagination-wrapper';
 import { ProductCard } from '~/components/ui/product-card';
 import { Separator } from '~/components/ui/separator';
 import { Routes } from '~/lib/constants/routes.constent';
-import { getUserDetails, isAuthenticate } from '~/lib/utils/authsession.server';
+import { isAuthenticate } from '~/lib/utils/authsession.server';
 import { getCategories } from '../_app/app.server';
 import { FilterForm, SortByFilterForm } from './filter-form';
 import { ProductCardData } from './product-card-data';
-import { getProducts } from './product-list.server';
 import { getProductFilterList } from './product-filter.server';
+import { getProducts } from './product-list.server';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -58,7 +58,7 @@ export default function SubCategoryPage() {
         )}
       </div>
       <Outlet />
-      {productList?.results.length > 0 &&
+      {productList?.results?.length > 0 &&
         <div className="grid grid-cols-4 gap-6">
           <div className="col-span-1">
             <h1 className="sticky top-[100px] bg-neutral-white p-4">
@@ -69,7 +69,7 @@ export default function SubCategoryPage() {
           <div className="col-start-2 col-end-5">
             <SortByFilterForm />
             <div className="grid gap-6 my-6 sm:grid-cols-2 md:grid-cols-3">
-              {productList?.results.map((product: any, index: any) => (
+              {productList?.results?.map((product: any, index: any) => (
                 <ProductCard key={index} {...product} />
               ))}
             </div>
@@ -91,12 +91,12 @@ const getProductList = async (params: any, context: any, request: any) => {
     const { searchParams } = new URL(request.url);
     const searchParam = Object.fromEntries(searchParams)
     const searchKey = Object.keys(searchParam)
-
-    const searchList = searchKey.map((value) => {
+    let searchList: any = []
+    searchKey.map((value) => {
+      searchList.push({ key: value, value: searchParams.getAll(value) })
       return { [value]: searchParams.getAll(value) }
     })
-    const customerData = await getUserDetails(context)
-    const results = await getProducts(context, params, customerData.userDetails.meta.company_id.value, searchList);
+    const results = await getProducts(context, params, searchList);
     const productFilter = await getProductFilterList(context);
     return { results, productFilter }
   } catch (error) {

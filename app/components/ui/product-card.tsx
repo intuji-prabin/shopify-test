@@ -11,13 +11,14 @@ export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
 
 export function ProductCard({
   // buyPrice,
-  // isBuyQtyAvailable,
-  // isFavorited,
+  isBuyQtyAvailable,
+  isFavorited,
   // productImageUrl,
   title,
   // rppPrice,
   variants,
-  // imageBackgroundColor,
+  featuredImageUrl,
+  imageBackgroundColor,
 }: ProductCardProps) {
   return (
     <>
@@ -28,6 +29,12 @@ export function ProductCard({
           productImageUrl={productImageUrl}
           imageBackgroundColor={imageBackgroundColor}
         /> */}
+        <ProductCardImage
+          isBuyQtyAvailable={isBuyQtyAvailable}
+          isFavorited={isFavorited}
+          featuredImageUrl={featuredImageUrl}
+          imageBackgroundColor={imageBackgroundColor}
+        />
         <ProductCardInfo
           sku={variants?.sku}
           productName={title}
@@ -49,10 +56,10 @@ type VariantType = {
 }
 
 type ProductCardImageProps = {
-  productImageUrl: string;
   isBuyQtyAvailable: boolean;
   isFavorited: boolean;
   imageBackgroundColor: string;
+  featuredImageUrl: string;
 };
 
 export function ProductCardInfo({
@@ -126,7 +133,7 @@ export function ProductCardInfo({
 }
 
 function ProductCardImage({
-  productImageUrl,
+  featuredImageUrl,
   isBuyQtyAvailable,
   isFavorited,
   imageBackgroundColor,
@@ -153,7 +160,7 @@ function ProductCardImage({
         {heartFill ? <ProductLoveRed /> : <ProductLoveWhite />}
       </button>
       <figure className="mt-3">
-        <img src={productImageUrl} className="" alt="product-image" />
+        <img src={featuredImageUrl} className="" alt="product-image" />
       </figure>
     </div>
   );
