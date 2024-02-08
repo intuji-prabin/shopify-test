@@ -1,14 +1,20 @@
 import {NotificationIcon} from '../../icons/notification';
-import {Cart, Heart, Note} from '../../icons/orderStatus';
+import {Cart, Heart} from '../../icons/orderStatus';
 import {FaSearch} from 'react-icons/fa';
 import {useState} from 'react';
 import CloseMenu from '~/components/icons/closeMenu';
 import HamburgerIcon from '~/components/icons/hamburgerIcon';
 import {Signout} from '~/components/icons/signout';
-import Search from '~/components/icons/search';
+import {Note} from '~/components/icons/note';
+import {Button} from '../button';
+import SearchIcon from '~/components/icons/search';
+import {Link} from '@remix-run/react';
+import {TrackAnOrderButton} from './elements/track-an-order-dialog';
+import {Routes} from '~/lib/constants/routes.constent';
 
 export default function MobileNav() {
   const [isHamOpen, setIsHamOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const navIcons = [
     {
       id: 1,
@@ -51,20 +57,32 @@ export default function MobileNav() {
   ];
   return (
     <>
-      <div className="bg-grey-900 px-4 py-6 flex justify-between items-center">
-        <a href="">
+      <div className="bg-grey-900 px-4 py-6 flex justify-between items-center relative">
+        <Link to="">
           <figure>
             <img src="logo.png" alt="" />
           </figure>
-        </a>
-        <button
-          className="border border-[#313535] p-2 "
-          onClick={() => {
-            setIsHamOpen(!isHamOpen);
-          }}
-        >
-          {isHamOpen ? <CloseMenu /> : <HamburgerIcon />}
-        </button>
+        </Link>
+        <div className="flex gap-2 items-center">
+          <Button
+            className="border border-[#313535] p-2 bg-transparent max-w-10 max-h-10 hover:bg-transparent"
+            onClick={() => {
+              setIsSearchOpen(!isSearchOpen);
+            }}
+          >
+            {' '}
+            <SearchIcon fillColor="#FFE600" width={''} height={''} />
+          </Button>
+
+          <Button
+            className="border border-[#313535] p-2 bg-transparent max-w-10 max-h-10 hover:bg-transparent"
+            onClick={() => {
+              setIsHamOpen(!isHamOpen);
+            }}
+          >
+            {isHamOpen ? <CloseMenu /> : <HamburgerIcon />}
+          </Button>
+        </div>
       </div>
 
       <div
@@ -72,50 +90,59 @@ export default function MobileNav() {
         ${isHamOpen ? 'opacity-100' : 'opacity-0'}  `}
       >
         <div className="user-menu flex gap-4 flex-col">
-          <div className="flex justify-between ">
+          <div className="flex justify-between flex-col-reverse gap-4">
             {' '}
             <div className="flex gap-2 ">
               <figure>
-                <img src="pfp.png" alt="" />
+                <img src="niel.png" alt="" />
               </figure>
-              <p className="text-lg font-normal text-white">Niel De Grass</p>
-            </div>
-            <nav className="navbar">
-              <ul className="nav-list flex gap-3 items-center h-full">
-                {navIcons.map((navIcon) => (
-                  <li className="nav-item relative" key={navIcon.id}>
-                    <div className="absolute bg-semantic-danger-500 h-[14px] w-[14px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium p-2">
-                      {navIcon.notification}
-                    </div>
-                    <a className="nav-link">{navIcon.icon}</a>
-                    <div className=""></div>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          </div>
-          <div className="search-bar flex border gap-2 border-white items-center min-w-[unset] w-full max-h-12 px-4 py-3 xl:min-w-[453px] ">
-            <FaSearch className="search-icon fill-white" />
-            <input
-              type="text"
-              placeholder="Search Product"
-              className="border-none w-full placeholder:italic placeholder:text-base placeholder:font-bold placeholder:text-white bg-transparent outline-none text-white"
-            />
-          </div>
-
-          <div className="">
-            <ul className="flex flex-col gap-4">
-              {navigations.map((navigation) => (
-                <li
-                  key={navigation.id}
-                  className="italic uppercase font-bold text-base text-white hover:text-secondary-500  active:text-secondary-500"
+              <div className="flex justify-between w-full items-center">
+                <p className="text-lg font-normal text-white">Niel De Grass</p>
+                <Link
+                  to=""
+                  className="font-bold text-lg leading-6 italic text-white border-b border-white border-x-0 border-t-0 uppercase"
                 >
-                  <a href="" className="w-full block">
-                    {navigation.title}
-                  </a>
+                  my profile
+                </Link>
+              </div>
+            </div>
+            <ul className="nav-list flex gap-3 items-center h-full justify-around">
+              {navIcons.map((navIcon) => (
+                <li className="nav-item relative" key={navIcon.id}>
+                  <div className="absolute bg-semantic-danger-500 h-[14px] w-[14px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium p-2">
+                    {navIcon.notification}
+                  </div>
+                  <a className="nav-link">{navIcon.icon}</a>
+                  <div className=""></div>
                 </li>
               ))}
             </ul>
+          </div>
+
+          <ul className="flex flex-col gap-4">
+            {navigations.map((navigation) => (
+              <li
+                key={navigation.id}
+                className="italic uppercase font-bold text-base text-white hover:text-secondary-500  active:text-secondary-500"
+              >
+                <a href="" className="w-full block">
+                  {navigation.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <div className="flex items-center gap-4 flex-row-reverse  ">
+            <TrackAnOrderButton />
+
+            <div className="place-order h-full ">
+              <Link
+                to={Routes.PLACE_AN_ORDER}
+                className="uppercase  text-[14px] italic font-bold bg-secondary-500 h-full px-6 flex items-center"
+              >
+                Place an order
+              </Link>
+            </div>
           </div>
         </div>
         <div className="flex gap-[2px]">
@@ -125,6 +152,28 @@ export default function MobileNav() {
           </p>
         </div>
       </div>
+
+      {/* search bar starts here  */}
+      {isSearchOpen ? (
+        <div className="bg-grey-900 p-4 absolute top-0 w-full">
+          <div className="flex bg-grey-900 border-primary-400 border-2 items-center p-2 ">
+            <SearchIcon width={'24px'} height={'24px'} fillColor="#fff" />
+            <input
+              type="text"
+              placeholder="Search product or part number"
+              className="w-full outline-none border-none focus:bg-transparent bg-transparent placeholder:text-white text-white"
+            />
+            <Button
+              className="bg-semantic-danger-500 p-2"
+              onClick={() => {
+                setIsSearchOpen(!isSearchOpen);
+              }}
+            >
+              <CloseMenu fillColor="#fff" />
+            </Button>
+          </div>
+        </div>
+      ) : undefined}
     </>
   );
 }

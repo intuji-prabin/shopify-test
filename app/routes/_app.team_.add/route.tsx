@@ -82,6 +82,7 @@ export async function action({request, context}: ActionFunctionArgs) {
         },
       );
     }
+
     return json({error}, {status: 400});
   }
 }

@@ -2,91 +2,40 @@ import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 
-export interface ShippingAddressResponse {
-  data: Data;
-  extensions: Extensions;
-}
+type ShippingAddressResponse = {
+  status: boolean;
+  message: string;
+  payload: ShippingAddress;
+};
 
-export interface Data {
-  customer: Customer;
-}
-
-export interface Customer {
+export type ShippingAddress = {
   defaultAddress: DefaultAddress;
   addresses: Address[];
-}
+};
 
-export interface Address {
-  address1: string;
-  phone: string;
-  zip: string;
-}
-
-export interface DefaultAddress {
+export type DefaultAddress = {
   address1: string;
   address2: string;
   phone: string;
   zip: string;
   firstName: string;
   country: string;
-}
+};
 
-export interface Extensions {
-  cost: Cost;
-}
+export type Address = DefaultAddress;
 
-export interface Cost {
-  requestedQueryCost: number;
-  actualQueryCost: number;
-  throttleStatus: ThrottleStatus;
-}
-
-export interface ThrottleStatus {
-  maximumAvailable: number;
-  currentlyAvailable: number;
-  restoreRate: number;
-}
-
-export async function getAllCompanyShippingAddresses(shopifyId: string) {
-  const body = JSON.stringify({
-    query: GET_COMPANY_SHIPING_ADDRESS_QUERY(`${shopifyId}`),
-  });
+export async function getAllCompanyShippingAddresses(customerId: string) {
+  const customer = customerId.split('/').pop();
   const results = await useFetch<ShippingAddressResponse>({
-    method: AllowedHTTPMethods.POST,
-    url: ENDPOINT.ADMIN.URL,
-    body,
+    method: AllowedHTTPMethods.GET,
+    url: `${ENDPOINT.COMPANY.GET_SHIPPING_ADDRESS}?customerId=${customer}`,
   });
 
-  if (
-    !results.data.customer.defaultAddress ||
-    results.data.customer.addresses.length === 0
-  ) {
-    throw new Response('Oh no! Something went wrong!', {
+  if (!results.status) {
+    throw new Response(results.message, {
       status: 404,
     });
   }
 
-  return results.data.customer;
+  return results.payload;
 }
-
-const GET_COMPANY_SHIPING_ADDRESS_QUERY = (shopifyId: string) =>
-  `query getShippingAddress{
- 	customer(id: "${shopifyId}"){
-    defaultAddress{
-      address1,
-      address2,
-      phone,
-      zip,
-      country,
-      firstName
-    }
-    addresses(first:15){
-      address1,
-      address2,
-      phone,
-      zip,
-      country,
-      firstName
-    }
-  }
-}` as const;

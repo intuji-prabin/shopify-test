@@ -21,7 +21,6 @@ export const SingleNavItem = ({
   const menuRef = useRef<HTMLLIElement>(null);
   const location = useLocation();
   const currentPageRoute = location.pathname;
-  console.log('HERE', currentPageRoute, menu.url);
 
   return (
     <li
@@ -62,7 +61,7 @@ export const SingleNavItem = ({
               </span>
 
               <span className="block group-hover:hidden ">
-                <ArrowDown />
+                <ArrowDown fillColor="#FFF" />
               </span>
             </button>
             <div

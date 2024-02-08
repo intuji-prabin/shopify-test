@@ -5,21 +5,14 @@ import {
   PhoneMajor,
   PrintMinor,
 } from '~/components/icons/orderStatus';
-import { Locations, MainContact, Metafield } from './company-profile.server';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {CompanyProfile} from '~/routes/_app.company-profile/company-profile.server';
 
-type CompanyProfile = {
-  meta: Record<string, Metafield>;
-  id: string;
-  name: string;
-  note: string;
-  externalId: string;
-  mainContact: MainContact;
-  locations: Locations;
-}
-
-
-export default function CompanyProfileDetail({ data }: { data: CompanyProfile | null }) {
+export default function CompanyProfileDetail({
+  data,
+}: {
+  data: CompanyProfile | null;
+}) {
   const locationNode = data?.locations?.nodes[0];
 
   return (
@@ -28,26 +21,31 @@ export default function CompanyProfileDetail({ data }: { data: CompanyProfile | 
         <div className="">
           <div className="flex items-center gap-4">
             <figure className="w-[96px] h-[96px] flex items-center justify-center rounded-[50%] border border-grey-50">
-              <img src={data?.meta?.image_url?.value ?? DEFAULT_IMAGE.LOGO} alt="company_logo" className='w-[96px] h-[96px] rounded-[50%] object-cover' />
+              <img
+                src={data?.meta?.image_url?.value ?? DEFAULT_IMAGE.LOGO}
+                alt="company_logo"
+                className="w-[96px] h-[96px] rounded-[50%] object-cover"
+              />
             </figure>
-            <h3>{data?.name ?? "-"}</h3>
+            <h3>{data?.name ?? '-'}</h3>
           </div>
           <div className=" max-w-[439px]">
             <ul className="grid grid-cols-1 text-lg font-medium gap-x-10 text-grey-700 sm:grid-cols-2 ">
               <li className="settings-card-detail">
                 <Email />
-                {data?.mainContact?.customer?.email ?? "-"}
+                {data?.mainContact?.customer?.email ?? '-'}
               </li>
               <li className="settings-card-detail">
-                <PrintMinor />{data?.meta?.fax?.value ?? "-"}
+                <PrintMinor />
+                {data?.meta?.fax?.value ?? '-'}
               </li>
               <li className="settings-card-detail">
                 <PhoneMajor />
-                {locationNode?.billingAddress?.phone ?? "-"}
+                {locationNode?.billingAddress?.phone ?? '-'}
               </li>
               <li className="settings-card-detail">
                 <LocationsMinor />
-                {locationNode?.billingAddress?.address1 ?? "-"}
+                {locationNode?.billingAddress?.address1 ?? '-'}
               </li>
             </ul>
           </div>
@@ -66,14 +64,14 @@ export default function CompanyProfileDetail({ data }: { data: CompanyProfile | 
         <ul className="grid grid-cols-1 text-lg font-medium gap-x-10 gap-y-4 text-grey-700 xl:grid-cols-2">
           <li className="settings-card-detail ">
             <InventoryMajor />
-            {locationNode?.name ?? "-"}
+            {locationNode?.name ?? '-'}
           </li>
           <li className="settings-card-detail ">
-            <LocationsMinor /> {locationNode?.shippingAddress?.address1 ?? "-"}
+            <LocationsMinor /> {locationNode?.shippingAddress?.address1 ?? '-'}
           </li>
           <li className="settings-card-detail ">
             <PhoneMajor />
-            {locationNode?.shippingAddress?.phone ?? "-"}
+            {locationNode?.shippingAddress?.phone ?? '-'}
           </li>
         </ul>
       </div>

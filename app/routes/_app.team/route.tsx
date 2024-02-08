@@ -52,8 +52,6 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 
     return json({teams, roles, currentUser});
   } catch (error) {
-    console.log('error', error);
-
     return json({teams: [], roles: [], currentUser});
   }
 }
