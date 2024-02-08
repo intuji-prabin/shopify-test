@@ -10,10 +10,12 @@ import {getRoles} from '~/routes/_app.team_.add/add-team.server';
 import {getAllTeams, updateStatus} from '~/routes/_app.team/team.server';
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '~/components/ui/tabs';
 import {ConfirmationFormSchemaValidator} from '~/routes/_app.team/confirmation-form';
+import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
 import {
   Link,
   isRouteErrorResponse,
   useLoaderData,
+  useRevalidator,
   useRouteError,
 } from '@remix-run/react';
 import {
@@ -27,7 +29,6 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
-import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
 
 export async function loader({request, context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -43,6 +44,8 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 
     const teams = await getAllTeams({companyId, query});
 
+    console.log({teams});
+
     const rolesList = await getRoles();
 
     const roles = rolesList.data.map((role) => ({
@@ -52,8 +55,6 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 
     return json({teams, roles, currentUser});
   } catch (error) {
-    console.log('error', error);
-
     return json({teams: [], roles: [], currentUser});
   }
 }
@@ -69,6 +70,7 @@ export async function action({request, context}: ActionFunctionArgs) {
     case 'activate': {
       try {
         const customerId = formData.get('customerId') as string;
+
         await updateStatus({customerId, value: 'true'});
         setSuccessMessage(messageSession, 'Customer Activated Successfully');
 
@@ -140,6 +142,7 @@ export async function action({request, context}: ActionFunctionArgs) {
 
 export default function TeamPage() {
   const {teams, roles, currentUser} = useLoaderData<typeof loader>();
+
   console.log({teams});
 
   const [activeDepartmentTab, setActiveDepartmentTab] = useState('all');

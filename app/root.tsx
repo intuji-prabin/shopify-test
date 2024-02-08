@@ -6,6 +6,7 @@ import tailwindStyles from '~/styles/tailwind.css';
 import type {CustomerAccessToken} from '@shopify/hydrogen/storefront-api-types';
 import favicon from '../public/favicon.svg';
 import {Layout} from '~/components/Layout';
+import nProgressStyles from 'nprogress/nprogress.css';
 import {
   defer,
   type SerializeFrom,
@@ -31,6 +32,7 @@ import {
   messageCommitSession,
 } from '~/lib/utils/toastsession.server';
 import {getUserDetails} from './lib/utils/authsession.server';
+import {useGlobalLoader} from './hooks/useGlobalLoader';
 
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
@@ -64,6 +66,7 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
+    {rel: 'stylesheet', href: nProgressStyles},
     {rel: 'icon', type: 'image/svg+xml', href: favicon},
   ];
 }
@@ -139,7 +142,10 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 
 export default function App() {
   const nonce = useNonce();
+
   const {toastMessage} = useLoaderData<typeof loader>();
+
+  useGlobalLoader();
 
   useEffect(() => {
     if (!toastMessage) {

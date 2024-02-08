@@ -51,7 +51,7 @@ export default function TopHeader() {
 
   return (
     <>
-      <header className="bg-grey-900">
+      <div className="bg-grey-900">
         <div className="container py-5 flex  gap-3 justify-between ">
           {/* home icon begins here */}
           <Link to={Routes.HOME}>
@@ -141,7 +141,7 @@ export default function TopHeader() {
             </DropdownMenu>
           </div>
         </div>
-      </header>
+      </div>
     </>
   );
 }

@@ -52,7 +52,7 @@ export async function action({request, context}: ActionFunctionArgs) {
     const {email, fullName, address, phoneNumber, userRole, profileImage} =
       result.data;
 
-    await addTeam({
+    const team = await addTeam({
       address,
       email,
       fullName,
@@ -63,13 +63,14 @@ export async function action({request, context}: ActionFunctionArgs) {
       file: profileImage,
     });
 
-    setSuccessMessage(messageSession, 'Email sent successfully to customer');
-
-    return redirect(Routes.TEAM, {
-      headers: {
-        'Set-Cookie': await messageCommitSession(messageSession),
-      },
-    });
+    if (team?.status) {
+      setSuccessMessage(messageSession, 'Email sent successfully to customer');
+      return redirect(Routes.TEAM, {
+        headers: {
+          'Set-Cookie': await messageCommitSession(messageSession),
+        },
+      });
+    }
   } catch (error) {
     if (error instanceof Error) {
       setErrorMessage(messageSession, error.message);
@@ -82,6 +83,7 @@ export async function action({request, context}: ActionFunctionArgs) {
         },
       );
     }
+
     return json({error}, {status: 400});
   }
 }

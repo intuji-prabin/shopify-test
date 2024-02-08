@@ -16,7 +16,10 @@ import {Routes} from '~/lib/constants/routes.constent';
 import TeamForm, {
   EditTeamFormSchemaValidator,
 } from '~/routes/_app.team_.add/team-form';
-import {editTeam, getCustomerDetail} from './edit-team.server';
+import {
+  editTeam,
+  getCustomerById,
+} from '~/routes/_app.team_.$teamId/edit-team.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -45,9 +48,10 @@ interface RolesResponse {
 export async function loader({params}: LoaderFunctionArgs) {
   let customerId = params?.teamId as string;
 
-  const customerDetails = await getCustomerDetail({customerId});
+  const customerDetails = await getCustomerById({customerId});
 
   const roles = (await useFetch({url: ENDPOINT.ROLE.GET})) as RolesResponse;
+  console.log({customerDetails});
 
   return json({customerDetails, roles});
 }
@@ -109,7 +113,6 @@ export async function action({request}: ActionFunctionArgs) {
 export default function TeamDetailsPage() {
   const navigate = useNavigate();
   const {customerDetails, roles} = useLoaderData<typeof loader>();
-  console.log({customerDetails});
 
   return (
     <section className="container">
@@ -128,7 +131,7 @@ export default function TeamDetailsPage() {
       <Separator className="mt-4 mb-8" />
       <TeamForm
         defaultValues={customerDetails}
-        companyId={customerDetails.customerId}
+        customerId={customerDetails.customerId}
         options={roles.data as SelectInputOptions[]}
       />
     </section>

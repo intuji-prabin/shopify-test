@@ -16,6 +16,7 @@ import {
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE_MB,
 } from '~/lib/constants/form.constant';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {AustralianPhoneNumberValidationRegex} from '~/lib/constants/regex.constant';
 
 type TeamFormProps = {
@@ -23,7 +24,7 @@ type TeamFormProps = {
     profileImageUrl: string;
   };
   options: SelectInputOptions[];
-  companyId?: string;
+  customerId?: string;
 };
 
 const EditTeamFormSchema = z.object({
@@ -79,13 +80,13 @@ export type AddTeamFormFieldNameType = keyof AddTeamFormType;
 export default function TeamForm({
   defaultValues,
   options,
-  companyId,
+  customerId,
 }: TeamFormProps) {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
-  const {reset} = useFormContext('add-team-form');
+  const {reset} = useFormContext('team-form');
 
   const updatePermissions = (value: string) => {
     setSelectedRole(value);
@@ -96,6 +97,11 @@ export default function TeamForm({
   )?.permissions;
 
   const isSubmitting = useIsSubmitting('team-form');
+
+  const defaultImageUrl =
+    defaultValues?.profileImageUrl && defaultValues?.profileImageUrl?.length > 0
+      ? defaultValues?.profileImageUrl
+      : DEFAULT_IMAGE.DEFAULT;
 
   return (
     <ValidatedForm
@@ -114,17 +120,14 @@ export default function TeamForm({
         </div>
         <div className="sm:col-start-2 sm:col-end-5">
           <div className="grid gap-6 lg:grid-cols-2">
-            <ImageUploadInput
-              name="profileImage"
-              imageUrl={defaultValues?.profileImageUrl}
-            />
+            <ImageUploadInput name="profileImage" imageUrl={defaultImageUrl} />
             <div className="hidden lg:block"></div>
             <Input
               required
               type="text"
               name="fullName"
               label="Full Name"
-              placeholder="member full name"
+              placeholder="full name"
             />
             <Input
               required
@@ -146,12 +149,7 @@ export default function TeamForm({
               label="Address"
               placeholder="address"
             />
-            <Input
-              type="hidden"
-              name="customerId"
-              value={companyId}
-              placeholder="member full name"
-            />
+            <Input type="hidden" name="customerId" value={customerId} />
           </div>
         </div>
       </div>
@@ -170,7 +168,7 @@ export default function TeamForm({
               <SelectInput
                 name="userRole"
                 options={options}
-                label="Select Roles"
+                label="select roles"
                 updatePermissions={(value: string) => updatePermissions(value)}
               />
             </div>

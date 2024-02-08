@@ -1,20 +1,26 @@
-import { Link, isRouteErrorResponse, useLoaderData, useRouteError } from '@remix-run/react';
-import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
-import { CircleInformationMajor } from '~/components/icons/orderStatus';
-import { Alert, AlertDescription } from '~/components/ui/alert';
-import { Routes } from '~/lib/constants/routes.constent';
-import { getUserDetails, isAuthenticate } from '~/lib/utils/authsession.server';
-import ShippingAddressHeader from './shipping-address-breadcrumb';
-import ShippingAddressCards from './shipping-address-card';
-import { getAllCompanyShippingAddresses } from './shipping-address.server';
+import {
+  Link,
+  isRouteErrorResponse,
+  useLoaderData,
+  useRouteError,
+} from '@remix-run/react';
+import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
+import {CircleInformationMajor} from '~/components/icons/orderStatus';
+import {Alert, AlertDescription} from '~/components/ui/alert';
+import {Routes} from '~/lib/constants/routes.constent';
+import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
+import ShippingAddressHeader from '~/routes/_app.shipping-address/shipping-address-breadcrumb';
+import ShippingAddressCards from '~/routes/_app.shipping-address/shipping-address-card';
+import {getAllCompanyShippingAddresses} from '~/routes/_app.shipping-address/shipping-address.server';
 
-export async function loader({ context }: LoaderFunctionArgs) {
+export async function loader({context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
-  const { userDetails } = await getUserDetails(context);
+  const {userDetails} = await getUserDetails(context);
   const metaParentValue = userDetails.meta.parent.value;
-  const parentId = metaParentValue === 'null' ? userDetails.id : metaParentValue;
+  const customerId =
+    metaParentValue === 'null' ? userDetails.id : metaParentValue;
 
-  const response = await getAllCompanyShippingAddresses(parentId);
+  const response = await getAllCompanyShippingAddresses(customerId);
   if (response) {
     return json(response);
   }
@@ -47,9 +53,9 @@ export function ErrorBoundary() {
   const error = useRouteError();
   if (isRouteErrorResponse(error)) {
     return (
-      <section className='container'>
-        <h1 className='text-center uppercase'>No data found</h1>
+      <section className="container">
+        <h1 className="text-center uppercase">No data found</h1>
       </section>
-    )
+    );
   }
 }

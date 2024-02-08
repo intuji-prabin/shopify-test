@@ -35,7 +35,7 @@ export function useColumn({currentUser}: {currentUser: string}) {
           return (
             <div>
               <figure className="flex items-center space-x-2 relative">
-                <div className="h-9 w-9 rounded-full">
+                <div className="min-h-9 min-w-9 w-9 h-9 rounded-full">
                   <img
                     src={imageSrc}
                     alt="profile-image"
@@ -77,8 +77,11 @@ export function useColumn({currentUser}: {currentUser: string}) {
         enableSorting: false,
         cell: (info) => {
           const status = info.row.original.status;
+
           const customerId = info.row.original.id;
+
           const fetcher = useFetcher();
+
           const [isChecked, setIsChecked] = useState<boolean>(false);
           return (
             <>
@@ -92,7 +95,7 @@ export function useColumn({currentUser}: {currentUser: string}) {
                 />
               ) : (
                 <fetcher.Form
-                  method="post"
+                  method="POST"
                   onChange={(event) => fetcher.submit(event.currentTarget)}
                 >
                   <input type="hidden" name="customerId" value={customerId} />
