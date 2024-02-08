@@ -35,7 +35,7 @@ export function useColumn({currentUser}: {currentUser: string}) {
           return (
             <div>
               <figure className="flex items-center space-x-2 relative">
-                <div className="h-9 w-9 rounded-full">
+                <div className="min-h-9 min-w-9 w-9 h-9 rounded-full">
                   <img
                     src={imageSrc}
                     alt="profile-image"

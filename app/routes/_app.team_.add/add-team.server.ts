@@ -5,7 +5,7 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getUserDetails} from '~/lib/utils/authsession.server';
 import {fileUpload} from '~/lib/utils/file-upload';
-import {getMessageSession} from '~/lib/utils/toastsession.server';
+import {CustomerResponse} from '~/routes/_app.team_.$teamId/edit-team.server';
 
 interface Role {
   title: string;
@@ -77,22 +77,6 @@ export async function addTeam({
 
   const customerId = team.customerCreate?.customer?.id as string;
 
-  const body = JSON.stringify({
-    companyId,
-    customerId,
-    address,
-    parentId,
-    userRole,
-  });
-
-  const results = await useFetch({
-    method: AllowedHTTPMethods.POST,
-    url: ENDPOINT.CUSTOMER.POST,
-    body,
-  });
-
-  if (!results) throw new Error("Couldn't create user");
-
   try {
     if (typeof file !== 'undefined') {
       const {status} = await fileUpload({customerId, file});
@@ -102,6 +86,22 @@ export async function addTeam({
   } catch (error) {
     return;
   }
+
+  const body = JSON.stringify({
+    companyId,
+    customerId,
+    address,
+    parentId,
+    userRole,
+  });
+
+  const results = await useFetch<CustomerResponse>({
+    method: AllowedHTTPMethods.POST,
+    url: ENDPOINT.CUSTOMER.CREATE,
+    body,
+  });
+
+  if (!results.status) throw new Error("Couldn't create user");
 
   const emailSend = await customerRecover({email, context});
 

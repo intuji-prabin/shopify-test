@@ -23,7 +23,7 @@ type TeamFormProps = {
     profileImageUrl: string;
   };
   options: SelectInputOptions[];
-  companyId?: string;
+  customerId?: string;
 };
 
 const EditTeamFormSchema = z.object({
@@ -79,7 +79,7 @@ export type AddTeamFormFieldNameType = keyof AddTeamFormType;
 export default function TeamForm({
   defaultValues,
   options,
-  companyId,
+  customerId,
 }: TeamFormProps) {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
@@ -146,7 +146,7 @@ export default function TeamForm({
               label="Address"
               placeholder="address"
             />
-            <Input type="hidden" name="customerId" value={companyId} />
+            <Input type="hidden" name="customerId" value={customerId} />
           </div>
         </div>
       </div>

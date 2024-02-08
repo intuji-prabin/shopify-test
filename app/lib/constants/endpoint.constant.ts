@@ -13,12 +13,13 @@ export const ENDPOINT = {
     GET: `https://casual-mink-routinely.ngrok-free.app/api/customer-roles`,
   },
   FILE: {
-    POST: `${BASE_URL}/customer-image/upload`,
+    POST: `https://casual-mink-routinely.ngrok-free.app/api/customer-image/upload`,
   },
   CUSTOMER: {
     GET: `${BASE_URL}/customer`,
-    PUT: `${BASE_URL}/customer-status`,
-    POST: `${BASE_URL}/customer-update`,
+    UPDATE_STATUS: `${BASE_URL}/customer-status`,
+    CREATE: `${BASE_URL}/customer-create`,
+    UPDATE: `${BASE_URL}/customer-update`,
   },
   CUSTOMER_LIST: {
     GET: `${BASE_URL}/customer-list`,
