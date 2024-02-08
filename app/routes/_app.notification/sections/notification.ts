@@ -42,6 +42,4 @@ export const news = [
       customer: 'Catherin McCallum',
     },
     
-    
-    
   ];
