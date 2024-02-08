@@ -1,11 +1,11 @@
-import { Link } from '@remix-run/react';
-import { useState } from 'react';
+import {Link} from '@remix-run/react';
+import {useState} from 'react';
 import {
   ProductLoveRed,
   ProductLoveWhite,
   TooltipInfo,
 } from '~/components/icons/orderStatus';
-import { Button } from '~/components/ui/button';
+import {Button} from '~/components/ui/button';
 
 export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
 
@@ -22,7 +22,7 @@ export function ProductCard({
 }: ProductCardProps) {
   return (
     <>
-      <div className="single-product-card">
+      <div className="single-product-card bg-white">
         {/* <ProductCardImage
           isBuyQtyAvailable={isBuyQtyAvailable}
           isFavorited={isFavorited}
@@ -38,8 +38,8 @@ export function ProductCard({
         <ProductCardInfo
           sku={variants?.sku}
           productName={title}
-        // buyPrice={buyPrice}
-        // rppPrice={rppPrice}
+          // buyPrice={buyPrice}
+          // rppPrice={rppPrice}
         />
       </div>
     </>
@@ -53,7 +53,7 @@ type ProductCardInfoProps = {
 
 type VariantType = {
   sku: string;
-}
+};
 
 type ProductCardImageProps = {
   isBuyQtyAvailable: boolean;
@@ -65,9 +65,9 @@ type ProductCardImageProps = {
 export function ProductCardInfo({
   sku,
   productName,
-  // buyPrice,
-  // rppPrice,
-}: any) {
+}: // buyPrice,
+// rppPrice,
+any) {
   return (
     <>
       <div className="flex flex-col gap-6 p-4">
@@ -148,8 +148,9 @@ function ProductCardImage({
 
   return (
     <div
-      className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 ${imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
-        }`}
+      className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 ${
+        imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
+      }`}
     >
       {isBuyQtyAvailableState && (
         <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px]">

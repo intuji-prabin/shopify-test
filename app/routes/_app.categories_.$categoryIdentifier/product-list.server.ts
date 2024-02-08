@@ -7,11 +7,13 @@ export async function getProducts(context: any, params: any, filterList: any) {
   const filters = filterBuilder(filterList);
 
   const products = await storefront.query(
-    STOREFRONT_PRODUCT_GET_QUERY(filters, categoryIdentifier),
+    STOREFRONT_PRODUCT_GET_QUERY(filters, categoryIdentifier, cursor),
   );
 
+  const pageInfo = products?.collection?.products?.pageInfo;
   const formattedData = formattedResponse(products);
-  return formattedData;
+  console.log('iii', pageInfo);
+  return {formattedData, pageInfo};
 }
 
 const filterBuilder = (filterList: any) => {
@@ -43,12 +45,11 @@ const formattedResponse = (response: any) => {
     return [];
   }
   const productList = response?.collection?.products?.edges;
-  const pageInfo = response?.collection?.products?.pageInfo;
-  console.log('pageInfo', pageInfo);
+
   const finalProductList: any = productList.map((item: any) => ({
     title: item?.node?.title,
     variants: productVariantDataFormat(item?.node?.variants),
-    featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.DEFAULT,
+    featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.IMAGE,
   }));
 
   return finalProductList;
@@ -61,16 +62,21 @@ const productVariantDataFormat = (variant: any) => {
   return finalVariantData;
 };
 
-const STOREFRONT_PRODUCT_GET_QUERY = (filterList: any, handler: string) => {
+const STOREFRONT_PRODUCT_GET_QUERY = (
+  filterList: any,
+  handler: string,
+  cursor: string,
+) => {
   const product_query = `query ProductType {
     collection(handle: "${handler}" ) {
           id
           title 
           handle
-          products( first: 10, filters: ${filterList} ) {
+          products( first: 3, filters: ${filterList}, after: "${cursor}" ) {
             pageInfo {
               hasNextPage
               hasPreviousPage
+              startCursor
             }
             edges {
                 node {
@@ -90,8 +96,7 @@ const STOREFRONT_PRODUCT_GET_QUERY = (filterList: any, handler: string) => {
                 }
             }
           }
-        }
-        
+        } 
       }`;
   return product_query;
 };

@@ -1,21 +1,24 @@
-import { Form, useSearchParams, useSubmit } from '@remix-run/react';
-import { FormEvent, Fragment, useState } from 'react';
+import {Form, useSearchParams, useSubmit} from '@remix-run/react';
+import {FormEvent, Fragment, useState} from 'react';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import { Button } from '~/components/ui/button';
-import { Separator } from '~/components/ui/separator';
-import { Slider } from '~/components/ui/slider';
-import { RadioInputData } from './filter-form-data';
+import {Button} from '~/components/ui/button';
+import {Separator} from '~/components/ui/separator';
+import {Slider} from '~/components/ui/slider';
 
 export function FilterForm(filterList: any) {
-  const { filterdata } = filterList;
+  const {filterdata} = filterList;
   const initialRange = [3, 100];
   const [range, setRange] = useState(initialRange);
 
   const handleRangeChange = (newValues: number[]) => {
     setRange(newValues);
   };
-  const warrantyFilter = filterdata.filter(item => item.filterKey === 'warranty');
-  const otherFilters = filterdata.filter(item => item.filterKey !== 'warranty');
+  const warrantyFilter = filterdata.filter(
+    (item) => item.filterKey === 'warranty',
+  );
+  const otherFilters = filterdata.filter(
+    (item) => item.filterKey !== 'warranty',
+  );
 
   return (
     <>
@@ -41,7 +44,7 @@ export function FilterForm(filterList: any) {
                       {input}
                     </label>
                   </div>
-                )
+                );
               })}
             </AccordionCustom>
           </Fragment>
@@ -67,9 +70,9 @@ export function FilterForm(filterList: any) {
                       {value}
                     </label>
                   </Fragment>
-                )
-              }
-              ))}
+                );
+              }),
+            )}
           </div>
         </div>
         <Separator />
@@ -99,7 +102,7 @@ export function SortByFilterForm() {
   return (
     <div className="flex items-center justify-between">
       <p className="text-lg text-grey-700">
-        183 items found for <span className="font-medium">“ Mig Welders ”</span>
+        Products found for <span className="font-medium">“ Mig Welders ”</span>
       </p>
       <Form
         method="get"
@@ -117,7 +120,7 @@ export function SortByFilterForm() {
         <select
           name="sort-by"
           value={queryParams.get('sort-by') as string}
-          onChange={() => { }}
+          onChange={() => {}}
           className="!p-2 !border-grey-50 text-base font-medium bg-transparent text-grey-900"
         >
           <option value="">Sort By</option>
