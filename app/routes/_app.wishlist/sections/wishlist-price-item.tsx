@@ -1,28 +1,21 @@
 import {Link} from '@remix-run/react';
+import {InfoIcon} from '~/components/icons/info-icon';
 import {TooltipInfo} from '~/components/icons/orderStatus';
 
 export default function WishlistPriceItem({buyPrice}: {buyPrice: number}) {
   return (
-    <div className="flex gap-6">
-      <div className="flex flex-col">
-        <div className="flex items-center gap-1">
-          <p className="text-semantic-success-500 text-base font-bold uppercase leading-[21px]">
-            BUY PRICE
-          </p>
-          <div className="info-block">
-            <p className="h-5 w-5 flex justify-center items-center ">
-              <Link to="" data-tooltip="Recommended retail price">
-                <span>
-                  <TooltipInfo />
-                </span>
-              </Link>
-            </p>
-          </div>
-        </div>
-        <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
-          ${buyPrice.toFixed(2)}
-        </h3>
-        <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
+    <div className="flex flex-col gap-[2px] items-baseline">
+      <p className="flex mb-1.5 text-semantic-success-500 font-medium text-sm">
+        BUY PRICE{' '}
+        <span>
+          <InfoIcon />
+        </span>
+      </p>
+      <div>
+        <p className="text-grey-900 text-lg leading-5.5 italic">${buyPrice}</p>
+        <p className="text-grey-500 font-bold italic text-sm leading-normal">
+          (Excl. GST)
+        </p>
       </div>
     </div>
   );

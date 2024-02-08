@@ -1,8 +1,6 @@
 import {useField} from 'remix-validated-form';
-
 import {Button} from '~/components/ui/button';
 import {DangerAlert} from '~/components/icons/alert';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {
   AddTeamFormFieldNameType,
   EditTeamFormFieldNameType,
@@ -56,7 +54,7 @@ export default function ImageUploadInput({
     <div className={className}>
       <div className="flex flex-col items-center gap-y-4 sm:flex-row sm:gap-x-4">
         <img
-          src={imageUrl ?? defaultImage ?? DEFAULT_IMAGE.DEFAULT}
+          src={imageUrl ?? defaultImage}
           alt="image-preview"
           className="object-cover w-16 h-16 border border-solid rounded-full image-preview border-gray_C3C1BF place-content-start"
         />

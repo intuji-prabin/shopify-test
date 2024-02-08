@@ -721,3 +721,6 @@ div[data-state='open'].fixed.inset-0 {
 .card-wrapper .single-product-card .product-button {
   @apply hidden;
 }
+.place-order span {
+  @apply text-grey-400 leading-[21px] text-base font-normal not-italic;
+}
