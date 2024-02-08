@@ -51,6 +51,7 @@ export async function loader({params}: LoaderFunctionArgs) {
   const customerDetails = await getCustomerById({customerId});
 
   const roles = (await useFetch({url: ENDPOINT.ROLE.GET})) as RolesResponse;
+  console.log({customerDetails});
 
   return json({customerDetails, roles});
 }
