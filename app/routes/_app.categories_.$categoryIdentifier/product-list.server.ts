@@ -55,7 +55,9 @@ const filterBuilder = (filterList: any) => {
         before = true;
       }
     });
-  }
+  } 
+  let pageinfo = ''
+  if( cursor && )
   return `[${filterData}]`;
 };
 

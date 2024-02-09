@@ -29,6 +29,7 @@ export default function SubCategoryPage() {
   const { categories, productList } = useLoaderData<typeof loader>();
   const { productFilter } = productList;
   const paginationInfo = productList?.results?.pageInfo;
+  // const paginationInfo = productList?.results?.pageInfo;
 
   // Pagination parameters
   const currentPage = Number(queryParams.get(pageParam) || 1);
