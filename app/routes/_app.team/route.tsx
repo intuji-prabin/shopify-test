@@ -49,8 +49,6 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 
     const teams = await getAllTeams({companyId, query});
 
-    console.log({teams});
-
     const rolesList = await getRoles();
 
     const roles = rolesList.data.map((role) => ({
@@ -147,8 +145,6 @@ export async function action({request, context}: ActionFunctionArgs) {
 
 export default function TeamPage() {
   const {teams, roles, currentUser} = useLoaderData<typeof loader>();
-
-  console.log({teams});
 
   const [activeDepartmentTab, setActiveDepartmentTab] = useState('all');
   const params = new URLSearchParams();
