@@ -117,10 +117,7 @@ const getProductList = async (params: any, context: any, request: any) => {
       searchList.push({ key: value, value: searchParams.getAll(value) });
       return { [value]: searchParams.getAll(value) };
     });
-    const pageValue = searchList.find(item => item.key === 'page')?.value[0];
-    console.log("pageValue", pageValue);
-    const cursor = pageValue ? pageValue : null;
-    const results = cursor ? await getProducts(context, params, searchList, cursor) : await getProducts(context, params, searchList)
+    const results = await getProducts(context, params, searchList)
     const productFilter = await getProductFilterList(context);
     return { results, productFilter };
   } catch (error) {

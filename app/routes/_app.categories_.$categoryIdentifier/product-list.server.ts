@@ -4,20 +4,15 @@ export async function getProducts(
   context: any,
   params: any,
   filterList: any,
-  cursor?: any,
 ) {
-  console.log({cursor});
 
   const {storefront} = context;
   const {categoryIdentifier} = params;
 
   const filters = filterBuilder(filterList);
-  console.log(
-    'dfsdfsdf ',
-    STOREFRONT_PRODUCT_GET_QUERY(filters, categoryIdentifier, cursor),
-  );
+
   const products = await storefront.query(
-    STOREFRONT_PRODUCT_GET_QUERY(filters, categoryIdentifier, cursor),
+    STOREFRONT_PRODUCT_GET_QUERY(filters, categoryIdentifier),
   );
 
   const pageInfo = products?.collection?.products?.pageInfo;
@@ -32,6 +27,7 @@ const filterBuilder = (filterList: any) => {
   let cursor = null;
   let after = false;
   let before = false;
+  let pageinfo = ''
   if (filterList.length > 0) {
     filterList.map((item: any) => {
       if (item?.key != 'page' && item.key != 'after' && item.key != 'before') {
@@ -56,9 +52,15 @@ const filterBuilder = (filterList: any) => {
       }
     });
   } 
-  let pageinfo = ''
-  if( cursor && )
-  return `[${filterData}]`;
+  if( cursor && after ) {
+    pageinfo = `first: 3 after: "${cursor}"`
+  } else if( cursor && before ) {
+    pageinfo = `last: 3 before: "${cursor}"`
+  } else {
+    pageinfo = `first: 3`
+  }
+
+  return `filters: [${filterData}] ${pageinfo}`;
 };
 
 const formattedResponse = (response: any) => {
@@ -90,17 +92,14 @@ const productVariantDataFormat = (variant: any) => {
 
 const STOREFRONT_PRODUCT_GET_QUERY = (
   filterList: any,
-  handler: string,
-  after: string = '',
+  handler: string
 ) => {
-  const theAfter = after ? `, after: "${after}" ,` : '';
-  console.log('lkjekjkewjrererewrewrwrw', filterList);
-  const product_query = `query ProductType {
+  const product_query = `query getProductList {
     collection(handle: "${handler}" ) {
           id
           title 
           handle
-          products( first: 3,  ${theAfter} filters: ${filterList}  ) {
+          products( ${filterList}  ) {
             pageInfo {
               hasNextPage
               hasPreviousPage
