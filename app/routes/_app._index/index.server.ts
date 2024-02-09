@@ -43,9 +43,9 @@ export async function getSlides({context}: any) {
 
 const formattedResponse = (response: SliderType[]) => {
   const data = response.map((item) => ({
-    image: item?.node?.slider_image?.reference?.previewImage?.url,
+    src: item?.node?.slider_image?.reference?.previewImage?.url,
+    alt: item.node.slider_title.value,
   }));
-
   return data;
 };
 
