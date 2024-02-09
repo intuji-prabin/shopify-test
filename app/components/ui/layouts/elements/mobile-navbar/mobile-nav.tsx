@@ -72,13 +72,20 @@ export default function MobileNav() {
                 key={navigation.id}
                 className="italic uppercase font-bold text-base text-white hover:text-secondary-500  active:text-secondary-500 [&>svg]:hover:fill-secondary-500"
               >
-                <Link
-                  to={navigation.url}
-                  className="w-full flex items-center gap-2 text-base font-bold leading-[21px] italic"
-                >
-                  {navigation.icon}
-                  {navigation.title}
-                </Link>
+                {navigation.url ? (
+                  <Link
+                    to={navigation.url}
+                    className="w-full flex items-center gap-2 text-base font-bold leading-[21px] italic"
+                  >
+                    {navigation.icon}
+                    {navigation.title}
+                  </Link>
+                ) : (
+                  <div className="w-full flex items-center gap-2 text-base font-bold leading-[21px] italic">
+                    {navigation.icon}
+                    {navigation.title}
+                  </div>
+                )}
               </li>
             ))}
           </ul>
@@ -102,7 +109,7 @@ export default function MobileNav() {
 
       {/* search bar starts here  */}
       {isSearchOpen ? (
-        <div className="bg-grey-900 p-4 absolute top-0 w-full">
+        <div className="bg-grey-900 p-4 absolute top-0 w-full ">
           <div className="flex bg-grey-900 border-primary-400 border-2 items-center p-2 ">
             <SearchIcon width={'24px'} height={'24px'} fillColor="#fff" />
             <input
@@ -111,7 +118,7 @@ export default function MobileNav() {
               className="w-full outline-none border-none focus:bg-transparent bg-transparent placeholder:text-white text-white"
             />
             <Button
-              className="bg-semantic-danger-500 p-2"
+              className="bg-semantic-danger-500 p-2 hover:bg-semantic-danger-500"
               onClick={() => {
                 setIsSearchOpen(!isSearchOpen);
               }}
