@@ -639,12 +639,18 @@ input[type='radio']:checked + label {
   @apply h-5 w-5;
 }
 
+.embla__container {
+  transition: height 0.2s;
+  align-items: flex-start;
+}
+
 /* Styling Single Embla Slide */
 .embla-thumbs__container .embla__slide {
   flex: 0 0 100%; /* Default slide covers 100% of the viewport */
   max-height: 85px;
   max-width: 85px;
 }
+
 @media (min-width: 1024px) {
   .embla-thumbs__container .embla__slide {
     flex: 0 0 50%; /* Breakpoint SM slide covers 50% of the viewport */
