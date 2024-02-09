@@ -169,7 +169,7 @@ function QuantityColumn({quantity}: QuantityColumnType) {
   const handleDecreaseQuantity = () =>
     setQuantityCounter((previousState) => previousState - 1);
   return (
-    <div className="flex flex-col gap-[11.5px]">
+    <div className="flex flex-col gap-[11.5px] mt-[2.5rem]">
       <div className="flex items-center">
         <button
           className="border border-solid border-grey-200 flex items-center justify-center  min-h-10 w-10"
@@ -212,7 +212,7 @@ type MeasurementColumnType = Pick<BulkOrderColumn, 'measurement'>;
 function ProductMeasurement({measurement}: MeasurementColumnType) {
   return (
     <Select>
-      <SelectTrigger className="w-[116px] place-order rounded-sm">
+      <SelectTrigger className="w-[116px] place-order rounded-sm ">
         <SelectValue placeholder="boxes" />
       </SelectTrigger>
       <SelectContent>

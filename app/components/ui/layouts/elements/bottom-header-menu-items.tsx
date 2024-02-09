@@ -10,6 +10,11 @@ import Resources from '~/components/icons/resources';
 import {Settings} from '~/components/icons/setting';
 import {Support} from '~/components/icons/support';
 import {Routes} from '~/lib/constants/routes.constent';
+import {
+  AccountDropDownMobile,
+  ContentDropdownMobile,
+  ResourcesDropdownMobile,
+} from './mobile-navbar/mobileDrop';
 
 export const menuItemsData = [
   {
@@ -25,7 +30,7 @@ export const menuItemsData = [
     submenu: [
       {
         title: 'Orders',
-        url: '/orders',
+        url: Routes.ORDERS,
         icon: <Order />,
       },
       {
@@ -119,6 +124,50 @@ export const menuItemsData = [
     title: 'Company Information',
     type: 'link',
     url: '/company-info',
+    icon: <Settings />,
+  },
+];
+
+export const mobileMenuItemsData = [
+  {
+    id: 0,
+    title: 'Home',
+    url: '/',
+    icon: <Home />,
+  },
+  {
+    id: 1,
+    title: <AccountDropDownMobile />,
+  },
+  {
+    id: 2,
+    title: 'All Product',
+    icon: <Product />,
+    url: Routes.CATEGORIES,
+  },
+  {
+    id: 3,
+    title: <ContentDropdownMobile />,
+  },
+  {
+    id: 4,
+    title: 'My Team',
+    url: Routes.TEAM,
+    icon: <MyTeam />,
+  },
+  {
+    title: 'Support',
+    url: Routes.SUPPORT,
+    icon: <Support />,
+  },
+  {
+    id: 5,
+    title: <ResourcesDropdownMobile />,
+  },
+  {
+    id: 6,
+    title: 'Settings',
+    url: Routes.SETTINGS,
     icon: <Settings />,
   },
 ];

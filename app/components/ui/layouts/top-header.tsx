@@ -16,8 +16,36 @@ import {TrackAnOrderButton} from './elements/track-an-order-dialog';
 import {Note} from '~/components/icons/note';
 import {NotificationIcon} from '~/components/icons/notification';
 
-export default function TopHeader() {
-  const [isClicked, setIsClicked] = useState(false);
+export function PlaceOrder() {
+  return (
+    <Button className="place-order h-full bg-secondary-500  px-6 hover:bg-secondary-500 min-h-12">
+      <Link
+        to={Routes.PLACE_AN_ORDER}
+        className="uppercase  text-[14px] italic font-bold flex items-center text-grey-900"
+      >
+        Place an order
+      </Link>
+    </Button>
+  );
+}
+export function OrderTrack() {
+  return (
+    <div className="flex items-center gap-4 border border-l-2 border-t-0 border-b-0 border-grey-800 pl-4 ">
+      <TrackAnOrderButton />
+      <PlaceOrder />
+    </div>
+  );
+}
+export function LogoIcon({logo_url}: {logo_url: string}) {
+  return (
+    <Link to={Routes.HOME}>
+      <figure>
+        <img src={logo_url} alt="My cigweld logo" />
+      </figure>
+    </Link>
+  );
+}
+export function NotificationNavbar() {
   const navIcons = [
     {
       id: 1,
@@ -48,19 +76,39 @@ export default function TopHeader() {
       notification: '3',
     },
   ];
+  return (
+    <div className="navbar">
+      <ul className="nav-list flex gap-4 items-center h-full">
+        {navIcons.map((navIcon) => (
+          <li className="nav-item relative" key={navIcon.id}>
+            <Link to={navIcon.url} className="info-block">
+              {' '}
+              <div data-tooltip={navIcon.title}>
+                <div className="absolute bg-semantic-danger-500 h-[14px] w-[14px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium p-2">
+                  {navIcon.notification}
+                </div>
+                <div className="nav-link">{navIcon.icon}</div>
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default function TopHeader() {
+  const [isClicked, setIsClicked] = useState(false);
 
   return (
     <>
       <div className="bg-grey-900">
         <div className="container py-5 flex  gap-3 justify-between ">
-          {/* home icon begins here */}
-          <Link to={Routes.HOME}>
-            <figure>
-              <img src="Logo.png" alt="My cigweld logo" />
-            </figure>
-          </Link>
+          {/* home logo begins here */}
+          <LogoIcon logo_url={'Logo.png'} />
           {/* Search and notification bar begins here  */}
           <div className="flex gap-[22px]">
+            {/* search bar begins here */}
             <div className="search-bar flex bg-white items-center min-w-[unset] w-full max-h-12 px-4 py-3 xl:min-w-[453px]">
               <FaSearch className="search-icon fill-primary-500" />
               <input
@@ -69,38 +117,13 @@ export default function TopHeader() {
                 className="border-none w-full placeholder:italic text-base font-bold text-[#0F1010] placeholder:text-[#0F1010]"
               />
             </div>
-            <nav className="navbar">
-              <ul className="nav-list flex gap-4 items-center h-full">
-                {navIcons.map((navIcon) => (
-                  <li className="nav-item relative" key={navIcon.id}>
-                    <Link to={navIcon.url} className="info-block">
-                      {' '}
-                      <div data-tooltip={navIcon.title}>
-                        <div className="absolute bg-semantic-danger-500 h-[14px] w-[14px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium p-2">
-                          {navIcon.notification}
-                        </div>
-                        <div className="nav-link">{navIcon.icon}</div>
-                      </div>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+
+            {/* notification menu starts here */}
+            <NotificationNavbar />
           </div>
 
           {/* order track begins here  */}
-          <div className="flex items-center gap-4 border border-l-2 border-t-0 border-b-0 border-grey-800 pl-4 ">
-            <TrackAnOrderButton />
-
-            <div className="place-order h-full ">
-              <Link
-                to={Routes.PLACE_AN_ORDER}
-                className="uppercase  text-[14px] italic font-bold bg-secondary-500 h-full px-6 flex items-center"
-              >
-                Place an order
-              </Link>
-            </div>
-          </div>
+          <OrderTrack />
 
           {/* user profile begins here  */}
           <div className="flex items-center gap-1">

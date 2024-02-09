@@ -1,5 +1,6 @@
+import {VariantProps} from 'class-variance-authority';
 import RemoveItem from '~/components/icons/removeItem';
-import {Button} from '~/components/ui/button';
+import {Button, ButtonProps, buttonVariants} from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -10,13 +11,25 @@ import {
 } from '~/components/ui/dialog';
 export default function CreateGroup({
   handleRemoveAllItems,
+  buttonVariant,
 }: {
   handleRemoveAllItems: () => void;
+  buttonVariant:
+    | 'link'
+    | 'input'
+    | 'primary'
+    | 'secondary'
+    | 'disabled'
+    | 'ghost'
+    | 'danger'
+    | null
+    | undefined;
 }) {
+  console.log('VARIANT', buttonVariant);
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-primary-500 min-w-[111px] text-white uppercase font-bold italic">
+        <Button variant={buttonVariant} className="min-w-[111px]">
           Save for later
         </Button>
       </DialogTrigger>
