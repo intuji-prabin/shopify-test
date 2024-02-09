@@ -1,6 +1,8 @@
 // const BASE_URL = 'https://casual-mink-routinely.ngrok-free.app/api';  // Sanchay NGRok
 
-const BASE_URL = 'https://relaxing-hawk-ace.ngrok-free.app/api'; // Amit NGRok
+// const BASE_URL = 'https://relaxing-hawk-ace.ngrok-free.app/api'; // Amit NGRok
+
+const BASE_URL = 'https://cig-backend.webo.dev/api'; // Live
 
 export const ENDPOINT = {
   AUTH: {
@@ -10,7 +12,7 @@ export const ENDPOINT = {
     RESET_PASSWORD: '/auth/reset-password',
   },
   ROLE: {
-    GET: `https://casual-mink-routinely.ngrok-free.app/api/customer-roles`,
+    GET: `${BASE_URL}/customer-roles`,
   },
   FILE: {
     POST: `https://casual-mink-routinely.ngrok-free.app/api/customer-image/upload`,

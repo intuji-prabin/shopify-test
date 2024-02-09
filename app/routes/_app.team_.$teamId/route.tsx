@@ -26,6 +26,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
+import {MetaFunction} from '@shopify/remix-oxygen';
 
 interface Role {
   title: string;
@@ -45,13 +46,16 @@ interface RolesResponse {
   status: boolean;
 }
 
+export const meta: MetaFunction = () => {
+  return [{title: 'Edit Team Member'}];
+};
+
 export async function loader({params}: LoaderFunctionArgs) {
   let customerId = params?.teamId as string;
 
   const customerDetails = await getCustomerById({customerId});
 
   const roles = (await useFetch({url: ENDPOINT.ROLE.GET})) as RolesResponse;
-  console.log({customerDetails});
 
   return json({customerDetails, roles});
 }

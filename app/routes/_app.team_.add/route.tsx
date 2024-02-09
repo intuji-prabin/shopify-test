@@ -25,6 +25,11 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
+import {MetaFunction} from '@shopify/remix-oxygen';
+
+export const meta: MetaFunction = () => {
+  return [{title: 'Add Team Member'}];
+};
 
 export async function loader({context}: LoaderFunctionArgs) {
   try {
