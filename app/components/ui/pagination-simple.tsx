@@ -1,37 +1,30 @@
-import {useSearchParams} from '@remix-run/react';
 import {
   PaginationContent,
   PaginationNext,
   PaginationPrevious,
 } from './pagination';
 
-const PaginationSimple = () => {
-  const pageParam = 'page';
-  const [queryParams] = useSearchParams();
-  const currentPage = Number(queryParams.get(pageParam) || 1);
-
-  const previousQuery = new URLSearchParams(queryParams);
-  previousQuery.set(pageParam, String(currentPage - 1));
-
-  const nextQuery = new URLSearchParams(queryParams);
-  nextQuery.set(pageParam, String(currentPage + 1));
+const PaginationSimple = ({ currentPage, previousQuery, nextQuery, paginationInfo }: { currentPage: number, previousQuery: any, nextQuery: any, paginationInfo: any }) => {
+  console.log("paginationInfo", paginationInfo?.startCursor)
   return (
     <PaginationContent>
-      <PaginationPrevious
-        to={`?${previousQuery.toString()}`}
-        // aria-disabled={isPreviousButtonDisabled}
-        // className={isPreviousButtonDisabled ? 'pointer-events-none' : ''}
-        // tabIndex={isPreviousButtonDisabled ? -1 : undefined}
-      />
-      <li className="font-medium text-grey-400 w-7 text-center">
-        <span className="text-grey-900">{currentPage}</span>
+      <li className='flex items-center mr-3 gap-x-1'><span className='text-grey-400'>Page : </span><span className='p-2 font-medium border border-solid flex justify-center items-center border-grey-50 text-grey-900 w-[34px] h-[34px]'>{currentPage}</span></li>
+      <li>
+        <ul className='flex gap-x-3'>
+          <PaginationPrevious
+            to={`?page=${paginationInfo?.startCursor}&before=true`}
+            // aria-disabled={isPreviousButtonDisabled}
+            className={!paginationInfo?.hasPreviousPage ? 'pointer-events-none opacity-50' : ''}
+          // tabIndex={isPreviousButtonDisabled ? -1 : undefined}
+          />
+          <PaginationNext
+            to={`?page=${paginationInfo?.endCursor}&after=true`}
+            // aria-disabled={isNextButtonDisabled}
+            className={!paginationInfo?.hasNextPage ? 'pointer-events-none opacity-50' : ''}
+          // tabIndex={isNextButtonDisabled ? -1 : undefined}
+          />
+        </ul>
       </li>
-      <PaginationNext
-        to={`?${nextQuery.toString()}`}
-        // aria-disabled={isNextButtonDisabled}
-        // className={isNextButtonDisabled ? 'pointer-events-none' : ''}
-        // tabIndex={isNextButtonDisabled ? -1 : undefined}
-      />
     </PaginationContent>
   );
 };

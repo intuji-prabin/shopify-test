@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {ChevronLeft, ChevronRight, MoreHorizontal} from 'lucide-react';
-import {type ButtonProps, buttonVariants} from '~/components/ui/button';
-import {Link} from '@remix-run/react';
-import {cn} from '~/lib/utils/utils';
+import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
+import { type ButtonProps, buttonVariants } from '~/components/ui/button';
+import { Link } from '@remix-run/react';
+import { cn } from '~/lib/utils/utils';
 
-const Pagination = ({className, ...props}: React.ComponentProps<'nav'>) => (
+const Pagination = ({ className, ...props }: React.ComponentProps<'nav'>) => (
   <nav
     role="navigation"
     aria-label="pagination"
@@ -16,10 +16,10 @@ const Pagination = ({className, ...props}: React.ComponentProps<'nav'>) => (
 const PaginationContent = React.forwardRef<
   HTMLUListElement,
   React.ComponentProps<'ul'>
->(({className, ...props}, ref) => (
+>(({ className, ...props }, ref) => (
   <ul
     ref={ref}
-    className={cn('flex flex-row items-center gap-3', className)}
+    className={cn('flex flex-wrap justify-between sm:justify-normal items-center gap-3', className)}
     {...props}
   />
 ));
@@ -28,7 +28,7 @@ PaginationContent.displayName = 'PaginationContent';
 const PaginationItem = React.forwardRef<
   HTMLLIElement,
   React.ComponentProps<'li'>
->(({className, ...props}, ref) => (
+>(({ className, ...props }, ref) => (
   <li ref={ref} className={cn('', className)} {...props} />
 ));
 PaginationItem.displayName = 'PaginationItem';
@@ -72,7 +72,7 @@ const PaginationPrevious = ({
     className={cn('', className)}
     {...props}
   >
-    <ChevronLeft className="h-5 w-5" />
+    <ChevronLeft className="w-5 h-5" />
   </PaginationLink>
 );
 PaginationPrevious.displayName = 'PaginationPrevious';
@@ -87,7 +87,7 @@ const PaginationNext = ({
     className={cn('', className)}
     {...props}
   >
-    <ChevronRight className="h-5 w-5" />
+    <ChevronRight className="w-5 h-5" />
   </PaginationLink>
 );
 
@@ -100,7 +100,7 @@ const PaginationEllipsis = ({
     className={cn('flex h-9 w-9 items-center justify-center', className)}
     {...props}
   >
-    <MoreHorizontal className="h-4 w-4" />
+    <MoreHorizontal className="w-4 h-4" />
     <span className="sr-only">More pages</span>
   </span>
 );

@@ -1,5 +1,5 @@
-import {FormEvent} from 'react';
-import {Form, useSearchParams, useSubmit} from '@remix-run/react';
+import { FormEvent } from 'react';
+import { Form, useSearchParams, useSubmit } from '@remix-run/react';
 import {
   PaginationContent,
   Pagination,
@@ -14,10 +14,10 @@ type PaginationPropsType = {
 
 function range(start: number, end: number) {
   const length = end - start + 1;
-  return Array.from({length}, (_, index) => index + start);
+  return Array.from({ length }, (_, index) => index + start);
 }
 
-export function PaginationWrapper({totalCount, pageSize}: PaginationPropsType) {
+export function PaginationWrapper({ totalCount, pageSize }: PaginationPropsType) {
   const pageParam = 'page';
 
   const submit = useSubmit();
@@ -49,8 +49,8 @@ export function PaginationWrapper({totalCount, pageSize}: PaginationPropsType) {
   // const pageChange = new URLSearchParams(queryParams);
 
   return (
-    <Pagination className="justify-end items-center">
-      <div className="flex gap-6 items-center">
+    <Pagination className="items-center justify-end">
+      <div className="flex items-center gap-6">
         <Form
           method="get"
           onChange={(event: FormEvent<HTMLFormElement>) => {
@@ -64,7 +64,7 @@ export function PaginationWrapper({totalCount, pageSize}: PaginationPropsType) {
           <select
             name="page"
             value={currentPage} // default value doesn't work
-            onChange={() => {}}
+            onChange={() => { }}
             className=" !py-1.5 appearance-none !border-grey-50 text-base font-medium text-grey-900"
           >
             {paginationRange &&
