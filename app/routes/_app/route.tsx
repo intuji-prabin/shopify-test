@@ -1,22 +1,29 @@
-import { Outlet, isRouteErrorResponse, useLoaderData, useRouteError } from '@remix-run/react';
+import {
+  Outlet,
+  isRouteErrorResponse,
+  useLoaderData,
+  useRouteError,
+} from '@remix-run/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
 import TopHeader from '~/components/ui/layouts/top-header';
-import { Payload, getCategories } from './app.server';
-import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
+import {Payload, getCategories} from './app.server';
+import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
 } from '~/lib/utils/toastsession.server';
+import {useMediaQuery} from '~/hooks/useMediaQuery';
+import MobileNav from '~/components/ui/layouts/mobile-nav';
 
-export async function loader({ request }: ActionFunctionArgs) {
+export async function loader({request}: ActionFunctionArgs) {
   const categories = await getCategories();
   const messageSession = await getMessageSession(request);
   if (!categories) {
-    setErrorMessage(messageSession, "Category not found");
+    setErrorMessage(messageSession, 'Category not found');
     return json(
-      { categories: [] },
+      {categories: []},
       {
         headers: {
           'Set-Cookie': await messageCommitSession(messageSession),
@@ -24,12 +31,11 @@ export async function loader({ request }: ActionFunctionArgs) {
       },
     );
   }
-  return json({ categories });
+  return json({categories});
 }
 
-
 export default function PublicPageLayout() {
-  const { categories } = useLoaderData<typeof loader>();
+  const {categories} = useLoaderData<typeof loader>();
 
   return (
     <Layout categories={categories}>
@@ -38,13 +44,25 @@ export default function PublicPageLayout() {
   );
 }
 
-const Layout = ({ children, categories }: { children: React.ReactNode; categories: Payload[] }) => {
+const Layout = ({
+  children,
+  categories,
+}: {
+  children: React.ReactNode;
+  categories: Payload[];
+}) => {
+  const matches = useMediaQuery('(min-width: 768px)');
   return (
     <>
-      <header>
-        <TopHeader />
-        <BottomHeader categories={categories} />
-      </header>
+      {matches ? (
+        <header>
+          <TopHeader />
+          <BottomHeader />
+        </header>
+      ) : (
+        <MobileNav />
+      )}
+
       {children}
       <footer className="mt-12">
         <DesktopFooter />

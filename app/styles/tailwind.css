@@ -724,3 +724,20 @@ div[data-state='open'].fixed.inset-0 {
 .place-order span {
   @apply text-grey-400 leading-[21px] text-base font-normal not-italic;
 }
+
+/* css for mobile header starts here */
+.mobile-nav .menus {
+  @apply flex-col items-baseline;
+}
+.user-menu .navbar ul {
+  @apply justify-around;
+}
+.submenu-mobile-nav div button {
+  @apply flex  justify-start items-center p-0 text-base font-bold leading-[21px] italic;
+}
+.submenu-mobile-nav .menus ul li {
+  @apply flex  justify-start;
+}
+.submenu-mobile-nav .menus ul li a {
+  @apply text-base font-bold leading-[21px] italic;
+}

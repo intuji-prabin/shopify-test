@@ -1,68 +1,23 @@
-import {NotificationIcon} from '../../icons/notification';
-import {Cart, Heart} from '../../icons/orderStatus';
-import {FaSearch} from 'react-icons/fa';
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 import CloseMenu from '~/components/icons/closeMenu';
 import HamburgerIcon from '~/components/icons/hamburgerIcon';
 import {Signout} from '~/components/icons/signout';
-import {Note} from '~/components/icons/note';
 import {Button} from '../button';
 import SearchIcon from '~/components/icons/search';
 import {Link} from '@remix-run/react';
 import {TrackAnOrderButton} from './elements/track-an-order-dialog';
-import {Routes} from '~/lib/constants/routes.constent';
+import {LogoIcon, NotificationNavbar, PlaceOrder} from './top-header';
+import {mobileMenuItemsData} from './elements/bottom-header-menu-items';
 
 export default function MobileNav() {
   const [isHamOpen, setIsHamOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const navIcons = [
-    {
-      id: 1,
-      icon: <Cart />,
-      notification: '3',
-    },
-    {
-      id: 2,
-      icon: <Note />,
-      notification: '3',
-    },
-    {
-      id: 3,
-      icon: <Heart />,
-      notification: '3',
-    },
-    {
-      id: 4,
-      icon: <NotificationIcon />,
-      notification: '3',
-    },
-  ];
-  const navigations = [
-    {
-      id: 0,
-      title: 'Home',
-    },
-    {
-      id: 1,
-      title: 'dashboard',
-    },
-    {
-      id: 2,
-      title: 'All products',
-    },
-    {
-      id: 4,
-      title: 'Blogs',
-    },
-  ];
+  const menuRef = useRef<HTMLLIElement>(null);
+
   return (
     <>
       <div className="bg-grey-900 px-4 py-6 flex justify-between items-center relative">
-        <Link to="">
-          <figure>
-            <img src="logo.png" alt="" />
-          </figure>
-        </Link>
+        <LogoIcon logo_url={'Logo.png'} />
         <div className="flex gap-2 items-center">
           <Button
             className="border border-[#313535] p-2 bg-transparent max-w-10 max-h-10 hover:bg-transparent"
@@ -86,12 +41,13 @@ export default function MobileNav() {
       </div>
 
       <div
-        className={`bg-primary-500 p-4 flex flex-col gap-[195px] transition-opacity ease-in-out delay-75 duration-150 
-        ${isHamOpen ? 'opacity-100' : 'opacity-0'}  `}
+        className={`bg-primary-500 p-4 flex flex-col gap-16 transition-opacity ease-in-out delay-75 duration-150 mobile-nav
+        ${isHamOpen ? 'block' : 'hidden'}  `}
       >
         <div className="user-menu flex gap-4 flex-col">
           <div className="flex justify-between flex-col-reverse gap-4">
             {' '}
+            {/* user profile starts here */}
             <div className="flex gap-2 ">
               <figure>
                 <img src="niel.png" alt="" />
@@ -106,51 +62,39 @@ export default function MobileNav() {
                 </Link>
               </div>
             </div>
-            <ul className="nav-list flex gap-3 items-center h-full justify-around">
-              {navIcons.map((navIcon) => (
-                <li className="nav-item relative" key={navIcon.id}>
-                  <div className="absolute bg-semantic-danger-500 h-[14px] w-[14px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium p-2">
-                    {navIcon.notification}
-                  </div>
-                  <a className="nav-link">{navIcon.icon}</a>
-                  <div className=""></div>
-                </li>
-              ))}
-            </ul>
+            {/* notification menu bar starts */}
+            <NotificationNavbar />
           </div>
-
+          {/* menu navigation starts here */}
           <ul className="flex flex-col gap-4">
-            {navigations.map((navigation) => (
+            {mobileMenuItemsData.map((navigation) => (
               <li
-                key={navigation.id}
+                key={navigation.title}
                 className="italic uppercase font-bold text-base text-white hover:text-secondary-500  active:text-secondary-500"
               >
-                <a href="" className="w-full block">
+                <Link to={navigation.url} className="w-full block">
                   {navigation.title}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
 
-          <div className="flex items-center gap-4 flex-row-reverse  ">
+          {/* <MainNavigationMenus categories={[]} /> */}
+          {/*  order track starts here */}
+          <div className="flex items-center gap-4 flex-row-reverse justify-end ">
             <TrackAnOrderButton />
-
-            <div className="place-order h-full ">
-              <Link
-                to={Routes.PLACE_AN_ORDER}
-                className="uppercase  text-[14px] italic font-bold bg-secondary-500 h-full px-6 flex items-center"
-              >
-                Place an order
-              </Link>
-            </div>
+            <PlaceOrder />
           </div>
+          {/* order track ends here */}
         </div>
-        <div className="flex gap-[2px]">
+
+        {/* user logout starts here */}
+        <Button className="flex gap-[2px] justify-start p-0 hover:bg-transparent">
           <Signout />
           <p className="italic uppercase font-bold text-base text-white">
-            sign out
+            Log out
           </p>
-        </div>
+        </Button>
       </div>
 
       {/* search bar starts here  */}
