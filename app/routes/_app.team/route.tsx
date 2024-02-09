@@ -29,6 +29,11 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
+import {MetaFunction} from '@shopify/remix-oxygen';
+
+export const meta: MetaFunction = () => {
+  return [{title: 'Team List'}];
+};
 
 export async function loader({request, context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -195,25 +200,26 @@ export default function TeamPage() {
 
 export function ErrorBoundary() {
   const error = useRouteError();
-  let errorMessage = 'Unknown error';
-  let errorStatus = 500;
 
   if (isRouteErrorResponse(error)) {
-    errorMessage = error?.data?.message ?? error.data;
-    errorStatus = error.status;
+    return (
+      <div>
+        <h1>
+          {error.status} {error.statusText}
+        </h1>
+        <p>{error.data}</p>
+      </div>
+    );
   } else if (error instanceof Error) {
-    errorMessage = error.message;
+    return (
+      <div className="flex justify-center items-center">
+        <div className="text-center">
+          <h1>Opps</h1>
+          <p>Something went wrong</p>
+        </div>
+      </div>
+    );
+  } else {
+    return <h1>Unknown Error</h1>;
   }
-
-  return (
-    <div>
-      <h1>Oops</h1>
-      <h2>{errorStatus}</h2>
-      {errorMessage && (
-        <fieldset>
-          <pre>{errorMessage}</pre>
-        </fieldset>
-      )}
-    </div>
-  );
 }
