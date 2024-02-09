@@ -15,7 +15,7 @@ import {
   setErrorMessage,
 } from '~/lib/utils/toastsession.server';
 import {useMediaQuery} from '~/hooks/useMediaQuery';
-import MobileNav from '~/components/ui/layouts/mobile-nav';
+import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
 
 export async function loader({request}: ActionFunctionArgs) {
   const categories = await getCategories();

@@ -2,12 +2,12 @@ import {useRef, useState} from 'react';
 import CloseMenu from '~/components/icons/closeMenu';
 import HamburgerIcon from '~/components/icons/hamburgerIcon';
 import {Signout} from '~/components/icons/signout';
-import {Button} from '../button';
+import {Button} from '../../../button';
 import SearchIcon from '~/components/icons/search';
 import {Link} from '@remix-run/react';
-import {TrackAnOrderButton} from './elements/track-an-order-dialog';
-import {LogoIcon, NotificationNavbar, PlaceOrder} from './top-header';
-import {mobileMenuItemsData} from './elements/bottom-header-menu-items';
+import {TrackAnOrderButton} from '../track-an-order-dialog';
+import {LogoIcon, NotificationNavbar, PlaceOrder} from '../../top-header';
+import {mobileMenuItemsData} from '../bottom-header-menu-items';
 
 export default function MobileNav() {
   const [isHamOpen, setIsHamOpen] = useState(false);
@@ -56,7 +56,7 @@ export default function MobileNav() {
                 <p className="text-lg font-normal text-white">Niel De Grass</p>
                 <Link
                   to=""
-                  className="font-bold text-lg leading-6 italic text-white border-b border-white border-x-0 border-t-0 uppercase"
+                  className="font-bold text-lg leading-6 italic text-white border-b-2 border-white border-x-0 border-t-0 uppercase"
                 >
                   my profile
                 </Link>
@@ -66,22 +66,25 @@ export default function MobileNav() {
             <NotificationNavbar />
           </div>
           {/* menu navigation starts here */}
-          <ul className="flex flex-col gap-4">
+          <ul className="flex flex-col gap-4 menu-items">
             {mobileMenuItemsData.map((navigation) => (
               <li
-                key={navigation.title}
-                className="italic uppercase font-bold text-base text-white hover:text-secondary-500  active:text-secondary-500"
+                key={navigation.id}
+                className="italic uppercase font-bold text-base text-white hover:text-secondary-500  active:text-secondary-500 [&>svg]:hover:fill-secondary-500"
               >
-                <Link to={navigation.url} className="w-full block">
+                <Link
+                  to={navigation.url}
+                  className="w-full flex items-center gap-2 text-base font-bold leading-[21px] italic"
+                >
+                  {navigation.icon}
                   {navigation.title}
                 </Link>
               </li>
             ))}
           </ul>
 
-          {/* <MainNavigationMenus categories={[]} /> */}
           {/*  order track starts here */}
-          <div className="flex items-center gap-4 flex-row-reverse justify-end ">
+          <div className="flex items-center gap-4 flex-row-reverse justify-end pt-4 border border-t-[#e9edf2] border-x-0 border-b-0">
             <TrackAnOrderButton />
             <PlaceOrder />
           </div>

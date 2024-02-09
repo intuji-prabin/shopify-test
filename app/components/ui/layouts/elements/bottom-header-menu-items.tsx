@@ -10,7 +10,11 @@ import Resources from '~/components/icons/resources';
 import {Settings} from '~/components/icons/setting';
 import {Support} from '~/components/icons/support';
 import {Routes} from '~/lib/constants/routes.constent';
-import {MobileDropDOwn} from './mobileDrop';
+import {
+  AccountDropDownMobile,
+  ContentDropdownMobile,
+  ResourcesDropdownMobile,
+} from './mobile-navbar/mobileDrop';
 
 export const menuItemsData = [
   {
@@ -126,62 +130,44 @@ export const menuItemsData = [
 
 export const mobileMenuItemsData = [
   {
+    id: 0,
     title: 'Home',
     url: '/',
-    type: 'link',
     icon: <Home />,
   },
   {
-    title: <MobileDropDOwn />,
-    type: 'link',
-    icon: <Settings />,
+    id: 1,
+    title: <AccountDropDownMobile />,
   },
   {
+    id: 2,
     title: 'All Product',
-    type: 'megamenu',
     icon: <Product />,
     url: Routes.CATEGORIES,
   },
   {
-    title: 'Content Management',
-    type: 'normal',
-    icon: <Content />,
-    submenu: [
-      {
-        title: 'Promotions',
-        url: Routes.PROMOTIONS,
-        icon: <Promotions />,
-      },
-    ],
+    id: 3,
+    title: <ContentDropdownMobile />,
   },
   {
+    id: 4,
     title: 'My Team',
-    type: 'link',
-    url: '/team',
+    url: Routes.TEAM,
     icon: <MyTeam />,
   },
   {
     title: 'Support',
-    type: 'link',
-    url: '/support',
+    url: Routes.SUPPORT,
     icon: <Support />,
   },
   {
-    title: 'Resources',
-    type: 'normal',
-    icon: <Resources />,
-    submenu: [
-      {
-        title: 'Certificate Generation',
-        url: Routes.CERTIFICATE_GENERATION,
-        icon: <Invoice />,
-      },
-    ],
+    id: 5,
+    title: <ResourcesDropdownMobile />,
   },
   {
+    id: 6,
     title: 'Settings',
-    type: 'link',
-    url: '/company-info',
+    url: Routes.SETTINGS,
     icon: <Settings />,
   },
 ];

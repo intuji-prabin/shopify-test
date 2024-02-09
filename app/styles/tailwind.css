@@ -733,10 +733,16 @@ div[data-state='open'].fixed.inset-0 {
   @apply justify-around;
 }
 .submenu-mobile-nav div button {
-  @apply flex  justify-start items-center p-0 text-base font-bold leading-[21px] italic;
+  @apply flex  justify-start items-center p-0 text-base font-bold leading-[21px] italic uppercase;
+}
+.submenu-mobile-nav div button svg:first-child {
+  @apply rotate-0;
+}
+.submenu-mobile-nav div {
+  @apply p-0;
 }
 .submenu-mobile-nav .menus ul li {
-  @apply flex  justify-start;
+  @apply flex  justify-start pl-7;
 }
 .submenu-mobile-nav .menus ul li a {
   @apply text-base font-bold leading-[21px] italic;
