@@ -1,12 +1,12 @@
-import { Form, useSearchParams, useSubmit } from '@remix-run/react';
-import { FormEvent, Fragment, useState } from 'react';
+import {Form, useNavigate, useSearchParams, useSubmit} from '@remix-run/react';
+import {FormEvent, Fragment, useState} from 'react';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import { Button } from '~/components/ui/button';
-import { Separator } from '~/components/ui/separator';
-import { Slider } from '~/components/ui/slider';
+import {Button} from '~/components/ui/button';
+import {Separator} from '~/components/ui/separator';
+import {Slider} from '~/components/ui/slider';
 
 export function FilterForm(filterList: any) {
-  const { filterdata } = filterList;
+  const {filterdata} = filterList;
   const initialRange = [3, 100];
   const [range, setRange] = useState(initialRange);
 
@@ -22,9 +22,22 @@ export function FilterForm(filterList: any) {
 
   return (
     <>
-      <h4 className="py-4 text-primary-500">All Filters</h4>
-      <Separator />
       <Form method="get">
+        <h4 className="py-4 text-primary-500">
+          All Filters
+          <input
+            type="button"
+            value="Unset Params"
+            onClick={() => {
+              window.history.replaceState(
+                {},
+                document.title,
+                window.location.pathname,
+              );
+              window.location.reload();
+            }}
+          />
+        </h4>
         {otherFilters?.map((form: any, index: any) => (
           <Fragment key={index}>
             <AccordionCustom accordionTitle={form.filterLabel}>
@@ -100,36 +113,28 @@ export function SortByFilterForm() {
   const submit = useSubmit();
   const [queryParams] = useSearchParams();
   return (
-    <div className="flex flex-col justify-between gap-2 sm:items-center sm:flex-row">
-      <p className="text-lg text-grey-700">
-        Products found for <span className="font-medium">“ Mig Welders ”</span>
-      </p>
-      <Form
-        method="get"
-        onChange={(event: FormEvent<HTMLFormElement>) => {
-          submit(event.currentTarget);
-        }}
-        className="flex items-center space-x-2"
+    <Form
+      method="get"
+      onChange={(event: FormEvent<HTMLFormElement>) => {
+        submit(event.currentTarget);
+      }}
+      className="flex items-center space-x-2"
+    >
+      <label htmlFor="sort-by" className="text-base font-medium text-grey-400">
+        Sort by :{' '}
+      </label>
+      <select
+        name="sort-by"
+        value={queryParams.get('sort-by') as string}
+        onChange={() => {}}
+        className="!p-2 !border-grey-50 text-base font-medium bg-transparent text-grey-900"
       >
-        <label
-          htmlFor="sort-by"
-          className="text-base font-medium text-grey-400"
-        >
-          Sort by :{' '}
-        </label>
-        <select
-          name="sort-by"
-          value={queryParams.get('sort-by') as string}
-          onChange={() => { }}
-          className="!p-2 !border-grey-50 text-base font-medium bg-transparent text-grey-900"
-        >
-          <option value="">Sort By</option>
-          <option value="quantity-buy-available">Quantity Buy Available</option>
-          <option value="quantity-buy-unavailable">
-            Quantity Buy UnAvailable
-          </option>
-        </select>
-      </Form>
-    </div>
+        <option value="">Sort By</option>
+        <option value="quantity-buy-available">Quantity Buy Available</option>
+        <option value="quantity-buy-unavailable">
+          Quantity Buy UnAvailable
+        </option>
+      </select>
+    </Form>
   );
 }

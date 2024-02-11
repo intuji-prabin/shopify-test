@@ -1,11 +1,6 @@
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 
-export async function getProducts(
-  context: any,
-  params: any,
-  filterList: any,
-) {
-
+export async function getProducts(context: any, params: any, filterList: any) {
   const {storefront} = context;
   const {categoryIdentifier} = params;
 
@@ -18,7 +13,6 @@ export async function getProducts(
   const pageInfo = products?.collection?.products?.pageInfo;
 
   const formattedData = formattedResponse(products);
-  console.log('iii', pageInfo);
   return {formattedData, pageInfo};
 }
 
@@ -27,16 +21,20 @@ const filterBuilder = (filterList: any) => {
   let cursor = null;
   let after = false;
   let before = false;
-  let pageinfo = ''
+  let pageinfo = '';
   if (filterList.length > 0) {
     filterList.map((item: any) => {
-      if (item?.key != 'page' && item.key != 'after' && item.key != 'before') {
+      if (
+        item?.key != 'page' &&
+        item.key != 'after' &&
+        item.key != 'before' &&
+        item.key != 'pageNo'
+      ) {
         if (item?.key == 'brand') {
           item?.value.map((filterValue: any) => {
             filterData = filterData + ` { productVendor: "${filterValue}"}`;
           });
         } else {
-          console.log('afterddfsds ', item.key);
           item?.value.map((filterValue: any) => {
             filterData =
               filterData +
@@ -51,34 +49,36 @@ const filterBuilder = (filterList: any) => {
         before = true;
       }
     });
-  } 
-  if( cursor && after ) {
-    pageinfo = `first: 3 after: "${cursor}"`
-  } else if( cursor && before ) {
-    pageinfo = `last: 3 before: "${cursor}"`
+  }
+  if (cursor && after) {
+    pageinfo = `first: 3 after: "${cursor}"`;
+  } else if (cursor && before) {
+    pageinfo = `last: 3 before: "${cursor}"`;
   } else {
-    pageinfo = `first: 3`
+    pageinfo = `first: 3`;
   }
 
   return `filters: [${filterData}] ${pageinfo}`;
 };
 
 const formattedResponse = (response: any) => {
-  if (!response?.collection) {
+  if (
+    !response?.collection ||
+    response?.collection?.products?.edges.length < 1
+  ) {
     return [];
   }
 
-  if (response?.collection?.products?.edges.length < 1) {
-    return [];
-  }
-  const productList = response?.collection?.products?.edges;
-  const pageInfo = response?.collection?.products?.pageInfo;
-  console.log('pageInfo', pageInfo);
-  const finalProductList: any = productList.map((item: any) => ({
-    title: item?.node?.title,
-    variants: productVariantDataFormat(item?.node?.variants),
-    featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.DEFAULT,
-  }));
+  const productList = response?.collection;
+
+  const finalProductList: any = {
+    categorytitle: productList?.title,
+    productList: productList?.products?.edges.map((item: any) => ({
+      title: item?.node?.title,
+      variants: productVariantDataFormat(item?.node?.variants),
+      featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.DEFAULT,
+    })),
+  };
 
   return finalProductList;
 };
@@ -90,10 +90,7 @@ const productVariantDataFormat = (variant: any) => {
   return finalVariantData;
 };
 
-const STOREFRONT_PRODUCT_GET_QUERY = (
-  filterList: any,
-  handler: string
-) => {
+const STOREFRONT_PRODUCT_GET_QUERY = (filterList: any, handler: string) => {
   const product_query = `query getProductList {
     collection(handle: "${handler}" ) {
           id
@@ -127,6 +124,6 @@ const STOREFRONT_PRODUCT_GET_QUERY = (
         }
         
       }`;
-
+  console.log('product_query', product_query);
   return product_query;
 };
