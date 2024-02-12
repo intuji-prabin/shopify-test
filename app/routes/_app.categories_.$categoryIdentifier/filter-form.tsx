@@ -1,12 +1,12 @@
-import {Form, useNavigate, useSearchParams, useSubmit} from '@remix-run/react';
-import {FormEvent, Fragment, useState} from 'react';
+import { Form, useSearchParams, useSubmit } from '@remix-run/react';
+import { FormEvent, Fragment, useState } from 'react';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import {Button} from '~/components/ui/button';
-import {Separator} from '~/components/ui/separator';
-import {Slider} from '~/components/ui/slider';
+import { Button } from '~/components/ui/button';
+import { Separator } from '~/components/ui/separator';
+import { Slider } from '~/components/ui/slider';
 
 export function FilterForm(filterList: any) {
-  const {filterdata} = filterList;
+  const { filterdata } = filterList;
   const initialRange = [3, 100];
   const [range, setRange] = useState(initialRange);
 
@@ -20,48 +20,51 @@ export function FilterForm(filterList: any) {
     (item) => item.filterKey !== 'warranty',
   );
 
+
   return (
-    <>
-      <Form method="get">
-        <h4 className="py-4 text-primary-500">
+    <Form method="get">
+      <div className='flex items-end gap-2 px-4 py-5 border-b border-solid border-grey-50'>
+        <h4 className='leading-none'>
           All Filters
-          <input
-            type="button"
-            value="Unset Params"
-            onClick={() => {
-              window.history.replaceState(
-                {},
-                document.title,
-                window.location.pathname,
-              );
-              window.location.reload();
-            }}
-          />
         </h4>
-        {otherFilters?.map((form: any, index: any) => (
-          <Fragment key={index}>
-            <AccordionCustom accordionTitle={form.filterLabel}>
-              {form?.filterValue?.map((input: any, index: any) => {
-                return (
-                  <div key={index} className="flex items-center py-2 gap-x-2">
-                    <input
-                      type="checkbox"
-                      id={input}
-                      name={form?.filterKey}
-                      value={input}
-                    />
-                    <label
-                      htmlFor={input}
-                      className="text-lg not-italic font-medium text-grey-700"
-                    >
-                      {input}
-                    </label>
-                  </div>
-                );
-              })}
-            </AccordionCustom>
-          </Fragment>
-        ))}
+        <div className='text-xs lg:text-sm !leading-none italic font-bold cursor-pointer text-primary-500 border-b border-solid !border-primary-500' onClick={() => {
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname,
+          );
+          window.location.reload();
+        }}>
+          CLEAR FILTER
+        </div>
+      </div>
+      <div className='px-4 pb-4'>
+        {
+          otherFilters?.map((form: any, index: any) => (
+            <Fragment key={index}>
+              <AccordionCustom accordionTitle={form.filterLabel}>
+                {form?.filterValue?.map((input: any, index: any) => {
+                  return (
+                    <div key={index} className="flex items-center py-2 gap-x-2">
+                      <input
+                        type="checkbox"
+                        id={input}
+                        name={form?.filterKey}
+                        value={input}
+                      />
+                      <label
+                        htmlFor={input}
+                        className="text-lg not-italic font-medium text-grey-700"
+                      >
+                        {input}
+                      </label>
+                    </div>
+                  );
+                })}
+              </AccordionCustom>
+            </Fragment>
+          ))
+        }
         <div className="py-4">
           <h5>Warranty</h5>
           <div className="flex flex-wrap gap-1">
@@ -89,7 +92,7 @@ export function FilterForm(filterList: any) {
           </div>
         </div>
         <Separator />
-        <div className="py-4">
+        {/* <div className="py-4">
           <h5 className="mb-16">Price</h5>
           <Slider
             minStepsBetweenThumbs={2}
@@ -100,12 +103,12 @@ export function FilterForm(filterList: any) {
             onValueChange={handleRangeChange}
             formatLabel={(value) => `$${value}`}
           />
-        </div>
-        <Button type="submit" className="w-full">
-          Submit
+        </div> */}
+        <Button type="submit" className="absolute p-0 text-xs italic font-bold !leading-none bg-transparent border-b border-solid lg:text-sm top-6 lg:top-7 right-4 text-grey-500 border-grey-500 hover:bg-transparent">
+          APPLY FILTER
         </Button>
-      </Form>
-    </>
+      </div>
+    </Form >
   );
 }
 
@@ -126,7 +129,7 @@ export function SortByFilterForm() {
       <select
         name="sort-by"
         value={queryParams.get('sort-by') as string}
-        onChange={() => {}}
+        onChange={() => { }}
         className="!p-2 !border-grey-50 text-base font-medium bg-transparent text-grey-900"
       >
         <option value="">Sort By</option>

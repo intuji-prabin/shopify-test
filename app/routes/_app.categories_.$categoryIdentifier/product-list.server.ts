@@ -51,11 +51,11 @@ const filterBuilder = (filterList: any) => {
     });
   }
   if (cursor && after) {
-    pageinfo = `first: 3 after: "${cursor}"`;
+    pageinfo = `first: 9 after: "${cursor}"`;
   } else if (cursor && before) {
-    pageinfo = `last: 3 before: "${cursor}"`;
+    pageinfo = `last: 9 before: "${cursor}"`;
   } else {
-    pageinfo = `first: 3`;
+    pageinfo = `first: 9`;
   }
 
   return `filters: [${filterData}] ${pageinfo}`;
@@ -76,7 +76,7 @@ const formattedResponse = (response: any) => {
     productList: productList?.products?.edges.map((item: any) => ({
       title: item?.node?.title,
       variants: productVariantDataFormat(item?.node?.variants),
-      featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.DEFAULT,
+      featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.IMAGE,
     })),
   };
 
@@ -124,6 +124,5 @@ const STOREFRONT_PRODUCT_GET_QUERY = (filterList: any, handler: string) => {
         }
         
       }`;
-  console.log('product_query', product_query);
   return product_query;
 };

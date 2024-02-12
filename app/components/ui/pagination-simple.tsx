@@ -1,4 +1,4 @@
-import {useNavigation, useSearchParams} from '@remix-run/react';
+import { useNavigation, useSearchParams } from '@remix-run/react';
 import {
   PaginationContent,
   PaginationNext,
@@ -8,32 +8,26 @@ import {
 const PaginationSimple = ({
   paginationInfo,
   totalProductLength,
-  currentPage,
-  setCurrentPage,
+  page
 }: {
   paginationInfo: any;
   totalProductLength: number;
-  currentPage: number;
-  setCurrentPage: any;
+  page: number
 }) => {
   const navigation = useNavigation();
-  // console.log('object', window.location);
+  const [searchParams] = useSearchParams();
 
-  const prevBtn = () => {
-    if (paginationInfo?.hasPreviousPage) {
-      setCurrentPage(currentPage - 1);
+  // Getting all query parameters
+  let searchParamList = '';
+  for (const [key, value] of searchParams.entries()) {
+    if (key != "page" && key != "after" && key != "before" && key != "pageNo") {
+      searchParamList += key + '=' + value + "&"
     }
-  };
-  const nextBtn = () => {
-    if (paginationInfo?.hasNextPage) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-  const showProductPerPage = 3;
+  }
 
-  const currentPageStartData = (currentPage - 1) * showProductPerPage;
+  const showProductPerPage = 9;
+  const currentPageStartData = (page - 1) * showProductPerPage;
   const currentPageEndData = totalProductLength + currentPageStartData;
-
   return (
     <>
       <p className="w-40 font-medium text-grey-400">
@@ -50,15 +44,14 @@ const PaginationSimple = ({
         <li className="flex items-center mr-3 gap-x-1">
           <span className="text-grey-400">Page : </span>
           <span className="p-2 font-medium border border-solid flex justify-center items-center border-grey-50 text-grey-900 w-[34px] h-[34px]">
-            {currentPage}
+            {page}
           </span>
         </li>
         <li>
           <ul className="flex gap-x-3">
             <PaginationPrevious
-              to={`?page=${paginationInfo?.startCursor}&before=true&pageNo=${
-                currentPage - 1
-              }`}
+              to={`?${searchParamList}page=${paginationInfo?.startCursor}&before=true&pageNo=${page - 1
+                }`}
               aria-disabled={!paginationInfo?.hasPreviousPage}
               className={
                 !paginationInfo?.hasPreviousPage
@@ -66,12 +59,10 @@ const PaginationSimple = ({
                   : ''
               }
               tabIndex={!paginationInfo?.hasPreviousPage ? -1 : undefined}
-              onClick={prevBtn}
             />
             <PaginationNext
-              to={`?page=${paginationInfo?.endCursor}&after=true&pageNo=${
-                currentPage + 1
-              }`}
+              to={`?${searchParamList}page=${paginationInfo?.endCursor}&after=true&pageNo=${page + 1
+                }`}
               aria-disabled={!paginationInfo?.hasNextPage}
               className={
                 !paginationInfo?.hasNextPage
@@ -79,7 +70,6 @@ const PaginationSimple = ({
                   : ''
               }
               tabIndex={!paginationInfo?.hasNextPage ? -1 : undefined}
-              onClick={nextBtn}
             />
           </ul>
         </li>

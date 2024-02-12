@@ -1,11 +1,11 @@
-import {Link} from '@remix-run/react';
-import {useState} from 'react';
+import { Link } from '@remix-run/react';
+import { useState } from 'react';
 import {
   ProductLoveRed,
   ProductLoveWhite,
   TooltipInfo,
 } from '~/components/icons/orderStatus';
-import {Button} from '~/components/ui/button';
+import { Button } from '~/components/ui/button';
 
 export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
 
@@ -21,14 +21,8 @@ export function ProductCard({
   imageBackgroundColor,
 }: ProductCardProps) {
   return (
-    <>
-      <div className="single-product-card bg-white">
-        {/* <ProductCardImage
-          isBuyQtyAvailable={isBuyQtyAvailable}
-          isFavorited={isFavorited}
-          productImageUrl={productImageUrl}
-          imageBackgroundColor={imageBackgroundColor}
-        /> */}
+    <div className="bg-white single-product-card">
+      <div className='relative h-full'>
         <ProductCardImage
           isBuyQtyAvailable={isBuyQtyAvailable}
           isFavorited={isFavorited}
@@ -38,11 +32,11 @@ export function ProductCard({
         <ProductCardInfo
           sku={variants?.sku}
           productName={title}
-          // buyPrice={buyPrice}
-          // rppPrice={rppPrice}
+        // buyPrice={buyPrice}
+        // rppPrice={rppPrice}
         />
       </div>
-    </>
+    </div>
   );
 }
 
@@ -66,20 +60,20 @@ export function ProductCardInfo({
   sku,
   productName,
 }: // buyPrice,
-// rppPrice,
-any) {
+  // rppPrice,
+  any) {
   return (
-    <>
-      <div className="flex flex-col gap-6 p-4">
-        <div className="tag flex flex-col gap-[11px]">
-          <div>
-            <p className="text-base font-medium text-primary-500 sku">
-              SKU:{sku}
-            </p>
-            <h5 className="h-12 text-lg italic font-bold leading-6 whitespace-normal text-grey-900 line-clamp-2 text-ellipsis">
-              {productName}
-            </h5>
-          </div>
+    <div className="p-4">
+      <div className='sm:pb-[146px]'>
+        <div>
+          <p className="text-base font-medium text-primary-500 sku">
+            SKU:{sku}
+          </p>
+          <h5 className="text-lg italic font-bold leading-6 whitespace-normal max-h-12 text-grey-900 line-clamp-2 text-ellipsis">
+            {productName}{productName}
+          </h5>
+        </div>
+        <div className='mt-3 sm:absolute bottom-4 inset-x-4'>
           <div className="flex gap-6">
             <div className="flex flex-col">
               <div className="flex items-center gap-1">
@@ -97,7 +91,7 @@ any) {
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
-                {/* ${buyPrice.toFixed(2)} */}
+                {/* ${buyPrice.toFixed(2)} */}$649.22
               </h3>
               <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
             </div>
@@ -120,15 +114,15 @@ any) {
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-                {/* ${rppPrice.toFixed(2)} */}
+                {/* ${rppPrice.toFixed(2)} */}$799.87
               </h3>
               <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
             </div>
           </div>
+          <ProductCardButtons />
         </div>
-        <ProductCardButtons />
       </div>
-    </>
+    </div>
   );
 }
 
@@ -148,9 +142,8 @@ function ProductCardImage({
 
   return (
     <div
-      className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 ${
-        imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
-      }`}
+      className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 ${imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
+        }`}
     >
       {isBuyQtyAvailableState && (
         <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px]">
@@ -177,7 +170,7 @@ function ProductCardButtons() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center gap-2 sm:flex-row product-button">
+    <div className="flex flex-col items-center justify-center gap-2 mt-6 sm:flex-row product-button">
       <Button
         variant="primary"
         size="default"
