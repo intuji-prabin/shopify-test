@@ -121,7 +121,10 @@ const CarouselThumb = ({
         <div className="embla__viewport h-full" ref={emblaMainRef}>
           <div className="flex embla__container h-full">
             {images.map((image, index) => (
-              <div key={index} className="min-w-0 embla__slide flex-full">
+              <div
+                key={index}
+                className="min-w-0 embla__slide flex-full h-full"
+              >
                 <img
                   src={image.src}
                   alt={image.alt}
