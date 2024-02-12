@@ -17,27 +17,28 @@ export interface Promotion {
   title: null | string;
   image_url: string;
 }
+const getPromotions = async (companyId: any, custom = false) => {
+  const url =
+    `${ENDPOINT.PROMOTION.GET}?company_id=${companyId}` +
+    (custom ? '&custom_promotion=true' : '');
+  const response = await useFetch<PromotionsResponse>({
+    method: AllowedHTTPMethods.GET,
+    url: url,
+  });
+  if (!response.status) {
+    throw new Response('Oh no! Something went wrong!', {
+      status: 404,
+    });
+  }
+  return response?.payload?.promotions;
+};
 
-export async function getPromotions(companyId: string) {
+export async function getPromotionsList(companyId: string) {
   try {
-    const getPromotions = async (companyId: any, custom = false) => {
-      const url =
-        `${ENDPOINT.PROMOTION.GET}?company_id=${companyId}` +
-        (custom ? '&custom_promotion=true' : '');
-      const response = await useFetch<PromotionsResponse>({
-        method: AllowedHTTPMethods.GET,
-        url: url,
-      });
-      if (response?.payload?.promotions?.length === 0) {
-        throw new Response('Oh no! Something went wrong!', {
-          status: 404,
-        });
-      }
-      return response?.payload?.promotions;
-    };
-
     const promotions = await getPromotions(companyId);
     const myPromotions = await getPromotions(companyId, true);
+    console.log({promotions});
+    console.log({myPromotions});
 
     return {promotions, myPromotions};
   } catch (error) {
