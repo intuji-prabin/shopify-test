@@ -22,7 +22,7 @@ export async function getCategoriesDetail() {
   try {
     const response = await useFetch<CategoryDetailType>({
       method: AllowedHTTPMethods.GET,
-      url: `${ENDPOINT.CUSTOM.URL}/product/category/detail`,
+      url: ENDPOINT.CATEGORY.GET_DETAIL,
     });
     if (!response?.status) {
       throw new Error(response?.message);

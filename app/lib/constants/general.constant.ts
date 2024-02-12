@@ -14,6 +14,7 @@ export const LOCAL_STORAGE_KEYS = Object.freeze({
 export const DEFAULT_IMAGE = Object.freeze({
   USER: '/images/dummyuser.svg',
   LOGO: '/images/dummylogo.svg',
+  IMAGE: '/dummy_image.png',
   DEFAULT:
     'https://shermacbucket.sgp1.digitaloceanspaces.com/DefaultImages/IMG_378943359_ic_admin_user_default.svg',
 });
