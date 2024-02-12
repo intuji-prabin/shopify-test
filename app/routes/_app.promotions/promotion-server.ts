@@ -22,7 +22,7 @@ export async function getPromotions(companyId: string) {
   try {
     const getPromotions = async (companyId: any, custom = false) => {
       const url =
-        `${ENDPOINT.CUSTOM.URL}/promotion?company_id=${companyId}` +
+        `${ENDPOINT.PROMOTION.GET}?company_id=${companyId}` +
         (custom ? '&custom_promotion=true' : '');
       const response = await useFetch<PromotionsResponse>({
         method: AllowedHTTPMethods.GET,

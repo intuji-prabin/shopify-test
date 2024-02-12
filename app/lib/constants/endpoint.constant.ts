@@ -30,7 +30,11 @@ export const ENDPOINT = {
     GET_PROFILE: `${BASE_URL}/company-profile`,
     GET_SHIPPING_ADDRESS: `${BASE_URL}/company/shipping-address`,
   },
-  CUSTOM: {
-    URL: 'https://casual-mink-routinely.ngrok-free.app/api',
+  CATEGORY: {
+    GET: `${BASE_URL}/product/category`,
+    GET_DETAIL: `${BASE_URL}/product/category/detail`,
+  },
+  PROMOTION: {
+    GET: `${BASE_URL}/promotion`,
   },
 };

@@ -6,7 +6,7 @@ export async function getPromotionById(promotionId: string) {
   try {
     const results = await useFetch<any>({
       method: AllowedHTTPMethods.GET,
-      url: `${ENDPOINT.CUSTOM.URL}/promotion/${promotionId}`,
+      url: `${ENDPOINT.PROMOTION.GET}/${promotionId}`,
     });
 
     if (!results) {
@@ -42,7 +42,7 @@ export async function createPromotion({formData}: any) {
 
     // const body = fData;
 
-    const results = await fetch(`${ENDPOINT.CUSTOM.URL}/promotion`, {
+    const results = await fetch(ENDPOINT.PROMOTION.GET, {
       method: 'POST',
       body: formData,
     });
