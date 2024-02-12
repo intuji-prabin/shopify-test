@@ -45,7 +45,7 @@ export default function OrderTable() {
               }
               className="min-w-[111px] min-h-10"
             >
-              <Link to={Routes.SHOPPING_CART}>Add to cart</Link>
+              <Link to={Routes.CART_LIST}>Add to cart</Link>
             </Button>
           </div>
         </div>

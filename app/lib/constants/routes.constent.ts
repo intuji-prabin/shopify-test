@@ -27,5 +27,5 @@ export const Routes = {
   PRODCUT_COMPARISON:'/product-comparison',
   PRODUCT:'/product',
   SETTINGS:'/settings',
-  SHOPPING_CART:'/shopping-cart',
+ CART_LIST:'/cart-list',
 };
