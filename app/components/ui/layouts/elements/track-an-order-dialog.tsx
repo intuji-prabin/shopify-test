@@ -16,7 +16,7 @@ export function TrackAnOrderButton() {
       <DialogTrigger asChild>
         <button className="track-time flex gap-1 items-center">
           <Ordertrack />
-          <p className="uppercase text-white italic text-base font-bold p-4">
+          <p className="uppercase text-white italic text-base font-bold ">
             Track an order
           </p>
         </button>

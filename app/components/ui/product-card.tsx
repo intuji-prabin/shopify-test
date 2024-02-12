@@ -1,76 +1,79 @@
-import {Link} from '@remix-run/react';
-import {useState} from 'react';
+import { Link } from '@remix-run/react';
+import { useState } from 'react';
 import {
   ProductLoveRed,
   ProductLoveWhite,
   TooltipInfo,
 } from '~/components/icons/orderStatus';
-import {Button} from '~/components/ui/button';
+import { Button } from '~/components/ui/button';
 
 export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
 
 export function ProductCard({
-  buyPrice,
+  // buyPrice,
   isBuyQtyAvailable,
   isFavorited,
-  productImageUrl,
-  productName,
-  rppPrice,
-  sku,
+  // productImageUrl,
+  title,
+  // rppPrice,
+  variants,
+  featuredImageUrl,
   imageBackgroundColor,
 }: ProductCardProps) {
   return (
-    <>
-      <div className="single-product-card">
+    <div className="bg-white single-product-card">
+      <div className='relative h-full'>
         <ProductCardImage
           isBuyQtyAvailable={isBuyQtyAvailable}
           isFavorited={isFavorited}
-          productImageUrl={productImageUrl}
+          featuredImageUrl={featuredImageUrl}
           imageBackgroundColor={imageBackgroundColor}
         />
         <ProductCardInfo
-          sku={sku}
-          productName={productName}
-          buyPrice={buyPrice}
-          rppPrice={rppPrice}
+          sku={variants?.sku}
+          productName={title}
+        // buyPrice={buyPrice}
+        // rppPrice={rppPrice}
         />
       </div>
-    </>
+    </div>
   );
 }
 
 type ProductCardInfoProps = {
+  variants: VariantType;
+  title: string;
+};
+
+type VariantType = {
   sku: string;
-  productName: string;
-  buyPrice: number;
-  rppPrice: number;
 };
 
 type ProductCardImageProps = {
-  productImageUrl: string;
   isBuyQtyAvailable: boolean;
   isFavorited: boolean;
   imageBackgroundColor: string;
+  featuredImageUrl: string;
 };
 
 export function ProductCardInfo({
   sku,
   productName,
-  buyPrice,
-  rppPrice,
-}: ProductCardInfoProps) {
+}: // buyPrice,
+  // rppPrice,
+  any) {
   return (
-    <>
-      <div className="p-4 flex flex-col gap-6">
-        <div className="tag flex flex-col gap-[11px]">
-          <div>
-            <p className="text-base font-medium text-primary-500 sku">
-              SKU:{sku}
-            </p>
-            <h5 className="text-lg italic font-bold leading-6 text-grey-900 line-clamp-2 text-ellipsis whitespace-normal h-12">
-              {productName}
-            </h5>
-          </div>
+    <div className="p-4">
+      <div className='sm:pb-[146px]'>
+        <div>
+          <p className="text-base font-medium text-primary-500 sku">
+            SKU:{sku}
+          </p>
+          <h5 className="text-lg italic font-bold leading-6 whitespace-normal max-h-12 text-grey-900 line-clamp-2 text-ellipsis">
+            {productName}{productName}
+          </h5>
+        </div>
+        <div className='mt-3 sm:absolute bottom-4 inset-x-4'>
           <div className="flex gap-6">
             <div className="flex flex-col">
               <div className="flex items-center gap-1">
@@ -78,7 +81,7 @@ export function ProductCardInfo({
                   BUY PRICE
                 </p>
                 <div className="info-block">
-                  <p className="h-5 w-5 flex justify-center items-center ">
+                  <p className="flex items-center justify-center w-5 h-5 ">
                     <Link to="" data-tooltip="Recommended retail price">
                       <span>
                         <TooltipInfo />
@@ -88,17 +91,17 @@ export function ProductCardInfo({
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
-                ${buyPrice.toFixed(2)}
+                {/* ${buyPrice.toFixed(2)} */}$649.22
               </h3>
               <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
             </div>
-            <div className="flex flex-col border-grey-50 border-l-2 border-y-0 border-r-0 pl-6">
+            <div className="flex flex-col pl-6 border-l-2 border-r-0 border-grey-50 border-y-0">
               <div className="flex items-center ">
                 <p className="text-grey-300 not-italic text-base font-bold uppercase leading-[21px]">
                   rrp
                 </p>
                 <div className="info-block">
-                  <p className="h-5 w-5 flex justify-center items-center ">
+                  <p className="flex items-center justify-center w-5 h-5 ">
                     <Link
                       to=""
                       data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts"
@@ -111,20 +114,20 @@ export function ProductCardInfo({
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-                ${rppPrice.toFixed(2)}
+                {/* ${rppPrice.toFixed(2)} */}$799.87
               </h3>
               <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
             </div>
           </div>
+          <ProductCardButtons />
         </div>
-        <ProductCardButtons />
       </div>
-    </>
+    </div>
   );
 }
 
 function ProductCardImage({
-  productImageUrl,
+  featuredImageUrl,
   isBuyQtyAvailable,
   isFavorited,
   imageBackgroundColor,
@@ -139,9 +142,8 @@ function ProductCardImage({
 
   return (
     <div
-      className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 ${
-        imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
-      }`}
+      className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 ${imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
+        }`}
     >
       {isBuyQtyAvailableState && (
         <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px]">
@@ -152,7 +154,7 @@ function ProductCardImage({
         {heartFill ? <ProductLoveRed /> : <ProductLoveWhite />}
       </button>
       <figure className="mt-3">
-        <img src={productImageUrl} className="" alt="product-image" />
+        <img src={featuredImageUrl} className="" alt="product-image" />
       </figure>
     </div>
   );
@@ -168,7 +170,7 @@ function ProductCardButtons() {
   }
 
   return (
-    <div className="flex gap-2 justify-center items-center flex-col sm:flex-row product-button">
+    <div className="flex flex-col items-center justify-center gap-2 mt-6 sm:flex-row product-button">
       <Button
         variant="primary"
         size="default"

@@ -10,11 +10,16 @@ const buttonVariants = cva(
       variant: {
         primary:
           'text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50',
+        secondary:
+          'bg-secondary-500 py-4 px-8 font-bold italic leading-6 text-lg text-grey-800 max-h-14 hover:bg-grey-800 hover:text-white',
         ghost:
           'text-grey-900 border border-primary-500 hover:bg-primary-100 disabled:border-none disabled:text-neutral-white disabled:bg-grey-50',
         link: 'relative before:absolute before:w-full before:h-0.5 before:bg-primary-500 before:-bottom-1 p-0 before:hover:bg-primary-600 before:duration-150 disabled:text-grey-50 disabled:before:bg-grey-50',
+        destructive: 'bg-semantic-danger-500 text-neutral-white',
         danger: 'bg-semantic-danger-100 border border-semantic-danger-500',
         input: 'text-grey-500 border border-grey-100 not-italic',
+        disabled:
+          'text-grey-400 bg-grey-200 cursor-not-allowed pointer-events-none',
       },
       size: {
         default: 'px-6 py-2 text-sm leading-6',

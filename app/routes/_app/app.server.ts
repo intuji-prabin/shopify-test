@@ -19,7 +19,7 @@ export async function getCategories() {
   try {
     const response = await useFetch<CategoriesType>({
       method: AllowedHTTPMethods.GET,
-      url: `${ENDPOINT.CUSTOM.URL}/product/category`,
+      url: ENDPOINT.CATEGORY.GET,
     });
     if (!response?.status) {
       throw new Error(response?.message);
