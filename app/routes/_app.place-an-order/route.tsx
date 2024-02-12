@@ -1,9 +1,8 @@
 import HeroSection from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
 import OrderTable from './order-table';
-import OrderlistTitle from './order-list-title';
 
-export default function BulkOrderPage({ measurement}:{ measurement?: string;}) {
+export default function BulkOrderPage({measurement}: {measurement?: string}) {
   return (
     <>
       <HeroSection
@@ -11,7 +10,6 @@ export default function BulkOrderPage({ measurement}:{ measurement?: string;}) {
         section_name={'PLACE AN ORDER'}
       />
       <UploadSearchbar />
-      <OrderlistTitle />
       <OrderTable />
     </>
   );

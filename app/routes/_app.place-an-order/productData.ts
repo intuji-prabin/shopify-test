@@ -1,4 +1,4 @@
-// Dummpy data for the product table
+// Dummy data for the product table
 export const ProductData = [
   {
     id: '1',
@@ -11,6 +11,7 @@ export const ProductData = [
     price: '19.99',
     quantity: 200,
     total: '59.97',
+    measurement: "boxes"
   },
   {
     id: '2',
@@ -23,6 +24,7 @@ export const ProductData = [
     price: '24.99',
     quantity: 200,
     total: '49.98',
+    measurement: "boxes"
   },
   {
     id: '3',
@@ -35,5 +37,6 @@ export const ProductData = [
     price: '14.99',
     quantity: 200,
     total: '74.95',
+    measurement: "boxes"
   },
 ];

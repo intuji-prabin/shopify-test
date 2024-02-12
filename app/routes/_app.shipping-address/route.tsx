@@ -5,6 +5,7 @@ import {
   useRouteError,
 } from '@remix-run/react';
 import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
+import {MetaFunction} from '@shopify/remix-oxygen';
 import {CircleInformationMajor} from '~/components/icons/orderStatus';
 import {Alert, AlertDescription} from '~/components/ui/alert';
 import {Routes} from '~/lib/constants/routes.constent';
@@ -12,6 +13,10 @@ import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
 import ShippingAddressHeader from '~/routes/_app.shipping-address/shipping-address-breadcrumb';
 import ShippingAddressCards from '~/routes/_app.shipping-address/shipping-address-card';
 import {getAllCompanyShippingAddresses} from '~/routes/_app.shipping-address/shipping-address.server';
+
+export const meta: MetaFunction = () => {
+  return [{title: 'Shipping Address'}];
+};
 
 export async function loader({context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -51,11 +56,26 @@ export default function ShippingAddressMgmt() {
 
 export function ErrorBoundary() {
   const error = useRouteError();
+
   if (isRouteErrorResponse(error)) {
     return (
-      <section className="container">
-        <h1 className="text-center uppercase">No data found</h1>
-      </section>
+      <div>
+        <h1>
+          {error.status} {error.statusText}
+        </h1>
+        <p>{error.data}</p>
+      </div>
     );
+  } else if (error instanceof Error) {
+    return (
+      <div className="flex justify-center items-center">
+        <div className="text-center">
+          <h1>Opps</h1>
+          <p>Something went wrong</p>
+        </div>
+      </div>
+    );
+  } else {
+    return <h1>Unknown Error</h1>;
   }
 }

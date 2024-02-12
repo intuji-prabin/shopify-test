@@ -53,6 +53,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^2.30.0",
+    "embla-carousel-auto-height": "^8.0.0-rc22",
     "embla-carousel-react": "^8.0.0-rc17",
     "graphql": "^16.6.0",
     "graphql-tag": "^2.12.6",
