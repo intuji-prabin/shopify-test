@@ -10,9 +10,12 @@ import {
 import { CategoryCard } from '~/routes/_app.categories/category-card';
 import { Payload, getCategoriesDetail } from './categories.server';
 import { Button } from '~/components/ui/button';
+import { getCagetoryList } from './cat.server';
 
-export async function loader({ request }: ActionFunctionArgs) {
-  const categoriesDetail = await getCategoriesDetail();
+export async function loader({ request, context }: ActionFunctionArgs) {
+  const categoriesDetail = await getCagetoryList( context )
+  // console.log("abdffhdfsjdfh", categories );
+  // const categoriesDetail = await getCategoriesDetail();
   const messageSession = await getMessageSession(request);
   if (!categoriesDetail) {
     setErrorMessage(messageSession, "Category List not found");
