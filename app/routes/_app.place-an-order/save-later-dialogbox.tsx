@@ -29,7 +29,7 @@ export default function CreateGroup({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={buttonVariant} className="min-w-[111px]">
+        <Button variant={buttonVariant} className="min-w-[111px] min-h-10">
           Save for later
         </Button>
       </DialogTrigger>

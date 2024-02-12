@@ -26,5 +26,6 @@ export const Routes = {
   NOTIFICATION: '/notification',
   PRODCUT_COMPARISON:'/product-comparison',
   PRODUCT:'/product',
-  SETTINGS:'/settings'
+  SETTINGS:'/settings',
+  SHOPPING_CART:'/shopping-cart',
 };

@@ -139,15 +139,15 @@ function ItemsColumn({items}: ItemsColumnType) {
       <figcaption className="flex flex-col justify-between">
         <h5 className="">{name}</h5>
         <div className="flex space-x-5 items-center max-w-[180px] flex-wrap">
-          <p>
+          <p className="mr-2">
             <span className="text-grey-900 font-semibold ">SKU: </span>
             {sku}
           </p>
-          <div className={badgeVariants({variant: 'inStock'})}>
+          <div className={`${badgeVariants({variant: 'inStock'})} !m-0 `}>
             <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>IN
             STOCK
           </div>
-          <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize !mt-2">
+          <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize ">
             minimum order(500 pieces)
           </p>
         </div>
