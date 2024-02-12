@@ -23,10 +23,10 @@ export type BulkOrderColumn = {
   };
   quantity: number;
   total: string;
-  measurement: string;
+  UDM: string;
 };
 
-export function useColumn() {
+export function useMyProductColumn() {
   const columns = useMemo<ColumnDef<BulkOrderColumn>[]>(
     () => [
       {
@@ -73,17 +73,17 @@ export function useColumn() {
         },
       },
       {
-        accessorKey: 'measurement',
-        header: 'Measurement',
+        accessorKey: 'UDM',
+        header: 'UDM',
         enableSorting: false,
         cell: (info) => {
-          const productMeasurement = info.row.original.measurement;
-          return <ProductMeasurement measurement={productMeasurement} />;
+          const productMeasurement = info.row.original.UDM;
+          return <ProductMeasurement UDM={productMeasurement} />;
         },
       },
       {
         accessorKey: 'total',
-        header: 'Total',
+        header: 'Price',
         enableSorting: false,
         cell: (info) => {
           const productTotal = info.row.original.total;
@@ -206,8 +206,8 @@ function QuantityColumn({quantity}: QuantityColumnType) {
 /**
  * @description Measurement Column Component
  */
-type MeasurementColumnType = Pick<BulkOrderColumn, 'measurement'>;
-function ProductMeasurement({measurement}: MeasurementColumnType) {
+type MeasurementColumnType = Pick<BulkOrderColumn, 'UDM'>;
+function ProductMeasurement({UDM}: MeasurementColumnType) {
   return (
     <Select>
       <SelectTrigger className="w-[116px] place-order rounded-sm ">

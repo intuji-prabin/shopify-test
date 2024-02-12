@@ -3,6 +3,7 @@ import RemoveItem from '~/components/icons/removeItem';
 import {Button, ButtonProps, buttonVariants} from '~/components/ui/button';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -25,41 +26,42 @@ export default function CreateGroup({
     | null
     | undefined;
 }) {
-  console.log('VARIANT', buttonVariant);
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button variant={buttonVariant} className="min-w-[111px] min-h-10">
-          Save for later
+          Remove
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] track-an-order p-0 block">
         <DialogHeader>
-          <DialogTitle className="leading-6 font-bold italic text-lg text-grey-900 flex p-4 uppercase">
-            Create a group
+          <DialogTitle className="leading-6 font-bold italic text-lg text-grey-900 flex p-4 justify-center items-center flex-col gap-3">
+            <div className="bg-semantic-danger-100 p-[10px] rounded-[50%]">
+              <RemoveItem />
+            </div>
+            <h3 className="font-medium leading-[22px] text-lg text-grey-900 not-italic capitalize">
+              clear cart
+            </h3>
+            <p className="font-normal leading-[21px] text-base text-center">
+              All products will be removed from your cart. Are you sure you want
+              to continue?
+            </p>
           </DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col gap-1 p-4 border-[1px] border-t-grey-100 border-b-0 border-x-0 ">
-          <label
-            htmlFor="orderNumber"
-            className="text-base text-normal leading-[21px] text-grey-800"
-          >
-            Group Name
-          </label>
-          <input
-            type="text"
-            id="group-name"
-            name="group-name"
-            placeholder="Group Name"
-            className="active:!border-grey-100 focus:!border-grey-100 hover:!border-grey-100 focu:bg-white active:bg-white hover:bg-white !bg-white"
-          />
-        </div>
-        <DialogFooter className="block p-4">
+
+        <DialogFooter className="px-4 pb-4 flex">
+          <DialogClose asChild>
+            <Button type="button" className="uppercase w-full" variant="ghost">
+              cancel
+            </Button>
+          </DialogClose>
           <Button
             type="submit"
             className="w-full italic font-bold uppercase leading6 text-sm "
+            variant="primary"
+            onClick={handleRemoveAllItems}
           >
-            Save for later
+            continue
           </Button>
         </DialogFooter>
       </DialogContent>
