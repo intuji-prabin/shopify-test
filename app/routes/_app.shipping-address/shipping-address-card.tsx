@@ -15,7 +15,10 @@ export default function ShippingAddressCards({
     ? data?.defaultAddress?.address1
     : defaultAddress2;
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <div
+      className="grid grid-cols-1 gap-6 sm:grid-cols-2"
+      data-cy="contact-cards"
+    >
       <div className="p-6 bg-white">
         <ul className="space-y-3">
           <li>

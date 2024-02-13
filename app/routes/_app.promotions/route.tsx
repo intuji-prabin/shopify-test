@@ -1,71 +1,56 @@
-import {
-  isRouteErrorResponse,
-  useLoaderData,
-  useRouteError,
-} from '@remix-run/react';
-import {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  json,
-} from '@remix-run/server-runtime';
-import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
-import PromotionHeader from './promotion-header';
-import PromotionList from './promotion-list';
-import {getPromotionsList} from './promotion-server';
+import {NavLink, Outlet} from '@remix-run/react';
+import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
+import {isAuthenticate} from '~/lib/utils/authsession.server';
+import {Separator} from '~/components/ui/separator';
+import PromotionHeader from '~/routes/_app.promotions/promotion-header';
 
 export async function loader({context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
-  const {userDetails} = await getUserDetails(context);
-  const companyId = userDetails.meta.company_id.value;
-
-  const response = await getPromotionsList(companyId);
-  if (response) {
-    return json({response});
-  }
-  return {response: {}};
+  return json({});
 }
 
-export async function action({request}: ActionFunctionArgs) {
-  const formData = await request.formData();
-  // Convert formData to a plain object
-
-  const formDataObject: Record<string, FormDataEntryValue> = {};
-  formData.forEach((value, key) => {
-    formDataObject[key] = value;
-  });
-
-  // Log the formDataObject
-  console.log(formDataObject);
-  return null;
-}
+const routes = [
+  {
+    link: '/promotions/available-promotion',
+    name: 'Available Promotions',
+  },
+  {
+    link: '/promotions/my-promotion',
+    name: 'My Promotions',
+  },
+];
 
 const Promotions = () => {
-  const {response} = useLoaderData<any>();
-
   return (
-    <section className="container">
-      <div className="relative">
-        <PromotionHeader />
-        {response?.promotions.length > 0 ||
-        response?.myPromotions.length > 0 ? (
-          <PromotionList promotionData={response} />
-        ) : (
-          'No data found'
-        )}
-      </div>
-    </section>
+    <>
+      <section className="container ">
+        <div className="relative ">
+          <PromotionHeader />
+          <div className="p-6 bg-neutral-white mt-6">
+            <div className="py-1.5">
+              {routes.map((route) => (
+                <NavLink
+                  key={route.link}
+                  to={route.link}
+                  className={({isActive, isPending}) =>
+                    isPending
+                      ? 'px-4 py-2'
+                      : isActive
+                      ? 'px-4 py-2 border-b-2 text-primary-500 border-b-primary-500'
+                      : 'px-4 py-2 text-grey-400'
+                  }
+                >
+                  {route.name}
+                </NavLink>
+              ))}
+            </div>
+            <Separator />
+            <Outlet />
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 
 export default Promotions;
-
-export function ErrorBoundary() {
-  const error = useRouteError();
-  if (isRouteErrorResponse(error)) {
-    return (
-      <section className="container">
-        <h1 className="text-center uppercase">No data found</h1>
-      </section>
-    );
-  }
-}
