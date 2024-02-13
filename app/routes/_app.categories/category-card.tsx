@@ -1,9 +1,7 @@
 import { Link } from '@remix-run/react';
-import { Routes } from '~/lib/constants/routes.constent';
-import { Payload } from './categories.server';
 
-export function CategoryCard({ category }: { category: Payload }) {
-  const { category_id, title, description, imageUrl, child_categories } = category;
+export function CategoryCard({ category }: { category: any }) {
+  const { category_id, title, description, imageUrl, child_categories, identifier } = category;
   return (
     <section className="container py-6 mt-0 category-wrap" id={category_id}>
       <div className="grid md:grid-cols-4">
@@ -27,7 +25,7 @@ export function CategoryCard({ category }: { category: Payload }) {
                   (childCategoryItem) => (
                     <li key={childCategoryItem.id}>
                       <Link
-                        to={`${Routes.CATEGORIES}/${childCategoryItem.identifier}`}
+                        to={`/${identifier}/${subCategoryItem.identifier}/${childCategoryItem.identifier}`}
                         className="text-base font-medium leading-5.5 text-grey-600 duration-150 hover:text-primary-500"
                       >
                         {childCategoryItem.title}

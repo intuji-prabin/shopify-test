@@ -7,7 +7,7 @@ import {
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
 import TopHeader from '~/components/ui/layouts/top-header';
-import {Payload, getCategories} from './app.server';
+import {Payload, getCagetoryList, getCategories} from './app.server';
 import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
 import {
   getMessageSession,
@@ -16,9 +16,13 @@ import {
 } from '~/lib/utils/toastsession.server';
 import {useMediaQuery} from '~/hooks/useMediaQuery';
 import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
+import {getCategoryList} from '../_app.categories/route';
 
-export async function loader({request}: ActionFunctionArgs) {
-  const categories = await getCategories();
+export async function loader({request, context}: ActionFunctionArgs) {
+  // const categories = await getCategories();
+  const categories = await getCategoryList(context);
+  // const categories = await getCagetoryList( context )
+  // console.log("dfdsfsdf ", categories)
   const messageSession = await getMessageSession(request);
   if (!categories) {
     setErrorMessage(messageSession, 'Category not found');
@@ -49,7 +53,7 @@ const Layout = ({
   categories,
 }: {
   children: React.ReactNode;
-  categories: Payload[];
+  categories: any;
 }) => {
   const matches = useMediaQuery('(min-width: 768px)');
   return (
@@ -57,7 +61,7 @@ const Layout = ({
       {matches ? (
         <header>
           <TopHeader />
-          <BottomHeader />
+          <BottomHeader categories={categories} />
         </header>
       ) : (
         <MobileNav />
