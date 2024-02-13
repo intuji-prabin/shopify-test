@@ -21,7 +21,7 @@ export default function MyProducts() {
                   buttonVariant={
                     table.getSelectedRowModel().rows.length === 0
                       ? 'disabled'
-                      : 'danger'
+                      : 'danger_dark'
                   }
                   handleRemoveAllItems={handleRemoveAllItems}
                 />

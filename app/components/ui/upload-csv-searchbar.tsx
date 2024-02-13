@@ -1,7 +1,8 @@
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 import {FaSearch} from 'react-icons/fa';
 import {CSVFileType, UploadCsv} from '~/routes/_app.place-an-order/upload-csv';
-import RecomendedProduct from './layouts/elements/recomended-products.tsx/recomended-product';
+import RecomendedProduct from './layouts/elements/recomended-products/recomended-product';
+import {useOutsideClick} from '~/hooks/useOutsideClick';
 
 export function ProductSearchBar() {
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -9,9 +10,14 @@ export function ProductSearchBar() {
   function handleInputClick() {
     setShowSuggestions(true);
   }
+  const productRef = useRef<HTMLDivElement>(null);
+  useOutsideClick(productRef, () => setShowSuggestions(false));
 
   return (
-    <div className="search-bar flex bg-white items-center min-w-[unset] w-full px-4 py-3 xl:min-w-[453px] max-h-14 relative">
+    <div
+      className="search-bar flex bg-white items-center min-w-[unset] w-full px-4 py-3 xl:min-w-[453px] max-h-14 relative"
+      ref={productRef}
+    >
       <FaSearch className="search-icon fill-primary-500 h-5 w-5" />
       <input
         type="text"

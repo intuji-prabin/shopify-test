@@ -3,7 +3,8 @@
     "./**/*.d.ts",
     "./**/*.ts",
     "./**/*.tsx",
-    "app/routes/_app.certificate-generation"
+    "app/routes/_app.certificate-generation",
+    "app/components/ui/layouts/elements/recomended-products"
   ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],

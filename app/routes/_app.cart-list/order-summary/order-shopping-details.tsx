@@ -193,12 +193,12 @@ export function ShoppingDetails() {
       </div>
       {/* place order starts here */}
       <Button>
-        <Link to={Routes.Order_SUCCESSFUL} className="w-full">
+        <Link to={Routes.Order_SUCCESSFUL} className="w-full h-14">
           Place order
         </Link>
       </Button>
       <p className="text-lg font-normal leading-[22px] text-grey-700">
-        <span className="text-primary-500">
+        <span className="text-primary-500 underline">
           Availability, shipping, tax & promotions
         </span>{' '}
         are not final until you complete your order.
