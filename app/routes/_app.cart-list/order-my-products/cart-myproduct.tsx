@@ -13,7 +13,7 @@ export default function MyProducts() {
   }
   return (
     <>
-      <div className=" flex flex-col bg-white">
+      <div className=" flex flex-col bg-white w-full">
         <div className="  flex  justify-between md:items-center my-[30px] flex-col gap-4 md:flex-row md:gap-0 items-baseline uppercase mx-6 ">
           <h3>My products</h3>
           <div className="flex gap-2 items-center w-full justify-between md:justify-[unset] md:w-[unset]">
@@ -32,7 +32,7 @@ export default function MyProducts() {
           </div>
         </div>
 
-        <div className="p-6 border-grey-50 border-t">
+        <div className="p-6 border-grey-50 border-t cart-order">
           <DataTable table={table} />
         </div>
       </div>

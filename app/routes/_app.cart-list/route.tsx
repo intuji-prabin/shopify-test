@@ -11,7 +11,7 @@ export default function CartList() {
         section_name={'SHOPPING CART'}
       />
       <UploadSearchbar />
-      <div className="flex justify-between container my-6 gap-6">
+      <div className="flex justify-between container my-6 gap-6 items-start flex-col lg:flex-row">
         <MyProducts />
         <OrderSummary />
       </div>
