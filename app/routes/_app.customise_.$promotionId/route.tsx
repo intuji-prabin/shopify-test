@@ -1,27 +1,42 @@
-import { isRouteErrorResponse, useActionData, useLoaderData, useLocation, useRouteError } from '@remix-run/react';
-import { ActionFunctionArgs, DataFunctionArgs, LoaderFunctionArgs, json } from '@remix-run/server-runtime';
-import { withZod } from '@remix-validated-form/with-zod';
+import {
+  isRouteErrorResponse,
+  useActionData,
+  useLoaderData,
+  useLocation,
+  useRouteError,
+} from '@remix-run/react';
+import {
+  ActionFunctionArgs,
+  DataFunctionArgs,
+  LoaderFunctionArgs,
+  json,
+} from '@remix-run/server-runtime';
+import {withZod} from '@remix-validated-form/with-zod';
 import html2canvas from 'html2canvas';
-import { useRef, useState } from 'react';
-import { ValidatedForm, validationError } from 'remix-validated-form';
-import { z } from 'zod';
-import { zfd } from 'zod-form-data';
-import { ExportUp } from '~/components/icons/export';
-import { FullScreen } from '~/components/icons/full-screen';
+import {useRef, useState} from 'react';
+import {ValidatedForm, validationError} from 'remix-validated-form';
+import {z} from 'zod';
+import {zfd} from 'zod-form-data';
+import {ExportUp} from '~/components/icons/export';
+import {FullScreen} from '~/components/icons/full-screen';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import { BackButton } from '~/components/ui/back-button';
-import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
-import { Button } from '~/components/ui/button';
+import {BackButton} from '~/components/ui/back-button';
+import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import {Button} from '~/components/ui/button';
 import ColorPicker from '~/components/ui/color-picker';
-import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog';
+import {Dialog, DialogContent, DialogTrigger} from '~/components/ui/dialog';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import ImageEdit from '~/components/ui/imageEdit';
 import Loader from '~/components/ui/loader';
-import { Separator } from '~/components/ui/separator';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { createPromotion, getPromotionById } from './promotion.server';
-import { getMessageSession, messageCommitSession, setSuccessMessage } from '~/lib/utils/toastsession.server';
-import { isAuthenticate } from '~/lib/utils/authsession.server';
+import {Separator} from '~/components/ui/separator';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {createPromotion, getPromotionById} from './promotion.server';
+import {
+  getMessageSession,
+  messageCommitSession,
+  setSuccessMessage,
+} from '~/lib/utils/toastsession.server';
+import {isAuthenticate} from '~/lib/utils/authsession.server';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -63,18 +78,18 @@ export type EditFormType = z.infer<typeof EditFormValidator>;
 
 export type EditFormFieldNameType = keyof EditFormType;
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({request}: ActionFunctionArgs) {
   const messageSession = await getMessageSession(request);
-  const data = await request.formData()
+  const data = await request.formData();
 
   let formData = Object.fromEntries(data);
-  formData = { ...formData }
-  console.log("qwe", { formData })
+  formData = {...formData};
+  console.log('qwe', {formData});
   const _action = formData.action;
 
   // switch (_action) {
   //   case "Customise": {
-  console.log("customise")
+  console.log('customise');
   await createPromotion(formData);
   setSuccessMessage(messageSession, 'New Banner Added Successfully');
 
@@ -94,43 +109,43 @@ export async function action({ request }: ActionFunctionArgs) {
   // }
 }
 
-export async function loader({ params, context }: LoaderFunctionArgs) {
+export async function loader({params, context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
   const promotionId = params?.promotionId as string;
   const response = await getPromotionById(promotionId);
   if (response?.payload) {
     const results = response?.payload;
-    return json({ results });
+    return json({results});
   }
-  return { response: {} };
+  return {response: {}};
 }
 
-
-const PromotionEdit = ({ defaultValues }: EditFormProps) => {
-  const { results } = useLoaderData<any>();
+const PromotionEdit = ({defaultValues}: EditFormProps) => {
+  const {results} = useLoaderData<any>();
 
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState('');
   const [renderedImageWidth, setRenderedImageWidth] = useState();
   const [companyInfo, setCompanyInfo] = useState({
-    companyLogo: results?.logo_url ?? DEFAULT_IMAGE.DEFAULT,
-    companyName: results?.company_name ?? 'ABC Distributors',
-    companyEmail: results?.company_email ?? 'company@gmail.com',
-    companyWebsite: results?.company_domain ?? 'abc.com.au',
-    companyFax: results?.company_fax ?? '+61 1 123 456 789',
+    companyLogo: DEFAULT_IMAGE.DEFAULT,
+    companyName: 'ABC Distributors',
+    companyEmail: 'company@gmail.com',
+    companyWebsite: 'abc.com.au',
+    companyFax: '+61 1 123 456 789',
     companyPhone: '+61 1 123 456 789',
-    textColor: results?.color ?? '#0F1010',
-    bgColor: results?.background_color ?? '#f5f5f5',
+    textColor: '#0F1010',
+    bgColor: '#f5f5f5',
   });
   const canvasRef = useRef<any>();
-  const blobRef = useRef<any>()
+  const blobRef = useRef<any>();
 
   const printDocument = (canvasRef: HTMLElement) => {
     setLoading(true);
     if (canvasRef) {
       html2canvas(canvasRef, {
+        allowTaint: true,
         useCORS: true,
         scale: 2,
       }).then((canvas) => {
@@ -150,42 +165,39 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
 
   const createBlob = (canvasRef: any) => {
     try {
-
-      console.log("firstDamn")
-      console.log("canvasref", canvasRef.current)
+      console.log('firstDamn');
+      console.log('canvasref', canvasRef.current);
 
       html2canvas(canvasRef, {
+        allowTaint: true,
         useCORS: false,
         scale: 2,
       }).then((canvas) => {
         canvas.toBlob((blob) => {
-          console.log("bull", blob)
+          console.log('bull', blob);
           var reader = new FileReader();
 
           // Closure to capture the file information.
           reader.onload = function (e) {
             // Set the value of the input to the file content
-            console.log("ert", e?.target?.result)
+            console.log('ert', e?.target?.result);
             blobRef.current.value = e?.target?.result;
-            console.log("blValue", blobRef.current.value)
+            console.log('blValue', blobRef.current.value);
           };
           reader.readAsDataURL(blob);
-        })
+        });
       });
+    } catch (err) {
+      console.log('err', err);
     }
-    catch (err) {
-      console.log("err", err)
-    }
-
   };
 
   const handleChange = (field: string, value: string) => {
-    console.log("first")
     setCompanyInfo((prevState) => ({
       ...prevState,
       [field]: value,
     }));
-    createBlob(canvasRef.current)
+    createBlob(canvasRef.current);
     setShowUnsavedChanges(true);
   };
 
@@ -204,7 +216,10 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
       '.image-preview',
     ) as unknown as HTMLImageElement[];
     imagePreviews.forEach((imagePreview) => {
-      imagePreview.setAttribute('src', `${results?.logo_url ?? DEFAULT_IMAGE.DEFAULT}`);
+      imagePreview.setAttribute(
+        'src',
+        `${results?.logo_url ?? DEFAULT_IMAGE.DEFAULT}`,
+      );
     });
     setShowUnsavedChanges(false);
   };
@@ -215,6 +230,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
   const htmlProcessPop = (canvasRef: any) => {
     setImage('');
     html2canvas(canvasRef, {
+      allowTaint: true,
       useCORS: true,
       scale: 2,
     }).then((canvas) => {
@@ -239,8 +255,9 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
             type="button"
             size="small"
             variant="ghost"
-            className={`border-primary-500 hover:bg-inherit ${loading && 'pointer-events-none'
-              }`}
+            className={`border-primary-500 hover:bg-inherit ${
+              loading && 'pointer-events-none'
+            }`}
             onClick={() => printDocument(canvasRef.current)}
           >
             {loading ? <Loader /> : <ExportUp />}Export
@@ -276,8 +293,9 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                   style={{
                     width: renderedImageWidth && renderedImageWidth + 50,
                   }}
-                  className={`max-w-4xl ${!image && 'flex items-center justify-center'
-                    }`}
+                  className={`max-w-4xl ${
+                    !image && 'flex items-center justify-center'
+                  }`}
                 >
                   {image && renderedImageWidth ? (
                     <img
@@ -316,10 +334,16 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
               validator={EditFormSchemaValidator}
               encType="multipart/form-data"
               defaultValues={defaultValues}
-              id='promotion-form'
+              id="promotion-form"
               data-cy="customize-promotion"
             >
-              <input ref={blobRef} id="love" accept=".blob" type='file' name="image" />
+              <input
+                ref={blobRef}
+                id="love"
+                accept=".blob"
+                type="file"
+                name="image"
+              />
               <h5 className="py-4">Company Logo</h5>
               <ImageUploadInput
                 name="logo"
@@ -427,7 +451,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                         >
                           discard
                         </Button>
-                        <Button type="submit" variant="primary" name='action'>
+                        <Button type="submit" variant="primary" name="action">
                           save changes
                         </Button>
                       </div>
@@ -449,9 +473,9 @@ export function ErrorBoundary() {
   const error = useRouteError();
   if (isRouteErrorResponse(error)) {
     return (
-      <section className='container'>
-        <h1 className='text-center uppercase'>No data found</h1>
+      <section className="container">
+        <h1 className="text-center uppercase">No data found</h1>
       </section>
-    )
+    );
   }
 }

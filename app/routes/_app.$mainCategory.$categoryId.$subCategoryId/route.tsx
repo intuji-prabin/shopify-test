@@ -100,6 +100,31 @@ export default function SubCategoryPage(props) {
           )),
         )}
       </div>
+      <div className="embla">
+        <div className="embla__viewport" ref={emblaRef}>
+          <div className="sticky top-0 z-10 flex embla__container gap-3 py-4 bg-primary-25">
+            {matchingCategory?.subCategory.map((subCategory) =>
+              subCategory.child_categories.map((childCategory) => (
+                <div className="embla__slide">
+                  <NavLink
+                    key={childCategory.id}
+                    to={`/${matchingCategory.identifier}/${subCategory?.identifier}/${childCategory?.identifier}`}
+                    className={({isActive, isPending}) =>
+                      isPending
+                        ? `active__tab ${linkStyles}`
+                        : isActive
+                        ? `active__tab ${linkStyles}`
+                        : linkStyles
+                    }
+                  >
+                    {childCategory.title}
+                  </NavLink>
+                </div>
+              )),
+            )}
+          </div>
+        </div>
+      </div>
       {(productList?.results?.formattedData?.productList?.length > 0 && (
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-4">
           <div className="xl:col-span-1">
