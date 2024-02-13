@@ -1,34 +1,17 @@
 import { useLoaderData } from '@remix-run/react';
 import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
 import { useEffect } from 'react';
-import { useScroll } from '~/hooks/useScroll';
-import {
-  getMessageSession,
-  messageCommitSession,
-  setErrorMessage,
-} from '~/lib/utils/toastsession.server';
-import { CategoryCard } from '~/routes/_app.categories/category-card';
-import { Payload, getCategoriesDetail } from './categories.server';
 import { Button } from '~/components/ui/button';
-import { getCagetoryList } from './cat.server';
+import { useScroll } from '~/hooks/useScroll';
+import { CategoryCard } from '~/routes/_app.categories/category-card';
+import { getCategory } from './categories.server';
 
-export async function loader({ request, context }: ActionFunctionArgs) {
-  const categoriesDetail = await getCagetoryList( context )
-  // console.log("abdffhdfsjdfh", categories );
-  // const categoriesDetail = await getCategoriesDetail();
-  const messageSession = await getMessageSession(request);
-  if (!categoriesDetail) {
-    setErrorMessage(messageSession, "Category List not found");
-    return json(
-      { categoriesDetail: [] },
-      {
-        headers: {
-          'Set-Cookie': await messageCommitSession(messageSession),
-        },
-      },
-    );
+export async function loader({ context }: ActionFunctionArgs) {
+  const categoriesDetail = await getCategoryList(context);
+  if (categoriesDetail && categoriesDetail.length > 0) {
+    return json({ categoriesDetail });
   }
-  return json({ categoriesDetail });
+  return { categoriesDetail: [] };
 }
 
 export default function CategoriesPage() {
@@ -85,7 +68,7 @@ export default function CategoriesPage() {
       >
         {categoriesDetail.length > 0 &&
           <div className="flex items-center gap-3 py-4">
-            {categoriesDetail.map((category: Payload) => (
+            {categoriesDetail.map((category: any) => (
               <a
                 href={String(category?.category_id)}
                 onClick={(event) => handleScroll(event, category.category_id)}
@@ -98,7 +81,7 @@ export default function CategoriesPage() {
           </div>
         }
       </section>
-      {categoriesDetail.length > 0 ? categoriesDetail.map((category: Payload) => (
+      {categoriesDetail.length > 0 ? categoriesDetail.map((category: any) => (
         <CategoryCard key={category.id} category={category} />
       )) :
         <section className='container'>
@@ -107,3 +90,24 @@ export default function CategoriesPage() {
     </>
   );
 }
+
+export const getCategoryList = async (context: any) => {
+  try {
+    const getCategories = await getCategory(context);
+    return getCategories;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log('error is ', error.message);
+      return (
+        <div className="flex items-center justify-center">
+          <div className="text-center">
+            <h1>Opps</h1>
+            <p>Something went wrong</p>
+          </div>
+        </div>
+      );
+    }
+    console.log('new error', error);
+    return <h1>Unknown Error</h1>;
+  }
+};

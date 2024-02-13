@@ -48,48 +48,68 @@ const formattedResponse = (response: CategoriesType) => {
   return data;
 };
 
-export const getCagetoryList = async ( context : any ) => {
+export const getCagetoryList = async (context: any) => {
   try {
-
-      const {storefront} = context;
-      const catList = await storefront.query(GET_CATEGORY_QUEYR)
-      const formateCategories = await formateCategory( catList )
-      return formateCategories
-  } catch( error ) {
-      if( error instanceof Error ) {
-          console.log("error is ", error.message)
-          return []
-      }
-      console.log("new error", error )
-      return []
+    const {storefront} = context;
+    const catList = await storefront.query(GET_CATEGORY_QUEYR);
+    const formateCategories = await formateCategory(catList);
+    return formateCategories;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log('error is ', error.message);
+      return [];
+    }
+    console.log('new error', error);
+    return [];
   }
+};
 
-}
-
-const formateCategory = async ( categoryesponse : any ) => {
-  const items = categoryesponse?.collections?.nodes
-  const finalCategories = await items.filter(( categories : any  ) => categories?.parent_handle?.value == "null" ).map( ( parentList : any ) => ({
-      id          : parseInt( parentList?.id.replace("gid://shopify/Collection/", "") ),
-      title       : parentList?.title,
-      identifier  : parentList?.handle,
-      child_categories: items.some( ( category : any ) => parentList?.handle == category?.parent_handle?.value ) ? items.filter( ( category : any ) => parentList?.handle === category?.parent_handle?.value).map((childCategory : any) => (
-          {
-              id          : parseInt( childCategory?.id.replace("gid://shopify/Collection/", "") ),
-              title       : childCategory?.title,
-              identifier  : childCategory?.handle,
-              child_categories: items.some( (category : any ) => childCategory?.handle == category?.parent_handle?.value) ? items.filter( ( category : any ) => childCategory?.handle === category?.parent_handle?.value).map((child : any) => (
-                  {
-                      id          : parseInt( child?.id.replace("gid://shopify/Collection/", "") ),
-                      title       : child?.title,
-                      identifier  : child?.handle,
-                      child_categories : []
-                  }
-              )) : []
-          }
-      )) : []
-  }))
-  return finalCategories
-}
+const formateCategory = async (categoryesponse: any) => {
+  const items = categoryesponse?.collections?.nodes;
+  const finalCategories = await items
+    .filter((categories: any) => categories?.parent_handle?.value == 'null')
+    .map((parentList: any) => ({
+      id: parseInt(parentList?.id.replace('gid://shopify/Collection/', '')),
+      title: parentList?.title,
+      identifier: parentList?.handle,
+      child_categories: items.some(
+        (category: any) => parentList?.handle == category?.parent_handle?.value,
+      )
+        ? items
+            .filter(
+              (category: any) =>
+                parentList?.handle === category?.parent_handle?.value,
+            )
+            .map((childCategory: any) => ({
+              id: parseInt(
+                childCategory?.id.replace('gid://shopify/Collection/', ''),
+              ),
+              title: childCategory?.title,
+              identifier: childCategory?.handle,
+              child_categories: items.some(
+                (category: any) =>
+                  childCategory?.handle == category?.parent_handle?.value,
+              )
+                ? items
+                    .filter(
+                      (category: any) =>
+                        childCategory?.handle ===
+                        category?.parent_handle?.value,
+                    )
+                    .map((child: any) => ({
+                      id: parseInt(
+                        child?.id.replace('gid://shopify/Collection/', ''),
+                      ),
+                      title: child?.title,
+                      identifier: child?.handle,
+                      child_categories: [],
+                    }))
+                : [],
+            }))
+        : [],
+    }));
+  return finalCategories;
+};
 
 const GET_CATEGORY_QUEYR = `query getCollection {
   collections(first :  250 ) {
@@ -101,4 +121,4 @@ const GET_CATEGORY_QUEYR = `query getCollection {
       }
   }
   
-}`  as const;
+}` as const;

@@ -2,7 +2,7 @@ import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 
 export async function getProducts(context: any, params: any, filterList: any) {
   const {storefront} = context;
-  const {categoryIdentifier} = params;
+  const categoryIdentifier = params.subCategoryId;
 
   const filters = filterBuilder(filterList);
 
