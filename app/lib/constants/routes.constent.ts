@@ -23,7 +23,8 @@ export const Routes = {
   CERTIFICATE_GENERATION: '/certificate-generation',
   WISHLIST: '/wishlist',
   NOTIFICATION: '/notification',
-  PRODCUT_COMPARISON: '/product-comparison',
-  PRODUCT: '/product',
-  SETTINGS: '/settings',
+  PRODCUT_COMPARISON:'/product-comparison',
+  PRODUCT:'/product',
+  SETTINGS:'/settings',
+ CART_LIST:'/cart-list',
 };
