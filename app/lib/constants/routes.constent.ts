@@ -12,7 +12,6 @@ export const Routes = {
   SUPPORT_CONTACT_US: '/support/contact-us',
   SUPPORT_TICKETS: '/support/tickets',
   SUPPORT_SCHEDULE_CALL: '/support/schedule-call',
-  PROMOTION: '/promotions',
   PLACE_AN_ORDER: '/place-an-order',
   COMPANY_INFORMATION: '/company-info',
   COMPANY_PROFILE: '/company-profile',
@@ -20,11 +19,11 @@ export const Routes = {
   ORDERS: '/orders',
   INVOICES: '/invoices',
   STATEMENTS: './statements',
-  PROMOTIONS: './promotions',
+  PROMOTIONS: '/promotions/available-promotion',
   CERTIFICATE_GENERATION: '/certificate-generation',
   WISHLIST: '/wishlist',
   NOTIFICATION: '/notification',
-  PRODCUT_COMPARISON:'/product-comparison',
-  PRODUCT:'/product',
-  SETTINGS:'/settings'
+  PRODCUT_COMPARISON: '/product-comparison',
+  PRODUCT: '/product',
+  SETTINGS: '/settings',
 };
