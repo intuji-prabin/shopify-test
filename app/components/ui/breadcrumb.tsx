@@ -27,7 +27,7 @@ const Breadcrumb = ({children}: Props) => {
   });
 
   return (
-    <div>
+    <div data-cy="breadcrumb-nav">
       <ul className="flex flex-wrap gap-x-1.5 text-grey-400">
         {childrenWithSeperator}
       </ul>
