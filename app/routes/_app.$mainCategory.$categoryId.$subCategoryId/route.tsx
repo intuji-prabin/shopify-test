@@ -2,23 +2,23 @@ import {
   NavLink,
   isRouteErrorResponse,
   useLoaderData,
-  useRouteError
+  useRouteError,
 } from '@remix-run/react';
-import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
-import { isAuthenticate } from '~/lib/utils/authsession.server';
-import { getCategoryList } from '../_app.categories/route';
-import { FilterForm, SortByFilterForm } from './filter-form';
-import { getProductFilterList } from './product-filter.server';
-import { getProducts } from './product-list.server';
-import { BackButton } from '~/components/ui/back-button';
-import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
-import { Separator } from '~/components/ui/separator';
-import { ProductCard } from '~/components/ui/product-card';
+import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
+import {isAuthenticate} from '~/lib/utils/authsession.server';
+import {getCategoryList} from '../_app.categories/route';
+import {FilterForm, SortByFilterForm} from './filter-form';
+import {getProductFilterList} from './product-filter.server';
+import {getProducts} from './product-list.server';
+import {BackButton} from '~/components/ui/back-button';
+import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import {Separator} from '~/components/ui/separator';
+import {ProductCard} from '~/components/ui/product-card';
 import PaginationSimple from '~/components/ui/pagination-simple';
-import { Routes } from '~/lib/constants/routes.constent';
-import useEmblaCarousel, { EmblaOptionsType } from 'embla-carousel-react';
+import {Routes} from '~/lib/constants/routes.constent';
+import useEmblaCarousel, {EmblaOptionsType} from 'embla-carousel-react';
 
-export async function loader({ params, context, request }: LoaderFunctionArgs) {
+export async function loader({params, context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
   const productList = await getProductList(params, context, request);
   const categories = await getCategoryList(context);
@@ -26,60 +26,73 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   const categoryId = params.categoryId;
   const subCategoryId = params.subCategoryId;
   const mainCategory = params.mainCategory;
-  return json({ categories, productList, categoryId, subCategoryId, mainCategory });
+  return json({
+    categories,
+    productList,
+    categoryId,
+    subCategoryId,
+    mainCategory,
+  });
 }
 const linkStyles =
   'text-center basis-full border-b-2 duration-300 border-b-grey-50 cursor-pointer bg-grey-50 uppercase text-lg italic font-bold leading-6 text-grey-500 py-3 px-5 hover:bg-none';
 
 type PropType = {
-  slides: number[]
-  options?: EmblaOptionsType
-}
+  slides: number[];
+  options?: EmblaOptionsType;
+};
 
 export default function SubCategoryPage(props) {
-  const { categories, productList, categoryId, subCategoryId, mainCategory } = useLoaderData<typeof loader>();
-  const { page } = productList;
+  const {categories, productList, categoryId, subCategoryId, mainCategory} =
+    useLoaderData<typeof loader>();
+  const {page} = productList;
   const paginationInfo = productList?.results?.pageInfo;
 
-  const { productFilter } = productList;
+  const {productFilter} = productList;
 
-  const matchingCategory = categories.map((category) => {
-    const matchingSubcategory = category.child_categories.find(
-      (subCategory) => subCategory.identifier === categoryId,
-    );
-    return matchingSubcategory
-      ? { ...category, subCategory: [matchingSubcategory] }
-      : null;
-  }).filter((category) => category !== null)[0];
+  const matchingCategory = categories
+    .map((category) => {
+      const matchingSubcategory = category.child_categories.find(
+        (subCategory) => subCategory.identifier === categoryId,
+      );
+      return matchingSubcategory
+        ? {...category, subCategory: [matchingSubcategory]}
+        : null;
+    })
+    .filter((category) => category !== null)[0];
 
-  const { options } = props
-  const [emblaRef] = useEmblaCarousel(options)
+  const {options} = props;
+  const [emblaRef] = useEmblaCarousel(options);
 
   return (
     <section className="container">
       <div className="pt-6 pb-4">
-        <BackButton
-          title={subCategoryId?.split('-').join(' ') ?? 'Back'}
-        />
+        <BackButton title={subCategoryId?.split('-').join(' ') ?? 'Back'} />
         <Breadcrumb>
-          <BreadcrumbItem href={Routes.CATEGORIES} className='capitalize'>{mainCategory?.split('-').join(' ')}</BreadcrumbItem>
-          <BreadcrumbItem href={Routes.CATEGORIES} className='capitalize'>{categoryId?.split('-').join(' ')}</BreadcrumbItem>
-          <BreadcrumbItem className='capitalize text-grey-800'>{subCategoryId?.split('-').join(' ')}</BreadcrumbItem>
+          <BreadcrumbItem href={Routes.CATEGORIES} className="capitalize">
+            {mainCategory?.split('-').join(' ')}
+          </BreadcrumbItem>
+          <BreadcrumbItem href={Routes.CATEGORIES} className="capitalize">
+            {categoryId?.split('-').join(' ')}
+          </BreadcrumbItem>
+          <BreadcrumbItem className="capitalize text-grey-800">
+            {subCategoryId?.split('-').join(' ')}
+          </BreadcrumbItem>
         </Breadcrumb>
         <Separator className="my-2" />
       </div>
-      <div className="sticky top-0 z-10 flex items-center gap-3 py-4 bg-grey-25">
+      <div className="sticky top-0 z-10 flex items-center gap-3 py-4 bg-primary-25">
         {matchingCategory?.subCategory.map((subCategory) =>
           subCategory.child_categories.map((childCategory) => (
             <NavLink
               key={childCategory.id}
               to={`/${matchingCategory.identifier}/${subCategory?.identifier}/${childCategory?.identifier}`}
-              className={({ isActive, isPending }) =>
+              className={({isActive, isPending}) =>
                 isPending
                   ? `active__tab ${linkStyles}`
                   : isActive
-                    ? `active__tab ${linkStyles}`
-                    : linkStyles
+                  ? `active__tab ${linkStyles}`
+                  : linkStyles
               }
             >
               {childCategory.title}
@@ -129,22 +142,22 @@ export default function SubCategoryPage(props) {
 
 const getProductList = async (params: any, context: any, request: any) => {
   try {
-    const { searchParams } = new URL(request.url);
+    const {searchParams} = new URL(request.url);
     const searchParam = Object.fromEntries(searchParams);
-    const pageInfo = searchParams.get("pageNo")
-    let page = 1
+    const pageInfo = searchParams.get('pageNo');
+    let page = 1;
     if (pageInfo) {
-      page = parseInt(pageInfo)
+      page = parseInt(pageInfo);
     }
     const searchKey = Object.keys(searchParam);
     let searchList: any = [];
     searchKey.map((value) => {
-      searchList.push({ key: value, value: searchParams.getAll(value) });
-      return { [value]: searchParams.getAll(value) };
+      searchList.push({key: value, value: searchParams.getAll(value)});
+      return {[value]: searchParams.getAll(value)};
     });
     const results = await getProducts(context, params, searchList);
     const productFilter = await getProductFilterList(context);
-    return { productFilter, results, page };
+    return {productFilter, results, page};
   } catch (error) {
     if (error instanceof Error) {
       console.log('err', error);

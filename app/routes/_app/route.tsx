@@ -7,18 +7,18 @@ import {
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
 import TopHeader from '~/components/ui/layouts/top-header';
-import { Payload, getCagetoryList, getCategories } from './app.server';
-import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
+import {Payload, getCagetoryList, getCategories} from './app.server';
+import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
 } from '~/lib/utils/toastsession.server';
-import { useMediaQuery } from '~/hooks/useMediaQuery';
+import {useMediaQuery} from '~/hooks/useMediaQuery';
 import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
-import { getCategoryList } from '../_app.categories/route';
+import {getCategoryList} from '../_app.categories/route';
 
-export async function loader({ request, context }: ActionFunctionArgs) {
+export async function loader({request, context}: ActionFunctionArgs) {
   // const categories = await getCategories();
   const categories = await getCategoryList(context);
   // const categories = await getCagetoryList( context )
@@ -27,7 +27,7 @@ export async function loader({ request, context }: ActionFunctionArgs) {
   if (!categories) {
     setErrorMessage(messageSession, 'Category not found');
     return json(
-      { categories: [] },
+      {categories: []},
       {
         headers: {
           'Set-Cookie': await messageCommitSession(messageSession),
@@ -35,11 +35,11 @@ export async function loader({ request, context }: ActionFunctionArgs) {
       },
     );
   }
-  return json({ categories });
+  return json({categories});
 }
 
 export default function PublicPageLayout() {
-  const { categories } = useLoaderData<typeof loader>();
+  const {categories} = useLoaderData<typeof loader>();
 
   return (
     <Layout categories={categories}>
@@ -61,7 +61,7 @@ const Layout = ({
       {matches ? (
         <header>
           <TopHeader />
-          <BottomHeader />
+          <BottomHeader categories={categories} />
         </header>
       ) : (
         <MobileNav />
