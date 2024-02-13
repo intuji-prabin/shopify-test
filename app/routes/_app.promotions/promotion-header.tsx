@@ -7,7 +7,7 @@ const PromotionHeader = () => {
       <h3>Promotions</h3>
       <Breadcrumb>
         <BreadcrumbItem>Content Management</BreadcrumbItem>
-        <BreadcrumbItem href={Routes.PROMOTION} className="text-grey-900">
+        <BreadcrumbItem href={Routes.PROMOTIONS} className="text-grey-900">
           Promotions
         </BreadcrumbItem>
       </Breadcrumb>

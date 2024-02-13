@@ -1,9 +1,9 @@
-import * as Tabs from '@radix-ui/react-tabs';
 import React, {useState} from 'react';
 import {Button} from '~/components/ui/button';
 import PromotionCard from './promotion-card';
 import {Form} from '@remix-run/react';
 import {Upload} from 'lucide-react';
+import {Tabs, TabsContent, TabsList, TabsTrigger} from '~/components/ui/tabs';
 
 export interface PromotionDataType {
   promotions: PromotionType[];
@@ -35,6 +35,8 @@ const PromotionList = ({promotionData}: {promotionData: PromotionDataType}) => {
     const isChecked = target.checked;
     const imageURL = target.getAttribute('data-attribute');
 
+    console.log({imageURL});
+
     if (isChecked) {
       setSelectedImages(
         (prevSelected) => [...prevSelected, imageURL] as string[],
@@ -52,8 +54,6 @@ const PromotionList = ({promotionData}: {promotionData: PromotionDataType}) => {
   const handleExportImages = () => {
     // Create a function to download images based on selectedImages array
     selectedImages.forEach((imageUrl) => {
-      // Here you can initiate the download process for each imageUrl
-      // For example, you can use an anchor element with download attribute
       const link = document.createElement('a');
       link.href = imageUrl;
       link.download = 'image.jpg';
@@ -71,25 +71,25 @@ const PromotionList = ({promotionData}: {promotionData: PromotionDataType}) => {
 
   return (
     <div className="p-6 bg-white">
-      <Tabs.Root defaultValue="tab1">
+      <Tabs defaultValue="tab1">
         <div className="flex flex-col lg:flex-row gap-x-6 gap-y-4">
-          <Tabs.List
+          <TabsList
             className="flex flex-col flex-wrap flex-grow border-2 border-t-0 shrink-0 tab-header border-b-grey-50 border-x-0 lg:flex-row"
             aria-label="Manage your account"
           >
-            <Tabs.Trigger
+            <TabsTrigger
               className="bg-white px-4 py-2 flex items-left text-grey-500 font-normal select-none first:rounded-tl-md last:rounded-tr-md  data-[state=active]:text-primary-500 data-[state=active]:border-b-4 data-[state=active]:border-primary-500 outline-none cursor-pointer not-italic justify-center lg:justify-start"
               value="tab1"
             >
               Available Promotions
-            </Tabs.Trigger>
-            <Tabs.Trigger
+            </TabsTrigger>
+            <TabsTrigger
               className="bg-white px-4 py-2 flex items-left text-grey-500 font-normal select-none first:rounded-tl-md last:rounded-tr-md  data-[state=active]:text-primary-500 data-[state=active]:border-b-4 data-[state=active]:border-primary-500 outline-none cursor-pointer not-italic justify-center lg:justify-start"
               value="tab2"
             >
               My Promotions
-            </Tabs.Trigger>
-          </Tabs.List>
+            </TabsTrigger>
+          </TabsList>
           <div>
             <select
               name="filter"
@@ -104,7 +104,7 @@ const PromotionList = ({promotionData}: {promotionData: PromotionDataType}) => {
             </select>
           </div>
         </div>
-        <Tabs.Content className="pt-6" value="tab1">
+        <TabsContent className="pt-6" value="tab1">
           <div className="grid grid-cols-1 gap-6 pb-6 border-b sm:grid-cols-2 lg:grid-cols-3 border-b-grey-25">
             {promotionList.map((promotion: PromotionType) => (
               <div key={promotion.id}>
@@ -126,8 +126,8 @@ const PromotionList = ({promotionData}: {promotionData: PromotionDataType}) => {
               Load More
             </Button>
           </div>
-        </Tabs.Content>
-        <Tabs.Content className="pt-6" value="tab2">
+        </TabsContent>
+        <TabsContent className="pt-6" value="tab2">
           <Form method="POST" onChange={handleCheckboxChange}>
             <div className="grid grid-cols-1 gap-6 pb-6 border-b sm:grid-cols-2 lg:grid-cols-3 border-b-grey-25">
               {myPromotionList.map((promotion: PromotionType) => (
@@ -175,12 +175,6 @@ const PromotionList = ({promotionData}: {promotionData: PromotionDataType}) => {
                   </div>
                 </div>
               )}
-              {/* <input
-                type="submit"
-                name="_action"
-                value="Delete"
-                className="absolute top-0 right-0"
-              /> */}
             </div>
           </Form>
           <div className="flex justify-center pt-6">
@@ -193,8 +187,8 @@ const PromotionList = ({promotionData}: {promotionData: PromotionDataType}) => {
               Load More
             </Button>
           </div>
-        </Tabs.Content>
-      </Tabs.Root>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

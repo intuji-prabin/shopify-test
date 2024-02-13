@@ -22,5 +22,5 @@ export const DEFAULT_IMAGE = Object.freeze({
 // Pagination
 export const PAGINATION = Object.freeze({
   PAGE: 1,
-  LIMIT: 10,
+  LIMIT: 9,
 });

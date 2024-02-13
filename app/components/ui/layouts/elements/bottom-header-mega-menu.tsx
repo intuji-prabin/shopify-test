@@ -16,7 +16,7 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
     <>
       {categories.length > 0 && (
         <div
-          className={`transition-opacity megamenu-content p-3  text-black shadow-xl absolute bg-white top-8 -left-8  flex flex-row z-10`}
+          className={`transition-opacity megamenu-content p-3  text-black shadow-xl absolute bg-white top-8 -left-8  flex flex-row z-50`}
         >
           {/* Level 1 Menus Begin Here */}
           <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10 pr-2">
