@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {FaSearch} from 'react-icons/fa';
 import {CSVFileType, UploadCsv} from '~/routes/_app.place-an-order/upload-csv';
-import RecomendedProduct from './layouts/elements/recomended-products.tsx/recomendedProduct';
+import RecomendedProduct from './layouts/elements/recomended-products.tsx/recomended-product';
 
 export function ProductSearchBar() {
   const [showSuggestions, setShowSuggestions] = useState(false);

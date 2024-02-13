@@ -759,3 +759,6 @@ div[data-state='open'].fixed.inset-0 {
 .ship-location button span {
   @apply text-grey-700 leading-[21px] font-normal text-base not-italic;
 }
+.product-remove button.cursor-not-allowed {
+  @apply text-white;
+}

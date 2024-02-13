@@ -28,4 +28,5 @@ export const Routes = {
   PRODUCT:'/product',
   SETTINGS:'/settings',
  CART_LIST:'/cart-list',
+ Order_SUCCESSFUL:'/order-successful',
 };

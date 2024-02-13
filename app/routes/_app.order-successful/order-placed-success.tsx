@@ -3,7 +3,7 @@ import {Button} from '~/components/ui/button';
 
 export default function OrderSuccess() {
   return (
-    <div className="max-w-[538px] bg-white flex flex-col mx-auto justify-center items-center gap-10 py-6">
+    <section className="max-w-[538px] bg-white flex flex-col mx-auto justify-center items-center gap-10 py-6">
       <figure className="bg-semantic-success-100 rounded-[50%] h-12 w-12 flex items-center justify-center">
         <OrderSuccessfull />
       </figure>
@@ -21,6 +21,6 @@ export default function OrderSuccess() {
         <Button variant="primary">track order</Button>
         <Button variant="ghost">All products</Button>
       </div>
-    </div>
+    </section>
   );
 }

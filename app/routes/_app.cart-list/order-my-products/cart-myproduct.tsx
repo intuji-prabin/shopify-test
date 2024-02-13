@@ -16,7 +16,7 @@ export default function MyProducts() {
           <h3>My products</h3>
           <div className="flex gap-2 items-center w-full justify-between md:justify-[unset] md:w-[unset]">
             <div className="flex gap-2">
-              <div className="remove-dialogue">
+              <div className="product-remove">
                 <CreateGroup
                   buttonVariant={
                     table.getSelectedRowModel().rows.length === 0
@@ -30,7 +30,7 @@ export default function MyProducts() {
           </div>
         </div>
 
-        <div className="p-6 border-grey-50 border-t cart-order">
+        <div className=" border-grey-50 border-t cart-order">
           <DataTable table={table} />
         </div>
       </div>

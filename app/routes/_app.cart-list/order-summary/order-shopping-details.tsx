@@ -7,12 +7,13 @@ import {
   SelectValue,
 } from '~/components/ui/select';
 import {format, setDate} from 'date-fns';
-import {Calendar as CalendarIcon} from 'lucide-react';
+import {Calendar as CalendarIcon, Route} from 'lucide-react';
 import {Calendar} from '~/components/ui/calendar';
 import {Popover, PopoverContent, PopoverTrigger} from '~/components/ui/popover';
 import {Button} from '~/components/ui/button';
 import {Link} from '@remix-run/react';
 import {useState} from 'react';
+import {Routes} from '~/lib/constants/routes.constent';
 
 export function ShippingLocation() {
   return (
@@ -192,7 +193,7 @@ export function ShoppingDetails() {
       </div>
       {/* place order starts here */}
       <Button>
-        <Link to="/order-placed-success" className="w-full">
+        <Link to={Routes.Order_SUCCESSFUL} className="w-full">
           Place order
         </Link>
       </Button>
