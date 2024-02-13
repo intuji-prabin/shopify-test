@@ -1,8 +1,9 @@
 import {useTable} from '~/hooks/useTable';
+
 import {DataTable} from '~/components/ui/data-table';
 import {useMyProductColumn} from './use-column';
 import {ProductData} from './productData';
-import CreateGroup from './remove-later-dialogbox';
+import CreateGroup from '~/routes/_app.cart-list/order-my-products/remove-later-dialogbox';
 export default function MyProducts() {
   const {columns} = useMyProductColumn();
   const {table} = useTable(columns, ProductData);

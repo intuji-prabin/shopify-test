@@ -1,4 +1,4 @@
-import HeroSection from '~/components/ui/hero-section';
+import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
 import MyProducts from './order-my-products/cart-myproduct';
 import OrderSummary from './order-summary/cart-order-summary';
@@ -6,7 +6,7 @@ import OrderSummary from './order-summary/cart-order-summary';
 export default function CartList() {
   return (
     <>
-      <HeroSection
+      <HeroBanner
         image_url={'/place-order.png'}
         section_name={'SHOPPING CART'}
       />

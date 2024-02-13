@@ -6,30 +6,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
-import * as React from 'react';
 import {format, setDate} from 'date-fns';
 import {Calendar as CalendarIcon} from 'lucide-react';
 import {Calendar} from '~/components/ui/calendar';
 import {Popover, PopoverContent, PopoverTrigger} from '~/components/ui/popover';
-import {cn} from '~/lib/utils/utils';
 import {Button} from '~/components/ui/button';
 import {Link} from '@remix-run/react';
-import {Routes} from '~/lib/constants/routes.constent';
 import {useState} from 'react';
 
 export function ShippingLocation() {
   return (
-    <div>
+    <div className="ship-location">
       {' '}
       <p className="after:content-['*'] after:ml-0.5 after:text-red-500 block text-base font-normal text-grey-800 leading-[21px]">
         Change Shipping Location
       </p>
       <Select>
         <SelectTrigger className="w-full h-[37px] rounded-none border border-grey-100">
-          <SelectValue
-            placeholder="99th Street, Wandiligong, NSW"
-            className="placeholder:text-grey-400 leading-[21px] font-normal text-base placeholder:not-italic"
-          />
+          <SelectValue placeholder="99th Street, Wandiligong, NSW" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
@@ -74,7 +68,7 @@ export function DateDelivery() {
             mode="single"
             selected={date}
             initialFocus={true}
-            onDayClick={handleDateChange} // Use onDayClick to handle date selection
+            onDayClick={handleDateChange}
           />
         </PopoverContent>
       </Popover>
