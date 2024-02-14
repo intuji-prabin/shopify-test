@@ -28,4 +28,8 @@ export const Routes = {
   SETTINGS:'/settings',
  CART_LIST:'/cart-list',
  Order_SUCCESSFUL:'/order-successful',
+ FILTER_METALS:'/filter-metals',
+ SAFETY:'/safety',
+ ORDER_DETAILS:'/order-details',
+
 };

@@ -1,7 +1,18 @@
 import Enquire from '~/components/icons/enquire';
 import Phone from '~/components/icons/phone';
 import {Link} from '@remix-run/react';
-export default function DesktopFooter() {
+import {Routes} from '~/lib/constants/routes.constent';
+import {Payload} from '~/routes/_app/app.server';
+import {useState} from 'react';
+import ArrowForward from '~/components/icons/arrowForward';
+
+export default function DesktopFooter({categories}: {categories: Payload[]}) {
+  const [activeMenu, setActiveMenu] = useState<{
+    menu: Payload;
+  }>({
+    menu: {id: 1, title: '', identifier: '', child_categories: []},
+  });
+  console.log('this', categories);
   const footerNavs = [
     {
       id: 0,
@@ -11,17 +22,17 @@ export default function DesktopFooter() {
     {
       id: 1,
       title: 'my team',
-      link: '/my-team',
+      link: Routes.TEAM,
     },
     {
       id: 2,
       title: 'support',
-      link: '/support',
+      link: Routes.SUPPORT,
     },
     {
       id: 3,
       title: 'settings',
-      link: '/settings',
+      link: Routes.SETTINGS,
     },
   ];
   const products = [
@@ -55,18 +66,22 @@ export default function DesktopFooter() {
     {
       id: 0,
       title: 'Orders',
+      url: Routes.ORDERS,
     },
     {
       id: 1,
       title: 'Invoice',
+      url: Routes.INVOICES,
     },
     {
       id: 2,
       title: 'Filler Metals',
+      url: Routes.FILTER_METALS,
     },
     {
       id: 3,
       title: 'Safety',
+      url: Routes.SAFETY,
     },
   ];
 
@@ -111,13 +126,9 @@ export default function DesktopFooter() {
                 Products
               </h4>
 
-              <ul className="flex flex-col gap-3">
-                {products.map((product) => (
-                  <Link to="" key={product.id}>
-                    <li className="text-lg font-normal  leading-[29px] text-white">
-                      {product.title}
-                    </li>
-                  </Link>
+              <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10 pr-2 ">
+                {products?.map((prod) => (
+                  <li key={prod.id}>{prod.title}</li>
                 ))}
               </ul>
             </div>
@@ -128,7 +139,7 @@ export default function DesktopFooter() {
 
               <ul className="flex flex-col gap-3">
                 {accounts.map((account) => (
-                  <Link to="" key={account.id}>
+                  <Link to={account.url} key={account.id}>
                     <li className="text-lg font-normal  leading-[29px] text-white">
                       {account.title}
                     </li>
@@ -142,11 +153,9 @@ export default function DesktopFooter() {
               </h4>
 
               <ul className="flex flex-col gap-3">
-                <Link to="">
-                  <li className="text-lg font-normal  leading-[29px] text-white">
-                    Promotions
-                  </li>
-                </Link>
+                <li className="text-lg font-normal  leading-[29px] text-white">
+                  <Link to={Routes.CERTIFICATE_GENERATION}> Promotions</Link>
+                </li>
               </ul>
             </div>
           </div>
