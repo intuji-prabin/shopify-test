@@ -44,7 +44,7 @@ export default function MobileNav() {
         </div>
 
         <div
-          className={`bg-primary-500 p-4 flex flex-col gap-16 transition-opacity ease-in-out delay-75 duration-150 mobile-nav z-[1000] w-full
+          className={`bg-primary-500 p-4 flex flex-col gap-16 transition-opacity ease-in-out delay-75 duration-150 mobile-nav z-[1000] absolute w-full
         ${isHamOpen ? 'block' : 'hidden'}  `}
         >
           <div className="user-menu flex gap-4 flex-col">

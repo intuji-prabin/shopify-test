@@ -753,3 +753,12 @@ div[data-state='open'].fixed.inset-0 {
 .submenu-mobile-nav .menus ul li a {
   @apply text-base font-bold leading-[21px] italic;
 }
+.recommended-product thead {
+  @apply hidden;
+}
+.ship-location button span {
+  @apply text-grey-700 leading-[21px] font-normal text-base not-italic;
+}
+.product-remove button.cursor-not-allowed {
+  @apply text-white;
+}

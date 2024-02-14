@@ -8,11 +8,11 @@ export default function EstimatedTotal() {
       </h3>
 
       <ul className="py-4  border border-y-grey-50 border-x-0">
-        {orderCharges.map((orders) => {
+        {orderCharges.map((orders, index) => {
           return (
-            <li className="flex justify-between">
+            <li className="flex justify-between" key={index}>
               <p> {orders.title}</p>
-              <span className="text-lg font-medium"> {orders.amount}</span>
+              <span className="text-lg font-medium"> ${orders.amount}</span>
             </li>
           );
         })}

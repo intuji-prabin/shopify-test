@@ -230,7 +230,7 @@ type TotalColumnType = Pick<BulkOrderColumn, 'total'>;
 
 function ProductTotal({total}: TotalColumnType) {
   return (
-    <div className="flex flex-col gap-4 items-baseline">
+    <div className="flex flex-col gap-4 items-baseline min-w-[110px]">
       <div className="flex flex-col gap-1">
         <div className="">
           <p className="flex mb-1.5 text-semantic-success-500 font-medium text-sm">
