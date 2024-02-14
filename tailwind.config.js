@@ -124,6 +124,7 @@ module.exports = {
       flex: {
         full: '0 0 100%',
         quarter: '0 0 20%',
+        autoCustom: '0 0 auto',
       },
     },
   },
