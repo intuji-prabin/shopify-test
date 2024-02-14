@@ -278,7 +278,7 @@ label .required {
   border-top: 23px solid;
   content: '';
   left: 40px;
-  top: -13%;
+  top: -5%;
   margin-left: -20px;
   margin-left: -23px;
   position: absolute;
@@ -500,6 +500,7 @@ label .required {
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
+  height: 37px;
 }
 
 /* Tooltip position (header notifications)*/
@@ -761,4 +762,7 @@ div[data-state='open'].fixed.inset-0 {
 }
 .product-remove button.cursor-not-allowed {
   @apply text-white;
+}
+.cart-order table tbody tr td:nth-child(3) {
+  @apply min-w-[177px] ;
 }

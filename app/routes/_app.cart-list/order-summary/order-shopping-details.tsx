@@ -143,7 +143,7 @@ export function ShippingAddress({
   postal_code,
 }: ShippingAddressProps) {
   return (
-    <div>
+    <div className="space-y-4">
       <div className="flex gap-4">
         <p className="font-bold italic leading-6 text-lg text-grey-700 capitalize">
           New South Wales
@@ -192,8 +192,11 @@ export function ShoppingDetails() {
         />
       </div>
       {/* place order starts here */}
-      <Button>
-        <Link to={Routes.Order_SUCCESSFUL} className="w-full h-14">
+      <Button className="p-0" variant="primary">
+        <Link
+          to={Routes.Order_SUCCESSFUL}
+          className="w-full min-h-14 flex items-center justify-center "
+        >
           Place order
         </Link>
       </Button>

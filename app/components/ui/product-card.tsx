@@ -1,11 +1,11 @@
-import { Link } from '@remix-run/react';
-import { useState } from 'react';
+import {Link} from '@remix-run/react';
+import {useState} from 'react';
 import {
   ProductLoveRed,
   ProductLoveWhite,
   TooltipInfo,
 } from '~/components/icons/orderStatus';
-import { Button } from '~/components/ui/button';
+import {Button} from '~/components/ui/button';
 
 export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
 
@@ -22,7 +22,7 @@ export function ProductCard({
 }: ProductCardProps) {
   return (
     <div className="bg-white single-product-card">
-      <div className='relative h-full'>
+      <div className="relative h-full">
         <ProductCardImage
           isBuyQtyAvailable={isBuyQtyAvailable}
           isFavorited={isFavorited}
@@ -32,8 +32,8 @@ export function ProductCard({
         <ProductCardInfo
           sku={variants?.sku}
           productName={title}
-        // buyPrice={buyPrice}
-        // rppPrice={rppPrice}
+          // buyPrice={buyPrice}
+          // rppPrice={rppPrice}
         />
       </div>
     </div>
@@ -60,20 +60,21 @@ export function ProductCardInfo({
   sku,
   productName,
 }: // buyPrice,
-  // rppPrice,
-  any) {
+// rppPrice,
+any) {
   return (
     <div className="p-4">
-      <div className='sm:pb-[146px]'>
+      <div className="sm:pb-[146px]">
         <div>
           <p className="text-base font-medium text-primary-500 sku">
             SKU:{sku}
           </p>
           <h5 className="text-lg italic font-bold leading-6 whitespace-normal max-h-12 text-grey-900 line-clamp-2 text-ellipsis">
-            {productName}{productName}
+            {productName}
+            {productName}
           </h5>
         </div>
-        <div className='mt-3 sm:absolute bottom-4 inset-x-4'>
+        <div className="mt-3 sm:absolute bottom-4 inset-x-4">
           <div className="flex gap-6">
             <div className="flex flex-col">
               <div className="flex items-center gap-1">
@@ -142,8 +143,9 @@ function ProductCardImage({
 
   return (
     <div
-      className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 ${imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
-        }`}
+      className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 ${
+        imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
+      }`}
     >
       {isBuyQtyAvailableState && (
         <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px]">
