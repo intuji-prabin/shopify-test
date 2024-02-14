@@ -278,7 +278,8 @@ label .required {
   border-top: 23px solid;
   content: '';
   left: 40px;
-  top: -13%;
+  top: -1rem;
+  /* top: -13%; */
   margin-left: -20px;
   margin-left: -23px;
   position: absolute;
