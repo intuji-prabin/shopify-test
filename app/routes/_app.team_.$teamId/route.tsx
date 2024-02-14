@@ -27,6 +27,7 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
 import {MetaFunction} from '@shopify/remix-oxygen';
+import {isAuthenticate} from '~/lib/utils/authsession.server';
 
 interface Role {
   title: string;
@@ -50,7 +51,9 @@ export const meta: MetaFunction = () => {
   return [{title: 'Edit Team Member'}];
 };
 
-export async function loader({params}: LoaderFunctionArgs) {
+export async function loader({params, context}: LoaderFunctionArgs) {
+  await isAuthenticate(context);
+
   let customerId = params?.teamId as string;
 
   const customerDetails = await getCustomerById({customerId});
@@ -60,7 +63,9 @@ export async function loader({params}: LoaderFunctionArgs) {
   return json({customerDetails, roles});
 }
 
-export async function action({request}: ActionFunctionArgs) {
+export async function action({request, context}: ActionFunctionArgs) {
+  await isAuthenticate(context);
+
   const messageSession = await getMessageSession(request);
   try {
     const result = await EditTeamFormSchemaValidator.validate(

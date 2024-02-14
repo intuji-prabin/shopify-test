@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {FormEvent, useEffect, useState} from 'react';
 import {Upload} from 'lucide-react';
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
@@ -15,6 +15,7 @@ import {
   useNavigation,
   useRouteError,
   useSearchParams,
+  useSubmit,
 } from '@remix-run/react';
 import {
   ActionFunctionArgs,
@@ -81,6 +82,11 @@ export async function action({request, context}: ActionFunctionArgs) {
 
 const PAGE_LIMIT = 9;
 
+const filterOptions = [
+  {label: 'Newest To Oldest', value: 'Newest To Oldest'},
+  {label: 'Oldest To Newest', value: 'Oldest To Newest'},
+];
+
 export default function MyPromotionsPage() {
   const {promotions, totalPromotionCount} = useLoaderData<typeof loader>();
   const [checkedCount, setCheckedCount] = useState(0);
@@ -140,8 +146,10 @@ export default function MyPromotionsPage() {
 
   const isLoadMoreDisabled = currentPage >= totalPages;
 
+  const submit = useSubmit();
+
   return (
-    <div className="pt-6">
+    <div className="pt-10 sm:pt-0">
       <Form method="POST" onChange={handleCheckboxChange}>
         <div className="grid grid-cols-1 gap-6 pb-6 border-b sm:grid-cols-2 lg:grid-cols-3 border-b-grey-25">
           {promotions.map((promotion: Promotion, index: number) => (
@@ -166,19 +174,23 @@ export default function MyPromotionsPage() {
             </div>
           ))}
           {checkedCount > 0 && (
-            <div className="absolute top-0 right-0">
+            <div className="absolute -top-14 inset-x-0 sm:-top-16 sm:right-0 sm:left-auto">
               <div className="flex items-center gap-x-2">
-                <p className="font-bold text-lg leading-5.5 italic">
+                <p className="font-bold text-lg leading-5.5 italic basis-full sm:basis-auto">
                   {checkedCount} items selected
                 </p>
                 <Button
                   type="button"
                   variant="primary"
-                  className="text-neutral-white"
+                  className="text-neutral-white basis-full sm:basis-auto"
                 >
                   <Upload className="h-5 w-5" /> Export
                 </Button>
-                <Button type="submit" variant="destructive">
+                <Button
+                  type="submit"
+                  variant="destructive"
+                  className="basis-full sm:basis-auto"
+                >
                   Delete
                 </Button>
               </div>
@@ -200,6 +212,21 @@ export default function MyPromotionsPage() {
           </Link>
         </div>
       )}
+      <Form
+        method="GET"
+        onChange={(event: FormEvent<HTMLFormElement>) => {
+          submit(event.currentTarget);
+        }}
+        className="absolute top-20 inset-x-6 sm:right-6 sm:top-4 sm:left-auto"
+      >
+        <select name="filter" className="w-full !border-grey-100 filter-select">
+          {filterOptions.map((filter, index) => (
+            <option value={filter.value} key={index + 'filter'}>
+              {filter.label}
+            </option>
+          ))}
+        </select>
+      </Form>
     </div>
   );
 }
