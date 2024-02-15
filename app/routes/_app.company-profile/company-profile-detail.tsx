@@ -29,7 +29,7 @@ export default function CompanyProfileDetail({
             </figure>
             <h3>{data?.name ?? '-'}</h3>
           </div>
-          <div className=" max-w-[439px]">
+          <div>
             <ul className="grid grid-cols-1 md:grid-cols-2 text-lg font-medium gap-x-10 text-grey-700 sm:grid-cols-2 gap-y-4 ">
               <li className="settings-card-detail  break-all">
                 <Email />
@@ -70,14 +70,14 @@ export default function CompanyProfileDetail({
           Preferred Inventory Location
         </h5>
         <ul className="grid grid-cols-1 text-lg font-medium gap-x-10 gap-y-4 text-grey-700 xl:grid-cols-2">
-          <li className="settings-card-detail ">
+          <li className="settings-card-detail break-all">
             <InventoryMajor />
             {locationNode?.name ?? '-'}
           </li>
-          <li className="settings-card-detail ">
+          <li className="settings-card-detail break-all">
             <LocationsMinor /> {locationNode?.shippingAddress?.address1 ?? '-'}
           </li>
-          <li className="settings-card-detail ">
+          <li className="settings-card-detail break-all">
             <PhoneMajor />
             {locationNode?.shippingAddress?.phone ?? '-'}
           </li>

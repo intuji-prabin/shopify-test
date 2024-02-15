@@ -767,5 +767,5 @@ div[data-state='open'].fixed.inset-0 {
   @apply min-w-[177px];
 }
 .settings-card-detail .comapny-setting-text {
-  @apply max-w-[280px];
+  @apply max-w-[280px] font-medium text-lg;
 }
