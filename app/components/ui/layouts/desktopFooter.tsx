@@ -126,7 +126,7 @@ export default function DesktopFooter({categories}: {categories: Payload[]}) {
                 Products
               </h4>
 
-              <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10 pr-2 ">
+              <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10">
                 {products?.map((prod) => (
                   <li key={prod.id}>{prod.title}</li>
                 ))}
