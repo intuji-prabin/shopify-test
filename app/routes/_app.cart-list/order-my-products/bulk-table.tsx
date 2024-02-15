@@ -43,15 +43,15 @@ export function BulkTable({
   quantity: string;
   price: string;
 }) {
-  const [showAllRows, setShowAllRows] = useState(false);
-  const defaultRowCount = 2;
-
-  const displayedInvoices = showAllRows
-    ? invoices
-    : invoices.slice(0, defaultRowCount);
-
   return (
-    <div className="space-y-4">
+    <div className="flex space-x-6 w-full">
+      <div>
+        <h3 className="capitalize">bulk prices</h3>
+        <p>
+          Explore the pricing options today! We're here to help you find the
+          perfect fit for your business and maximize your savings
+        </p>
+      </div>
       <Table className="min-w-[266px] border-[1px] border-grey-50 h-full transition-all duration-700 ease-in-out delay-200">
         <TableHeader>
           <TableRow className="bg-secondary-500 hover:bg-secondary-500">
@@ -64,7 +64,7 @@ export function BulkTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {displayedInvoices.map((invoice) => (
+          {invoices.map((invoice) => (
             <TableRow key={invoice.invoice} className="hover:bg-white">
               <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
                 {invoice.invoice}
@@ -76,13 +76,6 @@ export function BulkTable({
           ))}
         </TableBody>
       </Table>
-      <div>
-        <h3 className="capitalize">bulk prices</h3>
-        <p>
-          Explore the pricing options today! We're here to help you find the
-          perfect fit for your business and maximize your savings
-        </p>
-      </div>
     </div>
   );
 }

@@ -18,7 +18,7 @@ export default function CompanyProfileDetail({
   return (
     <div className="flex flex-col justify-between gap-10 p-6 bg-white setting-card-info lg:flex-row lg:gap-6">
       <div className="flex flex-col gap-6 max-w-[unset] lg:max-w-[650px] xl:max-w-[805px]">
-        <div className="">
+        <div className="flex flex-col gap-4">
           <div className="flex items-center gap-4">
             <figure className="w-[96px] h-[96px] flex items-center justify-center rounded-[50%] border border-grey-50">
               <img
@@ -29,23 +29,31 @@ export default function CompanyProfileDetail({
             </figure>
             <h3>{data?.name ?? '-'}</h3>
           </div>
-          <div className=" max-w-[439px]">
-            <ul className="grid grid-cols-1 text-lg font-medium gap-x-10 text-grey-700 sm:grid-cols-2 ">
-              <li className="settings-card-detail">
+          <div>
+            <ul className="grid grid-cols-1 md:grid-cols-2 text-lg font-medium gap-x-10 text-grey-700 sm:grid-cols-2 gap-y-4 ">
+              <li className="settings-card-detail  break-all">
                 <Email />
-                {data?.mainContact?.customer?.email ?? '-'}
+                <p className="comapny-setting-text">
+                  {data?.mainContact?.customer?.email ?? '-'}
+                </p>
               </li>
-              <li className="settings-card-detail">
+              <li className="settings-card-detail  break-all ">
                 <PrintMinor />
-                {data?.meta?.fax?.value ?? '-'}
+                <p className="comapny-setting-text">
+                  {data?.meta?.fax?.value ?? '-'}{' '}
+                </p>
               </li>
-              <li className="settings-card-detail">
+              <li className="settings-card-detail  break-all">
                 <PhoneMajor />
-                {locationNode?.billingAddress?.phone ?? '-'}
+                <p className="comapny-setting-text">
+                  {locationNode?.billingAddress?.phone ?? '-'}
+                </p>
               </li>
-              <li className="settings-card-detail">
+              <li className="settings-card-detail  break-all">
                 <LocationsMinor />
-                {locationNode?.billingAddress?.address1 ?? '-'}
+                <p className="comapny-setting-text">
+                  {locationNode?.billingAddress?.address1 ?? '-'}
+                </p>
               </li>
             </ul>
           </div>
@@ -61,15 +69,15 @@ export default function CompanyProfileDetail({
         <h5 className="text-lg italic font-bold leading-6">
           Preferred Inventory Location
         </h5>
-        <ul className="grid grid-cols-1 text-lg font-medium gap-x-10 gap-y-4 text-grey-700 xl:grid-cols-2">
-          <li className="settings-card-detail ">
+        <ul className="grid grid-cols-1 text-lg font-medium gap-x-10 gap-y-4 text-grey-700 md:grid-cols-2">
+          <li className="settings-card-detail break-all">
             <InventoryMajor />
             {locationNode?.name ?? '-'}
           </li>
-          <li className="settings-card-detail ">
+          <li className="settings-card-detail break-all">
             <LocationsMinor /> {locationNode?.shippingAddress?.address1 ?? '-'}
           </li>
-          <li className="settings-card-detail ">
+          <li className="settings-card-detail break-all">
             <PhoneMajor />
             {locationNode?.shippingAddress?.phone ?? '-'}
           </li>

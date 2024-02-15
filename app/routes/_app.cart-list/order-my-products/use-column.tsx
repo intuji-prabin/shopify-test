@@ -94,7 +94,7 @@ export function useMyProductColumn() {
                 isBulkDetailVisible={isVisible}
                 setIsBulkDetailsVisible={setIsVisible}
               />
-              {isVisible && <BulkTable quantity={'Quantity'} price={'Price'} />}
+              {/* {isVisible && <BulkTable quantity={'Quantity'} price={'Price'} />} */}
             </>
           );
         },
