@@ -1,10 +1,10 @@
-import { Form, useActionData } from '@remix-run/react';
-import { ActionFunctionArgs, json, redirect } from '@remix-run/server-runtime';
-import { useEffect, useState } from 'react';
-import { DangerAlert } from '~/components/icons/alert';
-import { Button } from '~/components/ui/button';
+import {Form, useActionData} from '@remix-run/react';
+import {ActionFunctionArgs, json, redirect} from '@remix-run/server-runtime';
+import {useEffect, useState} from 'react';
+import {DangerAlert} from '~/components/icons/alert';
+import {Button} from '~/components/ui/button';
 import Password from '~/components/ui/password';
-import { changePassword } from './reset-password.server';
+import {changePassword} from './reset-password.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -12,10 +12,10 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
 
-export const action = async ({ request, context }: ActionFunctionArgs) => {
-  const { searchParams } = new URL(request.url);
-  const customerId = searchParams.get("customer_id") as string;
-  const resetToken = searchParams.get("reset_token") as string;
+export const action = async ({request, context}: ActionFunctionArgs) => {
+  const {searchParams} = new URL(request.url);
+  const customerId = searchParams.get('customer_id') as string;
+  const resetToken = searchParams.get('reset_token') as string;
 
   const data = Object.fromEntries(await request.formData());
   const finalPassword = data?.password;
@@ -44,30 +44,34 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
     password: validatePassword(finalPassword),
     confirmpassword: validateConfirmPassword(finalConfirmPassword),
   };
-  if (Object.values(formErrors).some(Boolean)) return { formErrors };
+  if (Object.values(formErrors).some(Boolean)) return {formErrors};
 
   const messageSession = await getMessageSession(request);
   try {
-    const resetPassword = await changePassword({ context, customerId, password: finalPassword as string, resetToken })
+    const resetPassword = await changePassword({
+      context,
+      customerId,
+      password: finalPassword as string,
+      resetToken,
+    });
     if (resetPassword) {
       setSuccessMessage(messageSession, 'Password changed successfully');
       return redirect('/login', {
-        headers: [
-          ['Set-Cookie', await messageCommitSession(messageSession)],
-        ],
+        headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
       });
     }
     setSuccessMessage(messageSession, 'Error occured');
-    return json({ status: "ERROR" }, {
-      headers: [
-        ['Set-Cookie', await messageCommitSession(messageSession)],
-      ],
-    });
+    return json(
+      {status: 'ERROR'},
+      {
+        headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+      },
+    );
   } catch (error) {
     if (error instanceof Error) {
       setErrorMessage(messageSession, error.message);
       return json(
-        { error },
+        {error},
         {
           headers: {
             'Set-Cookie': await messageCommitSession(messageSession),
@@ -75,7 +79,7 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
         },
       );
     }
-    return json({ error }, { status: 400 });
+    return json({error}, {status: 400});
   }
 };
 
@@ -107,7 +111,7 @@ const ResetPassword = () => {
   }, [errors]);
   const actionData = useActionData<any>();
   return (
-    <div className="md:w-[398px] w-full">
+    <div className="md:w-[398px] w-full min-h-[414px]">
       <div className="flex flex-col p-8 space-y-8 bg-white shadow-3xl">
         <div className="flex flex-col items-center justify-center gap-y-5">
           <h4>Create a new password</h4>
@@ -125,10 +129,11 @@ const ResetPassword = () => {
                 {Object.entries(errors).map(([key], index) => (
                   <span
                     key={key}
-                    className={`basis-full rounded-full bg-grey-100 ${errorCount && errorCount >= index + 1
-                      ? '!bg-semantic-success-500 h-1.5'
-                      : ''
-                      }`}
+                    className={`basis-full rounded-full bg-grey-100 ${
+                      errorCount && errorCount >= index + 1
+                        ? '!bg-semantic-success-500 h-1.5'
+                        : ''
+                    }`}
                   ></span>
                 ))}
               </div>
