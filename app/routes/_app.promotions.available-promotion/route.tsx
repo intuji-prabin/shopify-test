@@ -20,16 +20,20 @@ export async function loader({context}: LoaderFunctionArgs) {
   const {userDetails} = await getUserDetails(context);
 
   const companyId = userDetails.meta.company_id.value;
+  try {
+    const {promotions, totalPromotionCount} = await getPromotions({
+      companyId,
+    });
 
-  const {promotions, totalPromotionCount} = await getPromotions({
-    companyId,
-  });
-
-  return json({promotions});
+    return json({promotions});
+  } catch (error) {
+    console.log('error', error);
+  }
 }
 
 export default function AvailablePromotionPage() {
   const {promotions} = useLoaderData<typeof loader>();
+
   return (
     <div className="pt-6">
       <div className="grid grid-cols-1 gap-6 pb-6 border-b sm:grid-cols-2 lg:grid-cols-3 border-b-grey-25">
