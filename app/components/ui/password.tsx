@@ -1,5 +1,5 @@
-import { Eye, EyeOff } from 'lucide-react';
-import { useState } from 'react';
+import {useState} from 'react';
+import {EyeOff, EyeOn} from '~/components/icons/eye';
 
 type passwordType = {
   name: string;
@@ -25,14 +25,17 @@ export default function Password({
       <label>{label}</label>
       <div className="relative">
         <input
-          type={!isVisible ? "password" : "text"}
+          type={!isVisible ? 'password' : 'text'}
           name={name}
           placeholder={placeholder}
           onChange={handlePasswordChange}
           className="w-full !pr-14"
         />
-        <span className="absolute -translate-y-1/2 cursor-pointer eyeIcon right-3 top-1/2" onClick={toggle}>
-          {isVisible ? <Eye /> : <EyeOff />}
+        <span
+          className="absolute -translate-y-1/2 cursor-pointer eyeIcon right-3 top-1/2"
+          onClick={toggle}
+        >
+          {isVisible ? <EyeOn /> : <EyeOff />}
         </span>
       </div>
     </div>

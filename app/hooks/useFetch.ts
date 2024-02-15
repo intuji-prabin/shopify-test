@@ -12,7 +12,7 @@ export async function useFetch<T>({
   body,
   url,
 }: FetchParams) {
-  const fetchOptions = {
+  const fetchOptions: RequestInit = {
     method,
     headers: {
       'Content-Type': 'application/json',
