@@ -12,12 +12,11 @@ type ImageType = {
 type PropType = {
   options?: EmblaOptionsType;
   images: ImageType[];
-  maxHeight?: number;
   sectionClass?: string;
 };
 
 const Carousel = (props: PropType) => {
-  const {options, images, maxHeight = '500', sectionClass} = props;
+  const {options, images, sectionClass} = props;
   const [emblaRef, emblaApi] = useEmblaCarousel(options, [AutoHeight()]);
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
@@ -62,7 +61,7 @@ const Carousel = (props: PropType) => {
       <div
         className="embla__viewport"
         ref={emblaRef}
-        style={{maxHeight: maxHeight + 'px'}}
+        // style={{maxHeight: maxHeight + 'px'}}
       >
         <div className="flex embla__container">
           {images.map((image, index) => {
