@@ -86,7 +86,7 @@ export default function DesktopFooter({categories}: {categories: Payload[]}) {
   ];
 
   return (
-    <div className="bg-grey-900 ">
+    <div className="bg-grey-900 fixed w-full">
       <div className="container">
         <div className=" flex justify-between py-20 flex-col md:flex-row gap-10 ">
           <div className="flex flex-col gap-10">
