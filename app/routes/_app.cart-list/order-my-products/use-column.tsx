@@ -12,7 +12,8 @@ import {
 } from '~/components/ui/select';
 import {TooltipInfo} from '~/components/icons/orderStatus';
 import {Link} from '@remix-run/react';
-
+import {Button} from '~/components/ui/button';
+import {BulkTable} from './bulk-table';
 export type BulkOrderColumn = {
   id: string;
   items: {
@@ -25,7 +26,6 @@ export type BulkOrderColumn = {
   total: string;
   UDM: string;
 };
-
 export function useMyProductColumn() {
   const columns = useMemo<ColumnDef<BulkOrderColumn>[]>(
     () => [
@@ -62,7 +62,6 @@ export function useMyProductColumn() {
           return <ItemsColumn items={product.items} />;
         },
       },
-
       {
         accessorKey: 'quantity',
         header: 'Quantity',
@@ -87,7 +86,17 @@ export function useMyProductColumn() {
         enableSorting: false,
         cell: (info) => {
           const productTotal = info.row.original.total;
-          return <ProductTotal total={productTotal} />;
+          const [isVisible, setIsVisible] = useState(false);
+          return (
+            <>
+              <ProductTotal
+                total={productTotal}
+                isBulkDetailVisible={isVisible}
+                setIsBulkDetailsVisible={setIsVisible}
+              />
+              {isVisible && <BulkTable quantity={'Quantity'} price={'Price'} />}
+            </>
+          );
         },
       },
     ],
@@ -95,7 +104,6 @@ export function useMyProductColumn() {
   );
   return {columns};
 }
-
 /**
  * @description Select Column Component
  */
@@ -105,13 +113,11 @@ function IndeterminateCheckbox({
   ...rest
 }: {indeterminate?: boolean} & HTMLProps<HTMLInputElement>) {
   const ref = useRef<HTMLInputElement>(null!);
-
   useEffect(() => {
     if (typeof indeterminate === 'boolean') {
       ref.current.indeterminate = !rest.checked && indeterminate;
     }
   }, [ref, indeterminate]);
-
   return (
     <input
       type="checkbox"
@@ -121,12 +127,10 @@ function IndeterminateCheckbox({
     />
   );
 }
-
 /**
  * @description Items Column Component
  */
 type ItemsColumnType = Pick<BulkOrderColumn, 'items'>;
-
 function ItemsColumn({items}: ItemsColumnType) {
   const {name, image, isStock, sku} = items;
   return (
@@ -153,21 +157,18 @@ function ItemsColumn({items}: ItemsColumnType) {
     </figure>
   );
 }
-
 /**
  * @description Quantity Column Component
  */
 type QuantityColumnType = Pick<BulkOrderColumn, 'quantity'>;
 function QuantityColumn({quantity}: QuantityColumnType) {
   const [quantityCounter, setQuantityCounter] = useState(quantity);
-
   const handleIncreaseQuantity = () =>
     setQuantityCounter((previousState) => previousState + 1);
-
   const handleDecreaseQuantity = () =>
     setQuantityCounter((previousState) => previousState - 1);
   return (
-    <div className="flex flex-col gap-[11.5px] mt-[2.5rem]">
+    <div className="flex flex-col gap-[11.5px] mt-[2.4rem]">
       <div className="flex items-center">
         <button
           className="border border-solid border-grey-200 flex items-center justify-center  min-h-10 w-10"
@@ -187,8 +188,11 @@ function QuantityColumn({quantity}: QuantityColumnType) {
       </div>
       <div className="flex items-center gap-1">
         <div className="info-block">
-          <p className="h-5 w-5 flex justify-center items-center ">
-            <Link to="" data-tooltip="Recommended retail price">
+          <p className="h-5 min-w-5 flex justify-center items-center ">
+            <Link
+              to=""
+              data-tooltip="The minimum order quantity is 500. Orders below this quantity will incur additional surcharges."
+            >
               <span>
                 <TooltipInfo fillColor="#0092CF" />
               </span>
@@ -202,7 +206,6 @@ function QuantityColumn({quantity}: QuantityColumnType) {
     </div>
   );
 }
-
 /**
  * @description Measurement Column Component
  */
@@ -210,7 +213,7 @@ type MeasurementColumnType = Pick<BulkOrderColumn, 'UDM'>;
 function ProductMeasurement({UDM}: MeasurementColumnType) {
   return (
     <Select>
-      <SelectTrigger className="w-[116px] place-order rounded-sm ">
+      <SelectTrigger className="min-w-[116px] place-order rounded-sm ">
         <SelectValue placeholder="boxes" />
       </SelectTrigger>
       <SelectContent>
@@ -222,36 +225,41 @@ function ProductMeasurement({UDM}: MeasurementColumnType) {
     </Select>
   );
 }
-
 /**
  * @description Total Column Component
  */
 type TotalColumnType = Pick<BulkOrderColumn, 'total'>;
-
-function ProductTotal({total}: TotalColumnType) {
+function ProductTotal({
+  total,
+  isBulkDetailVisible,
+  setIsBulkDetailsVisible,
+}: {
+  total: string;
+  isBulkDetailVisible: boolean;
+  setIsBulkDetailsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   return (
-    <div className="flex flex-col gap-4 items-baseline">
+    <div className="flex flex-col gap-4 items-baseline min-w-[110px]">
       <div className="flex flex-col gap-1">
         <div className="">
-          <p className="flex mb-1.5 text-semantic-success-500 font-medium text-sm">
+          <p className="flex mb-1.5 text-semantic-success-500 font-medium text-sm uppercase">
             BUY PRICE{' '}
             <span>
               <InfoIcon />
             </span>
           </p>
         </div>
-
         <p className="text-grey-900 text-lg leading-5.5 italic">${total}</p>
         <p className="text-grey-500 font-bold italic text-sm leading-normal">
           (Excl. GST)
         </p>
       </div>
-      <Link
-        to=""
-        className="text-[14px] italic font-bold leading-6 uppercase border-t-0 border-2 border-x-0 border-b-primary-500 mb-[2px]"
+      <Button
+        onClick={() => setIsBulkDetailsVisible((isVisible) => !isVisible)}
+        className="text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4 "
       >
-        VIEW BULK PRICE
-      </Link>
+        {isBulkDetailVisible ? 'Hide' : 'View'} BULK PRICE
+      </Button>
     </div>
   );
 }

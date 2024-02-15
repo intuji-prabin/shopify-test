@@ -17,9 +17,11 @@ const buttonVariants = cva(
         link: 'relative before:absolute before:w-full before:h-0.5 before:bg-primary-500 before:-bottom-1 p-0 before:hover:bg-primary-600 before:duration-150 disabled:text-grey-50 disabled:before:bg-grey-50',
         destructive: 'bg-semantic-danger-500 text-neutral-white',
         danger: 'bg-semantic-danger-100 border border-semantic-danger-500',
+        danger_dark:
+          'bg-semantic-danger-500 border border-semantic-danger-500 text-neutral-white',
         input: 'text-grey-500 border border-grey-100 not-italic',
         disabled:
-          'text-grey-400 bg-grey-200 cursor-not-allowed pointer-events-none',
+          'text-grey-400 bg-grey-200 cursor-not-allowed pointer-events-none border border-bg-grey-200',
       },
       size: {
         default: 'px-6 py-2 text-sm leading-6',

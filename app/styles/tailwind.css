@@ -278,7 +278,7 @@ label .required {
   border-top: 23px solid;
   content: '';
   left: 40px;
-  top: -13%;
+  top: -5%;
   margin-left: -20px;
   margin-left: -23px;
   position: absolute;
@@ -500,6 +500,7 @@ label .required {
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
+  height: 37px;
 }
 
 /* Tooltip position (header notifications)*/
@@ -752,4 +753,19 @@ div[data-state='open'].fixed.inset-0 {
 }
 .submenu-mobile-nav .menus ul li a {
   @apply text-base font-bold leading-[21px] italic;
+}
+.recommended-product thead {
+  @apply hidden;
+}
+.ship-location button span {
+  @apply text-grey-700 leading-[21px] font-normal text-base not-italic;
+}
+.product-remove button.cursor-not-allowed {
+  @apply text-white;
+}
+.cart-order table tbody tr td:nth-child(3) {
+  @apply min-w-[177px];
+}
+.settings-card-detail .comapny-setting-text {
+  @apply max-w-[280px] font-medium text-lg;
 }

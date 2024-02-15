@@ -23,11 +23,11 @@ export function MainNavigationMenus({categories}: {categories: Payload[]}) {
     </ul>
   );
 }
-const BottomHeader = () => {
+const BottomHeader = ({categories}: {categories: Payload[]}) => {
   return (
-    <nav className="relative  bg-primary-500">
+    <nav className="relative bg-primary-500">
       <div className="container">
-        <MainNavigationMenus categories={[]} />
+        <MainNavigationMenus categories={categories} />
       </div>
     </nav>
   );
