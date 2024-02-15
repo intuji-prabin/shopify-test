@@ -13,7 +13,6 @@ import {
 import {TooltipInfo} from '~/components/icons/orderStatus';
 import {Link} from '@remix-run/react';
 import {Button} from '~/components/ui/button';
-import {BulkTable} from './bulk-table';
 export type BulkOrderColumn = {
   id: string;
   items: {
@@ -86,13 +85,13 @@ export function useMyProductColumn() {
         enableSorting: false,
         cell: (info) => {
           const productTotal = info.row.original.total;
-          const [isVisible, setIsVisible] = useState(false);
           return (
             <>
               <ProductTotal
                 total={productTotal}
-                isBulkDetailVisible={isVisible}
-                setIsBulkDetailsVisible={setIsVisible}
+                isBulkDetailVisible={info?.row?.getIsExpanded()}
+                setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
+                isRowChecked={info?.row?.getIsSelected()}
               />
               {/* {isVisible && <BulkTable quantity={'Quantity'} price={'Price'} />} */}
             </>
@@ -233,10 +232,12 @@ function ProductTotal({
   total,
   isBulkDetailVisible,
   setIsBulkDetailsVisible,
+  isRowChecked,
 }: {
   total: string;
   isBulkDetailVisible: boolean;
-  setIsBulkDetailsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  isRowChecked: boolean;
+  setIsBulkDetailsVisible: () => void;
 }) {
   return (
     <div className="flex flex-col gap-4 items-baseline min-w-[110px]">
@@ -255,8 +256,10 @@ function ProductTotal({
         </p>
       </div>
       <Button
-        onClick={() => setIsBulkDetailsVisible((isVisible) => !isVisible)}
-        className="text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4 "
+        onClick={setIsBulkDetailsVisible}
+        className={`${
+          isRowChecked ? 'bg-white' : 'bg-primary-200'
+        }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
       >
         {isBulkDetailVisible ? 'Hide' : 'View'} BULK PRICE
       </Button>
