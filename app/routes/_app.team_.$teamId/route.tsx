@@ -125,7 +125,7 @@ export default function TeamDetailsPage() {
 
   return (
     <section className="container">
-      <div className="flex items-center pt-6 pb-4 space-x-4">
+      <div className="flex items-center py-6 space-x-4">
         <Button
           type="button"
           size="icon"
@@ -137,7 +137,6 @@ export default function TeamDetailsPage() {
         </Button>
         <h3>Edit Details</h3>
       </div>
-      <Separator className="mt-4 mb-8" />
       <TeamForm
         defaultValues={customerDetails}
         customerId={customerDetails.customerId}
