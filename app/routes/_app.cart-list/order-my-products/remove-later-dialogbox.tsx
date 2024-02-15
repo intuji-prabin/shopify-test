@@ -23,6 +23,7 @@ export default function CreateGroup({
     | 'disabled'
     | 'ghost'
     | 'danger'
+    | 'danger_dark'
     | null
     | undefined;
 }) {

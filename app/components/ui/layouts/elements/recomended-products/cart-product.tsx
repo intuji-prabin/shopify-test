@@ -1,8 +1,9 @@
 import {useTable} from '~/hooks/useTable';
+
 import {DataTable} from '~/components/ui/data-table';
 import {useMyProductColumn} from './use-column';
 import {ProductData} from './productData';
-import CreateGroup from './remove-later-dialogbox';
+import CreateGroup from '~/routes/_app.cart-list/order-my-products/remove-later-dialogbox';
 export default function MyProducts() {
   const {columns} = useMyProductColumn();
   const {table} = useTable(columns, ProductData);
@@ -16,12 +17,12 @@ export default function MyProducts() {
           <h3>My products</h3>
           <div className="flex gap-2 items-center w-full justify-between md:justify-[unset] md:w-[unset]">
             <div className="flex gap-2">
-              <div className="product-remove">
+              <div className="remove-dialogue">
                 <CreateGroup
                   buttonVariant={
                     table.getSelectedRowModel().rows.length === 0
                       ? 'disabled'
-                      : 'danger_dark'
+                      : 'danger'
                   }
                   handleRemoveAllItems={handleRemoveAllItems}
                 />
@@ -30,7 +31,7 @@ export default function MyProducts() {
           </div>
         </div>
 
-        <div className=" border-grey-50 border-t cart-order">
+        <div className="p-6 border-grey-50 border-t cart-order">
           <DataTable table={table} />
         </div>
       </div>

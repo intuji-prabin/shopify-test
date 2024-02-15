@@ -21,7 +21,7 @@ export function PlaceOrder() {
     <Button className="place-order h-full bg-secondary-500  px-6 hover:bg-secondary-500 min-h-12">
       <Link
         to={Routes.PLACE_AN_ORDER}
-        className="uppercase  text-[14px] italic font-bold flex items-center text-grey-900"
+        className="uppercase  text-[14px] italic font-bold flex items-center text-grey-900 h-full"
       >
         Place an order
       </Link>
@@ -50,7 +50,7 @@ export function NotificationNavbar() {
     {
       id: 1,
       icon: <CartIcon width={'20px'} height={'20px'} />,
-      url: '/cart',
+      url: Routes.CART_LIST,
       title: 'cart',
       notification: '3',
     },
@@ -58,21 +58,21 @@ export function NotificationNavbar() {
       id: 2,
       icon: <Note width={'20px'} height={'20px'} />,
       url: '/note',
-      title: 'Note',
+      title: 'Pending Order',
       notification: '3',
     },
     {
       id: 3,
       icon: <Heart width={'20px'} height={'20px'} />,
       url: Routes.WISHLIST,
-      title: 'Heart',
+      title: 'Wishlist',
       notification: '3',
     },
     {
       id: 4,
       icon: <NotificationIcon width={'20px'} height={'20px'} />,
       url: Routes.NOTIFICATION,
-      title: 'Notification',
+      title: 'Notifications',
       notification: '3',
     },
   ];

@@ -2,7 +2,7 @@ type HeroImage = {
   image_url: string;
   section_name: string;
 };
-export default function HeroSection({image_url, section_name}: HeroImage) {
+export default function HeroBanner({image_url, section_name}: HeroImage) {
   return (
     <div className="relative">
       <figure className=" h-full">
