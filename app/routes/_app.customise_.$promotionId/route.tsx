@@ -2,39 +2,40 @@ import {
   isRouteErrorResponse,
   useLoaderData,
   useRouteError,
-  useSubmit
+  useSubmit,
 } from '@remix-run/react';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
-  json
+  json,
+  redirect,
 } from '@remix-run/server-runtime';
-import { withZod } from '@remix-validated-form/with-zod';
+import {withZod} from '@remix-validated-form/with-zod';
 import html2canvas from 'html2canvas';
-import { useRef, useState } from 'react';
-import { ValidatedForm } from 'remix-validated-form';
-import { z } from 'zod';
-import { zfd } from 'zod-form-data';
-import { ExportUp } from '~/components/icons/export';
-import { FullScreen } from '~/components/icons/full-screen';
+import {useEffect, useRef, useState} from 'react';
+import {ValidatedForm} from 'remix-validated-form';
+import {z} from 'zod';
+import {zfd} from 'zod-form-data';
+import {ExportUp} from '~/components/icons/export';
+import {FullScreen} from '~/components/icons/full-screen';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import { BackButton } from '~/components/ui/back-button';
-import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
-import { Button } from '~/components/ui/button';
+import {BackButton} from '~/components/ui/back-button';
+import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import {Button} from '~/components/ui/button';
 import ColorPicker from '~/components/ui/color-picker';
-import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog';
+import {Dialog, DialogContent, DialogTrigger} from '~/components/ui/dialog';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import ImageEdit from '~/components/ui/imageEdit';
 import Loader from '~/components/ui/loader';
-import { Separator } from '~/components/ui/separator';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { getUserDetails, isAuthenticate } from '~/lib/utils/authsession.server';
+import {Separator} from '~/components/ui/separator';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
 import {
   getMessageSession,
   messageCommitSession,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
-import { createPromotion, getPromotionById } from './promotion.server';
+import {createPromotion, getPromotionById} from './promotion.server';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -76,41 +77,37 @@ export type EditFormType = z.infer<typeof EditFormValidator>;
 
 export type EditFormFieldNameType = keyof EditFormType;
 
-export async function action({ request, context }: ActionFunctionArgs) {
+export async function action({request, context}: ActionFunctionArgs) {
   const messageSession = await getMessageSession(request);
   const data = await request.formData();
-  const { userDetails } = await getUserDetails(context);
+  const {userDetails} = await getUserDetails(context);
   const companyId = userDetails.meta.company_id.value;
 
   let formData = Object.fromEntries(data);
-  formData = { ...formData };
-  console.log('qwe', { formData });
+  formData = {...formData};
   await createPromotion(formData, companyId);
-  setSuccessMessage(messageSession, 'New Banner Added Successfully');
-  return json(
-    {},
-    {
-      headers: {
-        'Set-Cookie': await messageCommitSession(messageSession),
-      },
+  setSuccessMessage(messageSession, 'Banner Customized Successfully');
+  return redirect('/promotions/my-promotion', {
+    headers: {
+      'Set-Cookie': await messageCommitSession(messageSession),
     },
-  );
+  });
 }
 
-export async function loader({ params, context }: LoaderFunctionArgs) {
+export async function loader({params, context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
   const promotionId = params?.promotionId as string;
   const response = await getPromotionById(promotionId);
   if (response?.payload) {
     const results = response?.payload;
-    return json({ results });
+    return json({results});
   }
-  return { response: {} };
+  return {response: {}};
 }
 
-const PromotionEdit = ({ defaultValues }: EditFormProps) => {
-  const { results } = useLoaderData<any>();
+const PromotionEdit = ({defaultValues}: EditFormProps) => {
+  const {results} = useLoaderData<any>();
   const submit = useSubmit();
 
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
@@ -118,7 +115,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
   const [image, setImage] = useState('');
   const [renderedImageWidth, setRenderedImageWidth] = useState();
   const [companyInfo, setCompanyInfo] = useState({
-    companyLogo: DEFAULT_IMAGE.DEFAULT,
+    companyLogo: DEFAULT_IMAGE.IMAGE,
     companyName: 'ABC Distributors',
     companyEmail: 'company@gmail.com',
     companyWebsite: 'abc.com.au',
@@ -153,24 +150,54 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
   };
 
   const createBlob = (canvasRef: HTMLElement) => {
-    return new Promise((resolve, reject) => {
-      try {
-        html2canvas(canvasRef, {
-          allowTaint: true,
-          useCORS: true,
-          scale: 2,
-        }).then((canvas: any) => {
-          if (blobRef.current) {
-            blobRef.current.value = canvas.toDataURL();
-          }
-          console.log("createdCanvas", canvas.toDataURL())
-          resolve(true)
-        });
-      }
-      catch (err) {
-        reject(false)
-      }
-    })
+    // return new Promise((resolve, reject) => {
+    //   try {
+    //     html2canvas(canvasRef, {
+    //       allowTaint: true,
+    //       useCORS: true,
+    //       scale: 2,
+    //     }).then((canvas: any) => {
+    //       if (blobRef.current) {
+    //         blobRef.current.value = canvas.toDataURL();
+    //       }
+    //       console.log("createdCanvas", canvas.toDataURL())
+    //       resolve(true)
+    //     });
+    //   }
+    //   catch (err) {
+    //     reject(false)
+    //   }
+    // })
+
+    if (canvasRef) {
+      html2canvas(canvasRef, {
+        allowTaint: true,
+        useCORS: true,
+        scale: 2,
+      }).then((canvas: any) => {
+        if (blobRef.current) {
+          blobRef.current.value = canvas.toDataURL();
+        }
+        console.log('createdCanvas', canvas.toDataURL());
+      });
+    } else {
+      alert('Error occured while exporting the image. Please try again.');
+    }
+
+    // try {
+    //   const canvas = await html2canvas(canvasRef, {
+    //     allowTaint: true,
+    //     useCORS: true,
+    //     scale: 2,
+    //   });
+
+    //   if (blobRef.current) {
+    //     blobRef.current.value = canvas.toDataURL();
+    //   }
+    //   console.log('createdCanvas', canvas.toDataURL());
+    // } catch (error) {
+    //   console.error('Error generating canvas:', error);
+    // }
   };
 
   const handleChange = (field: string, value: string) => {
@@ -183,7 +210,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
 
   const resetCompanyInfo = () => {
     setCompanyInfo({
-      companyLogo: DEFAULT_IMAGE.DEFAULT,
+      companyLogo: DEFAULT_IMAGE.IMAGE,
       companyName: 'ABC Distributors',
       companyEmail: 'company@gmail.com',
       companyWebsite: 'abc.com.au',
@@ -198,7 +225,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     imagePreviews.forEach((imagePreview) => {
       imagePreview.setAttribute(
         'src',
-        `${results?.logo_url ?? DEFAULT_IMAGE.DEFAULT}`,
+        `${results?.logo_url ?? DEFAULT_IMAGE.IMAGE}`,
       );
     });
     setShowUnsavedChanges(false);
@@ -223,9 +250,15 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     setShowUnsavedChanges(true);
   };
 
-  const handleClick = async () => {
-    await createBlob(canvasRef.current);
+  // const handleClick = async () => {
+  //   await createBlob(canvasRef.current);
+  // };
+
+  const handleClick = () => {
+    createBlob(canvasRef.current);
   };
+
+  useEffect(() => createBlob(canvasRef.current), []);
 
   return (
     <div className="bg-grey-25">
@@ -236,8 +269,9 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
             type="button"
             size="small"
             variant="ghost"
-            className={`border-primary-500 hover:bg-inherit ${loading && 'pointer-events-none'
-              }`}
+            className={`border-primary-500 hover:bg-inherit ${
+              loading && 'pointer-events-none'
+            }`}
             onClick={() => printDocument(canvasRef.current)}
           >
             {loading ? <Loader /> : <ExportUp />}Export
@@ -273,8 +307,9 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                   style={{
                     width: renderedImageWidth && renderedImageWidth + 50,
                   }}
-                  className={`max-w-4xl ${!image && 'flex items-center justify-center'
-                    }`}
+                  className={`max-w-4xl ${
+                    !image && 'flex items-center justify-center'
+                  }`}
                 >
                   {image && renderedImageWidth ? (
                     <img
@@ -324,15 +359,14 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                 ref={blobRef}
                 type="text"
                 name="image"
-              // className='hidden'
+                className="hidden"
               />
               <h5 className="py-4">Company Logo</h5>
               <ImageUploadInput
                 name="logo"
                 unsavedChanges={unsavedChanges}
-                imageUrl={defaultValues?.companyLogo}
+                imageUrl={DEFAULT_IMAGE.IMAGE}
                 className="pb-4 promotion__edit"
-                defaultImage={results?.logo_url ?? DEFAULT_IMAGE.DEFAULT}
               />
               <div className="accordion__section">
                 <AccordionCustom accordionTitle="Company Information">

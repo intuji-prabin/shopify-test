@@ -1,9 +1,9 @@
-import { RefObject } from 'react';
-import { Call } from '../icons/call';
-import { Fax } from '../icons/fax';
-import { Globe } from '../icons/globe';
+import {RefObject} from 'react';
+import {Call} from '../icons/call';
+import {Fax} from '../icons/fax';
+import {Globe} from '../icons/globe';
 import Mail from '../icons/mail';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 
 interface ImageEditProps {
   canvasRef?: RefObject<HTMLDivElement>;
@@ -29,6 +29,7 @@ const ImageEdit = ({
   companyInfo,
   renderedImageWidth,
 }: ImageEditProps) => {
+  console.log('object', companyInfo);
   return (
     <div className="flex justify-center px-6 py-10 bg-white">
       <div
@@ -57,7 +58,7 @@ const ImageEdit = ({
         >
           <div
             className="flex flex-wrap items-center justify-between p-4 gap-x-6 gap-y-3"
-            style={{ color: companyInfo?.textColor }}
+            style={{color: companyInfo?.textColor}}
           >
             <div className="flex flex-wrap items-center gap-2">
               <div className="flex items-center justify-center w-12 h-12 p-1 bg-white border border-solid rounded-full border-grey-50">
@@ -67,7 +68,7 @@ const ImageEdit = ({
                   className="rounded-full image-preview"
                 />
               </div>
-              <h5 style={{ lineHeight: '0', fontFamily: 'Barlow Condensed' }}>
+              <h5 style={{lineHeight: '0', fontFamily: 'Barlow Condensed'}}>
                 {companyInfo?.companyName}
               </h5>
             </div>

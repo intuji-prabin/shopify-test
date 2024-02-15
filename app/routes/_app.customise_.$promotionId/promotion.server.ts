@@ -35,13 +35,10 @@ export async function createPromotion(
     }
     fData.append('company_id', companyId);
     // // const body = fData
-    const results = await fetch(
-      'https://personality-sullivan-vhs-barnes.trycloudflare.com/api/promotion',
-      {
-        method: 'POST',
-        body: fData,
-      },
-    );
+    const results = await fetch(`${ENDPOINT.PROMOTION.GET}`, {
+      method: 'POST',
+      body: fData,
+    });
 
     if (!results) {
       throw new Response('Oh no! Something went wrong!', {
