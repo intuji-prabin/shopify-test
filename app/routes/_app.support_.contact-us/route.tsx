@@ -32,7 +32,7 @@ export default function ContactUsPage() {
           </BreadcrumbItem>
         </Breadcrumb>
       </div>
-      <div className="my-6 grid gap-6 sm:grid-cols-2">
+      <div className=" flex justify-center items-center min-h-[200px]">
         {(contacts.length > 0 &&
           contacts.map((item, index) => (
             <ContactUsCard key={index} {...item} />
