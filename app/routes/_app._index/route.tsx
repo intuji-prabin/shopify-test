@@ -39,7 +39,7 @@ export default function Homepage() {
   return (
     <article className="home">
       {data?.slides.length > 0 ? (
-        <Carousel images={data?.slides} maxHeight={220} sectionClass="mt-0" />
+        <Carousel images={data?.slides} sectionClass="mt-0" />
       ) : null}
       <Profile sectionClass="mt-10" />
       <CtaHome />

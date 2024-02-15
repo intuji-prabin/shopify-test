@@ -766,3 +766,11 @@ div[data-state='open'].fixed.inset-0 {
 .settings-card-detail .comapny-setting-text {
   @apply max-w-[280px] font-medium text-lg;
 }
+.menu-hov:hover svg,
+.menu-hov:hover svg path {
+  @apply fill-primary-500;
+}
+.menu-hov p svg,
+.menu-hov p svg path {
+  @apply fill-grey-900;
+}

@@ -2,17 +2,8 @@ import Enquire from '~/components/icons/enquire';
 import Phone from '~/components/icons/phone';
 import {Link} from '@remix-run/react';
 import {Routes} from '~/lib/constants/routes.constent';
-import {Payload} from '~/routes/_app/app.server';
-import {useState} from 'react';
-import ArrowForward from '~/components/icons/arrowForward';
 
-export default function DesktopFooter({categories}: {categories: Payload[]}) {
-  const [activeMenu, setActiveMenu] = useState<{
-    menu: Payload;
-  }>({
-    menu: {id: 1, title: '', identifier: '', child_categories: []},
-  });
-  console.log('this', categories);
+export default function DesktopFooter() {
   const footerNavs = [
     {
       id: 0,
