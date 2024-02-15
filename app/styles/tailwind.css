@@ -764,5 +764,8 @@ div[data-state='open'].fixed.inset-0 {
   @apply text-white;
 }
 .cart-order table tbody tr td:nth-child(3) {
-  @apply min-w-[177px] ;
+  @apply min-w-[177px];
+}
+.settings-card-detail .comapny-setting-text {
+  @apply max-w-[280px];
 }
