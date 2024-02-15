@@ -20,7 +20,7 @@ export async function getPromotionById(promotionId: string) {
   }
 }
 
-export async function createPromotion({formData}: any) {
+export async function createPromotiontest({formData}: any) {
   try {
     console.log('hi');
     // const body = {
