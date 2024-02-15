@@ -1,5 +1,5 @@
 import {Form, useActionData} from '@remix-run/react';
-import {ActionFunctionArgs, json, redirect} from '@remix-run/server-runtime';
+import {ActionFunctionArgs, LoaderFunctionArgs, json, redirect} from '@remix-run/server-runtime';
 import {useEffect, useState} from 'react';
 import {DangerAlert} from '~/components/icons/alert';
 import {Button} from '~/components/ui/button';
@@ -11,6 +11,15 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
+import { getAccessToken } from '~/lib/utils/authsession.server';
+
+export const loader = async ( { context } : LoaderFunctionArgs) => {
+  const accessToken = await getAccessToken(context);
+  if( accessToken ) {
+    return redirect('/');
+  }
+  return json({})
+}
 
 export const action = async ({request, context}: ActionFunctionArgs) => {
   const {searchParams} = new URL(request.url);
