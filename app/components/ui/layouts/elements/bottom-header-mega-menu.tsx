@@ -23,7 +23,7 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
             {categories?.map((menu: Payload) => (
               <li
                 key={'list' + menu.id}
-                className={`relative italic font-bold text-lg text-grey-900 flex menu-hov justify-between
+                className={`relative italic font-bold text-lg text-grey-900 flex menu-hov justify-between 
               ${
                 activeMenu.menu?.id === menu.id
                   ? 'bg-primary-100 text-primary-500'
@@ -34,11 +34,11 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                   setActiveMenu((prevMenu) => ({...prevMenu, menu}))
                 }
               >
-                <span className="flex flex-row-reverse items-center justify-between w-full px-2 py-1 text-lg font-medium rounded menu-hov">
+                <p className="flex flex-row-reverse items-center justify-between w-full px-2 py-1 text-lg font-medium rounded menu-hov">
                   {' '}
-                  <ArrowForward />
-                  {menu.title}
-                </span>
+                  <ArrowForward width={'24px'} height={'24px'} />
+                  <span className="w-[169px]"> {menu.title} </span>
+                </p>
               </li>
             ))}
           </ul>
@@ -63,11 +63,11 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                     setActiveMenu((prevMenu) => ({...prevMenu, subMenu}))
                   }
                 >
-                  <span className="flex flex-row-reverse items-center justify-between w-full px-2 py-1 text-lg font-medium rounded menu-hov between">
+                  <p className="flex flex-row-reverse items-center justify-between px-2 py-1 text-lg font-medium rounded menu-hov between">
                     {' '}
-                    <ArrowForward />
-                    {subMenu.title}
-                  </span>
+                    <ArrowForward width={'24px'} height={'24px'} />
+                    <span className="w-[169px]">{subMenu.title} </span>
+                  </p>
                 </li>
               ))}
           </ul>
@@ -90,10 +90,10 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                     to={`/categories/${subMenu?.identifier}`}
                     className="w-full"
                   >
-                    <span className="flex items-center w-full px-2 py-1 text-lg font-medium rounded menu-hov justify- text-grey-900">
+                    <p className="flex items-center  px-2 py-1 text-lg font-medium rounded menu-hov justify- text-grey-900 ">
                       {' '}
-                      {subMenu.title}
-                    </span>
+                      <span className="w-[169px]">{subMenu.title}</span>
+                    </p>
                   </Link>
                 </li>
               ))}
