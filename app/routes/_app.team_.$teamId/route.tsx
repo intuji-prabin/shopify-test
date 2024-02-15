@@ -27,6 +27,7 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
 import {MetaFunction} from '@shopify/remix-oxygen';
+import {isAuthenticate} from '~/lib/utils/authsession.server';
 
 interface Role {
   title: string;
@@ -50,7 +51,9 @@ export const meta: MetaFunction = () => {
   return [{title: 'Edit Team Member'}];
 };
 
-export async function loader({params}: LoaderFunctionArgs) {
+export async function loader({params, context}: LoaderFunctionArgs) {
+  await isAuthenticate(context);
+
   let customerId = params?.teamId as string;
 
   const customerDetails = await getCustomerById({customerId});
@@ -60,7 +63,9 @@ export async function loader({params}: LoaderFunctionArgs) {
   return json({customerDetails, roles});
 }
 
-export async function action({request}: ActionFunctionArgs) {
+export async function action({request, context}: ActionFunctionArgs) {
+  await isAuthenticate(context);
+
   const messageSession = await getMessageSession(request);
   try {
     const result = await EditTeamFormSchemaValidator.validate(
@@ -120,7 +125,7 @@ export default function TeamDetailsPage() {
 
   return (
     <section className="container">
-      <div className="flex items-center pt-6 pb-4 space-x-4">
+      <div className="flex items-center py-6 space-x-4">
         <Button
           type="button"
           size="icon"
@@ -132,7 +137,6 @@ export default function TeamDetailsPage() {
         </Button>
         <h3>Edit Details</h3>
       </div>
-      <Separator className="mt-4 mb-8" />
       <TeamForm
         defaultValues={customerDetails}
         customerId={customerDetails.customerId}
