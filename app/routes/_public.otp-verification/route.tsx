@@ -1,13 +1,13 @@
-import { Form, Link, useActionData } from '@remix-run/react';
-import { ActionFunctionArgs } from '@remix-run/server-runtime';
-import { useState, Fragment, useRef, useEffect } from 'react';
-import { DangerAlert } from '~/components/icons/alert';
-import { ArrowLeftSmall } from '~/components/icons/arrowleft';
-import { Button } from '~/components/ui/button';
+import {Form, Link, useActionData} from '@remix-run/react';
+import {ActionFunctionArgs} from '@remix-run/server-runtime';
+import {useState, Fragment, useRef, useEffect} from 'react';
+import {DangerAlert} from '~/components/icons/alert';
+import {ArrowLeftSmall} from '~/components/icons/arrowleft';
+import {Button} from '~/components/ui/button';
 
 let currentOtpIndex: number = 0;
 
-export const action = async ({ request }: ActionFunctionArgs) => {
+export const action = async ({request}: ActionFunctionArgs) => {
   const formData = await request.formData();
   const otpKey = formData.getAll('otp');
   const finalOtp = otpKey.join('');
@@ -21,10 +21,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const formErrors = {
     otp: validateOtp(finalOtp),
   };
-  if (Object.values(formErrors).some(Boolean)) return { formErrors };
+  if (Object.values(formErrors).some(Boolean)) return {formErrors};
 
   // Return final OTP if no form errors
-  return { finalOtp };
+  return {finalOtp};
 };
 
 type ActionData = {
@@ -48,7 +48,7 @@ const OtpVerification = () => {
   const handleOnchange = ({
     target,
   }: React.ChangeEvent<HTMLInputElement>): void => {
-    const { value } = target;
+    const {value} = target;
     const newOtp: string[] = [...tempOtp];
     newOtp[currentOtpIndex] = value.substring(value.length - 1);
 
@@ -63,7 +63,7 @@ const OtpVerification = () => {
   };
 
   const handleOnKeyDown = (
-    { key }: React.KeyboardEvent<HTMLInputElement>,
+    {key}: React.KeyboardEvent<HTMLInputElement>,
     index: number,
   ) => {
     currentOtpIndex = index;
@@ -80,13 +80,13 @@ const OtpVerification = () => {
   console.log('actionData', actionData);
 
   return (
-    <div className='md:w-[398px] w-full'>
+    <div className="md:w-[398px] w-full min-h-[414px]">
       <div className="flex flex-col p-8 space-y-8 bg-white shadow-3xl">
         <div className="flex flex-col items-center justify-center gap-y-5">
           <h4>Enter your code!</h4>
           <p>We have just sent code to your email address</p>
         </div>
-        <Form method="post" className='flex flex-col gap-y-6'>
+        <Form method="post" className="flex flex-col gap-y-6">
           <div>
             <div className="flex items-center space-x-4 w-fit">
               {tempOtp.map((_, index) => {
@@ -118,15 +118,22 @@ const OtpVerification = () => {
           </Button>
         </Form>
       </div>
-      <div className='mt-4 space-y-6 text-center'>
-        <p>Didn’t receive code? <Link to="#" className='underline text-primary-500'>Click to resend</Link></p>
-        <Link to="/login" className='inline-flex items-center gap-3 px-6 py-2 text-sm italic font-bold uppercase border border-solid border-primary-500'>
+      <div className="mt-4 space-y-6 text-center">
+        <p>
+          Didn’t receive code?{' '}
+          <Link to="#" className="underline text-primary-500">
+            Click to resend
+          </Link>
+        </p>
+        <Link
+          to="/login"
+          className="inline-flex items-center gap-3 px-6 py-2 text-sm italic font-bold uppercase border border-solid border-primary-500"
+        >
           <ArrowLeftSmall /> back to log in
         </Link>
       </div>
     </div>
-
   );
-}
+};
 
 export default OtpVerification;
