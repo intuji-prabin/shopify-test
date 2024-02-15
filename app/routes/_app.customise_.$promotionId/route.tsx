@@ -324,7 +324,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                 ref={blobRef}
                 type="text"
                 name="image"
-                className='hidden'
+              // className='hidden'
               />
               <h5 className="py-4">Company Logo</h5>
               <ImageUploadInput

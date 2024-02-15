@@ -36,7 +36,7 @@ export async function createPromotion(
     fData.append('company_id', companyId);
     // // const body = fData
     const results = await fetch(
-      'https://copies-neighborhood-relax-ip.trycloudflare.com/api/promotion',
+      'https://personality-sullivan-vhs-barnes.trycloudflare.com/api/promotion',
       {
         method: 'POST',
         body: fData,
