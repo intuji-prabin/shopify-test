@@ -240,9 +240,6 @@ label .required {
   @apply hover:text-secondary-500 focus:text-secondary-500 outline-none focus:outline-none;
 }
 
-.menu-hov {
-  @apply hover:bg-primary-100 hover:text-primary-500 active:bg-primary-100 active:text-primary-500;
-}
 .menu-hov:hover span svg {
   @apply !fill-primary-500;
 }
