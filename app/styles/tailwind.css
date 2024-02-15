@@ -240,9 +240,6 @@ label .required {
   @apply hover:text-secondary-500 focus:text-secondary-500 outline-none focus:outline-none;
 }
 
-.menu-hov {
-  @apply hover:bg-primary-100 hover:text-primary-500 active:bg-primary-100 active:text-primary-500;
-}
 .menu-hov:hover span svg {
   @apply !fill-primary-500;
 }
@@ -764,5 +761,16 @@ div[data-state='open'].fixed.inset-0 {
   @apply text-white;
 }
 .cart-order table tbody tr td:nth-child(3) {
-  @apply min-w-[177px] ;
+  @apply min-w-[177px];
+}
+.settings-card-detail .comapny-setting-text {
+  @apply max-w-[280px] font-medium text-lg;
+}
+.menu-hov:hover svg,
+.menu-hov:hover svg path {
+  @apply fill-primary-500;
+}
+.menu-hov p svg,
+.menu-hov p svg path {
+  @apply fill-grey-900;
 }
