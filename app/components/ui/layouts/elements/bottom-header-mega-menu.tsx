@@ -12,6 +12,7 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
     menu: {id: 1, title: '', identifier: '', child_categories: []},
     subMenu: {id: 1, title: '', identifier: '', child_categories: []},
   });
+  console.log('first', categories);
   return (
     <>
       {categories.length > 0 && (
@@ -86,10 +87,7 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                   key={subMenu.id}
                   className="relative flex items-center text-lg not-italic font-medium text-grey-900 menu-hov"
                 >
-                  <Link
-                    to={`/categories/${subMenu?.identifier}`}
-                    className="w-full"
-                  >
+                  <Link to={`/${subMenu?.identifier}`} className="w-full">
                     <p className="flex items-center  px-2 py-1 text-lg font-medium rounded menu-hov justify- text-grey-900 ">
                       {' '}
                       <span className="w-[169px]">{subMenu.title}</span>

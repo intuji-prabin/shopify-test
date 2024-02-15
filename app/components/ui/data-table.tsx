@@ -85,14 +85,14 @@ export function DataTable<T>({table, columns}: DataTableProps<T>) {
                     </TableCell>
                   ))}
                 </TableRow>
-                <TableRow>
+                {/* <TableRow>
                   <TableCell
                     className="text-grey-900 text-lg leading-5.5 items-end"
                     colSpan={5}
                   >
                     <BulkTable quantity={'Quantity'} price={'Price'} />
                   </TableCell>
-                </TableRow>
+                </TableRow> */}
               </>
             ))
           ) : (
