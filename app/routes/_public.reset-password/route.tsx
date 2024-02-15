@@ -61,23 +61,15 @@ export const action = async ({request, context}: ActionFunctionArgs) => {
       });
     }
     setSuccessMessage(messageSession, 'Error occured');
-    return json(
-      {status: 'ERROR'},
-      {
-        headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
-      },
-    );
+    return redirect('/login', {
+      headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+    });
   } catch (error) {
     if (error instanceof Error) {
       setErrorMessage(messageSession, error.message);
-      return json(
-        {error},
-        {
-          headers: {
-            'Set-Cookie': await messageCommitSession(messageSession),
-          },
-        },
-      );
+      return redirect('/login', {
+        headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+      });
     }
     return json({error}, {status: 400});
   }
