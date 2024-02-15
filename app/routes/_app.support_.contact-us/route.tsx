@@ -34,7 +34,7 @@ export default function ContactUsPage() {
       </div>
 
       {contacts.length > 0 ? (
-        <div className="my-6 grid gap-6 sm:grid-cols-2">
+        <div className="my-6 grid gap-6 grid-cols-1 sm:grid-cols-2">
           {contacts.map((item, index) => (
             <ContactUsCard key={index} {...item} />
           ))}
