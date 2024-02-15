@@ -3,6 +3,7 @@ import Phone from '~/components/icons/phone';
 import {Link} from '@remix-run/react';
 import {Routes} from '~/lib/constants/routes.constent';
 
+
 export default function DesktopFooter() {
   const footerNavs = [
     {
@@ -82,7 +83,7 @@ export default function DesktopFooter() {
         <div className=" flex justify-between py-20 flex-col md:flex-row gap-10 ">
           <div className="flex flex-col gap-10">
             <figure>
-              <img src="footerlogo.png" alt="" />
+              <img src="/footerlogo.png" alt="" />
             </figure>
             <div className="flex flex-col gap-[23px]">
               <div className="flex">

@@ -1,7 +1,7 @@
-import {Eye, EyeOff} from 'lucide-react';
 import {useState} from 'react';
 import {useField} from 'remix-validated-form';
 import {DangerAlert} from '~/components/icons/alert';
+import {EyeOff, EyeOn} from '~/components/icons/eye';
 
 type passwordType = {
   name: string;
@@ -39,7 +39,7 @@ export default function ValidatedFormPassword({
           className="absolute -translate-y-1/2 cursor-pointer eyeIcon right-3 top-1/2"
           onClick={toggle}
         >
-          {isVisible ? <Eye /> : <EyeOff />}
+          {isVisible ? <EyeOn /> : <EyeOff />}
         </span>
       </div>
       {error && (

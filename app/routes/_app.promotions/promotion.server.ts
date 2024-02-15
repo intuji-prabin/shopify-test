@@ -20,16 +20,18 @@ export interface Promotion {
 }
 
 export async function getPromotions({
-  companyId,
   custom = false,
+  companyId,
+  filterBy,
   pageNumber,
 }: {
   companyId: string;
+  filterBy?: string | null;
   custom?: boolean;
   pageNumber?: number;
 }) {
   const url =
-    `${ENDPOINT.PROMOTION.GET}?page=${pageNumber}&company_id=${companyId}` +
+    `${ENDPOINT.PROMOTION.GET}?page=${pageNumber}&company_id=${companyId}&filter_by=${filterBy}` +
     (custom ? '&custom_promotion=true' : '');
 
   const response = await useFetch<PromotionsResponse>({

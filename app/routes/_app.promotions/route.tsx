@@ -1,4 +1,4 @@
-import {NavLink, Outlet} from '@remix-run/react';
+import {Form, NavLink, Outlet, useSubmit} from '@remix-run/react';
 import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
 import {isAuthenticate} from '~/lib/utils/authsession.server';
 import {Separator} from '~/components/ui/separator';
@@ -24,29 +24,27 @@ const Promotions = () => {
   return (
     <>
       <section className="container ">
-        <div className="relative ">
-          <PromotionHeader />
-          <div className="p-6 bg-neutral-white mt-6">
-            <div className="py-1.5">
-              {routes.map((route) => (
-                <NavLink
-                  key={route.link}
-                  to={route.link}
-                  className={({isActive, isPending}) =>
-                    isPending
-                      ? 'px-4 py-2'
-                      : isActive
-                      ? 'px-4 py-2 border-b-2 text-primary-500 border-b-primary-500'
-                      : 'px-4 py-2 text-grey-400'
-                  }
-                >
-                  {route.name}
-                </NavLink>
-              ))}
-            </div>
-            <Separator />
-            <Outlet />
+        <PromotionHeader />
+        <div className="relative p-6 mt-6 bg-neutral-white">
+          <div className="flex items-center space-x-4">
+            {routes.map((route) => (
+              <NavLink
+                key={route.link}
+                to={route.link}
+                className={({isActive, isPending}) =>
+                  isPending
+                    ? 'py-2 border-b-2 border-b-transparent'
+                    : isActive
+                    ? 'py-2 border-b-2 text-primary-500 border-b-primary-500'
+                    : 'py-2 border-b-2 border-b-transparent text-grey-400'
+                }
+              >
+                {route.name}
+              </NavLink>
+            ))}
           </div>
+          <Separator className="mb-6" />
+          <Outlet />
         </div>
       </section>
     </>
