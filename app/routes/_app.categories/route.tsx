@@ -5,8 +5,10 @@ import { Button } from '~/components/ui/button';
 import { useScroll } from '~/hooks/useScroll';
 import { CategoryCard } from '~/routes/_app.categories/category-card';
 import { getCategory } from './categories.server';
+import { isAuthenticate } from '~/lib/utils/authsession.server';
 
 export async function loader({ context }: ActionFunctionArgs) {
+  await isAuthenticate( context )
   const categoriesDetail = await getCategoryList(context);
   if (categoriesDetail && categoriesDetail.length > 0) {
     return json({ categoriesDetail });

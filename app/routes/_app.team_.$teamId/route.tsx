@@ -26,6 +26,7 @@ import {
 } from '~/lib/utils/toastsession.server';
 import {MetaFunction} from '@shopify/remix-oxygen';
 import { getCustomerRolePermission } from '~/lib/customer-role/customer-role-permission';
+import { isAuthenticate } from '~/lib/utils/authsession.server';
 
 interface Role {
   title: string;
@@ -52,7 +53,6 @@ export const meta: MetaFunction = () => {
 export async function loader({params, context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
   let customerId = params?.teamId as string;
-  console.log("xczxcxz", customerId)
   const customerDetails = await getCustomerById({customerId});
 
   const roles = await getCustomerRolePermission( context ) as RolesResponse;
