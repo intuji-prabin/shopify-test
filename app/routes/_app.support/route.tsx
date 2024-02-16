@@ -1,7 +1,14 @@
 import {Separator} from '~/components/ui/separator';
 import {OptionsCardData} from '~/routes/_app.support/options-data';
 import {OptionsCard} from '~/routes/_app.support/options-card';
+import { LoaderFunctionArgs } from '@remix-run/server-runtime';
+import { isAuthenticate } from '~/lib/utils/authsession.server';
+import { json } from '@remix-run/react';
 
+export const loader = async (  { context } : LoaderFunctionArgs ) => {
+  await isAuthenticate( context )
+  return json({})
+}
 export default function SupportPage() {
   return (
     <section className="container">
