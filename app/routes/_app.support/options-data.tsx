@@ -1,7 +1,7 @@
 import React from 'react';
 import {PcIcon} from '~/components/icons/pc-icon';
 import {HeadPhoneIcon} from '~/components/icons/headphone-icon';
-import {PhoneIcon} from '~/components/icons/phone-icon';
+import {PhoneIcon, PhoneIconImage} from '~/components/icons/phone-icon';
 import {Routes} from '~/lib/constants/routes.constent';
 
 export type OptionsCardType = {
@@ -27,7 +27,7 @@ export const OptionsCardData: OptionsCardType[] = [
     link: Routes.SUPPORT_TICKETS,
   },
   {
-    icon: <PhoneIcon />,
+    icon: <PhoneIconImage image_url={'/phone-icon.png'} />,
     title: 'Contact Us',
     description: 'Find the list of contact details.',
     link: Routes.SUPPORT_CONTACT_US,
