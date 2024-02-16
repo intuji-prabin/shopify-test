@@ -4,7 +4,7 @@ import HamburgerIcon from '~/components/icons/hamburgerIcon';
 import {Signout} from '~/components/icons/signout';
 import {Button} from '../../../button';
 import SearchIcon from '~/components/icons/search';
-import {Link} from '@remix-run/react';
+import {Form, Link} from '@remix-run/react';
 import {TrackAnOrderButton} from '../track-an-order-dialog';
 import {LogoIcon, NotificationNavbar, PlaceOrder} from '../../top-header';
 import {mobileMenuItemsData} from '../bottom-header-menu-items';
@@ -75,7 +75,8 @@ export default function MobileNav() {
               {mobileMenuItemsData.map((navigation) => (
                 <li
                   key={navigation.id}
-                  className="italic uppercase font-bold text-base text-white hover:text-secondary-500  active:text-secondary-500 [&>svg]:hover:fill-secondary-500"
+                  className="italic uppercase font-bold text-base text-white hover:text-secondary-500  active:text-secondary-500 [&_path]:hover:fill-secondary-500
+               "
                 >
                   {navigation.url ? (
                     <Link
@@ -104,12 +105,14 @@ export default function MobileNav() {
           </div>
 
           {/* user logout starts here */}
-          <Button className="flex gap-[2px] justify-start p-0 hover:bg-transparent">
-            <Signout />
-            <p className="italic uppercase font-bold text-base text-white">
-              Log out
-            </p>
-          </Button>
+          <Form method="post" action="/logout" className="w-full">
+            <Button className="flex gap-[2px] justify-start p-0 hover:bg-transparent">
+              <Signout />
+              <p className="italic uppercase font-bold text-base text-white">
+                Log out
+              </p>
+            </Button>
+          </Form>
         </div>
       </div>
       {/* search bar starts here  */}

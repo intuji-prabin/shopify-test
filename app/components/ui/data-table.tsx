@@ -1,5 +1,5 @@
-import {ColumnDef, Table, flexRender} from '@tanstack/react-table';
-import {LucideArrowDown, LucideArrowUp, LucideArrowUpDown} from 'lucide-react';
+import { ColumnDef, Table, flexRender } from '@tanstack/react-table';
+import { LucideArrowDown, LucideArrowUp, LucideArrowUpDown } from 'lucide-react';
 import {
   Table as TableShadcn,
   TableBody,
@@ -8,14 +8,14 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui/table';
-import {BulkTable} from '~/routes/_app.cart-list/order-my-products/bulk-table';
+import { BulkTable } from '~/routes/_app.cart-list/order-my-products/bulk-table';
 
 type DataTableProps<T> = {
   table: Table<T>;
   columns?: ColumnDef<T>[];
 };
 
-export function DataTable<T>({table, columns}: DataTableProps<T>) {
+export function DataTable<T>({ table, columns }: DataTableProps<T>) {
   return (
     <TableShadcn className="bg-neutral-white">
       <TableHeader>
@@ -88,9 +88,8 @@ export function DataTable<T>({table, columns}: DataTableProps<T>) {
                 </TableRow>
                 {row.getIsExpanded() ? (
                   <TableRow
-                    className={` ${
-                      row.getIsSelected() ? 'bg-primary-200 ' : ''
-                    } hover:bg-primary-200`}
+                    className={` ${row.getIsSelected() ? 'bg-primary-200 ' : ''
+                      } hover:bg-primary-200`}
                   >
                     <TableCell
                       valign="bottom"

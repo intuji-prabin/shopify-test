@@ -1,4 +1,3 @@
-import {Router} from 'lucide-react';
 import {Account} from '~/components/icons/account';
 import {Content} from '~/components/icons/content';
 import {Home} from '~/components/icons/home';
@@ -46,7 +45,7 @@ export const menuItemsData = [
     ],
   },
   {
-    title: 'Product',
+    title: 'Products',
     type: 'megamenu',
     icon: <Product />,
     url: Routes.CATEGORIES,
