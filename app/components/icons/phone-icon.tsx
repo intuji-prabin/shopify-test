@@ -24,11 +24,3 @@ export function PhoneIcon({
     </svg>
   );
 }
-<<<<<<< HEAD
-
-type PhoneImageProps = {image_url: string};
-export function PhoneIconImage({image_url}: PhoneImageProps) {
-  return <img src={image_url} alt="Phone logo" className="aspect-square" />;
-}
-=======
->>>>>>> e01026718dc6194bd02862467c25574ead38c2e7

@@ -46,7 +46,7 @@ export default function ContactUsPage() {
           ))}
         </div>
       ) : (
-        <div className="flex justify-center items-center min-h-[200px]">
+        <div className="flex justify-center items-center min-h-[400px]">
           <h3>No contacts found</h3>
         </div>
       )}
