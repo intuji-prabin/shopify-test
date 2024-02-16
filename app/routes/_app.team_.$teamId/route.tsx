@@ -10,8 +10,6 @@ import {validationError} from 'remix-validated-form';
 import {Button} from '~/components/ui/button';
 import {SelectInputOptions} from '~/components/ui/select-input';
 import {Separator} from '~/components/ui/separator';
-import {useFetch} from '~/hooks/useFetch';
-import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {Routes} from '~/lib/constants/routes.constent';
 import TeamForm, {
   EditTeamFormSchemaValidator,
@@ -27,7 +25,7 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
 import {MetaFunction} from '@shopify/remix-oxygen';
-import {isAuthenticate} from '~/lib/utils/authsession.server';
+import { getCustomerRolePermission } from '~/lib/customer-role/customer-role-permission';
 
 interface Role {
   title: string;
@@ -43,7 +41,7 @@ interface Permission {
 
 interface RolesResponse {
   data: Role[];
-  msg: string;
+  message: string;
   status: boolean;
 }
 
@@ -53,12 +51,11 @@ export const meta: MetaFunction = () => {
 
 export async function loader({params, context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
-
   let customerId = params?.teamId as string;
-
+  console.log("xczxcxz", customerId)
   const customerDetails = await getCustomerById({customerId});
 
-  const roles = (await useFetch({url: ENDPOINT.ROLE.GET})) as RolesResponse;
+  const roles = await getCustomerRolePermission( context ) as RolesResponse;
 
   return json({customerDetails, roles});
 }
