@@ -33,10 +33,10 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({context}: LoaderFunctionArgs) {
+  await isAuthenticate(context);
   try {
     await isAuthenticate(context);
     const roleAndPermissision = await getCustomerRolePermission( context )
-    // const roles = await getRoles();
     const roles = roleAndPermissision
     return json({roles});
   } catch (error) {

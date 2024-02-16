@@ -1,16 +1,16 @@
-import {Link} from '@remix-run/react';
-import {useState} from 'react';
+import { Link } from '@remix-run/react';
+import { useState } from 'react';
 import ArrowForward from '~/components/icons/arrowForward';
-import {Payload} from '~/routes/_app/app.server';
+import { Payload } from '~/routes/_app/app.server';
 
-export const MegaMenu = ({categories}: {categories: Payload[]}) => {
+export const MegaMenu = ({ categories }: { categories: Payload[] }) => {
   //State to store the selected/active menu and submenu IDs
   const [activeMenu, setActiveMenu] = useState<{
     menu: Payload;
     subMenu: Payload;
   }>({
-    menu: {id: 1, title: '', identifier: '', child_categories: []},
-    subMenu: {id: 1, title: '', identifier: '', child_categories: []},
+    menu: { id: 1, title: '', identifier: '', child_categories: [] },
+    subMenu: { id: 1, title: '', identifier: '', child_categories: [] },
   });
   return (
     <>
@@ -23,22 +23,21 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
             {categories?.map((menu: Payload) => (
               <li
                 key={'list' + menu.id}
-                className={`relative italic font-bold text-lg text-grey-900 flex menu-hov justify-between
-              ${
-                activeMenu.menu?.id === menu.id
-                  ? 'bg-primary-100 text-primary-500'
-                  : ''
-              }
+                className={`relative italic font-bold text-lg text-grey-900 flex menu-hov justify-between 
+              ${activeMenu.menu?.id === menu.id
+                    ? 'bg-primary-100 text-primary-500'
+                    : ''
+                  }
             `}
                 onMouseOver={() =>
-                  setActiveMenu((prevMenu) => ({...prevMenu, menu}))
+                  setActiveMenu((prevMenu) => ({ ...prevMenu, menu }))
                 }
               >
-                <span className="flex flex-row-reverse items-center justify-between w-full px-2 py-1 text-lg font-medium rounded menu-hov">
+                <p className="flex flex-row-reverse items-center justify-between w-full px-2 py-1 text-lg font-medium rounded menu-hov">
                   {' '}
-                  <ArrowForward />
-                  {menu.title}
-                </span>
+                  <ArrowForward width={'24px'} height={'24px'} />
+                  <span className="w-[169px]"> {menu.title} </span>
+                </p>
               </li>
             ))}
           </ul>
@@ -53,21 +52,20 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                 <li
                   key={subMenu.id}
                   className={`relative text-grey-900 flex menu-hov font-medium not-italic text-lg items-center
-               ${
-                 activeMenu?.subMenu?.id === subMenu.id
-                   ? 'bg-primary-100 text-primary-500'
-                   : ''
-               }
+               ${activeMenu?.subMenu?.id === subMenu.id
+                      ? 'bg-primary-100 text-primary-500'
+                      : ''
+                    }
               `}
                   onMouseOver={() =>
-                    setActiveMenu((prevMenu) => ({...prevMenu, subMenu}))
+                    setActiveMenu((prevMenu) => ({ ...prevMenu, subMenu }))
                   }
                 >
-                  <span className="flex flex-row-reverse items-center justify-between w-full px-2 py-1 text-lg font-medium rounded menu-hov between">
+                  <p className="flex flex-row-reverse items-center justify-between px-2 py-1 text-lg font-medium rounded menu-hov between">
                     {' '}
-                    <ArrowForward />
-                    {subMenu.title}
-                  </span>
+                    <ArrowForward width={'24px'} height={'24px'} />
+                    <span className="w-[169px]">{subMenu.title} </span>
+                  </p>
                 </li>
               ))}
           </ul>
@@ -86,14 +84,11 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                   key={subMenu.id}
                   className="relative flex items-center text-lg not-italic font-medium text-grey-900 menu-hov"
                 >
-                  <Link
-                    to={`/categories/${subMenu?.identifier}`}
-                    className="w-full"
-                  >
-                    <span className="flex items-center w-full px-2 py-1 text-lg font-medium rounded menu-hov justify- text-grey-900">
+                  <Link to={`/${activeMenu?.menu?.identifier}/${activeMenu?.subMenu?.identifier}/${subMenu?.identifier}`} className="w-full">
+                    <p className="flex items-center px-2 py-1 text-lg font-medium rounded menu-hov justify- text-grey-900 ">
                       {' '}
-                      {subMenu.title}
-                    </span>
+                      <span className="w-[169px]">{subMenu.title}</span>
+                    </p>
                   </Link>
                 </li>
               ))}

@@ -2,17 +2,9 @@ import Enquire from '~/components/icons/enquire';
 import Phone from '~/components/icons/phone';
 import {Link} from '@remix-run/react';
 import {Routes} from '~/lib/constants/routes.constent';
-import {Payload} from '~/routes/_app/app.server';
-import {useState} from 'react';
-import ArrowForward from '~/components/icons/arrowForward';
 
-export default function DesktopFooter({categories}: {categories: Payload[]}) {
-  const [activeMenu, setActiveMenu] = useState<{
-    menu: Payload;
-  }>({
-    menu: {id: 1, title: '', identifier: '', child_categories: []},
-  });
-  console.log('this', categories);
+
+export default function DesktopFooter() {
   const footerNavs = [
     {
       id: 0,
@@ -91,7 +83,7 @@ export default function DesktopFooter({categories}: {categories: Payload[]}) {
         <div className=" flex justify-between py-20 flex-col md:flex-row gap-10 ">
           <div className="flex flex-col gap-10">
             <figure>
-              <img src="footerlogo.png" alt="" />
+              <img src="/footerlogo.png" alt="" />
             </figure>
             <div className="flex flex-col gap-[23px]">
               <div className="flex">
@@ -126,7 +118,7 @@ export default function DesktopFooter({categories}: {categories: Payload[]}) {
                 Products
               </h4>
 
-              <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10 pr-2 ">
+              <ul className="flex flex-col space-y-2 text-white submenu-nav z-10">
                 {products?.map((prod) => (
                   <li key={prod.id}>{prod.title}</li>
                 ))}

@@ -105,7 +105,7 @@ export default function TopHeader() {
       <div className="bg-grey-900">
         <div className="container py-5 flex  gap-3 justify-between ">
           {/* home logo begins here */}
-          <LogoIcon logo_url={'Logo.png'} />
+          <LogoIcon logo_url={'/Logo.png'} />
           {/* Search and notification bar begins here  */}
           <div className="flex gap-[22px]">
             {/* search bar begins here */}
@@ -128,7 +128,7 @@ export default function TopHeader() {
           {/* user profile begins here  */}
           <div className="flex items-center gap-1">
             <figure className="rounded-[50%]">
-              <img src="niel.png" alt="" />
+              <img src="/niel.png" alt="" />
             </figure>
             <DropdownMenu open={isClicked} onOpenChange={setIsClicked}>
               <DropdownMenuTrigger asChild>

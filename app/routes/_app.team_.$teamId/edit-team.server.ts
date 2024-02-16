@@ -75,7 +75,7 @@ export async function editTeam({
   });
 
   if (!results.status) {
-    throw new Error("Couldn't update customer");
+    throw new Error(results.message);
   }
 
   return results;
