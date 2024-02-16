@@ -14,8 +14,8 @@ export async function loader({context}: LoaderFunctionArgs) {
 
 export default function CompanySettings() {
   return (
-    <div className="bg-primary-25 container py-12 ">
-      <h3 className="mb-[42px] text-grey-900">Company Information</h3>
+    <div className="bg-primary-25 container pt-6 ">
+      <h3 className="mb-6 text-grey-900">Company Information</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {settingCards.map((settingCard) => (
           <div
