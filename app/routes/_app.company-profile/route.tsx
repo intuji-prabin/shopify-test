@@ -4,23 +4,23 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
-import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
-import {MetaFunction} from '@shopify/remix-oxygen';
-import {CircleInformationMajor} from '~/components/icons/orderStatus';
-import {Alert, AlertDescription} from '~/components/ui/alert';
-import {Routes} from '~/lib/constants/routes.constent';
-import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
+import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
+import { MetaFunction } from '@shopify/remix-oxygen';
+import { CircleInformationMajor } from '~/components/icons/orderStatus';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { Routes } from '~/lib/constants/routes.constent';
+import { getUserDetails, isAuthenticate } from '~/lib/utils/authsession.server';
 import CompanyProfileDetail from '~/routes/_app.company-profile/company-profile-detail';
 import CompanyInfoHeader from '~/routes/_app.company-profile/company-profile-header';
-import {getAllCompanyProfileDetails} from '~/routes/_app.company-profile/company-profile.server';
+import { getAllCompanyProfileDetails } from '~/routes/_app.company-profile/company-profile.server';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Company Profile'}];
+  return [{ title: 'Company Profile' }];
 };
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({ context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
-  const {userDetails} = await getUserDetails(context);
+  const { userDetails } = await getUserDetails(context);
   const companyId = userDetails.meta.company_id.value;
 
   const response = await getAllCompanyProfileDetails(companyId);
@@ -63,7 +63,7 @@ export function ErrorBoundary() {
     );
   } else if (error instanceof Error) {
     return (
-      <div className="flex justify-center items-center">
+      <div className="flex items-center justify-center">
         <div className="text-center">
           <h1>Opps</h1>
           <p>Something went wrong</p>

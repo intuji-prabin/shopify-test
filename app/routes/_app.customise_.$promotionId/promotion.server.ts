@@ -28,20 +28,23 @@ interface FormDataObject {
 
 export async function createPromotion(
   formData: FormDataObject,
-  companyId: string,
+  bannerId: string,
 ) {
   try {
     const fData = new FormData();
     for (const [key, value] of Object.entries(formData)) {
       fData.append(key, value);
     }
-    fData.append('company_id', companyId);
-    console.log('finalData', fData.get('logo'));
+    fData.append('banner_id', bannerId);
+    console.log('final', fData);
 
-    const results: any = await fetch(`${ENDPOINT.PROMOTION.GET}`, {
-      method: 'POST',
-      body: fData,
-    });
+    const results: any = await fetch(
+      'https://liberia-denver-sa-royal.trycloudflare.com/api/promotion',
+      {
+        method: 'POST',
+        body: fData,
+      },
+    );
 
     if (!results.status) {
       throw new Response(results.message, {
