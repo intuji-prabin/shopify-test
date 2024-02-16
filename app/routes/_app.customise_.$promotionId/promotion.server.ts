@@ -9,14 +9,16 @@ export async function getPromotionById(promotionId: string) {
       url: `${ENDPOINT.PROMOTION.GET}/${promotionId}`,
     });
 
-    if (!results) {
-      throw new Response('Oh no! Something went wrong!', {
+    if (!results.status) {
+      throw new Response(results.message, {
         status: 404,
       });
     }
     return results;
   } catch (error) {
-    return {promotions: {}};
+    throw new Error(
+      'Oops! Something went wrong. Please hold tight and try again in a little while. Thank you for your understanding.',
+    );
   }
 }
 
@@ -34,20 +36,22 @@ export async function createPromotion(
       fData.append(key, value);
     }
     fData.append('company_id', companyId);
-    // // const body = fData
-    const results = await fetch(`${ENDPOINT.PROMOTION.GET}`, {
+    console.log('finalData', fData.get('logo'));
+
+    const results: any = await fetch(`${ENDPOINT.PROMOTION.GET}`, {
       method: 'POST',
       body: fData,
     });
 
-    if (!results) {
-      throw new Response('Oh no! Something went wrong!', {
+    if (!results.status) {
+      throw new Response(results.message, {
         status: 404,
       });
     }
     return results;
   } catch (error) {
-    console.log('errr', error);
-    return {};
+    throw new Error(
+      'Oops! Something went wrong. Please hold tight and try again in a little while. Thank you for your understanding.',
+    );
   }
 }
