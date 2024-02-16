@@ -9,14 +9,16 @@ export async function getPromotionById(promotionId: string) {
       url: `${ENDPOINT.PROMOTION.GET}/${promotionId}`,
     });
 
-    if (!results) {
-      throw new Response('Oh no! Something went wrong!', {
+    if (!results.status) {
+      throw new Response(results.message, {
         status: 404,
       });
     }
     return results;
   } catch (error) {
-    return {promotions: {}};
+    throw new Error(
+      'Oops! Something went wrong. Please hold tight and try again in a little while. Thank you for your understanding.',
+    );
   }
 }
 
@@ -26,31 +28,33 @@ interface FormDataObject {
 
 export async function createPromotion(
   formData: FormDataObject,
-  companyId: string,
+  bannerId: string,
 ) {
   try {
     const fData = new FormData();
     for (const [key, value] of Object.entries(formData)) {
       fData.append(key, value);
     }
-    fData.append('company_id', companyId);
-    // // const body = fData
-    const results = await fetch(
-      'https://copies-neighborhood-relax-ip.trycloudflare.com/api/promotion',
+    fData.append('banner_id', bannerId);
+    console.log('final', fData);
+
+    const results: any = await fetch(
+      'https://liberia-denver-sa-royal.trycloudflare.com/api/promotion',
       {
         method: 'POST',
         body: fData,
       },
     );
 
-    if (!results) {
-      throw new Response('Oh no! Something went wrong!', {
+    if (!results.status) {
+      throw new Response(results.message, {
         status: 404,
       });
     }
     return results;
   } catch (error) {
-    console.log('errr', error);
-    return {};
+    throw new Error(
+      'Oops! Something went wrong. Please hold tight and try again in a little while. Thank you for your understanding.',
+    );
   }
 }
