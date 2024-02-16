@@ -39,11 +39,11 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
           className={`transition-opacity megamenu-content p-3  text-black shadow-xl absolute bg-white top-8 -left-8  flex flex-row z-50`}
         >
           {/* Level 1 Menus Begin Here */}
-          <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10 pr-2 ">
+          <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10 pr-2 max-h-[334px]">
             {categories?.map((menu: Payload) => (
               <li
                 key={'list' + menu.id}
-                className={`relative italic font-bold text-lg text-grey-900 flex menu-hov justify-between 
+                className={`relative  flex menu-hov justify-between 
               ${
                 activeMenu.menu?.id === menu.id
                   ? 'bg-primary-100 text-primary-500'
@@ -54,10 +54,13 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                   setActiveMenu((prevMenu) => ({...prevMenu, menu}))
                 }
               >
-                <p className="flex flex-row-reverse items-center justify-between w-full px-2 py-1 text-lg font-medium rounded menu-hov">
+                <p className="flex flex-row-reverse items-center justify-between w-full px-2 py-1 text-lg rounded menu-hov">
                   {' '}
                   <ArrowForward width={'24px'} height={'24px'} />
-                  <span className="w-[169px]"> {menu.title} </span>
+                  <span className="w-[169px] italic font-bold text-2xl text-grey-900">
+                    {' '}
+                    {menu.title}{' '}
+                  </span>
                 </p>
               </li>
             ))}
@@ -65,7 +68,7 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
           {/* Level 1 Menus End Here */}
 
           {/* Level 2 Menus Begin Here */}
-          <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] border border-x-2 border-[#F5F5F5] px-2 border-y-0  max-h-[280px] overflow-y-auto">
+          <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] border border-x-2 border-[#F5F5F5] px-2 border-y-0  max-h-[334px] overflow-y-auto">
             {/* Finding the currently active Level 1 Menu and displaying only its items */}
             {categories
               ?.find((menu: Payload) => menu?.id === activeMenu?.menu.id)
@@ -83,10 +86,12 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                     setActiveMenu((prevMenu) => ({...prevMenu, subMenu}))
                   }
                 >
-                  <p className="flex flex-row-reverse items-center justify-between px-2 py-1 text-lg font-medium rounded menu-hov between">
+                  <p className="flex flex-row-reverse items-center justify-between px-2 py-1  rounded menu-hov between">
                     {' '}
                     <ArrowForward width={'24px'} height={'24px'} />
-                    <span className="w-[169px]">{subMenu.title} </span>
+                    <span className="w-[169px] text-lg font-medium text-grey-900">
+                      {subMenu.title}{' '}
+                    </span>
                   </p>
                 </li>
               ))}
@@ -110,9 +115,11 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                     to={`/${activeMenu?.menu?.identifier}/${activeMenu?.subMenu?.identifier}/${subMenu?.identifier}`}
                     className="w-full"
                   >
-                    <p className="flex items-center px-2 py-1 text-lg font-medium rounded menu-hov justify- text-grey-900 ">
+                    <p className="flex items-center px-2 py-1  rounded menu-hov justify-  ">
                       {' '}
-                      <span className="w-[169px]">{subMenu.title}</span>
+                      <span className="w-[169px] text-grey-900 text-lg font-medium">
+                        {subMenu.title}
+                      </span>
                     </p>
                   </Link>
                 </li>
