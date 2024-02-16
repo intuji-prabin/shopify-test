@@ -7,7 +7,7 @@ export function PcIcon() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_8168_86573)">
+      <g clip-path="url(#clip0_8251_86752)">
         <path
           fill-rule="evenodd"
           clip-rule="evenodd"
@@ -58,7 +58,7 @@ export function PcIcon() {
         />
       </g>
       <defs>
-        <clipPath id="clip0_8168_86573">
+        <clipPath id="clip0_8251_86752">
           <rect width="24" height="24" fill="white" />
         </clipPath>
       </defs>
