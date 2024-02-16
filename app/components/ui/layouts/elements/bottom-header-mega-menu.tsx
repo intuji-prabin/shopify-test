@@ -51,7 +51,18 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
               }
             `}
                 onMouseOver={() =>
-                  setActiveMenu((prevMenu) => ({...prevMenu, menu}))
+                  setActiveMenu((prevMenu) => ({
+                    ...prevMenu,
+                    menu,
+                    subMenu: {
+                      id: menu.child_categories?.at(0)?.id ?? '',
+                      identifier:
+                        menu?.child_categories?.at(0)?.identifier ?? '',
+                      title: menu?.child_categories?.at(0)?.title ?? '',
+                      child_categories:
+                        menu?.child_categories?.at(0)?.child_categories ?? [],
+                    },
+                  }))
                 }
               >
                 <p className="flex flex-row-reverse items-center justify-between w-full px-2 py-1 text-lg rounded menu-hov">
