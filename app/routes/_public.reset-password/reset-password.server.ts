@@ -14,7 +14,7 @@ export async function changePassword({
   resetToken,
 }: ChangePasswordParams) {
   const {storefront} = context;
-  return await storefront.mutate(RESET_PASSWORD_MUTATION, {
+  const passwordResetReponse = await storefront.mutate(RESET_PASSWORD_MUTATION, {
     variables: {
       id: `gid://shopify/Customer/${customerId}`,
       input: {
@@ -23,6 +23,12 @@ export async function changePassword({
       },
     },
   });
+  const responseError =  passwordResetReponse?.customerReset?.customerUserErrors as any
+  if( responseError.length > 0 ) {
+      throw new Error( responseError[0]?.message )
+  }
+
+  return passwordResetReponse
 }
 
 const RESET_PASSWORD_MUTATION = `#graphql 
@@ -32,7 +38,7 @@ mutation customerReset($id: ID!, $input: CustomerResetInput!) {
         displayName
       }
       customerAccessToken {
-       accessToken
+        accessToken
       }
       customerUserErrors {
         field
