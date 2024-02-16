@@ -31,21 +31,21 @@ export function ContactUsCard({
         <figcaption>
           <ul>
             <li className="flex items-center space-x-4">
-              <p className="flex items-center w-24 text-lg leading-5.5">
-                <PhoneIcon />
+              <p className="flex items-center w-24 text-lg leading-5.5 gap-1">
+                <PhoneIcon width="24px" height="24px" />
                 Phone
               </p>
               <p className="text-lg leading-5.5 font-medium">{phone ?? '-'}</p>
             </li>
             <li className="flex items-center space-x-4">
-              <p className="flex items-center w-24 text-lg leading-5.5">
+              <p className="flex items-center w-24 text-lg leading-5.5 gap-1">
                 <LargeMailIcon />
                 Email
               </p>
               <p className="text-lg leading-5.5 font-medium">{email ?? '-'}</p>
             </li>
             <li className="flex items-center space-x-4">
-              <p className="flex items-center w-24 text-lg leading-5.5">
+              <p className="flex items-center w-24 text-lg leading-5.5 gap-1">
                 <BuildingIcon />
                 Department
               </p>

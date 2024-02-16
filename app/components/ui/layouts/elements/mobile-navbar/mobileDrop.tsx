@@ -48,7 +48,10 @@ export function AccountDropDownMobile() {
               {' '}
               {accounts.map((account) => {
                 return (
-                  <li className="flex flex-row items-center justify-center gap-1 p-3 text-lg italic font-bold text-white menu-items group ">
+                  <li
+                    className="flex flex-row items-center justify-center gap-1 p-3 text-lg italic font-bold text-white menu-items group "
+                    key={account.title}
+                  >
                     <Link
                       to={account.url}
                       className="relative flex items-center gap-1 menu-links 
@@ -71,6 +74,7 @@ export function AccountDropDownMobile() {
 export function ContentDropdownMobile() {
   const contentManagement = [
     {
+      id: 1,
       title: 'Promotions',
       url: Routes.PROMOTIONS,
       icon: <Promotions fill="#fff" />,
@@ -90,9 +94,9 @@ export function ContentDropdownMobile() {
         </AccordionTrigger>
         <AccordionContent>
           <ul>
-            {contentManagement.map((account, index) => (
+            {contentManagement.map((account) => (
               <li
-                key={index}
+                key={account.id}
                 className="flex flex-row items-center justify-center gap-1 p-3 text-lg italic font-bold text-white menu-items group"
               >
                 <Link
