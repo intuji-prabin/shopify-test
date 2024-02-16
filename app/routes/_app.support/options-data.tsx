@@ -27,7 +27,7 @@ export const OptionsCardData: OptionsCardType[] = [
     link: Routes.SUPPORT_TICKETS,
   },
   {
-    icon: <PhoneIcon />,
+    icon: <PhoneIcon width="24px" height="24px" />,
     title: 'Contact Us',
     description: 'Find the list of contact details.',
     link: Routes.SUPPORT_CONTACT_US,

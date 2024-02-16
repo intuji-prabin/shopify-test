@@ -19,17 +19,21 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({context}: LoaderFunctionArgs) {
-  await isAuthenticate(context);
-  const {userDetails} = await getUserDetails(context);
-  const metaParentValue = userDetails.meta.parent.value;
-  const customerId =
-    metaParentValue === 'null' ? userDetails.id : metaParentValue;
+  try {
+    await isAuthenticate(context);
+    const {userDetails} = await getUserDetails(context);
+    const metaParentValue = userDetails.meta.parent.value;
+    const customerId =
+      metaParentValue === 'null' ? userDetails.id : metaParentValue;
 
-  const response = await getAllCompanyShippingAddresses(customerId);
-  if (response) {
-    return json(response);
+    const response = await getAllCompanyShippingAddresses(customerId);
+    if (response) {
+      return json(response);
+    }
+    return null;
+  } catch (error) {
+    throw new Error('something went wrong');
   }
-  return null;
 }
 
 export default function ShippingAddressMgmt() {
