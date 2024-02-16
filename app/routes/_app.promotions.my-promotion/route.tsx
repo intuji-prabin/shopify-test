@@ -30,15 +30,15 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
+import {MetaFunction} from '@shopify/remix-oxygen';
+import {
+  PAGE_LIMIT,
+  filterOptions,
+} from '~/routes/_app.promotions/promotion-constants';
 
-const PAGE_LIMIT = 9;
-
-const filterOptions = [
-  {label: 'Newest To Oldest', value: 'new_to_old'},
-  {label: 'Oldest To Newest', value: 'old_to_new'},
-  {label: 'Valid', value: 'valid'},
-  {label: 'Expired', value: 'expired'},
-];
+export const meta: MetaFunction = () => {
+  return [{title: 'My Promotion'}];
+};
 
 export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -151,36 +151,36 @@ export default function MyPromotionsPage() {
     setCheckedCount((prevCount) => (isChecked ? prevCount + 1 : prevCount - 1));
   };
   const [searchParams] = useSearchParams();
-  useEffect(() => {
-    const promos = searchParams.get('checkedPromos');
-    if (
-      // promos?.split(',')?.length === 0 ||
-      !actionData ||
-      !actionData
-    ) {
-      return;
-    }
-    const url = window.URL.createObjectURL(
-      new Blob([actionData as Blob], {type: 'application/octet-stream'}),
-    );
-    // const url = window.URL.createObjectURL(
-    //   new Blob(['This is a dummy blob!'], {type: 'text/plain'}),
-    // );
+  // useEffect(() => {
+  //   const promos = searchParams.get('checkedPromos');
+  //   if (
+  //     // promos?.split(',')?.length === 0 ||
+  //     !actionData ||
+  //     !actionData
+  //   ) {
+  //     return;
+  //   }
+  //   const url = window.URL.createObjectURL(
+  //     new Blob([actionData as Blob], {type: 'application/octet-stream'}),
+  //   );
+  //   // const url = window.URL.createObjectURL(
+  //   //   new Blob(['This is a dummy blob!'], {type: 'text/plain'}),
+  //   // );
 
-    console.log('DATA', actionData);
+  //   console.log('DATA', actionData);
 
-    // Create a temporary <a> element to trigger download
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'qwe.png');
-    document.body.appendChild(link);
-    link.click();
-    // Clean up
-    () => {
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(link);
-    };
-  }, [actionData]);
+  //   // Create a temporary <a> element to trigger download
+  //   const link = document.createElement('a');
+  //   link.href = url;
+  //   link.setAttribute('download', 'qwe.png');
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   // Clean up
+  //   () => {
+  //     window.URL.revokeObjectURL(url);
+  //     document.body.removeChild(link);
+  //   };
+  // }, [actionData]);
 
   return (
     <div className="pt-10 sm:pt-0">

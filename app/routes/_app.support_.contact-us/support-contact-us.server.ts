@@ -1,4 +1,19 @@
-export async function getSupportContact({context}: {context: any}) {
+import {AppLoadContext} from '@shopify/remix-oxygen';
+
+export type ContactUsDataType = {
+  service: string;
+  imageUrl: string;
+  name: string;
+  phone: string;
+  email: string;
+  department: string;
+};
+
+export async function getSupportContact({
+  context,
+}: {
+  context: AppLoadContext;
+}): Promise<ContactUsDataType[]> {
   const {storefront} = context;
   try {
     const response = await storefront.query(SUPPORT_CONTACT_DATA_QUERY);

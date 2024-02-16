@@ -1,8 +1,13 @@
-import {Form, NavLink, Outlet, useSubmit} from '@remix-run/react';
+import {NavLink, Outlet} from '@remix-run/react';
 import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
 import {isAuthenticate} from '~/lib/utils/authsession.server';
 import {Separator} from '~/components/ui/separator';
 import PromotionHeader from '~/routes/_app.promotions/promotion-header';
+import {MetaFunction} from '@shopify/remix-oxygen';
+
+export const meta: MetaFunction = () => {
+  return [{title: 'Promotions'}];
+};
 
 export async function loader({context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
