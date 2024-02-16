@@ -38,7 +38,6 @@ export async function loader({context}: LoaderFunctionArgs) {
     const roleAndPermissision = await getCustomerRolePermission( context )
     // const roles = await getRoles();
     const roles = roleAndPermissision
-    console.log("fsdfsdfd", roleAndPermissision )
     return json({roles});
   } catch (error) {
     return json({roles: {} as RolesResponse});
@@ -111,7 +110,7 @@ export default function AddTeam() {
           </BreadcrumbItem>
         </Breadcrumb>
       </div>
-      <TeamForm options={roles.data as SelectInputOptions[]} />
+      <TeamForm options={roles?.data as SelectInputOptions[]} />
     </section>
   );
 }

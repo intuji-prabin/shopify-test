@@ -30,7 +30,7 @@ const formateRolesAndPermission = async ( response : any ) => {
         return {
             title : role,
             value : role.toLowerCase(),
-            permission : formatingPermission( permission )
+            permissions : formatingPermission( permission )
         }
     })
     return rolePermission
