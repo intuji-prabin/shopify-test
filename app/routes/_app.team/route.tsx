@@ -4,7 +4,6 @@ import {BackButton} from '~/components/ui/back-button';
 import {Button} from '~/components/ui/button';
 import {SearchInput} from '~/components/ui/search-input';
 import {Routes} from '~/lib/constants/routes.constent';
-import {Separator} from '~/components/ui/separator';
 import {TabsTable} from '~/routes/_app.team/tabs-table';
 import {getRoles} from '~/routes/_app.team_.add/add-team.server';
 import {getAllTeams, updateStatus} from '~/routes/_app.team/team.server';
@@ -15,7 +14,6 @@ import {
   Link,
   isRouteErrorResponse,
   useLoaderData,
-  useRevalidator,
   useRouteError,
 } from '@remix-run/react';
 import {
@@ -58,7 +56,7 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 
     return json({teams, roles, currentUser});
   } catch (error) {
-    return json({teams: [], roles: [], currentUser});
+    throw new Error('something went wrong');
   }
 }
 
@@ -210,7 +208,7 @@ export function ErrorBoundary() {
       <div className="flex justify-center items-center">
         <div className="text-center">
           <h1>Opps</h1>
-          <p>Something went wrong</p>
+          <p>{error.message}</p>
         </div>
       </div>
     );

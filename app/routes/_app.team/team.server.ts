@@ -38,8 +38,14 @@ export async function getAllTeams({
     }`,
   });
 
-  if (!results.status) {
+  if (results.payload.length < 0) {
     throw new Error(results.message);
+  }
+
+  if (!results.status) {
+    throw new Response('Oh no! Something went wrong!', {
+      status: 404,
+    });
   }
 
   return results.payload;
@@ -64,6 +70,8 @@ export async function updateStatus({
   });
 
   if (!results.status) {
-    throw new Error(results.message);
+    throw new Response('Oh no! Something went wrong!', {
+      status: 404,
+    });
   }
 }
