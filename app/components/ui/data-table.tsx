@@ -72,6 +72,7 @@ export function DataTable<T>({table, columns}: DataTableProps<T>) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  className=" hover:bg-primary-200 data-[state=selected]:bg-primary-200"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
@@ -85,14 +86,31 @@ export function DataTable<T>({table, columns}: DataTableProps<T>) {
                     </TableCell>
                   ))}
                 </TableRow>
-                {/* <TableRow>
-                  <TableCell
-                    className="text-grey-900 text-lg leading-5.5 items-end"
-                    colSpan={5}
+                {row.getIsExpanded() ? (
+                  <TableRow
+                    className={` ${
+                      row.getIsSelected() ? 'bg-primary-200 ' : ''
+                    } hover:bg-primary-200`}
                   >
-                    <BulkTable quantity={'Quantity'} price={'Price'} />
-                  </TableCell>
-                </TableRow> */}
+                    <TableCell
+                      valign="bottom"
+                      colSpan={2}
+                      className="align-bottom"
+                    >
+                      <div>
+                        <h3 className="capitalize">bulk prices</h3>
+                        <p>
+                          Explore the pricing options today! We're here to help
+                          you find the perfect fit for your business and
+                          maximize your savings
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell colSpan={3}>
+                      <BulkTable quantity={'Quantity'} price={'Price'} />
+                    </TableCell>
+                  </TableRow>
+                ) : undefined}
               </>
             ))
           ) : (

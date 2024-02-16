@@ -19,11 +19,11 @@ export function ContactUsCard({
       </h4>
       <figure className="p-6 bg-neutral-white">
         <div className="flex items-center space-x-2 mb-4">
-          <div className="h-14 w-14 rounded-full">
+          <div className="h-14 w-14">
             <img
               src={imageUrl ?? DEFAULT_IMAGE.DEFAULT}
               alt="image-url"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-[50%]"
             />
           </div>
           <h4>{name}</h4>

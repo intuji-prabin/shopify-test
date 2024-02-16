@@ -45,13 +45,6 @@ export function BulkTable({
 }) {
   return (
     <div className="flex space-x-6 w-full">
-      <div>
-        <h3 className="capitalize">bulk prices</h3>
-        <p>
-          Explore the pricing options today! We're here to help you find the
-          perfect fit for your business and maximize your savings
-        </p>
-      </div>
       <Table className="min-w-[266px] border-[1px] border-grey-50 h-full transition-all duration-700 ease-in-out delay-200">
         <TableHeader>
           <TableRow className="bg-secondary-500 hover:bg-secondary-500">
