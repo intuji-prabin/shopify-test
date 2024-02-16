@@ -16,9 +16,14 @@ html {
 
 body {
   font-family: 'Barlow Condensed';
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   @apply bg-primary-25;
 }
-
+footer {
+  margin-top: auto;
+}
 section {
   @apply mt-6;
 }

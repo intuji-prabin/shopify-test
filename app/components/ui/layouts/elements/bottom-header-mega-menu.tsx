@@ -39,7 +39,7 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
           className={`transition-opacity megamenu-content p-3  text-black shadow-xl absolute bg-white top-8 -left-8  flex flex-row z-50`}
         >
           {/* Level 1 Menus Begin Here */}
-          <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10 pr-2 max-h-[334px]">
+          <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10 pr-2 max-h-[330px]">
             {categories?.map((menu: Payload) => (
               <li
                 key={'list' + menu.id}
@@ -79,7 +79,7 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
           {/* Level 1 Menus End Here */}
 
           {/* Level 2 Menus Begin Here */}
-          <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] border border-x-2 border-[#F5F5F5] px-2 border-y-0  max-h-[334px] overflow-y-auto">
+          <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] border border-x-2 border-[#F5F5F5] px-2 border-y-0  max-h-[330px] overflow-y-auto">
             {/* Finding the currently active Level 1 Menu and displaying only its items */}
             {categories
               ?.find((menu: Payload) => menu?.id === activeMenu?.menu.id)
@@ -110,7 +110,7 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
           {/* Level 2 Menus End Here */}
 
           {/* Level 3 i.e Final Level Menus Begin Here */}
-          <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] px-2 max-h-[280px] overflow-y-auto">
+          <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] px-2 max-h-[330px] overflow-y-auto">
             {/* Finding the currently active Level 1 Menu & Level 2 Sub Menu and displaying only its items */}
             {categories
               ?.find((menu: Payload) => menu?.id === activeMenu?.menu?.id)

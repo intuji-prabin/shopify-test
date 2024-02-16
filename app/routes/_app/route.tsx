@@ -66,9 +66,9 @@ const Layout = ({
       ) : (
         <MobileNav />
       )}
+      <div className="mb-12">{children}</div>
 
-      {children}
-      <footer className="mt-12">
+      <footer>
         <DesktopFooter />
       </footer>
     </>
