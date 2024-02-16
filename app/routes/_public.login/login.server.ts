@@ -45,7 +45,7 @@ export async function getCustomerByEmail({email}: {email: string}) {
     method: AllowedHTTPMethods.GET,
     url: `${ENDPOINT.CUSTOMER.GET}?email=${email}`,
   });
-
+  
   if (!customerResponse.status) {
     throw new Error(customerResponse.message);
   }
@@ -54,21 +54,29 @@ export async function getCustomerByEmail({email}: {email: string}) {
 }
 
 export async function verifyLogin({email, password, context}: LoginParams) {
-  const {storefront} = context;
+  try{
+    const {storefront} = context;
+    const {customerAccessTokenCreate} = await storefront.mutate(LOGIN_MUTATION, {
+      variables: {
+        input: {email, password},
+      },
+    });
 
-  const {customerAccessTokenCreate} = await storefront.mutate(LOGIN_MUTATION, {
-    variables: {
-      input: {email, password},
-    },
-  });
-
-  if (!customerAccessTokenCreate?.customerAccessToken?.accessToken) {
-    throw new Error(customerAccessTokenCreate?.customerUserErrors[0].message);
+    if (!customerAccessTokenCreate?.customerAccessToken?.accessToken) {
+      throw new Error(customerAccessTokenCreate?.customerUserErrors[0].message);
+    }
+  
+    const {customerAccessToken} = customerAccessTokenCreate;
+  
+    return customerAccessToken;
+  } catch( error ) {
+    if( error instanceof Error ) {
+      if( error?.message == "Unidentified customer" ) {
+        throw new Error("Email and password invalid")
+      }
+    }
+    throw new Error("Oops! Something went wrong. Please hold tight and try again in a little while. Thank you for your understanding.")
   }
-
-  const {customerAccessToken} = customerAccessTokenCreate;
-
-  return customerAccessToken;
 }
 
 const LOGIN_MUTATION = `#graphql

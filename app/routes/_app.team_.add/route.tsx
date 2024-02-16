@@ -32,8 +32,8 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({context}: LoaderFunctionArgs) {
+  await isAuthenticate(context);
   try {
-    await isAuthenticate(context);
     const roles = await getRoles();
     return json({roles});
   } catch (error) {
