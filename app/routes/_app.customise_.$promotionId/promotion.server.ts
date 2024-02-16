@@ -20,33 +20,28 @@ export async function getPromotionById(promotionId: string) {
   }
 }
 
-export async function createPromotion({formData}: any) {
+interface FormDataObject {
+  [key: string]: string | Blob;
+}
+
+export async function createPromotion(
+  formData: FormDataObject,
+  companyId: string,
+) {
   try {
-    console.log('hi');
-    // const body = {
-    //   company_name: 'Kumari pvt ltd',
-    //   company_id: 'abc12345',
-    //   company_email: 'hgjghj',
-    //   company_domain: 'ghdh',
-    //   company_fax: '45464',
-    //   color: 'ghfgh',
-    //   background_color: 'fghdfg',
-    //   image: new Blob(['dummy image file'], {type: 'image/jpeg'}),
-    //   logo: new Blob(['dummy image file'], {type: 'image/jpeg'}),
-    // };
-    // const fData = new FormData();
-    // for (const [key, value] of Object.entries(data)) {
-    //   fData.append(key, value);
-    // }
-    // console.log('sal', fData);
-
-    // const body = fData;
-
-    const results = await fetch(ENDPOINT.PROMOTION.GET, {
-      method: 'POST',
-      body: formData,
-    });
-    console.log('finaltest', results);
+    const fData = new FormData();
+    for (const [key, value] of Object.entries(formData)) {
+      fData.append(key, value);
+    }
+    fData.append('company_id', companyId);
+    // // const body = fData
+    const results = await fetch(
+      'https://copies-neighborhood-relax-ip.trycloudflare.com/api/promotion',
+      {
+        method: 'POST',
+        body: fData,
+      },
+    );
 
     if (!results) {
       throw new Response('Oh no! Something went wrong!', {

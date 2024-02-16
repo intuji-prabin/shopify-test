@@ -18,7 +18,7 @@ export function SearchInput() {
           type="search"
           name="search"
           placeholder="Search"
-          className="w-full"
+          className="w-full !border-grey-100"
           defaultValue={searchParams.get('search') || ''}
         />
         <span className="absolute right-0 inset-y-0 p-2.5 pt-1.5 bg-primary-500">

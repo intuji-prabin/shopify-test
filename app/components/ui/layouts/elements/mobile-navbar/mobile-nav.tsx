@@ -20,7 +20,7 @@ export default function MobileNav() {
     <>
       <div ref={mobileNavSectionRef}>
         <div className="bg-grey-900 px-4 py-6 flex justify-between items-center relative">
-          <LogoIcon logo_url={'Logo.png'} />
+          <LogoIcon logo_url={'/Logo.png'} />
           <div className="flex gap-2 items-center">
             <Button
               className="border border-[#313535] p-2 bg-transparent max-w-10 max-h-10 hover:bg-transparent"
@@ -53,7 +53,7 @@ export default function MobileNav() {
               {/* user profile starts here */}
               <div className="flex gap-2 ">
                 <figure>
-                  <img src="niel.png" alt="" />
+                  <img src="/niel.png" alt="" />
                 </figure>
                 <div className="flex justify-between w-full items-center">
                   <p className="text-lg font-normal text-white">

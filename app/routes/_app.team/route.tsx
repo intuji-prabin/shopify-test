@@ -155,7 +155,7 @@ export default function TeamPage() {
 
   return (
     <section className="container">
-      <div className="flex items-center justify-between pt-6 pb-4 ">
+      <div className="flex items-center justify-between py-6 ">
         <BackButton title="My Team" />
         <Link to={Routes.TEAM_ADD}>
           <Button type="button" variant="primary">
@@ -163,7 +163,6 @@ export default function TeamPage() {
           </Button>
         </Link>
       </div>
-      <Separator className="mb-6" />
       <div className="flex items-center justify-between p-6 bg-neutral-white">
         <div className="w-[451px]">
           <SearchInput />

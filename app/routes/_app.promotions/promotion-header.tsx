@@ -3,7 +3,7 @@ import {Routes} from '~/lib/constants/routes.constent';
 
 const PromotionHeader = () => {
   return (
-    <div className="">
+    <div className="pb-11 sm:pb-0">
       <h3>Promotions</h3>
       <Breadcrumb>
         <BreadcrumbItem>Content Management</BreadcrumbItem>

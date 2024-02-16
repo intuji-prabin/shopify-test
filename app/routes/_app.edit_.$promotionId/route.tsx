@@ -11,32 +11,32 @@ import {
   LoaderFunctionArgs,
   json,
 } from '@remix-run/server-runtime';
-import {withZod} from '@remix-validated-form/with-zod';
+import { withZod } from '@remix-validated-form/with-zod';
 import html2canvas from 'html2canvas';
-import {useRef, useState} from 'react';
-import {ValidatedForm, validationError} from 'remix-validated-form';
-import {z} from 'zod';
-import {zfd} from 'zod-form-data';
-import {ExportUp} from '~/components/icons/export';
-import {FullScreen} from '~/components/icons/full-screen';
+import { useRef, useState } from 'react';
+import { ValidatedForm, validationError } from 'remix-validated-form';
+import { z } from 'zod';
+import { zfd } from 'zod-form-data';
+import { ExportUp } from '~/components/icons/export';
+import { FullScreen } from '~/components/icons/full-screen';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import {BackButton} from '~/components/ui/back-button';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {Button} from '~/components/ui/button';
+import { BackButton } from '~/components/ui/back-button';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { Button } from '~/components/ui/button';
 import ColorPicker from '~/components/ui/color-picker';
-import {Dialog, DialogContent, DialogTrigger} from '~/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import ImageEdit from '~/components/ui/imageEdit';
 import Loader from '~/components/ui/loader';
-import {Separator} from '~/components/ui/separator';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import { Separator } from '~/components/ui/separator';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 import {
   getMessageSession,
   messageCommitSession,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
-import {isAuthenticate} from '~/lib/utils/authsession.server';
-import {createPromotion, getPromotionById} from './edit-promotion.server';
+import { isAuthenticate } from '~/lib/utils/authsession.server';
+import { createPromotiontest, getPromotionById } from './edit-promotion.server';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -78,19 +78,19 @@ export type EditFormType = z.infer<typeof EditFormValidator>;
 
 export type EditFormFieldNameType = keyof EditFormType;
 
-export async function action({request}: ActionFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const messageSession = await getMessageSession(request);
   const data = await request.formData();
 
   let formData = Object.fromEntries(data);
-  formData = {...formData};
-  console.log('qwe', {formData});
+  formData = { ...formData };
+  console.log('qwe', { formData });
   const _action = formData.action;
 
   // switch (_action) {
   //   case "Customise": {
   console.log('customise');
-  await createPromotion(formData);
+  await createPromotiontest(formData);
   setSuccessMessage(messageSession, 'New Banner Added Successfully');
 
   return json(
@@ -109,20 +109,20 @@ export async function action({request}: ActionFunctionArgs) {
   // }
 }
 
-export async function loader({params, context}: LoaderFunctionArgs) {
+export async function loader({ params, context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
   const promotionId = params?.promotionId as string;
   const response = await getPromotionById(promotionId);
   if (response?.payload) {
     const results = response?.payload;
-    return json({results});
+    return json({ results });
   }
-  return {response: {}};
+  return { response: {} };
 }
 
-const PromotionEdit = ({defaultValues}: EditFormProps) => {
-  const {results} = useLoaderData<any>();
+const PromotionEdit = ({ defaultValues }: EditFormProps) => {
+  const { results } = useLoaderData<any>();
 
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -253,9 +253,8 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
             type="button"
             size="small"
             variant="ghost"
-            className={`border-primary-500 hover:bg-inherit ${
-              loading && 'pointer-events-none'
-            }`}
+            className={`border-primary-500 hover:bg-inherit ${loading && 'pointer-events-none'
+              }`}
             onClick={() => printDocument(canvasRef.current)}
           >
             {loading ? <Loader /> : <ExportUp />}Export
@@ -291,9 +290,8 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
                   style={{
                     width: renderedImageWidth && renderedImageWidth + 50,
                   }}
-                  className={`max-w-4xl ${
-                    !image && 'flex items-center justify-center'
-                  }`}
+                  className={`max-w-4xl ${!image && 'flex items-center justify-center'
+                    }`}
                 >
                   {image && renderedImageWidth ? (
                     <img

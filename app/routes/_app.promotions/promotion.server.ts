@@ -20,17 +20,28 @@ export interface Promotion {
 }
 
 export async function getPromotions({
-  companyId,
   custom = false,
+  companyId,
+  filterBy,
   pageNumber,
 }: {
   companyId: string;
+  filterBy?: string | null;
   custom?: boolean;
   pageNumber?: number;
 }) {
-  const url =
-    `${ENDPOINT.PROMOTION.GET}?page=${pageNumber}&company_id=${companyId}` +
-    (custom ? '&custom_promotion=true' : '');
+  let url = `${ENDPOINT.PROMOTION.GET}?`;
+
+  if (companyId) {
+    url += `&company_id=${companyId}`;
+  }
+
+  if (filterBy) {
+    url += `&filter_by=${filterBy}`;
+  }
+  if (custom) {
+    url += '&custom_promotion=true';
+  }
 
   const response = await useFetch<PromotionsResponse>({
     method: AllowedHTTPMethods.GET,

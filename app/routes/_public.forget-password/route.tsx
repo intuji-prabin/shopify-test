@@ -1,8 +1,9 @@
 import {Link, useActionData} from '@remix-run/react';
-import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
+import {ActionFunctionArgs, LoaderFunctionArgs, json, redirect} from '@remix-run/server-runtime';
 import {validationError} from 'remix-validated-form';
 import {ArrowLeftSmall} from '~/components/icons/arrowleft';
 import {Alert, AlertDescription} from '~/components/ui/alert';
+import { getAccessToken } from '~/lib/utils/authsession.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -19,7 +20,16 @@ type ActionResponse = {
   email: string | null;
 };
 
+export const loader = async ( { context } : LoaderFunctionArgs ) => {
+  const accessToken = await getAccessToken(context);
+  if( accessToken ) {
+    return redirect('/');
+  }
+  return json({})
+}
+
 export const action = async ({request, context}: ActionFunctionArgs) => {
+
   const messageSession = await getMessageSession(request);
   try {
     const result = await ForgetPassFormFieldValidator.validate(
