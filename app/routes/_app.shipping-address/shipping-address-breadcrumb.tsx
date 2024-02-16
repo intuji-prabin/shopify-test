@@ -1,11 +1,11 @@
-import { BackButton } from '~/components/ui/back-button';
-import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
-import { Routes } from '~/lib/constants/routes.constent';
+import {BackButton} from '~/components/ui/back-button';
+import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import {Routes} from '~/lib/constants/routes.constent';
 
-export default function ShippingAddressHeader({ title }: { title: string }) {
+export default function ShippingAddressHeader({title}: {title: string}) {
   return (
     <div className="mb-4 flex flex-col gap-[6px]">
-      <BackButton title="Company Settings Management" />
+      <BackButton title="Shipping Address " />
       <Breadcrumb>
         <BreadcrumbItem href={Routes.COMPANY_INFORMATION}>
           Company Settings

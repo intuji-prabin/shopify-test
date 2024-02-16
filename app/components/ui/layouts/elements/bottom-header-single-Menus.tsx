@@ -52,9 +52,9 @@ export const SingleNavItem = ({
               }}
             >
               {menu.title === 'Product' && categories.length > 0 ? (
-                <span>{menu.title}</span>
+                <span className="uppercase">{menu.title}</span>
               ) : (
-                <>{menu.title} </>
+                <span className="uppercase">{menu.title} </span>
               )}
               <span className="hidden group-hover:block">
                 <ArrowUp fillColor="#FFE600" />
@@ -81,7 +81,7 @@ export const SingleNavItem = ({
             </div>
           </>
         ) : (
-          <span>{menu.title}</span>
+          <span className="uppercase">{menu.title}</span>
         )}
       </Link>
     </li>
