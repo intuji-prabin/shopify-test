@@ -43,6 +43,10 @@ export async function getPromotions({
     url += '&custom_promotion=true';
   }
 
+  if (pageNumber) {
+    url += `&page=${pageNumber}`;
+  }
+
   const response = await useFetch<PromotionsResponse>({
     method: AllowedHTTPMethods.GET,
     url: url,

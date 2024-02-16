@@ -1,22 +1,28 @@
 import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
 import {ContactUsCard} from '~/routes/_app.support_.contact-us/contact-us-card';
-import {ContactUsData} from '~/routes/_app.support_.contact-us/contact-us-data';
 import {BackButton} from '~/components/ui/back-button';
 import {Routes} from '~/lib/constants/routes.constent';
 import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
 import {isAuthenticate} from '~/lib/utils/authsession.server';
 import {getSupportContact} from './support-contact-us.server';
-import {useLoaderData} from '@remix-run/react';
+import {
+  isRouteErrorResponse,
+  useLoaderData,
+  useRouteError,
+} from '@remix-run/react';
 
 export async function loader({context}: LoaderFunctionArgs) {
-  await isAuthenticate(context);
-  const contacts = await getSupportContact({context});
-  return json({contacts});
+  try {
+    await isAuthenticate(context);
+    const contacts = await getSupportContact({context});
+    return json({contacts});
+  } catch (error) {
+    throw new Error('something went wrong');
+  }
 }
 
 export default function ContactUsPage() {
   const {contacts} = useLoaderData<typeof loader>();
-  console.log(contacts);
 
   return (
     <section className="container">
@@ -46,4 +52,30 @@ export default function ContactUsPage() {
       )}
     </section>
   );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div>
+        <h1>
+          {error.status} {error.statusText}
+        </h1>
+        <p>{error.data}</p>
+      </div>
+    );
+  } else if (error instanceof Error) {
+    return (
+      <div className="flex justify-center items-center">
+        <div className="text-center">
+          <h1>Opps</h1>
+          <p>{error.message}</p>
+        </div>
+      </div>
+    );
+  } else {
+    return <h1>Unknown Error</h1>;
+  }
 }
