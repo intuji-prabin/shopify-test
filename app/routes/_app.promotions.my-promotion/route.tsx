@@ -1,14 +1,15 @@
-import React, {FormEvent, useEffect, useState} from 'react';
-import {Upload} from 'lucide-react';
+import React, {FormEvent, useState} from 'react';
 import {Button} from '~/components/ui/button';
+import {MetaFunction} from '@shopify/remix-oxygen';
 import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
 import PromotionCard from '~/routes/_app.promotions/promotion-card';
+import {UploadIcon} from '~/components/icons/upload';
 import {
   Form,
   Link,
+  NavLink,
   isRouteErrorResponse,
   json,
-  useActionData,
   useLoaderData,
   useNavigation,
   useRouteError,
@@ -23,14 +24,13 @@ import {
   Promotion,
   getPromotions,
 } from '~/routes/_app.promotions/promotion.server';
-import {deletePromotion, exportPromotion} from './my-promotion.server';
+import {deletePromotion} from '~/routes/_app.promotions.my-promotion/my-promotion.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
-import {MetaFunction} from '@shopify/remix-oxygen';
 import {
   PAGE_LIMIT,
   filterOptions,
@@ -81,52 +81,38 @@ export async function action({request, context}: ActionFunctionArgs) {
     }
   });
 
-  const buttonName = formData.get('_action') as 'export' | 'delete';
+  try {
+    const response = await deletePromotion(promotionId);
 
-  switch (buttonName) {
-    case 'export': {
-      const file = await exportPromotion(promotionId);
-      return new Response(file, {
+    if (!response.status) {
+      setErrorMessage(messageSession, response.message);
+    }
+
+    setSuccessMessage(messageSession, response.message);
+
+    return json(
+      {},
+      {
         headers: {
-          'Content-Type': 'application/octet-stream',
+          'Set-Cookie': await messageCommitSession(messageSession),
         },
-      });
-    }
-    case 'delete': {
-      try {
-        const response = await deletePromotion(promotionId);
-
-        if (!response.status) {
-          setErrorMessage(messageSession, response.message);
-        }
-
-        setSuccessMessage(messageSession, response.message);
-
-        return json(
-          {},
-          {
-            headers: {
-              'Set-Cookie': await messageCommitSession(messageSession),
-            },
-          },
-        );
-      } catch (error) {
-        throw new Error('Something went wrong');
-      }
-    }
-    default:
-      throw new Error('Invalid Action');
+      },
+    );
+  } catch (error) {
+    throw new Error('Something went wrong');
   }
 }
 
 export default function MyPromotionsPage() {
   const {promotions, totalPromotionCount} = useLoaderData<typeof loader>();
 
-  const actionData = useActionData<typeof action>();
-
-  console.log({actionData});
-
-  const [checkedCount, setCheckedCount] = useState(0);
+  const [checkedItems, setCheckedItems] = useState<{
+    count: number;
+    promotions: string[];
+  }>({
+    count: 0,
+    promotions: [],
+  });
 
   const pageParam = 'page';
   const [queryParams] = useSearchParams();
@@ -148,39 +134,28 @@ export default function MyPromotionsPage() {
   const handleCheckboxChange = (event: React.FormEvent<HTMLFormElement>) => {
     const target = event.target as HTMLInputElement;
     const isChecked = target.checked;
-    setCheckedCount((prevCount) => (isChecked ? prevCount + 1 : prevCount - 1));
+    const value = target.value;
+
+    setCheckedItems((prevItems) => {
+      if (isChecked) {
+        return {
+          count: prevItems.count + 1,
+          promotions: [...prevItems.promotions, value],
+        };
+      } else {
+        return {
+          count: prevItems.count - 1,
+          promotions: prevItems.promotions.filter(
+            (promotion) => promotion !== value,
+          ),
+        };
+      }
+    });
   };
-  const [searchParams] = useSearchParams();
-  // useEffect(() => {
-  //   const promos = searchParams.get('checkedPromos');
-  //   if (
-  //     // promos?.split(',')?.length === 0 ||
-  //     !actionData ||
-  //     !actionData
-  //   ) {
-  //     return;
-  //   }
-  //   const url = window.URL.createObjectURL(
-  //     new Blob([actionData as Blob], {type: 'application/octet-stream'}),
-  //   );
-  //   // const url = window.URL.createObjectURL(
-  //   //   new Blob(['This is a dummy blob!'], {type: 'text/plain'}),
-  //   // );
 
-  //   console.log('DATA', actionData);
-
-  //   // Create a temporary <a> element to trigger download
-  //   const link = document.createElement('a');
-  //   link.href = url;
-  //   link.setAttribute('download', 'qwe.png');
-  //   document.body.appendChild(link);
-  //   link.click();
-  //   // Clean up
-  //   () => {
-  //     window.URL.revokeObjectURL(url);
-  //     document.body.removeChild(link);
-  //   };
-  // }, [actionData]);
+  const exportUrl = `/export-promotion?promotion_id=${checkedItems.promotions.join(
+    ',',
+  )}`;
 
   return (
     <div className="pt-10 sm:pt-0">
@@ -189,7 +164,7 @@ export default function MyPromotionsPage() {
         onChange={handleCheckboxChange}
         onSubmit={(event) => {
           submit(event.currentTarget);
-          setCheckedCount(0);
+          setCheckedItems({count: 0, promotions: []});
         }}
       >
         {promotions.length > 0 ? (
@@ -212,24 +187,26 @@ export default function MyPromotionsPage() {
             ))}
 
             <div className="absolute -top-14 inset-x-0 sm:-top-16 sm:right-0 sm:left-auto">
-              {checkedCount > 0 ? (
+              {checkedItems.count > 0 ? (
                 <div className="flex items-center gap-x-2">
                   <p className="font-bold text-lg leading-5.5 italic basis-full sm:basis-auto">
-                    {checkedCount} items selected
+                    {checkedItems.count} items selected
                   </p>
-                  <Button
-                    type="submit"
-                    name="_action"
-                    value="export"
-                    variant="primary"
-                    className="text-neutral-white basis-full sm:basis-auto"
+                  <NavLink
+                    to={exportUrl}
+                    reloadDocument
+                    className={({isActive, isPending}) =>
+                      isPending
+                        ? 'bg-red-500'
+                        : isActive
+                        ? 'active'
+                        : 'text-neutral-white font-bold italic uppercase bg-primary-500 disabled:bg-grey-50 px-6 py-2 text-sm leading-6 flex items-center gap-x-1.5'
+                    }
                   >
-                    <Upload className="h-5 w-5" /> Export
-                  </Button>
+                    <UploadIcon /> Export
+                  </NavLink>
                   <Button
                     type="submit"
-                    name="_action"
-                    value="delete"
                     variant="destructive"
                     className="basis-full sm:basis-auto"
                   >
