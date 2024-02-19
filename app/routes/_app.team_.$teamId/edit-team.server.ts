@@ -4,6 +4,7 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {EditTeamFormType} from '~/routes/_app.team_.add/team-form';
 import {fileUpload} from '~/lib/utils/file-upload';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 
 type CustomerDetails = Omit<EditTeamFormType, 'profileImage'> & {
   profileImageUrl: string;
@@ -27,17 +28,28 @@ export type CustomerResponse = {
   payload: CustomerDetails;
 };
 
-export async function getCustomerById({customerId}: {customerId: string}) {
-  const customerResponse = await useFetch<CustomerResponse>({
-    method: AllowedHTTPMethods.GET,
-    url: `${ENDPOINT.CUSTOMER.GET}?customerId=${customerId}`,
-  });
+export async function getCustomerById({
+  customerId,
+}: {
+  customerId: string;
+}): Promise<CustomerDetails> {
+  try {
+    const customerResponse = await useFetch<CustomerResponse>({
+      method: AllowedHTTPMethods.GET,
+      url: `${ENDPOINT.CUSTOMER.GET}?customerId=${customerId}`,
+    });
 
-  if (!customerResponse.status) {
-    throw new Error(customerResponse.message);
+    if (!customerResponse.status) {
+      throw new Error(customerResponse.message);
+    }
+
+    return customerResponse.payload;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Response(DEFAULT_ERRROR_MESSAGE, {status: 500});
   }
-
-  return customerResponse.payload;
 }
 
 export async function editTeam({

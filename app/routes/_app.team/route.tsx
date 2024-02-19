@@ -1,15 +1,14 @@
-import { useMemo, useState } from 'react';
-import { validationError } from 'remix-validated-form';
-import { BackButton } from '~/components/ui/back-button';
-import { Button } from '~/components/ui/button';
-import { SearchInput } from '~/components/ui/search-input';
-import { Routes } from '~/lib/constants/routes.constent';
-import { TabsTable } from '~/routes/_app.team/tabs-table';
-import { getRoles } from '~/routes/_app.team_.add/add-team.server';
-import { getAllTeams, updateStatus } from '~/routes/_app.team/team.server';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
-import { ConfirmationFormSchemaValidator } from '~/routes/_app.team/confirmation-form';
-import { getUserDetails, isAuthenticate } from '~/lib/utils/authsession.server';
+import {useMemo, useState} from 'react';
+import {validationError} from 'remix-validated-form';
+import {BackButton} from '~/components/ui/back-button';
+import {Button} from '~/components/ui/button';
+import {SearchInput} from '~/components/ui/search-input';
+import {Routes} from '~/lib/constants/routes.constent';
+import {TabsTable} from '~/routes/_app.team/tabs-table';
+import {getAllTeams, updateStatus} from '~/routes/_app.team/team.server';
+import {Tabs, TabsContent, TabsList, TabsTrigger} from '~/components/ui/tabs';
+import {ConfirmationFormSchemaValidator} from '~/routes/_app.team/confirmation-form';
+import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
 import {
   Link,
   isRouteErrorResponse,
@@ -27,36 +26,36 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
-import { MetaFunction } from '@shopify/remix-oxygen';
-import { getCustomerRolePermission } from '~/lib/customer-role/customer-role-permission';
+import {MetaFunction} from '@shopify/remix-oxygen';
+import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Team List' }];
+  return [{title: 'Team List'}];
 };
 
-export async function loader({ request, context }: LoaderFunctionArgs) {
+export async function loader({request, context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
-  const { userDetails } = await getUserDetails(context);
+  const {userDetails} = await getUserDetails(context);
 
   const companyId = userDetails.meta.company_id.value;
 
   const currentUser = userDetails.id;
 
   try {
-    const { searchParams } = new URL(request.url);
+    const {searchParams} = new URL(request.url);
     const query = searchParams.get('search');
 
-    const teams = await getAllTeams({ companyId, query });
+    const teams = await getAllTeams({companyId, query});
 
     const roles = await getCustomerRolePermission(context);
 
-    return json({ teams, roles, currentUser });
+    return json({teams, roles, currentUser});
   } catch (error) {
     throw new Error('something went wrong');
   }
 }
 
-export async function action({ request, context }: ActionFunctionArgs) {
+export async function action({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
   const messageSession = await getMessageSession(request);
   const formData = await request.formData();
@@ -68,7 +67,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
       try {
         const customerId = formData.get('customerId') as string;
 
-        await updateStatus({ customerId, value: 'true' });
+        await updateStatus({customerId, value: 'true'});
         setSuccessMessage(messageSession, 'Customer Activated Successfully');
 
         return json(
@@ -83,7 +82,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         if (error instanceof Error) {
           setErrorMessage(messageSession, error.message);
           return json(
-            { error },
+            {error},
             {
               headers: {
                 'Set-Cookie': await messageCommitSession(messageSession),
@@ -91,7 +90,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
             },
           );
         }
-        return json({ error }, { status: 400 });
+        return json({error}, {status: 400});
       }
     }
     case 'deactivate': {
@@ -103,7 +102,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         }
         if (result.data.confirmation === 'Deactivate') {
           const customerId = result.data.customerId;
-          await updateStatus({ customerId, value: 'false' });
+          await updateStatus({customerId, value: 'false'});
         }
 
         setSuccessMessage(messageSession, 'Customer Deactivated Successfully');
@@ -120,7 +119,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         if (error instanceof Error) {
           setErrorMessage(messageSession, error.message);
           return json(
-            { error },
+            {error},
             {
               headers: {
                 'Set-Cookie': await messageCommitSession(messageSession),
@@ -128,7 +127,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
             },
           );
         }
-        return json({ error }, { status: 400 });
+        return json({error}, {status: 400});
       }
     }
     default: {
@@ -138,7 +137,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function TeamPage() {
-  const { teams, roles, currentUser } = useLoaderData<typeof loader>();
+  const {teams, roles, currentUser} = useLoaderData<typeof loader>();
 
   const [activeDepartmentTab, setActiveDepartmentTab] = useState('all');
   const params = new URLSearchParams();
@@ -150,7 +149,7 @@ export default function TeamPage() {
   return (
     <section className="container">
       <div className="flex items-center justify-between py-6 ">
-        <BackButton title="My Team" />
+        <h3 className="uppercase">My Team</h3>
         <Link to={Routes.TEAM_ADD}>
           <Button type="button" variant="primary">
             add a team member
@@ -166,7 +165,7 @@ export default function TeamPage() {
         defaultValue={activeDepartmentTab}
         onValueChange={(value) => setActiveDepartmentTab(value)}
       >
-        <TabsList className="justify-start w-full not-italic border-b rounded-none bg-neutral-white">
+        <TabsList className="justify-start w-full not-italic border-b rounded-none bg-neutral-white overflow-x-auto">
           <TabsTrigger value="all">All</TabsTrigger>
           {roles?.data?.map((role) => (
             <TabsTrigger key={role.value} value={role.value}>

@@ -1,11 +1,11 @@
-import {useLoaderData} from '@remix-run/react';
+import {
+  isRouteErrorResponse,
+  useLoaderData,
+  useRouteError,
+} from '@remix-run/react';
 import {validationError} from 'remix-validated-form';
 import {BackButton} from '~/components/ui/back-button';
-import {
-  RolesResponse,
-  addTeam,
-  getRoles,
-} from '~/routes/_app.team_.add/add-team.server';
+import {addTeam} from '~/routes/_app.team_.add/add-team.server';
 import {isAuthenticate} from '~/lib/utils/authsession.server';
 import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
 import {Routes} from '~/lib/constants/routes.constent';
@@ -26,7 +26,7 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
 import {MetaFunction} from '@shopify/remix-oxygen';
-import { getCustomerRolePermission } from '~/lib/customer-role/customer-role-permission';
+import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Add Team Member'}];
@@ -34,14 +34,8 @@ export const meta: MetaFunction = () => {
 
 export async function loader({context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
-  try {
-    await isAuthenticate(context);
-    const roleAndPermissision = await getCustomerRolePermission( context )
-    const roles = roleAndPermissision
-    return json({roles});
-  } catch (error) {
-    return json({roles: {} as RolesResponse});
-  }
+  const roles = await getCustomerRolePermission(context);
+  return json({roles});
 }
 
 export async function action({request, context}: ActionFunctionArgs) {
@@ -113,4 +107,30 @@ export default function AddTeam() {
       <TeamForm options={roles?.data as SelectInputOptions[]} />
     </section>
   );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div>
+        <h1>
+          {error.status} {error.statusText}
+        </h1>
+        <p>{error.data}</p>
+      </div>
+    );
+  } else if (error instanceof Error) {
+    return (
+      <div className="flex items-center justify-center">
+        <div className="text-center">
+          <h1>Opps</h1>
+          <p>{error.message}</p>
+        </div>
+      </div>
+    );
+  } else {
+    return <h1>Unknown Error</h1>;
+  }
 }
