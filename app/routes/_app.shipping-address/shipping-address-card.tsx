@@ -26,76 +26,78 @@ export default function ShippingAddressCards({
               Default Shipping Address
             </span>
           </li>
-          <li className="flex gap-x-4 flex-wrap gap-y-2">
+          <li className="flex flex-wrap gap-x-4 gap-y-2">
             <p className="text-lg font-medium w-[85px]">Address</p>
-            <p className="text-lg w-[calc(100%_-_101px)]">{defaultAddress}</p>
+            <p className="text-lg w-[calc(100%_-_101px)]">{defaultAddress && defaultAddress || '-'}</p>
           </li>
-          <li className="flex gap-x-4 flex-wrap gap-y-2">
+          <li className="flex flex-wrap gap-x-4 gap-y-2">
             <p className="text-lg font-medium w-[85px]">Postal Code</p>
             <p className="text-lg w-[calc(100%_-_101px)]">
-              {data?.defaultAddress?.zip ?? '-'}
+              {data?.defaultAddress?.zip && data?.defaultAddress?.zip || '-'}
             </p>
           </li>
-          <li className="flex gap-x-4 flex-wrap gap-y-2">
+          <li className="flex flex-wrap gap-x-4 gap-y-2">
             <p className="text-lg font-medium w-[85px]">Fax</p>
             <p className="text-lg w-[calc(100%_-_101px)]">
-              {data?.defaultAddress?.firstName ?? '-'}
+              {data?.defaultAddress?.firstName && data?.defaultAddress?.firstName || '-'}
             </p>
           </li>
-          <li className="flex gap-x-4 flex-wrap gap-y-2">
+          <li className="flex flex-wrap gap-x-4 gap-y-2">
             <p className="text-lg font-medium w-[85px]">Phone</p>
             <p className="text-lg w-[calc(100%_-_101px)]">
-              {data?.defaultAddress?.phone ?? '-'}
+              {data?.defaultAddress?.phone && data?.defaultAddress?.phone || '-'}
             </p>
           </li>
-          <li className="flex gap-x-4 flex-wrap gap-y-2">
+          <li className="flex flex-wrap gap-x-4 gap-y-2">
             <p className="text-lg font-medium w-[85px]">Country</p>
             <p className="text-lg w-[calc(100%_-_101px)]">
-              {data?.defaultAddress?.country ?? '-'}
+              {data?.defaultAddress?.country && data?.defaultAddress?.country || '-'}
             </p>
           </li>
         </ul>
       </div>
-      {data?.addresses.map((shippingCard: Address, index: number) => (
-        <div className="p-6 bg-white flex items-center" key={'address' + index}>
-          <ul className="space-y-3">
-            <li className="flex gap-x-4 flex-wrap gap-y-2">
-              <p className="text-lg font-medium w-[85px]">Address</p>
-              <p className="text-lg w-[calc(100%_-_101px)]">
-                {shippingCard?.address1
-                  ? shippingCard?.address1
-                  : shippingCard?.address2
-                  ? shippingCard?.address2
-                  : '-'}
-              </p>
-            </li>
-            <li className="flex gap-x-4 flex-wrap gap-y-2">
-              <p className="text-lg font-medium w-[85px]">Postal Code</p>
-              <p className="text-lg w-[calc(100%_-_101px)]">
-                {shippingCard?.zip ?? '-'}
-              </p>
-            </li>
-            <li className="flex gap-x-4 flex-wrap gap-y-2">
-              <p className="text-lg font-medium w-[85px]">Fax</p>
-              <p className="text-lg w-[calc(100%_-_101px)]">
-                {shippingCard?.firstName ?? '-'}
-              </p>
-            </li>
-            <li className="flex gap-x-4 flex-wrap gap-y-2">
-              <p className="text-lg font-medium w-[85px]">Phone</p>
-              <p className="text-lg w-[calc(100%_-_101px)]">
-                {shippingCard?.phone ?? '-'}
-              </p>
-            </li>
-            <li className="flex gap-x-4 flex-wrap gap-y-2">
-              <p className="text-lg font-medium w-[85px]">Country</p>
-              <p className="text-lg w-[calc(100%_-_101px)]">
-                {shippingCard?.country ?? '-'}
-              </p>
-            </li>
-          </ul>
-        </div>
-      ))}
+      {data?.addresses.map((shippingCard: Address, index: number) => {
+        return (
+          <div className="flex items-center p-6 bg-white" key={'address' + index}>
+            <ul className="space-y-3">
+              <li className="flex flex-wrap gap-x-4 gap-y-2">
+                <p className="text-lg font-medium w-[85px]">Address</p>
+                <p className="text-lg w-[calc(100%_-_101px)]">
+                  {shippingCard?.address1
+                    ? shippingCard?.address1
+                    : shippingCard?.address2
+                      ? shippingCard?.address2
+                      : '-'}
+                </p>
+              </li>
+              <li className="flex flex-wrap gap-x-4 gap-y-2">
+                <p className="text-lg font-medium w-[85px]">Postal Code</p>
+                <p className="text-lg w-[calc(100%_-_101px)]">
+                  {shippingCard?.zip && shippingCard?.zip || '-'}
+                </p>
+              </li>
+              <li className="flex flex-wrap gap-x-4 gap-y-2">
+                <p className="text-lg font-medium w-[85px]">Fax</p>
+                <p className="text-lg w-[calc(100%_-_101px)]">
+                  {shippingCard?.firstName && shippingCard?.firstName || '-'}
+                </p>
+              </li>
+              <li className="flex flex-wrap gap-x-4 gap-y-2">
+                <p className="text-lg font-medium w-[85px]">Phone</p>
+                <p className="text-lg w-[calc(100%_-_101px)]">
+                  {shippingCard?.phone && shippingCard?.phone || '-'}
+                </p>
+              </li>
+              <li className="flex flex-wrap gap-x-4 gap-y-2">
+                <p className="text-lg font-medium w-[85px]">Country</p>
+                <p className="text-lg w-[calc(100%_-_101px)]">
+                  {shippingCard?.country && shippingCard?.country || '-'}
+                </p>
+              </li>
+            </ul>
+          </div>
+        )
+      })}
     </div>
   );
 }
