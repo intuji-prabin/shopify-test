@@ -149,7 +149,7 @@ export default function TeamPage() {
   return (
     <section className="container">
       <div className="flex items-center justify-between py-6 ">
-        <BackButton title="My Team" />
+        <h3 className="uppercase">My Team</h3>
         <Link to={Routes.TEAM_ADD}>
           <Button type="button" variant="primary">
             add a team member
@@ -165,7 +165,7 @@ export default function TeamPage() {
         defaultValue={activeDepartmentTab}
         onValueChange={(value) => setActiveDepartmentTab(value)}
       >
-        <TabsList className="justify-start w-full not-italic border-b rounded-none bg-neutral-white">
+        <TabsList className="justify-start w-full not-italic border-b rounded-none bg-neutral-white overflow-x-auto">
           <TabsTrigger value="all">All</TabsTrigger>
           {roles?.data?.map((role) => (
             <TabsTrigger key={role.value} value={role.value}>
