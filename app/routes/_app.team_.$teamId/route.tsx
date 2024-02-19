@@ -1,4 +1,9 @@
-import {useLoaderData, useNavigate} from '@remix-run/react';
+import {
+  isRouteErrorResponse,
+  useLoaderData,
+  useNavigate,
+  useRouteError,
+} from '@remix-run/react';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -9,7 +14,6 @@ import {ArrowLeft} from 'lucide-react';
 import {validationError} from 'remix-validated-form';
 import {Button} from '~/components/ui/button';
 import {SelectInputOptions} from '~/components/ui/select-input';
-import {Separator} from '~/components/ui/separator';
 import {Routes} from '~/lib/constants/routes.constent';
 import TeamForm, {
   EditTeamFormSchemaValidator,
@@ -25,26 +29,8 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
 import {MetaFunction} from '@shopify/remix-oxygen';
-import { getCustomerRolePermission } from '~/lib/customer-role/customer-role-permission';
-import { isAuthenticate } from '~/lib/utils/authsession.server';
-
-interface Role {
-  title: string;
-  value: string;
-  permissions: Permission[];
-}
-
-interface Permission {
-  id: number;
-  title: string;
-  value: string;
-}
-
-interface RolesResponse {
-  data: Role[];
-  message: string;
-  status: boolean;
-}
+import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
+import {isAuthenticate} from '~/lib/utils/authsession.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Edit Team Member'}];
@@ -52,10 +38,12 @@ export const meta: MetaFunction = () => {
 
 export async function loader({params, context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
-  let customerId = params?.teamId as string;
+
+  const customerId = params?.teamId as string;
+
   const customerDetails = await getCustomerById({customerId});
 
-  const roles = await getCustomerRolePermission( context ) as RolesResponse;
+  const roles = await getCustomerRolePermission(context);
 
   return json({customerDetails, roles});
 }
@@ -118,6 +106,7 @@ export async function action({request, context}: ActionFunctionArgs) {
 
 export default function TeamDetailsPage() {
   const navigate = useNavigate();
+
   const {customerDetails, roles} = useLoaderData<typeof loader>();
 
   return (
@@ -136,9 +125,35 @@ export default function TeamDetailsPage() {
       </div>
       <TeamForm
         defaultValues={customerDetails}
-        customerId={customerDetails.customerId}
+        customerId={customerDetails?.customerId}
         options={roles.data as SelectInputOptions[]}
       />
     </section>
   );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div>
+        <h1>
+          {error.status} {error.statusText}
+        </h1>
+        <p>{error.data}</p>
+      </div>
+    );
+  } else if (error instanceof Error) {
+    return (
+      <div className="flex items-center justify-center">
+        <div className="text-center">
+          <h1>Opps</h1>
+          <p>{error.message}</p>
+        </div>
+      </div>
+    );
+  } else {
+    return <h1>Unknown Error</h1>;
+  }
 }
