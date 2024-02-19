@@ -1,26 +1,22 @@
 import {
   isRouteErrorResponse,
-  useActionData,
   useLoaderData,
-  useLocation,
   useRouteError,
+  useSubmit
 } from '@remix-run/react';
 import {
   ActionFunctionArgs,
-  DataFunctionArgs,
   LoaderFunctionArgs,
-  json,
+  json
 } from '@remix-run/server-runtime';
 import { withZod } from '@remix-validated-form/with-zod';
 import html2canvas from 'html2canvas';
-import { useRef, useState } from 'react';
-import { ValidatedForm, validationError } from 'remix-validated-form';
+import { useEffect, useRef, useState } from 'react';
+import { ValidatedForm } from 'remix-validated-form';
 import { z } from 'zod';
 import { zfd } from 'zod-form-data';
-import { ExportUp } from '~/components/icons/export';
 import { FullScreen } from '~/components/icons/full-screen';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import { BackButton } from '~/components/ui/back-button';
 import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
 import { Button } from '~/components/ui/button';
 import ColorPicker from '~/components/ui/color-picker';
@@ -30,14 +26,15 @@ import ImageEdit from '~/components/ui/imageEdit';
 import Loader from '~/components/ui/loader';
 import { Separator } from '~/components/ui/separator';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { createPromotion, getPromotionById } from './promotion.server';
+import { Routes } from '~/lib/constants/routes.constent';
+import { isAuthenticate } from '~/lib/utils/authsession.server';
 import {
   getMessageSession,
   messageCommitSession,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
-import { isAuthenticate } from '~/lib/utils/authsession.server';
 import PromotionHeader from './promotion-navigation';
+import { createPromotion, getPromotionById } from './promotion.server';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -85,15 +82,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   let formData = Object.fromEntries(data);
   formData = { ...formData };
-  console.log('qwe', { formData });
-  const _action = formData.action;
   const bannerId = params.promotionId as string;
-  // switch (_action) {
-  //   case "Customise": {
-  console.log('customise');
   await createPromotion(formData, bannerId);
   setSuccessMessage(messageSession, 'New Banner Added Successfully');
-
   return json(
     {},
     {
@@ -102,12 +93,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
       },
     },
   );
-  //   }
-  //   case "Edit":
-  //     return "Edit";
-  //   default:
-  //     throw new Error("Unknown action");
-  // }
 }
 
 export async function loader({ params, context }: LoaderFunctionArgs) {
@@ -124,9 +109,9 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
 
 const PromotionEdit = ({ defaultValues }: EditFormProps) => {
   const { results } = useLoaderData<any>();
+  const submit = useSubmit();
 
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
-
   const [image, setImage] = useState('');
   const [renderedImageWidth, setRenderedImageWidth] = useState();
   const [companyInfo, setCompanyInfo] = useState({
@@ -139,41 +124,43 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     textColor: '#0F1010',
     bgColor: '#f5f5f5',
   });
+
   const canvasRef = useRef<any>();
   const blobRef = useRef<any>();
 
-  const createBlob = (canvasRef: any) => {
-    try {
-      html2canvas(canvasRef, {
-        allowTaint: true,
-        useCORS: true,
-        scale: 2,
-      }).then((canvas) => {
-        blobRef.current.value = canvas.toDataURL();
-        console.log('blValue', blobRef.current.value);
-        // canvas.toBlob((blob) => {
-        //   console.log('bull', blob);
-        //   var reader = new FileReader();
+  const createBlob = async (canvasRef: any) => {
+    // try {
+    //   const canvas = await html2canvas(canvasRef, {
+    //     allowTaint: true,
+    //     useCORS: true,
+    //     scale: 2,
+    //   })
 
-        //   // Closure to capture the file information.
-        //   reader.onload = function (e) {
-        //     // Set the value of the input to the file content
-        //     console.log('ert', e?.target?.result);
-        //     blobRef.current.value = e?.target?.result;
-        //     console.log('blValue', blobRef.current.value);
-        //   };
-        //   if (blob) {
-        //     reader.readAsDataURL(blob);
-        //   }
-        // });
-      });
-    } catch (err) {
-      console.log('err', err);
-    }
+    //   blobRef.current.value = canvas.toDataURL();
+    //   console.log('blValue', blobRef.current.value);
+    // } catch (err) {
+    //   console.log('err', err);
+    // }
+    return new Promise((resolve, reject) => {
+      try {
+        html2canvas(canvasRef, {
+          allowTaint: true,
+          useCORS: true,
+          scale: 2,
+        }).then((canvas) => {
+          blobRef.current.value = canvas.toDataURL();
+          resolve(true);
+          console.log('blValue', blobRef.current.value);
+        });
+      }
+      catch (err) {
+        reject(err);
+      }
+
+    })
   };
 
   const handleChange = (field: string, value: string) => {
-    createBlob(canvasRef.current);
     setCompanyInfo((prevState) => ({
       ...prevState,
       [field]: value,
@@ -204,9 +191,6 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     setShowUnsavedChanges(false);
   };
 
-  const actionData = useActionData();
-  console.log(actionData);
-
   const htmlProcessPop = (canvasRef: any) => {
     setImage('');
     html2canvas(canvasRef, {
@@ -225,19 +209,24 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
   const unsavedChanges = () => {
     setShowUnsavedChanges(true);
   };
+
+  useEffect(() => {
+    createBlob(canvasRef.current);
+  }, [])
+
   return (
     <div className="bg-grey-25">
       <PromotionHeader canvasRef={canvasRef} />
       <section className="container mt-1">
         <Breadcrumb>
           <BreadcrumbItem>Content Management</BreadcrumbItem>
-          <BreadcrumbItem href="/">Promotions</BreadcrumbItem>
-          <BreadcrumbItem href="/" className="text-grey-900">
+          <BreadcrumbItem href={Routes.PROMOTIONS}>Promotions</BreadcrumbItem>
+          <BreadcrumbItem className="text-grey-900">
             Customize Promotion
           </BreadcrumbItem>
         </Breadcrumb>
       </section>
-      <section className={`container pb-72 ${showUnsavedChanges && 'mb-28'}`}>
+      <section className="container">
         <Separator className="mt-4 mb-8" />
         <div className="grid items-start grid-cols-3 gap-6">
           <div className="col-span-2">
@@ -299,6 +288,10 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
               defaultValues={defaultValues}
               id="promotion-form"
               data-cy="customize-promotion"
+              onSubmit={async (_, event) => {
+                await createBlob(canvasRef.current);
+                submit(event.currentTarget);
+              }}
             >
               <input
                 ref={blobRef}

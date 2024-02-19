@@ -39,7 +39,7 @@ export async function createPromotion(
     console.log('final', fData);
 
     const results: any = await fetch(
-      'https://liberia-denver-sa-royal.trycloudflare.com/api/promotion',
+      `${ENDPOINT.PROMOTION.GET}`,
       {
         method: 'POST',
         body: fData,
