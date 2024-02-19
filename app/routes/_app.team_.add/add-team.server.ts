@@ -7,24 +7,6 @@ import {getUserDetails} from '~/lib/utils/authsession.server';
 import {fileUpload} from '~/lib/utils/file-upload';
 import {CustomerResponse} from '~/routes/_app.team_.$teamId/edit-team.server';
 
-interface Role {
-  title: string;
-  value: string;
-  permissions: Permission[];
-}
-
-interface Permission {
-  id: number;
-  title: string;
-  value: string;
-}
-
-export interface RolesResponse {
-  data: Role[];
-  msg: string;
-  status: boolean;
-}
-
 type AddTeamParams = {
   fullName: string;
   email: string;
@@ -108,11 +90,6 @@ export async function addTeam({
     throw new Error("Email couldn't send");
   }
   return results;
-}
-
-export async function getRoles(): Promise<RolesResponse> {
-  const roles = await useFetch<RolesResponse>({url: ENDPOINT.ROLE.GET});
-  return roles;
 }
 
 const CREATE_TEAM_MUTATION = `#graphql 

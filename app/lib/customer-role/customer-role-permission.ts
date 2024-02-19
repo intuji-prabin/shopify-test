@@ -1,51 +1,103 @@
- export const getCustomerRolePermission = async ( context : any ) => {
-    try {
-        const { storefront } = await context
-        const rolePermissionResponse = await storefront.query( GET_ROLES_AND_PERMISSION )
-        const formatedList = await formateRolesAndPermission( rolePermissionResponse )
-        return {
-            status : true,
-            message : "Data get successfully",
-            data : formatedList
-        }
-    } catch( error ) {
-        if( error instanceof Error ) {
-            console.log("ererer", error?.message)
-            return []
-        } 
-        return []
-    }
+import {AppLoadContext} from '@remix-run/server-runtime';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+
+interface Role {
+  title: string;
+  value: string;
+  permissions: Permission[];
 }
 
-const formateRolesAndPermission = async ( response : any ) => {
-    const roleListEgdge = response?.metaobjects
-    if( roleListEgdge?.edges.length < 1 ) {
-        return []
-    }
-
-    const rolePermission = roleListEgdge?.edges.map( ( items : any ) => {
-        const role = items?.node?.role?.value
-        const permission = items?.node?.permission?.value
-
-        return {
-            title : role,
-            value : role.toLowerCase(),
-            permissions : formatingPermission( permission )
-        }
-    })
-    return rolePermission
+interface Permission {
+  id: number;
+  title: string;
+  value: string;
 }
 
-const formatingPermission = ( permission : any ) => {
-    const permissionList : any = JSON.parse( permission )
-    const permissionFormate = permissionList.map( ( items : any , index : any ) => {
-        return {
-            id : index + 1,
-            value : items,
-            title : items.replace("_", " ") 
-        }
-    })
-    return permissionFormate
+interface Node {
+  role: {value: string};
+  permission: {value: string};
+}
+
+interface Edge {
+  node: Node;
+}
+
+interface Metaobjects {
+  edges: Edge[];
+}
+
+interface Response {
+  metaobjects: Metaobjects;
+}
+
+export interface RolesResponse {
+  data: Role[];
+  message: string;
+  status: boolean;
+}
+
+export async function getCustomerRolePermission(
+  context: AppLoadContext,
+): Promise<RolesResponse> {
+  try {
+    const {storefront} = context;
+    const rolePermissionResponse = await storefront.query(
+      GET_ROLES_AND_PERMISSION,
+    );
+    const formatedList = await formatRolesAndPermission(rolePermissionResponse);
+
+    return {
+      status: true,
+      message: 'Data get successfully',
+      data: formatedList,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        status: false,
+        message: error.message,
+        data: [],
+      };
+    }
+    return {
+      status: false,
+      message: DEFAULT_ERRROR_MESSAGE,
+      data: [],
+    };
+  }
+}
+
+export async function formatRolesAndPermission(response: Response) {
+  const roleListEgdge = response?.metaobjects;
+  if (roleListEgdge?.edges.length < 1) {
+    return [];
+  }
+
+  const rolePermission = roleListEgdge?.edges.map((items: Edge) => {
+    const role = items?.node?.role?.value;
+    const permission = items?.node?.permission?.value;
+
+    return {
+      title: role,
+      value: role.toLowerCase(),
+      permissions: formatPermission(permission),
+    };
+  });
+  return rolePermission;
+}
+
+function formatPermission(permission: string) {
+  const permissionList = JSON.parse(permission) as string[];
+  const formatPermission = permissionList.map(
+    (items: string, index: number) => {
+      return {
+        id: index + 1,
+        value: items,
+        title: items.replace('_', ' '),
+      };
+    },
+  );
+  return formatPermission;
 }
 
 const GET_ROLES_AND_PERMISSION = `query getMeta {
@@ -57,4 +109,4 @@ const GET_ROLES_AND_PERMISSION = `query getMeta {
           }
       }
     }
-  }` as const
+  }` as const;
