@@ -399,7 +399,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                 </AccordionCustom>
               </div>
               {showUnsavedChanges && (
-                <div className="fixed inset-x-0 bottom-0 py-4 bg-grey-900">
+                <div className="fixed inset-x-0 bottom-0 z-40 py-4 bg-primary-500">
                   <div className="container">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <h5 className="text-white">Unsaved changes</h5>
@@ -407,12 +407,12 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                         <Button
                           type="button"
                           variant="ghost"
-                          className="text-primary-500"
+                          className="text-white border-white"
                           onClick={resetCompanyInfo}
                         >
                           discard
                         </Button>
-                        <Button type="submit" variant="primary" name="action">
+                        <Button type="submit" variant="secondary" name="action">
                           save changes
                         </Button>
                       </div>
