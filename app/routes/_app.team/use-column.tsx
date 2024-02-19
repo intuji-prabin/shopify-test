@@ -16,7 +16,7 @@ export type TeamColumn = {
   imageUrl: string;
   department: string;
   contactNumber: string;
-  status: boolean;
+  status: 'true' | 'false';
 };
 
 export function useColumn({currentUser}: {currentUser: string}) {
@@ -30,7 +30,7 @@ export function useColumn({currentUser}: {currentUser: string}) {
           const {imageUrl, name, id} = info.row.original;
           const isCurrentUser = currentUser === id;
           const imageSrc =
-            imageUrl.length > 0 ? imageUrl : DEFAULT_IMAGE.DEFAULT;
+            imageUrl?.length > 0 ? imageUrl : DEFAULT_IMAGE.DEFAULT;
 
           return (
             <div>
@@ -85,10 +85,10 @@ export function useColumn({currentUser}: {currentUser: string}) {
           const [isChecked, setIsChecked] = useState<boolean>(false);
           return (
             <>
-              {status ? (
+              {status === 'true' ? (
                 <Switch
                   type="button"
-                  checked={status}
+                  checked={status === 'true'}
                   onCheckedChange={() =>
                     setIsChecked((prevState) => !prevState)
                   }
