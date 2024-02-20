@@ -1,23 +1,23 @@
-import { withZod } from '@remix-validated-form/with-zod';
-import { useState } from 'react';
+import {withZod} from '@remix-validated-form/with-zod';
+import {useState} from 'react';
 import {
   ValidatedForm,
   useFormContext,
   useIsSubmitting,
 } from 'remix-validated-form';
-import { z } from 'zod';
-import { zfd } from 'zod-form-data';
-import { Button } from '~/components/ui/button';
+import {z} from 'zod';
+import {zfd} from 'zod-form-data';
+import {Button} from '~/components/ui/button';
 import ImageUploadInput from '~/components/ui/image-upload-input';
-import { Input } from '~/components/ui/input';
-import SelectInput, { SelectInputOptions } from '~/components/ui/select-input';
-import { Separator } from '~/components/ui/separator';
+import {Input} from '~/components/ui/input';
+import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
+import {Separator} from '~/components/ui/separator';
 import {
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE_MB,
 } from '~/lib/constants/form.constant';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { AustralianPhoneNumberValidationRegex } from '~/lib/constants/regex.constant';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {AustralianPhoneNumberValidationRegex} from '~/lib/constants/regex.constant';
 
 type TeamFormProps = {
   defaultValues?: Omit<AddTeamFormType, 'profileImage'> & {
@@ -45,26 +45,26 @@ const EditTeamFormSchema = z.object({
         return true;
       }, 'Max file size is 15MB.'),
   ),
-  fullName: z.string().trim().min(1, { message: 'Full Name is required' }),
+  fullName: z.string().trim().min(1, {message: 'Full Name is required'}),
   email: z
     .string()
-    .min(1, { message: 'Email is required' })
+    .min(1, {message: 'Email is required'})
     .email()
     .trim()
     .toLowerCase(),
   phoneNumber: z
     .string()
-    .min(1, { message: 'Phone Number is required' })
+    .min(1, {message: 'Phone Number is required'})
     .trim()
     .refine(
       (value) => AustralianPhoneNumberValidationRegex.test(value),
       'Invalid Phone Number',
     ),
-  address: z.string().min(1, { message: 'Address is required' }).trim(),
-  userRole: z.string().min(1, { message: 'User Role is required' }).trim(),
+  address: z.string().min(1, {message: 'Address is required'}).trim(),
+  userRole: z.string().min(1, {message: 'User Role is required'}).trim(),
   customerId: z.string(),
 });
-const AddTeamFormSchema = EditTeamFormSchema.omit({ customerId: true }).extend({
+const AddTeamFormSchema = EditTeamFormSchema.omit({customerId: true}).extend({
   customerID: z.string().optional(),
 });
 
@@ -86,7 +86,7 @@ export default function TeamForm({
 
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
-  const { reset } = useFormContext('team-form');
+  const {reset} = useFormContext('team-form');
 
   const updatePermissions = (value: string) => {
     setSelectedRole(value);
@@ -209,7 +209,11 @@ export default function TeamForm({
                 >
                   discard
                 </Button>
-                <Button type="submit" variant="secondary" disabled={isSubmitting}>
+                <Button
+                  type="submit"
+                  variant={isSubmitting ? 'disabled' : 'secondary'}
+                  disabled={isSubmitting}
+                >
                   save changes
                 </Button>
               </div>

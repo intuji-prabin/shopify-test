@@ -28,6 +28,7 @@ import {
 } from '~/lib/utils/toastsession.server';
 import {MetaFunction} from '@shopify/remix-oxygen';
 import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Team List'}];
@@ -51,7 +52,13 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 
     return json({teams, roles, currentUser});
   } catch (error) {
-    throw new Error('something went wrong');
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+
+    throw new Response(DEFAULT_ERRROR_MESSAGE, {
+      status: 500,
+    });
   }
 }
 

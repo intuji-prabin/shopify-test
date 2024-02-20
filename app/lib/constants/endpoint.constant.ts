@@ -27,7 +27,7 @@ export const ENDPOINT = {
     GET: `${BASE_URL}/customer-list`,
   },
   COMPANY: {
-    GET_PROFILE: `${BASE_URL}/company-profile`,
+    GET_PROFILE: `${BASE_URL}/company`,
     GET_SHIPPING_ADDRESS: `${BASE_URL}/company/shipping-address`,
   },
   CATEGORY: {
