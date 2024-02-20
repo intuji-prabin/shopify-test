@@ -3,8 +3,6 @@ import { Call } from '../icons/call';
 import { Fax } from '../icons/fax';
 import { Globe } from '../icons/globe';
 import Mail from '../icons/mail';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-
 interface ImageEditProps {
   canvasRef?: RefObject<HTMLDivElement>;
   imgSrc: string;

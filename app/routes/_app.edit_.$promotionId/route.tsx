@@ -1,26 +1,22 @@
 import {
   isRouteErrorResponse,
-  useActionData,
   useLoaderData,
-  useLocation,
-  useRouteError,
+  useNavigate,
+  useRouteError
 } from '@remix-run/react';
 import {
   ActionFunctionArgs,
-  DataFunctionArgs,
   LoaderFunctionArgs,
-  json,
+  json
 } from '@remix-run/server-runtime';
 import { withZod } from '@remix-validated-form/with-zod';
 import html2canvas from 'html2canvas';
 import { useRef, useState } from 'react';
-import { ValidatedForm, validationError } from 'remix-validated-form';
+import { ValidatedForm } from 'remix-validated-form';
 import { z } from 'zod';
 import { zfd } from 'zod-form-data';
-import { ExportUp } from '~/components/icons/export';
 import { FullScreen } from '~/components/icons/full-screen';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import { BackButton } from '~/components/ui/back-button';
 import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
 import { Button } from '~/components/ui/button';
 import ColorPicker from '~/components/ui/color-picker';
@@ -29,14 +25,14 @@ import ImageUploadInput from '~/components/ui/image-upload-input';
 import ImageEdit from '~/components/ui/imageEdit';
 import Loader from '~/components/ui/loader';
 import { Separator } from '~/components/ui/separator';
+import { displayToast } from '~/components/ui/toast';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import {
-  getMessageSession,
-  messageCommitSession,
-  setSuccessMessage,
-} from '~/lib/utils/toastsession.server';
+import { Routes } from '~/lib/constants/routes.constent';
 import { isAuthenticate } from '~/lib/utils/authsession.server';
-import { createPromotiontest, getPromotionById } from './edit-promotion.server';
+import { getPromotionById } from '../_app.customise_.$promotionId/promotion.server';
+import { updatePromotion } from './edit-promotion.server';
+import PromotionNavigation from '../_app.customise_.$promotionId/promotion-navigation';
+import { BackButton } from '~/components/ui/back-button';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -78,138 +74,86 @@ export type EditFormType = z.infer<typeof EditFormValidator>;
 
 export type EditFormFieldNameType = keyof EditFormType;
 
-export async function action({ request }: ActionFunctionArgs) {
-  const messageSession = await getMessageSession(request);
+/**
+ * @category Action Function
+ * @param param0 request | params
+ * @returns json
+ */
+export async function action({ request, params }: ActionFunctionArgs) {
   const data = await request.formData();
-
+  console.log("saaaaaa")
   let formData = Object.fromEntries(data);
   formData = { ...formData };
-  console.log('qwe', { formData });
-  const _action = formData.action;
-
-  // switch (_action) {
-  //   case "Customise": {
-  console.log('customise');
-  await createPromotiontest(formData);
-  setSuccessMessage(messageSession, 'New Banner Added Successfully');
-
-  return json(
-    {},
-    {
-      headers: {
-        'Set-Cookie': await messageCommitSession(messageSession),
-      },
-    },
-  );
-  //   }
-  //   case "Edit":
-  //     return "Edit";
-  //   default:
-  //     throw new Error("Unknown action");
-  // }
+  const bannerId = params.promotionId as string;
+  await updatePromotion(formData, bannerId);
+  return json({});
 }
 
 export async function loader({ params, context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
-
-  const promotionId = params?.promotionId as string;
-  const response = await getPromotionById(promotionId);
-  if (response?.payload) {
-    const results = response?.payload;
-    return json({ results });
+  try {
+    const promotionId = params?.promotionId as string;
+    const response = await getPromotionById(promotionId);
+    if (response?.payload) {
+      const results = response?.payload;
+      return json({ results, promotionId });
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log('err', error);
+      return (
+        <div className="flex items-center justify-center">
+          <div className="text-center">
+            <h1>Oops</h1>
+            <p>Something went wrong</p>
+          </div>
+        </div>
+      );
+    }
+    return <h1>Unknown Error</h1>;
   }
-  return { response: {} };
+
 }
 
 const PromotionEdit = ({ defaultValues }: EditFormProps) => {
-  const { results } = useLoaderData<any>();
-
+  const { results, promotionId } = useLoaderData<any>();
+  console.log("results", results);
+  const [isLoading, setIsLoading] = useState(false);
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [image, setImage] = useState('');
   const [renderedImageWidth, setRenderedImageWidth] = useState();
   const [companyInfo, setCompanyInfo] = useState({
-    companyLogo: results?.logo_url ?? DEFAULT_IMAGE.DEFAULT,
-    companyName: results?.company_name ?? 'ABC Distributors',
-    companyEmail: results?.company_email ?? 'company@gmail.com',
-    companyWebsite: results?.company_domain ?? 'abc.com.au',
-    companyFax: results?.company_fax ?? '+61 1 123 456 789',
-    companyPhone: '+61 1 123 456 789',
-    textColor: results?.color ?? '#0F1010',
-    bgColor: results?.background_color ?? '#f5f5f5',
+    companyLogo: DEFAULT_IMAGE.IMAGE,
+    companyName: results?.company_name,
+    companyEmail: results?.company_email,
+    companyWebsite: results?.company_domain,
+    companyFax: results?.company_fax,
+    companyPhone: results?.phone,
+    textColor: results?.color,
+    bgColor: results?.background_color,
   });
+
   const canvasRef = useRef<any>();
   const blobRef = useRef<any>();
 
-  const printDocument = (canvasRef: HTMLElement) => {
-    setLoading(true);
-    if (canvasRef) {
-      html2canvas(canvasRef, {
-        useCORS: true,
-        scale: 2,
-      }).then((canvas) => {
-        const link = document.createElement('a');
-        document.body.appendChild(link);
-        link.download = 'preview.png';
-        link.href = canvas.toDataURL();
-        link.target = '_blank';
-        link.click();
-        setLoading(false);
-      });
-    } else {
-      alert('Error occured while exporting the image. Please try again.');
-      setLoading(false);
-    }
-  };
-
-  const createBlob = (canvasRef: any) => {
-    try {
-      console.log('firstDamn');
-      console.log('canvasref', canvasRef.current);
-
-      html2canvas(canvasRef, {
-        useCORS: false,
-        scale: 2,
-      }).then((canvas) => {
-        canvas.toBlob((blob) => {
-          console.log('bull', blob);
-          var reader = new FileReader();
-
-          // Closure to capture the file information.
-          reader.onload = function (e) {
-            // Set the value of the input to the file content
-            console.log('ert', e?.target?.result);
-            blobRef.current.value = e?.target?.result;
-            console.log('blValue', blobRef.current.value);
-          };
-          reader.readAsDataURL(blob);
-        });
-      });
-    } catch (err) {
-      console.log('err', err);
-    }
-  };
-
   const handleChange = (field: string, value: string) => {
-    console.log('first');
     setCompanyInfo((prevState) => ({
       ...prevState,
       [field]: value,
     }));
-    createBlob(canvasRef.current);
     setShowUnsavedChanges(true);
   };
 
   const resetCompanyInfo = () => {
     setCompanyInfo({
-      companyLogo: DEFAULT_IMAGE.DEFAULT,
-      companyName: 'ABC Distributors',
-      companyEmail: 'company@gmail.com',
-      companyWebsite: 'abc.com.au',
-      companyFax: '+61 1 123 456 789',
-      companyPhone: '+61 1 123 456 789',
-      textColor: '#0F1010',
-      bgColor: '#f5f5f5',
+      companyLogo: DEFAULT_IMAGE.IMAGE,
+      companyName: results?.company_name,
+      companyEmail: results?.company_email,
+      companyWebsite: results?.company_domain,
+      companyFax: results?.company_fax,
+      companyPhone: results?.phone,
+      textColor: results?.color,
+      bgColor: results?.background_color,
     });
     const imagePreviews = document.querySelectorAll(
       '.image-preview',
@@ -217,18 +161,16 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     imagePreviews.forEach((imagePreview) => {
       imagePreview.setAttribute(
         'src',
-        `${results?.logo_url ?? DEFAULT_IMAGE.DEFAULT}`,
+        `${results?.logo_url ?? DEFAULT_IMAGE.IMAGE}`,
       );
     });
     setShowUnsavedChanges(false);
   };
 
-  const actionData = useActionData();
-  console.log(actionData);
-
   const htmlProcessPop = (canvasRef: any) => {
     setImage('');
     html2canvas(canvasRef, {
+      allowTaint: true,
       useCORS: true,
       scale: 2,
     }).then((canvas) => {
@@ -243,34 +185,88 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
   const unsavedChanges = () => {
     setShowUnsavedChanges(true);
   };
+  const navigate = useNavigate();
+
+  const handleClick = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+    const formData = new FormData();
+
+    formData.append("company_name", companyInfo?.companyName);
+    formData.append("company_email", companyInfo?.companyEmail);
+    formData.append("company_fax", companyInfo?.companyFax);
+    formData.append("phone", companyInfo?.companyPhone);
+    formData.append("company_domain", companyInfo?.companyWebsite);
+    formData.append("color", companyInfo?.textColor);
+    formData.append("background_color", companyInfo?.bgColor);
+    formData.append("logo", companyInfo?.companyLogo);
+
+    await html2canvas(canvasRef.current, {
+      allowTaint: true,
+      useCORS: true,
+      // proxy: "/html2canvas-proxy/",
+      // logging: true,
+      scale: 2,
+    }).then((canvas) => {
+      console.log('imagess', canvas.toDataURL())
+      formData.append("image", canvas.toDataURL());
+      return ""
+    });
+    try {
+      const response = await fetch(`/edit/${promotionId}`, {
+        method: 'POST',
+        body: formData
+      })
+      if (response.status === 200) {
+        displayToast({ message: "Promotion Edited Successfully", type: "success" });
+        navigate(Routes.MY_PROMOTIONS);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log('err', error);
+        setIsLoading(false);
+        return (
+          <div className="flex items-center justify-center">
+            <div className="text-center">
+              <h1>Oops</h1>
+              <p>Something went wrong</p>
+            </div>
+          </div>
+        );
+      }
+      setIsLoading(false);
+      return <h1>Unknown Error</h1>;
+    }
+
+  };
 
   return (
     <div className="bg-grey-25">
+      {isLoading && <div className='absolute inset-0 z-[9999]'>
+        <div className='flex h-full bg-white/95'>
+          <div className='fixed flex flex-wrap items-center justify-center -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 gap-x-4 gap-y-2'>
+            <p className='text-lg'>The image is being processed. Please wait for few moments ....</p>
+            <Loader width="w-8" height="h-8" />
+          </div>
+        </div>
+      </div>}
       <section className="container pt-8 pb-1">
         <div className="flex flex-wrap justify-between gap-4">
-          <BackButton title="Customize Promotion" />
-          <Button
-            type="button"
-            size="small"
-            variant="ghost"
-            className={`border-primary-500 hover:bg-inherit ${loading && 'pointer-events-none'
-              }`}
-            onClick={() => printDocument(canvasRef.current)}
-          >
-            {loading ? <Loader /> : <ExportUp />}Export
-          </Button>
+          <BackButton title="Edit Promotion" />
+          <PromotionNavigation canvasRef={canvasRef} />
         </div>
       </section>
       <section className="container mt-1">
         <Breadcrumb>
           <BreadcrumbItem>Content Management</BreadcrumbItem>
-          <BreadcrumbItem href="/">Promotions</BreadcrumbItem>
-          <BreadcrumbItem href="/" className="text-grey-900">
+          <BreadcrumbItem href={Routes.MY_PROMOTIONS}>My Promotions</BreadcrumbItem>
+          <BreadcrumbItem className="text-grey-900">
             Customize Promotion
           </BreadcrumbItem>
         </Breadcrumb>
       </section>
-      <section className={`container pb-72 ${showUnsavedChanges && 'mb-28'}`}>
+      <section className="container">
         <Separator className="mt-4 mb-8" />
         <div className="grid items-start grid-cols-3 gap-6">
           <div className="col-span-2">
@@ -297,7 +293,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                     <img
                       src={image}
                       alt="popupView"
-                      className="h-auto max-h-[calc(100vh_-_150px)]"
+                      className="h-auto max-h-[calc(100vh_-_150px)] mx-auto"
                     />
                   ) : (
                     <>
@@ -332,21 +328,18 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
               defaultValues={defaultValues}
               id="promotion-form"
               data-cy="customize-promotion"
+              onSubmit={async (_, event) => {
+                await handleClick(event);
+              }}
             >
-              <input
-                ref={blobRef}
-                id="love"
-                accept=".blob"
-                type="file"
-                name="image"
-              />
+              <input ref={blobRef} type="text" name="image" className='hidden' />
               <h5 className="py-4">Company Logo</h5>
               <ImageUploadInput
                 name="logo"
                 unsavedChanges={unsavedChanges}
                 imageUrl={defaultValues?.companyLogo}
                 className="pb-4 promotion__edit"
-                defaultImage={results?.logo_url ?? DEFAULT_IMAGE.DEFAULT}
+                defaultImage={DEFAULT_IMAGE.IMAGE}
               />
               <div className="accordion__section">
                 <AccordionCustom accordionTitle="Company Information">
@@ -434,7 +427,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                 </AccordionCustom>
               </div>
               {showUnsavedChanges && (
-                <div className="fixed inset-x-0 bottom-0 z-40 py-4 bg-primary-500">
+                <div className="fixed inset-x-0 bottom-0 py-4 bg-primary-500">
                   <div className="container">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <h5 className="text-white">Unsaved changes</h5>
@@ -447,7 +440,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                         >
                           discard
                         </Button>
-                        <Button type="submit" variant="secondary" name="action">
+                        <Button type="submit" variant="secondary" name="action" disabled={isLoading}>
                           save changes
                         </Button>
                       </div>

@@ -30,21 +30,16 @@ const PromotionNavigation = (canvasRef: any) => {
         }
     };
     return (
-        <section className="container pt-8 pb-1">
-            <div className="flex flex-wrap justify-between gap-4">
-                <BackButton title="Customize Promotion" />
-                <Button
-                    type="button"
-                    size="small"
-                    variant="ghost"
-                    className={`border-primary-500 hover:bg-inherit ${loading && 'pointer-events-none'
-                        }`}
-                    onClick={() => printDocument(canvasRef.canvasRef.current)}
-                >
-                    {loading ? <Loader /> : <ExportUp />}Export
-                </Button>
-            </div>
-        </section>
+        <Button
+            type="button"
+            size="small"
+            variant="ghost"
+            className={`border-primary-500 hover:bg-inherit ${loading && 'pointer-events-none'
+                }`}
+            onClick={() => printDocument(canvasRef.canvasRef.current)}
+        >
+            {loading ? <Loader /> : <ExportUp />}Export
+        </Button>
     );
 }
 
