@@ -1,40 +1,37 @@
 import {
   isRouteErrorResponse,
   useLoaderData,
-  useRouteError,
-  useSubmit,
+  useNavigate,
+  useRouteError
 } from '@remix-run/react';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
-  json,
+  json
 } from '@remix-run/server-runtime';
-import {withZod} from '@remix-validated-form/with-zod';
+import { withZod } from '@remix-validated-form/with-zod';
 import html2canvas from 'html2canvas';
-import {useEffect, useRef, useState} from 'react';
-import {ValidatedForm} from 'remix-validated-form';
-import {z} from 'zod';
-import {zfd} from 'zod-form-data';
-import {FullScreen} from '~/components/icons/full-screen';
+import { useRef, useState } from 'react';
+import { ValidatedForm } from 'remix-validated-form';
+import { z } from 'zod';
+import { zfd } from 'zod-form-data';
+import { FullScreen } from '~/components/icons/full-screen';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {Button} from '~/components/ui/button';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { Button } from '~/components/ui/button';
 import ColorPicker from '~/components/ui/color-picker';
-import {Dialog, DialogContent, DialogTrigger} from '~/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import ImageEdit from '~/components/ui/imageEdit';
 import Loader from '~/components/ui/loader';
-import {Separator} from '~/components/ui/separator';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {Routes} from '~/lib/constants/routes.constent';
-import {isAuthenticate} from '~/lib/utils/authsession.server';
-import {
-  getMessageSession,
-  messageCommitSession,
-  setSuccessMessage,
-} from '~/lib/utils/toastsession.server';
-import PromotionHeader from './promotion-navigation';
-import {createPromotion, getPromotionById} from './promotion.server';
+import { Separator } from '~/components/ui/separator';
+import { displayToast } from '~/components/ui/toast';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { Routes } from '~/lib/constants/routes.constent';
+import { isAuthenticate } from '~/lib/utils/authsession.server';
+import { createPromotion, getPromotionById } from './promotion.server';
+import PromotionNavigation from './promotion-navigation';
+import { BackButton } from '~/components/ui/back-button';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -76,41 +73,45 @@ export type EditFormType = z.infer<typeof EditFormValidator>;
 
 export type EditFormFieldNameType = keyof EditFormType;
 
-export async function action({request, params}: ActionFunctionArgs) {
-  const messageSession = await getMessageSession(request);
+export async function action({ request, params }: ActionFunctionArgs) {
   const data = await request.formData();
 
   let formData = Object.fromEntries(data);
-  formData = {...formData};
+  formData = { ...formData };
   const bannerId = params.promotionId as string;
   await createPromotion(formData, bannerId);
-  setSuccessMessage(messageSession, 'New Banner Added Successfully');
-  return json(
-    {},
-    {
-      headers: {
-        'Set-Cookie': await messageCommitSession(messageSession),
-      },
-    },
-  );
+  return json({});
 }
 
-export async function loader({params, context}: LoaderFunctionArgs) {
+export async function loader({ params, context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
-
-  const promotionId = params?.promotionId as string;
-  const response = await getPromotionById(promotionId);
-  if (response?.payload) {
-    const results = response?.payload;
-    return json({results, promotionId });
+  try {
+    const promotionId = params?.promotionId as string;
+    const response = await getPromotionById(promotionId);
+    if (response?.payload) {
+      const results = response?.payload;
+      return json({ results, promotionId });
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log('err', error);
+      return (
+        <div className="flex items-center justify-center">
+          <div className="text-center">
+            <h1>Oops</h1>
+            <p>Something went wrong</p>
+          </div>
+        </div>
+      );
+    }
+    return <h1>Unknown Error</h1>;
   }
-  return {response: {}, promotionId};
+
 }
 
-const PromotionEdit = ({defaultValues}: EditFormProps) => {
-  const {results, promotionId} = useLoaderData<any>();
-  const submit = useSubmit();
-  console.log("rwerwe", results )
+const PromotionEdit = ({ defaultValues }: EditFormProps) => {
+  const { results, promotionId } = useLoaderData<any>();
+  const [isLoading, setIsLoading] = useState(false);
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
   const [image, setImage] = useState('');
   const [renderedImageWidth, setRenderedImageWidth] = useState();
@@ -139,13 +140,13 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
   const resetCompanyInfo = () => {
     setCompanyInfo({
       companyLogo: DEFAULT_IMAGE.IMAGE,
-    companyName: results?.company_name,
-    companyEmail: results?.company_email,
-    companyWebsite: results?.company_domain,
-    companyFax: results?.company_fax,
-    companyPhone: results?.phone,
-    textColor: results?.color,
-    bgColor: results?.background_color,
+      companyName: results?.company_name,
+      companyEmail: results?.company_email,
+      companyWebsite: results?.company_domain,
+      companyFax: results?.company_fax,
+      companyPhone: results?.phone,
+      textColor: results?.color,
+      bgColor: results?.background_color,
     });
     const imagePreviews = document.querySelectorAll(
       '.image-preview',
@@ -177,42 +178,75 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
   const unsavedChanges = () => {
     setShowUnsavedChanges(true);
   };
-
-  // useEffect(() => {
-  //   createBlob(canvasRef.current);
-  // }, []);
+  const navigate = useNavigate();
 
   const handleClick = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData()
-    
-    formData.append( "company_name", companyInfo?.companyName )
-    formData.append( "company_email", companyInfo?.companyEmail )
-    formData.append( "company_fax", companyInfo?.companyFax )
-    formData.append( "phone", companyInfo?.companyPhone )
-    formData.append( "company_domain", companyInfo?.companyWebsite )
-    formData.append( "color", companyInfo?.textColor )
-    formData.append( "background_color", companyInfo?.bgColor )
-    formData.append( "logo", companyInfo?.companyLogo )
+    setIsLoading(true);
+    const formData = new FormData();
+
+    formData.append("company_name", companyInfo?.companyName);
+    formData.append("company_email", companyInfo?.companyEmail);
+    formData.append("company_fax", companyInfo?.companyFax);
+    formData.append("phone", companyInfo?.companyPhone);
+    formData.append("company_domain", companyInfo?.companyWebsite);
+    formData.append("color", companyInfo?.textColor);
+    formData.append("background_color", companyInfo?.bgColor);
+    formData.append("logo", companyInfo?.companyLogo);
 
     await html2canvas(canvasRef.current, {
       allowTaint: true,
       useCORS: true,
       scale: 2,
     }).then((canvas) => {
-      formData.append("image", canvas.toDataURL() );
+      formData.append("image", canvas.toDataURL());
       return ""
     });
 
-    const response = await fetch(`/customise/${promotionId}`, {
-      method: 'POST',
-      body: formData
-    })
+    try {
+      const response = await fetch(`/customise/${promotionId}`, {
+        method: 'POST',
+        body: formData
+      })
+      if (response.status === 200) {
+        displayToast({ message: "Promotion Updated Successfully", type: "success" });
+        navigate(Routes.MY_PROMOTIONS);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log('err', error);
+        setIsLoading(false);
+        return (
+          <div className="flex items-center justify-center">
+            <div className="text-center">
+              <h1>Oops</h1>
+              <p>Something went wrong</p>
+            </div>
+          </div>
+        );
+      }
+      setIsLoading(false);
+      return <h1>Unknown Error</h1>;
+    }
   };
 
   return (
     <div className="bg-grey-25">
-      <PromotionHeader canvasRef={canvasRef} />
+      {isLoading && <div className='absolute inset-0 z-[9999]'>
+        <div className='flex h-full bg-white/95'>
+          <div className='fixed flex flex-wrap items-center justify-center -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 gap-x-4 gap-y-2'>
+            <p className='text-lg'>The image is being processed. Please wait for few moments ....</p>
+            <Loader width="w-8" height="h-8" />
+          </div>
+        </div>
+      </div>}
+      <section className="container pt-8 pb-1">
+        <div className="flex flex-wrap justify-between gap-4">
+          <BackButton title="Customize Promotion" />
+          <PromotionNavigation canvasRef={canvasRef} />
+        </div>
+      </section>
       <section className="container mt-1">
         <Breadcrumb>
           <BreadcrumbItem>Content Management</BreadcrumbItem>
@@ -242,9 +276,8 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
                   style={{
                     width: renderedImageWidth && renderedImageWidth + 50,
                   }}
-                  className={`max-w-4xl ${
-                    !image && 'flex items-center justify-center'
-                  }`}
+                  className={`max-w-4xl ${!image && 'flex items-center justify-center'
+                    }`}
                 >
                   {image && renderedImageWidth ? (
                     <img
@@ -287,10 +320,9 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
               data-cy="customize-promotion"
               onSubmit={async (_, event) => {
                 await handleClick(event);
-                submit(event.currentTarget);
               }}
             >
-              <input ref={blobRef} type="text" name="image" />
+              <input ref={blobRef} type="text" name="image" className='hidden' />
               <h5 className="py-4">Company Logo</h5>
               <ImageUploadInput
                 name="logo"
@@ -385,7 +417,7 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
                 </AccordionCustom>
               </div>
               {showUnsavedChanges && (
-                <div className="fixed inset-x-0 bottom-0 z-40 py-4 bg-primary-500">
+                <div className="fixed inset-x-0 bottom-0 py-4 bg-primary-500">
                   <div className="container">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <h5 className="text-white">Unsaved changes</h5>
@@ -398,7 +430,7 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
                         >
                           discard
                         </Button>
-                        <Button type="submit" variant="secondary" name="action">
+                        <Button type="submit" variant="secondary" name="action" disabled={isLoading}>
                           save changes
                         </Button>
                       </div>
@@ -410,7 +442,7 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
           </div>
         </div>
       </section>
-    </div>
+    </div >
   );
 };
 

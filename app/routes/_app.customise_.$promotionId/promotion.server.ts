@@ -36,15 +36,11 @@ export async function createPromotion(
       fData.append(key, value);
     }
     fData.append('banner_id', bannerId);
-    console.log('final', fData);
 
-    const results: any = await fetch(
-      `${ENDPOINT.PROMOTION.GET}`,
-      {
-        method: 'POST',
-        body: fData,
-      },
-    );
+    const results: any = await fetch(`${ENDPOINT.PROMOTION.GET}`, {
+      method: 'POST',
+      body: fData,
+    });
 
     if (!results.status) {
       throw new Response(results.message, {

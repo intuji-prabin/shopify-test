@@ -4,7 +4,6 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { X } from 'lucide-react';
 
 import { toast } from './use-toast';
-import { SuccessAlert } from '../icons/alert';
 import { cn } from '~/lib/utils/utils';
 import Tick from '../icons/tick';
 

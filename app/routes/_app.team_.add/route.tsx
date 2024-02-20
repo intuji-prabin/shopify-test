@@ -3,13 +3,13 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
-import {validationError} from 'remix-validated-form';
-import {BackButton} from '~/components/ui/back-button';
-import {addTeam} from '~/routes/_app.team_.add/add-team.server';
-import {isAuthenticate} from '~/lib/utils/authsession.server';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {Routes} from '~/lib/constants/routes.constent';
-import {SelectInputOptions} from '~/components/ui/select-input';
+import { validationError } from 'remix-validated-form';
+import { BackButton } from '~/components/ui/back-button';
+import { addTeam } from '~/routes/_app.team_.add/add-team.server';
+import { isAuthenticate } from '~/lib/utils/authsession.server';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { Routes } from '~/lib/constants/routes.constent';
+import { SelectInputOptions } from '~/components/ui/select-input';
 import TeamForm, {
   AddTeamFormSchemaValidator,
 } from '~/routes/_app.team_.add/team-form';
@@ -25,20 +25,20 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toastsession.server';
-import {MetaFunction} from '@shopify/remix-oxygen';
-import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
+import { MetaFunction } from '@shopify/remix-oxygen';
+import { getCustomerRolePermission } from '~/lib/customer-role/customer-role-permission';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Add Team Member'}];
+  return [{ title: 'Add Team Member' }];
 };
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({ context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   const roles = await getCustomerRolePermission(context);
-  return json({roles});
+  return json({ roles });
 }
 
-export async function action({request, context}: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
   const messageSession = await getMessageSession(request);
 
@@ -51,7 +51,7 @@ export async function action({request, context}: ActionFunctionArgs) {
       return validationError(result.error);
     }
 
-    const {email, fullName, address, phoneNumber, userRole, profileImage} =
+    const { email, fullName, address, phoneNumber, userRole, profileImage } =
       result.data;
 
     const team = await addTeam({
@@ -86,12 +86,12 @@ export async function action({request, context}: ActionFunctionArgs) {
       );
     }
 
-    return json({error}, {status: 400});
+    return json({ error }, { status: 400 });
   }
 }
 
 export default function AddTeam() {
-  const {roles} = useLoaderData<typeof loader>();
+  const { roles } = useLoaderData<typeof loader>();
 
   return (
     <section className="container">
