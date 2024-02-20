@@ -13,7 +13,7 @@ import {
   AccountDropDownMobile,
   ContentDropdownMobile,
   ResourcesDropdownMobile,
-} from './mobile-navbar/mobileDrop';
+} from './mobile-navbar/mobile-drop';
 
 export const menuItemsData = [
   {

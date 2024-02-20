@@ -622,9 +622,11 @@ label .required {
 
 /* Checkbox Input */
 input[type='checkbox'] {
-  @apply appearance-none w-5 h-5 align-text-top !p-0 rounded-[4px] outline-none leading-[0px] cursor-pointer bg-none border-2 border-solid border-grey-200 relative checked:bg-primary-500 checked:border checked:border-solid checked:border-primary-500 checked:outline-none active:bg-neutral-white active:border-2 active:border-solid active:border-grey-200;
+  @apply appearance-none w-[18px] h-[18px] align-text-top !p-0  outline-none leading-[0px] cursor-pointer bg-none border-2 border-solid border-grey-200 relative checked:bg-primary-500 checked:border checked:border-solid checked:border-primary-500 checked:outline-none active:bg-neutral-white active:border-2 active:border-solid active:border-grey-200 rounded-none;
 }
-
+input[type='checkbox']:checked {
+  @apply border-none;
+}
 input[type='checkbox']:before {
   @apply content-[""] absolute right-1/2 top-[45%] w-1 h-2.5 border-solid border-neutral-white border-t-0 border-r-2 border-b-2 border-l-0 -m-px -mx-1 mb-0  rotate-45 -translate-x-1/2 -translate-y-1/2 z-10;
 }
@@ -697,7 +699,7 @@ div[data-state='open'].fixed.inset-0 {
   tr
   td
   .data-\[state\=checked\]\:text-slate-50[data-state='checked']:first-child {
-  @apply bg-primary-500;
+  @apply bg-primary-500 border-none;
 }
 
 .wishlist table tbody tr td:last-child button {

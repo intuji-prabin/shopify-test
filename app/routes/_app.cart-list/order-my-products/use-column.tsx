@@ -133,10 +133,14 @@ type ItemsColumnType = Pick<BulkOrderColumn, 'items'>;
 function ItemsColumn({items}: ItemsColumnType) {
   const {name, image, isStock, sku} = items;
   return (
-    <figure className="flex space-x-2">
-      <div className="bg-grey-25 p-3 w-20 h-20">
-        <img src={image} alt="item-image" />
-      </div>
+    <div className="flex space-x-2">
+      <figure className="bg-grey-25 p-3 !w-20 ">
+        <img
+          src={image}
+          alt="item-image"
+          className="h-full object-contain object-center"
+        />
+      </figure>
       <figcaption className="flex flex-col justify-between">
         <h5 className="">{name}</h5>
         <div className="flex space-x-5 items-center max-w-[180px] flex-wrap">
@@ -153,7 +157,7 @@ function ItemsColumn({items}: ItemsColumnType) {
           </p>
         </div>
       </figcaption>
-    </figure>
+    </div>
   );
 }
 /**

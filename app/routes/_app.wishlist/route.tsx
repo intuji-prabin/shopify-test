@@ -1,6 +1,7 @@
 import {useLoaderData} from '@remix-run/react';
 import {json} from '@remix-run/server-runtime';
 import {WishListTable} from './wishlist';
+import {items} from './wishlistItems';
 
 //Type Definitions for the Wishlist Page
 export type WishListProductType = {
@@ -16,36 +17,6 @@ export type WishListItem = {
   quantity: number;
   action: string;
 };
-
-//Dummy Static Data for the Wishlist Items
-const items: WishListItem[] = [
-  {
-    id: 'm5gr84i9',
-    action: 'add to cart',
-    product: {
-      sku: 'W1400190',
-      productName:
-        'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition',
-      productImageUrl: 'product.png',
-      inStock: true,
-    },
-    buyPrice: 200,
-    quantity: 200,
-  },
-  {
-    id: 'asdf2324',
-    action: 'add to cart',
-    product: {
-      sku: 'W1400190',
-      productName:
-        'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition',
-      productImageUrl: 'product.png',
-      inStock: false,
-    },
-    buyPrice: 200,
-    quantity: 200,
-  },
-];
 
 //API calling function to fetch wishlisted products
 async function getWishlistedItems() {
