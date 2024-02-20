@@ -23,15 +23,15 @@ const invoices = [
     paymentStatus: 'Unpaid',
   },
   {
-    invoice: 'INV003',
+    invoice: 'INV004',
     paymentStatus: 'Unpaid',
   },
   {
-    invoice: 'INV003',
+    invoice: 'INV005',
     paymentStatus: 'Unpaid',
   },
   {
-    invoice: 'INV003',
+    invoice: 'INV006',
     paymentStatus: 'Unpaid',
   },
 ];

@@ -155,16 +155,17 @@ export const mobileMenuItemsData = [
     icon: <MyTeam />,
   },
   {
+    id: 5,
     title: 'Support',
     url: Routes.SUPPORT,
     icon: <Support />,
   },
   {
-    id: 5,
+    id: 6,
     title: <ResourcesDropdownMobile />,
   },
   {
-    id: 6,
+    id: 7,
     title: 'Settings',
     url: Routes.SETTINGS,
     icon: <Settings />,
