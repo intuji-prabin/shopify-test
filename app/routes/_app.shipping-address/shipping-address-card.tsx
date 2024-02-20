@@ -3,21 +3,30 @@ import {
   ShippingAddress,
 } from '~/routes/_app.shipping-address/shipping-address.server';
 
+function concatDefaultAddress(address1: string, address2: string) {
+  return address1.concat(' ', address2).trim();
+}
+
 export default function ShippingAddressCards({
-  data,
+  shippingAddresses,
 }: {
-  data: ShippingAddress | null;
+  shippingAddresses: ShippingAddress;
 }) {
-  const defaultAddress2 = data?.defaultAddress?.address2
-    ? data?.defaultAddress?.address2
-    : '-';
-  const defaultAddress = data?.defaultAddress?.address1
-    ? data?.defaultAddress?.address1
-    : defaultAddress2;
+  const addressList = shippingAddresses.addresses;
+  const defaultAddress = shippingAddresses.defaultAddress;
+
+  const defaultAddress1 = defaultAddress.address1;
+  const defaultAddress2 = defaultAddress.address2;
+
+  const defaultAddresses = concatDefaultAddress(
+    defaultAddress1,
+    defaultAddress2,
+  );
+
   return (
     <div
       className="grid grid-cols-1 gap-6 sm:grid-cols-2"
-      data-cy="contact-cards"
+      shippingAddresses-cy="contact-cards"
     >
       <div className="p-6 bg-white">
         <ul className="space-y-3">
@@ -28,75 +37,80 @@ export default function ShippingAddressCards({
           </li>
           <li className="flex flex-wrap gap-x-4 gap-y-2">
             <p className="text-lg font-medium w-[85px]">Address</p>
-            <p className="text-lg w-[calc(100%_-_101px)]">{defaultAddress && defaultAddress || '-'}</p>
+            <p className="text-lg w-[calc(100%_-_101px)]">
+              {defaultAddresses || '-'}
+            </p>
           </li>
           <li className="flex flex-wrap gap-x-4 gap-y-2">
             <p className="text-lg font-medium w-[85px]">Postal Code</p>
             <p className="text-lg w-[calc(100%_-_101px)]">
-              {data?.defaultAddress?.zip && data?.defaultAddress?.zip || '-'}
+              {defaultAddress.zip || '-'}
             </p>
           </li>
           <li className="flex flex-wrap gap-x-4 gap-y-2">
             <p className="text-lg font-medium w-[85px]">Fax</p>
             <p className="text-lg w-[calc(100%_-_101px)]">
-              {data?.defaultAddress?.firstName && data?.defaultAddress?.firstName || '-'}
+              {defaultAddress.firstName || '-'}
             </p>
           </li>
           <li className="flex flex-wrap gap-x-4 gap-y-2">
             <p className="text-lg font-medium w-[85px]">Phone</p>
             <p className="text-lg w-[calc(100%_-_101px)]">
-              {data?.defaultAddress?.phone && data?.defaultAddress?.phone || '-'}
+              {defaultAddress.phone || '-'}
             </p>
           </li>
           <li className="flex flex-wrap gap-x-4 gap-y-2">
             <p className="text-lg font-medium w-[85px]">Country</p>
             <p className="text-lg w-[calc(100%_-_101px)]">
-              {data?.defaultAddress?.country && data?.defaultAddress?.country || '-'}
+              {defaultAddress.country || '-'}
             </p>
           </li>
         </ul>
       </div>
-      {data?.addresses.map((shippingCard: Address, index: number) => {
+      {addressList.map((shippingCard: Address, index: number) => {
+        const concatAddresses = concatDefaultAddress(
+          shippingCard.address1,
+          shippingCard.address2,
+        );
         return (
-          <div className="flex items-center p-6 bg-white" key={'address' + index}>
+          <div
+            className="flex items-center p-6 bg-white"
+            key={'address' + index}
+          >
             <ul className="space-y-3">
               <li className="flex flex-wrap gap-x-4 gap-y-2">
                 <p className="text-lg font-medium w-[85px]">Address</p>
                 <p className="text-lg w-[calc(100%_-_101px)]">
-                  {shippingCard?.address1
-                    ? shippingCard?.address1
-                    : shippingCard?.address2
-                      ? shippingCard?.address2
-                      : '-'}
+                  {concatAddresses || '-'}
                 </p>
               </li>
               <li className="flex flex-wrap gap-x-4 gap-y-2">
                 <p className="text-lg font-medium w-[85px]">Postal Code</p>
                 <p className="text-lg w-[calc(100%_-_101px)]">
-                  {shippingCard?.zip && shippingCard?.zip || '-'}
+                  {shippingCard.zip || '-'}
                 </p>
               </li>
               <li className="flex flex-wrap gap-x-4 gap-y-2">
                 <p className="text-lg font-medium w-[85px]">Fax</p>
                 <p className="text-lg w-[calc(100%_-_101px)]">
-                  {shippingCard?.firstName && shippingCard?.firstName || '-'}
+                  {shippingCard.firstName || '-'}
                 </p>
               </li>
               <li className="flex flex-wrap gap-x-4 gap-y-2">
                 <p className="text-lg font-medium w-[85px]">Phone</p>
                 <p className="text-lg w-[calc(100%_-_101px)]">
-                  {shippingCard?.phone && shippingCard?.phone || '-'}
+                  {shippingCard.phone || '-'}
                 </p>
               </li>
               <li className="flex flex-wrap gap-x-4 gap-y-2">
                 <p className="text-lg font-medium w-[85px]">Country</p>
                 <p className="text-lg w-[calc(100%_-_101px)]">
-                  {shippingCard?.country && shippingCard?.country || '-'}
+                  {shippingCard.country || '-'}
                 </p>
               </li>
             </ul>
           </div>
-        )
+        );
       })}
     </div>
   );

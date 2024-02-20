@@ -19,25 +19,18 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({context}: LoaderFunctionArgs) {
-  try {
-    await isAuthenticate(context);
-    const {userDetails} = await getUserDetails(context);
-    const metaParentValue = userDetails.meta.parent.value;
-    const customerId =
-      metaParentValue === 'null' ? userDetails.id : metaParentValue;
+  await isAuthenticate(context);
+  const {userDetails} = await getUserDetails(context);
+  const metaParentValue = userDetails.meta.parent.value;
+  const customerId =
+    metaParentValue === 'null' ? userDetails.id : metaParentValue;
 
-    const response = await getAllCompanyShippingAddresses(customerId);
-    if (response) {
-      return json(response);
-    }
-    return null;
-  } catch (error) {
-    throw new Error('something went wrong');
-  }
+  const shippingAddresses = await getAllCompanyShippingAddresses(customerId);
+  return json({shippingAddresses});
 }
 
 export default function ShippingAddressMgmt() {
-  const results = useLoaderData<typeof loader>();
+  const {shippingAddresses} = useLoaderData<typeof loader>();
   return (
     <div className="container pt-6 ">
       <ShippingAddressHeader title={'Shipping Address '} />
@@ -53,7 +46,7 @@ export default function ShippingAddressMgmt() {
           </Link>
         </AlertDescription>
       </Alert>
-      <ShippingAddressCards data={results} />
+      <ShippingAddressCards shippingAddresses={shippingAddresses} />
     </div>
   );
 }
