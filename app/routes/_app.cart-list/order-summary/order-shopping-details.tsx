@@ -14,6 +14,7 @@ import {Button} from '~/components/ui/button';
 import {Link} from '@remix-run/react';
 import {useState} from 'react';
 import {Routes} from '~/lib/constants/routes.constent';
+import Tick from '~/components/icons/tick';
 
 export function ShippingLocation() {
   return (
@@ -114,22 +115,45 @@ export function TextArea() {
   );
 }
 export function PromoCode() {
+  const [activatePromo, setActivatePromo] = useState(false);
+  function handleActivatePromoCode() {
+    setActivatePromo(!activatePromo);
+  }
   return (
-    <div className="flex flex-col gap-1">
-      <p className="text-base text-normal leading-[21px] text-grey-800">
-        Enter promo code here
-      </p>
-      <div className="flex gap-2 flex-col sm:flex-row">
-        <input
-          type=" text"
-          className="grow"
-          placeholder="Enter promo code here"
-        />
-        <Button variant="secondary" className="min-w-[99px]">
-          Apply
-        </Button>
+    <>
+      <div className="flex flex-col gap-1">
+        <p className="text-base text-normal leading-[21px] text-grey-800">
+          Enter promo code here
+        </p>
+        <div className="flex gap-2 flex-col sm:flex-row w-full">
+          <input
+            type=" text"
+            className={` ${
+              activatePromo ? 'bg-semantic-success-100 border-none' : 'bg-white'
+            } grow`}
+            placeholder="Enter promo code here"
+          />
+
+          <Button
+            variant="secondary"
+            className="min-w-[99px]"
+            onClick={handleActivatePromoCode}
+          >
+            {activatePromo ? 'Remove' : 'Apply'}
+          </Button>
+        </div>
+        {activatePromo ? (
+          <div className="flex">
+            <Tick width="20px" height="20px" fillColor="#3BBA53" />
+
+            <p className="text-semantic-success-500 font-normal leading-5 text-[14px] items-center">
+              {' '}
+              Promo code activated
+            </p>
+          </div>
+        ) : undefined}
       </div>
-    </div>
+    </>
   );
 }
 type ShippingAddressProps = {
@@ -195,7 +219,7 @@ export function ShoppingDetails() {
       <Button className="p-0" variant="primary">
         <Link
           to={Routes.Order_SUCCESSFUL}
-          className="w-full min-h-14 flex items-center justify-center "
+          className="w-full min-h-14 flex items-center justify-center text-lg font-bold"
         >
           Place order
         </Link>

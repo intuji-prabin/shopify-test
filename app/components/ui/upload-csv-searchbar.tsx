@@ -22,7 +22,7 @@ export function ProductSearchBar() {
       <input
         type="text"
         placeholder="Rapid Product Search.."
-        className="border-none w-full placeholder-italic text-base font-bold text-grey-700 placeholder-text-[#0F1010] "
+        className="border-none w-full placeholder-italic text-base font-bold text-grey-700 placeholder-text-[#0F1010] focus:bg-white "
         onClick={handleInputClick}
       />
       {showSuggestions && <RecomendedProduct />}

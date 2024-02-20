@@ -128,12 +128,16 @@ function IndeterminateCheckbox({
 type ItemsColumnType = Pick<BulkOrderColumn, 'items'>;
 
 function ItemsColumn({items}: ItemsColumnType) {
-  const {name, image, isStock, sku} = items;
+  const {name, image, sku} = items;
   return (
-    <figure className="flex space-x-2">
-      <div className="bg-grey-25 p-3 w-20 h-20">
-        <img src={image} alt="item-image" />
-      </div>
+    <div className="flex space-x-2">
+      <figure className="bg-grey-25 p-3 w-20">
+        <img
+          src={image}
+          alt="item-image"
+          className="object-contain object-center h-full"
+        />
+      </figure>
       <figcaption className="flex flex-col justify-between">
         <h5 className="">{name}</h5>
         <div className="flex space-x-5 items-center max-w-[180px] flex-wrap">
@@ -150,7 +154,7 @@ function ItemsColumn({items}: ItemsColumnType) {
           </p>
         </div>
       </figcaption>
-    </figure>
+    </div>
   );
 }
 
@@ -167,7 +171,7 @@ function QuantityColumn({quantity}: QuantityColumnType) {
   const handleDecreaseQuantity = () =>
     setQuantityCounter((previousState) => previousState - 1);
   return (
-    <div className="flex flex-col gap-[11.5px] mt-[2.5rem]">
+    <div className="flex flex-col gap-[11.5px] mt-[2.5rem] cart-list">
       <div className="flex items-center">
         <button
           className="border border-solid border-grey-200 flex items-center justify-center  min-h-10 w-10"
@@ -187,8 +191,11 @@ function QuantityColumn({quantity}: QuantityColumnType) {
       </div>
       <div className="flex items-center gap-1">
         <div className="info-block">
-          <p className="h-5 w-5 flex justify-center items-center ">
-            <Link to="" data-tooltip="Recommended retail price">
+          <p className="h-5 min-w-5 flex justify-center items-center ">
+            <Link
+              to=""
+              data-tooltip="The minimum order quantity is 500. Orders below this quantity will incur additional surcharges."
+            >
               <span>
                 <TooltipInfo fillColor="#0092CF" />
               </span>

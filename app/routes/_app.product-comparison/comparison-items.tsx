@@ -11,6 +11,69 @@ type CompareProductsCardInfoProps = {
   imageUrl: string;
 };
 
+export function SelectedProduct({
+  productName,
+  buyPrice,
+  rppPrice,
+}: CompareProductsCardInfoProps) {
+  return (
+    <div className="py-4 flex flex-col gap-6 ">
+      <div className="tag flex flex-col gap-[11px]">
+        <div>
+          <h5 className="text-lg not-italic font-medium leading-[22px] text-grey-900 line-clamp-2 text-ellipsis whitespace-normal h-12">
+            {productName}
+          </h5>
+        </div>
+        <div className="flex  gap-2 md:gap-6 ">
+          <div className="flex flex-col">
+            <div className="flex items-center gap-1">
+              <p className="text-semantic-success-500 text-sm md:text-base font-bold uppercase leading-[21px]">
+                BUY PRICE
+              </p>
+              <div className="info-block">
+                <p className="h-5 w-5 flex justify-center items-center ">
+                  <Link to="" data-tooltip="Recommended retail price">
+                    <span>
+                      <TooltipInfo />
+                    </span>
+                  </Link>
+                </p>
+              </div>
+            </div>
+            <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-[#252727]">
+              ${buyPrice.toFixed(2)}
+            </h3>
+            <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
+          </div>
+          <div className="flex flex-col  pl-1 md:pl-6">
+            <div className="flex items-center ">
+              <p className="text-grey-300 not-italic text-base font-bold uppercase leading-[21px]">
+                rrp
+              </p>
+              <div className="info-block">
+                <p className="h-5 w-5 flex justify-center items-center ">
+                  <Link
+                    to=""
+                    data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts"
+                  >
+                    <span>
+                      <TooltipInfo />
+                    </span>
+                  </Link>
+                </p>
+              </div>
+            </div>
+            <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-[#252727]">
+              ${rppPrice.toFixed(2)}
+            </h3>
+            <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function CompareProductCardItem({
   imageUrl,
   productName,
@@ -50,64 +113,14 @@ export default function CompareProductCardItem({
           ) : undefined}
         </div>
         {isProductSelected ? (
-          <div className="py-4 flex flex-col gap-6 ">
-            <div className="tag flex flex-col gap-[11px]">
-              <div>
-                <h5 className="text-lg not-italic font-medium leading-[22px] text-grey-900 line-clamp-2 text-ellipsis whitespace-normal h-12">
-                  {productName}
-                </h5>
-              </div>
-              <div className="flex  gap-2 md:gap-6 ">
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-1">
-                    <p className="text-semantic-success-500 text-sm md:text-base font-bold uppercase leading-[21px]">
-                      BUY PRICE
-                    </p>
-                    <div className="info-block">
-                      <p className="h-5 w-5 flex justify-center items-center ">
-                        <Link to="" data-tooltip="Recommended retail price">
-                          <span>
-                            <TooltipInfo />
-                          </span>
-                        </Link>
-                      </p>
-                    </div>
-                  </div>
-                  <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-[#252727]">
-                    ${buyPrice.toFixed(2)}
-                  </h3>
-                  <p className="text-[14px] font-normal leading-4">
-                    (Excl. GST)
-                  </p>
-                </div>
-                <div className="flex flex-col  pl-1 md:pl-6">
-                  <div className="flex items-center ">
-                    <p className="text-grey-300 not-italic text-base font-bold uppercase leading-[21px]">
-                      rrp
-                    </p>
-                    <div className="info-block">
-                      <p className="h-5 w-5 flex justify-center items-center ">
-                        <Link
-                          to=""
-                          data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts"
-                        >
-                          <span>
-                            <TooltipInfo />
-                          </span>
-                        </Link>
-                      </p>
-                    </div>
-                  </div>
-                  <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-[#252727]">
-                    ${rppPrice.toFixed(2)}
-                  </h3>
-                  <p className="text-[14px] font-normal leading-4">
-                    (inc. GST)
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <SelectedProduct
+            productName={
+              'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of'
+            }
+            buyPrice={649.22}
+            rppPrice={799.87}
+            imageUrl={'weld-helmet.png'}
+          />
         ) : (
           <div className="product-add">
             <p className="text-lg leading-[22px] text-grey-900 font-medium my-4">

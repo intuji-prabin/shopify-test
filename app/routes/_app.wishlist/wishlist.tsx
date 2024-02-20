@@ -130,7 +130,8 @@ export function WishListTable({
   }
 
   function handleRemoveAllItems() {
-    table.toggleAllPageRowsSelected(false);
+    table.toggleAllRowsSelected(false);
+    console.log('All rows deselected');
   }
 
   return (
