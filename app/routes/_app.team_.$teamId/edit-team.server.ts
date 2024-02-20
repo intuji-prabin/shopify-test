@@ -62,7 +62,7 @@ export async function editTeam({
   file,
 }: EditTeamParams) {
   const firstName = fullName.split(' ')[0];
-  const lastName = fullName.split(' ')[1];
+  const lastName = fullName.split(' ')[1] ?? '';
 
   if (typeof file !== 'undefined') {
     const {status} = await fileUpload({customerId, file});

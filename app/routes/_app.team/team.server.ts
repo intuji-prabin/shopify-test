@@ -1,7 +1,7 @@
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
-import {TeamColumn} from './use-column';
+import {TeamColumn} from '~/routes/_app.team/use-column';
 
 interface MetaField {
   key: string;
@@ -40,12 +40,6 @@ export async function getAllTeams({
 
   if (results.payload.length < 0) {
     throw new Error(results.message);
-  }
-
-  if (!results.status) {
-    throw new Response('Oh no! Something went wrong!', {
-      status: 404,
-    });
   }
 
   return results.payload;
