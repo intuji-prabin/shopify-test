@@ -126,9 +126,9 @@ export default function ComparisonProperties() {
 
         <ComparisionTableRow title="sensor" items={sensor} />
 
-        <ComparisionTableRow title="sensor" items={powerSupply} />
+        <ComparisionTableRow title="Power Supply" items={powerSupply} />
 
-        <ComparisionTableRow title="sensor" items={weight} />
+        <ComparisionTableRow title="Weight" items={weight} />
       </div>
     </>
   );

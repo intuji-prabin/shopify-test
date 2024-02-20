@@ -1,61 +1,34 @@
-import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
-import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 
-export async function getPromotionById(promotionId: string) {
-  try {
-    const results = await useFetch<any>({
-      method: AllowedHTTPMethods.GET,
-      url: `${ENDPOINT.PROMOTION.GET}/${promotionId}`,
-    });
-
-    if (!results) {
-      throw new Response('Oh no! Something went wrong!', {
-        status: 404,
-      });
-    }
-    return results;
-  } catch (error) {
-    return {promotions: {}};
-  }
+interface FormDataObject {
+  [key: string]: string | Blob;
 }
 
-export async function createPromotiontest({formData}: any) {
+export async function updatePromotion(
+  formData: FormDataObject,
+  bannerId: string,
+) {
   try {
-    console.log('hi');
-    // const body = {
-    //   company_name: 'Kumari pvt ltd',
-    //   company_id: 'abc12345',
-    //   company_email: 'hgjghj',
-    //   company_domain: 'ghdh',
-    //   company_fax: '45464',
-    //   color: 'ghfgh',
-    //   background_color: 'fghdfg',
-    //   image: new Blob(['dummy image file'], {type: 'image/jpeg'}),
-    //   logo: new Blob(['dummy image file'], {type: 'image/jpeg'}),
-    // };
-    // const fData = new FormData();
-    // for (const [key, value] of Object.entries(data)) {
-    //   fData.append(key, value);
-    // }
-    // console.log('sal', fData);
+    const fData = new FormData();
+    for (const [key, value] of Object.entries(formData)) {
+      fData.append(key, value);
+    }
+    console.log('formData');
 
-    // const body = fData;
-
-    const results = await fetch(ENDPOINT.PROMOTION.GET, {
-      method: 'POST',
-      body: formData,
+    const results: any = await fetch(`${ENDPOINT.PROMOTION.GET}/${bannerId}`, {
+      method: 'PATCH',
+      body: fData,
     });
-    console.log('finaltest', results);
-
-    if (!results) {
-      throw new Response('Oh no! Something went wrong!', {
+    console.log('werwerwe', results);
+    if (!results.status) {
+      throw new Response(results.message, {
         status: 404,
       });
     }
     return results;
   } catch (error) {
-    console.log('errr', error);
-    return {};
+    throw new Error(
+      'Oops! Something went wrong. Please hold tight and try again in a little while. Thank you for your understanding.',
+    );
   }
 }
