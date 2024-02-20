@@ -77,7 +77,6 @@ export type EditFormType = z.infer<typeof EditFormValidator>;
 export type EditFormFieldNameType = keyof EditFormType;
 
 export async function action({request, params}: ActionFunctionArgs) {
-  console.log('reached action');
   const messageSession = await getMessageSession(request);
   const data = await request.formData();
 
@@ -103,88 +102,31 @@ export async function loader({params, context}: LoaderFunctionArgs) {
   const response = await getPromotionById(promotionId);
   if (response?.payload) {
     const results = response?.payload;
-    return json({results});
+    return json({results, promotionId });
   }
-  return {response: {}};
+  return {response: {}, promotionId};
 }
 
 const PromotionEdit = ({defaultValues}: EditFormProps) => {
-  const {results} = useLoaderData<any>();
+  const {results, promotionId} = useLoaderData<any>();
   const submit = useSubmit();
-
+  console.log("rwerwe", results )
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
   const [image, setImage] = useState('');
   const [renderedImageWidth, setRenderedImageWidth] = useState();
   const [companyInfo, setCompanyInfo] = useState({
     companyLogo: DEFAULT_IMAGE.IMAGE,
-    companyName: 'ABC Distributors',
-    companyEmail: 'company@gmail.com',
-    companyWebsite: 'abc.com.au',
-    companyFax: '+61 1 123 456 789',
-    companyPhone: '+61 1 123 456 789',
-    textColor: '#0F1010',
-    bgColor: '#f5f5f5',
+    companyName: results?.company_name,
+    companyEmail: results?.company_email,
+    companyWebsite: results?.company_domain,
+    companyFax: results?.company_fax,
+    companyPhone: results?.phone,
+    textColor: results?.color,
+    bgColor: results?.background_color,
   });
 
   const canvasRef = useRef<any>();
   const blobRef = useRef<any>();
-
-  const createBlob = async (canvasRef: any) => {
-    // try {
-    //   const canvas = await html2canvas(canvasRef, {
-    //     allowTaint: true,
-    //     useCORS: true,
-    //     scale: 2,
-    //   })
-
-    //   blobRef.current.value = canvas.toDataURL();
-    //   console.log('blValue', blobRef.current.value);
-    // } catch (err) {
-    //   console.log('err', err);
-    // }
-
-    // return new Promise((resolve, reject) => {
-    //   try {
-    //     html2canvas(canvasRef, {
-    //       allowTaint: true,
-    //       useCORS: true,
-    //       scale: 2,
-    //     }).then((canvas) => {
-    //       blobRef.current.value = canvas.toDataURL();
-    //       resolve(true);
-    //       console.log('blValue', blobRef.current.value);
-    //     });
-    //   } catch (err) {
-    //     reject(err);
-    //   }
-    // });
-
-    // html2canvas(canvasRef, {
-    //   allowTaint: true,
-    //   useCORS: true,
-    //   scale: 2,
-    // }).then((canvas) => {
-    //   blobRef.current.value = canvas.toDataURL();
-    // });
-
-    return new Promise((resolve, reject) => {
-      try {
-        html2canvas(canvasRef, {
-          allowTaint: true,
-          useCORS: true,
-          scale: 2,
-        }).then((canvas: any) => {
-          if (blobRef.current) {
-            blobRef.current.value = canvas.toDataURL();
-          }
-          console.log('createdCanvas', canvas.toDataURL());
-          resolve(true);
-        });
-      } catch (err) {
-        reject(false);
-      }
-    });
-  };
 
   const handleChange = (field: string, value: string) => {
     setCompanyInfo((prevState) => ({
@@ -197,13 +139,13 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
   const resetCompanyInfo = () => {
     setCompanyInfo({
       companyLogo: DEFAULT_IMAGE.IMAGE,
-      companyName: 'ABC Distributors',
-      companyEmail: 'company@gmail.com',
-      companyWebsite: 'abc.com.au',
-      companyFax: '+61 1 123 456 789',
-      companyPhone: '+61 1 123 456 789',
-      textColor: '#0F1010',
-      bgColor: '#f5f5f5',
+    companyName: results?.company_name,
+    companyEmail: results?.company_email,
+    companyWebsite: results?.company_domain,
+    companyFax: results?.company_fax,
+    companyPhone: results?.phone,
+    textColor: results?.color,
+    bgColor: results?.background_color,
     });
     const imagePreviews = document.querySelectorAll(
       '.image-preview',
@@ -236,13 +178,36 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
     setShowUnsavedChanges(true);
   };
 
-  useEffect(() => {
-    createBlob(canvasRef.current);
-  }, []);
+  // useEffect(() => {
+  //   createBlob(canvasRef.current);
+  // }, []);
 
   const handleClick = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    await createBlob(canvasRef.current);
+    const formData = new FormData()
+    
+    formData.append( "company_name", companyInfo?.companyName )
+    formData.append( "company_email", companyInfo?.companyEmail )
+    formData.append( "company_fax", companyInfo?.companyFax )
+    formData.append( "phone", companyInfo?.companyPhone )
+    formData.append( "company_domain", companyInfo?.companyWebsite )
+    formData.append( "color", companyInfo?.textColor )
+    formData.append( "background_color", companyInfo?.bgColor )
+    formData.append( "logo", companyInfo?.companyLogo )
+
+    await html2canvas(canvasRef.current, {
+      allowTaint: true,
+      useCORS: true,
+      scale: 2,
+    }).then((canvas) => {
+      formData.append("image", canvas.toDataURL() );
+      return ""
+    });
+
+    const response = await fetch(`/customise/${promotionId}`, {
+      method: 'POST',
+      body: formData
+    })
   };
 
   return (

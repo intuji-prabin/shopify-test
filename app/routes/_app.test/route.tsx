@@ -22,10 +22,10 @@ export const loader = () => {
 //         const formdata = new FormData()
 //         formdata.append('hello', 'sanchay')
 //         formdata.append('canvas', valref.current.value)
-//         const response = await fetch('/test', {
-//             method: 'POST',
-//             body: formdata
-//         })
+        // const response = await fetch('/test', {
+        //     method: 'POST',
+        //     body: formdata
+        // })
 //         console.log("terteter", response.json())
 //     }
 //     // console.log("erwdfd", valref.current)
