@@ -93,6 +93,7 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
   try {
     const promotionId = params?.promotionId as string;
     const response = await getPromotionById(promotionId);
+    console.log("first response", response)
     if (response?.payload) {
       const results = response?.payload;
       return json({ results, promotionId });
@@ -219,10 +220,10 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
         displayToast({ message: "Promotion Edited Successfully", type: "success" });
         navigate(Routes.MY_PROMOTIONS);
       } else {
-        throw new Error('Failed to update promotion');
+        throw new Error('Failed to edit promotion');
       }
     } catch (error) {
-      console.error('Error updating promotion:', error);
+      console.error('Error editing promotion:', error);
       setIsLoading(false);
       return (
         <div className="flex items-center justify-center">
