@@ -70,7 +70,7 @@ export default function AvailablePromotionPage() {
 
   return (
     <div className="pt-6">
-      {!(promotions.length > 0) ? (
+      {promotions.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 pb-6 border-b sm:grid-cols-2 lg:grid-cols-3 border-b-grey-25 mt-3">
           {promotions.map((promotion: Promotion) => (
             <div key={promotion.id}>

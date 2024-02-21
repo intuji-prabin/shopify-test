@@ -167,7 +167,7 @@ export default function MyPromotionsPage() {
           setCheckedItems({count: 0, promotions: []});
         }}
       >
-        {!(promotions.length > 0) ? (
+        {promotions.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 pb-6 border-b sm:grid-cols-2 lg:grid-cols-3 border-b-grey-25">
             {promotions.map((promotion: Promotion, index: number) => (
               <div key={promotion.id} className="relative">
