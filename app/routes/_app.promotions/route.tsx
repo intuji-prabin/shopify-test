@@ -38,10 +38,10 @@ const Promotions = () => {
                 to={route.link}
                 className={({isActive, isPending}) =>
                   isPending
-                    ? 'py-2 border-b-2 border-b-transparent'
+                    ? 'py-2 !border-b-[3px] border-b-transparent'
                     : isActive
-                    ? 'py-2 border-b-2 text-primary-500 border-b-primary-500'
-                    : 'py-2 border-b-2 border-b-transparent text-grey-400'
+                    ? 'py-2 !border-b-[3px] text-primary-500 border-b-primary-500'
+                    : 'py-2 !border-b-[3px] border-b-transparent text-grey-400'
                 }
               >
                 {route.name}
