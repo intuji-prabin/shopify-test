@@ -27,34 +27,33 @@ export default function CompanyProfileDetail({
             </figure>
             <h3>{companyProfileDetails?.companyName || '-'}</h3>
           </div>
-          <div>
-            <ul className="grid grid-cols-1 text-lg font-medium md:grid-cols-2 gap-x-10 text-grey-700 sm:grid-cols-2 gap-y-4 ">
-              <li className="break-all settings-card-detail">
-                <Email />
-                <p className="comapny-setting-text">
-                  {companyProfileDetails?.companyEmail || '-'}
-                </p>
-              </li>
-              <li className="break-all settings-card-detail ">
-                <PrintMinor />
-                <p className="comapny-setting-text">
-                  {companyProfileDetails?.companyFax || '-'}
-                </p>
-              </li>
-              <li className="break-all settings-card-detail">
-                <PhoneMajor />
-                <p className="comapny-setting-text">
-                  {companyProfileDetails?.phone || '-'}
-                </p>
-              </li>
-              <li className="break-all settings-card-detail">
-                <LocationsMinor />
-                <p className="comapny-setting-text">
-                  {companyProfileDetails?.address || '-'}
-                </p>
-              </li>
-            </ul>
-          </div>
+
+          <ul className="grid grid-cols-1 text-lg font-medium md:grid-cols-2 gap-x-6 text-grey-700 sm:grid-cols-2 gap-y-4 max-w-[450px]">
+            <li className="break-all settings-card-detail">
+              <Email />
+              <p className="comapny-setting-text">
+                {companyProfileDetails?.companyEmail || '-'}
+              </p>
+            </li>
+            <li className="break-all settings-card-detail ">
+              <PrintMinor />
+              <p className="comapny-setting-text">
+                {companyProfileDetails?.companyFax || '-'}
+              </p>
+            </li>
+            <li className="break-all settings-card-detail">
+              <PhoneMajor />
+              <p className="comapny-setting-text">
+                {companyProfileDetails?.phone || '-'}
+              </p>
+            </li>
+            <li className="break-all settings-card-detail">
+              <LocationsMinor />
+              <p className="comapny-setting-text">
+                {companyProfileDetails?.address || '-'}
+              </p>
+            </li>
+          </ul>
         </div>
         <div>
           <p className="text-grey-700 text-lg font-normal leading-[22px]">

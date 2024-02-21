@@ -25,7 +25,6 @@ export default function CreateGroup({
     | null
     | undefined;
 }) {
-  console.log('VARIANT', buttonVariant);
   return (
     <Dialog>
       <DialogTrigger asChild>
