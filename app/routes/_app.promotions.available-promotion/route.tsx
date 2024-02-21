@@ -69,9 +69,9 @@ export default function AvailablePromotionPage() {
   const isLoading = navigation.state === 'loading';
 
   return (
-    <div className="pt-6">
+    <div className="pt-10 sm:pt-0">
       {promotions.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 pb-6 border-b sm:grid-cols-2 lg:grid-cols-3 border-b-grey-25 mt-3">
+        <div className="grid grid-cols-1 gap-6 pb-6 border-b sm:grid-cols-2 lg:grid-cols-3 border-b-grey-25 ">
           {promotions.map((promotion: Promotion) => (
             <div key={promotion.id}>
               <PromotionCard
@@ -114,7 +114,7 @@ export default function AvailablePromotionPage() {
         onChange={(event: FormEvent<HTMLFormElement>) => {
           submit(event.currentTarget);
         }}
-        className="absolute top-20 inset-x-6 sm:right-6 sm:top-4 sm:left-auto"
+        className="absolute top-20 inset-x-6 sm:right-6 sm:top-[30px] sm:left-auto"
       >
         <select
           name="filter_by"
