@@ -795,5 +795,5 @@ div[data-state='open'].fixed.inset-0 {
   @apply rotate-180;
 }
 .table-tabs table thead th {
-  @apply p-4 md:p-6;
+  @apply p-4;
 }
