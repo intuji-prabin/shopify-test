@@ -252,7 +252,7 @@ export default function MyPromotionsPage() {
         onChange={(event: FormEvent<HTMLFormElement>) => {
           submit(event.currentTarget);
         }}
-        className="absolute !top-[30px] inset-x-6 sm:right-6 sm:top-4 sm:left-auto"
+        className="absolute top-20 inset-x-6 sm:right-6 sm:top-4 sm:left-auto"
       >
         <select
           name="filter_by"
