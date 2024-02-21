@@ -114,7 +114,7 @@ export default function TopHeader() {
               <input
                 type="text"
                 placeholder="Search Product or Part Number"
-                className="border-none w-full placeholder:italic text-base font-bold text-[#0F1010] placeholder:text-[#0F1010]"
+                className="border-none w-full placeholder:italic text-base font-bold text-[#0F1010] placeholder:text-[#0F1010] focus:bg-white"
               />
             </div>
 

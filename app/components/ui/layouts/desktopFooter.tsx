@@ -3,7 +3,6 @@ import Phone from '~/components/icons/phone';
 import {Link} from '@remix-run/react';
 import {Routes} from '~/lib/constants/routes.constent';
 
-
 export default function DesktopFooter() {
   const footerNavs = [
     {
@@ -146,7 +145,7 @@ export default function DesktopFooter() {
 
               <ul className="flex flex-col gap-3">
                 <li className="text-lg font-normal  leading-[29px] text-white">
-                  <Link to={Routes.CERTIFICATE_GENERATION}> Promotions</Link>
+                  <Link to={Routes.PROMOTIONS}> Promotions</Link>
                 </li>
               </ul>
             </div>
