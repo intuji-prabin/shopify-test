@@ -794,3 +794,6 @@ div[data-state='open'].fixed.inset-0 {
 .cart-order tr td button[data-state='open'] svg {
   @apply rotate-180;
 }
+.table-tabs table thead th {
+  @apply p-4 md:p-6;
+}
