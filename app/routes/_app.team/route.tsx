@@ -171,8 +171,9 @@ export default function TeamPage() {
       <Tabs
         defaultValue={activeDepartmentTab}
         onValueChange={(value) => setActiveDepartmentTab(value)}
+        className="table-tabs"
       >
-        <TabsList className="justify-start w-full not-italic border-b rounded-none bg-neutral-white overflow-x-auto">
+        <TabsList className="justify-start w-full not-italic border-b rounded-none bg-neutral-white overflow-x-auto gap-4 [&>button]:!border-b-[3px] [&>button]:px-4">
           <TabsTrigger value="all">All</TabsTrigger>
           {roles?.data?.map((role) => (
             <TabsTrigger key={role.value} value={role.value}>
