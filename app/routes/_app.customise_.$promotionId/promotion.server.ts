@@ -2,9 +2,34 @@ import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 
+export interface PromotionType {
+  status: boolean;
+  message: string;
+  payload: Payload;
+}
+export interface Payload {
+  id: number;
+  image_url: string;
+  title: string;
+  logo_url: string;
+  company_name: string;
+  company_id: string;
+  company_email: string;
+  company_domain: string;
+  company_fax: string;
+  color: string;
+  background_color: string;
+  created_by: string;
+  expaire_at: Date;
+  create_at: Date;
+  updated_at: Date;
+  phone: null;
+  original_image: null;
+}
+
 export async function getPromotionById(promotionId: string) {
   try {
-    const results = await useFetch<any>({
+    const results = await useFetch<PromotionType>({
       method: AllowedHTTPMethods.GET,
       url: `${ENDPOINT.PROMOTION.GET}/${promotionId}`,
     });

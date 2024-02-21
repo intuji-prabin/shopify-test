@@ -39,6 +39,7 @@ export default async function handleRequest(
       'shermacbucket.sgp1.digitaloceanspaces.com', // For default images domain, can be removed
       'casual-mink-routinely.ngrok-free.app',
       'cig-backend.webo.dev',
+      'requirements-inflation-purchase-lane.trycloudflare.com',
       ...localDirectives,
     ],
   });
