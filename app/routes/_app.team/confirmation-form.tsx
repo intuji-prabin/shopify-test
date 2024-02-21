@@ -76,7 +76,13 @@ function ConfirmationInput({
   name: string;
   placeholder: string;
 }) {
-  const {error, getInputProps} = useField(name);
+  const {error, getInputProps} = useField(name, {
+    validationBehavior: {
+      initial: 'onChange',
+      whenTouched: 'onChange',
+      whenSubmitted: 'onSubmit',
+    },
+  });
   return (
     <>
       <div className="relative">
