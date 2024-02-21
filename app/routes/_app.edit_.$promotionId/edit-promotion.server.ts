@@ -19,7 +19,6 @@ export async function updatePromotion(
       method: 'PATCH',
       body: fData,
     });
-    console.log('werwerwe', results);
     if (!results.status) {
       throw new Response(results.message, {
         status: 404,

@@ -81,7 +81,6 @@ export type EditFormFieldNameType = keyof EditFormType;
  */
 export async function action({ request, params }: ActionFunctionArgs) {
   const data = await request.formData();
-  console.log("saaaaaa")
   let formData = Object.fromEntries(data);
   formData = { ...formData };
   const bannerId = params.promotionId as string;
@@ -117,7 +116,6 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
 
 const PromotionEdit = ({ defaultValues }: EditFormProps) => {
   const { results, promotionId } = useLoaderData<any>();
-  console.log("results", results);
   const [isLoading, setIsLoading] = useState(false);
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
   const [image, setImage] = useState('');
@@ -187,8 +185,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
   };
   const navigate = useNavigate();
 
-  const handleClick = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleClick = async () => {
     setIsLoading(true);
     const formData = new FormData();
 
@@ -201,44 +198,41 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     formData.append("background_color", companyInfo?.bgColor);
     formData.append("logo", companyInfo?.companyLogo);
 
-    await html2canvas(canvasRef.current, {
-      allowTaint: true,
-      useCORS: true,
-      // proxy: "/html2canvas-proxy/",
-      // logging: true,
-      scale: 2,
-    }).then((canvas) => {
-      console.log('imagess', canvas.toDataURL())
+    try {
+      const canvas = await html2canvas(canvasRef.current, {
+        allowTaint: true,
+        useCORS: true,
+        scale: 2,
+      });
       formData.append("image", canvas.toDataURL());
-      return ""
-    });
+    } catch (error) {
+      console.error("An error occurred:", error);
+      alert("An error has occured while creating the image");
+    }
+
     try {
       const response = await fetch(`/edit/${promotionId}`, {
         method: 'POST',
         body: formData
-      })
-      if (response.status === 200) {
+      });
+      if (response.ok) {
         displayToast({ message: "Promotion Edited Successfully", type: "success" });
         navigate(Routes.MY_PROMOTIONS);
-        setIsLoading(false);
+      } else {
+        throw new Error('Failed to update promotion');
       }
     } catch (error) {
-      if (error instanceof Error) {
-        console.log('err', error);
-        setIsLoading(false);
-        return (
-          <div className="flex items-center justify-center">
-            <div className="text-center">
-              <h1>Oops</h1>
-              <p>Something went wrong</p>
-            </div>
-          </div>
-        );
-      }
+      console.error('Error updating promotion:', error);
       setIsLoading(false);
-      return <h1>Unknown Error</h1>;
+      return (
+        <div className="flex items-center justify-center">
+          <div className="text-center">
+            <h1>Oops</h1>
+            <p>Something went wrong</p>
+          </div>
+        </div>
+      );
     }
-
   };
 
   return (
@@ -328,8 +322,9 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
               defaultValues={defaultValues}
               id="promotion-form"
               data-cy="customize-promotion"
-              onSubmit={async (_, event) => {
-                await handleClick(event);
+              onSubmit={(_, event) => {
+                event.preventDefault();
+                handleClick();
               }}
             >
               <input ref={blobRef} type="text" name="image" className='hidden' />

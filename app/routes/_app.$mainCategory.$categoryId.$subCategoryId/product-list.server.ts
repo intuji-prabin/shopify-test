@@ -1,9 +1,18 @@
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 
-export async function getProducts(context: any, params: any, filterList: any) {
+type FilterItem = {
+  key: string;
+  value: string[];
+};
+type FilterType = FilterItem[];
+
+export async function getProducts(
+  context: any,
+  params: any,
+  filterList: FilterType,
+) {
   const {storefront} = context;
   const categoryIdentifier = params.subCategoryId;
-
   const filters = filterBuilder(filterList);
 
   const products = await storefront.query(
@@ -11,12 +20,11 @@ export async function getProducts(context: any, params: any, filterList: any) {
   );
 
   const pageInfo = products?.collection?.products?.pageInfo;
-
   const formattedData = formattedResponse(products);
   return {formattedData, pageInfo};
 }
 
-const filterBuilder = (filterList: any) => {
+const filterBuilder = (filterList: FilterType) => {
   let filterData = `{}`;
   let cursor = null;
   let after = false;
@@ -122,7 +130,6 @@ const STOREFRONT_PRODUCT_GET_QUERY = (filterList: any, handler: string) => {
             }
           }
         }
-        
       }`;
   return product_query;
 };
