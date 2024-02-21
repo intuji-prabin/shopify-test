@@ -252,7 +252,7 @@ export default function MyPromotionsPage() {
         onChange={(event: FormEvent<HTMLFormElement>) => {
           submit(event.currentTarget);
         }}
-        className="absolute top-20 inset-x-6 sm:right-6 sm:top-4 sm:left-auto"
+        className="absolute top-20 inset-x-6 sm:right-6 sm:top-[30px] sm:left-auto"
       >
         <select
           name="filter_by"
@@ -280,11 +280,12 @@ export function ErrorBoundary() {
     );
   } else if (error instanceof Error) {
     return (
-      <div className="flex justify-center items-center">
-        <div className="text-center">
-          <h1>Opps</h1>
-          <p>{error.message}</p>
-        </div>
+      <div className="flex justify-center items-center h-[220px] flex-col gap-2">
+        {' '}
+        <h4 className="text-center font-bold leading-[29px] text-2xl">
+          No promotions found
+        </h4>
+        <p className="text-lg leading-[22px]">Try editing promotions</p>
       </div>
     );
   } else {

@@ -69,9 +69,9 @@ export default function AvailablePromotionPage() {
   const isLoading = navigation.state === 'loading';
 
   return (
-    <div className="pt-6">
+    <div className="pt-10 sm:pt-0">
       {promotions.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 pb-6 border-b sm:grid-cols-2 lg:grid-cols-3 border-b-grey-25">
+        <div className="grid grid-cols-1 gap-6 pb-6 border-b sm:grid-cols-2 lg:grid-cols-3 border-b-grey-25 ">
           {promotions.map((promotion: Promotion) => (
             <div key={promotion.id}>
               <PromotionCard
@@ -88,7 +88,6 @@ export default function AvailablePromotionPage() {
           <h4 className="text-center font-bold leading-[29px] text-2xl">
             No promotions found
           </h4>
-          <p className="text-lg leading-[22px]">Try editing promotions</p>
         </div>
       )}
 
@@ -115,7 +114,7 @@ export default function AvailablePromotionPage() {
         onChange={(event: FormEvent<HTMLFormElement>) => {
           submit(event.currentTarget);
         }}
-        className="absolute top-20 inset-x-6 sm:right-6 sm:top-4 sm:left-auto"
+        className="absolute top-20 inset-x-6 sm:right-6 sm:top-[30px] sm:left-auto"
       >
         <select
           name="filter_by"
@@ -146,11 +145,11 @@ export function ErrorBoundary() {
     );
   } else if (error instanceof Error) {
     return (
-      <div className="flex justify-center items-center">
-        <div className="text-center">
-          <h1>Opps</h1>
-          <p>{error.message}</p>
-        </div>
+      <div className="flex justify-center items-center h-[220px] flex-col gap-2">
+        {' '}
+        <h4 className="text-center font-bold leading-[29px] text-2xl">
+          No promotions found
+        </h4>
       </div>
     );
   } else {
