@@ -7,7 +7,7 @@ import {
 import {CustomerData} from '~/routes/_public.login/login.server';
 
 const USER_SESSION_KEY = 'accessToken';
-const USER_DETAILS_KEY = 'userDetails';
+export const USER_DETAILS_KEY = 'userDetails';
 
 export async function createUserSession({
   request,

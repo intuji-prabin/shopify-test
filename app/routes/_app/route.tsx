@@ -17,8 +17,14 @@ import {
 import {useMediaQuery} from '~/hooks/useMediaQuery';
 import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
 import {getCategoryList} from '../_app.categories/route';
+import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
+import {CustomerData} from '../_public.login/login.server';
 
 export async function loader({request, context}: ActionFunctionArgs) {
+  await isAuthenticate(context);
+
+  const {userDetails} = await getUserDetails(context);
+
   // const categories = await getCategories();
   const categories = await getCategoryList(context);
   // const categories = await getCagetoryList( context )
@@ -27,7 +33,7 @@ export async function loader({request, context}: ActionFunctionArgs) {
   if (!categories) {
     setErrorMessage(messageSession, 'Category not found');
     return json(
-      {categories: []},
+      {categories: [], userDetails},
       {
         headers: {
           'Set-Cookie': await messageCommitSession(messageSession),
@@ -35,14 +41,16 @@ export async function loader({request, context}: ActionFunctionArgs) {
       },
     );
   }
-  return json({categories});
+  return json({categories, userDetails});
 }
 
 export default function PublicPageLayout() {
-  const {categories} = useLoaderData<typeof loader>();
+  const {categories, userDetails} = useLoaderData<typeof loader>();
+
+  console.log('userDetails', userDetails);
 
   return (
-    <Layout categories={categories}>
+    <Layout categories={categories} userDetails={userDetails}>
       <Outlet />
     </Layout>
   );
@@ -51,16 +59,18 @@ export default function PublicPageLayout() {
 const Layout = ({
   children,
   categories,
+  userDetails,
 }: {
   children: React.ReactNode;
   categories: any;
+  userDetails: CustomerData;
 }) => {
   const matches = useMediaQuery('(min-width: 768px)');
   return (
     <>
       {matches ? (
         <header>
-          <TopHeader />
+          <TopHeader userDetails={userDetails} />
           <BottomHeader categories={categories} />
         </header>
       ) : (

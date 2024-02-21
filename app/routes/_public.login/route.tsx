@@ -46,7 +46,7 @@ export const action = async ({request, context}: ActionFunctionArgs) => {
     const {email, password, rememberMe} = result.data;
 
     const customerData = await getCustomerByEmail({email});
-    
+
     const isActive = isUserActive(customerData.meta.status);
 
     if (!isActive) {

@@ -79,6 +79,7 @@ export async function action({request, context}: ActionFunctionArgs) {
       customerId,
       userRole,
       file: profileImage,
+      context,
     });
 
     setSuccessMessage(messageSession, 'Customer edit successful');
