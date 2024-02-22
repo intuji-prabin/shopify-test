@@ -1,7 +1,7 @@
 import React, {FormEvent, useState} from 'react';
 import {Button} from '~/components/ui/button';
 import {MetaFunction} from '@shopify/remix-oxygen';
-import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import PromotionCard from '~/routes/_app.promotions/promotion-card';
 import {UploadIcon} from '~/components/icons/upload';
 import {
@@ -30,11 +30,12 @@ import {
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
-} from '~/lib/utils/toastsession.server';
+} from '~/lib/utils/toast-session.server';
 import {
   PAGE_LIMIT,
   filterOptions,
 } from '~/routes/_app.promotions/promotion-constants';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'My Promotion'}];
@@ -49,7 +50,7 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 
   const filterBy = searchParams.get('filter_by');
 
-  const {userDetails} = await getUserDetails(context);
+  const {userDetails} = await getUserDetails(request);
 
   const companyId = userDetails.meta.company_id.value;
 

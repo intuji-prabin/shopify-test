@@ -22,7 +22,7 @@ export default function DeactivateDialog({
 }: DeactivateDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="p-4 gap-2 !rounded-none">
+      <DialogContent className="p-4 gap-2 !rounded-none !max-w-[38rem]">
         <DialogHeader>
           <DialogTitle
             asChild

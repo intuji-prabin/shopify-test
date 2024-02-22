@@ -16,7 +16,7 @@ type EditTeamParams = {
   email: string;
   phoneNumber: string;
   address: string;
-  context?: AppLoadContext;
+  context: AppLoadContext;
   userRole: string;
   customerId: string;
   file: File | undefined;
@@ -52,7 +52,7 @@ export async function getCustomerById({
   }
 }
 
-export async function editTeam({
+export async function updateTeam({
   address,
   email,
   fullName,
@@ -60,6 +60,7 @@ export async function editTeam({
   phoneNumber,
   customerId,
   file,
+  context,
 }: EditTeamParams) {
   const firstName = fullName.split(' ')[0];
   const lastName = fullName.split(' ')[1] ?? '';

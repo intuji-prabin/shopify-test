@@ -2,36 +2,36 @@ import {
   isRouteErrorResponse,
   useLoaderData,
   useNavigate,
-  useRouteError
+  useRouteError,
 } from '@remix-run/react';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
-  json
+  json,
 } from '@remix-run/server-runtime';
-import { withZod } from '@remix-validated-form/with-zod';
+import {withZod} from '@remix-validated-form/with-zod';
 import html2canvas from 'html2canvas';
-import { useRef, useState } from 'react';
-import { ValidatedForm } from 'remix-validated-form';
-import { z } from 'zod';
-import { zfd } from 'zod-form-data';
-import { FullScreen } from '~/components/icons/full-screen';
+import {useRef, useState} from 'react';
+import {ValidatedForm} from 'remix-validated-form';
+import {z} from 'zod';
+import {zfd} from 'zod-form-data';
+import {FullScreen} from '~/components/icons/full-screen';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
-import { Button } from '~/components/ui/button';
+import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import {Button} from '~/components/ui/button';
 import ColorPicker from '~/components/ui/color-picker';
-import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog';
+import {Dialog, DialogContent, DialogTrigger} from '~/components/ui/dialog';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import ImageEdit from '~/components/ui/imageEdit';
 import Loader from '~/components/ui/loader';
-import { Separator } from '~/components/ui/separator';
-import { displayToast } from '~/components/ui/toast';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { Routes } from '~/lib/constants/routes.constent';
-import { isAuthenticate } from '~/lib/utils/authsession.server';
-import { createPromotion, getPromotionById } from './promotion.server';
+import {Separator} from '~/components/ui/separator';
+import {displayToast} from '~/components/ui/toast';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {Routes} from '~/lib/constants/routes.constent';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {createPromotion, getPromotionById} from './promotion.server';
 import PromotionNavigation from './promotion-navigation';
-import { BackButton } from '~/components/ui/back-button';
+import {BackButton} from '~/components/ui/back-button';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -73,24 +73,24 @@ export type EditFormType = z.infer<typeof EditFormValidator>;
 
 export type EditFormFieldNameType = keyof EditFormType;
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({request, params}: ActionFunctionArgs) {
   const data = await request.formData();
 
   let formData = Object.fromEntries(data);
-  formData = { ...formData };
+  formData = {...formData};
   const bannerId = params.promotionId as string;
   await createPromotion(formData, bannerId);
   return json({});
 }
 
-export async function loader({ params, context }: LoaderFunctionArgs) {
+export async function loader({params, context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
   try {
     const promotionId = params?.promotionId as string;
     const response = await getPromotionById(promotionId);
     if (response?.payload) {
       const results = response?.payload;
-      return json({ results, promotionId });
+      return json({results, promotionId});
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -106,11 +106,10 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
     }
     return <h1>Unknown Error</h1>;
   }
-
 }
 
-const PromotionEdit = ({ defaultValues }: EditFormProps) => {
-  const { results, promotionId } = useLoaderData<any>();
+const PromotionEdit = ({defaultValues}: EditFormProps) => {
+  const {results, promotionId} = useLoaderData<any>();
   const [isLoading, setIsLoading] = useState(false);
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
   const [image, setImage] = useState('');
@@ -184,14 +183,14 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     setIsLoading(true);
     const formData = new FormData();
 
-    formData.append("company_name", companyInfo?.companyName);
-    formData.append("company_email", companyInfo?.companyEmail);
-    formData.append("company_fax", companyInfo?.companyFax);
-    formData.append("phone", companyInfo?.companyPhone);
-    formData.append("company_domain", companyInfo?.companyWebsite);
-    formData.append("color", companyInfo?.textColor);
-    formData.append("background_color", companyInfo?.bgColor);
-    formData.append("logo", companyInfo?.companyLogo);
+    formData.append('company_name', companyInfo?.companyName);
+    formData.append('company_email', companyInfo?.companyEmail);
+    formData.append('company_fax', companyInfo?.companyFax);
+    formData.append('phone', companyInfo?.companyPhone);
+    formData.append('company_domain', companyInfo?.companyWebsite);
+    formData.append('color', companyInfo?.textColor);
+    formData.append('background_color', companyInfo?.bgColor);
+    formData.append('logo', companyInfo?.companyLogo);
 
     try {
       const canvas = await html2canvas(canvasRef.current, {
@@ -232,14 +231,18 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
 
   return (
     <div className="bg-grey-25">
-      {isLoading && <div className='absolute inset-0 z-[9999]'>
-        <div className='flex h-full bg-white/95'>
-          <div className='fixed flex flex-wrap items-center justify-center -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 gap-x-4 gap-y-2'>
-            <p className='text-lg'>The image is being processed. Please wait for few moments ....</p>
-            <Loader width="w-8" height="h-8" />
+      {isLoading && (
+        <div className="absolute inset-0 z-[9999]">
+          <div className="flex h-full bg-white/95">
+            <div className="fixed flex flex-wrap items-center justify-center -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 gap-x-4 gap-y-2">
+              <p className="text-lg">
+                The image is being processed. Please wait for few moments ....
+              </p>
+              <Loader width="w-8" height="h-8" />
+            </div>
           </div>
         </div>
-      </div>}
+      )}
       <section className="container pt-8 pb-1">
         <div className="flex flex-wrap justify-between gap-4">
           <BackButton title="Customize Promotion" />
@@ -275,8 +278,9 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                   style={{
                     width: renderedImageWidth && renderedImageWidth + 50,
                   }}
-                  className={`max-w-4xl ${!image && 'flex items-center justify-center'
-                    }`}
+                  className={`max-w-4xl ${
+                    !image && 'flex items-center justify-center'
+                  }`}
                 >
                   {image && renderedImageWidth ? (
                     <img
@@ -322,7 +326,12 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                 handleClick();
               }}
             >
-              <input ref={blobRef} type="text" name="image" className='hidden' />
+              <input
+                ref={blobRef}
+                type="text"
+                name="image"
+                className="hidden"
+              />
               <h5 className="py-4">Company Logo</h5>
               <ImageUploadInput
                 name="logo"
@@ -430,7 +439,12 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                         >
                           discard
                         </Button>
-                        <Button type="submit" variant="secondary" name="action" disabled={isLoading}>
+                        <Button
+                          type="submit"
+                          variant="secondary"
+                          name="action"
+                          disabled={isLoading}
+                        >
                           save changes
                         </Button>
                       </div>
@@ -442,7 +456,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
           </div>
         </div>
       </section>
-    </div >
+    </div>
   );
 };
 

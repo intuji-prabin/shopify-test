@@ -13,18 +13,24 @@ import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
-} from '~/lib/utils/toastsession.server';
-import { useMediaQuery } from '~/hooks/useMediaQuery';
+} from '~/lib/utils/toast-session.server';
+import {useMediaQuery} from '~/hooks/useMediaQuery';
 import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
-import { getCategoryList } from '../_app.categories/route';
+import {getCategoryList} from '../_app.categories/route';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {CustomerData} from '../_public.login/login.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 
-export async function loader({ request, context }: ActionFunctionArgs) {
-  const categories = await getCategoryList(context);
+export async function loader({request, context}: ActionFunctionArgs) {
+  await isAuthenticate(context);
+
+  const {userDetails} = await getUserDetails(request);
+
   const messageSession = await getMessageSession(request);
   if (!categories) {
     setErrorMessage(messageSession, 'Category not found');
     return json(
-      { categories: [] },
+      {categories: [], userDetails},
       {
         headers: {
           'Set-Cookie': await messageCommitSession(messageSession),
@@ -32,14 +38,14 @@ export async function loader({ request, context }: ActionFunctionArgs) {
       },
     );
   }
-  return json({ categories });
+  return json({categories, userDetails});
 }
 
 export default function PublicPageLayout() {
-  const { categories } = useLoaderData<typeof loader>();
+  const {categories, userDetails} = useLoaderData<typeof loader>();
 
   return (
-    <Layout categories={categories}>
+    <Layout categories={categories} userDetails={userDetails}>
       <Outlet />
     </Layout>
   );
@@ -48,16 +54,18 @@ export default function PublicPageLayout() {
 const Layout = ({
   children,
   categories,
+  userDetails,
 }: {
   children: React.ReactNode;
   categories: any;
+  userDetails: CustomerData;
 }) => {
   const matches = useMediaQuery('(min-width: 768px)');
   return (
     <>
       {matches ? (
         <header>
-          <TopHeader />
+          <TopHeader userDetails={userDetails} />
           <BottomHeader categories={categories} />
         </header>
       ) : (

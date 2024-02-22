@@ -7,7 +7,7 @@ import DetailChart from '~/components/ui/detailChart';
 import ExpenditureCard from '~/components/ui/expenditureCard';
 import Profile from '~/components/ui/profile';
 import SpendCard from '~/components/ui/spend-card';
-import {isAuthenticate} from '~/lib/utils/authsession.server';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {getSlides} from '~/routes/_app._index/index.server';
 import {
   areaChartData,

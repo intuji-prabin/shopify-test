@@ -1,6 +1,6 @@
 import {LoaderFunctionArgs} from '@remix-run/server-runtime';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
-import {isAuthenticate} from '~/lib/utils/authsession.server';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 
 export async function exportPromotion(request: Request) {
   const searchParams = new URL(request.url).search;
