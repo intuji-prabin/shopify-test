@@ -179,8 +179,7 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
   };
   const navigate = useNavigate();
 
-  const handleClick = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleClick = async () => {
     setIsLoading(true);
     const formData = new FormData();
 
@@ -193,43 +192,40 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
     formData.append('background_color', companyInfo?.bgColor);
     formData.append('logo', companyInfo?.companyLogo);
 
-    await html2canvas(canvasRef.current, {
-      allowTaint: true,
-      useCORS: true,
-      scale: 2,
-    }).then((canvas) => {
-      formData.append('image', canvas.toDataURL());
-      return '';
-    });
+    try {
+      const canvas = await html2canvas(canvasRef.current, {
+        allowTaint: true,
+        useCORS: true,
+        scale: 2,
+      });
+      formData.append("image", canvas.toDataURL());
+    } catch (error) {
+      console.error("An error occurred:", error);
+      alert("An error has occured while creating the image");
+    }
 
     try {
       const response = await fetch(`/customise/${promotionId}`, {
         method: 'POST',
-        body: formData,
+        body: formData
       });
-      if (response.status === 200) {
-        displayToast({
-          message: 'Promotion Updated Successfully',
-          type: 'success',
-        });
+      if (response.ok) {
+        displayToast({ message: "Promotion Updated Successfully", type: "success" });
         navigate(Routes.MY_PROMOTIONS);
-        setIsLoading(false);
+      } else {
+        throw new Error('Failed to update promotion');
       }
     } catch (error) {
-      if (error instanceof Error) {
-        console.log('err', error);
-        setIsLoading(false);
-        return (
-          <div className="flex items-center justify-center">
-            <div className="text-center">
-              <h1>Oops</h1>
-              <p>Something went wrong</p>
-            </div>
-          </div>
-        );
-      }
+      console.error('Error updating promotion:', error);
       setIsLoading(false);
-      return <h1>Unknown Error</h1>;
+      return (
+        <div className="flex items-center justify-center">
+          <div className="text-center">
+            <h1>Oops</h1>
+            <p>Something went wrong</p>
+          </div>
+        </div>
+      );
     }
   };
 
@@ -325,8 +321,9 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
               defaultValues={defaultValues}
               id="promotion-form"
               data-cy="customize-promotion"
-              onSubmit={async (_, event) => {
-                await handleClick(event);
+              onSubmit={(_, event) => {
+                event.preventDefault();
+                handleClick();
               }}
             >
               <input

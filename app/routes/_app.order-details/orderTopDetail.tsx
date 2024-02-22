@@ -1,16 +1,15 @@
 import {Link} from '@remix-run/react';
+import {Button} from '~/components/ui/button';
 
-export default function OrderTopDetail() {
+export default function OrderTopDetail({order_no}: {order_no: string}) {
   return (
     <>
       <div className="top-card flex justify-between items-center pb-4  border-gray-100 border-x-0 border-b-2 border-t-0">
         <div className="flex justify-between items-center gap-4 ">
           <h4 className="text-2xl italic font-bold leading-[29px]">
-            Order No 0005145629{' '}
+            Order No <span>{order_no} </span>{' '}
           </h4>
-          <button className="px-[6px] py-2 border text-[14px] font-bold leading-4">
-            Processing
-          </button>
+          <Button variant="ghost">Processing</Button>
         </div>
         <div>
           <Link

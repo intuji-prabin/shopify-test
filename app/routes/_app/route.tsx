@@ -7,8 +7,8 @@ import {
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
 import TopHeader from '~/components/ui/layouts/top-header';
-import {Payload, getCagetoryList, getCategories} from './app.server';
-import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
+import { Payload, getCagetoryList, getCategories } from './app.server';
+import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
 import {
   getMessageSession,
   messageCommitSession,
@@ -26,10 +26,6 @@ export async function loader({request, context}: ActionFunctionArgs) {
 
   const {userDetails} = await getUserDetails(request);
 
-  // const categories = await getCategories();
-  const categories = await getCategoryList(context);
-  // const categories = await getCagetoryList( context )
-  // console.log("dfdsfsdf ", categories)
   const messageSession = await getMessageSession(request);
   if (!categories) {
     setErrorMessage(messageSession, 'Category not found');
