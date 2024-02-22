@@ -15,6 +15,9 @@ import {CartIcon} from '~/components/icons/cartIcon';
 import {TrackAnOrderButton} from './elements/track-an-order-dialog';
 import {Note} from '~/components/icons/note';
 import {NotificationIcon} from '~/components/icons/notification';
+import {Search} from 'lucide-react';
+import SearchIcon from '~/components/icons/search';
+import CloseMenu from '~/components/icons/closeMenu';
 import {CustomerData} from '~/routes/_public.login/login.server';
 
 export function PlaceOrder() {
@@ -100,7 +103,15 @@ export function NotificationNavbar() {
 
 export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
   const [isClicked, setIsClicked] = useState(false);
+  const [searchProduct, setSearchProduct] = useState(false);
 
+  function handleSearchInput() {
+    setSearchProduct(true);
+  }
+
+  function handleCloseSearch() {
+    setSearchProduct(false);
+  }
   const fullName = `${userDetails.firstName} ${userDetails.lastName}`;
 
   const imageUrl = userDetails.meta?.image_url?.value;
@@ -116,13 +127,76 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
           {/* Search and notification bar begins here  */}
           <div className="flex gap-[22px]">
             {/* search bar begins here */}
-            <div className="search-bar flex bg-white items-center min-w-[unset] w-full max-h-12 px-4 py-3 xl:min-w-[453px]">
+            <div className="search-bar flex bg-white items-center min-w-[unset] w-full max-h-12 px-4 py-3 xl:min-w-[453px] relative">
               <FaSearch className="search-icon fill-primary-500" />
               <input
                 type="text"
                 placeholder="Search Product or Part Number"
                 className="border-none w-full placeholder:italic text-base font-bold text-[#0F1010] placeholder:text-[#0F1010] focus:bg-white"
+                onChange={handleSearchInput}
               />
+              {searchProduct && (
+                <Button
+                  className="p-0 bg-white hover:bg-white active:bg-white"
+                  onClick={handleCloseSearch}
+                >
+                  {' '}
+                  <CloseMenu fillColor="#D92F28" />
+                </Button>
+              )}
+
+              {searchProduct && (
+                <div className="bg-white absolute top-[52px] left-0 w-full z-20 py-4 px-6 space-y-4">
+                  <div>
+                    <p className="mb-2 font-medium text-grey-900">
+                      Suggestions
+                    </p>
+                    <ul>
+                      <li className="flex items-center gap-2">
+                        <SearchIcon fillColor="#0F1010" />
+                        Welding Equipment
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <SearchIcon fillColor="#0F1010" />
+                        Welding Equipment
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <SearchIcon fillColor="#0F1010" />
+                        Welding Equipment
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <SearchIcon fillColor="#0F1010" />
+                        welders
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="py-4 border-grey-50 border-t">
+                    <p className="mb-2 font-medium text-grey-900">
+                      Recent Searches
+                    </p>
+                    <ul>
+                      <li className="flex items-center gap-2">
+                        <SearchIcon fillColor="#0F1010" />
+                        Welding & Heating Mixers
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <SearchIcon fillColor="#0F1010" />
+                        cutting attachments
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <SearchIcon fillColor="#0F1010" />
+                        tig welding
+                      </li>
+                    </ul>
+                  </div>
+                  <Link
+                    to=""
+                    className="uppercase text-primary-500 font-bold text-sm  italic border-b border-primary-500"
+                  >
+                    CLEAR ALL RECENT
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* notification menu starts here */}
