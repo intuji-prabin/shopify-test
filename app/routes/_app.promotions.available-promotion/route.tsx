@@ -1,5 +1,5 @@
 import {LoaderFunctionArgs} from '@remix-run/server-runtime';
-import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {Button} from '~/components/ui/button';
 import PromotionCard from '~/routes/_app.promotions/promotion-card';
 import {
@@ -23,15 +23,16 @@ import {
   PAGE_LIMIT,
   filterOptions,
 } from '~/routes/_app.promotions/promotion-constants';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Available Promotion'}];
 };
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const {userDetails} = await getUserDetails(context);
+  const {userDetails} = await getUserDetails(request);
 
   const companyId = userDetails.meta.company_id.value;
   try {

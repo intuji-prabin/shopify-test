@@ -12,5 +12,6 @@ export function TabsTable({
   const {columns} = useColumn({currentUser});
 
   const {table} = useTable(columns, results);
+
   return <DataTable table={table} columns={columns} />;
 }
