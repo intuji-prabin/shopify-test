@@ -28,6 +28,7 @@ export type SelectInputProps = {
   // | ScheduleCallFormFieldNameType
   // | TicketsFilterFormFieldNameType;
   label: string;
+  isDisabled?: boolean;
   options: SelectInputOptions[];
   updatePermissions?: (value: string) => void;
 };
@@ -36,6 +37,7 @@ export default function SelectInput({
   name,
   label,
   options,
+  isDisabled,
   updatePermissions,
 }: SelectInputProps) {
   const {getInputProps, error, clearError} = useField(name);
@@ -44,6 +46,7 @@ export default function SelectInput({
     <>
       <div className="relative">
         <Select
+          disabled={isDisabled}
           {...getInputProps()}
           onValueChange={(value) => {
             updatePermissions && updatePermissions(value);
@@ -73,7 +76,7 @@ export default function SelectInput({
             </ScrollArea>
           </SelectContent>
         </Select>
-        {error && (
+        {!isDisabled && error && (
           <p className="pt-1 error-msg">
             <DangerAlert />
             <span className="pl-2">{error}</span>

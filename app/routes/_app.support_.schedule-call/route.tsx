@@ -1,7 +1,30 @@
 import {BackButton} from '~/components/ui/back-button';
 import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {ScheduleCallForm} from './schedule-call-form';
+import {
+  ScheduleCallForm,
+  ScheduleCallFormFieldValidator,
+} from './schedule-call-form';
 import {Routes} from '~/lib/constants/routes.constent';
+import {validationError} from 'remix-validated-form';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
+
+export async function action({request, context}: ActionFunctionArgs) {
+  console.log('hello');
+
+  await isAuthenticate(context);
+  try {
+    const result = await ScheduleCallFormFieldValidator.validate(
+      await request.formData(),
+    );
+    if (result.error) {
+      return validationError(result.error);
+    }
+    console.log('result', result.data);
+
+    return json({});
+  } catch (error) {}
+}
 
 export default function ScheduleCallPage() {
   return (
