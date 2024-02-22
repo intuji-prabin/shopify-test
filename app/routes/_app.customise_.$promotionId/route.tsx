@@ -32,6 +32,7 @@ import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {createPromotion, getPromotionById} from './promotion.server';
 import PromotionNavigation from './promotion-navigation';
 import {BackButton} from '~/components/ui/back-button';
+import { getUserDetails } from '~/lib/utils/user-session.server';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -75,19 +76,22 @@ export type EditFormFieldNameType = keyof EditFormType;
 
 export async function action({request, params}: ActionFunctionArgs) {
   const data = await request.formData();
-
+  const {userDetails} = await getUserDetails(request);
+  const customerId        = userDetails?.id.replace("gid://shopify/Customer/", "")
   let formData = Object.fromEntries(data);
   formData = {...formData};
   const bannerId = params.promotionId as string;
-  await createPromotion(formData, bannerId);
+  await createPromotion(formData, bannerId, customerId);
   return json({});
 }
 
-export async function loader({params, context}: LoaderFunctionArgs) {
+export async function loader({params, context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
   try {
+    const {userDetails} = await getUserDetails(request);
+    const customerId    = userDetails?.id.replace("gid://shopify/Customer/", "")
     const promotionId = params?.promotionId as string;
-    const response = await getPromotionById(promotionId);
+    const response = await getPromotionById(promotionId, customerId);
     if (response?.payload) {
       const results = response?.payload;
       return json({results, promotionId});
@@ -191,7 +195,6 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
     formData.append('color', companyInfo?.textColor);
     formData.append('background_color', companyInfo?.bgColor);
     formData.append('logo', companyInfo?.companyLogo);
-
     try {
       const canvas = await html2canvas(canvasRef.current, {
         allowTaint: true,
@@ -203,7 +206,6 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
       console.error("An error occurred:", error);
       alert("An error has occured while creating the image");
     }
-
     try {
       const response = await fetch(`/customise/${promotionId}`, {
         method: 'POST',

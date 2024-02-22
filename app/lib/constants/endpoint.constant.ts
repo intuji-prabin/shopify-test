@@ -36,6 +36,7 @@ export const ENDPOINT = {
   },
   PROMOTION: {
     GET: `${BASE_URL}/promotions`,
+    GET_MYPROMOTION: `${BASE_URL}/mypromotion`,
     BULK_DELETE: `${BASE_URL}/promotion`,
     BULK_EXPORT: `${BASE_URL}/promotion/download-images`,
   },

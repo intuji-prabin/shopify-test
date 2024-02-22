@@ -35,7 +35,6 @@ export async function getPromotions({
 }) {
   try {
     let url = `${ENDPOINT.PROMOTION.GET}/${customerId}?`;
-    console.log("qwqweqwe ", url)
     if (paramsList?.filter_by) {
       url += `&filter_by=${paramsList?.filter_by}`;
     }
