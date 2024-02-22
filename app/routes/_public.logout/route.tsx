@@ -1,11 +1,11 @@
 import {ActionFunctionArgs, json, redirect} from '@remix-run/server-runtime';
-import {getAccessToken, logout} from '~/lib/utils/authsession.server';
+import {getAccessToken, logout} from '~/lib/utils/auth-session.server';
 
 export async function loader() {
   return redirect('/');
 }
 
-export async function action({context}: ActionFunctionArgs) {
+export async function action({context, request}: ActionFunctionArgs) {
   try {
     const {storefront} = context;
     const accessToken = (await getAccessToken(context)) as string;
@@ -14,7 +14,7 @@ export async function action({context}: ActionFunctionArgs) {
         customerAccessToken: accessToken,
       },
     });
-    return logout(context);
+    return logout({context, request});
   } catch (error) {
     return json({error}, {status: 400});
   }

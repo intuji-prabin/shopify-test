@@ -5,8 +5,6 @@ import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {EditTeamFormType} from '~/routes/_app.team_.add/team-form';
 import {fileUpload} from '~/lib/utils/file-upload';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
-import {getCustomerByEmail} from '../_public.login/login.server';
-import {USER_DETAILS_KEY, getUserDetails} from '~/lib/utils/authsession.server';
 
 type CustomerDetails = Omit<EditTeamFormType, 'profileImage'> & {
   profileImageUrl: string;
@@ -54,7 +52,7 @@ export async function getCustomerById({
   }
 }
 
-export async function editTeam({
+export async function updateTeam({
   address,
   email,
   fullName,
@@ -92,14 +90,6 @@ export async function editTeam({
   if (!results.status) {
     throw new Error(results.message);
   }
-
-  const userDetails = await getCustomerByEmail({email});
-
-  context.session.unset(USER_DETAILS_KEY);
-
-  context.session.set(USER_DETAILS_KEY, userDetails);
-
-  console.log('new session', await getUserDetails(context));
 
   return results;
 }

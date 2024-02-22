@@ -13,17 +13,18 @@ import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
-} from '~/lib/utils/toastsession.server';
+} from '~/lib/utils/toast-session.server';
 import {useMediaQuery} from '~/hooks/useMediaQuery';
 import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
 import {getCategoryList} from '../_app.categories/route';
-import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {CustomerData} from '../_public.login/login.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
 
-  const {userDetails} = await getUserDetails(context);
+  const {userDetails} = await getUserDetails(request);
 
   // const categories = await getCategories();
   const categories = await getCategoryList(context);
@@ -46,8 +47,6 @@ export async function loader({request, context}: ActionFunctionArgs) {
 
 export default function PublicPageLayout() {
   const {categories, userDetails} = useLoaderData<typeof loader>();
-
-  console.log('userDetails', userDetails);
 
   return (
     <Layout categories={categories} userDetails={userDetails}>

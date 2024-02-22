@@ -1,6 +1,6 @@
 import {NavLink, Outlet} from '@remix-run/react';
 import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
-import {isAuthenticate} from '~/lib/utils/authsession.server';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {Separator} from '~/components/ui/separator';
 import PromotionHeader from '~/routes/_app.promotions/promotion-header';
 import {MetaFunction} from '@shopify/remix-oxygen';

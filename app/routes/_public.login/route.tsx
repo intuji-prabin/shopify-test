@@ -17,12 +17,12 @@ import LoginForm, {
 import {
   createUserSession,
   getAccessToken,
-} from '~/lib/utils/authsession.server';
+} from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
-} from '~/lib/utils/toastsession.server';
+} from '~/lib/utils/toast-session.server';
 
 export const loader = async ({context}: LoaderFunctionArgs) => {
   const accessToken = await getAccessToken(context);

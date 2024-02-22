@@ -19,18 +19,25 @@ import TeamForm, {
   EditTeamFormSchemaValidator,
 } from '~/routes/_app.team_.add/team-form';
 import {
-  editTeam,
   getCustomerById,
+  updateTeam,
 } from '~/routes/_app.team_.$teamId/edit-team.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
-} from '~/lib/utils/toastsession.server';
+} from '~/lib/utils/toast-session.server';
 import {MetaFunction} from '@shopify/remix-oxygen';
 import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
-import {isAuthenticate} from '~/lib/utils/authsession.server';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {
+  USER_DETAILS_KEY,
+  getUserDetails,
+  getUserDetailsSession,
+  userDetailsCommitSession,
+} from '~/lib/utils/user-session.server';
+import {getCustomerByEmail} from '~/routes/_public.login/login.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Edit Team Member'}];
@@ -52,6 +59,11 @@ export async function action({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
 
   const messageSession = await getMessageSession(request);
+
+  const userDetailsSession = await getUserDetailsSession(request);
+
+  const {userDetails} = await getUserDetails(request);
+
   try {
     const result = await EditTeamFormSchemaValidator.validate(
       await request.formData(),
@@ -71,7 +83,7 @@ export async function action({request, context}: ActionFunctionArgs) {
       profileImage,
     } = result.data;
 
-    await editTeam({
+    await updateTeam({
       address,
       email,
       fullName,
@@ -82,12 +94,21 @@ export async function action({request, context}: ActionFunctionArgs) {
       context,
     });
 
-    setSuccessMessage(messageSession, 'Customer edit successful');
+    userDetailsSession.unset(USER_DETAILS_KEY);
+
+    const customerDetails = await getCustomerByEmail({
+      email: userDetails.email,
+    });
+
+    userDetailsSession.set(USER_DETAILS_KEY, customerDetails);
+
+    setSuccessMessage(messageSession, 'Customer update successful');
 
     return redirect(Routes.TEAM, {
-      headers: {
-        'Set-Cookie': await messageCommitSession(messageSession),
-      },
+      headers: [
+        ['Set-Cookie', await userDetailsCommitSession(userDetailsSession)],
+        ['Set-Cookie', await messageCommitSession(messageSession)],
+      ],
     });
   } catch (error) {
     if (error instanceof Error) {

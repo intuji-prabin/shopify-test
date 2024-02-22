@@ -9,7 +9,8 @@ import {MetaFunction} from '@shopify/remix-oxygen';
 import {CircleInformationMajor} from '~/components/icons/orderStatus';
 import {Alert, AlertDescription} from '~/components/ui/alert';
 import {Routes} from '~/lib/constants/routes.constent';
-import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 import ShippingAddressHeader from '~/routes/_app.shipping-address/shipping-address-breadcrumb';
 import ShippingAddressCards from '~/routes/_app.shipping-address/shipping-address-card';
 import {getAllCompanyShippingAddresses} from '~/routes/_app.shipping-address/shipping-address.server';
@@ -18,14 +19,17 @@ export const meta: MetaFunction = () => {
   return [{title: 'Shipping Address'}];
 };
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
-  const {userDetails} = await getUserDetails(context);
+  const {userDetails} = await getUserDetails(request);
+
   const metaParentValue = userDetails.meta.parent.value;
+
   const customerId =
     metaParentValue === 'null' ? userDetails.id : metaParentValue;
 
   const shippingAddresses = await getAllCompanyShippingAddresses(customerId);
+
   return json({shippingAddresses});
 }
 

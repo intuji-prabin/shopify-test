@@ -8,7 +8,7 @@ import {TabsTable} from '~/routes/_app.team/tabs-table';
 import {getAllTeams, updateStatus} from '~/routes/_app.team/team.server';
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '~/components/ui/tabs';
 import {ConfirmationFormSchemaValidator} from '~/routes/_app.team/confirmation-form';
-import {getUserDetails, isAuthenticate} from '~/lib/utils/authsession.server';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {
   Link,
   isRouteErrorResponse,
@@ -25,10 +25,11 @@ import {
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
-} from '~/lib/utils/toastsession.server';
+} from '~/lib/utils/toast-session.server';
 import {MetaFunction} from '@shopify/remix-oxygen';
 import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Team List'}];
@@ -36,7 +37,7 @@ export const meta: MetaFunction = () => {
 
 export async function loader({request, context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
-  const {userDetails} = await getUserDetails(context);
+  const {userDetails} = await getUserDetails(request);
 
   const companyId = userDetails.meta.company_id.value;
 

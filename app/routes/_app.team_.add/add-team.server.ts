@@ -3,9 +3,9 @@ import {customerRecover} from '~/routes/_public.forget-password/forget-password.
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
-import {getUserDetails} from '~/lib/utils/authsession.server';
 import {fileUpload} from '~/lib/utils/file-upload';
 import {CustomerResponse} from '~/routes/_app.team_.$teamId/edit-team.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 
 type AddTeamParams = {
   fullName: string;
@@ -26,12 +26,13 @@ export async function addTeam({
   fullName,
   userRole,
   phoneNumber,
+  request,
 }: AddTeamParams) {
   const {storefront} = context;
   const firstName = fullName.split(' ')[0];
   const lastName = fullName.split(' ')[1];
 
-  const {userDetails} = await getUserDetails(context);
+  const {userDetails} = await getUserDetails(request);
 
   const companyId = userDetails.meta.company_id.value;
 

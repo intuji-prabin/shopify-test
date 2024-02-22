@@ -1,7 +1,7 @@
 import {Link} from '@remix-run/react';
 import {settingCards} from './settingCards';
 import {LoaderFunctionArgs} from '@remix-run/server-runtime';
-import {isAuthenticate} from '~/lib/utils/authsession.server';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {MetaFunction} from '@shopify/remix-oxygen';
 
 export const meta: MetaFunction = () => {

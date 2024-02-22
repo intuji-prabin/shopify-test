@@ -3,7 +3,7 @@ import {ContactUsCard} from '~/routes/_app.support_.contact-us/contact-us-card';
 import {BackButton} from '~/components/ui/back-button';
 import {Routes} from '~/lib/constants/routes.constent';
 import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
-import {isAuthenticate} from '~/lib/utils/authsession.server';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {getSupportContact} from './support-contact-us.server';
 import {
   isRouteErrorResponse,

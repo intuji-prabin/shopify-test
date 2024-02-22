@@ -1,24 +1,24 @@
-import { useLoaderData } from '@remix-run/react';
-import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
-import { useEffect } from 'react';
-import { Button } from '~/components/ui/button';
-import { useScroll } from '~/hooks/useScroll';
-import { CategoryCard } from '~/routes/_app.categories/category-card';
-import { getCategory } from './categories.server';
-import { isAuthenticate } from '~/lib/utils/authsession.server';
+import {useLoaderData} from '@remix-run/react';
+import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
+import {useEffect} from 'react';
+import {Button} from '~/components/ui/button';
+import {useScroll} from '~/hooks/useScroll';
+import {CategoryCard} from '~/routes/_app.categories/category-card';
+import {getCategory} from './categories.server';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 
-export async function loader({ context }: ActionFunctionArgs) {
-  await isAuthenticate( context )
+export async function loader({context}: ActionFunctionArgs) {
+  await isAuthenticate(context);
   const categoriesDetail = await getCategoryList(context);
   if (categoriesDetail && categoriesDetail.length > 0) {
-    return json({ categoriesDetail });
+    return json({categoriesDetail});
   }
-  return { categoriesDetail: [] };
+  return {categoriesDetail: []};
 }
 
 export default function CategoriesPage() {
-  const { handleScroll } = useScroll('categories-menu');
-  const { categoriesDetail } = useLoaderData<typeof loader>();
+  const {handleScroll} = useScroll('categories-menu');
+  const {categoriesDetail} = useLoaderData<typeof loader>();
 
   useEffect(() => {
     const handleScroll: EventListener = () => {
@@ -26,22 +26,24 @@ export default function CategoriesPage() {
         window.scrollY ||
         document.documentElement.scrollTop ||
         document.body.scrollTop;
-      const sections: NodeListOf<HTMLDivElement> = document.querySelectorAll(
-        ".category-wrap"
-      );
-      const navLinks: NodeListOf<HTMLAnchorElement> = document.querySelectorAll("#categories-menu a");
+      const sections: NodeListOf<HTMLDivElement> =
+        document.querySelectorAll('.category-wrap');
+      const navLinks: NodeListOf<HTMLAnchorElement> =
+        document.querySelectorAll('#categories-menu a');
       sections.forEach((section: HTMLDivElement) => {
         const offsetTop: number = section.offsetTop - 125;
         const outerHeight: number = section.offsetHeight;
         if (scrollPos >= offsetTop && scrollPos < offsetTop + outerHeight) {
-          const targetClass: string | null = section.getAttribute("id");
+          const targetClass: string | null = section.getAttribute('id');
           if (targetClass) {
             navLinks.forEach((link: HTMLAnchorElement) =>
-              link.classList.remove("active__tab")
+              link.classList.remove('active__tab'),
             );
-            const targetLink: HTMLAnchorElement | null = document.querySelector(`#categories-menu a[href="${targetClass}"]`);
+            const targetLink: HTMLAnchorElement | null = document.querySelector(
+              `#categories-menu a[href="${targetClass}"]`,
+            );
             if (targetLink) {
-              targetLink.classList.add("active__tab");
+              targetLink.classList.add('active__tab');
             }
           }
         }
@@ -56,19 +58,17 @@ export default function CategoriesPage() {
 
   return (
     <>
-      <section className='mt-10'>
+      <section className="mt-10">
         <div className="container flex flex-wrap items-center justify-between gap-x-5 gap-y-2">
           <h3>Categories</h3>
-          <Button>
-            upload order
-          </Button>
+          <Button>upload order</Button>
         </div>
       </section>
       <section
         id="categories-menu"
         className="container sticky top-0 hidden mt-0 sm:block bg-primary-25"
       >
-        {categoriesDetail.length > 0 &&
+        {categoriesDetail.length > 0 && (
           <div className="flex items-center gap-3 py-4">
             {categoriesDetail.map((category: any) => (
               <a
@@ -81,14 +81,17 @@ export default function CategoriesPage() {
               </a>
             ))}
           </div>
-        }
+        )}
       </section>
-      {categoriesDetail.length > 0 ? categoriesDetail.map((category: any) => (
-        <CategoryCard key={category.id} category={category} />
-      )) :
-        <section className='container'>
+      {categoriesDetail.length > 0 ? (
+        categoriesDetail.map((category: any) => (
+          <CategoryCard key={category.id} category={category} />
+        ))
+      ) : (
+        <section className="container">
           <h4>NO DATA FOUND</h4>
-        </section>}
+        </section>
+      )}
     </>
   );
 }

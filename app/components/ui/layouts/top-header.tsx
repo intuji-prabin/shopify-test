@@ -101,8 +101,10 @@ export function NotificationNavbar() {
 export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
   const [isClicked, setIsClicked] = useState(false);
 
-  const fullName = `${userDetails.firstName}${userDetails.lastName}`;
+  const fullName = `${userDetails.firstName} ${userDetails.lastName}`;
+
   const imageUrl = userDetails.meta?.image_url?.value;
+
   const userId = userDetails.id.split('/').pop();
 
   return (
@@ -141,7 +143,7 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
             </figure>
             <DropdownMenu open={isClicked} onOpenChange={setIsClicked}>
               <DropdownMenuTrigger asChild>
-                <Button className="bg-transparent italic font-bold text-base hover:bg-transparent border-none focus:border-transparent focus-visible:border-transparent outline-none focus:outline-none p-0">
+                <Button className="bg-transparent italic font-bold capitalize text-base hover:bg-transparent border-none focus:border-transparent focus-visible:border-transparent outline-none focus:outline-none p-0">
                   {fullName}
                   {isClicked ? <IoIosArrowUp /> : <IoIosArrowDown />}
                 </Button>
