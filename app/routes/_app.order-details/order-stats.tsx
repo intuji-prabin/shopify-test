@@ -6,6 +6,7 @@ import {
   Ordertrack,
   Printblue,
 } from '~/components/icons/orderStatus';
+import {Button} from '~/components/ui/button';
 
 export default function OrderStats() {
   const orderStatus = [
@@ -29,12 +30,12 @@ export default function OrderStats() {
     {
       id: 0,
 
-      phone: 'Phone',
-      addresstitle: 'address',
-      postalcode: 'Postal Code',
+      carrier: 'Carrier',
+      carrier_type: 'Carrier Type',
+      service_level: 'Service Level',
       phoneno: '+61 414 123 456',
-      address: '99th Street, Wandiligong, NSW',
-      pstcode: '2424',
+      carrier_typ: 'LCL',
+      service_type: 'Standard',
     },
   ];
   return (
@@ -71,9 +72,9 @@ export default function OrderStats() {
                 <h5>Current Status</h5>
               </div>
               <div className="max-w-[235px]">
-                <button className="border border-[#CE8311] px-[6px] py-[8px] text-[#CE8311] font-bold text-[14px] leading-4">
+                <Button className="border border-[#CE8311] px-[6px] py-[8px] text-[#CE8311] font-bold text-[14px] leading-4 bg-white">
                   processing
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -91,22 +92,22 @@ export default function OrderStats() {
                         key={index}
                         className="flex justify-start gap-[17px] text-grey-900"
                       >
-                        <p className="text-lg font-bold leading-[22px]">
-                          {order.phone}
+                        <p className=" font-medium text-base leading-[22px]">
+                          {order.carrier}
                         </p>
                         <p className="font-normal">{order.phoneno}</p>
                       </li>
                       <li className="flex justify-start gap-[17px] text-grey-900">
-                        <p className="text-lg font-bold leading-[22px]">
-                          {order.addresstitle}
+                        <p className=" font-medium text-base leading-[22px]">
+                          {order.carrier_type}
                         </p>
-                        <p className="font-normal">{order.address}</p>
+                        <p className="font-normal">{order.carrier_typ}</p>
                       </li>
                       <li className="flex justify-start gap-[17px] text-grey-900">
-                        <p className="text-lg font-bold leading-[22px]">
-                          {order.postalcode}
+                        <p className=" font-medium text-base leading-[22px]">
+                          {order.service_level}
                         </p>
-                        <p className="font-normal">{order.pstcode}</p>
+                        <p className="font-normal">{order.service_type}</p>
                       </li>
                     </>
                   ))}
