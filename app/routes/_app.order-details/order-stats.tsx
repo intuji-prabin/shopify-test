@@ -72,9 +72,7 @@ export default function OrderStats() {
                 <h5>Current Status</h5>
               </div>
               <div className="max-w-[235px]">
-                <Button className="border border-[#CE8311] px-[6px] py-[8px] text-[#CE8311] font-bold text-[14px] leading-4 bg-white">
-                  processing
-                </Button>
+                <Button variant="status_brown">processing</Button>
               </div>
             </div>
           </div>

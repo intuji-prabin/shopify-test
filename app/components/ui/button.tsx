@@ -19,6 +19,12 @@ const buttonVariants = cva(
         danger: 'bg-semantic-danger-100 border border-semantic-danger-500',
         danger_dark:
           'bg-semantic-danger-500 border border-semantic-danger-500 text-neutral-white',
+        status_brown:
+          'bg-white text-status-awaiting border border-status-awaiting',
+        status_green:
+          'bg-white text-status-delivered border border-status-delivered',
+        status_blue:
+          'bg-white text-status-shipped border border-status-shipped',
         input: 'text-grey-500 border border-grey-100 not-italic',
         disabled:
           'text-grey-400 bg-grey-200 cursor-not-allowed pointer-events-none border border-bg-grey-200',

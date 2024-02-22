@@ -3,7 +3,6 @@ import {DataTable} from '~/components/ui/data-table';
 import {useMyProductColumn} from './use-column';
 import {ProductData} from './productData';
 import CreateGroup from './remove-later-dialogbox';
-import {useState} from 'react';
 export default function MyProducts() {
   const {columns} = useMyProductColumn();
   const {table} = useTable(columns, ProductData);
@@ -32,9 +31,7 @@ export default function MyProducts() {
         </div>
 
         <div className=" border-grey-50 border-t cart-order">
-          <DataTable
-            table={table}
-          />
+          <DataTable table={table} />
         </div>
       </div>
     </>
