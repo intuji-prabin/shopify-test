@@ -47,7 +47,7 @@ export function useColumn({currentUser}: {currentUser: string}) {
                     </div>
                   )}
                 </div>
-                <figcaption>{name}</figcaption>
+                <figcaption className="capitalize">{name}</figcaption>
               </figure>
             </div>
           );
@@ -120,6 +120,7 @@ export function useColumn({currentUser}: {currentUser: string}) {
           return (
             <Link to={`${Routes.TEAM}/${teamId}`}>
               <Button
+                data-cy="edit"
                 type="button"
                 size="icon"
                 variant="ghost"

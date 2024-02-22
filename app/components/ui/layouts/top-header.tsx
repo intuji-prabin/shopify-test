@@ -18,6 +18,7 @@ import {NotificationIcon} from '~/components/icons/notification';
 import {Search} from 'lucide-react';
 import SearchIcon from '~/components/icons/search';
 import CloseMenu from '~/components/icons/closeMenu';
+import {CustomerData} from '~/routes/_public.login/login.server';
 
 export function PlaceOrder() {
   return (
@@ -100,7 +101,7 @@ export function NotificationNavbar() {
   );
 }
 
-export default function TopHeader() {
+export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
   const [isClicked, setIsClicked] = useState(false);
   const [searchProduct, setSearchProduct] = useState(false);
 
@@ -111,6 +112,12 @@ export default function TopHeader() {
   function handleCloseSearch() {
     setSearchProduct(false);
   }
+  const fullName = `${userDetails.firstName} ${userDetails.lastName}`;
+
+  const imageUrl = userDetails.meta?.image_url?.value;
+
+  const userId = userDetails.id.split('/').pop();
+
   return (
     <>
       <div className="bg-grey-900">
@@ -201,28 +208,32 @@ export default function TopHeader() {
 
           {/* user profile begins here  */}
           <div className="flex items-center gap-1">
-            <figure className="rounded-[50%]">
-              <img src="/niel.png" alt="" />
+            <figure className="w-8 h-8">
+              <img
+                src={imageUrl ?? '/niel.png'}
+                alt="profile-image"
+                className="w-full h-full rounded-full object-cover object-center"
+              />
             </figure>
             <DropdownMenu open={isClicked} onOpenChange={setIsClicked}>
               <DropdownMenuTrigger asChild>
-                <Button className="bg-transparent italic font-bold text-base hover:bg-transparent border-none focus:border-transparent focus-visible:border-transparent outline-none focus:outline-none p-0">
-                  Niel De Grass
+                <Button className="bg-transparent italic font-bold capitalize text-base hover:bg-transparent border-none focus:border-transparent focus-visible:border-transparent outline-none focus:outline-none p-0">
+                  {fullName}
                   {isClicked ? <IoIosArrowUp /> : <IoIosArrowDown />}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56 user-login max-w-[172px] rounded-none mr-4">
                 <DropdownMenuLabel className="flex items-center user-login-dropdown p-0 ">
                   <Form method="post" action="/logout" className="w-full">
-                    <Button
-                      type="submit"
-                      className="bg-white  w-full items-center justify-start hover:bg-primary-100 px-2 "
+                    <Link
+                      to={`/team/${userId}`}
+                      className="bg-white p-2 w-full flex items-center justify-start gap-2 hover:bg-primary-100"
                     >
                       <UserProfile />
                       <h5 className="text-lg font-bold italic text-grey-900">
                         My profile
                       </h5>
-                    </Button>
+                    </Link>
                     <Button
                       type="submit"
                       className="bg-white px-2 w-full items-center justify-start hover:bg-primary-100 "

@@ -1,15 +1,20 @@
 import {Link, useActionData} from '@remix-run/react';
-import {ActionFunctionArgs, LoaderFunctionArgs, json, redirect} from '@remix-run/server-runtime';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  json,
+  redirect,
+} from '@remix-run/server-runtime';
 import {validationError} from 'remix-validated-form';
 import {ArrowLeftSmall} from '~/components/icons/arrowleft';
 import {Alert, AlertDescription} from '~/components/ui/alert';
-import { getAccessToken } from '~/lib/utils/authsession.server';
+import {getAccessToken} from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
-} from '~/lib/utils/toastsession.server';
+} from '~/lib/utils/toast-session.server';
 import ForgetPasswordForm, {
   ForgetPassFormFieldValidator,
 } from '~/routes/_public.forget-password/forget-password-form';
@@ -20,16 +25,15 @@ type ActionResponse = {
   email: string | null;
 };
 
-export const loader = async ( { context } : LoaderFunctionArgs ) => {
+export const loader = async ({context}: LoaderFunctionArgs) => {
   const accessToken = await getAccessToken(context);
-  if( accessToken ) {
+  if (accessToken) {
     return redirect('/');
   }
-  return json({})
-}
+  return json({});
+};
 
 export const action = async ({request, context}: ActionFunctionArgs) => {
-
   const messageSession = await getMessageSession(request);
   try {
     const result = await ForgetPassFormFieldValidator.validate(
