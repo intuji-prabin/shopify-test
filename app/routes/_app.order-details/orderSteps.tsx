@@ -8,6 +8,7 @@ import {
   Transit,
 } from '~/components/icons/orderStatus';
 import {Steps} from '~/components/ui/steps';
+import ProcessingPopover from './order-processing-popover';
 export default function OrderSteps() {
   return (
     <Steps simple={false} className="steps__order">
@@ -31,6 +32,7 @@ export default function OrderSteps() {
         <p className="pt-2 text-sm italic font-bold text-grey-100">
           Items On Back Order
         </p>
+        <ProcessingPopover />
       </li>
       <li className="relative text-center basis-full">
         <span className="inline-flex items-center justify-center w-16 h-16 text-lg font-medium text-white rounded-full bg-grey-100">
