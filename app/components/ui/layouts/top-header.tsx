@@ -163,7 +163,7 @@ export default function TopHeader() {
                       </li>
                     </ul>
                   </div>
-                  <div className="pt-4 border-grey-50 border-t">
+                  <div className="py-4 border-grey-50 border-t">
                     <p className="mb-2 font-medium text-grey-900">
                       Recent Searches
                     </p>
@@ -182,6 +182,12 @@ export default function TopHeader() {
                       </li>
                     </ul>
                   </div>
+                  <Link
+                    to=""
+                    className="uppercase text-primary-500 font-bold text-sm  italic border-b border-primary-500"
+                  >
+                    CLEAR ALL RECENT
+                  </Link>
                 </div>
               )}
             </div>
