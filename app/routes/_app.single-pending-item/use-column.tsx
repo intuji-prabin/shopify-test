@@ -1,5 +1,4 @@
 import {HTMLProps, useEffect, useMemo, useRef, useState} from 'react';
-import {ColumnDef} from '~tanstack/react-table';
 import {InfoIcon} from '~/components/icons/info-icon';
 import {badgeVariants} from '~/components/ui/badge';
 import {
@@ -13,6 +12,7 @@ import {
 import {TooltipInfo} from '~/components/icons/orderStatus';
 import {Link} from '@remix-run/react';
 import React from 'react';
+import {ColumnDef} from '@tanstack/react-table';
 
 export type BulkOrderColumn = {
   id: string;
