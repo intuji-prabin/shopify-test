@@ -27,7 +27,10 @@ export interface Payload {
   original_image: null;
 }
 
-export async function getPromotionById(promotionId: string, customerId : string) {
+export async function getPromotionById(
+  promotionId: string,
+  customerId: string,
+) {
   try {
     const results = await useFetch<PromotionType>({
       method: AllowedHTTPMethods.GET,
@@ -54,7 +57,7 @@ interface FormDataObject {
 export async function createPromotion(
   formData: FormDataObject,
   bannerId: string,
-  customerId : string
+  customerId: string,
 ) {
   try {
     const fData = new FormData();
@@ -62,18 +65,19 @@ export async function createPromotion(
       fData.append(key, value);
     }
     fData.append('banner_id', bannerId);
-    console.log( ` url is ${ENDPOINT.PROMOTION.GET}/${customerId}` )
-    const results: any = await fetch(`${ENDPOINT.PROMOTION.GET}/${customerId}`, {
-      method: 'POST',
-      body: fData,
-    });
+    const results: any = await fetch(
+      `${ENDPOINT.PROMOTION.GET}/${customerId}`,
+      {
+        method: 'POST',
+        body: fData,
+      },
+    );
 
     if (!results.status) {
       throw new Response(results.message, {
         status: 404,
       });
     }
-    console.log("ggg ", results)
     return results;
   } catch (error) {
     throw new Error(

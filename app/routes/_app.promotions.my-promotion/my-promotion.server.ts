@@ -9,18 +9,23 @@ type ResponseData = {
   payload: [];
 };
 
-export async function deletePromotion(promotionId: number[]) {
-  const url = `${ENDPOINT.PROMOTION.BULK_DELETE}`;
+export async function deletePromotion(
+  promotionId: number[],
+  customerId: string,
+) {
+  const url = `${ENDPOINT.PROMOTION.BULK_DELETE}/${customerId}`;
 
   const body = JSON.stringify({
     promotion_id: promotionId,
   });
 
-  return await useFetch<ResponseData>({
+  const response = await useFetch<ResponseData>({
     url,
     method: AllowedHTTPMethods.DELETE,
     body,
   });
+
+  return response;
 }
 
 export async function exportPromotion(promotionId: number[]) {
