@@ -1,4 +1,6 @@
+import {Link} from '@remix-run/react';
 import {Button} from '~/components/ui/button';
+import {Routes} from '~/lib/constants/routes.constent';
 
 export default function OrderCards() {
   return (
@@ -13,7 +15,9 @@ export default function OrderCards() {
           </li>
         </ul>
         <Button variant="ghost" className="w-full">
-          View Items
+          <Link to={Routes.SINGLE_PENDING_ITEM} className="w-full">
+            View Items
+          </Link>
         </Button>
       </div>
       <div className="bg-white  max-w-[302px] p-4 space-y-12">
@@ -26,7 +30,7 @@ export default function OrderCards() {
           </li>
         </ul>
         <Button variant="ghost" className="w-full">
-          View Items
+          <Link to="">View Items</Link>
         </Button>
       </div>
       <div className="bg-white  max-w-[302px] p-4 space-y-12">
@@ -39,7 +43,7 @@ export default function OrderCards() {
           </li>
         </ul>
         <Button variant="ghost" className="w-full">
-          View Items
+          <Link to="">View Items</Link>
         </Button>
       </div>
       <div className="bg-white  max-w-[302px] p-4 space-y-12">
@@ -52,7 +56,7 @@ export default function OrderCards() {
           </li>
         </ul>
         <Button variant="ghost" className="w-full">
-          View Items
+          <Link to="">View Items</Link>
         </Button>
       </div>
       <div className="bg-white  max-w-[302px] p-4 space-y-12">
@@ -65,7 +69,7 @@ export default function OrderCards() {
           </li>
         </ul>
         <Button variant="ghost" className="w-full">
-          View Items
+          <Link to="">View Items</Link>
         </Button>
       </div>
 
@@ -79,7 +83,7 @@ export default function OrderCards() {
           </li>
         </ul>
         <Button variant="ghost" className="w-full">
-          View Items
+          <Link to="">View Items</Link>
         </Button>
       </div>
       <div className="border-dashed border-2 border-grey-100 max-w-[302px] p-4 space-y-12 flex items-center justify-center">
