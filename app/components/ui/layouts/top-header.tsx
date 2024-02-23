@@ -119,8 +119,6 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
 
   const imageUrl = userDetails.meta?.image_url?.value;
 
-  const userId = userDetails.id.split('/').pop();
-
   return (
     <>
       <div className="bg-grey-900">
@@ -231,7 +229,7 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
                 <DropdownMenuLabel className="flex items-center user-login-dropdown p-0 ">
                   <Form method="post" action="/logout" className="w-full">
                     <Link
-                      to={`/team/${userId}`}
+                      to={Routes.PROFILE}
                       className="bg-white p-2 w-full flex items-center justify-start gap-2 hover:bg-primary-100"
                     >
                       <UserProfile />

@@ -98,7 +98,7 @@ export async function action({request, context}: ActionFunctionArgs) {
       {error: null, customer: updated.customerUpdate?.customer},
       {
         headers: {
-          'Set-Cookie': await session.commit(),
+          'Set-Cookie': await session.commit({}),
         },
       },
     );
