@@ -1,6 +1,6 @@
-import {useField} from 'remix-validated-form';
-import {Button} from '~/components/ui/button';
-import {DangerAlert} from '~/components/icons/alert';
+import { useField } from 'remix-validated-form';
+import { Button } from '~/components/ui/button';
+import { DangerAlert } from '~/components/icons/alert';
 import {
   AddTeamFormFieldNameType,
   EditTeamFormFieldNameType,
@@ -12,6 +12,7 @@ type ImageUploadInputProps = {
   className?: string;
   defaultImage?: string;
   unsavedChanges?: any;
+  handleChange?: any;
 };
 
 export default function ImageUploadInput({
@@ -19,9 +20,10 @@ export default function ImageUploadInput({
   imageUrl,
   className,
   defaultImage,
+  handleChange,
   unsavedChanges,
 }: ImageUploadInputProps) {
-  const {getInputProps, error, clearError} = useField(name);
+  const { getInputProps, error, clearError } = useField(name);
 
   const handleProfileImageUpload = () => {
     const profileImageUploadInput = document.getElementById(
@@ -45,6 +47,7 @@ export default function ImageUploadInput({
           });
         };
         reader.readAsDataURL(file);
+        handleChange("companyLogo", file);
         unsavedChanges && unsavedChanges();
       }
     });
@@ -62,13 +65,13 @@ export default function ImageUploadInput({
           <input
             type="file"
             accept="image/*"
-            {...getInputProps({onChange: () => clearError()})}
+            {...getInputProps({ onChange: () => clearError() })}
             id="image-upload"
             hidden
           />
           <label
             htmlFor="image-upload"
-            className="flex flex-col gap-y-4 items-center text-sm font-normal text-grey-400 w-full sm:flex-row"
+            className="flex flex-col items-center w-full text-sm font-normal gap-y-4 text-grey-400 sm:flex-row"
             onClick={(event) => {
               event.preventDefault();
               handleProfileImageUpload();

@@ -9,29 +9,29 @@ import {
   LoaderFunctionArgs,
   json,
 } from '@remix-run/server-runtime';
-import {withZod} from '@remix-validated-form/with-zod';
+import { withZod } from '@remix-validated-form/with-zod';
 import html2canvas from 'html2canvas';
-import {useRef, useState} from 'react';
-import {ValidatedForm} from 'remix-validated-form';
-import {z} from 'zod';
-import {zfd} from 'zod-form-data';
-import {FullScreen} from '~/components/icons/full-screen';
+import { useRef, useState } from 'react';
+import { ValidatedForm } from 'remix-validated-form';
+import { z } from 'zod';
+import { zfd } from 'zod-form-data';
+import { FullScreen } from '~/components/icons/full-screen';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {Button} from '~/components/ui/button';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { Button } from '~/components/ui/button';
 import ColorPicker from '~/components/ui/color-picker';
-import {Dialog, DialogContent, DialogTrigger} from '~/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import ImageEdit from '~/components/ui/imageEdit';
 import Loader from '~/components/ui/loader';
-import {Separator} from '~/components/ui/separator';
-import {displayToast} from '~/components/ui/toast';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {Routes} from '~/lib/constants/routes.constent';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {getMyPromotionById, updatePromotion} from './edit-promotion.server';
+import { Separator } from '~/components/ui/separator';
+import { displayToast } from '~/components/ui/toast';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { Routes } from '~/lib/constants/routes.constent';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getMyPromotionById, updatePromotion } from './edit-promotion.server';
 import PromotionNavigation from '../_app.customise_.$promotionId/promotion-navigation';
-import {BackButton} from '~/components/ui/back-button';
+import { BackButton } from '~/components/ui/back-button';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 
 const MAX_FILE_SIZE_MB = 15;
@@ -79,26 +79,25 @@ export type EditFormFieldNameType = keyof EditFormType;
  * @param param0 request | params
  * @returns json
  */
-export async function action({request, params}: ActionFunctionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   const data = await request.formData();
   let formData = Object.fromEntries(data);
-  formData = {...formData};
+  formData = { ...formData };
   const bannerId = params.promotionId as string;
   await updatePromotion(formData, bannerId);
   return json({});
 }
 
-export async function loader({params, context, request}: LoaderFunctionArgs) {
+export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   try {
-    const {userDetails} = await getUserDetails(request);
-    const customerId    = userDetails?.id.replace("gid://shopify/Customer/", "")
+    const { userDetails } = await getUserDetails(request);
     const promotionId = params?.promotionId as string;
     const response = await getMyPromotionById(promotionId);
-    
+
     if (response?.payload) {
       const results = response?.payload;
-      return json({results, promotionId});
+      return json({ results, promotionId });
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -123,7 +122,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
   const [image, setImage] = useState('');
   const [renderedImageWidth, setRenderedImageWidth] = useState();
   const [companyInfo, setCompanyInfo] = useState({
-    companyLogo: DEFAULT_IMAGE.IMAGE,
+    companyLogo: results?.logo_url ?? DEFAULT_IMAGE.IMAGE,
     companyName: results?.company_name,
     companyEmail: results?.company_email,
     companyWebsite: results?.company_domain,
@@ -131,6 +130,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     companyPhone: results?.phone,
     textColor: results?.color,
     bgColor: results?.background_color,
+
   });
 
   const canvasRef = useRef<any>();
@@ -146,7 +146,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
 
   const resetCompanyInfo = () => {
     setCompanyInfo({
-      companyLogo: DEFAULT_IMAGE.IMAGE,
+      companyLogo: results?.logo_url ?? DEFAULT_IMAGE.IMAGE,
       companyName: results?.company_name,
       companyEmail: results?.company_email,
       companyWebsite: results?.company_domain,
@@ -184,7 +184,8 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
 
   const unsavedChanges = () => {
     setShowUnsavedChanges(true);
-  };
+  }
+
   const navigate = useNavigate();
 
   const handleClick = async () => {
@@ -198,7 +199,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     formData.append('company_domain', companyInfo?.companyWebsite);
     formData.append('color', companyInfo?.textColor);
     formData.append('background_color', companyInfo?.bgColor);
-    formData.append('logo', companyInfo?.companyLogo);
+    formData.append('logo', companyInfo?.logo);
 
     try {
       const canvas = await html2canvas(canvasRef.current, {
@@ -288,9 +289,8 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                   style={{
                     width: renderedImageWidth && renderedImageWidth + 50,
                   }}
-                  className={`max-w-4xl ${
-                    !image && 'flex items-center justify-center'
-                  }`}
+                  className={`max-w-4xl ${!image && 'flex items-center justify-center'
+                    }`}
                 >
                   {image && renderedImageWidth ? (
                     <img
@@ -308,7 +308,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
               </Dialog>
             </div>
             <img
-              src={results?.image_url}
+              src={results?.original_image}
               alt="previewHidden"
               className="hidden"
               onLoad={(event: any) =>
@@ -317,7 +317,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
             />
             <ImageEdit
               alt={'preview'}
-              imgSrc={results?.image_url}
+              imgSrc={results?.original_image}
               canvasRef={canvasRef}
               companyInfo={companyInfo}
               renderedImageWidth={renderedImageWidth}
@@ -345,10 +345,10 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
               <h5 className="py-4">Company Logo</h5>
               <ImageUploadInput
                 name="logo"
-                unsavedChanges={unsavedChanges}
-                imageUrl={defaultValues?.companyLogo}
+                imageUrl={results?.logo_url ?? DEFAULT_IMAGE.IMAGE}
                 className="pb-4 promotion__edit"
-                defaultImage={DEFAULT_IMAGE.IMAGE}
+                unsavedChanges={unsavedChanges}
+                handleChange={(field: string, value: string) => handleChange(field, value)}
               />
               <div className="accordion__section">
                 <AccordionCustom accordionTitle="Company Information">
