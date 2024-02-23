@@ -16,14 +16,14 @@ import {
   EditItems,
 } from '~/components/icons/orderStatus';
 import {Done} from '~/components/icons/done';
-import PendingEmpty from './pending-empty';
 
 export default function SingleItem() {
   const itemNameFromApi = 'Gloves';
   const {columns} = useColumn();
   const {table} = useTable(columns, ProductData);
+
   function handleRemoveAllItems() {
-    // table.toggleAllPageRowsSelected(false);
+    // table.toggleAllRowsSelected(false);
   }
 
   const [editing, setEditing] = useState(false);

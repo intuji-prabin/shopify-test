@@ -2,7 +2,11 @@ import {Link} from '@remix-run/react';
 import {Button} from '~/components/ui/button';
 import {Routes} from '~/lib/constants/routes.constent';
 
-export default function OrderCards() {
+type OrderCardProps = {
+  item_name: string;
+  item_number: string;
+};
+export default function OrderCards({item_name, item_number}: OrderCardProps) {
   return (
     <section className="container grid grid-cols-2 md:grid-cols-4 gap-6 ">
       <div className="bg-white  max-w-[302px] p-4 space-y-12">
@@ -86,11 +90,14 @@ export default function OrderCards() {
           <Link to="">View Items</Link>
         </Button>
       </div>
-      <div className="border-dashed border-2 border-grey-100 max-w-[302px] p-4 space-y-12 flex items-center justify-center">
+      <Link
+        className="border-dashed border-2 border-grey-100 max-w-[302px] p-4 space-y-12 flex items-center justify-center"
+        to={''}
+      >
         <h3 className="font-bold italic uppercase text-lg leading-[22px] text-grey-200">
           add group
         </h3>
-      </div>
+      </Link>
     </section>
   );
 }

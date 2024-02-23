@@ -1,7 +1,7 @@
 import {FaSearch} from 'react-icons/fa';
 import {Form, Link} from '@remix-run/react';
 import {Heart, Logout, UserProfile} from '~/components/icons/orderStatus';
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 import {Button} from '~/components/ui/button';
 import {
   DropdownMenu,
@@ -19,6 +19,7 @@ import {Search} from 'lucide-react';
 import SearchIcon from '~/components/icons/search';
 import CloseMenu from '~/components/icons/closeMenu';
 import {CustomerData} from '~/routes/_public.login/login.server';
+import {useOutsideClick} from '~/hooks/useOutsideClick';
 
 export function PlaceOrder() {
   return (
@@ -104,6 +105,8 @@ export function NotificationNavbar() {
 export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
   const [isClicked, setIsClicked] = useState(false);
   const [searchProduct, setSearchProduct] = useState(false);
+  const searchResultRef = useRef<HTMLDivElement>(null);
+  useOutsideClick(searchResultRef, () => setSearchProduct(false));
 
   function handleSearchInput() {
     setSearchProduct(true);
@@ -146,55 +149,57 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
               )}
 
               {searchProduct && (
-                <div className="bg-white absolute top-[52px] left-0 w-full z-20 py-4 px-6 space-y-4">
-                  <div>
-                    <p className="mb-2 font-medium text-grey-900">
-                      Suggestions
-                    </p>
-                    <ul>
-                      <li className="flex items-center gap-2">
-                        <SearchIcon fillColor="#0F1010" />
-                        Welding Equipment
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <SearchIcon fillColor="#0F1010" />
-                        Welding Equipment
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <SearchIcon fillColor="#0F1010" />
-                        Welding Equipment
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <SearchIcon fillColor="#0F1010" />
-                        welders
-                      </li>
-                    </ul>
+                <div ref={searchResultRef}>
+                  <div className="bg-white absolute top-[52px] left-0 w-full z-20 py-4 px-6 space-y-4">
+                    <div>
+                      <p className="mb-2 font-medium text-grey-900">
+                        Suggestions
+                      </p>
+                      <ul>
+                        <li className="flex items-center gap-2">
+                          <SearchIcon fillColor="#0F1010" />
+                          Welding Equipment
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <SearchIcon fillColor="#0F1010" />
+                          Welding Equipment
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <SearchIcon fillColor="#0F1010" />
+                          Welding Equipment
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <SearchIcon fillColor="#0F1010" />
+                          welders
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="py-4 border-grey-50 border-t">
+                      <p className="mb-2 font-medium text-grey-900">
+                        Recent Searches
+                      </p>
+                      <ul>
+                        <li className="flex items-center gap-2">
+                          <SearchIcon fillColor="#0F1010" />
+                          Welding & Heating Mixers
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <SearchIcon fillColor="#0F1010" />
+                          cutting attachments
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <SearchIcon fillColor="#0F1010" />
+                          tig welding
+                        </li>
+                      </ul>
+                    </div>
+                    <Link
+                      to=""
+                      className="uppercase text-primary-500 font-bold text-sm  italic border-b border-primary-500"
+                    >
+                      CLEAR ALL RECENT
+                    </Link>
                   </div>
-                  <div className="py-4 border-grey-50 border-t">
-                    <p className="mb-2 font-medium text-grey-900">
-                      Recent Searches
-                    </p>
-                    <ul>
-                      <li className="flex items-center gap-2">
-                        <SearchIcon fillColor="#0F1010" />
-                        Welding & Heating Mixers
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <SearchIcon fillColor="#0F1010" />
-                        cutting attachments
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <SearchIcon fillColor="#0F1010" />
-                        tig welding
-                      </li>
-                    </ul>
-                  </div>
-                  <Link
-                    to=""
-                    className="uppercase text-primary-500 font-bold text-sm  italic border-b border-primary-500"
-                  >
-                    CLEAR ALL RECENT
-                  </Link>
                 </div>
               )}
             </div>

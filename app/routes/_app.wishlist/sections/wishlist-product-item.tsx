@@ -19,7 +19,7 @@ export default function WishListProductItem({
         </div>
         <figcaption className="flex flex-col justify-between max-w-[261px]">
           <h5 className="">{productName}</h5>
-          <div className="flex space-x-5 items-center max-w-[180px] flex-wrap">
+          <div className="flex space-x-5 items-center max-w-[180px] flex-wrap gap-2">
             <p>
               <span className="text-grey-900 font-semibold ">SKU: </span>
               {sku}

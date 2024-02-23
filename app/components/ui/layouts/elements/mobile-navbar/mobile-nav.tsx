@@ -1,13 +1,9 @@
 import {useRef, useState} from 'react';
 import CloseMenu from '~/components/icons/closeMenu';
 import HamburgerIcon from '~/components/icons/hamburgerIcon';
-import {Signout} from '~/components/icons/signout';
 import {Button} from '../../../button';
 import SearchIcon from '~/components/icons/search';
-import {Form, Link} from '@remix-run/react';
-import {TrackAnOrderButton} from '../track-an-order-dialog';
-import {LogoIcon, NotificationNavbar, PlaceOrder} from '../../top-header';
-import {mobileMenuItemsData} from '../bottom-header-menu-items';
+import {LogoIcon, NotificationNavbar} from '../../top-header';
 import {useOutsideClick} from '~/hooks/useOutsideClick';
 import UserProfle from './user-profle';
 import NavMenu from './nav-menu';
