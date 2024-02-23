@@ -1,9 +1,9 @@
-import React, {FormEvent, useState} from 'react';
-import {Button} from '~/components/ui/button';
-import {MetaFunction} from '@shopify/remix-oxygen';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import React, { FormEvent, useState } from 'react';
+import { Button } from '~/components/ui/button';
+import { MetaFunction } from '@shopify/remix-oxygen';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import PromotionCard from '~/routes/_app.promotions/promotion-card';
-import {UploadIcon} from '~/components/icons/upload';
+import { UploadIcon } from '~/components/icons/upload';
 import {
   Form,
   Link,
@@ -24,7 +24,7 @@ import {
   Promotion,
   getPromotions,
 } from '~/routes/_app.promotions/promotion.server';
-import {deletePromotion} from '~/routes/_app.promotions.my-promotion/my-promotion.server';
+import { deletePromotion } from '~/routes/_app.promotions.my-promotion/my-promotion.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -35,37 +35,34 @@ import {
   PAGE_LIMIT,
   filterOptions,
 } from '~/routes/_app.promotions/promotion-constants';
-import {getUserDetails} from '~/lib/utils/user-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'My Promotion'}];
+  return [{ title: 'My Promotion' }];
 };
 
-export async function loader({context, request}: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const {searchParams} = new URL(request.url);
+  const { userDetails } = await getUserDetails(request);
+  const { searchParams } = new URL(request.url);
+  const paramsList = Object.fromEntries(searchParams)
+  const customerId = userDetails?.id.replace("gid://shopify/Customer/", "")
 
-  const pageNumber = Math.max(Number(searchParams.get('page')) || 1, 1);
-
-  const filterBy = searchParams.get('filter_by');
-
-  const {userDetails} = await getUserDetails(request);
-
-  const companyId = userDetails.meta.company_id.value;
-
-  const {promotions, totalPromotionCount} = await getPromotions({
-    companyId,
+  const { promotions, totalPromotionCount } = await getPromotions({
+    customerId,
     custom: true,
-    pageNumber,
-    filterBy,
+    paramsList
   });
 
-  return json({promotions, totalPromotionCount});
+  return json({ promotions, totalPromotionCount });
 }
 
-export async function action({request, context}: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
+
+  const { userDetails } = await getUserDetails(request);
+  const customerId = userDetails?.id.replace("gid://shopify/Customer/", "")
 
   const messageSession = await getMessageSession(request);
 
@@ -83,8 +80,7 @@ export async function action({request, context}: ActionFunctionArgs) {
   });
 
   try {
-    const response = await deletePromotion(promotionId);
-
+    const response = await deletePromotion(promotionId, customerId);
     if (!response.status) {
       setErrorMessage(messageSession, response.message);
     }
@@ -105,7 +101,7 @@ export async function action({request, context}: ActionFunctionArgs) {
 }
 
 export default function MyPromotionsPage() {
-  const {promotions, totalPromotionCount} = useLoaderData<typeof loader>();
+  const { promotions, totalPromotionCount } = useLoaderData<typeof loader>();
 
   const [checkedItems, setCheckedItems] = useState<{
     count: number;
@@ -165,7 +161,7 @@ export default function MyPromotionsPage() {
         onChange={handleCheckboxChange}
         onSubmit={(event) => {
           submit(event.currentTarget);
-          setCheckedItems({count: 0, promotions: []});
+          setCheckedItems({ count: 0, promotions: [] });
         }}
       >
         {promotions.length > 0 ? (
@@ -187,7 +183,7 @@ export default function MyPromotionsPage() {
               </div>
             ))}
 
-            <div className="absolute -top-14 inset-x-0 sm:-top-16 sm:right-0 sm:left-auto">
+            <div className="absolute inset-x-0 -top-14 sm:-top-16 sm:right-0 sm:left-auto">
               {checkedItems.count > 0 ? (
                 <div className="flex items-center gap-x-2">
                   <p className="font-bold text-lg leading-5.5 italic basis-full sm:basis-auto">
@@ -196,12 +192,12 @@ export default function MyPromotionsPage() {
                   <NavLink
                     to={exportUrl}
                     reloadDocument
-                    className={({isActive, isPending}) =>
+                    className={({ isActive, isPending }) =>
                       isPending
                         ? 'bg-red-500'
                         : isActive
-                        ? 'active'
-                        : 'text-neutral-white font-bold italic uppercase bg-primary-500 disabled:bg-grey-50 px-6 py-2 text-sm leading-6 flex items-center gap-x-1.5'
+                          ? 'active'
+                          : 'text-neutral-white font-bold italic uppercase bg-primary-500 disabled:bg-grey-50 px-6 py-2 text-sm leading-6 flex items-center gap-x-1.5'
                     }
                   >
                     <UploadIcon /> Export

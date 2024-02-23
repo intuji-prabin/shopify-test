@@ -217,7 +217,7 @@ type MeasurementColumnType = Pick<BulkOrderColumn, 'measurement'>;
 function ProductMeasurement({measurement}: MeasurementColumnType) {
   return (
     <Select>
-      <SelectTrigger className="w-[116px] place-order rounded-sm ">
+      <SelectTrigger className="w-[116px] place-order rounded-sm list-select">
         <SelectValue placeholder="boxes" />
       </SelectTrigger>
       <SelectContent>

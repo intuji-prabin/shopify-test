@@ -27,11 +27,14 @@ export interface Payload {
   original_image: null;
 }
 
-export async function getPromotionById(promotionId: string) {
+export async function getPromotionById(
+  promotionId: string,
+  customerId: string,
+) {
   try {
     const results = await useFetch<PromotionType>({
       method: AllowedHTTPMethods.GET,
-      url: `${ENDPOINT.PROMOTION.GET}/${promotionId}`,
+      url: `${ENDPOINT.PROMOTION.GET}/${customerId}/${promotionId}`,
     });
 
     if (!results.status) {
@@ -54,6 +57,7 @@ interface FormDataObject {
 export async function createPromotion(
   formData: FormDataObject,
   bannerId: string,
+  customerId: string,
 ) {
   try {
     const fData = new FormData();
@@ -61,11 +65,13 @@ export async function createPromotion(
       fData.append(key, value);
     }
     fData.append('banner_id', bannerId);
-
-    const results: any = await fetch(`${ENDPOINT.PROMOTION.GET}`, {
-      method: 'POST',
-      body: fData,
-    });
+    const results: any = await fetch(
+      `${ENDPOINT.PROMOTION.GET}/${customerId}`,
+      {
+        method: 'POST',
+        body: fData,
+      },
+    );
 
     if (!results.status) {
       throw new Response(results.message, {

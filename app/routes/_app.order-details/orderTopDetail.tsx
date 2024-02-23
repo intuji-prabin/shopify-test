@@ -9,7 +9,7 @@ export default function OrderTopDetail({order_no}: {order_no: string}) {
           <h4 className="text-2xl italic font-bold leading-[29px]">
             Order No <span>{order_no} </span>{' '}
           </h4>
-          <Button variant="ghost">Processing</Button>
+          <Button variant="status_brown">Processing</Button>
         </div>
         <div>
           <Link

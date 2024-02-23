@@ -9,29 +9,30 @@ import {
   LoaderFunctionArgs,
   json,
 } from '@remix-run/server-runtime';
-import {withZod} from '@remix-validated-form/with-zod';
+import { withZod } from '@remix-validated-form/with-zod';
 import html2canvas from 'html2canvas';
-import {useRef, useState} from 'react';
-import {ValidatedForm} from 'remix-validated-form';
-import {z} from 'zod';
-import {zfd} from 'zod-form-data';
-import {FullScreen} from '~/components/icons/full-screen';
+import { useRef, useState } from 'react';
+import { ValidatedForm } from 'remix-validated-form';
+import { z } from 'zod';
+import { zfd } from 'zod-form-data';
+import { FullScreen } from '~/components/icons/full-screen';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {Button} from '~/components/ui/button';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { Button } from '~/components/ui/button';
 import ColorPicker from '~/components/ui/color-picker';
-import {Dialog, DialogContent, DialogTrigger} from '~/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import ImageEdit from '~/components/ui/imageEdit';
 import Loader from '~/components/ui/loader';
-import {Separator} from '~/components/ui/separator';
-import {displayToast} from '~/components/ui/toast';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {Routes} from '~/lib/constants/routes.constent';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {createPromotion, getPromotionById} from './promotion.server';
+import { Separator } from '~/components/ui/separator';
+import { displayToast } from '~/components/ui/toast';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { Routes } from '~/lib/constants/routes.constent';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { createPromotion, getPromotionById } from './promotion.server';
 import PromotionNavigation from './promotion-navigation';
-import {BackButton} from '~/components/ui/back-button';
+import { BackButton } from '~/components/ui/back-button';
+import { getUserDetails } from '~/lib/utils/user-session.server';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -73,24 +74,27 @@ export type EditFormType = z.infer<typeof EditFormValidator>;
 
 export type EditFormFieldNameType = keyof EditFormType;
 
-export async function action({request, params}: ActionFunctionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   const data = await request.formData();
-
+  const { userDetails } = await getUserDetails(request);
+  const customerId = userDetails?.id.replace("gid://shopify/Customer/", "")
   let formData = Object.fromEntries(data);
-  formData = {...formData};
+  formData = { ...formData };
   const bannerId = params.promotionId as string;
-  await createPromotion(formData, bannerId);
+  await createPromotion(formData, bannerId, customerId);
   return json({});
 }
 
-export async function loader({params, context}: LoaderFunctionArgs) {
+export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   try {
+    const { userDetails } = await getUserDetails(request);
+    const customerId = userDetails?.id.replace("gid://shopify/Customer/", "")
     const promotionId = params?.promotionId as string;
-    const response = await getPromotionById(promotionId);
+    const response = await getPromotionById(promotionId, customerId);
     if (response?.payload) {
       const results = response?.payload;
-      return json({results, promotionId});
+      return json({ results, promotionId });
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -108,14 +112,14 @@ export async function loader({params, context}: LoaderFunctionArgs) {
   }
 }
 
-const PromotionEdit = ({defaultValues}: EditFormProps) => {
-  const {results, promotionId} = useLoaderData<any>();
+const PromotionEdit = ({ defaultValues }: EditFormProps) => {
+  const { results, promotionId } = useLoaderData<any>();
   const [isLoading, setIsLoading] = useState(false);
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
   const [image, setImage] = useState('');
   const [renderedImageWidth, setRenderedImageWidth] = useState();
   const [companyInfo, setCompanyInfo] = useState({
-    companyLogo: DEFAULT_IMAGE.IMAGE,
+    companyLogo: results?.logo_url ?? DEFAULT_IMAGE.IMAGE,
     companyName: results?.company_name,
     companyEmail: results?.company_email,
     companyWebsite: results?.company_domain,
@@ -138,7 +142,7 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
 
   const resetCompanyInfo = () => {
     setCompanyInfo({
-      companyLogo: DEFAULT_IMAGE.IMAGE,
+      companyLogo: results?.logo_url ?? DEFAULT_IMAGE.IMAGE,
       companyName: results?.company_name,
       companyEmail: results?.company_email,
       companyWebsite: results?.company_domain,
@@ -191,7 +195,6 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
     formData.append('color', companyInfo?.textColor);
     formData.append('background_color', companyInfo?.bgColor);
     formData.append('logo', companyInfo?.companyLogo);
-
     try {
       const canvas = await html2canvas(canvasRef.current, {
         allowTaint: true,
@@ -203,7 +206,6 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
       console.error("An error occurred:", error);
       alert("An error has occured while creating the image");
     }
-
     try {
       const response = await fetch(`/customise/${promotionId}`, {
         method: 'POST',
@@ -278,9 +280,8 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
                   style={{
                     width: renderedImageWidth && renderedImageWidth + 50,
                   }}
-                  className={`max-w-4xl ${
-                    !image && 'flex items-center justify-center'
-                  }`}
+                  className={`max-w-4xl ${!image && 'flex items-center justify-center'
+                    }`}
                 >
                   {image && renderedImageWidth ? (
                     <img
@@ -336,9 +337,9 @@ const PromotionEdit = ({defaultValues}: EditFormProps) => {
               <ImageUploadInput
                 name="logo"
                 unsavedChanges={unsavedChanges}
-                imageUrl={defaultValues?.companyLogo}
+                imageUrl={results?.logo_url ?? DEFAULT_IMAGE.IMAGE}
                 className="pb-4 promotion__edit"
-                defaultImage={DEFAULT_IMAGE.IMAGE}
+                handleChange={(field: string, value: string) => handleChange(field, value)}
               />
               <div className="accordion__section">
                 <AccordionCustom accordionTitle="Company Information">

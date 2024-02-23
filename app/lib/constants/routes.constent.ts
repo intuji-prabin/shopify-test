@@ -33,4 +33,5 @@ export const Routes = {
   SAFETY: '/safety',
   ORDER_DETAILS: '/order-details',
   PROFILE: '/profile',
+  PENDING_ORDER:'/pending-order'
 };

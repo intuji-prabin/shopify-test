@@ -33,11 +33,14 @@ export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
   const {userDetails} = await getUserDetails(request);
-
-  const companyId = userDetails.meta.company_id.value;
+  const { searchParams }  = new URL(request.url);
+  const paramsList        = Object.fromEntries(searchParams)
+  const customerId        = userDetails?.id.replace("gid://shopify/Customer/", "")
+  
   try {
     const {promotions, totalPromotionCount} = await getPromotions({
-      companyId,
+      customerId,
+      paramsList
     });
     return json({promotions, totalPromotionCount});
   } catch (error) {

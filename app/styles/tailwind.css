@@ -788,7 +788,9 @@ div[data-state='open'].fixed.inset-0 {
   padding: 12px;
   min-width: 228px;
 }
-.ship-location button[data-state='open'] svg {
+.ship-location button[data-state='open'] svg,
+.list-select[data-state='open'] svg,
+.country[data-state='open'] svg {
   @apply rotate-180;
 }
 .cart-order tr td button[data-state='open'] svg {
