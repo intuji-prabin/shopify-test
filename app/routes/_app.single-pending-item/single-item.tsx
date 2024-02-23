@@ -16,6 +16,7 @@ import {
   EditItems,
 } from '~/components/icons/orderStatus';
 import {Done} from '~/components/icons/done';
+import {Alert, AlertDescription} from '~/components/ui/alert';
 
 export default function SingleItem() {
   const itemNameFromApi = 'Gloves';
@@ -85,12 +86,13 @@ export default function SingleItem() {
               )}
             </div>
           </div>
-          <div className="py-2 px-4 bg-semantic-info-100 flex gap-2 border-semantic-info-500 border-l-4 border-y-0 border-r-0 ">
+
+          <Alert className='border-0 rounded-none bg-semantic-info-100 before:content-[""] before:bg-semantic-info-500 before:inline-block before:h-full before:absolute before:w-1 before:left-0 before:top-0 py-2.5 [&>svg]:top-1/2 [&>svg]:-translate-y-1/2 [&>svg]:left-3 '>
             <CircleInformationMajor />
-            <p className="text-base font-normal leading-[21px]">
+            <AlertDescription className="text-base !translate-y-0 !pl-6">
               Only 300 items can be added in a group
-            </p>
-          </div>
+            </AlertDescription>
+          </Alert>
         </div>
 
         <div className="flex gap-2 items-center w-full justify-between md:justify-[unset] md:w-[unset]">
