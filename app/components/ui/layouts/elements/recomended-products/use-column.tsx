@@ -60,7 +60,7 @@ function ItemsColumn({items}: ItemsColumnType) {
         />
       </figure>
       <figcaption className="flex flex-col justify-between">
-        <div className="flex space-x-5 items-center max-w-[180px] flex-wrap">
+        <div className="flex space-x-5 items-center max-w-[180px] flex-wrap gap-2">
           <p className="mr-2 text-primary-500">
             <span className="font-normal text-sm leading-4 ">SKU: </span>
             {sku}

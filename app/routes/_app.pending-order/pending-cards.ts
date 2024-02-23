@@ -30,3 +30,4 @@ export const pendingCards = [
         items: '1 item',
     }
 ];
+
