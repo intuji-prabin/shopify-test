@@ -81,6 +81,7 @@ export default function AvailablePromotionPage() {
                 title={promotion.title}
                 imageURL={promotion.image_url}
                 id={promotion.id}
+                expire_at={promotion.expaire_at}
               />
             </div>
           ))}
