@@ -33,7 +33,7 @@ export const Routes = {
   SAFETY: '/safety',
   ORDER_DETAILS: '/order-details',
   PENDING_ORDER:'/pending-order',
-  SINGLE_PENDING_ITEM:'/single-pending-item'
+  SINGLE_PENDING_ITEM:'/single-pending-item',
   PROFILE: '/profile',
 };
 
