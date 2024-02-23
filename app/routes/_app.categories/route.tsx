@@ -1,24 +1,25 @@
-import {useLoaderData} from '@remix-run/react';
-import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
-import {useEffect} from 'react';
-import {Button} from '~/components/ui/button';
-import {useScroll} from '~/hooks/useScroll';
-import {CategoryCard} from '~/routes/_app.categories/category-card';
-import {getCategory} from './categories.server';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import { useLoaderData } from '@remix-run/react';
+import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
+import { useEffect } from 'react';
+import { Button } from '~/components/ui/button';
+import { useScroll } from '~/hooks/useScroll';
+import { CategoryCard } from '~/routes/_app.categories/category-card';
+import { getCategory } from './categories.server';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
 
-export async function loader({context}: ActionFunctionArgs) {
+export async function loader({ context }: ActionFunctionArgs) {
   await isAuthenticate(context);
   const categoriesDetail = await getCategoryList(context);
   if (categoriesDetail && categoriesDetail.length > 0) {
-    return json({categoriesDetail});
+    return json({ categoriesDetail });
   }
-  return {categoriesDetail: []};
+  return { categoriesDetail: [] };
 }
 
 export default function CategoriesPage() {
-  const {handleScroll} = useScroll('categories-menu');
-  const {categoriesDetail} = useLoaderData<typeof loader>();
+  const { handleScroll } = useScroll('categories-menu');
+  const { categoriesDetail } = useLoaderData<typeof loader>();
+  console.log("first", categoriesDetail)
 
   useEffect(() => {
     const handleScroll: EventListener = () => {
