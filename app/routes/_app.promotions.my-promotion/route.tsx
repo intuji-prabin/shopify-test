@@ -44,21 +44,15 @@ export const meta: MetaFunction = () => {
 export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const {searchParams} = new URL(request.url);
-
-  const pageNumber = Math.max(Number(searchParams.get('page')) || 1, 1);
-
-  const filterBy = searchParams.get('filter_by');
-
   const {userDetails} = await getUserDetails(request);
-
-  const companyId = userDetails.meta.company_id.value;
+  const { searchParams }  = new URL(request.url);
+  const paramsList        = Object.fromEntries(searchParams)
+  const customerId        = userDetails?.id.replace("gid://shopify/Customer/", "")
 
   const {promotions, totalPromotionCount} = await getPromotions({
-    companyId,
+    customerId,
     custom: true,
-    pageNumber,
-    filterBy,
+    paramsList
   });
 
   return json({promotions, totalPromotionCount});

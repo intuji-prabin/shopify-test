@@ -22,31 +22,28 @@ export interface Promotion {
 
 export async function getPromotions({
   custom = false,
-  companyId,
   filterBy,
   pageNumber,
+  customerId,
+  paramsList
 }: {
-  companyId: string;
   filterBy?: string | null;
   custom?: boolean;
   pageNumber?: number;
+  customerId?: string
+  paramsList?: any
 }) {
   try {
-    let url = `${ENDPOINT.PROMOTION.GET}?`;
-
-    if (companyId) {
-      url += `&company_id=${companyId}`;
-    }
-
-    if (filterBy) {
-      url += `&filter_by=${filterBy}`;
+    let url = `${ENDPOINT.PROMOTION.GET}/${customerId}?`;
+    if (paramsList?.filter_by) {
+      url += `&filter_by=${paramsList?.filter_by}`;
     }
     if (custom) {
       url += '&custom_promotion=true';
     }
 
-    if (pageNumber) {
-      url += `&page=${pageNumber}`;
+    if (paramsList?.page) {
+      url += `&page=${paramsList?.page}`;
     }
 
     const response = await useFetch<PromotionsResponse>({

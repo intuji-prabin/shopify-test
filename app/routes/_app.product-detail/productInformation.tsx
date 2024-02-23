@@ -215,10 +215,7 @@ const ProductDetailsSection = ({
                   +
                 </button>
               </div>
-              <SelectACountryDropdown
-                placeHolder="Country"
-                items={['Nepal', 'UK', 'Australia']}
-              />
+              <SelectACountryDropdown />
               <Button className="uppercase flex-grow" variant="primary">
                 {addToCart}
               </Button>
@@ -302,26 +299,17 @@ export function ProductCardInfo({
   );
 }
 
-export function SelectACountryDropdown({
-  placeHolder,
-  items,
-}: {
-  placeHolder: string;
-  items: Array<string>;
-}) {
+export function SelectACountryDropdown() {
   return (
     <div className="flex flex-col">
       <Select>
-        <SelectTrigger className="w-[120px] h-full text-base font-normal leading-[21px] not-italic border-[1px] border-grey-500 rounded-none">
-          <SelectValue placeholder={placeHolder} />
+        <SelectTrigger className="min-w-[116px] place-order rounded-sm country h-full  border-[1px] border-grey-500 ">
+          <SelectValue placeholder="UDM" />
         </SelectTrigger>
-        <SelectContent className="product-names">
+        <SelectContent>
           <SelectGroup>
-            {items?.map((item, index) => (
-              <SelectItem key={index} value={item}>
-                {item}
-              </SelectItem>
-            ))}
+            <SelectItem value="pieces">Pieces</SelectItem>
+            <SelectItem value="boxes">Boxes</SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>

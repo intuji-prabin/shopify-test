@@ -61,7 +61,7 @@ export function NotificationNavbar() {
     {
       id: 2,
       icon: <Note width={'20px'} height={'20px'} />,
-      url: '/note',
+      url: Routes.PENDING_ORDER,
       title: 'Pending Order',
       notification: '3',
     },
