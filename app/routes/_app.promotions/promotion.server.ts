@@ -18,6 +18,7 @@ export interface Promotion {
   id: number;
   title: string;
   image_url: string;
+  expaire_at: string;
 }
 
 export async function getPromotions({
@@ -25,13 +26,13 @@ export async function getPromotions({
   filterBy,
   pageNumber,
   customerId,
-  paramsList
+  paramsList,
 }: {
   filterBy?: string | null;
   custom?: boolean;
   pageNumber?: number;
-  customerId?: string
-  paramsList?: any
+  customerId?: string;
+  paramsList?: any;
 }) {
   try {
     let url = `${ENDPOINT.PROMOTION.GET}/${customerId}?`;
