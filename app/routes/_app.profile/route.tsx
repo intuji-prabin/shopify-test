@@ -8,10 +8,7 @@ import {
 import ProfileForm, {
   ProfileFormSchemaValidator,
 } from '~/routes/_app.profile/profile-form';
-import {
-  USER_SESSION_KEY,
-  isAuthenticate,
-} from '~/lib/utils/auth-session.server';
+import {isAuthenticate, logout} from '~/lib/utils/auth-session.server';
 import {getCustomerById} from '~/routes/_app.team_.$teamId/edit-team.server';
 import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
 import {
@@ -26,15 +23,23 @@ import {
   userDetailsCommitSession,
 } from '~/lib/utils/user-session.server';
 import {validationError} from 'remix-validated-form';
-import {CustomerUpdateInput} from '@shopify/hydrogen/storefront-api-types';
+import {
+  CustomerUpdateInput,
+  MailingAddressInput,
+} from '@shopify/hydrogen/storefront-api-types';
 import {
   getMessageSession,
   messageCommitSession,
+  setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {getCustomerByEmail} from '../_public.login/login.server';
+import {
+  LOGIN_MUTATION,
+  getCustomerByEmail,
+} from '../_public.login/login.server';
 import {Routes} from '~/lib/constants/routes.constent';
 import {fileUpload} from '~/lib/utils/file-upload';
+import {LOGOUT_MUTATION} from '../_public.logout/route';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Profile'}];
@@ -71,7 +76,6 @@ export async function action({request, context}: ActionFunctionArgs) {
       return validationError(result.error);
     }
 
-    console.log('result', result.data);
     const {
       email,
       fullName,
@@ -84,12 +88,10 @@ export async function action({request, context}: ActionFunctionArgs) {
     } = result.data;
 
     if (typeof profileImage !== 'undefined' && customerId) {
-      const {status, payload, message} = await fileUpload({
+      const {status} = await fileUpload({
         customerId,
         file: profileImage,
       });
-
-      console.log('statuspayload', status, payload, message);
 
       if (!status) throw new Error('Image upload unsuccessfull');
     }
@@ -102,30 +104,24 @@ export async function action({request, context}: ActionFunctionArgs) {
     customer.email = email;
     customer.firstName = firstName;
     customer.lastName = lastName;
-    customer.password = password;
     customer.phone = phoneNumber;
 
-    const updated = await storefront.mutate(CUSTOMER_UPDATE_MUTATION, {
-      variables: {
-        customerAccessToken: accessToken,
-        customer,
+    const updateCustomerDetails = await storefront.mutate(
+      CUSTOMER_UPDATE_MUTATION,
+      {
+        variables: {
+          customerAccessToken: accessToken,
+          customer,
+        },
       },
-    });
+    );
 
-    if (updated.customerUpdate?.customerUserErrors?.length) {
-      console.log('error', updated.customerUpdate?.customerUserErrors[0]);
+    if (updateCustomerDetails.customerUpdate?.customerUserErrors?.length) {
       return json(
-        {error: updated.customerUpdate?.customerUserErrors[0]},
+        {error: updateCustomerDetails.customerUpdate?.customerUserErrors[0]},
         {status: 400},
       );
     }
-
-    console.log('accessToken');
-
-    session.set(
-      USER_SESSION_KEY,
-      updated.customerUpdate?.customerAccessToken?.accessToken,
-    );
 
     userDetailsSession.unset(USER_DETAILS_KEY);
 
@@ -135,7 +131,70 @@ export async function action({request, context}: ActionFunctionArgs) {
 
     userDetailsSession.set(USER_DETAILS_KEY, customerDetails);
 
-    console.log('updated', customerDetails);
+    const customerAddress: MailingAddressInput = {};
+    customerAddress.address1 = address;
+
+    const updateCustomerAddress = await storefront.mutate(
+      CUSTOMER_ADDRESS_UPDATE_MUTATION,
+      {
+        variables: {
+          address: customerAddress,
+          customerAccessToken: accessToken,
+          id: updateCustomerDetails.customerUpdate.customer.addresses.nodes[0]
+            .id,
+        },
+      },
+    );
+
+    if (updateCustomerAddress.customerUpdate?.customerUserErrors?.length) {
+      return json(
+        {error: updateCustomerAddress.customerUpdate?.customerUserErrors[0]},
+        {status: 400},
+      );
+    }
+
+    if (typeof oldPassword !== 'undefined' && oldPassword !== '') {
+      const {customerAccessTokenCreate} = await storefront.mutate(
+        LOGIN_MUTATION,
+        {
+          variables: {
+            input: {email, password: oldPassword},
+          },
+        },
+      );
+
+      if (!customerAccessTokenCreate?.customerAccessToken?.accessToken) {
+        throw new Error(
+          "Old password doesn't match. Please enter correct old password.",
+        );
+      }
+
+      const customer: CustomerUpdateInput = {};
+      customer.password = password;
+
+      const updatePassword = await storefront.mutate(CUSTOMER_UPDATE_MUTATION, {
+        variables: {
+          customerAccessToken:
+            customerAccessTokenCreate?.customerAccessToken?.accessToken,
+          customer,
+        },
+      });
+
+      if (updatePassword.customerUpdate?.customerUserErrors?.length) {
+        return json(
+          {error: updatePassword.customerUpdate?.customerUserErrors[0]},
+          {status: 400},
+        );
+      }
+
+      await storefront.mutate(LOGOUT_MUTATION, {
+        variables: {
+          customerAccessToken: accessToken,
+        },
+      });
+
+      return logout({context, request});
+    }
 
     setSuccessMessage(messageSession, 'Profile update successfull');
 
@@ -146,7 +205,21 @@ export async function action({request, context}: ActionFunctionArgs) {
         ['Set-Cookie', await messageCommitSession(messageSession)],
       ],
     });
-  } catch (error) {}
+  } catch (error) {
+    if (error instanceof Error) {
+      setErrorMessage(messageSession, error.message);
+      return json(
+        {},
+        {
+          headers: {
+            'Set-Cookie': await messageCommitSession(messageSession),
+          },
+        },
+      );
+    }
+
+    return json({error}, {status: 400});
+  }
 }
 
 export default function ProfilePage() {
@@ -202,6 +275,12 @@ const CUSTOMER_UPDATE_MUTATION = `#graphql
         lastName
         id
         phone
+        addresses(first:10){
+          nodes{
+          id
+          address1
+      }
+     }
       }
       customerAccessToken {
         accessToken
@@ -214,4 +293,20 @@ const CUSTOMER_UPDATE_MUTATION = `#graphql
       }
     }
   }
+` as const;
+
+const CUSTOMER_ADDRESS_UPDATE_MUTATION = `#graphql
+  mutation customerAddressUpdate($address: MailingAddressInput!, $customerAccessToken: String!, $id: ID!) {
+  customerAddressUpdate(address: $address, customerAccessToken: $customerAccessToken, id: $id) {
+    customerAddress {
+      id
+      address1
+    }
+    customerUserErrors {
+      code
+      field
+      message
+    }
+  }
+}
 ` as const;

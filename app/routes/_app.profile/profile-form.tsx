@@ -75,15 +75,9 @@ const ProfileFormSchema = z
       .trim()
       .optional(),
     customerId: z.string().optional(),
-    oldPassword: z
-      .string()
-      .min(1, {message: 'Old Password is required'})
-      .trim(),
-    password: z.string().min(1, {message: 'Password is required'}).trim(),
-    confirmPassword: z
-      .string()
-      .min(1, {message: 'Confirm password is required'})
-      .trim(),
+    oldPassword: z.string().trim().optional(),
+    password: z.string().trim().optional(),
+    confirmPassword: z.string().trim().optional(),
   })
   .refine(({password, confirmPassword}) => password == confirmPassword, {
     path: ['confirmPassword'],
@@ -196,17 +190,20 @@ export default function ProfileForm({
               name="oldPassword"
               placeholder="old password"
               label="Old Password"
+              required={false}
             />
             <div></div>
             <ValidatedFormPassword
               name="password"
               placeholder="new password"
               label="New Password"
+              required={false}
             />
             <ValidatedFormPassword
               name="confirmPassword"
               placeholder="confirm password"
               label="Confirm Password"
+              required={false}
             />
           </div>
         </div>

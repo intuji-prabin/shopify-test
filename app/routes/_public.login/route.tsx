@@ -26,7 +26,6 @@ import {
 
 export const loader = async ({context}: LoaderFunctionArgs) => {
   const accessToken = await getAccessToken(context);
-  console.log('accessTokenlogin', accessToken);
 
   if (accessToken) {
     return redirect('/');
