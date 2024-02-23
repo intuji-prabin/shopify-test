@@ -157,7 +157,7 @@ export default function TeamPage() {
   return (
     <section className="container">
       <div className="flex items-center justify-between py-6 ">
-        <h3 className="uppercase">My Team</h3>
+        <h3>My Team</h3>
         <Link to={Routes.TEAM_ADD}>
           <Button type="button" variant="primary">
             add a team member

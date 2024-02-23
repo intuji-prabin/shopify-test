@@ -12,7 +12,7 @@ import {
   userDetailsCommitSession,
 } from '~/lib/utils/user-session.server';
 
-const USER_SESSION_KEY = 'accessToken';
+export const USER_SESSION_KEY = 'accessToken';
 
 export async function createUserSession({
   request,
@@ -54,6 +54,7 @@ export async function getAccessToken(
   const {session} = context;
 
   const accessToken = session.get(USER_SESSION_KEY);
+  console.log('accessToken', accessToken);
 
   return accessToken;
 }

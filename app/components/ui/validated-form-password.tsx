@@ -7,12 +7,14 @@ type passwordType = {
   name: string;
   placeholder: string;
   label: string;
+  required?: boolean;
 };
 
 export default function ValidatedFormPassword({
   name,
   placeholder,
   label,
+  required = true,
 }: passwordType) {
   const [isVisible, setVisible] = useState(false);
   const {error, getInputProps} = useField(name);
@@ -25,7 +27,7 @@ export default function ValidatedFormPassword({
     <div>
       <label>
         {label}
-        <span className="required">*</span>
+        {required && <span className="required">*</span>}
       </label>
       <div className="relative">
         <input

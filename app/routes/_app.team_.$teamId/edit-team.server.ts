@@ -60,7 +60,6 @@ export async function updateTeam({
   phoneNumber,
   customerId,
   file,
-  context,
 }: EditTeamParams) {
   const firstName = fullName.split(' ')[0];
   const lastName = fullName.split(' ')[1] ?? '';
