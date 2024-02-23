@@ -1,0 +1,44 @@
+name: "Deploy: Cigweld Frontend Dev"
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  web_deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the latest code
+        uses: actions/checkout@v2.3.2
+      - name: Write .env secrets
+        run: |
+          echo "$DEV_ENV_FILE" >> .env
+        shell: bash
+        env:
+          DEV_ENV_FILE: ${{secrets.DOT_ENV_DEV }}
+      - name: Rsync files
+        uses: burnett01/rsync-deployments@5.2.1
+        with:
+          switches: -avzr --delete --exclude=".git/" --exclude=".gitignore" --exclude=".github/" --exclude="node_modules/"
+          remote_host: ${{secrets.DO_HOST_DEV}}
+          remote_user: ${{secrets.SSH_USERNAME_DEV}}
+          remote_key: ${{secrets.SSH_KEY_DEV}}
+          remote_path: /home/cigweld/cigweld_frontend
+          
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.DO_HOST_DEV}}
+          username: ${{secrets.SSH_USERNAME_DEV}}
+          key: ${{secrets.SSH_KEY_DEV}}
+          script: |
+            cd /home/cigweld/cigweld_frontend
+            npm install 
+            pm2 delete Cigweld_frontend
+            pm2 start "npm run dev" --name Cigweld_frontend
+            ss -tulnp
+
+            
+          

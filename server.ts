@@ -132,7 +132,7 @@ export class HydrogenSession {
         path: '/',
         sameSite: 'lax',
         secrets,
-        // secure: true,  Needs to set true in production
+        secure: true,  //Needs to set true in production
       },
     });
 

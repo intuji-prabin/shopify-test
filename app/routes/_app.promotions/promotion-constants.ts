@@ -1,4 +1,4 @@
-export const PAGE_LIMIT = 9;
+export const PAGE_LIMIT = 1;
 
 export const filterOptions = [
   {label: 'Newest To Oldest', value: 'new_to_old'},

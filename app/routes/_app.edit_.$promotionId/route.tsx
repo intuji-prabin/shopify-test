@@ -29,10 +29,10 @@ import {displayToast} from '~/components/ui/toast';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {Routes} from '~/lib/constants/routes.constent';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {getPromotionById} from '../_app.customise_.$promotionId/promotion.server';
-import {updatePromotion} from './edit-promotion.server';
+import {getMyPromotionById, updatePromotion} from './edit-promotion.server';
 import PromotionNavigation from '../_app.customise_.$promotionId/promotion-navigation';
 import {BackButton} from '~/components/ui/back-button';
+import { getUserDetails } from '~/lib/utils/user-session.server';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -88,12 +88,14 @@ export async function action({request, params}: ActionFunctionArgs) {
   return json({});
 }
 
-export async function loader({params, context}: LoaderFunctionArgs) {
+export async function loader({params, context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
   try {
+    const {userDetails} = await getUserDetails(request);
+    const customerId    = userDetails?.id.replace("gid://shopify/Customer/", "")
     const promotionId = params?.promotionId as string;
-    const response = await getPromotionById(promotionId);
-    console.log("first response", response)
+    const response = await getMyPromotionById(promotionId);
+    
     if (response?.payload) {
       const results = response?.payload;
       return json({results, promotionId});
