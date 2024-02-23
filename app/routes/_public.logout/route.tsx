@@ -20,7 +20,7 @@ export async function action({context, request}: ActionFunctionArgs) {
   }
 }
 
-const LOGOUT_MUTATION = `#graphql 
+export const LOGOUT_MUTATION = `#graphql 
 mutation customerAccessTokenDelete($customerAccessToken: String!) {
   customerAccessTokenDelete(customerAccessToken: $customerAccessToken) {
     deletedAccessToken

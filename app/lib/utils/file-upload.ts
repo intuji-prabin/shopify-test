@@ -15,10 +15,14 @@ type FileUploadParams = {
 
 export async function fileUpload({file, customerId}: FileUploadParams) {
   const formData = new FormData();
-  formData.append('image', file);
-  formData.append('owner_id', customerId);
 
-  const response = await fetch(ENDPOINT.FILE.POST, {
+  const formatCustomerId = customerId.split('/').pop();
+
+  formData.append('image', file);
+
+  const url = `${ENDPOINT.FILE.POST}/${formatCustomerId}`;
+
+  const response = await fetch(url, {
     method: 'POST',
     body: formData,
   });

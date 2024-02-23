@@ -132,7 +132,7 @@ export class HydrogenSession {
         path: '/',
         sameSite: 'lax',
         secrets,
-        secure: true,  //Needs to set true in production
+        secure: true,
       },
     });
 
@@ -165,7 +165,7 @@ export class HydrogenSession {
     return this.#sessionStorage.destroySession(this.#session);
   }
 
-  commit({rememberMe}: {rememberMe: boolean}) {
+  commit({rememberMe}: {rememberMe?: boolean}) {
     return this.#sessionStorage.commitSession(this.#session, {
       // 30 days or 7 days => need improvements
       maxAge: rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24 * 7,
