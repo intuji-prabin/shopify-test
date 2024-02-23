@@ -4,17 +4,13 @@ import {Popover, PopoverContent, PopoverTrigger} from '~/components/ui/popover';
 import {Button} from '~/components/ui/button';
 import {Calendar} from '~/components/ui/calendar';
 import {CalendarIcon} from '~/components/icons/calendar-icon';
-import {OrderFilterFormFieldNameType} from '~/routes/order/filter-form';
-import {ScheduleCallFormFieldNameType} from '~/routes/_app.support_.schedule-call/schedule-call-form';
+import {CreateTicketFormFieldNameType} from '~/routes/_app.support_.create-ticket/create-ticket-form';
 import {DangerAlert} from '../icons/alert';
 import {TicketsFilterFormFieldNameType} from '~/routes/_app.support_.tickets/filter-form';
 import {cn} from '~/lib/utils/utils';
 
 type DatePickerInputProps = {
-  name:
-    | OrderFilterFormFieldNameType
-    | ScheduleCallFormFieldNameType
-    | TicketsFilterFormFieldNameType;
+  name: CreateTicketFormFieldNameType | TicketsFilterFormFieldNameType;
 };
 
 export function DatePickerInput({name}: DatePickerInputProps) {
@@ -33,7 +29,9 @@ export function DatePickerInput({name}: DatePickerInputProps) {
           variant="input"
           size="medium"
           className={cn(
-            'w-full justify-between text-left text-base font-normal text-grey-400 border-grey-300',
+            `w-full justify-between text-left text-base font-normal text-grey-400 ${
+              error ? 'border-semantic-danger-500' : 'border-grey-300'
+            }`,
             !date && 'text-muted-foreground',
           )}
         >
@@ -45,7 +43,7 @@ export function DatePickerInput({name}: DatePickerInputProps) {
           <CalendarIcon />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
           selected={date}

@@ -13,6 +13,7 @@ import {
   AddTeamFormFieldNameType,
   EditTeamFormFieldNameType,
 } from '~/routes/_app.team_.add/team-form';
+import {CreateTicketFormFieldNameType} from '~/routes/_app.support_.create-ticket/create-ticket-form';
 
 type SelectInputType = {value: string; title: string};
 
@@ -23,9 +24,11 @@ export type SelectInputOptions = SelectInputType & {
 };
 
 export type SelectInputProps = {
-  name: AddTeamFormFieldNameType | EditTeamFormFieldNameType;
+  name:
+    | AddTeamFormFieldNameType
+    | EditTeamFormFieldNameType
+    | CreateTicketFormFieldNameType;
   // | OrderFilterFormFieldNameType
-  // | ScheduleCallFormFieldNameType
   // | TicketsFilterFormFieldNameType;
   label: string;
   isDisabled?: boolean;
