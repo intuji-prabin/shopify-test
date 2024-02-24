@@ -37,8 +37,10 @@ export async function getAllTeams({
       query ? '&search_query=' + query : ''
     }`,
   });
+  
+  console.log("dfasew ", results)
 
-  if (results.payload.length < 0) {
+  if (results.payload.length < 1) {
     throw new Error(results.message);
   }
 

@@ -10,6 +10,7 @@ type LoginParams = {
 };
 
 type CustomerAddress = {
+  id? : string
   address1: string;
 };
 

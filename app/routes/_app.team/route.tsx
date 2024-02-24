@@ -38,15 +38,16 @@ export const meta: MetaFunction = () => {
 export async function loader({request, context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
   const {userDetails} = await getUserDetails(request);
-
+  console.log("fsdfds ", userDetails)
   const companyId = userDetails.meta.company_id.value;
 
-  const currentUser = userDetails.id;
+  const currentUser = userDetails?.id;
 
   try {
     const {searchParams} = new URL(request.url);
     const query = searchParams.get('search');
     const customerId = currentUser.replace("gid://shopify/Customer/", "")
+    console.log("wwwwwww", customerId)
     const teams = await getAllTeams({customerId, query});
 
     const roles = await getCustomerRolePermission(context);
