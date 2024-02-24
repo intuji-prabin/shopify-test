@@ -36,7 +36,7 @@ export async function getCustomerById({
   try {
     const customerResponse = await useFetch<CustomerResponse>({
       method: AllowedHTTPMethods.GET,
-      url: `${ENDPOINT.CUSTOMER.GET}?customerId=${customerId}`,
+      url: `${ENDPOINT.CUSTOMER.GET}/${customerId}`,
     });
 
     if (!customerResponse.status) {
@@ -61,33 +61,33 @@ export async function updateTeam({
   customerId,
   file,
 }: EditTeamParams) {
-  const firstName = fullName.split(' ')[0];
-  const lastName = fullName.split(' ')[1] ?? '';
 
-  if (typeof file !== 'undefined') {
-    const {status} = await fileUpload({customerId, file});
+  const formData : any = new FormData()
+  formData.append("fullName", fullName)
+  formData.append("profileImage", file )
+  formData.append("email", email)
+  formData.append("address", address)
+  formData.append("userRole", userRole)
+  formData.append("phoneNumber", phoneNumber)
+  formData.append("customerId", customerId)
 
-    if (!status) throw new Error('Image upload unsuccessfull');
+  const results : any = await fetch(
+    ENDPOINT.CUSTOMER.CREATE,
+    {
+      method: AllowedHTTPMethods.PUT,
+      body: formData,
+    },
+  );
+
+  const response = await results.json()
+
+  if( response?.error ) {
+    throw new Error("Customer not created")
   }
+  console.log("erwerewr ", response)
 
-  const body = JSON.stringify({
-    customerId,
-    address,
-    userRole,
-    firstName,
-    lastName,
-    email,
-    phoneNumber,
-  });
-
-  const results = await useFetch<CustomerResponse>({
-    method: AllowedHTTPMethods.PUT,
-    url: ENDPOINT.CUSTOMER.UPDATE,
-    body,
-  });
-
-  if (!results.status) {
-    throw new Error(results.message);
+  if( !response?.status ) {
+    throw new Error(response?.message)
   }
 
   return results;

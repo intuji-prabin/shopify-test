@@ -14,7 +14,7 @@ type AddTeamParams = {
   address: string;
   context: AppLoadContext;
   userRole: string;
-  file: File | undefined;
+  file: File | any;
   request: Request;
 };
 
@@ -28,69 +28,48 @@ export async function addTeam({
   phoneNumber,
   request,
 }: AddTeamParams) {
-  const {storefront} = context;
-  const firstName = fullName.split(' ')[0];
-  const lastName = fullName.split(' ')[1];
-
+  const {storefront}  = context;
   const {userDetails} = await getUserDetails(request);
 
   const companyId = userDetails.meta.company_id.value;
-
+  const customerId = userDetails?.id.replace("gid://shopify/Customer/", "")
   const metaParentValue = userDetails.meta.parent.value;
 
   const parentId =
-    metaParentValue === 'null' ? userDetails.id : metaParentValue;
+    metaParentValue === 'null' ? customerId : metaParentValue;
+  
+  const formData : any = new FormData()
+  formData.append("fullName", fullName)
+  formData.append("profileImage", file )
+  formData.append("email", email)
+  formData.append("address", address)
+  formData.append("userRole", userRole)
+  formData.append("phoneNumber", phoneNumber)
+  formData.append("customerId", customerId)
+  formData.append("parentId", parentId)
+  formData.append("companyid", companyId)
 
-  const team = await storefront.mutate(CREATE_TEAM_MUTATION, {
-    variables: {
-      input: {
-        firstName,
-        lastName,
-        email,
-        phone: phoneNumber,
-        password: 'defaultPass',
-      },
+  const results: any = await fetch(
+    ENDPOINT.CUSTOMER.CREATE,
+    {
+      method: AllowedHTTPMethods.POST,
+      body: formData,
     },
-  });
+  );
 
-  if ((team.customerCreate?.customerUserErrors.length as number) > 0) {
-    throw new Error(team.customerCreate?.customerUserErrors[0].message);
+  const response = await results.json()
+
+  if( response?.error ) {
+    throw new Error("Customer not created")
   }
 
-  const customerId = team.customerCreate?.customer?.id as string;
-
-  try {
-    if (typeof file !== 'undefined') {
-      const {status} = await fileUpload({customerId, file});
-
-      if (!status) throw new Error('Image upload unsuccessfull');
-    }
-  } catch (error) {
-    return;
+  if( !response?.status ) {
+    throw new Error(response?.message)
   }
 
-  const body = JSON.stringify({
-    companyId,
-    customerId,
-    address,
-    parentId,
-    userRole,
-  });
+  // if (!results.status) throw new Error("Couldn't create user");
 
-  const results = await useFetch<CustomerResponse>({
-    method: AllowedHTTPMethods.POST,
-    url: ENDPOINT.CUSTOMER.CREATE,
-    body,
-  });
-
-  if (!results.status) throw new Error("Couldn't create user");
-
-  const emailSend = await customerRecover({email, context});
-
-  if (!emailSend) {
-    throw new Error("Email couldn't send");
-  }
-  return results;
+  return response;
 }
 
 const CREATE_TEAM_MUTATION = `#graphql 

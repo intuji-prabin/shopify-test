@@ -14,10 +14,8 @@ type CustomerAddress = {
 };
 
 type Metafield = {
-  id: string;
   key: string;
   value: string;
-  type: string;
 };
 
 export type CustomerData = {

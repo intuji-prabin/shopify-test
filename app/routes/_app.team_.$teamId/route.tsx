@@ -55,7 +55,7 @@ export async function loader({params, context}: LoaderFunctionArgs) {
   return json({customerDetails, roles});
 }
 
-export async function action({request, context}: ActionFunctionArgs) {
+export async function action({request, context, params}: ActionFunctionArgs) {
   await isAuthenticate(context);
 
   const messageSession = await getMessageSession(request);
@@ -73,13 +73,14 @@ export async function action({request, context}: ActionFunctionArgs) {
       return validationError(result.error);
     }
 
+    const customerId = params?.teamId as string
+
     const {
       email,
       fullName,
       address,
       phoneNumber,
       userRole,
-      customerId,
       profileImage,
     } = result.data;
 
@@ -96,17 +97,10 @@ export async function action({request, context}: ActionFunctionArgs) {
 
     userDetailsSession.unset(USER_DETAILS_KEY);
 
-    const customerDetails = await getCustomerByEmail({
-      email: userDetails.email,
-    });
-
-    userDetailsSession.set(USER_DETAILS_KEY, customerDetails);
-
     setSuccessMessage(messageSession, 'Customer update successful');
 
     return redirect(Routes.TEAM, {
       headers: [
-        ['Set-Cookie', await userDetailsCommitSession(userDetailsSession)],
         ['Set-Cookie', await messageCommitSession(messageSession)],
       ],
     });

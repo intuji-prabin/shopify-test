@@ -2,7 +2,7 @@
 
 // const BASE_URL = 'https://relaxing-hawk-ace.ngrok-free.app/api'; // Amit NGRok
 
-const BASE_URL = 'https://cig-backend.webo.dev/api'; // Live
+const BASE_URL = 'https://bbd0-2400-1a00-b050-11c8-91f6-e92c-cca2-9428.ngrok-free.app/api'; // Live
 
 export const ENDPOINT = {
   AUTH: {
@@ -20,11 +20,11 @@ export const ENDPOINT = {
   CUSTOMER: {
     GET: `${BASE_URL}/customer`,
     UPDATE_STATUS: `${BASE_URL}/customer-status`,
-    CREATE: `${BASE_URL}/customer-create`,
+    CREATE: `${BASE_URL}/customer`,
     UPDATE: `${BASE_URL}/customer-update`,
   },
   CUSTOMER_LIST: {
-    GET: `${BASE_URL}/customer-list`,
+    GET: `${BASE_URL}/customer`,
   },
   COMPANY: {
     GET_PROFILE: `${BASE_URL}/company`,
