@@ -48,7 +48,6 @@ export default function SubCategoryPage() {
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
-
   const {productFilter} = productList;
 
   const matchingCategory = categories

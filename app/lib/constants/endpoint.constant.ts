@@ -41,6 +41,6 @@ export const ENDPOINT = {
     BULK_EXPORT: `${BASE_URL}/promotion/download-images`,
   },
   PRODUCT: {
-    GET_PRICE : `${BASE_URL}/proudct/prices`
+    GET_PRICE : `${BASE_URL}/product/prices`
   }
 };
