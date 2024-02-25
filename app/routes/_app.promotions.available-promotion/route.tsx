@@ -35,7 +35,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   const { userDetails } = await getUserDetails(request);
   const { searchParams } = new URL(request.url);
   const paramsList = Object.fromEntries(searchParams)
-  const customerId = userDetails?.id.replace("gid://shopify/Customer/", "")
+  const customerId = userDetails?.id
 
   try {
     const { promotions, totalPromotionCount } = await getPromotions({

@@ -2,7 +2,7 @@
 
 // const BASE_URL = 'https://relaxing-hawk-ace.ngrok-free.app/api'; // Amit NGRok
 
-const BASE_URL = 'https://bbd0-2400-1a00-b050-11c8-91f6-e92c-cca2-9428.ngrok-free.app/api'; // Live
+const BASE_URL = 'https://1b37-2400-1a00-b050-11c8-65e2-caff-f54a-e0fb.ngrok-free.app/api'; // Live
 
 export const ENDPOINT = {
   AUTH: {
@@ -40,4 +40,7 @@ export const ENDPOINT = {
     BULK_DELETE: `${BASE_URL}/promotions`,
     BULK_EXPORT: `${BASE_URL}/promotion/download-images`,
   },
+  PRODUCT: {
+    GET_PRICE : `${BASE_URL}/proudct/prices`
+  }
 };

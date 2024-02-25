@@ -46,8 +46,7 @@ export async function loader({request, context}: LoaderFunctionArgs) {
   try {
     const {searchParams} = new URL(request.url);
     const query = searchParams.get('search');
-    const customerId = currentUser.replace("gid://shopify/Customer/", "")
-    console.log("wwwwwww", customerId)
+    const customerId = currentUser
     const teams = await getAllTeams({customerId, query});
 
     const roles = await getCustomerRolePermission(context);

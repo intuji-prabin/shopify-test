@@ -77,7 +77,7 @@ export type EditFormFieldNameType = keyof EditFormType;
 export async function action({ request, params }: ActionFunctionArgs) {
   const data = await request.formData();
   const { userDetails } = await getUserDetails(request);
-  const customerId = userDetails?.id.replace("gid://shopify/Customer/", "")
+  const customerId = userDetails?.id
   let formData = Object.fromEntries(data);
   formData = { ...formData };
   const bannerId = params.promotionId as string;
@@ -89,7 +89,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   try {
     const { userDetails } = await getUserDetails(request);
-    const customerId = userDetails?.id.replace("gid://shopify/Customer/", "")
+    const customerId = userDetails?.id
     const promotionId = params?.promotionId as string;
     const response = await getPromotionById(promotionId, customerId);
     if (response?.payload) {

@@ -32,7 +32,7 @@ export async function addTeam({
   const {userDetails} = await getUserDetails(request);
 
   const companyId = userDetails.meta.company_id.value;
-  const customerId = userDetails?.id.replace("gid://shopify/Customer/", "")
+  const customerId = userDetails?.id
   const metaParentValue = userDetails.meta.parent.value;
 
   const parentId =

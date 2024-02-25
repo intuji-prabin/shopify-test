@@ -38,8 +38,6 @@ export async function getAllTeams({
     }`,
   });
   
-  console.log("dfasew ", results)
-
   if (results.payload.length < 1) {
     throw new Error(results.message);
   }

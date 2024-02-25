@@ -19,6 +19,7 @@ import {getProducts} from './product-list.server';
 import {useCallback, useEffect, useState} from 'react';
 import {LeftArrow} from '~/components/icons/left';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
 
 export async function loader({params, context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -200,24 +201,30 @@ export default function SubCategoryPage() {
   );
 }
 
-const getProductList = async (params: any, context: any, request: any) => {
+const getProductList = async (params: any, context: any, request: Request) => {
   try {
-    const {searchParams} = new URL(request.url);
-    const searchParam = Object.fromEntries(searchParams);
-    const pageInfo = searchParams.get('pageNo');
+    const {searchParams}  = new URL(request.url);
+    const searchParam     = Object.fromEntries(searchParams);
+    const pageInfo        = searchParams.get('pageNo');
+    const {userDetails}   = await getUserDetails(request);
+
     let page = 1;
     if (pageInfo) {
       page = parseInt(pageInfo);
     }
-    const searchKey = Object.keys(searchParam);
+
+    const searchKey     = Object.keys(searchParam);
     let searchList: any = [];
+
     searchKey.map((value) => {
       searchList.push({key: value, value: searchParams.getAll(value)});
       return {[value]: searchParams.getAll(value)};
     });
-    const results = await getProducts(context, params, searchList);
+
+    const results       = await getProducts(context, params, searchList, userDetails?.id );
     const productFilter = await getProductFilterList(context);
     return {productFilter, results, page};
+
   } catch (error) {
     if (error instanceof Error) {
       console.log('err', error);
