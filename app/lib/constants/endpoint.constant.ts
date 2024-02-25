@@ -2,7 +2,7 @@
 
 // const BASE_URL = 'https://relaxing-hawk-ace.ngrok-free.app/api'; // Amit NGRok
 
-const BASE_URL = 'https://1b37-2400-1a00-b050-11c8-65e2-caff-f54a-e0fb.ngrok-free.app/api'; // Live
+const BASE_URL = 'https://cig-backend.webo.dev/api'; // Live
 
 export const ENDPOINT = {
   AUTH: {

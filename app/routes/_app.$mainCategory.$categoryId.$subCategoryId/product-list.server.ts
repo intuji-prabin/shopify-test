@@ -82,7 +82,6 @@ const formattedResponse = async (response: any, customerId : string) => {
   }
 
   const productList = response?.collection;
-  console.log("rwrwr ", productList?.products?.edges)
 
   let productIds = "" 
   productList?.products?.edges.map( ( items : any ) => {
@@ -108,7 +107,6 @@ const formattedResponse = async (response: any, customerId : string) => {
       }
     }),
   };
-  console.log("zzzzz ", finalProductList)
   return finalProductList;
 };
 
