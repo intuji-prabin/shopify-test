@@ -96,6 +96,8 @@ module.exports = {
           invoice: '#1A9B36',
           delivered: '#046F3C',
           back_order: '#734808',
+          pending: '#4B0082',
+          closed: '#0066FF',
         },
       },
       boxShadow: {

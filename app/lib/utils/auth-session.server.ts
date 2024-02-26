@@ -54,7 +54,6 @@ export async function getAccessToken(
   const {session} = context;
 
   const accessToken = session.get(USER_SESSION_KEY);
-  console.log('accessToken', accessToken);
 
   return accessToken;
 }

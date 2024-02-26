@@ -1,76 +1,90 @@
 import {z} from 'zod';
 import {Link} from '@remix-run/react';
 import {withZod} from '@remix-validated-form/with-zod';
-import {ValidatedForm} from 'remix-validated-form';
+import {ValidatedForm, useIsSubmitting} from 'remix-validated-form';
 import {Button} from '~/components/ui/button';
 import {DatePickerInput} from '~/components/ui/date-picker';
 import {Input} from '~/components/ui/input';
-import SelectInput from '~/components/ui/select-input';
+import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
 import {TextAreaInput} from '~/components/ui/text-area-input';
 import {Routes} from '~/lib/constants/routes.constent';
 
-const invoiceStatusOptions = [
-  {label: 'paid', value: 'paid'},
-  {label: 'unpaid', value: 'unpaid'},
-];
+type CreateTicketFormProps = {
+  options: SelectInputOptions[];
+};
 
-const ScheduleCallFormFieldSchema = z.object({
-  date: z.coerce.date({required_error: 'Date is required'}),
-  time: z.string().min(1, {message: 'Time is required'}).trim(),
+const CreateTicketFormFieldSchema = z.object({
+  date: z
+    .string()
+    .refine((date) => !isNaN(Date.parse(date)), {message: 'Date is required'}),
   contactName: z.string().min(1, {message: 'Contact Name is required'}).trim(),
   department: z.string().min(1, {message: 'Department is required'}).trim(),
-  reason: z.string().min(1, {message: 'Reason is required'}).trim(),
+  description: z.string().min(1, {message: 'Description is required'}).trim(),
 });
 
-export const ScheduleCallFormFieldValidator = withZod(
-  ScheduleCallFormFieldSchema,
+export const CreateTicketFormFieldValidator = withZod(
+  CreateTicketFormFieldSchema,
 );
 
-export type ScheduleCallFormType = z.infer<typeof ScheduleCallFormFieldSchema>;
+export type CreateTicketFormType = z.infer<typeof CreateTicketFormFieldSchema>;
 
-export type ScheduleCallFormFieldNameType = keyof ScheduleCallFormType;
+export type CreateTicketFormFieldNameType = keyof CreateTicketFormType;
 
-export function ScheduleCallForm() {
+export function CreateTicketForm({options}: CreateTicketFormProps) {
+  const isSubmitting = useIsSubmitting('create-ticket-form');
+
   return (
     <div className="bg-neutral-white p-6 grid gap-6 sm:grid-cols-2">
       <div>
         <ValidatedForm
           method="POST"
-          validator={ScheduleCallFormFieldValidator}
+          id="create-ticket-form"
+          validator={CreateTicketFormFieldValidator}
           className="flex flex-col gap-y-4"
         >
           <div className="grid gap-6 sm:grid-cols-2">
-            <div>
-              <label htmlFor="date">Date</label>
-              <DatePickerInput name="date" />
-            </div>
-            <Input label="Time" name="time" type="time" placeholder="Time" />
             <Input
+              required
               name="contactName"
               label="Contact Name"
               placeholder="Contact Name"
             />
             <div>
-              <label htmlFor="department">Department</label>
+              <label htmlFor="department">
+                Department <span className="required">*</span>
+              </label>
               <SelectInput
                 name="department"
                 label="Department"
-                options={invoiceStatusOptions}
+                options={options}
               />
             </div>
           </div>
+          <div>
+            <label htmlFor="date">
+              Date
+              <span className="required">*</span>
+            </label>
+            <DatePickerInput name="date" />
+          </div>
           <TextAreaInput
-            label="Reason to Impersonate"
-            name="reason"
-            placeholder="Reason here"
+            required
+            label="Ticket Description"
+            name="description"
+            placeholder="Description here"
           />
           <div className="flex items-center space-x-4">
-            <Button type="submit" variant="primary">
+            <Button
+              type="submit"
+              variant="primary"
+              size="large"
+              disabled={isSubmitting}
+            >
               send
             </Button>
             <p>
-              By clicking send, you are granting permission to Cigweld to access
-              and work on your account.
+              By clicking send, the concerned authorities will look into your
+              issue and work on your account.
             </p>
           </div>
         </ValidatedForm>

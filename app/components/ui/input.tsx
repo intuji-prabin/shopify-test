@@ -1,7 +1,7 @@
 import React from 'react';
 import {useField} from 'remix-validated-form';
 import {DangerAlert} from '~/components/icons/alert';
-import {ScheduleCallFormFieldNameType} from '~/routes/_app.support_.schedule-call/schedule-call-form';
+import {CreateTicketFormFieldNameType} from '~/routes/_app.support_.create-ticket/create-ticket-form';
 import {
   AddTeamFormFieldNameType,
   EditTeamFormFieldNameType,
@@ -13,7 +13,7 @@ interface InputType extends React.ComponentPropsWithoutRef<'input'> {
     | AddTeamFormFieldNameType
     | EditTeamFormFieldNameType
     | LoginFormFieldNameType
-    | ScheduleCallFormFieldNameType;
+    | CreateTicketFormFieldNameType;
   label?: string;
   placeholder?: string;
   required?: boolean;

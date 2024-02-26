@@ -54,7 +54,7 @@ export function AllowImpersonateForm() {
             If you are having any trouble with allowing impersonate option,
             please try{' '}
             <Link
-              to={Routes.SUPPORT_SCHEDULE_CALL}
+              to={Routes.SUPPORT_TICKETS_CREATE}
               className="text-primary-500 font-medium"
             >
               Schedule a call
