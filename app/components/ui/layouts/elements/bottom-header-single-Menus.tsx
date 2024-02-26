@@ -30,6 +30,7 @@ export const SingleNavItem = ({
           : ''
       }`}
       ref={menuRef}
+      key={menu.title}
     >
       <Link
         to={menu.url ?? ''}

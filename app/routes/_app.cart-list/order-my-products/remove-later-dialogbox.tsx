@@ -34,7 +34,7 @@ export default function CreateGroup({
           Remove
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] track-an-order p-0 block">
+      <DialogContent className="sm:max-w-[360px] track-an-order p-0 block">
         <DialogHeader>
           <DialogTitle className="leading-6 font-bold italic text-lg text-grey-900 flex p-4 justify-center items-center flex-col gap-3">
             <div className="bg-semantic-danger-100 p-[10px] rounded-[50%]">

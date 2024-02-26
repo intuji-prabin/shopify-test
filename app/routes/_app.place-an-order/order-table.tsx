@@ -1,5 +1,4 @@
 import {DataTable} from '~/components/ui/data-table';
-import {useColumn} from '~/routes/_app.place-an-order/use-column';
 import {ProductData} from '~/routes/_app.place-an-order/productData';
 import {useTable} from '~/hooks/useTable';
 import {TicketsData} from '../_app.support_.tickets/tickets-data';
@@ -8,9 +7,10 @@ import CreateGroup from './save-later-dialogbox';
 import {Button} from '~/components/ui/button';
 import {Routes} from '~/lib/constants/routes.constent';
 import {Link} from '@remix-run/react';
+import {useMyProductColumn} from './use-column';
 
 export default function OrderTable() {
-  const {columns} = useColumn();
+  const {columns} = useMyProductColumn();
   const {table} = useTable(columns, ProductData);
   function handleRemoveAllItems() {
     // table.toggleAllPageRowsSelected(false);
@@ -53,7 +53,7 @@ export default function OrderTable() {
         </div>
       </div>
 
-      <div className="container">
+      <div className="container cart-order">
         <DataTable table={table} />
 
         {/* pagination starts here */}
