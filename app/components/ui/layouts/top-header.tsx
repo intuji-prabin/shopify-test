@@ -15,7 +15,6 @@ import {CartIcon} from '~/components/icons/cartIcon';
 import {TrackAnOrderButton} from './elements/track-an-order-dialog';
 import {Note} from '~/components/icons/note';
 import {NotificationIcon} from '~/components/icons/notification';
-import {Search} from 'lucide-react';
 import SearchIcon from '~/components/icons/search';
 import CloseMenu from '~/components/icons/closeMenu';
 import {CustomerData} from '~/routes/_public.login/login.server';
@@ -146,6 +145,7 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
                 </Button>
               )}
 
+              {/* searchbar starts here  */}
               {searchProduct && (
                 <div ref={searchResultRef}>
                   <div className="bg-white absolute top-[52px] left-0 w-full z-20 py-4 px-6 space-y-4">
@@ -230,7 +230,7 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
                   <Form method="post" action="/logout" className="w-full">
                     <Link
                       to={Routes.PROFILE}
-                      className="bg-white p-2 w-full flex items-center justify-start gap-2 hover:bg-primary-100"
+                      className="bg-white p-2 w-full flex items-center justify-start gap-2 hover:bg-primary-100 my-profile transition duration-500 ease-in-out delay-75"
                     >
                       <UserProfile />
                       <h5 className="text-lg font-bold italic text-grey-900">
@@ -239,7 +239,7 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
                     </Link>
                     <Button
                       type="submit"
-                      className="bg-white px-2 w-full items-center justify-start hover:bg-primary-100 "
+                      className="bg-white px-2 w-full items-center justify-start hover:bg-primary-100 transition duration-500 ease-in-out delay-75"
                     >
                       <Logout />
                       <h5 className="text-lg font-bold italic text-grey-900">
