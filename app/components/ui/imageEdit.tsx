@@ -42,7 +42,7 @@ const ImageEdit = ({
             <img
               alt={alt}
               src={imgSrc}
-              className={`${renderedImageWidth > 799 && 'w-full'} h-auto`}
+              className="w-full h-auto"
             />
           )}
           <div
