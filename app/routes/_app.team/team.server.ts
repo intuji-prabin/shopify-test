@@ -38,7 +38,7 @@ export async function getAllTeams({
     }`,
   });
   
-  if (results.payload.length < 1) {
+  if (results.payload.length < 0) {
     throw new Error(results.message);
   }
 
