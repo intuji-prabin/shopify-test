@@ -41,6 +41,7 @@ export const ENDPOINT = {
     BULK_EXPORT: `${BASE_URL}/promotion/download-images`,
   },
   SUPPORT: {
+    GET_TICKETS: `${BASE_URL}/support/tickets`,
     CREATE_TICKET: `${BASE_URL}/support/create-ticket`,
   },
 };

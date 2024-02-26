@@ -3,18 +3,18 @@ import {withZod} from '@remix-validated-form/with-zod';
 import {ValidatedForm} from 'remix-validated-form';
 import {Button} from '~/components/ui/button';
 import {DatePickerInput} from '~/components/ui/date-picker';
-import SelectInput, {SelectInputType} from '~/components/ui/select-input';
+import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
 import {Separator} from '~/components/ui/separator';
 import {SheetClose, SheetFooter} from '~/components/ui/sheet';
 
-const departmentOptions: SelectInputType[] = [
-  {label: 'marketing', value: 'marketing'},
-  {label: 'sales', value: 'sales'},
-];
+type TicketsFilterFormProps = {
+  options: SelectInputOptions[];
+};
 
-const ticketsStatusOptions: SelectInputType[] = [
-  {label: 'paid', value: 'paid'},
-  {label: 'unpaid', value: 'unpaid'},
+const ticketsStatusOptions: SelectInputOptions[] = [
+  {title: 'Pending', value: 'pending'},
+  {title: 'Closed', value: 'closed'},
+  {title: 'In Progress', value: 'in_progress'},
 ];
 
 const TicketsFilterFormSchema = z.object({
@@ -32,11 +32,11 @@ export type TicketsFilterFormType = z.infer<typeof TicketsFilterFormSchema>;
 
 export type TicketsFilterFormFieldNameType = keyof TicketsFilterFormType;
 
-export default function TicketsFilterForm() {
+export default function TicketsFilterForm({options}: TicketsFilterFormProps) {
   return (
     <ValidatedForm
       id="tickets-filter-form"
-      method="get"
+      method="GET"
       validator={TicketsFilterFormSchemaValidator}
     >
       <div>
@@ -56,11 +56,7 @@ export default function TicketsFilterForm() {
         <Separator />
         <div className="p-6">
           <h5 className="pb-2">Department</h5>
-          <SelectInput
-            name="department"
-            label="All"
-            options={departmentOptions}
-          />
+          <SelectInput name="department" label="All" options={options} />
         </div>
         <Separator />
         <div className="p-6">

@@ -1,18 +1,17 @@
 import {z} from 'zod';
 import {Link} from '@remix-run/react';
 import {withZod} from '@remix-validated-form/with-zod';
-import {ValidatedForm} from 'remix-validated-form';
+import {ValidatedForm, useIsSubmitting} from 'remix-validated-form';
 import {Button} from '~/components/ui/button';
 import {DatePickerInput} from '~/components/ui/date-picker';
 import {Input} from '~/components/ui/input';
-import SelectInput from '~/components/ui/select-input';
+import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
 import {TextAreaInput} from '~/components/ui/text-area-input';
 import {Routes} from '~/lib/constants/routes.constent';
 
-const invoiceStatusOptions = [
-  {title: 'paid', value: 'paid'},
-  {title: 'unpaid', value: 'unpaid'},
-];
+type CreateTicketFormProps = {
+  options: SelectInputOptions[];
+};
 
 const CreateTicketFormFieldSchema = z.object({
   date: z
@@ -20,7 +19,7 @@ const CreateTicketFormFieldSchema = z.object({
     .refine((date) => !isNaN(Date.parse(date)), {message: 'Date is required'}),
   contactName: z.string().min(1, {message: 'Contact Name is required'}).trim(),
   department: z.string().min(1, {message: 'Department is required'}).trim(),
-  reason: z.string().min(1, {message: 'Reason is required'}).trim(),
+  description: z.string().min(1, {message: 'Description is required'}).trim(),
 });
 
 export const CreateTicketFormFieldValidator = withZod(
@@ -31,12 +30,15 @@ export type CreateTicketFormType = z.infer<typeof CreateTicketFormFieldSchema>;
 
 export type CreateTicketFormFieldNameType = keyof CreateTicketFormType;
 
-export function CreateTicketForm() {
+export function CreateTicketForm({options}: CreateTicketFormProps) {
+  const isSubmitting = useIsSubmitting('create-ticket-form');
+
   return (
     <div className="bg-neutral-white p-6 grid gap-6 sm:grid-cols-2">
       <div>
         <ValidatedForm
           method="POST"
+          id="create-ticket-form"
           validator={CreateTicketFormFieldValidator}
           className="flex flex-col gap-y-4"
         >
@@ -54,7 +56,7 @@ export function CreateTicketForm() {
               <SelectInput
                 name="department"
                 label="Department"
-                options={invoiceStatusOptions}
+                options={options}
               />
             </div>
           </div>
@@ -67,17 +69,22 @@ export function CreateTicketForm() {
           </div>
           <TextAreaInput
             required
-            label="Reason to Impersonate"
-            name="reason"
-            placeholder="Reason here"
+            label="Ticket Description"
+            name="description"
+            placeholder="Description here"
           />
           <div className="flex items-center space-x-4">
-            <Button type="submit" variant="primary">
+            <Button
+              type="submit"
+              variant="primary"
+              size="large"
+              disabled={isSubmitting}
+            >
               send
             </Button>
             <p>
-              By clicking send, you are granting permission to Cigweld to access
-              and work on your account.
+              By clicking send, the concerned authorities will look into your
+              issue and work on your account.
             </p>
           </div>
         </ValidatedForm>

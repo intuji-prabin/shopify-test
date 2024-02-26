@@ -2,7 +2,7 @@ import {DataTable} from '~/components/ui/data-table';
 import {useColumn} from '~/routes/_app.place-an-order/use-column';
 import {ProductData} from '~/routes/_app.place-an-order/productData';
 import {useTable} from '~/hooks/useTable';
-import {TicketsData} from '../_app.support_.tickets/tickets-data';
+import {TicketsData} from '../_app.notification/tickets-data';
 import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
 import CreateGroup from './save-later-dialogbox';
 import {Button} from '~/components/ui/button';

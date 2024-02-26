@@ -1,10 +1,10 @@
-import {TicketColumn} from './use-column';
+import {TicketColumn} from '../_app.support_.tickets/use-column';
 
 export const TicketsData: TicketColumn[] = [
   {
     ticketId: '12345',
     contactName: 'John Doe',
-    reason: 'Order issue',
+    description: 'Order issue',
     department: 'Customer service',
     createdOn: '2023-10-26',
     status: 'processing',
@@ -12,7 +12,7 @@ export const TicketsData: TicketColumn[] = [
   {
     ticketId: '54321',
     contactName: 'Jane Smith',
-    reason: 'Product return',
+    description: 'Product return',
     department: 'Returns',
     createdOn: '2023-10-27',
     status: 'invoice',
@@ -20,7 +20,7 @@ export const TicketsData: TicketColumn[] = [
   {
     ticketId: '98765',
     contactName: 'Mike Lee',
-    reason: 'Technical issue',
+    description: 'Technical issue',
     department: 'IT support',
     createdOn: '2023-10-28',
     status: 'partially-invoiced',
@@ -28,7 +28,7 @@ export const TicketsData: TicketColumn[] = [
   {
     ticketId: '98765',
     contactName: 'Mike Lee',
-    reason: 'Technical issue',
+    description: 'Technical issue',
     department: 'IT support',
     createdOn: '2023-10-28',
     status: 'delivered',
@@ -36,7 +36,7 @@ export const TicketsData: TicketColumn[] = [
   {
     ticketId: '98765',
     contactName: 'Mike Lee',
-    reason: 'Technical issue',
+    description: 'Technical issue',
     department: 'IT support',
     createdOn: '2023-10-28',
     status: 'fully-picked',
@@ -44,7 +44,7 @@ export const TicketsData: TicketColumn[] = [
   {
     ticketId: '98765',
     contactName: 'Mike Lee',
-    reason: 'Technical issue',
+    description: 'Technical issue',
     department: 'IT support',
     createdOn: '2023-10-28',
     status: 'in-transit',
@@ -52,7 +52,7 @@ export const TicketsData: TicketColumn[] = [
   {
     ticketId: '98765',
     contactName: 'Mike Lee',
-    reason: 'Technical issue',
+    description: 'Technical issue',
     department: 'IT support',
     createdOn: '2023-10-28',
     status: 'order-picked',

@@ -1,7 +1,7 @@
 import * as Tabs from '@radix-ui/react-tabs';
 import NewsForYou from './sections/news-for-you';
 import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
-import {TicketsData} from '../_app.support_.tickets/tickets-data';
+import {TicketsData} from './tickets-data';
 import PreviousNotification from './sections/previous-notification';
 import ClearAllDialouge from './sections/clear-all-dialouge-box';
 

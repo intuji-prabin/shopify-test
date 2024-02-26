@@ -17,6 +17,8 @@ const statusVariants = cva(
         partially_invoice:
           'border border-solid border-current text-status-partially_invoice',
         fully_pick: 'border border-solid border-current text-status-fully_pick',
+        pending: 'border border-solid border-current text-status-pending',
+        closed: 'border border-solid border-current text-status-closed',
       },
     },
     defaultVariants: {
