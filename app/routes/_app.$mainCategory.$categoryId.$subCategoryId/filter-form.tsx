@@ -20,6 +20,7 @@ export function FilterForm(filterList: any) {
     (item) => item.filterKey !== 'warranty',
   );
 
+  const [openAccordian, setOpenAccordian] = useState<any>("");
 
   return (
     <Form method="get">
@@ -42,7 +43,7 @@ export function FilterForm(filterList: any) {
         {
           otherFilters?.map((form: any, index: any) => (
             <Fragment key={index}>
-              <AccordionCustom accordionTitle={form.filterLabel}>
+              <AccordionCustom accordianLabel={form.filterLabel} setOpenAccordian={setOpenAccordian} isOpen={openAccordian === form.filterLabel} accordionTitle={form.filterLabel}>
                 {form?.filterValue?.map((input: any, index: any) => {
                   return (
                     <div key={index} className="flex items-center py-2 gap-x-2">
@@ -92,7 +93,7 @@ export function FilterForm(filterList: any) {
           </div>
         </div>
         <Separator />
-        {/* <div className="py-4">
+        <div className="py-4">
           <h5 className="mb-16">Price</h5>
           <Slider
             minStepsBetweenThumbs={2}
@@ -103,7 +104,7 @@ export function FilterForm(filterList: any) {
             onValueChange={handleRangeChange}
             formatLabel={(value) => `$${value}`}
           />
-        </div> */}
+        </div>
         <Button type="submit" className="absolute p-0 text-xs italic font-bold !leading-none bg-transparent border-b border-solid lg:text-sm top-6 lg:top-7 right-4 text-grey-500 border-grey-500 hover:bg-transparent">
           APPLY FILTER
         </Button>
