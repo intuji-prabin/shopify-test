@@ -260,8 +260,8 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
         </Breadcrumb>
       </section>
       <section className="container">
-        <div className="grid items-start grid-cols-3 gap-6">
-          <div className="col-span-2">
+        <div className="grid items-start grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="order-2 lg:col-span-2 lg:order-1">
             <div className="flex flex-wrap justify-between gap-4 px-6 py-4 bg-white border-b border-solid border-grey-50">
               <h5>Live Preview</h5>
               <Dialog>
@@ -312,7 +312,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
               renderedImageWidth={renderedImageWidth}
             />
           </div>
-          <div className="relative px-6 py-1 bg-white">
+          <div className="relative order-1 px-6 py-1 bg-white lg:order-2">
             <ValidatedForm
               method="post"
               validator={EditFormSchemaValidator}

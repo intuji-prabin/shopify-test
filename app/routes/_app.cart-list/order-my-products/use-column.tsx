@@ -216,7 +216,7 @@ type MeasurementColumnType = Pick<BulkOrderColumn, 'UDM'>;
 function ProductMeasurement({UDM}: MeasurementColumnType) {
   return (
     <Select>
-      <SelectTrigger className="min-w-[116px] place-order rounded-sm ">
+      <SelectTrigger className="min-w-[92px] place-order rounded-sm ">
         <SelectValue placeholder="boxes" />
       </SelectTrigger>
       <SelectContent>
