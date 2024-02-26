@@ -9,6 +9,7 @@ import UserProfle from './user-profle';
 import NavMenu from './nav-menu';
 import OrderTrackMobile from './order-track';
 import LogoutForm from './logout-form';
+import UserProfile from './user-profle';
 
 export default function MobileNav() {
   const [isHamOpen, setIsHamOpen] = useState(false);
@@ -51,7 +52,7 @@ export default function MobileNav() {
             <div className="flex justify-between flex-col-reverse gap-4">
               {' '}
               {/* user profile starts here */}
-              <UserProfle user_name={'Niel De Grass'} />
+              <UserProfile user_name={'Niel De Grass'} />
               {/* notification menu bar starts */}
               <NotificationNavbar />
             </div>
