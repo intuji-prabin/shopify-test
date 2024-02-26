@@ -20,11 +20,11 @@ export const ENDPOINT = {
   CUSTOMER: {
     GET: `${BASE_URL}/customer`,
     UPDATE_STATUS: `${BASE_URL}/customer-status`,
-    CREATE: `${BASE_URL}/customer-create`,
+    CREATE: `${BASE_URL}/customer`,
     UPDATE: `${BASE_URL}/customer-update`,
   },
   CUSTOMER_LIST: {
-    GET: `${BASE_URL}/customer-list`,
+    GET: `${BASE_URL}/customer`,
   },
   COMPANY: {
     GET_PROFILE: `${BASE_URL}/company`,
@@ -44,4 +44,7 @@ export const ENDPOINT = {
     GET_TICKETS: `${BASE_URL}/support/tickets`,
     CREATE_TICKET: `${BASE_URL}/support/create-ticket`,
   },
+  PRODUCT: {
+    GET_PRICE : `${BASE_URL}/product/prices`
+  }
 };

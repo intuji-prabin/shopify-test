@@ -21,7 +21,7 @@ export function TrackAnOrderButton() {
           </p>
         </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] track-an-order p-0 block">
+      <DialogContent className="sm:max-w-[366px] track-an-order p-0 block">
         <DialogHeader>
           <DialogTitle className="leading-6 font-bold italic text-lg text-grey-900 flex p-4">
             Track an order
@@ -35,7 +35,7 @@ export function TrackAnOrderButton() {
             Purchase Order Number Or Order Number
           </label>
           <input
-            type="text"
+            type="number"
             id="orderNumber"
             name="orderNumber"
             placeholder="Order Number"

@@ -34,19 +34,24 @@ export default function CreateGroup({
           Remove
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[360px] track-an-order p-0 block">
+      <DialogContent
+        className="sm:max-w-[425px] track-an-order p-0 block"
+        id="wishlist-remove-dialogue"
+      >
         <DialogHeader>
-          <DialogTitle className="leading-6 font-bold italic text-lg text-grey-900 flex p-4 justify-center items-center flex-col gap-3">
+          <DialogTitle className="leading-6 font-bold italic text-lg text-grey-900 flex p-4 justify-center items-center flex-col gap-4">
             <div className="bg-semantic-danger-100 p-[10px] rounded-[50%]">
               <RemoveItem />
             </div>
-            <h3 className="font-medium leading-[22px] text-lg text-grey-900 not-italic capitalize">
-              clear cart
-            </h3>
-            <p className="font-normal leading-[21px] text-base text-center">
-              All products will be removed from your cart. Are you sure you want
-              to continue?
-            </p>
+            <div className="flex items-center justify-center flex-col gap-1">
+              <h3 className=" text-grey-800 leading-[22px] text-lg font-medium">
+                Delete
+              </h3>
+              <p className="text-center font-normal leading-[21px] text-base text-neutral-400">
+                All products will be removed from your List. Are you sure you
+                want to continue?
+              </p>
+            </div>
           </DialogTitle>
         </DialogHeader>
 
@@ -62,7 +67,7 @@ export default function CreateGroup({
             variant="primary"
             onClick={handleRemoveAllItems}
           >
-            continue
+            Continue
           </Button>
         </DialogFooter>
       </DialogContent>

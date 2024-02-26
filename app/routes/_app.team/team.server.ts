@@ -25,19 +25,19 @@ interface ResponseData {
 }
 
 export async function getAllTeams({
-  companyId,
+  customerId,
   query,
 }: {
-  companyId: string;
+  customerId: string;
   query: string | null;
 }) {
   const results = await useFetch<ResponseData>({
     method: AllowedHTTPMethods.GET,
-    url: `${ENDPOINT.CUSTOMER_LIST.GET}?company_id=${companyId}${
+    url: `${ENDPOINT.CUSTOMER_LIST.GET}?customer_id=${customerId}${
       query ? '&search_query=' + query : ''
     }`,
   });
-
+  
   if (results.payload.length < 0) {
     throw new Error(results.message);
   }

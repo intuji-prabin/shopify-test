@@ -10,14 +10,13 @@ type LoginParams = {
 };
 
 type CustomerAddress = {
+  id? : string
   address1: string;
 };
 
 type Metafield = {
-  id: string;
   key: string;
   value: string;
-  type: string;
 };
 
 export type CustomerData = {

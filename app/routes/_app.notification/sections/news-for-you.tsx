@@ -16,7 +16,7 @@ export default function NewsForYou() {
                   {newsItem.date}
                 </p>
                 <p className="text-grey-900 text-lg italic font-semibold leading-6">
-                  News Order Received- <span>Order No.{newsItem.orderNo}</span>
+                  News Order Received- <span>Order No. {newsItem.orderNo}</span>
                 </p>
                 <p className="">
                   ordererd by{' '}

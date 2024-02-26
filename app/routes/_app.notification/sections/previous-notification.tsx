@@ -20,7 +20,7 @@ export default function PreviousNotification() {
   return (
     <>
       <ul className="flex gap-2 flex-col">
-        {!(news.length === 0) ? (
+        {news.length === 0 ? (
           <EmptyInbox />
         ) : (
           news.map((newsItem) => (

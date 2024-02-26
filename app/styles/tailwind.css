@@ -252,17 +252,15 @@ label .required {
   @apply text-primary-500;
 }
 .dropdown-content:before {
-  border-left: 18px solid transparent;
-  border-right: 18px solid transparent;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
   border-top: 23px solid;
   content: '';
-  left: 16%;
+  left: 5%;
   top: -1rem;
   position: absolute;
   border-top-color: #fff;
   transform: rotate(180deg);
-  height: 14px;
-  width: 26px;
 }
 
 .dropdown-content:after {
@@ -275,14 +273,12 @@ label .required {
 }
 
 .megamenu-content:before {
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
   border-top: 23px solid;
   content: '';
-  left: 40px;
-  top: -5%;
-  margin-left: -20px;
-  margin-left: -23px;
+  left: 3%;
+  top: -1rem;
   position: absolute;
   border-top-color: #fff;
   transform: rotate(180deg);
@@ -798,4 +794,30 @@ div[data-state='open'].fixed.inset-0 {
 }
 .table-tabs table thead th {
   @apply px-4 h-20;
+}
+.my-profile:hover svg path {
+  @apply fill-primary-500;
+}
+.my-profile:hover h5 {
+  @apply text-primary-500;
+}
+.cart-order table tr:hover td:last-child button,
+.cart-order table tr:hover td:nth-child(4) button,
+.cart-order table tr[data-state='selected'] td:last-child button,
+.cart-order table tr[data-state='selected'] td:nth-child(4) button {
+  @apply bg-primary-200;
+}
+.cart-order table {
+  @apply transition duration-500 ease-in-out delay-75;
+}
+/* disable arrows from number input field (Chrome, Safari, Edge, Opera )*/
+.track-an-order ::-webkit-outer-spin-button,
+.track-an-order input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.track-an-order input[type='number'] {
+  -moz-appearance: textfield;
 }

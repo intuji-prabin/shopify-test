@@ -64,7 +64,6 @@ export async function action({request, context}: ActionFunctionArgs) {
       request,
       file: profileImage,
     });
-
     if (team?.status) {
       setSuccessMessage(messageSession, 'Email sent successfully to customer');
       return redirect(Routes.TEAM, {

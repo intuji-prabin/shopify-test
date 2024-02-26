@@ -61,12 +61,11 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 export async function action({request, context}: ActionFunctionArgs) {
   const accessToken = await isAuthenticate(context);
   const {session, storefront} = context;
-  console.log('accessToken', accessToken);
   const messageSession = await getMessageSession(request);
 
   const userDetailsSession = await getUserDetailsSession(request);
 
-  const {userDetails} = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request) as any;
 
   try {
     const result = await ProfileFormSchemaValidator.validate(
@@ -87,6 +86,28 @@ export async function action({request, context}: ActionFunctionArgs) {
       profileImage,
     } = result.data;
 
+    const customer : CustomerUpdateInput = {};
+
+    if (typeof oldPassword !== 'undefined' && oldPassword !== '') {
+      const {customerAccessTokenCreate} : any = await storefront.mutate(
+        LOGIN_MUTATION,
+        {
+          variables: {
+            input: {email : userDetails?.email, password: oldPassword},
+          },
+        },
+      );
+
+      if ( customerAccessTokenCreate?.customerUserErrors.length > 0 ) {
+        throw new Error(
+          "Old password doesn't match. Please enter correct old password.",
+        );
+      }
+
+      customer.password = password;
+
+    }
+
     if (typeof profileImage !== 'undefined' && customerId) {
       const {status} = await fileUpload({
         customerId,
@@ -96,10 +117,24 @@ export async function action({request, context}: ActionFunctionArgs) {
       if (!status) throw new Error('Image upload unsuccessfull');
     }
 
-    const firstName = fullName.split(' ')[0];
-    const lastName = fullName.split(' ')[1] ?? '';
+    const customerName  = fullName.split(" ")
+    const nameLength    = customerName.length
+    var i
+    let firstName = ''
+    let lastName = ""
 
-    const customer: CustomerUpdateInput = {};
+    if( nameLength > 1 ) {
+      for( i = 1; i < nameLength; i++ ) {
+        if( i ===  1 ) {
+          firstName = customerName[i - 1 ]
+        } else {
+          firstName += ` ${customerName[i - 1 ]}`
+        }
+      }   
+      lastName = customerName[nameLength - 1]
+    } else {
+      firstName = fullName
+    }
 
     customer.email = email;
     customer.firstName = firstName;
@@ -112,81 +147,22 @@ export async function action({request, context}: ActionFunctionArgs) {
         variables: {
           customerAccessToken: accessToken,
           customer,
-        },
+          customerAddress : {
+            address1 : address
+          },
+          addressID : userDetails?.address[0]?.id
+        }
       },
     );
 
     if (updateCustomerDetails.customerUpdate?.customerUserErrors?.length) {
       return json(
-        {error: updateCustomerDetails.customerUpdate?.customerUserErrors[0]},
+        {error: updateCustomerDetails.customerUpdate?.customerUserErrors[0]?.message},
         {status: 400},
       );
     }
 
-    userDetailsSession.unset(USER_DETAILS_KEY);
-
-    const customerDetails = await getCustomerByEmail({
-      email: userDetails.email,
-    });
-
-    userDetailsSession.set(USER_DETAILS_KEY, customerDetails);
-
-    const customerAddress: MailingAddressInput = {};
-    customerAddress.address1 = address;
-
-    const updateCustomerAddress = await storefront.mutate(
-      CUSTOMER_ADDRESS_UPDATE_MUTATION,
-      {
-        variables: {
-          address: customerAddress,
-          customerAccessToken: accessToken,
-          id: updateCustomerDetails.customerUpdate.customer.addresses.nodes[0]
-            .id,
-        },
-      },
-    );
-
-    if (updateCustomerAddress.customerUpdate?.customerUserErrors?.length) {
-      return json(
-        {error: updateCustomerAddress.customerUpdate?.customerUserErrors[0]},
-        {status: 400},
-      );
-    }
-
-    if (typeof oldPassword !== 'undefined' && oldPassword !== '') {
-      const {customerAccessTokenCreate} = await storefront.mutate(
-        LOGIN_MUTATION,
-        {
-          variables: {
-            input: {email, password: oldPassword},
-          },
-        },
-      );
-
-      if (!customerAccessTokenCreate?.customerAccessToken?.accessToken) {
-        throw new Error(
-          "Old password doesn't match. Please enter correct old password.",
-        );
-      }
-
-      const customer: CustomerUpdateInput = {};
-      customer.password = password;
-
-      const updatePassword = await storefront.mutate(CUSTOMER_UPDATE_MUTATION, {
-        variables: {
-          customerAccessToken:
-            customerAccessTokenCreate?.customerAccessToken?.accessToken,
-          customer,
-        },
-      });
-
-      if (updatePassword.customerUpdate?.customerUserErrors?.length) {
-        return json(
-          {error: updatePassword.customerUpdate?.customerUserErrors[0]},
-          {status: 400},
-        );
-      }
-
+    if( typeof oldPassword !== 'undefined' && oldPassword !== '' ) { 
       await storefront.mutate(LOGOUT_MUTATION, {
         variables: {
           customerAccessToken: accessToken,
@@ -194,8 +170,16 @@ export async function action({request, context}: ActionFunctionArgs) {
       });
 
       return logout({context, request});
-    }
+    } else {
+      userDetailsSession.unset(USER_DETAILS_KEY);
 
+      const customerDetails = await getCustomerByEmail({
+        email: userDetails.email,
+      });
+
+      userDetailsSession.set(USER_DETAILS_KEY, customerDetails);
+    }
+    
     setSuccessMessage(messageSession, 'Profile update successfull');
 
     return redirect(Routes.HOME, {
@@ -264,35 +248,45 @@ export function ErrorBoundary() {
 }
 
 const CUSTOMER_UPDATE_MUTATION = `#graphql
-  mutation customerUpdate(
-    $customerAccessToken: String!,
-    $customer: CustomerUpdateInput!
-  ) {
-    customerUpdate(customerAccessToken: $customerAccessToken, customer: $customer) {
-      customer {
-        email
-        firstName
-        lastName
-        id
-        phone
-        addresses(first:10){
-          nodes{
-          id
+mutation customerUpdate(
+  $customerAccessToken: String!,
+  $customer: CustomerUpdateInput!,
+  $customerAddress : MailingAddressInput!,
+  $addressID : ID!,
+) {
+  customerUpdate(customerAccessToken: $customerAccessToken, customer: $customer) {
+    customer {
+      email
+      firstName
+      lastName
+      id
+      phone
+      addresses(first:10){
+        nodes{
+        address1
+    }
+   }
+    }
+    customerAccessToken {
+      accessToken
+      expiresAt
+    }
+    customerUserErrors {
+      code
+      field
+      message
+    }
+  },
+  customerAddressUpdate( address: $customerAddress, customerAccessToken: $customerAccessToken, id : $addressID  ) {
+      customerAddress {
           address1
       }
-     }
-      }
-      customerAccessToken {
-        accessToken
-        expiresAt
-      }
       customerUserErrors {
-        code
-        field
-        message
+          message
+          field
       }
-    }
   }
+}
 ` as const;
 
 const CUSTOMER_ADDRESS_UPDATE_MUTATION = `#graphql

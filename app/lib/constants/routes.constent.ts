@@ -32,6 +32,9 @@ export const Routes = {
   FILTER_METALS: '/filter-metals',
   SAFETY: '/safety',
   ORDER_DETAILS: '/order-details',
+  PENDING_ORDER:'/pending-order',
+  SINGLE_PENDING_ITEM:'/single-pending-item',
   PROFILE: '/profile',
   PENDING_ORDER: '/pending-order',
 };
+

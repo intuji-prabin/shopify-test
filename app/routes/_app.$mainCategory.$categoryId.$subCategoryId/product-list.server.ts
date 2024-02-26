@@ -1,4 +1,7 @@
+import { useFetch } from '~/hooks/useFetch';
+import { ENDPOINT } from '~/lib/constants/endpoint.constant';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import { AllowedHTTPMethods } from '~/lib/enums/api.enum';
 
 type FilterItem = {
   key: string;
@@ -10,6 +13,7 @@ export async function getProducts(
   context: any,
   params: any,
   filterList: FilterType,
+  customerId : string
 ) {
   const {storefront} = context;
   const categoryIdentifier = params.subCategoryId;
@@ -20,7 +24,7 @@ export async function getProducts(
   );
 
   const pageInfo = products?.collection?.products?.pageInfo;
-  const formattedData = formattedResponse(products);
+  const formattedData = await formattedResponse( products, customerId );
   return {formattedData, pageInfo};
 }
 
@@ -69,7 +73,7 @@ const filterBuilder = (filterList: FilterType) => {
   return `filters: [${filterData}] ${pageinfo}`;
 };
 
-const formattedResponse = (response: any) => {
+const formattedResponse = async (response: any, customerId : string) => {
   if (
     !response?.collection ||
     response?.collection?.products?.edges.length < 1
@@ -79,15 +83,30 @@ const formattedResponse = (response: any) => {
 
   const productList = response?.collection;
 
+  let productIds = "" 
+  productList?.products?.edges.map( ( items : any ) => {
+    const productId = items?.node?.id.replace("gid://shopify/Product/", "")
+    if( !productIds ) {
+      productIds = productId
+    } else {
+      productIds += `,${productId}`
+    }
+    return true
+  })
+  const priceList = await getPrices(productIds, customerId)
   const finalProductList: any = {
     categorytitle: productList?.title,
-    productList: productList?.products?.edges.map((item: any) => ({
-      title: item?.node?.title,
-      variants: productVariantDataFormat(item?.node?.variants),
-      featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.IMAGE,
-    })),
+    productList: productList?.products?.edges.map((item: any) => {
+      const productId = item?.node?.id.replace("gid://shopify/Product/", "")
+      return {
+        title: item?.node?.title,
+        variants: productVariantDataFormat(item?.node?.variants),
+        featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.IMAGE,
+        companyPrice: priceList?.[productId] ? priceList?.[productId][0]?.company_price : null,
+        defaultPrice: priceList?.[productId] ? priceList?.[productId][0]?.default_price : null
+      }
+    }),
   };
-
   return finalProductList;
 };
 
@@ -97,6 +116,24 @@ const productVariantDataFormat = (variant: any) => {
   };
   return finalVariantData;
 };
+
+const getPrices = async ( produdctId : string, customerId : string ) => {
+  const customerID = customerId
+  const results = await useFetch<any>({
+    method: AllowedHTTPMethods.GET,
+    url: `${ENDPOINT.PRODUCT.GET_PRICE}/${customerID}?productIds=${produdctId}`,
+  });
+
+  if( results?.errors ) {
+    throw new Error("Somthing error occured.")
+  }
+
+  if( !results?.status ) {
+    throw new Error(`Price not found due to ${results?.message}`)
+  }
+
+  return results?.payload
+}
 
 const STOREFRONT_PRODUCT_GET_QUERY = (filterList: any, handler: string) => {
   const product_query = `query getProductList {

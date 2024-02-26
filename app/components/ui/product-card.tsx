@@ -16,6 +16,8 @@ export function ProductCard({
   // productImageUrl,
   title,
   // rppPrice,
+  companyPrice,
+  defaultPrice,
   variants,
   featuredImageUrl,
   imageBackgroundColor,
@@ -32,8 +34,8 @@ export function ProductCard({
         <ProductCardInfo
           sku={variants?.sku}
           productName={title}
-          // buyPrice={buyPrice}
-          // rppPrice={rppPrice}
+          companyPrice={companyPrice}
+          defaultPrice={defaultPrice}
         />
       </div>
     </div>
@@ -43,6 +45,8 @@ export function ProductCard({
 type ProductCardInfoProps = {
   variants: VariantType;
   title: string;
+  defaultPrice?: string;
+  companyPrice?: string;
 };
 
 type VariantType = {
@@ -59,6 +63,8 @@ type ProductCardImageProps = {
 export function ProductCardInfo({
   sku,
   productName,
+  defaultPrice,
+  companyPrice
 }: // buyPrice,
 // rppPrice,
 any) {
@@ -92,7 +98,7 @@ any) {
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
-                {/* ${buyPrice.toFixed(2)} */}$649.22
+                { companyPrice ?? "00.00"}
               </h3>
               <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
             </div>
@@ -115,7 +121,7 @@ any) {
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-                {/* ${rppPrice.toFixed(2)} */}$799.87
+                { defaultPrice ?? "00.00" }
               </h3>
               <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
             </div>

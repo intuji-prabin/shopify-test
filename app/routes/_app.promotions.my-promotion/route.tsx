@@ -47,7 +47,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   const { userDetails } = await getUserDetails(request);
   const { searchParams } = new URL(request.url);
   const paramsList = Object.fromEntries(searchParams)
-  const customerId = userDetails?.id.replace("gid://shopify/Customer/", "")
+  const customerId = userDetails?.id
 
   const { promotions, totalPromotionCount } = await getPromotions({
     customerId,
@@ -62,7 +62,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
 
   const { userDetails } = await getUserDetails(request);
-  const customerId = userDetails?.id.replace("gid://shopify/Customer/", "")
+  const customerId = userDetails?.id
 
   const messageSession = await getMessageSession(request);
 
@@ -173,6 +173,7 @@ export default function MyPromotionsPage() {
                   imageURL={promotion.image_url}
                   id={promotion.id}
                   myPromotion={true}
+                  expire_at={promotion.expaire_at}
                 />
                 <input
                   type="checkbox"

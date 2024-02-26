@@ -77,7 +77,7 @@ export type EditFormFieldNameType = keyof EditFormType;
 export async function action({ request, params }: ActionFunctionArgs) {
   const data = await request.formData();
   const { userDetails } = await getUserDetails(request);
-  const customerId = userDetails?.id.replace("gid://shopify/Customer/", "")
+  const customerId = userDetails?.id
   let formData = Object.fromEntries(data);
   formData = { ...formData };
   const bannerId = params.promotionId as string;
@@ -89,7 +89,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   try {
     const { userDetails } = await getUserDetails(request);
-    const customerId = userDetails?.id.replace("gid://shopify/Customer/", "")
+    const customerId = userDetails?.id
     const promotionId = params?.promotionId as string;
     const response = await getPromotionById(promotionId, customerId);
     if (response?.payload) {
@@ -128,6 +128,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     textColor: results?.color,
     bgColor: results?.background_color,
   });
+  const [openAccordian, setOpenAccordian] = useState<"company-information" | "text-color" | "background" | "">("company-information");
 
   const canvasRef = useRef<any>();
   const blobRef = useRef<any>();
@@ -168,7 +169,6 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     html2canvas(canvasRef, {
       allowTaint: true,
       useCORS: true,
-      scale: 2,
     }).then((canvas) => {
       const link = document.createElement('a');
       document.body.appendChild(link);
@@ -199,7 +199,6 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
       const canvas = await html2canvas(canvasRef.current, {
         allowTaint: true,
         useCORS: true,
-        scale: 2,
       });
       formData.append("image", canvas.toDataURL());
     } catch (error) {
@@ -261,9 +260,8 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
         </Breadcrumb>
       </section>
       <section className="container">
-        <Separator className="mt-4 mb-8" />
-        <div className="grid items-start grid-cols-3 gap-6">
-          <div className="col-span-2">
+        <div className="grid items-start grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="order-2 lg:col-span-2 lg:order-1">
             <div className="flex flex-wrap justify-between gap-4 px-6 py-4 bg-white border-b border-solid border-grey-50">
               <h5>Live Preview</h5>
               <Dialog>
@@ -314,7 +312,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
               renderedImageWidth={renderedImageWidth}
             />
           </div>
-          <div className="relative px-6 py-1 bg-white">
+          <div className="relative order-1 px-6 py-1 bg-white lg:order-2">
             <ValidatedForm
               method="post"
               validator={EditFormSchemaValidator}
@@ -342,7 +340,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                 handleChange={(field: string, value: string) => handleChange(field, value)}
               />
               <div className="accordion__section">
-                <AccordionCustom accordionTitle="Company Information">
+                <AccordionCustom accordianLabel='company-information' setOpenAccordian={setOpenAccordian} isOpen={openAccordian === "company-information"} accordionTitle="Company Information">
                   <div className="space-y-6">
                     <div>
                       <label htmlFor="company_name">Company Name</label>
@@ -411,14 +409,14 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                     </div>
                   </div>
                 </AccordionCustom>
-                <AccordionCustom accordionTitle="Text Color">
+                <AccordionCustom accordianLabel='text-color' setOpenAccordian={setOpenAccordian} isOpen={openAccordian === "text-color"} accordionTitle="Text Color">
                   <ColorPicker
                     name="color"
                     color={companyInfo.textColor}
                     onChange={(color) => handleChange('textColor', color)}
                   />
                 </AccordionCustom>
-                <AccordionCustom accordionTitle="Background">
+                <AccordionCustom accordianLabel='background' setOpenAccordian={setOpenAccordian} isOpen={openAccordian === "background"} accordionTitle="Background">
                   <ColorPicker
                     name="background_color"
                     color={companyInfo.bgColor}
