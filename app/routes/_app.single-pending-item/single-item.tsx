@@ -133,7 +133,7 @@ export default function SingleItem() {
         </div>
       </div>
 
-      <div className="container">
+      <div className="container cart-order">
         <DataTable table={table} />
 
         {/* pagination starts here */}
