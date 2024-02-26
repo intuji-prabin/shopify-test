@@ -2,7 +2,6 @@ import {DataTable} from '~/components/ui/data-table';
 import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
 import {useTable} from '~/hooks/useTable';
 import {Routes} from '~/lib/constants/routes.constent';
-import {TicketsData} from '~/routes/_app.support_.tickets/tickets-data';
 import CreateGroup from './remove-item';
 import {Button} from '~/components/ui/button';
 import {Link} from '@remix-run/react';
@@ -17,6 +16,7 @@ import {Done} from '~/components/icons/done';
 import {Alert, AlertDescription} from '~/components/ui/alert';
 import {useMyProductColumn} from './use-column';
 import {ProductData} from './productData';
+import {TicketsData} from '../_app.notification/tickets-data';
 
 export default function SingleItem() {
   const itemNameFromApi = 'Gloves';

@@ -45,6 +45,6 @@ export const ENDPOINT = {
     CREATE_TICKET: `${BASE_URL}/support/create-ticket`,
   },
   PRODUCT: {
-    GET_PRICE : `${BASE_URL}/product/prices`
-  }
+    GET_PRICE: `${BASE_URL}/product/prices`,
+  },
 };
