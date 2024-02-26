@@ -2,10 +2,8 @@ import {DataTable} from '~/components/ui/data-table';
 import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
 import {useTable} from '~/hooks/useTable';
 import {Routes} from '~/lib/constants/routes.constent';
-import {ProductData} from '~/routes/_app.place-an-order/productData';
 import {TicketsData} from '~/routes/_app.support_.tickets/tickets-data';
 import CreateGroup from './remove-item';
-import {useColumn} from './use-column';
 import {Button} from '~/components/ui/button';
 import {Link} from '@remix-run/react';
 import {BackButton} from '~/components/ui/back-button';
@@ -17,10 +15,12 @@ import {
 } from '~/components/icons/orderStatus';
 import {Done} from '~/components/icons/done';
 import {Alert, AlertDescription} from '~/components/ui/alert';
+import {useMyProductColumn} from './use-column';
+import {ProductData} from './productData';
 
 export default function SingleItem() {
   const itemNameFromApi = 'Gloves';
-  const {columns} = useColumn();
+  const {columns} = useMyProductColumn();
   const {table} = useTable(columns, ProductData);
 
   function handleRemoveAllItems() {

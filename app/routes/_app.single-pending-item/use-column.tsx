@@ -1,4 +1,5 @@
 import {HTMLProps, useEffect, useMemo, useRef, useState} from 'react';
+import {ColumnDef} from '@tanstack/react-table';
 import {InfoIcon} from '~/components/icons/info-icon';
 import {badgeVariants} from '~/components/ui/badge';
 import {
@@ -11,9 +12,7 @@ import {
 } from '~/components/ui/select';
 import {TooltipInfo} from '~/components/icons/orderStatus';
 import {Link} from '@remix-run/react';
-import React from 'react';
-import {ColumnDef} from '@tanstack/react-table';
-
+import {Button} from '~/components/ui/button';
 export type BulkOrderColumn = {
   id: string;
   items: {
@@ -24,10 +23,9 @@ export type BulkOrderColumn = {
   };
   quantity: number;
   total: string;
-  measurement: string;
+  UDM: string;
 };
-
-export function useColumn() {
+export function useMyProductColumn() {
   const columns = useMemo<ColumnDef<BulkOrderColumn>[]>(
     () => [
       {
@@ -63,7 +61,6 @@ export function useColumn() {
           return <ItemsColumn items={product.items} />;
         },
       },
-
       {
         accessorKey: 'quantity',
         header: 'Quantity',
@@ -74,21 +71,31 @@ export function useColumn() {
         },
       },
       {
-        accessorKey: 'measurement',
-        header: 'Measurement',
+        accessorKey: 'UDM',
+        header: 'UDM',
         enableSorting: false,
         cell: (info) => {
-          const productMeasurement = info.row.original.measurement;
-          return <ProductMeasurement measurement={productMeasurement} />;
+          const productMeasurement = info.row.original.UDM;
+          return <ProductMeasurement UDM={productMeasurement} />;
         },
       },
       {
         accessorKey: 'total',
-        header: 'Total',
+        header: 'Price',
         enableSorting: false,
         cell: (info) => {
           const productTotal = info.row.original.total;
-          return <ProductTotal total={productTotal} />;
+          return (
+            <>
+              <ProductTotal
+                total={productTotal}
+                isBulkDetailVisible={info?.row?.getIsExpanded()}
+                setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
+                isRowChecked={info?.row?.getIsSelected()}
+              />
+              {/* {isVisible && <BulkTable quantity={'Quantity'} price={'Price'} />} */}
+            </>
+          );
         },
       },
     ],
@@ -96,7 +103,6 @@ export function useColumn() {
   );
   return {columns};
 }
-
 /**
  * @description Select Column Component
  */
@@ -106,13 +112,11 @@ function IndeterminateCheckbox({
   ...rest
 }: {indeterminate?: boolean} & HTMLProps<HTMLInputElement>) {
   const ref = useRef<HTMLInputElement>(null!);
-
   useEffect(() => {
     if (typeof indeterminate === 'boolean') {
       ref.current.indeterminate = !rest.checked && indeterminate;
     }
   }, [ref, indeterminate]);
-
   return (
     <input
       type="checkbox"
@@ -122,21 +126,19 @@ function IndeterminateCheckbox({
     />
   );
 }
-
 /**
  * @description Items Column Component
  */
 type ItemsColumnType = Pick<BulkOrderColumn, 'items'>;
-
 function ItemsColumn({items}: ItemsColumnType) {
-  const {name, image, sku} = items;
+  const {name, image, isStock, sku} = items;
   return (
     <div className="flex space-x-2">
-      <figure className="bg-grey-25 p-3 w-20">
+      <figure className="bg-grey-25 p-3 !w-20 ">
         <img
           src={image}
           alt="item-image"
-          className="object-contain object-center h-full"
+          className="h-full object-contain object-center"
         />
       </figure>
       <figcaption className="flex flex-col justify-between">
@@ -158,21 +160,18 @@ function ItemsColumn({items}: ItemsColumnType) {
     </div>
   );
 }
-
 /**
  * @description Quantity Column Component
  */
 type QuantityColumnType = Pick<BulkOrderColumn, 'quantity'>;
 function QuantityColumn({quantity}: QuantityColumnType) {
   const [quantityCounter, setQuantityCounter] = useState(quantity);
-
   const handleIncreaseQuantity = () =>
     setQuantityCounter((previousState) => previousState + 1);
-
   const handleDecreaseQuantity = () =>
     setQuantityCounter((previousState) => previousState - 1);
   return (
-    <div className="flex flex-col gap-[11.5px] mt-[2.5rem] cart-list">
+    <div className="flex flex-col gap-[11.5px] mt-[2.4rem] cart-list">
       <div className="flex items-center">
         <button
           className="border border-solid border-grey-200 flex items-center justify-center  min-h-10 w-10"
@@ -210,15 +209,14 @@ function QuantityColumn({quantity}: QuantityColumnType) {
     </div>
   );
 }
-
 /**
  * @description Measurement Column Component
  */
-type MeasurementColumnType = Pick<BulkOrderColumn, 'measurement'>;
-function ProductMeasurement({measurement}: MeasurementColumnType) {
+type MeasurementColumnType = Pick<BulkOrderColumn, 'UDM'>;
+function ProductMeasurement({UDM}: MeasurementColumnType) {
   return (
     <Select>
-      <SelectTrigger className="w-[116px] place-order rounded-sm list-select">
+      <SelectTrigger className="min-w-[116px] place-order rounded-sm ">
         <SelectValue placeholder="boxes" />
       </SelectTrigger>
       <SelectContent>
@@ -230,36 +228,45 @@ function ProductMeasurement({measurement}: MeasurementColumnType) {
     </Select>
   );
 }
-
 /**
  * @description Total Column Component
  */
 type TotalColumnType = Pick<BulkOrderColumn, 'total'>;
-
-function ProductTotal({total}: TotalColumnType) {
+function ProductTotal({
+  total,
+  isBulkDetailVisible,
+  setIsBulkDetailsVisible,
+  isRowChecked,
+}: {
+  total: string;
+  isBulkDetailVisible: boolean;
+  isRowChecked: boolean;
+  setIsBulkDetailsVisible: () => void;
+}) {
   return (
-    <div className="flex flex-col gap-4 items-baseline">
+    <div className="flex flex-col gap-4 items-baseline min-w-[110px]">
       <div className="flex flex-col gap-1">
         <div className="">
-          <p className="flex mb-1.5 text-semantic-success-500 font-medium text-sm">
+          <p className="flex mb-1.5 text-semantic-success-500 font-medium text-sm uppercase">
             BUY PRICE{' '}
             <span>
               <InfoIcon />
             </span>
           </p>
         </div>
-
         <p className="text-grey-900 text-lg leading-5.5 italic">${total}</p>
         <p className="text-grey-500 font-bold italic text-sm leading-normal">
           (Excl. GST)
         </p>
       </div>
-      <Link
-        to=""
-        className="text-[14px] italic font-bold leading-6 uppercase border-t-0 border-2 border-x-0 border-b-primary-500 mb-[2px]"
+      <Button
+        onClick={setIsBulkDetailsVisible}
+        className={`${
+          isRowChecked ? 'bg-white' : 'bg-primary-200'
+        }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
       >
-        VIEW BULK PRICE
-      </Link>
+        {isBulkDetailVisible ? 'Hide' : 'View'} BULK PRICE
+      </Button>
     </div>
   );
 }
