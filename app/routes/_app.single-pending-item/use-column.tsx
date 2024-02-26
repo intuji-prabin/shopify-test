@@ -219,7 +219,7 @@ function ProductMeasurement({UDM}: MeasurementColumnType) {
       <SelectTrigger className="max-w-[116px] place-order rounded-sm ">
         <SelectValue placeholder="boxes" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="max-w-[116px] rounded-none min-w-0">
         <SelectGroup>
           <SelectItem value="banana">Pieces</SelectItem>
           <SelectItem value="apple">Boxes</SelectItem>
