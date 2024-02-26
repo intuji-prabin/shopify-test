@@ -1,6 +1,11 @@
 import {FaSearch} from 'react-icons/fa';
 import {Form, Link} from '@remix-run/react';
-import {Heart, Logout, UserProfile} from '~/components/icons/orderStatus';
+import {
+  Heart,
+  Logout,
+  TabletHamburger,
+  UserProfile,
+} from '~/components/icons/orderStatus';
 import {useRef, useState} from 'react';
 import {Button} from '~/components/ui/button';
 import {
@@ -19,6 +24,8 @@ import SearchIcon from '~/components/icons/search';
 import CloseMenu from '~/components/icons/closeMenu';
 import {CustomerData} from '~/routes/_public.login/login.server';
 import {useOutsideClick} from '~/hooks/useOutsideClick';
+import MobileNav from './elements/mobile-navbar/mobile-nav';
+import TabletNavmenu from './tablet-navbar/tablet-navmenu';
 
 export function PlaceOrder() {
   return (
@@ -34,7 +41,7 @@ export function PlaceOrder() {
 }
 export function OrderTrack() {
   return (
-    <div className="flex items-center gap-4 border border-l-2 border-t-0 border-b-0 border-grey-800 pl-4 ">
+    <div className="hidden xl:flex items-center gap-4 border border-l-2 border-t-0 border-b-0 border-grey-800 pl-4 ">
       <TrackAnOrderButton />
       <PlaceOrder />
     </div>
@@ -49,6 +56,7 @@ export function LogoIcon({logo_url}: {logo_url: string}) {
     </Link>
   );
 }
+
 export function NotificationNavbar() {
   const navIcons = [
     {
@@ -114,6 +122,7 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
   function handleCloseSearch() {
     setSearchProduct(false);
   }
+
   const fullName = `${userDetails.firstName} ${userDetails.lastName}`;
 
   const imageUrl = userDetails.meta?.image_url?.value;
@@ -121,11 +130,14 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
   return (
     <>
       <div className="bg-grey-900">
-        <div className="container py-5 flex  gap-3 justify-between ">
-          {/* home logo begins here */}
-          <LogoIcon logo_url={'/Logo.png'} />
+        <div className="container py-5 flex  gap-3 justify-normal xl:justify-between items-center">
+          <div className="flex gap-4 items-center">
+            <TabletNavmenu />
+            {/* home logo begins here */}
+            <LogoIcon logo_url={'/Logo.png'} />
+          </div>
           {/* Search and notification bar begins here  */}
-          <div className="flex gap-[22px]">
+          <div className="flex gap-[22px] w-full xl:w-[unset]">
             {/* search bar begins here */}
             <div className="search-bar flex bg-white items-center min-w-[unset] w-full max-h-12 px-4 py-3 xl:min-w-[453px] relative">
               <FaSearch className="search-icon fill-primary-500" />
@@ -210,7 +222,7 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
           <OrderTrack />
 
           {/* user profile begins here  */}
-          <div className="flex items-center gap-1">
+          <div className="hidden xl:flex items-center gap-1">
             <figure className="w-8 h-8">
               <img
                 src={imageUrl ?? '/niel.png'}

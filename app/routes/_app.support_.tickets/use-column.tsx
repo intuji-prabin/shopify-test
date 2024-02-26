@@ -3,26 +3,19 @@ import {ColumnDef} from '@tanstack/react-table';
 import {statusVariants} from '~/components/ui/status';
 
 export type TicketColumn = {
-  ticketId: string;
+  id: string;
   contactName: string;
-  reason: string;
+  description: string;
   department: string;
   createdOn: string;
-  status:
-    | 'processing'
-    | 'invoice'
-    | 'partially-invoiced'
-    | 'order-picked'
-    | 'fully-picked'
-    | 'in-transit'
-    | 'delivered';
+  status: 'pending' | 'in_progress' | 'closed';
 };
 
 export function useColumn() {
   const columns = useMemo<ColumnDef<TicketColumn>[]>(
     () => [
       {
-        accessorKey: 'ticketId',
+        accessorKey: 'id',
         header: 'Ticket ID.',
         enableSorting: false,
         cell: (info) => info.getValue(),
@@ -31,10 +24,13 @@ export function useColumn() {
         accessorKey: 'contactName',
         header: 'Contact Name',
         enableSorting: false,
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const contactName = info.getValue() as string;
+          return <div className="capitalize">{contactName}</div>;
+        },
       },
       {
-        accessorKey: 'reason',
+        accessorKey: 'description',
         header: 'Reason',
         enableSorting: false,
         cell: (info) => info.getValue(),
@@ -49,7 +45,14 @@ export function useColumn() {
         accessorKey: 'createdOn',
         header: 'Created On',
         enableSorting: false,
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const date = new Date(info.getValue() as string);
+          return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          });
+        },
       },
       {
         accessorKey: 'status',
@@ -58,46 +61,22 @@ export function useColumn() {
         cell: (info) => {
           const status = info.row.original.status;
           switch (status) {
-            case 'processing':
+            case 'in_progress':
               return (
                 <div className={statusVariants({variant: 'awaiting'})}>
-                  Processing
+                  In Progress
                 </div>
               );
-            case 'delivered':
+            case 'pending':
               return (
-                <div className={statusVariants({variant: 'shipped'})}>
-                  delivered
+                <div className={statusVariants({variant: 'pending'})}>
+                  pending
                 </div>
               );
-            case 'fully-picked':
+            case 'closed':
               return (
-                <div className={statusVariants({variant: 'fully_pick'})}>
-                  fully pick
-                </div>
-              );
-            case 'partially-invoiced':
-              return (
-                <div className={statusVariants({variant: 'partially_invoice'})}>
-                  partially invoiced
-                </div>
-              );
-            case 'in-transit':
-              return (
-                <div className={statusVariants({variant: 'partially_shipped'})}>
-                  in transit
-                </div>
-              );
-            case 'invoice':
-              return (
-                <div className={statusVariants({variant: 'invoice'})}>
-                  invoice
-                </div>
-              );
-            case 'order-picked':
-              return (
-                <div className={statusVariants({variant: 'partially_pick'})}>
-                  order picked
+                <div className={statusVariants({variant: 'closed'})}>
+                  closed
                 </div>
               );
             default:

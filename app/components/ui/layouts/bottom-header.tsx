@@ -7,7 +7,7 @@ export function MainNavigationMenus({categories}: {categories: Payload[]}) {
   const depthLevel = 0;
   const [activeMenu, setActiveMenu] = useState('');
   return (
-    <ul className="flex flex-row justify-between menus">
+    <ul className="hidden xl:flex flex-row justify-between menus">
       {menuItemsData.map((menu, index) => {
         return (
           <SingleNavItem

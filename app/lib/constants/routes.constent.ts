@@ -11,7 +11,7 @@ export const Routes = {
   SUPPORT_ALLOW_IMPERSONATE: '/support/allow-impersonate',
   SUPPORT_CONTACT_US: '/support/contact-us',
   SUPPORT_TICKETS: '/support/tickets',
-  SUPPORT_SCHEDULE_CALL: '/support/schedule-call',
+  SUPPORT_TICKETS_CREATE: '/support/create-ticket',
   PLACE_AN_ORDER: '/place-an-order',
   COMPANY_INFORMATION: '/company-info',
   COMPANY_PROFILE: '/company-profile',
@@ -32,8 +32,7 @@ export const Routes = {
   FILTER_METALS: '/filter-metals',
   SAFETY: '/safety',
   ORDER_DETAILS: '/order-details',
-  PENDING_ORDER:'/pending-order',
-  SINGLE_PENDING_ITEM:'/single-pending-item',
+  PENDING_ORDER: '/pending-order',
+  SINGLE_PENDING_ITEM: '/single-pending-item',
   PROFILE: '/profile',
 };
-
