@@ -806,7 +806,8 @@ div[data-state='open'].fixed.inset-0 {
   @apply text-primary-500;
 }
 .cart-order table tr:hover td:last-child button,
-.cart-order table tr:hover td:nth-child(4) button {
+.cart-order table tr:hover td:nth-child(4) button,
+.cart-order table tr[data-state='selected'] td:last-child button {
   @apply bg-primary-200;
 }
 .cart-order table {

@@ -32,7 +32,7 @@ export default function CreateGroup({
           Save for later
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] track-an-order p-0 block">
+      <DialogContent className="sm:max-w-[452px] track-an-order p-0 block">
         <DialogHeader>
           <DialogTitle className="leading-6 font-bold italic text-lg text-grey-900 flex p-4 uppercase">
             Create a group
@@ -50,7 +50,7 @@ export default function CreateGroup({
             id="group-name"
             name="group-name"
             placeholder="Group Name"
-            className="active:!border-grey-100 focus:!border-grey-100 hover:!border-grey-100 focu:bg-white active:bg-white hover:bg-white !bg-white"
+            className="border border-grey-100 active:!border-grey-100 focus:!border-grey-100 hover:!border-grey-100 focu:bg-white active:bg-white hover:bg-white !bg-white placeholder:text-grey-500"
           />
         </div>
         <DialogFooter className="block p-4">
