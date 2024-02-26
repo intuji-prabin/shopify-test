@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import * as SliderPrimitive from '@radix-ui/react-slider';
-import {cn} from '~/lib/utils/utils';
+import { cn } from '~/lib/utils/utils';
 
 type SliderProps = {
   className?: string;
@@ -78,18 +78,18 @@ const Slider = React.forwardRef(
                 style={{
                   // Needs improvement in this calculation
                   left: `calc(${((value - min) / (max - min)) * 85}% + 0px)`,
-                  top: `-80px`,
+                  top: `-50px`,
                 }}
               >
-                <span className="text-sm font-medium bg-primary-500 text-neutral-white p-1.5 rounded relative after:content-['\25bc'] after:absolute after:bottom-[-14px] after:left-[25%] after:text-primary-500">
+                <span className="text-sm font-medium bg-primary-500 text-neutral-white p-1.5 rounded relative after:content-['\25bc'] after:absolute after:-bottom-[15px] after:left-[25%] after:text-primary-500">
                   {formatLabel ? formatLabel(value) : value}
                 </span>
               </div>
-              <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full border-4 border-primary-500 bg-white ring-offset-white transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300" />
+              <SliderPrimitive.Thumb className="block w-5 h-5 transition-colors bg-white border-4 rounded-full border-primary-500 ring-offset-white focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300" />
             </React.Fragment>
           ))}
         </SliderPrimitive.Root>
-        <div className="grid grid-cols-3 items-center">
+        <div className="grid items-center grid-cols-3">
           <input
             type="number"
             min={min}
@@ -99,7 +99,7 @@ const Slider = React.forwardRef(
             className="!border-grey-50 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             onChange={(e) => handleInputChange(0, Number(e.target.value))}
           />
-          <div className="flex justify-center items-center">
+          <div className="flex items-center justify-center">
             <div className="w-4 h-0.5 bg-grey-50"></div>
           </div>
           <input
@@ -119,4 +119,4 @@ const Slider = React.forwardRef(
 
 Slider.displayName = SliderPrimitive.Root.displayName;
 
-export {Slider};
+export { Slider };
