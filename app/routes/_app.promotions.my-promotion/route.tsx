@@ -173,6 +173,7 @@ export default function MyPromotionsPage() {
                   imageURL={promotion.image_url}
                   id={promotion.id}
                   myPromotion={true}
+                  expire_at={promotion.expaire_at}
                 />
                 <input
                   type="checkbox"
