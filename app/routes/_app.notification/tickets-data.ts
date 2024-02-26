@@ -1,6 +1,4 @@
-import {TicketColumn} from '../_app.support_.tickets/use-column';
-
-export const TicketsData: TicketColumn[] = [
+export const TicketsData = [
   {
     ticketId: '12345',
     contactName: 'John Doe',
