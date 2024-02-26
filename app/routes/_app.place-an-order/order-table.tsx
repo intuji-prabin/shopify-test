@@ -53,7 +53,7 @@ export default function OrderTable() {
         </div>
       </div>
 
-      <div className="container">
+      <div className="container ">
         <DataTable table={table} />
 
         {/* pagination starts here */}

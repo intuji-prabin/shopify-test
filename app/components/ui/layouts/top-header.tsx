@@ -82,7 +82,7 @@ export function NotificationNavbar() {
   ];
   return (
     <div className="navbar">
-      <ul className="nav-list flex gap-4 items-center h-full">
+      <ul className="nav-list flex gap-5 items-center h-full">
         {navIcons.map((navIcon) => (
           <li className="nav-item relative" key={navIcon.id}>
             <Link to={navIcon.url} className="info-block">

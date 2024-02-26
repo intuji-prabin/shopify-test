@@ -805,3 +805,13 @@ div[data-state='open'].fixed.inset-0 {
 .my-profile:hover h5 {
   @apply text-primary-500;
 }
+.cart-order table tr:hover td:last-child button,
+.cart-order table tr:hover td:nth-child(4) button {
+  @apply bg-primary-200;
+}
+.cart-order table {
+  @apply transition duration-500 ease-in-out delay-75;
+}
+.cart-order table thead th:first-child {
+  @apply text-center;
+}
