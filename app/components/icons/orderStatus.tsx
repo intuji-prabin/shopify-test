@@ -909,20 +909,20 @@ export function TabletHamburger({fillColor = '#313535'}: {fillColor?: string}) {
       <path
         d="M4 6L20 6"
         stroke="#FFE600"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <path
         d="M4 12L16 12"
         stroke="#FFE600"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <path
         d="M4 18L20 18"
         stroke="#FFE600"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );
