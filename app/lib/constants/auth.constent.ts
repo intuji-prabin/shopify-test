@@ -18,3 +18,8 @@ export const USER_DETAILS_SESSION_SECRET =
   'iFaXBRJ6HzfoNgOLmtwKudAVHyIfsYrRtNMxFZ7PI4M=';
 
 export const ADMIN_ACCESS_TOKEN = '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';
+
+export const SESSION_MAX_AGE = {
+  '30_DAYS': 60 * 60 * 24 * 30,
+  '7_DAYS': 60 * 60 * 24 * 7,
+};
