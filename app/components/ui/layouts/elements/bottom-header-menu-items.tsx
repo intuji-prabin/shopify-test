@@ -14,6 +14,7 @@ import {
   ContentDropdownMobile,
   ResourcesDropdownMobile,
 } from './mobile-navbar/mobile-drop';
+import {SetStateAction} from 'react';
 
 export const menuItemsData = [
   {

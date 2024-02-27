@@ -12,7 +12,10 @@ import {Content} from '~/components/icons/content';
 
 import {Routes} from '~/lib/constants/routes.constent';
 import Resources from '~/components/icons/resources';
+import {useHamburgerMenu} from '../HamburgerMenuContext';
 export function AccountDropDownMobile() {
+  const {isOpen, toggleMenu} = useHamburgerMenu();
+
   const accounts = [
     {
       title: 'Orders',
@@ -56,6 +59,7 @@ export function AccountDropDownMobile() {
                       to={account.url}
                       className="relative flex items-center gap-1 menu-links 
                     "
+                      onClick={() => toggleMenu(!isOpen)}
                     >
                       {account.title}
                       {account.icon}
@@ -72,6 +76,7 @@ export function AccountDropDownMobile() {
 }
 
 export function ContentDropdownMobile() {
+  const {isOpen, toggleMenu} = useHamburgerMenu();
   const contentManagement = [
     {
       id: 1,
@@ -102,6 +107,7 @@ export function ContentDropdownMobile() {
                 <Link
                   to={account.url}
                   className="relative flex items-center gap-1 menu-links"
+                  onClick={() => toggleMenu(!isOpen)}
                 >
                   {' '}
                   {account.icon}
@@ -117,9 +123,11 @@ export function ContentDropdownMobile() {
 }
 
 export function ResourcesDropdownMobile() {
-  const contentManagement = [
+  const {isOpen, toggleMenu} = useHamburgerMenu();
+
+  const resources = [
     {
-      title: 'Promotions',
+      title: 'Certificate Generation',
       url: Routes.CERTIFICATE_GENERATION,
       icon: <Invoice fillColor="#fff" />,
     },
@@ -138,7 +146,7 @@ export function ResourcesDropdownMobile() {
         </AccordionTrigger>
         <AccordionContent>
           <ul>
-            {contentManagement.map((account, index) => (
+            {resources.map((account, index) => (
               <li
                 key={index}
                 className="flex flex-row items-center justify-center gap-1 p-3 text-lg italic font-bold text-white menu-items group"
@@ -146,6 +154,7 @@ export function ResourcesDropdownMobile() {
                 <Link
                   to={account.url}
                   className="relative flex items-center gap-1 menu-links"
+                  onClick={() => toggleMenu(!isOpen)}
                 >
                   {' '}
                   {account.icon}
