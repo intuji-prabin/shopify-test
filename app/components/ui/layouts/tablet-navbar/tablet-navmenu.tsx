@@ -9,7 +9,11 @@ import {Button} from '../../button';
 import CloseMenu from '~/components/icons/closeMenu';
 import {useOutsideClick} from '~/hooks/useOutsideClick';
 
-export default function TabletNavmenu() {
+export default function TabletNavmenu({
+  setIsHamOpen,
+}: {
+  setIsHamOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [ishamburgerOpen, setIsHamburgerOpen] = useState(false);
   const tabletSectionRef = useRef<HTMLDivElement>(null);
   useOutsideClick(tabletSectionRef, () => setIsHamburgerOpen(false));
@@ -40,7 +44,7 @@ export default function TabletNavmenu() {
             </div>
             <div className="bg-primary-500 p-4">
               {' '}
-              <NavMenu />
+              <NavMenu setIsHamOpen={setIsHamOpen} />
               <div className="flex flex-col justify-between gap-52 mt-2">
                 <OrderTrackMobile />
                 <LogoutForm />

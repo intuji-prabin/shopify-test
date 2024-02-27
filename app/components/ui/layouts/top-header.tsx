@@ -6,7 +6,7 @@ import {
   TabletHamburger,
   UserProfile,
 } from '~/components/icons/orderStatus';
-import {useRef, useState} from 'react';
+import {SetStateAction, useRef, useState} from 'react';
 import {Button} from '~/components/ui/button';
 import {
   DropdownMenu,
@@ -57,7 +57,11 @@ export function LogoIcon({logo_url}: {logo_url: string}) {
   );
 }
 
-export function NotificationNavbar() {
+export function NotificationNavbar({
+  setIsHamOpen,
+}: {
+  setIsHamOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const navIcons = [
     {
       id: 1,
@@ -132,7 +136,11 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
       <div className="bg-grey-900">
         <div className="container py-5 flex  gap-3 justify-normal xl:justify-between items-center">
           <div className="flex gap-4 items-center">
-            <TabletNavmenu />
+            <TabletNavmenu
+              setIsHamOpen={function (value: SetStateAction<boolean>): void {
+                throw new Error('Function not implemented.');
+              }}
+            />
             {/* home logo begins here */}
             <LogoIcon logo_url={'/Logo.png'} />
           </div>
@@ -215,7 +223,11 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
             </div>
 
             {/* notification menu starts here */}
-            <NotificationNavbar />
+            <NotificationNavbar
+              setIsHamOpen={function (value: SetStateAction<boolean>): void {
+                throw new Error('Function not implemented.');
+              }}
+            />
           </div>
 
           {/* order track begins here  */}

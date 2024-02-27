@@ -14,6 +14,7 @@ import {
   ContentDropdownMobile,
   ResourcesDropdownMobile,
 } from './mobile-navbar/mobile-drop';
+import {SetStateAction} from 'react';
 
 export const menuItemsData = [
   {
@@ -136,7 +137,13 @@ export const mobileMenuItemsData = [
   },
   {
     id: 1,
-    title: <AccountDropDownMobile />,
+    title: (
+      <AccountDropDownMobile
+        setIsHamOpen={function (value: SetStateAction<boolean>): void {
+          throw new Error('Function not implemented.');
+        }}
+      />
+    ),
   },
   {
     id: 2,
@@ -146,7 +153,13 @@ export const mobileMenuItemsData = [
   },
   {
     id: 3,
-    title: <ContentDropdownMobile />,
+    title: (
+      <ContentDropdownMobile
+        setIsHamOpen={function (value: SetStateAction<boolean>): void {
+          throw new Error('Function not implemented.');
+        }}
+      />
+    ),
   },
   {
     id: 4,
@@ -162,7 +175,13 @@ export const mobileMenuItemsData = [
   },
   {
     id: 6,
-    title: <ResourcesDropdownMobile />,
+    title: (
+      <ResourcesDropdownMobile
+        setIsHamOpen={function (value: SetStateAction<boolean>): void {
+          throw new Error('Function not implemented.');
+        }}
+      />
+    ),
   },
   {
     id: 7,

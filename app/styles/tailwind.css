@@ -21,9 +21,7 @@ body {
   flex-direction: column;
   @apply bg-primary-25;
 }
-footer {
-  margin-top: auto;
-}
+
 section {
   @apply mt-6;
 }

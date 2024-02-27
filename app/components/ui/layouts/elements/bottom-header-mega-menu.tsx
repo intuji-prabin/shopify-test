@@ -1,16 +1,16 @@
-import { Link } from '@remix-run/react';
-import { useLayoutEffect, useState } from 'react';
+import {Link} from '@remix-run/react';
+import {useLayoutEffect, useState} from 'react';
 import ArrowForward from '~/components/icons/arrowForward';
-import { Payload } from '~/routes/_app/app.server';
+import {Payload} from '~/routes/_app/app.server';
 
-export const MegaMenu = ({ categories }: { categories: Payload[] }) => {
+export const MegaMenu = ({categories}: {categories: Payload[]}) => {
   //State to store the selected/active menu and submenu IDs
   const [activeMenu, setActiveMenu] = useState<{
     menu: Payload;
     subMenu: Payload;
   }>({
-    menu: { id: 1, title: '', identifier: '', child_categories: [] },
-    subMenu: { id: 1, title: '', identifier: '', child_categories: [] },
+    menu: {id: 1, title: '', identifier: '', child_categories: []},
+    subMenu: {id: 1, title: '', identifier: '', child_categories: []},
   });
   useLayoutEffect(() => {
     if (!categories) return;
@@ -32,9 +32,11 @@ export const MegaMenu = ({ categories }: { categories: Payload[] }) => {
     });
   }, []);
 
-  const activeLevel1Menu = categories?.find(menu => menu?.id === activeMenu?.menu?.id);
+  const activeLevel1Menu = categories?.find(
+    (menu) => menu?.id === activeMenu?.menu?.id,
+  );
   const activeLevel2SubMenu = activeLevel1Menu?.child_categories?.find(
-    subMenu => subMenu?.id === activeMenu?.subMenu?.id
+    (subMenu) => subMenu?.id === activeMenu?.subMenu?.id,
   );
 
   return (
@@ -49,10 +51,11 @@ export const MegaMenu = ({ categories }: { categories: Payload[] }) => {
               <li
                 key={'list' + menu.id}
                 className={`relative  flex menu-hov justify-between 
-              ${activeMenu.menu?.id === menu.id
-                    ? 'bg-primary-100 text-primary-500'
-                    : ''
-                  }
+              ${
+                activeMenu.menu?.id === menu.id
+                  ? 'bg-primary-100 text-primary-500'
+                  : ''
+              }
             `}
                 onMouseOver={() =>
                   setActiveMenu((prevMenu) => ({
@@ -69,10 +72,7 @@ export const MegaMenu = ({ categories }: { categories: Payload[] }) => {
                   }))
                 }
               >
-                <Link
-                  to="/categories"
-                  className="w-full"
-                >
+                <Link to="/categories" className="w-full">
                   <p className="flex flex-row-reverse items-center justify-between w-full px-2 py-1 text-lg rounded menu-hov">
                     {' '}
                     <ArrowForward width={'24px'} height={'24px'} />
@@ -94,69 +94,73 @@ export const MegaMenu = ({ categories }: { categories: Payload[] }) => {
               ?.find((menu: Payload) => menu?.id === activeMenu?.menu.id)
               ?.child_categories?.map((subMenu: Payload) => {
                 return (
-                  <Link
-                    to={`/${activeMenu?.menu?.identifier}/${subMenu?.identifier}`}
-                    className="w-full"
-                  >
-                    <li
-                      key={subMenu.id}
-                      className={`relative text-grey-900 flex menu-hov font-medium not-italic text-lg items-center
-               ${activeMenu?.subMenu?.id === subMenu.id
-                          ? 'bg-primary-100 text-primary-500'
-                          : ''
-                        }
+                  <li
+                    key={subMenu.id}
+                    className={`relative text-grey-900 flex menu-hov font-medium not-italic text-lg items-center
+               ${
+                 activeMenu?.subMenu?.id === subMenu.id
+                   ? 'bg-primary-100 text-primary-500'
+                   : ''
+               }
               `}
-                      onMouseOver={() =>
-                        setActiveMenu((prevMenu) => ({ ...prevMenu, subMenu }))
-                      }
+                    onMouseOver={() =>
+                      setActiveMenu((prevMenu) => ({...prevMenu, subMenu}))
+                    }
+                  >
+                    <Link
+                      to={`/${activeMenu?.menu?.identifier}/${subMenu?.identifier}`}
+                      className="w-full"
                     >
                       <p className="flex flex-row-reverse items-center justify-between px-2 py-1 rounded menu-hov between">
                         {' '}
-                        {subMenu.child_categories && subMenu.child_categories.length > 0 && (
-                          <ArrowForward width={'24px'} height={'24px'} />
-                        )}
+                        {subMenu.child_categories &&
+                          subMenu.child_categories.length > 0 && (
+                            <ArrowForward width={'24px'} height={'24px'} />
+                          )}
                         <span className="w-[169px] text-lg font-medium text-grey-900">
                           {subMenu.title}{' '}
                         </span>
                       </p>
-                    </li>
-                  </Link>
-                )
+                    </Link>
+                  </li>
+                );
               })}
           </ul>
           {/* Level 2 Menus End Here */}
 
           {/* Level 3 i.e Final Level Menus Begin Here */}
-          {activeLevel2SubMenu?.child_categories && activeLevel2SubMenu?.child_categories?.length > 0 && (
-            <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] px-2 max-h-[330px] overflow-y-auto">
-              {/* Finding the currently active Level 1 Menu & Level 2 Sub Menu and displaying only its items */}
-              {categories
-                ?.find((menu: Payload) => menu?.id === activeMenu?.menu?.id)
-                ?.child_categories?.find(
-                  (subMenu: Payload) => subMenu?.id === activeMenu?.subMenu?.id,
-                )
-                ?.child_categories?.map((subMenu: Payload) => {
-                  return (
-                    <li
-                      key={subMenu.id}
-                      className="relative flex items-center text-lg not-italic font-medium text-grey-900 menu-hov"
-                    >
-                      <Link
-                        to={`/${activeMenu?.menu?.identifier}/${activeMenu?.subMenu?.identifier}/${subMenu?.identifier}`}
-                        className="w-full"
-                      >
-                        <p className="flex items-center px-2 py-1 rounded menu-hov justify- ">
-                          {' '}
-                          <span className="w-[169px] text-grey-900 text-lg font-medium">
-                            {subMenu.title}
-                          </span>
-                        </p>
-                      </Link>
-                    </li>
+          {activeLevel2SubMenu?.child_categories &&
+            activeLevel2SubMenu?.child_categories?.length > 0 && (
+              <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] px-2 max-h-[330px] overflow-y-auto">
+                {/* Finding the currently active Level 1 Menu & Level 2 Sub Menu and displaying only its items */}
+                {categories
+                  ?.find((menu: Payload) => menu?.id === activeMenu?.menu?.id)
+                  ?.child_categories?.find(
+                    (subMenu: Payload) =>
+                      subMenu?.id === activeMenu?.subMenu?.id,
                   )
-                })}
-            </ul>
-          )}
+                  ?.child_categories?.map((subMenu: Payload) => {
+                    return (
+                      <li
+                        key={subMenu.id}
+                        className="relative flex items-center text-lg not-italic font-medium text-grey-900 menu-hov"
+                      >
+                        <Link
+                          to={`/${activeMenu?.menu?.identifier}/${activeMenu?.subMenu?.identifier}/${subMenu?.identifier}`}
+                          className="w-full"
+                        >
+                          <p className="flex items-center px-2 py-1 rounded menu-hov justify- ">
+                            {' '}
+                            <span className="w-[169px] text-grey-900 text-lg font-medium">
+                              {subMenu.title}
+                            </span>
+                          </p>
+                        </Link>
+                      </li>
+                    );
+                  })}
+              </ul>
+            )}
           {/* Level 3 i.e Final Level Menus End Here */}
         </ul>
       )}

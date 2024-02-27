@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react';
+import {SetStateAction, useRef, useState} from 'react';
 import CloseMenu from '~/components/icons/closeMenu';
 import HamburgerIcon from '~/components/icons/hamburgerIcon';
 import {Button} from '../../../button';
@@ -10,6 +10,8 @@ import NavMenu from './nav-menu';
 import OrderTrackMobile from './order-track';
 import LogoutForm from './logout-form';
 import UserProfile from './user-profle';
+import {mobileMenuItemsData} from '../bottom-header-menu-items';
+import {Link} from '@remix-run/react';
 
 export default function MobileNav() {
   const [isHamOpen, setIsHamOpen] = useState(false);
@@ -54,10 +56,14 @@ export default function MobileNav() {
               {/* user profile starts here */}
               <UserProfile user_name={'Niel De Grass'} />
               {/* notification menu bar starts */}
-              <NotificationNavbar />
+              <NotificationNavbar
+                setIsHamOpen={function (value: SetStateAction<boolean>): void {
+                  throw new Error('Function not implemented.');
+                }}
+              />
             </div>
             {/* menu navigation starts here */}
-            <NavMenu />
+            <NavMenu setIsHamOpen={setIsHamOpen} />
 
             {/*  order track starts here */}
             <OrderTrackMobile />
