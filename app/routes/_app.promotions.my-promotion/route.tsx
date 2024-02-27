@@ -112,8 +112,8 @@ export default function MyPromotionsPage() {
   });
 
   const pageParam = 'page';
-  const [queryParams] = useSearchParams();
-  const currentPage = Number(queryParams.get(pageParam) || 1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = Number(searchParams.get(pageParam) || 1);
 
   const navigation = useNavigation();
 
@@ -123,7 +123,7 @@ export default function MyPromotionsPage() {
 
   const totalPages = Math.ceil(totalPromotionCount / PAGE_LIMIT);
 
-  const nextQuery = new URLSearchParams(queryParams);
+  const nextQuery = new URLSearchParams(searchParams);
   nextQuery.set(pageParam, String(currentPage + 1));
 
   const isLoadMoreDisabled = currentPage >= totalPages;
@@ -238,18 +238,22 @@ export default function MyPromotionsPage() {
 
       {!isLoadMoreDisabled && (
         <div className="flex justify-center pt-6">
-          <Link prefetch="intent" to={`?${nextQuery.toString()}`}>
-            <Button
-              size="large"
-              type="button"
-              variant="primary"
-              data-cy="load-more"
-              className="min-w-64"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Loading...' : 'Load More'}
-            </Button>
-          </Link>
+          <Button
+            type="button"
+            variant="primary"
+            size="large"
+            className="min-w-64"
+            disabled={isLoading}
+            onClick={() => {
+              const params = new URLSearchParams();
+              params.set(pageParam, String(currentPage + 1));
+              setSearchParams(params, {
+                preventScrollReset: true,
+              });
+            }}
+          >
+            {isLoading ? 'Loading...' : 'Load More'}
+          </Button>
         </div>
       )}
 
@@ -257,6 +261,7 @@ export default function MyPromotionsPage() {
         method="GET"
         onChange={(event: FormEvent<HTMLFormElement>) => {
           submit(event.currentTarget);
+          setCheckedItems({ count: 0, promotions: [] });
         }}
         className="absolute top-20 inset-x-6 sm:right-6 sm:top-[30px] sm:left-auto pl-0 sm:pl-6 bg-white"
       >

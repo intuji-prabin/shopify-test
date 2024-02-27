@@ -1,17 +1,22 @@
-import {NavLink, Outlet} from '@remix-run/react';
-import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {Separator} from '~/components/ui/separator';
+import { NavLink, Outlet } from '@remix-run/react';
+import { LoaderFunctionArgs, redirect } from '@remix-run/server-runtime';
+import { MetaFunction } from '@shopify/remix-oxygen';
+import { Separator } from '~/components/ui/separator';
+import { Routes } from '~/lib/constants/routes.constent';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import PromotionHeader from '~/routes/_app.promotions/promotion-header';
-import {MetaFunction} from '@shopify/remix-oxygen';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Promotions'}];
+  return [{ title: 'Promotions' }];
 };
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
-  return json({});
+  const url = new URL(request.url);
+  if (url.pathname === "/promotions") {
+    return redirect(`${Routes.PROMOTIONS}`);
+  }
+  return null;
 }
 
 const routes = [
@@ -36,12 +41,12 @@ const Promotions = () => {
               <NavLink
                 key={route.link}
                 to={route.link}
-                className={({isActive, isPending}) =>
+                className={({ isActive, isPending }) =>
                   isPending
                     ? 'py-2 px-4 text-center border-b-[3px] border-b-transparent'
                     : isActive
-                    ? 'py-2 px-4 text-center border-b-[3px] text-primary-500 border-b-primary-500'
-                    : 'py-2  px-4 text-center border-b-[3px] border-b-transparent text-grey-400'
+                      ? 'py-2 px-4 text-center border-b-[3px] text-primary-500 border-b-primary-500'
+                      : 'py-2  px-4 text-center border-b-[3px] border-b-transparent text-grey-400'
                 }
               >
                 {route.name}

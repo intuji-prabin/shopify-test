@@ -90,7 +90,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   try {
-    const { userDetails } = await getUserDetails(request);
     const promotionId = params?.promotionId as string;
     const response = await getMyPromotionById(promotionId);
 
@@ -235,6 +234,9 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     }
   };
 
+  let imageName = companyInfo.companyName;
+  imageName = imageName.replace(/ /g, '_');
+
   return (
     <div className="bg-grey-25">
       {isLoading && (
@@ -252,7 +254,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
       <section className="container pt-8 pb-1">
         <div className="flex flex-wrap justify-between gap-4">
           <BackButton title="Edit Promotion" />
-          <PromotionNavigation canvasRef={canvasRef} />
+          <PromotionNavigation canvasRef={canvasRef} imageName={imageName} />
         </div>
       </section>
       <section className="container mt-1">

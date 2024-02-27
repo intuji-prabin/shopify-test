@@ -54,17 +54,17 @@ export default function AvailablePromotionPage() {
 
   const pageParam = 'page';
 
-  const [queryParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const navigation = useNavigation();
 
   const submit = useSubmit();
 
-  const currentPage = Number(queryParams.get(pageParam) || 1);
+  const currentPage = Number(searchParams.get(pageParam) || 1);
 
   const totalPages = Math.ceil(totalPromotionCount / PAGE_LIMIT);
 
-  const nextQuery = new URLSearchParams(queryParams);
+  const nextQuery = new URLSearchParams(searchParams);
   nextQuery.set(pageParam, String(currentPage + 1));
 
   const isLoadMoreDisabled = currentPage >= totalPages;
@@ -97,22 +97,25 @@ export default function AvailablePromotionPage() {
           </h4>
         </div>
       )}
-
       <div className="flex justify-center pt-6">
         {!isLoadMoreDisabled && (
           <div className="flex justify-center pt-6">
-            <Link prefetch="intent" to={`?${nextQuery.toString()}`}>
-              <Button
-                size="large"
-                type="button"
-                variant="primary"
-                data-cy="load-more"
-                className="min-w-64"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Loading...' : 'Load More'}
-              </Button>
-            </Link>
+            <Button
+              type="button"
+              variant="primary"
+              size="large"
+              className="min-w-64"
+              disabled={isLoading}
+              onClick={() => {
+                const params = new URLSearchParams();
+                params.set(pageParam, String(currentPage + 1));
+                setSearchParams(params, {
+                  preventScrollReset: true,
+                });
+              }}
+            >
+              {isLoading ? 'Loading...' : 'Load More'}
+            </Button>
           </div>
         )}
       </div>
