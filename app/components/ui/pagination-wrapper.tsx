@@ -1,5 +1,5 @@
-import { FormEvent } from 'react';
-import { Form, useSearchParams, useSubmit } from '@remix-run/react';
+import {FormEvent} from 'react';
+import {Form, useSearchParams, useSubmit} from '@remix-run/react';
 import {
   PaginationContent,
   Pagination,
@@ -14,10 +14,10 @@ type PaginationPropsType = {
 
 function range(start: number, end: number) {
   const length = end - start + 1;
-  return Array.from({ length }, (_, index) => index + start);
+  return Array.from({length}, (_, index) => index + start);
 }
 
-export function PaginationWrapper({ totalCount, pageSize }: PaginationPropsType) {
+export function PaginationWrapper({totalCount, pageSize}: PaginationPropsType) {
   const pageParam = 'page';
 
   const submit = useSubmit();
@@ -48,51 +48,64 @@ export function PaginationWrapper({ totalCount, pageSize }: PaginationPropsType)
 
   // const pageChange = new URLSearchParams(queryParams);
 
+  const startIndex = (currentPage - 1) * pageSize + 1;
+
+  const endIndex = Math.min(startIndex + pageSize - 1, totalCount);
+
   return (
-    <Pagination className="items-center justify-end">
-      <div className="flex items-center gap-6">
-        <Form
-          method="get"
-          onChange={(event: FormEvent<HTMLFormElement>) => {
-            submit(event.currentTarget);
-          }}
-          className="flex items-center space-x-2"
-        >
-          <label htmlFor="page" className="text-base font-medium text-grey-400">
-            Page :{' '}
-          </label>
-          <select
-            name="page"
-            value={currentPage} // default value doesn't work
-            onChange={() => { }}
-            className=" !py-1.5 appearance-none !border-grey-50 text-base font-medium text-grey-900"
+    <div className="bg-neutral-white py-4 px-6 border-t flex items-center justify-between">
+      <p className="w-40 text-grey-400 font-medium">
+        {startIndex}-{endIndex} of {totalCount} Items
+      </p>
+      <Pagination className="items-center justify-end">
+        <div className="flex items-center gap-6">
+          <Form
+            method="get"
+            onChange={(event: FormEvent<HTMLFormElement>) => {
+              submit(event.currentTarget);
+            }}
+            className="flex items-center space-x-2"
           >
-            {paginationRange &&
-              paginationRange.map((pageNumber, index) => (
-                <option key={index} value={pageNumber}>
-                  {pageNumber}
-                </option>
-              ))}
-          </select>
-        </Form>
-        <PaginationContent>
-          <PaginationPrevious
-            to={`?${previousQuery.toString()}`}
-            aria-disabled={isPreviousButtonDisabled}
-            className={isPreviousButtonDisabled ? 'pointer-events-none' : ''}
-            tabIndex={isPreviousButtonDisabled ? -1 : undefined}
-          />
-          <p className="font-medium text-grey-400 w-7">
-            <span className="text-grey-900">{currentPage}</span> / {totalPages}
-          </p>
-          <PaginationNext
-            to={`?${nextQuery.toString()}`}
-            aria-disabled={isNextButtonDisabled}
-            className={isNextButtonDisabled ? 'pointer-events-none' : ''}
-            tabIndex={isNextButtonDisabled ? -1 : undefined}
-          />
-        </PaginationContent>
-      </div>
-    </Pagination>
+            <label
+              htmlFor="page"
+              className="text-base font-medium text-grey-400"
+            >
+              Page :{' '}
+            </label>
+            <select
+              name="page"
+              value={currentPage} // default value doesn't work
+              onChange={() => {}}
+              className=" !py-1.5 appearance-none !border-grey-50 text-base font-medium text-grey-900"
+            >
+              {paginationRange &&
+                paginationRange.map((pageNumber, index) => (
+                  <option key={index} value={pageNumber}>
+                    {pageNumber}
+                  </option>
+                ))}
+            </select>
+          </Form>
+          <PaginationContent>
+            <PaginationPrevious
+              to={`?${previousQuery.toString()}`}
+              aria-disabled={isPreviousButtonDisabled}
+              className={isPreviousButtonDisabled ? 'pointer-events-none' : ''}
+              tabIndex={isPreviousButtonDisabled ? -1 : undefined}
+            />
+            <p className="font-medium text-grey-400 w-7">
+              <span className="text-grey-900">{currentPage}</span> /{' '}
+              {totalPages}
+            </p>
+            <PaginationNext
+              to={`?${nextQuery.toString()}`}
+              aria-disabled={isNextButtonDisabled}
+              className={isNextButtonDisabled ? 'pointer-events-none' : ''}
+              tabIndex={isNextButtonDisabled ? -1 : undefined}
+            />
+          </PaginationContent>
+        </div>
+      </Pagination>
+    </div>
   );
 }

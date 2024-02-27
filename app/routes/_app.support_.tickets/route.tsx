@@ -11,10 +11,12 @@ import {useColumn} from '~/routes/_app.support_.tickets/use-column';
 import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
 import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
 import {HorizontalHamburgerIcon} from '~/components/icons/hamburgerIcon';
-import TicketsFilterForm from '~/routes/_app.support_.tickets/filter-form';
+import TicketsFilterForm, {
+  TicketsFilterFormType,
+} from '~/routes/_app.support_.tickets/filter-form';
 import {LoaderFunctionArgs, MetaFunction, json} from '@shopify/remix-oxygen';
 import {getAllTickets} from '~/routes/_app.support_.tickets/support-tickets';
-import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
+import {getSupportContact} from '~/routes/_app.support_.contact-us/support-contact-us.server';
 import {
   Sheet,
   SheetContent,
@@ -27,6 +29,7 @@ import {
   isRouteErrorResponse,
   useLoaderData,
   useRouteError,
+  useSearchParams,
 } from '@remix-run/react';
 
 export const meta: MetaFunction = () => {
@@ -42,17 +45,33 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 
   const {totalCount, tickets} = await getAllTickets({customerId, request});
 
-  const roles = await getCustomerRolePermission(context);
+  const supportContact = await getSupportContact({context});
 
-  return json({totalCount, tickets, roles});
+  const departmentOptions = supportContact.map((item) => ({
+    title: item.department,
+    value: item.id.split('/').pop() as string,
+  }));
+
+  return json({totalCount, tickets, departmentOptions});
 }
 
 export default function TicketsPage() {
-  const {tickets, totalCount, roles} = useLoaderData<typeof loader>();
+  const {tickets, totalCount, departmentOptions} =
+    useLoaderData<typeof loader>();
 
   const {columns} = useColumn();
 
   const {table} = useTable(columns, tickets);
+
+  const [searchParams] = useSearchParams();
+
+  const defaultValues: TicketsFilterFormType = {};
+
+  defaultValues.status = searchParams.get('status') || undefined;
+  // defaultValues.createdDateFrom = searchParams.get('createdDateFrom') || '';
+  // defaultValues.createdDateTo = searchParams.get('createdDateTo') || '';
+  defaultValues.departmentId = searchParams.get('departmentId') || '';
+  console.log('defaultValues', defaultValues);
 
   return (
     <section className="container">
@@ -86,17 +105,16 @@ export default function TicketsPage() {
               <SheetTitle className="text-3xl font-bold">Filter</SheetTitle>
             </SheetHeader>
             <Separator className="" />
-            <TicketsFilterForm options={roles.data} />
+            <TicketsFilterForm
+              options={departmentOptions}
+              defaultValues={defaultValues}
+            />
           </SheetContent>
         </Sheet>
       </div>
       <DataTable table={table} columns={columns} />
-      <div className="bg-neutral-white py-4 px-6 border-t flex items-center justify-between">
-        <p className="w-40 text-grey-400 font-medium">
-          1-7 of {totalCount} Items
-        </p>
-        <PaginationWrapper pageSize={5} totalCount={totalCount} />
-      </div>
+
+      <PaginationWrapper pageSize={3} totalCount={totalCount} />
     </section>
   );
 }

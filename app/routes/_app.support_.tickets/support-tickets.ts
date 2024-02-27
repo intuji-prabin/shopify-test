@@ -23,16 +23,19 @@ export async function getAllTickets({
 }) {
   try {
     const params = [
+      'page',
       'search',
-      'createdDateFrom',
-      'createdDateTo',
-      'department',
       'status',
+      'departmentId',
+      'createdDateTo',
+      'createdDateFrom',
     ];
 
     const url = `${ENDPOINT.SUPPORT.GET_TICKETS}/${customerId}?`;
 
     const generatedUrl = generateUrlWithParams({url, params, request});
+
+    console.log('generatedUrl', generatedUrl);
 
     const results = await useFetch<ResponseData>({
       method: AllowedHTTPMethods.GET,

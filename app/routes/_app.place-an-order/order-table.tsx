@@ -56,13 +56,7 @@ export default function OrderTable() {
       <div className="container cart-order">
         <DataTable table={table} />
 
-        {/* pagination starts here */}
-        <div className="bg-neutral-white py-4 px-6 border-t flex items-center justify-between">
-          <p className="w-40 text-grey-400 font-medium">
-            1-7 of {TicketsData.length} Items
-          </p>
-          <PaginationWrapper pageSize={5} totalCount={TicketsData.length} />
-        </div>
+        <PaginationWrapper pageSize={5} totalCount={TicketsData.length} />
       </div>
       <button
         className="border rounded p-2 mb-2"

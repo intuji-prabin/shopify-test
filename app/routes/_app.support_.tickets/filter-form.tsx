@@ -9,18 +9,19 @@ import {SheetClose, SheetFooter} from '~/components/ui/sheet';
 
 type TicketsFilterFormProps = {
   options: SelectInputOptions[];
+  defaultValues?: TicketsFilterFormType;
 };
 
 const ticketsStatusOptions: SelectInputOptions[] = [
-  {title: 'Pending', value: 'pending'},
   {title: 'Closed', value: 'closed'},
+  {title: 'Pending', value: 'pending'},
   {title: 'In Progress', value: 'in_progress'},
 ];
 
 const TicketsFilterFormSchema = z.object({
   createdDateFrom: z.string().trim().optional(),
   createdDateTo: z.string().trim().optional(),
-  department: z.string().trim().optional(),
+  departmentId: z.string().trim().optional(),
   status: z.string().trim().optional(),
 });
 
@@ -32,11 +33,15 @@ export type TicketsFilterFormType = z.infer<typeof TicketsFilterFormSchema>;
 
 export type TicketsFilterFormFieldNameType = keyof TicketsFilterFormType;
 
-export default function TicketsFilterForm({options}: TicketsFilterFormProps) {
+export default function TicketsFilterForm({
+  options,
+  defaultValues,
+}: TicketsFilterFormProps) {
   return (
     <ValidatedForm
       id="tickets-filter-form"
       method="GET"
+      defaultValues={defaultValues}
       validator={TicketsFilterFormSchemaValidator}
     >
       <div>
@@ -56,7 +61,7 @@ export default function TicketsFilterForm({options}: TicketsFilterFormProps) {
         <Separator />
         <div className="p-6">
           <h5 className="pb-2">Department</h5>
-          <SelectInput name="department" label="All" options={options} />
+          <SelectInput name="departmentId" label="All" options={options} />
         </div>
         <Separator />
         <div className="p-6">
