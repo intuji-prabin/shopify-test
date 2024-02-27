@@ -1,4 +1,4 @@
-import {SetStateAction, useRef, useState} from 'react';
+import {useRef, useState} from 'react';
 import {TabletHamburger} from '~/components/icons/orderStatus';
 
 import NavMenu from '../elements/mobile-navbar/nav-menu';
