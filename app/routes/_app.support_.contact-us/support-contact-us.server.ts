@@ -1,6 +1,7 @@
 import {AppLoadContext} from '@shopify/remix-oxygen';
 
 export type ContactUsDataType = {
+  id: string;
   service: string;
   imageUrl: string;
   name: string;
@@ -32,6 +33,7 @@ export async function getSupportContact({
 
 const formattedResponse = (response: any) => {
   const data = response.map((item: any) => ({
+    id: item?.node?.id ?? null,
     imageUrl: item?.node?.profile_image?.reference?.previewImage?.url ?? null,
     service: item?.node?.team_position?.value ?? null,
     name: item?.node?.name?.value ?? null,
@@ -47,6 +49,7 @@ const SUPPORT_CONTACT_DATA_QUERY = `query getSUpportContacts {
     metaobjects(type : "cigweld_contact_us", first: 100) {
       edges {
           node {
+             id
               team_position : field( key: "cigweld_team_position" ) { value }
               name : field( key: "member_name" ) { value }
               phone : field( key: "phone_number" ) { value }
