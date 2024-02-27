@@ -1,11 +1,11 @@
-import {Link} from '@remix-run/react';
-import {useState} from 'react';
+import { Link } from '@remix-run/react';
+import { useState } from 'react';
 import {
   ProductLoveRed,
   ProductLoveWhite,
   TooltipInfo,
 } from '~/components/icons/orderStatus';
-import {Button} from '~/components/ui/button';
+import { Button } from '~/components/ui/button';
 
 export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
 
@@ -21,7 +21,9 @@ export function ProductCard({
   variants,
   featuredImageUrl,
   imageBackgroundColor,
+  handle
 }: ProductCardProps) {
+
   return (
     <div className="bg-white single-product-card">
       <div className="relative h-full">
@@ -36,6 +38,7 @@ export function ProductCard({
           productName={title}
           companyPrice={companyPrice}
           defaultPrice={defaultPrice}
+          handle={handle}
         />
       </div>
     </div>
@@ -47,6 +50,7 @@ type ProductCardInfoProps = {
   title: string;
   defaultPrice?: string;
   companyPrice?: string;
+  handle: string;
 };
 
 type VariantType = {
@@ -64,10 +68,11 @@ export function ProductCardInfo({
   sku,
   productName,
   defaultPrice,
-  companyPrice
+  companyPrice,
+  handle
 }: // buyPrice,
-// rppPrice,
-any) {
+  // rppPrice,
+  any) {
   return (
     <div className="p-4">
       <div className="sm:pb-[146px]">
@@ -76,8 +81,9 @@ any) {
             SKU:{sku}
           </p>
           <h5 className="text-lg italic font-bold leading-6 whitespace-normal max-h-12 text-grey-900 line-clamp-2 text-ellipsis">
-            {productName}
-            {productName}
+            <Link to={handle}>
+              {productName}
+            </Link>
           </h5>
         </div>
         <div className="mt-3 sm:absolute bottom-4 inset-x-4">
@@ -89,16 +95,16 @@ any) {
                 </p>
                 <div className="info-block">
                   <p className="flex items-center justify-center w-5 h-5 ">
-                    <Link to="" data-tooltip="Recommended retail price">
+                    <div className='cursor-pointer' data-tooltip="Recommended retail price">
                       <span>
                         <TooltipInfo />
                       </span>
-                    </Link>
+                    </div>
                   </p>
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
-                { companyPrice ?? "00.00"}
+                {companyPrice ?? "00.00"}
               </h3>
               <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
             </div>
@@ -109,24 +115,23 @@ any) {
                 </p>
                 <div className="info-block">
                   <p className="flex items-center justify-center w-5 h-5 ">
-                    <Link
-                      to=""
+                    <div className='cursor-pointer'
                       data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts"
                     >
                       <span>
                         <TooltipInfo />
                       </span>
-                    </Link>
+                    </div>
                   </p>
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-                { defaultPrice ?? "00.00" }
+                {defaultPrice ?? "00.00"}
               </h3>
               <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
             </div>
           </div>
-          <ProductCardButtons />
+          <ProductCardButtons handle={handle} />
         </div>
       </div>
     </div>
@@ -149,9 +154,8 @@ function ProductCardImage({
 
   return (
     <div
-      className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 ${
-        imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
-      }`}
+      className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 ${imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
+        }`}
     >
       {isBuyQtyAvailableState && (
         <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px]">
@@ -168,26 +172,18 @@ function ProductCardImage({
   );
 }
 
-function ProductCardButtons() {
-  function handleViewDetail() {
-    console.log('view detail');
-  }
-
+function ProductCardButtons({ handle }: { handle: string }) {
   function handleAddToCart() {
     console.log('add to cart');
   }
 
   return (
     <div className="flex flex-col items-center justify-center gap-2 mt-6 sm:flex-row product-button">
-      <Button
-        variant="primary"
-        size="default"
-        className="w-full"
-        onClick={handleViewDetail}
+      <Link to={handle}
+        className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600"
       >
-        {' '}
         view detail
-      </Button>
+      </Link>
 
       <Button
         variant="ghost"
