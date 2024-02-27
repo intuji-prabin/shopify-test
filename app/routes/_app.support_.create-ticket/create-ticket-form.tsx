@@ -65,7 +65,7 @@ export function CreateTicketForm({options}: CreateTicketFormProps) {
               Date
               <span className="required">*</span>
             </label>
-            <DatePickerInput name="date" />
+            <DatePickerInput name="date" disablePreviousDates />
           </div>
           <TextAreaInput
             required

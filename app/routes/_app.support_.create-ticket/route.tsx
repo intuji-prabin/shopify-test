@@ -31,6 +31,7 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import {getSupportContact} from '../_app.support_.contact-us/support-contact-us.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Create Ticket'}];
@@ -45,9 +46,14 @@ export type CreateTicketResponse = {
 export async function loader({context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const roles = await getCustomerRolePermission(context);
+  const supportContact = await getSupportContact({context});
 
-  return json({roles});
+  const departmentOptions = supportContact.map((item) => ({
+    title: item.department,
+    value: item.id.split('/').pop() as string,
+  }));
+
+  return json({departmentOptions});
 }
 
 export async function action({request, context}: ActionFunctionArgs) {
@@ -113,7 +119,7 @@ export async function action({request, context}: ActionFunctionArgs) {
 }
 
 export default function CreateTicketPage() {
-  const {roles} = useLoaderData<typeof loader>();
+  const {departmentOptions} = useLoaderData<typeof loader>();
   return (
     <section className="container">
       <div className=" pt-6 pb-4">
@@ -135,7 +141,7 @@ export default function CreateTicketPage() {
         resolving technical issues on the user's device or system. This method
         is widely used in today's digital age and offers several advantages.
       </p>
-      <CreateTicketForm options={roles.data} />
+      <CreateTicketForm options={departmentOptions} />
     </section>
   );
 }

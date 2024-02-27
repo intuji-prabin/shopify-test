@@ -1,6 +1,8 @@
 import {useField} from 'remix-validated-form';
 import {ScrollArea} from '~/components/ui/scroll-area';
 import {DangerAlert} from '~/components/icons/alert';
+import {TicketsFilterFormFieldNameType} from '~/routes/_app.support_.tickets/filter-form';
+import {CreateTicketFormFieldNameType} from '~/routes/_app.support_.create-ticket/create-ticket-form';
 import {
   Select,
   SelectContent,
@@ -13,8 +15,6 @@ import {
   AddTeamFormFieldNameType,
   EditTeamFormFieldNameType,
 } from '~/routes/_app.team_.add/team-form';
-import {CreateTicketFormFieldNameType} from '~/routes/_app.support_.create-ticket/create-ticket-form';
-import {TicketsFilterFormFieldNameType} from '~/routes/_app.support_.tickets/filter-form';
 
 type SelectInputType = {value: string; title: string};
 
@@ -65,7 +65,7 @@ export default function SelectInput({
             <SelectValue placeholder={label} />
           </SelectTrigger>
           <SelectContent className="rounded-none shadow-base">
-            <ScrollArea className="max-h-[238px] w-full p-2">
+            <ScrollArea className="max-h-[238px] h-full w-full p-2">
               <SelectGroup>
                 {options?.map((item, index) => (
                   <SelectItem
