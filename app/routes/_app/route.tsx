@@ -64,21 +64,21 @@ const Layout = ({
   const matches = useMediaQuery('(min-width: 768px)');
   return (
     <>
-      {matches ? (
-        <header>
-          <TopHeader userDetails={userDetails} />
-          <BottomHeader categories={categories} />
-        </header>
-      ) : (
-        <HamburgerMenuProvider>
+      <HamburgerMenuProvider>
+        {matches ? (
+          <header>
+            <TopHeader userDetails={userDetails} />
+            <BottomHeader categories={categories} />
+          </header>
+        ) : (
           <MobileNav />
-        </HamburgerMenuProvider>
-      )}
-      <div className="mb-12">{children}</div>
+        )}
+        <div className="mb-12">{children}</div>
 
-      <footer>
-        <DesktopFooter />
-      </footer>
+        <footer>
+          <DesktopFooter />
+        </footer>
+      </HamburgerMenuProvider>
     </>
   );
 };

@@ -9,12 +9,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/ui/dialog';
+import {useHamburgerMenu} from './HamburgerMenuContext';
 
 export function TrackAnOrderButton() {
+  const {isOpen, toggleMenu} = useHamburgerMenu();
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="track-time flex gap-1 items-center">
+        <button
+          className="track-time flex gap-1 items-center"
+          onClick={() => toggleMenu(!isOpen)}
+        >
           <Ordertrack />
           <p className="uppercase text-white italic text-base font-bold ">
             Track an order

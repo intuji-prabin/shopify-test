@@ -25,10 +25,16 @@ import CloseMenu from '~/components/icons/closeMenu';
 import {CustomerData} from '~/routes/_public.login/login.server';
 import {useOutsideClick} from '~/hooks/useOutsideClick';
 import TabletNavmenu from './tablet-navbar/tablet-navmenu';
+import {useHamburgerMenu} from './elements/HamburgerMenuContext';
 
 export function PlaceOrder() {
+  const {isOpen, toggleMenu} = useHamburgerMenu();
+
   return (
-    <Button className="place-order h-full bg-secondary-500  px-6 hover:bg-secondary-500 min-h-12">
+    <Button
+      className="place-order h-full bg-secondary-500  px-6 hover:bg-secondary-500 min-h-12"
+      onClick={() => toggleMenu(!isOpen)}
+    >
       <Link
         to={Routes.PLACE_AN_ORDER}
         className="uppercase  text-[14px] italic font-bold flex items-center text-grey-900 h-full"
@@ -57,6 +63,8 @@ export function LogoIcon({logo_url}: {logo_url: string}) {
 }
 
 export function NotificationNavbar() {
+  const {isOpen, toggleMenu} = useHamburgerMenu();
+
   const navIcons = [
     {
       id: 1,
@@ -92,7 +100,11 @@ export function NotificationNavbar() {
       <ul className="nav-list flex gap-5 items-center h-full">
         {navIcons.map((navIcon) => (
           <li className="nav-item relative" key={navIcon.id}>
-            <Link to={navIcon.url} className="info-block">
+            <Link
+              to={navIcon.url}
+              className="info-block"
+              onClick={() => toggleMenu(!isOpen)}
+            >
               {' '}
               <div data-tooltip={navIcon.title}>
                 <div className="absolute bg-semantic-danger-500 h-[14px] w-[14px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium p-2">
