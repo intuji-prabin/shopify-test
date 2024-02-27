@@ -1,9 +1,12 @@
 import {Link} from '@remix-run/react';
+import {useHamburgerMenu} from '../HamburgerMenuContext';
 
 type UserInfoProps = {
   user_name: string;
 };
 export default function UserProfile({user_name}: UserInfoProps) {
+  const {isOpen, toggleMenu} = useHamburgerMenu();
+
   return (
     <div className="flex gap-2">
       <figure>
@@ -16,6 +19,7 @@ export default function UserProfile({user_name}: UserInfoProps) {
         <Link
           to=""
           className="font-bold text-lg md:text-sm leading-6 italic text-white border-b-2 border-white border-x-0 border-t-0 uppercase"
+          onClick={() => toggleMenu(!isOpen)}
         >
           my profile
         </Link>

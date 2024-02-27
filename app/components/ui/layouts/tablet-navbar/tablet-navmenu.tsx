@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react';
+import {SetStateAction, useRef, useState} from 'react';
 import {TabletHamburger} from '~/components/icons/orderStatus';
 
 import NavMenu from '../elements/mobile-navbar/nav-menu';
@@ -9,7 +9,11 @@ import {Button} from '../../button';
 import CloseMenu from '~/components/icons/closeMenu';
 import {useOutsideClick} from '~/hooks/useOutsideClick';
 
-export default function TabletNavmenu() {
+export default function TabletNavmenu({
+  setIsHamOpen,
+}: {
+  setIsHamOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [ishamburgerOpen, setIsHamburgerOpen] = useState(false);
   const tabletSectionRef = useRef<HTMLDivElement>(null);
   useOutsideClick(tabletSectionRef, () => setIsHamburgerOpen(false));
