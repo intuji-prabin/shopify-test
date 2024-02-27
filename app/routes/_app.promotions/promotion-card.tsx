@@ -1,6 +1,7 @@
-import {Link} from '@remix-run/react';
-import {Button} from '~/components/ui/button';
-import {Dialog, DialogContent, DialogTrigger} from '~/components/ui/dialog';
+import { Link } from '@remix-run/react';
+import { useRef, useState } from 'react';
+import { Button } from '~/components/ui/button';
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog';
 
 const PromotionCard = ({
   title,
@@ -38,6 +39,8 @@ const PromotionCard = ({
     );
   };
 
+  const [renderedImageWidth, setRenderedImageWidth] = useState();
+
   return (
     <>
       <figure>
@@ -57,13 +60,16 @@ const PromotionCard = ({
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-[1280px] p-0 border-0 gap-y-0 promotion-view w-auto">
-              <div className="pl-5 pr-10 py-3">
+              <div className="py-3 pl-5 pr-10" style={{ maxWidth: renderedImageWidth }}>
                 <h5>{title}</h5>
               </div>
               <img
-                alt="preview"
+                alt="preview hello"
                 src={imageURL}
                 className="h-auto max-h-[calc(100vh_-_100px)] mx-auto"
+                onLoad={(event: any) =>
+                  setRenderedImageWidth(event?.target?.width)
+                }
               />
             </DialogContent>
           </Dialog>
@@ -90,7 +96,7 @@ const PromotionCard = ({
             </Link>
           )}
         </div>
-      </div>
+      </div >
     </>
   );
 };
