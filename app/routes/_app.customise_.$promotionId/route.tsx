@@ -9,30 +9,30 @@ import {
   LoaderFunctionArgs,
   json,
 } from '@remix-run/server-runtime';
-import { withZod } from '@remix-validated-form/with-zod';
+import {withZod} from '@remix-validated-form/with-zod';
 import html2canvas from 'html2canvas';
-import { useRef, useState } from 'react';
-import { ValidatedForm } from 'remix-validated-form';
-import { z } from 'zod';
-import { zfd } from 'zod-form-data';
-import { FullScreen } from '~/components/icons/full-screen';
+import {useRef, useState} from 'react';
+import {ValidatedForm} from 'remix-validated-form';
+import {z} from 'zod';
+import {zfd} from 'zod-form-data';
+import {FullScreen} from '~/components/icons/full-screen';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
-import { Button } from '~/components/ui/button';
+import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import {Button} from '~/components/ui/button';
 import ColorPicker from '~/components/ui/color-picker';
-import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog';
+import {Dialog, DialogContent, DialogTrigger} from '~/components/ui/dialog';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import ImageEdit from '~/components/ui/imageEdit';
 import Loader from '~/components/ui/loader';
-import { Separator } from '~/components/ui/separator';
-import { displayToast } from '~/components/ui/toast';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { Routes } from '~/lib/constants/routes.constent';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { createPromotion, getPromotionById } from './promotion.server';
+import {Separator} from '~/components/ui/separator';
+import {displayToast} from '~/components/ui/toast';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {Routes} from '~/lib/constants/routes.constent';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {createPromotion, getPromotionById} from './promotion.server';
 import PromotionNavigation from './promotion-navigation';
-import { BackButton } from '~/components/ui/back-button';
-import { getUserDetails } from '~/lib/utils/user-session.server';
+import {BackButton} from '~/components/ui/back-button';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -74,27 +74,27 @@ export type EditFormType = z.infer<typeof EditFormValidator>;
 
 export type EditFormFieldNameType = keyof EditFormType;
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({request, params}: ActionFunctionArgs) {
   const data = await request.formData();
-  const { userDetails } = await getUserDetails(request);
-  const customerId = userDetails?.id
+  const {userDetails} = await getUserDetails(request);
+  const customerId = userDetails?.id;
   let formData = Object.fromEntries(data);
-  formData = { ...formData };
+  formData = {...formData};
   const bannerId = params.promotionId as string;
   await createPromotion(formData, bannerId, customerId);
   return json({});
 }
 
-export async function loader({ params, context, request }: LoaderFunctionArgs) {
+export async function loader({params, context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
   try {
-    const { userDetails } = await getUserDetails(request);
-    const customerId = userDetails?.id
+    const {userDetails} = await getUserDetails(request);
+    const customerId = userDetails?.id;
     const promotionId = params?.promotionId as string;
     const response = await getPromotionById(promotionId, customerId);
     if (response?.payload) {
       const results = response?.payload;
-      return json({ results, promotionId });
+      return json({results, promotionId});
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -112,8 +112,8 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   }
 }
 
-const PromotionEdit = ({ defaultValues }: EditFormProps) => {
-  const { results, promotionId } = useLoaderData<any>();
+const PromotionEdit = ({defaultValues}: EditFormProps) => {
+  const {results, promotionId} = useLoaderData<any>();
   const [isLoading, setIsLoading] = useState(false);
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
   const [image, setImage] = useState('');
@@ -128,7 +128,9 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     textColor: results?.color,
     bgColor: results?.background_color,
   });
-  const [openAccordian, setOpenAccordian] = useState<"company-information" | "text-color" | "background" | "">("company-information");
+  const [openAccordian, setOpenAccordian] = useState<
+    'company-information' | 'text-color' | 'background' | ''
+  >('company-information');
 
   const canvasRef = useRef<any>();
   const blobRef = useRef<any>();
@@ -200,18 +202,21 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
         allowTaint: true,
         useCORS: true,
       });
-      formData.append("image", canvas.toDataURL());
+      formData.append('image', canvas.toDataURL());
     } catch (error) {
-      console.error("An error occurred:", error);
-      alert("An error has occured while creating the image");
+      console.error('An error occurred:', error);
+      alert('An error has occured while creating the image');
     }
     try {
       const response = await fetch(`/customise/${promotionId}`, {
         method: 'POST',
-        body: formData
+        body: formData,
       });
       if (response.ok) {
-        displayToast({ message: "Promotion Updated Successfully", type: "success" });
+        displayToast({
+          message: 'Promotion Updated Successfully',
+          type: 'success',
+        });
         navigate(Routes.MY_PROMOTIONS);
       } else {
         throw new Error('Failed to update promotion');
@@ -230,6 +235,10 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     }
   };
 
+  let imageName = companyInfo.companyName;
+  imageName = imageName.replace(/ /g, '_');
+  console.log('object', imageName);
+
   return (
     <div className="bg-grey-25">
       {isLoading && (
@@ -247,7 +256,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
       <section className="container pt-8 pb-1">
         <div className="flex flex-wrap justify-between gap-4">
           <BackButton title="Customize Promotion" />
-          <PromotionNavigation canvasRef={canvasRef} />
+          <PromotionNavigation canvasRef={canvasRef} imageName={imageName} />
         </div>
       </section>
       <section className="container mt-1">
@@ -278,8 +287,9 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                   style={{
                     width: renderedImageWidth && renderedImageWidth + 50,
                   }}
-                  className={`max-w-4xl ${!image && 'flex items-center justify-center'
-                    }`}
+                  className={`max-w-4xl ${
+                    !image && 'flex items-center justify-center'
+                  }`}
                 >
                   {image && renderedImageWidth ? (
                     <img
@@ -337,10 +347,17 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                 unsavedChanges={unsavedChanges}
                 imageUrl={results?.logo_url ?? DEFAULT_IMAGE.IMAGE}
                 className="pb-4 promotion__edit"
-                handleChange={(field: string, value: string) => handleChange(field, value)}
+                handleChange={(field: string, value: string) =>
+                  handleChange(field, value)
+                }
               />
               <div className="accordion__section">
-                <AccordionCustom accordianLabel='company-information' setOpenAccordian={setOpenAccordian} isOpen={openAccordian === "company-information"} accordionTitle="Company Information">
+                <AccordionCustom
+                  accordianLabel="company-information"
+                  setOpenAccordian={setOpenAccordian}
+                  isOpen={openAccordian === 'company-information'}
+                  accordionTitle="Company Information"
+                >
                   <div className="space-y-6">
                     <div>
                       <label htmlFor="company_name">Company Name</label>
@@ -409,14 +426,24 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                     </div>
                   </div>
                 </AccordionCustom>
-                <AccordionCustom accordianLabel='text-color' setOpenAccordian={setOpenAccordian} isOpen={openAccordian === "text-color"} accordionTitle="Text Color">
+                <AccordionCustom
+                  accordianLabel="text-color"
+                  setOpenAccordian={setOpenAccordian}
+                  isOpen={openAccordian === 'text-color'}
+                  accordionTitle="Text Color"
+                >
                   <ColorPicker
                     name="color"
                     color={companyInfo.textColor}
                     onChange={(color) => handleChange('textColor', color)}
                   />
                 </AccordionCustom>
-                <AccordionCustom accordianLabel='background' setOpenAccordian={setOpenAccordian} isOpen={openAccordian === "background"} accordionTitle="Background">
+                <AccordionCustom
+                  accordianLabel="background"
+                  setOpenAccordian={setOpenAccordian}
+                  isOpen={openAccordian === 'background'}
+                  accordionTitle="Background"
+                >
                   <ColorPicker
                     name="background_color"
                     color={companyInfo.bgColor}

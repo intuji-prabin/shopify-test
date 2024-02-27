@@ -14,6 +14,7 @@ import {
   type SessionStorage,
   type Session,
 } from '@shopify/remix-oxygen';
+import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
 
 /**
  * Export a fetch handler in module format.
@@ -127,7 +128,7 @@ export class HydrogenSession {
   static async init(request: Request, secrets: string[]) {
     const storage = createCookieSessionStorage({
       cookie: {
-        name: 'session',
+        name: '_session',
         httpOnly: true,
         path: '/',
         sameSite: 'lax',
@@ -168,7 +169,9 @@ export class HydrogenSession {
   commit({rememberMe}: {rememberMe?: boolean}) {
     return this.#sessionStorage.commitSession(this.#session, {
       // 30 days or 7 days => need improvements
-      maxAge: rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24 * 7,
+      maxAge: rememberMe
+        ? SESSION_MAX_AGE['30_DAYS']
+        : SESSION_MAX_AGE['7_DAYS'],
     });
   }
 }

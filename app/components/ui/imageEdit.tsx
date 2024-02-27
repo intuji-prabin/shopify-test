@@ -1,10 +1,8 @@
-import { RefObject } from 'react';
-import { Call } from '../icons/call';
-import { Fax } from '../icons/fax';
-import { Globe } from '../icons/globe';
+import {RefObject} from 'react';
+import {Call} from '../icons/call';
+import {Fax} from '../icons/fax';
+import {Globe} from '../icons/globe';
 import Mail from '../icons/mail';
-import { useMediaQuery } from '~/hooks/useMediaQuery';
-
 interface ImageEditProps {
   canvasRef?: RefObject<HTMLDivElement>;
   imgSrc: string;
@@ -29,15 +27,15 @@ const ImageEdit = ({
   companyInfo,
   renderedImageWidth,
 }: ImageEditProps) => {
-  const matches = useMediaQuery('(max-width: 1023px)');
-
   return (
     <div className="flex justify-center px-6 py-10 bg-white">
-      <div className='border border-gray-200 border-dashed'>
+      <div className="overflow-x-auto border border-gray-200 border-dashed">
         <div
           style={{
             width:
-              renderedImageWidth && renderedImageWidth < 799 && !matches ? 'min-content' : '',
+              renderedImageWidth && renderedImageWidth < 799
+                ? 'min-content'
+                : '',
           }}
           ref={canvasRef}
           id="main-image"
@@ -46,33 +44,33 @@ const ImageEdit = ({
             <img
               alt={alt}
               src={imgSrc}
-              className="w-full h-auto"
+              className={`${renderedImageWidth > 799 && 'w-full'} h-auto`}
             />
           )}
           <div
             style={{
               backgroundColor: companyInfo?.bgColor,
               width:
-                renderedImageWidth && renderedImageWidth > 799 || matches
+                renderedImageWidth && renderedImageWidth > 799
                   ? '100%'
                   : renderedImageWidth,
             }}
           >
             <div
               className="flex flex-wrap items-center justify-between p-4 gap-x-6 gap-y-3"
-              style={{ color: companyInfo?.textColor }}
+              style={{color: companyInfo?.textColor}}
             >
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-2">
                 <div className="flex items-center justify-center w-12 h-12 p-1 bg-white border border-solid rounded-full border-grey-50">
                   <img
                     src={companyInfo?.companyLogo}
                     alt="view"
-                    className="rounded-full w-11 h-11 image-preview"
+                    className="object-contain rounded-full w-11 h-11 image-preview"
                   />
                 </div>
-                <h5 style={{ lineHeight: '0', fontFamily: 'Barlow Condensed' }}>
-                  {companyInfo?.companyName}
-                </h5>
+                <div className=" w-[calc(100%_-_56px)]">
+                  <h5 className="leading-none">{companyInfo?.companyName}</h5>
+                </div>
               </div>
               <div className="flex flex-wrap gap-x-6 gap-y-2">
                 <div className="space-y-2">

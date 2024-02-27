@@ -1,16 +1,16 @@
-/**
- * @description Cookie base implementation for toast message
- */
-
 import {Session, createCookieSessionStorage} from '@shopify/remix-oxygen';
 import {TOAST_MESSAGE_SECRET} from '~/lib/constants/auth.constent';
 
 export type ToastMessage = {message: string; type: 'success' | 'error'};
 
+/**
+ * @description Cookie base implementation for toast message
+ */
+
 export const {commitSession: messageCommitSession, getSession} =
   createCookieSessionStorage({
     cookie: {
-      name: '__message',
+      name: '_message',
       path: '/',
       httpOnly: true,
       sameSite: 'lax',

@@ -10,11 +10,11 @@ import {
   json,
   redirect,
 } from '@remix-run/server-runtime';
-import { ArrowLeft } from 'lucide-react';
-import { validationError } from 'remix-validated-form';
-import { Button } from '~/components/ui/button';
-import { SelectInputOptions } from '~/components/ui/select-input';
-import { Routes } from '~/lib/constants/routes.constent';
+import {ArrowLeft} from 'lucide-react';
+import {validationError} from 'remix-validated-form';
+import {Button} from '~/components/ui/button';
+import {SelectInputOptions} from '~/components/ui/select-input';
+import {Routes} from '~/lib/constants/routes.constent';
 import TeamForm, {
   EditTeamFormSchemaValidator,
 } from '~/routes/_app.team_.add/team-form';
@@ -28,41 +28,42 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import { MetaFunction } from '@shopify/remix-oxygen';
-import { getCustomerRolePermission } from '~/lib/customer-role/customer-role-permission';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import {MetaFunction} from '@shopify/remix-oxygen';
+import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {
   USER_DETAILS_KEY,
   getUserDetails,
   getUserDetailsSession,
   userDetailsCommitSession,
 } from '~/lib/utils/user-session.server';
-import { getCustomerByEmail } from '~/routes/_public.login/login.server';
+import {getCustomerByEmail} from '~/routes/_public.login/login.server';
+import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Edit Team Member' }];
+  return [{title: 'Edit Team Member'}];
 };
 
-export async function loader({ params, context }: LoaderFunctionArgs) {
+export async function loader({params, context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
   const customerId = params?.teamId as string;
 
-  const customerDetails = await getCustomerById({ customerId });
+  const customerDetails = await getCustomerById({customerId});
 
   const roles = await getCustomerRolePermission(context);
 
-  return json({ customerDetails, roles });
+  return json({customerDetails, roles});
 }
 
-export async function action({ request, context, params }: ActionFunctionArgs) {
+export async function action({request, context, params}: ActionFunctionArgs) {
   await isAuthenticate(context);
 
   const messageSession = await getMessageSession(request);
 
   const userDetailsSession = await getUserDetailsSession(request);
 
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
 
   try {
     const result = await EditTeamFormSchemaValidator.validate(
@@ -73,16 +74,10 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
       return validationError(result.error);
     }
 
-    const customerId = params?.teamId as string
+    const customerId = params?.teamId as string;
 
-    const {
-      email,
-      fullName,
-      address,
-      phoneNumber,
-      userRole,
-      profileImage,
-    } = result.data;
+    const {email, fullName, address, phoneNumber, userRole, profileImage} =
+      result.data;
 
     await updateTeam({
       address,
@@ -108,7 +103,12 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 
       return redirect(Routes.TEAM, {
         headers: [
-          ['Set-Cookie', await userDetailsCommitSession(userDetailsSession)],
+          [
+            'Set-Cookie',
+            await userDetailsCommitSession(userDetailsSession, {
+              maxAge: SESSION_MAX_AGE['30_DAYS'],
+            }),
+          ],
           ['Set-Cookie', await messageCommitSession(messageSession)],
         ],
       });
@@ -117,9 +117,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
     setSuccessMessage(messageSession, 'Customer update successful');
 
     return redirect(Routes.TEAM, {
-      headers: [
-        ['Set-Cookie', await messageCommitSession(messageSession)],
-      ],
+      headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
     });
   } catch (error) {
     if (error instanceof Error) {
@@ -133,14 +131,14 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
         },
       );
     }
-    return json({ error }, { status: 400 });
+    return json({error}, {status: 400});
   }
 }
 
 export default function TeamDetailsPage() {
   const navigate = useNavigate();
 
-  const { customerDetails, roles } = useLoaderData<typeof loader>();
+  const {customerDetails, roles} = useLoaderData<typeof loader>();
 
   return (
     <section className="container">
