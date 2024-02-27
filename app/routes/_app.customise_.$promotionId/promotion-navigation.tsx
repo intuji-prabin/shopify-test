@@ -1,23 +1,23 @@
 import html2canvas from 'html2canvas';
-import {useState} from 'react';
-import {ExportUp} from '~/components/icons/export';
-import {Button} from '~/components/ui/button';
+import { useState } from 'react';
+import { ExportUp } from '~/components/icons/export';
+import { Button } from '~/components/ui/button';
 import Loader from '~/components/ui/loader';
 
-const PromotionNavigation = (canvasRef: any, imageName: string) => {
+const PromotionNavigation = ({ canvasRef, imageName }: { canvasRef: any, imageName: string }) => {
   const [loading, setLoading] = useState(false);
-  console.log('hello', imageName);
+  const canvasRefFinal = canvasRef.current;
 
-  const printDocument = (canvasRef: HTMLElement) => {
+  const printDocument = (canvasRefFinal: HTMLElement) => {
     setLoading(true);
-    if (canvasRef) {
-      html2canvas(canvasRef, {
+    if (canvasRefFinal) {
+      html2canvas(canvasRefFinal, {
         allowTaint: true,
         useCORS: true,
       }).then((canvas) => {
         const link = document.createElement('a');
         document.body.appendChild(link);
-        link.download = 'preview.png';
+        link.download = `${imageName}.png`;
         link.href = canvas.toDataURL();
         link.target = '_blank';
         link.click();
@@ -33,10 +33,9 @@ const PromotionNavigation = (canvasRef: any, imageName: string) => {
       type="button"
       size="small"
       variant="ghost"
-      className={`border-primary-500 hover:bg-inherit ${
-        loading && 'pointer-events-none'
-      }`}
-      onClick={() => printDocument(canvasRef.canvasRef.current)}
+      className={`border-primary-500 hover:bg-inherit ${loading && 'pointer-events-none'
+        }`}
+      onClick={() => printDocument(canvasRefFinal)}
     >
       {loading ? <Loader /> : <ExportUp />}Export
     </Button>
