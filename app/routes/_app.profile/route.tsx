@@ -40,6 +40,7 @@ import {
 import {Routes} from '~/lib/constants/routes.constent';
 import {fileUpload} from '~/lib/utils/file-upload';
 import {LOGOUT_MUTATION} from '../_public.logout/route';
+import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Profile'}];
@@ -47,6 +48,7 @@ export const meta: MetaFunction = () => {
 
 export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
+
   const {userDetails} = await getUserDetails(request);
 
   const customerId = userDetails.id.split('/').pop() as string;
@@ -60,12 +62,14 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 
 export async function action({request, context}: ActionFunctionArgs) {
   const accessToken = await isAuthenticate(context);
+
   const {session, storefront} = context;
+
   const messageSession = await getMessageSession(request);
 
   const userDetailsSession = await getUserDetailsSession(request);
 
-  const {userDetails} = await getUserDetails(request) as any;
+  const {userDetails} = (await getUserDetails(request)) as any;
 
   try {
     const result = await ProfileFormSchemaValidator.validate(
@@ -86,26 +90,25 @@ export async function action({request, context}: ActionFunctionArgs) {
       profileImage,
     } = result.data;
 
-    const customer : CustomerUpdateInput = {};
+    const customer: CustomerUpdateInput = {};
 
     if (typeof oldPassword !== 'undefined' && oldPassword !== '') {
-      const {customerAccessTokenCreate} : any = await storefront.mutate(
+      const {customerAccessTokenCreate}: any = await storefront.mutate(
         LOGIN_MUTATION,
         {
           variables: {
-            input: {email : userDetails?.email, password: oldPassword},
+            input: {email: userDetails?.email, password: oldPassword},
           },
         },
       );
 
-      if ( customerAccessTokenCreate?.customerUserErrors.length > 0 ) {
+      if (customerAccessTokenCreate?.customerUserErrors.length > 0) {
         throw new Error(
           "Old password doesn't match. Please enter correct old password.",
         );
       }
 
       customer.password = password;
-
     }
 
     if (typeof profileImage !== 'undefined' && customerId) {
@@ -117,23 +120,22 @@ export async function action({request, context}: ActionFunctionArgs) {
       if (!status) throw new Error('Image upload unsuccessfull');
     }
 
-    const customerName  = fullName.split(" ")
-    const nameLength    = customerName.length
-    var i
-    let firstName = ''
-    let lastName = ""
+    const customerName = fullName.split(' ');
+    const nameLength = customerName.length;
+    let firstName = '';
+    let lastName = '';
 
-    if( nameLength > 1 ) {
-      for( i = 1; i < nameLength; i++ ) {
-        if( i ===  1 ) {
-          firstName = customerName[i - 1 ]
+    if (nameLength > 1) {
+      for (let i = 1; i < nameLength; i++) {
+        if (i === 1) {
+          firstName = customerName[i - 1];
         } else {
-          firstName += ` ${customerName[i - 1 ]}`
+          firstName += ` ${customerName[i - 1]}`;
         }
-      }   
-      lastName = customerName[nameLength - 1]
+      }
+      lastName = customerName[nameLength - 1];
     } else {
-      firstName = fullName
+      firstName = fullName;
     }
 
     customer.email = email;
@@ -147,22 +149,26 @@ export async function action({request, context}: ActionFunctionArgs) {
         variables: {
           customerAccessToken: accessToken,
           customer,
-          customerAddress : {
-            address1 : address
+          customerAddress: {
+            address1: address,
           },
-          addressID : userDetails?.address[0]?.id
-        }
+          addressID: userDetails?.address[0]?.id,
+        },
       },
     );
 
     if (updateCustomerDetails.customerUpdate?.customerUserErrors?.length) {
       return json(
-        {error: updateCustomerDetails.customerUpdate?.customerUserErrors[0]?.message},
+        {
+          error:
+            updateCustomerDetails.customerUpdate?.customerUserErrors[0]
+              ?.message,
+        },
         {status: 400},
       );
     }
 
-    if( typeof oldPassword !== 'undefined' && oldPassword !== '' ) { 
+    if (typeof oldPassword !== 'undefined' && oldPassword !== '') {
       await storefront.mutate(LOGOUT_MUTATION, {
         variables: {
           customerAccessToken: accessToken,
@@ -179,13 +185,18 @@ export async function action({request, context}: ActionFunctionArgs) {
 
       userDetailsSession.set(USER_DETAILS_KEY, customerDetails);
     }
-    
+
     setSuccessMessage(messageSession, 'Profile update successfull');
 
     return redirect(Routes.HOME, {
       headers: [
         ['Set-Cookie', await session.commit({})],
-        ['Set-Cookie', await userDetailsCommitSession(userDetailsSession)],
+        [
+          'Set-Cookie',
+          await userDetailsCommitSession(userDetailsSession, {
+            maxAge: SESSION_MAX_AGE['30_DAYS'],
+          }),
+        ],
         ['Set-Cookie', await messageCommitSession(messageSession)],
       ],
     });
@@ -285,22 +296,6 @@ mutation customerUpdate(
           message
           field
       }
-  }
-}
-` as const;
-
-const CUSTOMER_ADDRESS_UPDATE_MUTATION = `#graphql
-  mutation customerAddressUpdate($address: MailingAddressInput!, $customerAccessToken: String!, $id: ID!) {
-  customerAddressUpdate(address: $address, customerAccessToken: $customerAccessToken, id: $id) {
-    customerAddress {
-      id
-      address1
-    }
-    customerUserErrors {
-      code
-      field
-      message
-    }
   }
 }
 ` as const;

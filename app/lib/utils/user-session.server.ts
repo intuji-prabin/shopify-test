@@ -1,6 +1,6 @@
 import {createCookieSessionStorage} from '@shopify/remix-oxygen';
-import {USER_DETAILS_SESSION_SECRET} from '~/lib/constants/auth.constent';
 import {CustomerData} from '~/routes/_public.login/login.server';
+import {USER_DETAILS_SESSION_SECRET} from '~/lib/constants/auth.constent';
 
 export const USER_DETAILS_KEY = 'userDetails';
 
@@ -10,7 +10,7 @@ export const {
   destroySession: destroyUserDetailsSession,
 } = createCookieSessionStorage({
   cookie: {
-    name: '__user-detail',
+    name: '_user_details',
     path: '/',
     httpOnly: true,
     sameSite: 'lax',
