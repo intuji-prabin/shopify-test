@@ -1,20 +1,25 @@
 import {format} from 'date-fns';
-import {useControlField, useField} from 'remix-validated-form';
-import {Popover, PopoverContent, PopoverTrigger} from '~/components/ui/popover';
+import {cn} from '~/lib/utils/utils';
 import {Button} from '~/components/ui/button';
 import {Calendar} from '~/components/ui/calendar';
+import {DangerAlert} from '~/components/icons/alert';
 import {CalendarIcon} from '~/components/icons/calendar-icon';
-import {CreateTicketFormFieldNameType} from '~/routes/_app.support_.create-ticket/create-ticket-form';
-import {DangerAlert} from '../icons/alert';
+import {useControlField, useField} from 'remix-validated-form';
+import {Popover, PopoverContent, PopoverTrigger} from '~/components/ui/popover';
 import {TicketsFilterFormFieldNameType} from '~/routes/_app.support_.tickets/filter-form';
-import {cn} from '~/lib/utils/utils';
+import {CreateTicketFormFieldNameType} from '~/routes/_app.support_.create-ticket/create-ticket-form';
 
 type DatePickerInputProps = {
+  disablePreviousDates?: boolean;
   name: CreateTicketFormFieldNameType | TicketsFilterFormFieldNameType;
 };
 
-export function DatePickerInput({name}: DatePickerInputProps) {
+export function DatePickerInput({
+  name,
+  disablePreviousDates = false,
+}: DatePickerInputProps) {
   const {getInputProps, validate, error} = useField(name);
+
   const [date, setDate] = useControlField<Date | undefined>(name);
 
   return (
@@ -45,6 +50,7 @@ export function DatePickerInput({name}: DatePickerInputProps) {
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
+          disabled={disablePreviousDates ? {before: new Date()} : undefined}
           mode="single"
           selected={date}
           onSelect={(date) => {

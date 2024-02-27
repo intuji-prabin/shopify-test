@@ -1,6 +1,6 @@
-import { LoaderFunctionArgs } from '@remix-run/server-runtime';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { Button } from '~/components/ui/button';
+import {LoaderFunctionArgs} from '@remix-run/server-runtime';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {Button} from '~/components/ui/button';
 import PromotionCard from '~/routes/_app.promotions/promotion-card';
 import {
   Form,
@@ -17,40 +17,40 @@ import {
   Promotion,
   getPromotions,
 } from '~/routes/_app.promotions/promotion.server';
-import { MetaFunction } from '@shopify/remix-oxygen';
-import { FormEvent } from 'react';
+import {MetaFunction} from '@shopify/remix-oxygen';
+import {FormEvent} from 'react';
 import {
   PAGE_LIMIT,
   filterOptions,
 } from '~/routes/_app.promotions/promotion-constants';
-import { getUserDetails } from '~/lib/utils/user-session.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Available Promotion' }];
+  return [{title: 'Available Promotion'}];
 };
 
-export async function loader({ context, request }: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const { userDetails } = await getUserDetails(request);
-  const { searchParams } = new URL(request.url);
-  const paramsList = Object.fromEntries(searchParams)
-  const customerId = userDetails?.id
+  const {userDetails} = await getUserDetails(request);
+  const {searchParams} = new URL(request.url);
+  const paramsList = Object.fromEntries(searchParams);
+  const customerId = userDetails?.id;
 
   try {
-    const { promotions, totalPromotionCount } = await getPromotions({
+    const {promotions, totalPromotionCount} = await getPromotions({
       customerId,
-      paramsList
+      paramsList,
     });
-    return json({ promotions, totalPromotionCount });
+    return json({promotions, totalPromotionCount});
   } catch (error) {
     throw new Error('promotion unavailable');
   }
 }
 
 export default function AvailablePromotionPage() {
-  const { promotions, totalPromotionCount } = useLoaderData<typeof loader>();
-  console.log("promotions", promotions)
+  const {promotions, totalPromotionCount} = useLoaderData<typeof loader>();
+  console.log('promotions', promotions);
 
   const pageParam = 'page';
 
@@ -74,9 +74,12 @@ export default function AvailablePromotionPage() {
   return (
     <div className="pt-10 sm:pt-0">
       {promotions.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 pb-6 border-b sm:grid-cols-2 lg:grid-cols-3 border-b-grey-25 ">
+        <div
+          className="grid grid-cols-1 gap-6 pb-6 border-b sm:grid-cols-2 lg:grid-cols-3 border-b-grey-25 "
+          data-cy="promotion-grid"
+        >
           {promotions.map((promotion: Promotion) => (
-            <div key={promotion.id}>
+            <div key={promotion.id} data-cy="promotion-card">
               <PromotionCard
                 title={promotion.title}
                 imageURL={promotion.image_url}
@@ -100,9 +103,10 @@ export default function AvailablePromotionPage() {
           <div className="flex justify-center pt-6">
             <Link prefetch="intent" to={`?${nextQuery.toString()}`}>
               <Button
+                size="large"
                 type="button"
                 variant="primary"
-                size="large"
+                data-cy="load-more"
                 className="min-w-64"
                 disabled={isLoading}
               >
