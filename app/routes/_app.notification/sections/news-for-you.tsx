@@ -8,7 +8,7 @@ export default function NewsForYou() {
         {news.map((newsItem) => {
           return (
             <li
-              className="flex justify-between border-grey-50 border-2 p-4 hover:bg-primary-50  hover:border-primary-400 "
+              className="flex justify-between border-grey-50 border-2 p-4 hover:bg-primary-50  hover:border-primary-400 gap-2"
               key={newsItem.id}
             >
               <div className="flex">

@@ -33,7 +33,7 @@ export function PlaceOrder() {
   return (
     <Button
       className="place-order h-full bg-secondary-500  px-6 hover:bg-secondary-500 min-h-12"
-      onClick={() => toggleMenu(!isOpen)}
+      onClick={() => toggleMenu(false)}
     >
       <Link
         to={Routes.PLACE_AN_ORDER}
@@ -103,7 +103,7 @@ export function NotificationNavbar() {
             <Link
               to={navIcon.url}
               className="info-block"
-              onClick={() => toggleMenu(!isOpen)}
+              onClick={() => toggleMenu(false)}
             >
               {' '}
               <div data-tooltip={navIcon.title}>
@@ -143,11 +143,7 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
       <div className="bg-grey-900">
         <div className="container py-5 flex  gap-3 justify-normal xl:justify-between items-center">
           <div className="flex gap-4 items-center">
-            <TabletNavmenu
-              setIsHamOpen={function (value: SetStateAction<boolean>): void {
-                throw new Error('Function not implemented.');
-              }}
-            />
+            <TabletNavmenu />
             {/* home logo begins here */}
             <LogoIcon logo_url={'/Logo.png'} />
           </div>
