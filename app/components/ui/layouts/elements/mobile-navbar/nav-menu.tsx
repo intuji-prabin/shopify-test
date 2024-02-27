@@ -1,11 +1,10 @@
 import {Link} from '@remix-run/react';
 import {mobileMenuItemsData} from '../bottom-header-menu-items';
+import {useHamburgerMenu} from '../HamburgerMenuContext';
 
-export default function NavMenu({
-  setIsHamOpen,
-}: {
-  setIsHamOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+export default function NavMenu() {
+  const {isOpen, toggleMenu} = useHamburgerMenu();
+
   return (
     <ul className="flex flex-col gap-4 menu-items">
       {mobileMenuItemsData.map((navigation) => (
@@ -18,7 +17,7 @@ export default function NavMenu({
             <Link
               to={navigation.url}
               className="w-full flex items-center gap-2 text-base font-bold leading-[21px] italic"
-              onClick={() => setIsHamOpen((prev) => !prev)}
+              onClick={() => toggleMenu(!isOpen)}
             >
               {navigation.icon}
               {navigation.title}

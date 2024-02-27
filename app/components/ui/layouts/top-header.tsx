@@ -24,7 +24,6 @@ import SearchIcon from '~/components/icons/search';
 import CloseMenu from '~/components/icons/closeMenu';
 import {CustomerData} from '~/routes/_public.login/login.server';
 import {useOutsideClick} from '~/hooks/useOutsideClick';
-import MobileNav from './elements/mobile-navbar/mobile-nav';
 import TabletNavmenu from './tablet-navbar/tablet-navmenu';
 
 export function PlaceOrder() {
@@ -57,11 +56,7 @@ export function LogoIcon({logo_url}: {logo_url: string}) {
   );
 }
 
-export function NotificationNavbar({
-  setIsHamOpen,
-}: {
-  setIsHamOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+export function NotificationNavbar() {
   const navIcons = [
     {
       id: 1,
@@ -223,11 +218,7 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
             </div>
 
             {/* notification menu starts here */}
-            <NotificationNavbar
-              setIsHamOpen={function (value: SetStateAction<boolean>): void {
-                throw new Error('Function not implemented.');
-              }}
-            />
+            <NotificationNavbar />
           </div>
 
           {/* order track begins here  */}

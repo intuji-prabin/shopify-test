@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react';
+import {SetStateAction, useRef, useState} from 'react';
 import {TabletHamburger} from '~/components/icons/orderStatus';
 
 import NavMenu from '../elements/mobile-navbar/nav-menu';
@@ -44,7 +44,7 @@ export default function TabletNavmenu({
             </div>
             <div className="bg-primary-500 p-4">
               {' '}
-              <NavMenu setIsHamOpen={setIsHamOpen} />
+              <NavMenu />
               <div className="flex flex-col justify-between gap-52 mt-2">
                 <OrderTrackMobile />
                 <LogoutForm />

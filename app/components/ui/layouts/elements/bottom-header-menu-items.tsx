@@ -137,13 +137,7 @@ export const mobileMenuItemsData = [
   },
   {
     id: 1,
-    title: (
-      <AccountDropDownMobile
-        setIsHamOpen={function (value: SetStateAction<boolean>): void {
-          throw new Error('Function not implemented.');
-        }}
-      />
-    ),
+    title: <AccountDropDownMobile />,
   },
   {
     id: 2,
@@ -153,13 +147,7 @@ export const mobileMenuItemsData = [
   },
   {
     id: 3,
-    title: (
-      <ContentDropdownMobile
-        setIsHamOpen={function (value: SetStateAction<boolean>): void {
-          throw new Error('Function not implemented.');
-        }}
-      />
-    ),
+    title: <ContentDropdownMobile />,
   },
   {
     id: 4,
@@ -175,13 +163,7 @@ export const mobileMenuItemsData = [
   },
   {
     id: 6,
-    title: (
-      <ResourcesDropdownMobile
-        setIsHamOpen={function (value: SetStateAction<boolean>): void {
-          throw new Error('Function not implemented.');
-        }}
-      />
-    ),
+    title: <ResourcesDropdownMobile />,
   },
   {
     id: 7,

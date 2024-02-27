@@ -12,11 +12,10 @@ import {Content} from '~/components/icons/content';
 
 import {Routes} from '~/lib/constants/routes.constent';
 import Resources from '~/components/icons/resources';
-export function AccountDropDownMobile({
-  setIsHamOpen,
-}: {
-  setIsHamOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+import {useHamburgerMenu} from '../HamburgerMenuContext';
+export function AccountDropDownMobile() {
+  const {isOpen, toggleMenu} = useHamburgerMenu();
+
   const accounts = [
     {
       title: 'Orders',
@@ -60,7 +59,7 @@ export function AccountDropDownMobile({
                       to={account.url}
                       className="relative flex items-center gap-1 menu-links 
                     "
-                      onClick={() => setIsHamOpen((prev) => !prev)}
+                      onClick={() => toggleMenu(!isOpen)}
                     >
                       {account.title}
                       {account.icon}
@@ -76,11 +75,8 @@ export function AccountDropDownMobile({
   );
 }
 
-export function ContentDropdownMobile({
-  setIsHamOpen,
-}: {
-  setIsHamOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+export function ContentDropdownMobile() {
+  const {isOpen, toggleMenu} = useHamburgerMenu();
   const contentManagement = [
     {
       id: 1,
@@ -111,7 +107,7 @@ export function ContentDropdownMobile({
                 <Link
                   to={account.url}
                   className="relative flex items-center gap-1 menu-links"
-                  onClick={() => setIsHamOpen((prev) => !prev)}
+                  onClick={() => toggleMenu(!isOpen)}
                 >
                   {' '}
                   {account.icon}
@@ -126,11 +122,9 @@ export function ContentDropdownMobile({
   );
 }
 
-export function ResourcesDropdownMobile({
-  setIsHamOpen,
-}: {
-  setIsHamOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+export function ResourcesDropdownMobile() {
+  const {isOpen, toggleMenu} = useHamburgerMenu();
+
   const resources = [
     {
       title: 'Certificate Generation',
@@ -160,7 +154,7 @@ export function ResourcesDropdownMobile({
                 <Link
                   to={account.url}
                   className="relative flex items-center gap-1 menu-links"
-                  onClick={() => setIsHamOpen((prev) => !prev)}
+                  onClick={() => toggleMenu(!isOpen)}
                 >
                   {' '}
                   {account.icon}

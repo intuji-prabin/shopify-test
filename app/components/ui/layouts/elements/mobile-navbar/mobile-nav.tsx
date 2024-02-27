@@ -12,12 +12,14 @@ import LogoutForm from './logout-form';
 import UserProfile from './user-profle';
 import {mobileMenuItemsData} from '../bottom-header-menu-items';
 import {Link} from '@remix-run/react';
+import {useHamburgerMenu} from '../HamburgerMenuContext';
 
 export default function MobileNav() {
-  const [isHamOpen, setIsHamOpen] = useState(false);
+  // const [isOpen, setisOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const {isOpen, toggleMenu} = useHamburgerMenu();
   const mobileNavSectionRef = useRef<HTMLDivElement>(null);
-  useOutsideClick(mobileNavSectionRef, () => setIsHamOpen(false));
+  useOutsideClick(mobileNavSectionRef, () => toggleMenu(false));
 
   return (
     <>
@@ -38,17 +40,17 @@ export default function MobileNav() {
             <Button
               className="border border-[#313535] p-2 bg-transparent max-w-10 max-h-10 hover:bg-transparent"
               onClick={() => {
-                setIsHamOpen(!isHamOpen);
+                toggleMenu(!isOpen);
               }}
             >
-              {isHamOpen ? <CloseMenu /> : <HamburgerIcon />}
+              {isOpen ? <CloseMenu /> : <HamburgerIcon />}
             </Button>
           </div>
         </div>
 
         <div
           className={`bg-primary-500 p-4 flex flex-col gap-16 transition-opacity ease-in-out delay-75 duration-150 mobile-nav z-[1000] absolute w-full
-        ${isHamOpen ? 'block' : 'hidden'}  `}
+        ${isOpen ? 'block' : 'hidden'}  `}
         >
           <div className="user-menu flex gap-4 flex-col">
             <div className="flex justify-between flex-col-reverse gap-4">
@@ -56,14 +58,10 @@ export default function MobileNav() {
               {/* user profile starts here */}
               <UserProfile user_name={'Niel De Grass'} />
               {/* notification menu bar starts */}
-              <NotificationNavbar
-                setIsHamOpen={function (value: SetStateAction<boolean>): void {
-                  throw new Error('Function not implemented.');
-                }}
-              />
+              <NotificationNavbar />
             </div>
             {/* menu navigation starts here */}
-            <NavMenu setIsHamOpen={setIsHamOpen} />
+            <NavMenu />
 
             {/*  order track starts here */}
             <OrderTrackMobile />
