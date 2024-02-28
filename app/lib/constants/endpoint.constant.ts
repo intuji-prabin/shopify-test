@@ -46,5 +46,6 @@ export const ENDPOINT = {
   },
   PRODUCT: {
     GET_PRICE: `${BASE_URL}/product/prices`,
+    GET_PRODUCT: `${BASE_URL}/product`,
   },
 };
