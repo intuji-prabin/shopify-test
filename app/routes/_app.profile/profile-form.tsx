@@ -81,13 +81,12 @@ const ProfileFormSchema = z
     oldPassword: z.string().trim().optional(),
     password: z
       .string()
-      .min(8, {message: 'Password must be at least 8 characters'})
       .trim()
-      .refine(
-        (value) => PASSWORD_REGEX.test(value),
-        'Password must be at least one capital letter, one number, and one special character',
-      )
-      .optional(),
+      .optional()
+      .refine((value) => {
+        if (typeof value === 'undefined' || value === '') return true;
+        return PASSWORD_REGEX.test(value);
+      }, 'Password must be at least 8 characters, one capital letter, one number, and one special character'),
     confirmPassword: z.string().trim().optional(),
   })
   .refine(({password, confirmPassword}) => password == confirmPassword, {
