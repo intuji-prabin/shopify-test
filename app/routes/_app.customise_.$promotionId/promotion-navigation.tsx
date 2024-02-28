@@ -10,6 +10,7 @@ const PromotionNavigation = ({ canvasRef, imageName }: { canvasRef: any, imageNa
 
   const printDocument = (canvasRefFinal: HTMLElement) => {
     setLoading(true);
+    console.log("canvasRefFinal", canvasRefFinal.clientWidth)
     if (canvasRefFinal) {
       html2canvas(canvasRefFinal, {
         allowTaint: true,
