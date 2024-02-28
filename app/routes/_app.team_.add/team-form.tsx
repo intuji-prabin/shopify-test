@@ -115,7 +115,7 @@ export default function TeamForm({
     >
       <div className="grid gap-4 sm:grid-cols-4">
         <div className="sm:col-start-1 sm:col-end-2">
-          <h5>Basic Information</h5>
+          <h4>Basic Information</h4>
           <p>View and change the user information</p>
         </div>
         <div className="sm:col-start-2 sm:col-end-5">
@@ -156,7 +156,7 @@ export default function TeamForm({
       <Separator className="my-8" />
       <div className="grid gap-4 sm:grid-cols-4">
         <div className="sm:col-start-1 sm:col-end-2">
-          <h5>User Roles</h5>
+          <h4>User Roles</h4>
           <p>Set the user roles, change teams</p>
         </div>
         <div className="sm:col-start-2 sm:col-end-5">
@@ -196,7 +196,7 @@ export default function TeamForm({
         <div className="fixed inset-x-0 bottom-0 z-40 py-4 bg-primary-500">
           <div className="container">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h5 className="text-white">Unsaved changes</h5>
+              <h4 className="text-white">Unsaved changes</h4>
               <div className="flex gap-3">
                 <Button
                   type="button"

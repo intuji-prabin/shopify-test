@@ -62,7 +62,8 @@ const ProfileFormSchema = z
       .min(1, {message: 'Email is required'})
       .email()
       .trim()
-      .toLowerCase(),
+      .toLowerCase()
+      .optional(),
     phoneNumber: z
       .string()
       .min(1, {message: 'Phone Number is required'})
@@ -124,7 +125,7 @@ export default function ProfileForm({
     >
       <div className="grid sm:grid-cols-4 gap-4">
         <div className="sm:col-start-1 sm:col-end-2">
-          <h5>Basic Information</h5>
+          <h4>Basic Information</h4>
           <p>View and change the user information</p>
         </div>
         <div className="sm:col-start-2 sm:col-end-5">
@@ -143,6 +144,7 @@ export default function ProfileForm({
             />
             <Input
               required
+              disabled
               type="email"
               name="email"
               label="Email"
@@ -168,7 +170,7 @@ export default function ProfileForm({
       <Separator className="my-8" />
       <div className="grid sm:grid-cols-4 gap-4">
         <div className="sm:col-start-1 sm:col-end-2">
-          <h5>User Roles</h5>
+          <h4>User Roles</h4>
           <p>Set the user roles, change Profiles</p>
         </div>
         <div className="sm:col-start-2 sm:col-end-5">
@@ -191,7 +193,7 @@ export default function ProfileForm({
       <Separator className="my-8" />
       <div className="grid sm:grid-cols-4 gap-4">
         <div className="sm:col-start-1 sm:col-end-2">
-          <h5>Passwords</h5>
+          <h4>Passwords</h4>
           <p>Change the password of the users</p>
         </div>
         <div className="sm:col-start-2 sm:col-end-5">
@@ -222,7 +224,7 @@ export default function ProfileForm({
         <div className="fixed inset-x-0 bottom-0 z-40 py-4 bg-primary-500">
           <div className="container">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h5 className="text-white">Unsaved changes</h5>
+              <h4 className="text-white">Unsaved changes</h4>
               <div className="flex gap-3">
                 <Button
                   type="button"
