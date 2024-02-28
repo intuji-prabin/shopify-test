@@ -17,7 +17,7 @@ import {
   MAX_FILE_SIZE_MB,
 } from '~/lib/constants/form.constant';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {AustralianPhoneNumberValidationRegex} from '~/lib/constants/regex.constant';
+import {AUSTRALIAN_PHONENUMBER_VALIDATION_REGEX} from '~/lib/constants/regex.constant';
 
 type TeamFormProps = {
   defaultValues?: Omit<AddTeamFormType, 'profileImage'> & {
@@ -57,7 +57,7 @@ const EditTeamFormSchema = z.object({
     .min(1, {message: 'Phone Number is required'})
     .trim()
     .refine(
-      (value) => AustralianPhoneNumberValidationRegex.test(value),
+      (value) => AUSTRALIAN_PHONENUMBER_VALIDATION_REGEX.test(value),
       'Invalid Phone Number',
     ),
   address: z.string().min(1, {message: 'Address is required'}).trim(),
