@@ -29,3 +29,4 @@ export const SEARCH_FIELD_REGEX = /^[A-Za-z0-9\s]*$/i; //except special characte
 
 export const AUSTRALIAN_PHONENUMBER_VALIDATION_REGEX =
   /^(?:\+?61|0)[2-478](?:[ -]?[0-9]){8}$/;
+export const NumberPlusOnly = /^\+?[\d\s]*$/;
