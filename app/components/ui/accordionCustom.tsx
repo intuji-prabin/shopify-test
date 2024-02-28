@@ -1,5 +1,5 @@
 import { ChevronDown } from 'lucide-react';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode } from 'react';
 
 type AccordionType = {
   accordionTitle: string;
@@ -10,29 +10,14 @@ type AccordionType = {
 };
 
 const AccordionCustom = ({ accordionTitle, children, isOpen = false, setOpenAccordian, accordianLabel }: AccordionType) => {
-  const content = useRef<HTMLDivElement>(null);
-  const [height, setHeight] = useState('0px');
 
   function toggleAccordion() {
     if (isOpen) {
       setOpenAccordian("");
-      setHeight('0px');
     } else {
       setOpenAccordian(accordianLabel);
-      setHeight(isOpen ? '0px' : `${content?.current?.scrollHeight}px`);
     }
-
   }
-
-  useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => {
-        setHeight(`${content?.current?.scrollHeight}px`);
-      }, 0);
-    } else {
-      setHeight('0px');
-    }
-  }, [isOpen]);
 
   return (
     <div className="border-b border-solid border-grey-50 accordion__list">
@@ -48,9 +33,8 @@ const AccordionCustom = ({ accordionTitle, children, isOpen = false, setOpenAcco
         </span>
       </button>
       <div
-        ref={content}
-        style={{ maxHeight: `${height}`, transition: 'max-height 0.3s ease' }}
-        className="overflow-hidden accordion__content"
+        className={` overflow-auto accordion__content ${isOpen ? 'block' : 'hidden'
+          }`}
       >
         <div className="mb-4">{children}</div>
       </div>

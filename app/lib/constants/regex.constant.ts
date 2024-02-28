@@ -16,3 +16,4 @@ export const FILE_TYPE_REGEX = /(\.pdf|\.docx|\.doc|\.png|\.jpg|\.jpeg)$/i;
 export const SEARCH_FIELD_REGEX = /^[A-Za-z0-9\s]*$/i; //except special characters
 export const AustralianPhoneNumberValidationRegex =
   /^(?:\+?61|0)[2-478](?:[ -]?[0-9]){8}$/;
+export const NumberPlusOnly = /^\+?[\d\s]*$/;
