@@ -60,11 +60,15 @@ const EditFormValidator = z.object({
         return true;
       }, 'Max file size is 15MB.'),
   ),
-  companyPhone: z.string().trim()
+  companyPhone: z.string().min(1, { message: 'Company Phone is required' }).trim()
     .refine(
       (value) => NumberPlusOnly.test(value),
       'Phone Number must only contain numbers and +',
-    ).optional(),
+    ),
+  company_name: z.string().min(1, { message: 'Company Name is required' }),
+  company_email: z.string().min(1, { message: 'Company Email is required' }).email({ message: 'Invalid email address' }),
+  company_domain: z.string().min(1, { message: 'Company Website is required' }),
+  company_fax: z.string().min(1, { message: 'Company Fax is required' }),
 });
 
 export const EditFormSchemaValidator = withZod(EditFormValidator);
@@ -175,6 +179,8 @@ const PromotionEdit = () => {
     html2canvas(canvasRef, {
       allowTaint: true,
       useCORS: true,
+      scale: 2,
+      removeContainer: true,
     }).then((canvas) => {
       const link = document.createElement('a');
       document.body.appendChild(link);
@@ -208,6 +214,8 @@ const PromotionEdit = () => {
       const canvas = await html2canvas(canvasRef.current, {
         allowTaint: true,
         useCORS: true,
+        scale: 2,
+        removeContainer: true,
       });
       formData.append("image", canvas.toDataURL());
     } catch (error) {
@@ -344,7 +352,6 @@ const PromotionEdit = () => {
                 className="hidden"
               />
               <h5 className="py-4">Company Logo</h5>
-
               <ImageUploadInput
                 name="logo"
                 imageUrl={companyInfo.companyLogo ?? DEFAULT_IMAGE.IMAGE}
@@ -356,10 +363,10 @@ const PromotionEdit = () => {
                 <AccordionCustom accordianLabel='company-information' setOpenAccordian={setOpenAccordian} isOpen={openAccordian === "company-information"} accordionTitle="Company Information">
                   <div className="space-y-6">
                     <div>
-                      <label htmlFor="company_name">Company Name</label>
-                      <input
+                      <Input
                         type="text"
                         name="company_name"
+                        label='Company Name'
                         value={companyInfo.companyName}
                         className="w-full"
                         placeholder="company name"
@@ -369,12 +376,12 @@ const PromotionEdit = () => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="company_email">Company Email</label>
-                      <input
+                      <Input
                         type="text"
                         name="company_email"
                         value={companyInfo.companyEmail}
                         className="w-full"
+                        label='Company Email'
                         placeholder="company email"
                         onInput={(e) =>
                           handleChange('companyEmail', e.currentTarget.value)
@@ -382,12 +389,12 @@ const PromotionEdit = () => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="company_domain">Company Website</label>
-                      <input
+                      <Input
                         type="text"
                         name="company_domain"
                         value={companyInfo.companyWebsite}
                         className="w-full"
+                        label="Company Website"
                         placeholder="company website"
                         onInput={(e) =>
                           handleChange('companyWebsite', e.currentTarget.value)
@@ -407,13 +414,13 @@ const PromotionEdit = () => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="company_fax">Company Fax</label>
-                      <input
+                      <Input
                         type="text"
                         name="company_fax"
                         value={companyInfo.companyFax}
                         className="w-full"
                         placeholder="company fax"
+                        label="Company Fax"
                         onInput={(e) =>
                           handleChange('companyFax', e.currentTarget.value)
                         }
