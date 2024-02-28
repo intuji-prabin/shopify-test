@@ -364,6 +364,7 @@ const PromotionEdit = () => {
                   <div className="space-y-6">
                     <div>
                       <Input
+                        required
                         type="text"
                         name="company_name"
                         label='Company Name'
@@ -377,6 +378,7 @@ const PromotionEdit = () => {
                     </div>
                     <div>
                       <Input
+                        required
                         type="text"
                         name="company_email"
                         value={companyInfo.companyEmail}
@@ -390,6 +392,7 @@ const PromotionEdit = () => {
                     </div>
                     <div>
                       <Input
+                        required
                         type="text"
                         name="company_domain"
                         value={companyInfo.companyWebsite}
@@ -403,6 +406,7 @@ const PromotionEdit = () => {
                     </div>
                     <div>
                       <Input
+                        required
                         type="text"
                         name="companyPhone"
                         label="Company Phone"
@@ -415,6 +419,7 @@ const PromotionEdit = () => {
                     </div>
                     <div>
                       <Input
+                        required
                         type="text"
                         name="company_fax"
                         value={companyInfo.companyFax}
