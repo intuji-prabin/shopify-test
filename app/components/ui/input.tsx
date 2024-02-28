@@ -1,19 +1,21 @@
 import React from 'react';
-import {useField} from 'remix-validated-form';
-import {DangerAlert} from '~/components/icons/alert';
-import {CreateTicketFormFieldNameType} from '~/routes/_app.support_.create-ticket/create-ticket-form';
+import { useField } from 'remix-validated-form';
+import { DangerAlert } from '~/components/icons/alert';
+import { EditFormFieldNameType } from '~/routes/_app.edit_.$promotionId/route';
+import { CreateTicketFormFieldNameType } from '~/routes/_app.support_.create-ticket/create-ticket-form';
 import {
   AddTeamFormFieldNameType,
   EditTeamFormFieldNameType,
 } from '~/routes/_app.team_.add/team-form';
-import {LoginFormFieldNameType} from '~/routes/_public.login/login-form';
+import { LoginFormFieldNameType } from '~/routes/_public.login/login-form';
 
 interface InputType extends React.ComponentPropsWithoutRef<'input'> {
   name:
-    | AddTeamFormFieldNameType
-    | EditTeamFormFieldNameType
-    | LoginFormFieldNameType
-    | CreateTicketFormFieldNameType;
+  | AddTeamFormFieldNameType
+  | EditTeamFormFieldNameType
+  | LoginFormFieldNameType
+  | CreateTicketFormFieldNameType
+  | EditFormFieldNameType;
   label?: string;
   placeholder?: string;
   required?: boolean;
@@ -29,7 +31,7 @@ export const Input = ({
   disabled,
   ...props
 }: InputType) => {
-  const {error, getInputProps} = useField(name);
+  const { error, getInputProps } = useField(name);
 
   return (
     <div>
