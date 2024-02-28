@@ -158,7 +158,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
       productPage
     });
   } catch (error) {
-
+    return json({});
   }
 };
 
