@@ -179,8 +179,6 @@ const PromotionEdit = () => {
     html2canvas(canvasRef, {
       allowTaint: true,
       useCORS: true,
-      scale: 2,
-      removeContainer: true,
     }).then((canvas) => {
       const link = document.createElement('a');
       document.body.appendChild(link);
@@ -214,8 +212,6 @@ const PromotionEdit = () => {
       const canvas = await html2canvas(canvasRef.current, {
         allowTaint: true,
         useCORS: true,
-        scale: 2,
-        removeContainer: true,
       });
       formData.append("image", canvas.toDataURL());
     } catch (error) {
