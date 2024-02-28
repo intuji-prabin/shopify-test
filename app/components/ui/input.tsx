@@ -26,13 +26,14 @@ export const Input = ({
   placeholder,
   required,
   icon,
+  disabled,
   ...props
 }: InputType) => {
   const {error, getInputProps} = useField(name);
 
   return (
     <div>
-      <label htmlFor={name}>
+      <label htmlFor={name} className={`${disabled && 'text-grey-200'}`}>
         {label}
         {required && <span className="required">*</span>}
       </label>
@@ -40,10 +41,11 @@ export const Input = ({
         <input
           {...props}
           {...getInputProps({id: name})}
+          disabled={disabled}
           placeholder={placeholder}
           className={`${error ? 'invalid' : ''} ${
             icon ? 'with-icon' : ''
-          } w-full text-grey-400`}
+          } w-full text-grey-400 disabled:bg-grey-25 disabled:!border-grey-25 disabled:border disabled:opacity-50`}
         />
         {icon && (
           <span className="absolute -translate-y-1/2 top-1/2 left-3">
@@ -51,7 +53,7 @@ export const Input = ({
           </span>
         )}
       </div>
-      {error && (
+      {!disabled && error && (
         <p className="pt-1 error-msg">
           <DangerAlert />
           <span className="pl-2">{error}</span>

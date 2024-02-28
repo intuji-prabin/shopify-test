@@ -1,14 +1,14 @@
 import {z} from 'zod';
-import {withZod} from '@remix-validated-form/with-zod';
-import {ValidatedForm} from 'remix-validated-form';
-import {Button} from '~/components/ui/button';
-import {DatePickerInput} from '~/components/ui/date-picker';
-import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
-import {Separator} from '~/components/ui/separator';
-import {SheetClose, SheetFooter} from '~/components/ui/sheet';
-import {useSearchParams} from '@remix-run/react';
 import {Link} from 'react-router-dom';
+import {Button} from '~/components/ui/button';
+import {useSearchParams} from '@remix-run/react';
+import {ValidatedForm} from 'remix-validated-form';
+import {Separator} from '~/components/ui/separator';
 import {Routes} from '~/lib/constants/routes.constent';
+import {withZod} from '@remix-validated-form/with-zod';
+import {DatePickerInput} from '~/components/ui/date-picker';
+import {SheetClose, SheetFooter} from '~/components/ui/sheet';
+import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
 
 type TicketsFilterFormProps = {
   options: SelectInputOptions[];
@@ -53,8 +53,9 @@ export default function TicketsFilterForm({options}: TicketsFilterFormProps) {
 
   return (
     <ValidatedForm
-      id="tickets-filter-form"
       method="GET"
+      data-cy="filter-form"
+      id="tickets-filter-form"
       defaultValues={defaultValues}
       validator={TicketsFilterFormSchemaValidator}
     >
@@ -67,7 +68,7 @@ export default function TicketsFilterForm({options}: TicketsFilterFormProps) {
                 to={Routes.SUPPORT_TICKETS}
                 className="italic text-primary-500 font-bold text-sm leading-6"
               >
-                RESET
+                RESET ALL
               </Link>
             </SheetClose>
           </div>
@@ -107,7 +108,7 @@ export default function TicketsFilterForm({options}: TicketsFilterFormProps) {
           </Button>
         </SheetClose>
         <SheetClose asChild>
-          <Button type="submit" className="">
+          <Button type="submit" data-cy="apply-filter">
             apply filter
           </Button>
         </SheetClose>
