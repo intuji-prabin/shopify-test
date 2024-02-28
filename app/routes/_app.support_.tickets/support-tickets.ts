@@ -23,11 +23,12 @@ export async function getAllTickets({
 }) {
   try {
     const params = [
+      'page',
       'search',
-      'createdDateFrom',
-      'createdDateTo',
-      'department',
       'status',
+      'departmentId',
+      'createdDateTo',
+      'createdDateFrom',
     ];
 
     const url = `${ENDPOINT.SUPPORT.GET_TICKETS}/${customerId}?`;
