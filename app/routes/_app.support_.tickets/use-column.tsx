@@ -6,7 +6,7 @@ export type TicketColumn = {
   id: string;
   contactName: string;
   description: string;
-  department: string;
+  supportDepartment: string;
   createdOn: string;
   status: 'pending' | 'in_progress' | 'closed';
 };
@@ -36,7 +36,7 @@ export function useColumn() {
         cell: (info) => info.getValue(),
       },
       {
-        accessorKey: 'department',
+        accessorKey: 'supportDepartment',
         header: 'Department',
         enableSorting: false,
         cell: (info) => info.getValue(),

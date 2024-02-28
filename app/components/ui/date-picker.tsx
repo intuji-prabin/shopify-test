@@ -27,7 +27,7 @@ export function DatePickerInput({
       <input
         {...getInputProps({id: name})}
         type="hidden"
-        value={date?.toDateString() || ''}
+        value={date ? date.toString() : ''}
       />
       <PopoverTrigger asChild>
         <Button
@@ -41,7 +41,7 @@ export function DatePickerInput({
           )}
         >
           {date ? (
-            format(date, 'dd/MM/yyyy')
+            format(new Date(date), 'dd/MM/yyyy')
           ) : (
             <span className="capitalize text-grey-400">Pick a date</span>
           )}

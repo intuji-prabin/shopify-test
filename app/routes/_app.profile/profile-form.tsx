@@ -8,7 +8,10 @@ import {withZod} from '@remix-validated-form/with-zod';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import ValidatedFormPassword from '~/components/ui/validated-form-password';
 import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
-import {AustralianPhoneNumberValidationRegex} from '~/lib/constants/regex.constant';
+import {
+  AUSTRALIAN_PHONENUMBER_VALIDATION_REGEX,
+  PASSWORD_REGEX,
+} from '~/lib/constants/regex.constant';
 import {
   ValidatedForm,
   useFormContext,
@@ -65,7 +68,7 @@ const ProfileFormSchema = z
       .min(1, {message: 'Phone Number is required'})
       .trim()
       .refine(
-        (value) => AustralianPhoneNumberValidationRegex.test(value),
+        (value) => AUSTRALIAN_PHONENUMBER_VALIDATION_REGEX.test(value),
         'Invalid Phone Number',
       ),
     address: z.string().min(1, {message: 'Address is required'}).trim(),
@@ -76,7 +79,15 @@ const ProfileFormSchema = z
       .optional(),
     customerId: z.string().optional(),
     oldPassword: z.string().trim().optional(),
-    password: z.string().trim().optional(),
+    password: z
+      .string()
+      .min(8, {message: 'Password must be at least 8 characters'})
+      .trim()
+      .refine(
+        (value) => PASSWORD_REGEX.test(value),
+        'Password must be at least one capital letter, one number, and one special character',
+      )
+      .optional(),
     confirmPassword: z.string().trim().optional(),
   })
   .refine(({password, confirmPassword}) => password == confirmPassword, {
