@@ -11,9 +11,7 @@ import {useColumn} from '~/routes/_app.support_.tickets/use-column';
 import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
 import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
 import {HorizontalHamburgerIcon} from '~/components/icons/hamburgerIcon';
-import TicketsFilterForm, {
-  TicketsFilterFormType,
-} from '~/routes/_app.support_.tickets/filter-form';
+import TicketsFilterForm from '~/routes/_app.support_.tickets/filter-form';
 import {LoaderFunctionArgs, MetaFunction, json} from '@shopify/remix-oxygen';
 import {getAllTickets} from '~/routes/_app.support_.tickets/support-tickets';
 import {getSupportContact} from '~/routes/_app.support_.contact-us/support-contact-us.server';
@@ -29,7 +27,6 @@ import {
   isRouteErrorResponse,
   useLoaderData,
   useRouteError,
-  useSearchParams,
 } from '@remix-run/react';
 
 export const meta: MetaFunction = () => {
@@ -63,16 +60,6 @@ export default function TicketsPage() {
 
   const {table} = useTable(columns, tickets);
 
-  const [searchParams] = useSearchParams();
-
-  const defaultValues: TicketsFilterFormType = {};
-
-  defaultValues.status = searchParams.get('status') || undefined;
-  // defaultValues.createdDateFrom = searchParams.get('createdDateFrom') || '';
-  // defaultValues.createdDateTo = searchParams.get('createdDateTo') || '';
-  defaultValues.departmentId = searchParams.get('departmentId') || '';
-  console.log('defaultValues', defaultValues);
-
   return (
     <section className="container">
       <div className=" pt-6 pb-4 flex items-center justify-between">
@@ -105,10 +92,7 @@ export default function TicketsPage() {
               <SheetTitle className="text-3xl font-bold">Filter</SheetTitle>
             </SheetHeader>
             <Separator className="" />
-            <TicketsFilterForm
-              options={departmentOptions}
-              defaultValues={defaultValues}
-            />
+            <TicketsFilterForm options={departmentOptions} />
           </SheetContent>
         </Sheet>
       </div>

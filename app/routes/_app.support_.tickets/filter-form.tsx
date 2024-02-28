@@ -6,10 +6,12 @@ import {DatePickerInput} from '~/components/ui/date-picker';
 import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
 import {Separator} from '~/components/ui/separator';
 import {SheetClose, SheetFooter} from '~/components/ui/sheet';
+import {useSearchParams} from '@remix-run/react';
+import {Link} from 'react-router-dom';
+import {Routes} from '~/lib/constants/routes.constent';
 
 type TicketsFilterFormProps = {
   options: SelectInputOptions[];
-  defaultValues?: TicketsFilterFormType;
 };
 
 const ticketsStatusOptions: SelectInputOptions[] = [
@@ -33,10 +35,22 @@ export type TicketsFilterFormType = z.infer<typeof TicketsFilterFormSchema>;
 
 export type TicketsFilterFormFieldNameType = keyof TicketsFilterFormType;
 
-export default function TicketsFilterForm({
-  options,
-  defaultValues,
-}: TicketsFilterFormProps) {
+export default function TicketsFilterForm({options}: TicketsFilterFormProps) {
+  const [searchParams] = useSearchParams();
+
+  const defaultValues: TicketsFilterFormType = {};
+
+  const keys: TicketsFilterFormFieldNameType[] = [
+    'status',
+    'createdDateFrom',
+    'createdDateTo',
+    'departmentId',
+  ];
+
+  keys.forEach((key) => {
+    defaultValues[key] = searchParams.get(key) || undefined;
+  });
+
   return (
     <ValidatedForm
       id="tickets-filter-form"
@@ -46,7 +60,17 @@ export default function TicketsFilterForm({
     >
       <div>
         <div className="p-6">
-          <h5 className="pb-2">Created On</h5>
+          <div className="flex justify-between items-center">
+            <h5 className="pb-2">Created On</h5>
+            <SheetClose asChild>
+              <Link
+                to={Routes.SUPPORT_TICKETS}
+                className="italic text-primary-500 font-bold text-sm leading-6"
+              >
+                RESET
+              </Link>
+            </SheetClose>
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="">
               <p className="pb-1">From</p>
@@ -65,7 +89,9 @@ export default function TicketsFilterForm({
         </div>
         <Separator />
         <div className="p-6">
-          <h5 className="pb-2">Status</h5>
+          <div className="">
+            <h5 className="pb-2">Status</h5>
+          </div>
           <SelectInput
             name="status"
             label="Status"

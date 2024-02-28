@@ -35,8 +35,6 @@ export async function getAllTickets({
 
     const generatedUrl = generateUrlWithParams({url, params, request});
 
-    console.log('generatedUrl', generatedUrl);
-
     const results = await useFetch<ResponseData>({
       method: AllowedHTTPMethods.GET,
       url: generatedUrl,
