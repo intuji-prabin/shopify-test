@@ -8,7 +8,10 @@ import {withZod} from '@remix-validated-form/with-zod';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import ValidatedFormPassword from '~/components/ui/validated-form-password';
 import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
-import {AustralianPhoneNumberValidationRegex} from '~/lib/constants/regex.constant';
+import {
+  AUSTRALIAN_PHONENUMBER_VALIDATION_REGEX,
+  PASSWORD_REGEX,
+} from '~/lib/constants/regex.constant';
 import {
   ValidatedForm,
   useFormContext,
@@ -59,13 +62,14 @@ const ProfileFormSchema = z
       .min(1, {message: 'Email is required'})
       .email()
       .trim()
-      .toLowerCase(),
+      .toLowerCase()
+      .optional(),
     phoneNumber: z
       .string()
       .min(1, {message: 'Phone Number is required'})
       .trim()
       .refine(
-        (value) => AustralianPhoneNumberValidationRegex.test(value),
+        (value) => AUSTRALIAN_PHONENUMBER_VALIDATION_REGEX.test(value),
         'Invalid Phone Number',
       ),
     address: z.string().min(1, {message: 'Address is required'}).trim(),
@@ -76,7 +80,14 @@ const ProfileFormSchema = z
       .optional(),
     customerId: z.string().optional(),
     oldPassword: z.string().trim().optional(),
-    password: z.string().trim().optional(),
+    password: z
+      .string()
+      .trim()
+      .optional()
+      .refine((value) => {
+        if (typeof value === 'undefined' || value === '') return true;
+        return PASSWORD_REGEX.test(value);
+      }, 'Password must be at least 8 characters, one capital letter, one number, and one special character'),
     confirmPassword: z.string().trim().optional(),
   })
   .refine(({password, confirmPassword}) => password == confirmPassword, {
@@ -114,7 +125,7 @@ export default function ProfileForm({
     >
       <div className="grid sm:grid-cols-4 gap-4">
         <div className="sm:col-start-1 sm:col-end-2">
-          <h5>Basic Information</h5>
+          <h4>Basic Information</h4>
           <p>View and change the user information</p>
         </div>
         <div className="sm:col-start-2 sm:col-end-5">
@@ -133,6 +144,7 @@ export default function ProfileForm({
             />
             <Input
               required
+              disabled
               type="email"
               name="email"
               label="Email"
@@ -158,7 +170,7 @@ export default function ProfileForm({
       <Separator className="my-8" />
       <div className="grid sm:grid-cols-4 gap-4">
         <div className="sm:col-start-1 sm:col-end-2">
-          <h5>User Roles</h5>
+          <h4>User Roles</h4>
           <p>Set the user roles, change Profiles</p>
         </div>
         <div className="sm:col-start-2 sm:col-end-5">
@@ -181,7 +193,7 @@ export default function ProfileForm({
       <Separator className="my-8" />
       <div className="grid sm:grid-cols-4 gap-4">
         <div className="sm:col-start-1 sm:col-end-2">
-          <h5>Passwords</h5>
+          <h4>Passwords</h4>
           <p>Change the password of the users</p>
         </div>
         <div className="sm:col-start-2 sm:col-end-5">
@@ -212,7 +224,7 @@ export default function ProfileForm({
         <div className="fixed inset-x-0 bottom-0 z-40 py-4 bg-primary-500">
           <div className="container">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h5 className="text-white">Unsaved changes</h5>
+              <h4 className="text-white">Unsaved changes</h4>
               <div className="flex gap-3">
                 <Button
                   type="button"

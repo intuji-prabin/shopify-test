@@ -1,24 +1,25 @@
+import {useFetch} from '~/hooks/useFetch';
+import {MetaFunction} from '@shopify/remix-oxygen';
+import {validationError} from 'remix-validated-form';
+import {Routes} from '~/lib/constants/routes.constent';
 import {BackButton} from '~/components/ui/back-button';
+import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import {getSupportContact} from '~/routes/_app.support_.contact-us/support-contact-us.server';
 import {
   CreateTicketForm,
   CreateTicketFormFieldValidator,
 } from '~/routes/_app.support_.create-ticket/create-ticket-form';
-import {Routes} from '~/lib/constants/routes.constent';
-import {validationError} from 'remix-validated-form';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   json,
   redirect,
 } from '@remix-run/server-runtime';
-import {MetaFunction} from '@shopify/remix-oxygen';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {useFetch} from '~/hooks/useFetch';
-import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
-import {ENDPOINT} from '~/lib/constants/endpoint.constant';
-import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
 import {
   isRouteErrorResponse,
   useLoaderData,
@@ -30,8 +31,6 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
-import {getSupportContact} from '../_app.support_.contact-us/support-contact-us.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Create Ticket'}];
