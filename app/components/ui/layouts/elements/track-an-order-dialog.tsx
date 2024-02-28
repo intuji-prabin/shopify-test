@@ -19,7 +19,7 @@ export function TrackAnOrderButton() {
       <DialogTrigger asChild>
         <button
           className="track-time flex gap-1 items-center"
-          onClick={() => toggleMenu(!isOpen)}
+          onClick={() => toggleMenu(false)}
         >
           <Ordertrack />
           <p className="uppercase text-white italic text-base font-bold ">

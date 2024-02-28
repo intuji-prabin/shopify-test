@@ -82,7 +82,7 @@ export const columns: ColumnDef<WishListItem>[] = [
     header: 'Action',
     cell: ({row}) => (
       <Button
-        className="uppercase flex-grow max-h-[28px] min-w-[86px]"
+        className="uppercase flex-grow max-h-[unset] lg:max-h-[28px] min-w-[86px]"
         variant="primary"
       >
         Add to cart
