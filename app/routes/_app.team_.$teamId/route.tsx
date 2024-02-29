@@ -76,11 +76,21 @@ export async function action({request, context, params}: ActionFunctionArgs) {
 
     const customerId = params?.teamId as string;
 
-    const {email, fullName, address, phoneNumber, userRole, profileImage} =
-      result.data;
+    const {
+      email,
+      fullName,
+      address,
+      phoneNumber,
+      userRole,
+      profileImage,
+      addressId,
+    } = result.data;
+
+    console.log('result.data', result.data);
 
     await updateTeam({
       address,
+      addressId,
       email,
       fullName,
       phoneNumber,
@@ -156,6 +166,7 @@ export default function TeamDetailsPage() {
       </div>
       <TeamForm
         defaultValues={customerDetails}
+        addressId={customerDetails?.addressId}
         customerId={customerDetails?.customerId}
         options={roles.data as SelectInputOptions[]}
       />

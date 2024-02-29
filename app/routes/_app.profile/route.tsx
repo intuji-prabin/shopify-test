@@ -152,19 +152,14 @@ export async function action({request, context}: ActionFunctionArgs) {
           customerAddress: {
             address1: address,
           },
-          addressID: userDetails?.address[0]?.id,
+          addressID: userDetails?.address[0]?.id || '',
         },
       },
     );
 
     if (updateCustomerDetails.customerUpdate?.customerUserErrors?.length) {
-      return json(
-        {
-          error:
-            updateCustomerDetails.customerUpdate?.customerUserErrors[0]
-              ?.message,
-        },
-        {status: 400},
+      throw new Error(
+        updateCustomerDetails.customerUpdate?.customerUserErrors[0]?.message,
       );
     }
 
@@ -202,6 +197,8 @@ export async function action({request, context}: ActionFunctionArgs) {
     });
   } catch (error) {
     if (error instanceof Error) {
+      console.log('error', error);
+
       setErrorMessage(messageSession, error.message);
       return json(
         {},
