@@ -150,9 +150,10 @@ export default function MyPromotionsPage() {
     });
   };
 
-  const exportUrl = `/export-promotion?promotion_id=${checkedItems.promotions.join(
+  const exportUrl = `https://cig-backend.webo.dev/api/promotion/download-images?promotion_id=${checkedItems.promotions.join(
     ',',
   )}`;
+  console.log('exportUrl', exportUrl);
 
   return (
     <div className="pt-10 sm:pt-0">
