@@ -21,7 +21,7 @@ export async function exportPromotion(request: Request) {
     if (contentType && contentType === 'application/zip') {
       const buffer = await response.arrayBuffer();
       fileData = buffer;
-    } else if (contentType && contentType === 'application/octet-stream') {
+    } else if (contentType && contentType === 'stream') {
       const blob = await response.blob();
       fileData = blob;
     } else {
