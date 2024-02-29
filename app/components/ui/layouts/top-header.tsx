@@ -6,7 +6,7 @@ import {
   TabletHamburger,
   UserProfile,
 } from '~/components/icons/orderStatus';
-import {SetStateAction, useRef, useState} from 'react';
+import {useRef, useState} from 'react';
 import {Button} from '~/components/ui/button';
 import {
   DropdownMenu,
@@ -254,6 +254,7 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
                     <Link
                       to={Routes.PROFILE}
                       className="bg-white p-2 w-full flex items-center justify-start gap-2 hover:bg-primary-100 my-profile transition duration-500 ease-in-out delay-75"
+                      onClick={() => setIsClicked(false)}
                     >
                       <UserProfile />
                       <h5 className="text-lg font-bold italic text-grey-900">
