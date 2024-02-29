@@ -86,8 +86,6 @@ export async function action({request, context, params}: ActionFunctionArgs) {
       addressId,
     } = result.data;
 
-    console.log('result.data', result.data);
-
     await updateTeam({
       address,
       addressId,
