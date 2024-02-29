@@ -17,9 +17,17 @@ const CreateTicketFormFieldSchema = z.object({
   date: z
     .string()
     .refine((date) => !isNaN(Date.parse(date)), {message: 'Date is required'}),
-  contactName: z.string().min(1, {message: 'Contact Name is required'}).trim(),
+  contactName: z
+    .string()
+    .min(1, {message: 'Contact Name is required'})
+    .max(50, {message: 'Contact Name should not exceed 50 characters'})
+    .trim(),
   departmentId: z.string().min(1, {message: 'Department is required'}).trim(),
-  description: z.string().min(1, {message: 'Description is required'}).trim(),
+  description: z
+    .string()
+    .min(1, {message: 'Description is required'})
+    .max(420, {message: 'Description should not exceed 420 characters'})
+    .trim(),
 });
 
 export const CreateTicketFormFieldValidator = withZod(

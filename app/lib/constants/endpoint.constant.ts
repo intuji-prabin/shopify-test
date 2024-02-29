@@ -1,8 +1,8 @@
 // const BASE_URL = 'https://casual-mink-routinely.ngrok-free.app/api'; // Sanchay NGRok
 
-// const BASE_URL = 'https://relaxing-hawk-ace.ngrok-free.app/api'; // Amit NGRok
+const BASE_URL = 'https://relaxing-hawk-ace.ngrok-free.app/api'; // Amit NGRok
 
-const BASE_URL = 'https://cig-backend.webo.dev/api'; // Live
+// const BASE_URL = 'https://cig-backend.webo.dev/api'; // Live
 
 export const ENDPOINT = {
   AUTH: {

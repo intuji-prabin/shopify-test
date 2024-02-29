@@ -36,6 +36,7 @@ import {
   filterOptions,
 } from '~/routes/_app.promotions/promotion-constants';
 import {getUserDetails} from '~/lib/utils/user-session.server';
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 
 export const meta: MetaFunction = () => {
   return [{title: 'My Promotion'}];
@@ -150,10 +151,9 @@ export default function MyPromotionsPage() {
     });
   };
 
-  const exportUrl = `https://cig-backend.webo.dev/api/promotion/download-images?promotion_id=${checkedItems.promotions.join(
-    ',',
-  )}`;
-  console.log('exportUrl', exportUrl);
+  const exportUrl = `${
+    ENDPOINT.PROMOTION.BULK_EXPORT
+  }?promotion_id=${checkedItems.promotions.join(',')}`;
 
   return (
     <div className="pt-10 sm:pt-0">
