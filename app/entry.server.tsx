@@ -40,7 +40,6 @@ export default async function handleRequest(
       'casual-mink-routinely.ngrok-free.app',
       'relaxing-hawk-ace.ngrok-free.app',
       'cig-backend.webo.dev',
-      'bbd0-2400-1a00-b050-11c8-91f6-e92c-cca2-9428.ngrok-free.app',
       ...localDirectives,
     ],
   });
