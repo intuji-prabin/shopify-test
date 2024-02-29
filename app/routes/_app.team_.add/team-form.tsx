@@ -25,6 +25,7 @@ type TeamFormProps = {
   };
   options: SelectInputOptions[];
   customerId?: string;
+  addressId?: string;
 };
 
 const EditTeamFormSchema = z.object({
@@ -63,6 +64,7 @@ const EditTeamFormSchema = z.object({
   address: z.string().min(1, {message: 'Address is required'}).trim(),
   userRole: z.string().min(1, {message: 'User Role is required'}).trim(),
   customerId: z.string(),
+  addressId: z.string(),
 });
 const AddTeamFormSchema = EditTeamFormSchema.omit({customerId: true}).extend({
   customerID: z.string().optional(),
@@ -81,6 +83,7 @@ export default function TeamForm({
   defaultValues,
   options,
   customerId,
+  addressId,
 }: TeamFormProps) {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
@@ -149,6 +152,7 @@ export default function TeamForm({
               label="Address"
               placeholder="address"
             />
+            <input type="hidden" name="addressId" value={addressId} />
             <Input type="hidden" name="customerId" value={customerId} />
           </div>
         </div>
