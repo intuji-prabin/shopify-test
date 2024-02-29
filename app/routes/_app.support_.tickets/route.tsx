@@ -33,6 +33,8 @@ export const meta: MetaFunction = () => {
   return [{title: 'Ticket List'}];
 };
 
+const PAGE_LIMIT = 8;
+
 export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
@@ -98,7 +100,7 @@ export default function TicketsPage() {
       </div>
       <DataTable table={table} columns={columns} />
 
-      <PaginationWrapper pageSize={3} totalCount={totalCount} />
+      <PaginationWrapper pageSize={PAGE_LIMIT} totalCount={totalCount} />
     </section>
   );
 }
