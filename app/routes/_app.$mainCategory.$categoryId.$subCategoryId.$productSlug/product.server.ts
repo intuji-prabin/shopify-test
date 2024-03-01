@@ -28,3 +28,4 @@ export async function getProductDetails(customerId: string, handle: string) {
     );
   }
 }
+

@@ -1,40 +1,39 @@
-import {FaSearch} from 'react-icons/fa';
-import {Form, Link} from '@remix-run/react';
+import { FaSearch } from 'react-icons/fa';
+import { Form, Link } from '@remix-run/react';
 import {
   Heart,
   Logout,
   TabletHamburger,
   UserProfile,
 } from '~/components/icons/orderStatus';
-import {useRef, useState} from 'react';
-import {Button} from '~/components/ui/button';
+import { SetStateAction, useRef, useState } from 'react';
+import { Button } from '~/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuLabel,
 } from '~/components/ui/dropdown-menu';
-import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
-import {Routes} from '~/lib/constants/routes.constent';
-import {CartIcon} from '~/components/icons/cartIcon';
-import {TrackAnOrderButton} from './elements/track-an-order-dialog';
-import {Note} from '~/components/icons/note';
-import {NotificationIcon} from '~/components/icons/notification';
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import { Routes } from '~/lib/constants/routes.constent';
+import { CartIcon } from '~/components/icons/cartIcon';
+import { TrackAnOrderButton } from './elements/track-an-order-dialog';
+import { Note } from '~/components/icons/note';
+import { NotificationIcon } from '~/components/icons/notification';
 import SearchIcon from '~/components/icons/search';
 import CloseMenu from '~/components/icons/closeMenu';
-import {CustomerData} from '~/routes/_public.login/login.server';
-import {useOutsideClick} from '~/hooks/useOutsideClick';
+import { CustomerData } from '~/routes/_public.login/login.server';
+import { useOutsideClick } from '~/hooks/useOutsideClick';
 import TabletNavmenu from './tablet-navbar/tablet-navmenu';
-import {useHamburgerMenu} from './elements/HamburgerMenuContext';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import { useHamburgerMenu } from './elements/HamburgerMenuContext';
 
 export function PlaceOrder() {
-  const {isOpen, toggleMenu} = useHamburgerMenu();
+  const { isOpen, toggleMenu } = useHamburgerMenu();
 
   return (
     <Button
-      className="place-order h-full bg-secondary-500  px-6 hover:bg-secondary-500 min-h-12"
-      onClick={() => toggleMenu(false)}
+      className="h-full px-6 place-order bg-secondary-500 hover:bg-secondary-500 min-h-12"
+      onClick={() => toggleMenu(!isOpen)}
     >
       <Link
         to={Routes.PLACE_AN_ORDER}
@@ -47,13 +46,13 @@ export function PlaceOrder() {
 }
 export function OrderTrack() {
   return (
-    <div className="hidden xl:flex items-center gap-4 border border-l-2 border-t-0 border-b-0 border-grey-800 pl-4 ">
+    <div className="items-center hidden gap-4 pl-4 border border-t-0 border-b-0 border-l-2 xl:flex border-grey-800 ">
       <TrackAnOrderButton />
       <PlaceOrder />
     </div>
   );
 }
-export function LogoIcon({logo_url}: {logo_url: string}) {
+export function LogoIcon({ logo_url }: { logo_url: string }) {
   return (
     <Link to={Routes.HOME}>
       <figure>
@@ -63,8 +62,8 @@ export function LogoIcon({logo_url}: {logo_url: string}) {
   );
 }
 
-export function NotificationNavbar() {
-  const {isOpen, toggleMenu} = useHamburgerMenu();
+export function NotificationNavbar({ cartCount }: { cartCount: number }) {
+  const { isOpen, toggleMenu } = useHamburgerMenu();
 
   const navIcons = [
     {
@@ -72,7 +71,7 @@ export function NotificationNavbar() {
       icon: <CartIcon width={'20px'} height={'20px'} />,
       url: Routes.CART_LIST,
       title: 'cart',
-      notification: '3',
+      notification: cartCount,
     },
     {
       id: 2,
@@ -98,17 +97,17 @@ export function NotificationNavbar() {
   ];
   return (
     <div className="navbar">
-      <ul className="nav-list flex gap-5 items-center h-full">
+      <ul className="flex items-center h-full gap-5 nav-list">
         {navIcons.map((navIcon) => (
-          <li className="nav-item relative" key={navIcon.id}>
+          <li className="relative nav-item" key={navIcon.id}>
             <Link
               to={navIcon.url}
               className="info-block"
-              onClick={() => toggleMenu(false)}
+              onClick={() => toggleMenu(!isOpen)}
             >
               {' '}
               <div data-tooltip={navIcon.title}>
-                <div className="absolute bg-semantic-danger-500 h-[14px] w-[14px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium p-2">
+                <div className="absolute bg-semantic-danger-500 h-[14px] min-w-[16px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium py-2 px-1">
                   {navIcon.notification}
                 </div>
                 <div className="nav-link">{navIcon.icon}</div>
@@ -121,7 +120,7 @@ export function NotificationNavbar() {
   );
 }
 
-export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
+export default function TopHeader({ userDetails, cartCount }: { userDetails: CustomerData, cartCount: number }) {
   const [isClicked, setIsClicked] = useState(false);
   const [searchProduct, setSearchProduct] = useState(false);
   const searchResultRef = useRef<HTMLDivElement>(null);
@@ -135,149 +134,150 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
     setSearchProduct(false);
   }
 
-  const imageUrl = userDetails.meta?.image_url?.value
-    ? userDetails.meta?.image_url?.value
-    : DEFAULT_IMAGE.DEFAULT;
+  const fullName = `${userDetails.firstName} ${userDetails.lastName}`;
+
+  const imageUrl = userDetails.meta?.image_url?.value;
 
   return (
-    <>
-      <div className="bg-grey-900">
-        <div className="container py-5 flex  gap-3 justify-normal xl:justify-between items-center">
-          <div className="flex gap-4 items-center">
-            <TabletNavmenu />
-            {/* home logo begins here */}
-            <LogoIcon logo_url={'/Logo.png'} />
-          </div>
-          {/* Search and notification bar begins here  */}
-          <div className="flex gap-[22px] w-full xl:w-[unset]">
-            {/* search bar begins here */}
-            <div className="search-bar flex bg-white items-center min-w-[unset] w-full max-h-12 px-4 py-3 xl:min-w-[453px] relative">
-              <FaSearch className="search-icon fill-primary-500" />
-              <input
-                type="text"
-                placeholder="Search Product or Part Number"
-                className="border-none w-full placeholder:italic text-base font-bold text-[#0F1010] placeholder:text-[#0F1010] focus:bg-white"
-                onChange={handleSearchInput}
-              />
-              {searchProduct && (
-                <Button
-                  className="p-0 bg-white hover:bg-white active:bg-white"
-                  onClick={handleCloseSearch}
-                >
-                  {' '}
-                  <CloseMenu fillColor="#D92F28" />
-                </Button>
-              )}
+    <div className="bg-grey-900">
+      <div className="container flex items-center gap-3 py-5 justify-normal xl:justify-between">
+        <div className="flex items-center gap-4">
+          <TabletNavmenu
+            setIsHamOpen={function (value: SetStateAction<boolean>): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
+          {/* home logo begins here */}
+          <LogoIcon logo_url={'/Logo.png'} />
+        </div>
+        {/* Search and notification bar begins here  */}
+        <div className="flex gap-[22px] w-full xl:w-[unset]">
+          {/* search bar begins here */}
+          <div className="search-bar flex bg-white items-center min-w-[unset] w-full max-h-12 px-4 py-3 xl:min-w-[453px] relative">
+            <FaSearch className="search-icon fill-primary-500" />
+            <input
+              type="text"
+              placeholder="Search Product or Part Number"
+              className="border-none w-full placeholder:italic text-base font-bold text-[#0F1010] placeholder:text-[#0F1010] focus:bg-white"
+              onChange={handleSearchInput}
+            />
+            {searchProduct && (
+              <Button
+                className="p-0 bg-white hover:bg-white active:bg-white"
+                onClick={handleCloseSearch}
+              >
+                {' '}
+                <CloseMenu fillColor="#D92F28" />
+              </Button>
+            )}
 
-              {/* searchbar starts here  */}
-              {searchProduct && (
-                <div ref={searchResultRef}>
-                  <div className="bg-white absolute top-[52px] left-0 w-full z-20 py-4 px-6 space-y-4">
-                    <div>
-                      <p className="mb-2 font-medium text-grey-900">
-                        Suggestions
-                      </p>
-                      <ul>
-                        <li className="flex items-center gap-2">
-                          <SearchIcon fillColor="#0F1010" />
-                          Welding Equipment
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <SearchIcon fillColor="#0F1010" />
-                          Welding Equipment
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <SearchIcon fillColor="#0F1010" />
-                          Welding Equipment
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <SearchIcon fillColor="#0F1010" />
-                          welders
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="py-4 border-grey-50 border-t">
-                      <p className="mb-2 font-medium text-grey-900">
-                        Recent Searches
-                      </p>
-                      <ul>
-                        <li className="flex items-center gap-2">
-                          <SearchIcon fillColor="#0F1010" />
-                          Welding & Heating Mixers
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <SearchIcon fillColor="#0F1010" />
-                          cutting attachments
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <SearchIcon fillColor="#0F1010" />
-                          tig welding
-                        </li>
-                      </ul>
-                    </div>
-                    <Link
-                      to=""
-                      className="uppercase text-primary-500 font-bold text-sm  italic border-b border-primary-500"
-                    >
-                      CLEAR ALL RECENT
-                    </Link>
+            {/* searchbar starts here  */}
+            {searchProduct && (
+              <div ref={searchResultRef}>
+                <div className="bg-white absolute top-[52px] left-0 w-full z-20 py-4 px-6 space-y-4">
+                  <div>
+                    <p className="mb-2 font-medium text-grey-900">
+                      Suggestions
+                    </p>
+                    <ul>
+                      <li className="flex items-center gap-2">
+                        <SearchIcon fillColor="#0F1010" />
+                        Welding Equipment
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <SearchIcon fillColor="#0F1010" />
+                        Welding Equipment
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <SearchIcon fillColor="#0F1010" />
+                        Welding Equipment
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <SearchIcon fillColor="#0F1010" />
+                        welders
+                      </li>
+                    </ul>
                   </div>
+                  <div className="py-4 border-t border-grey-50">
+                    <p className="mb-2 font-medium text-grey-900">
+                      Recent Searches
+                    </p>
+                    <ul>
+                      <li className="flex items-center gap-2">
+                        <SearchIcon fillColor="#0F1010" />
+                        Welding & Heating Mixers
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <SearchIcon fillColor="#0F1010" />
+                        cutting attachments
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <SearchIcon fillColor="#0F1010" />
+                        tig welding
+                      </li>
+                    </ul>
+                  </div>
+                  <Link
+                    to=""
+                    className="text-sm italic font-bold uppercase border-b text-primary-500 border-primary-500"
+                  >
+                    CLEAR ALL RECENT
+                  </Link>
                 </div>
-              )}
-            </div>
-
-            {/* notification menu starts here */}
-            <NotificationNavbar />
+              </div>
+            )}
           </div>
 
-          {/* order track begins here  */}
-          <OrderTrack />
+          {/* notification menu starts here */}
+          <NotificationNavbar cartCount={cartCount} />
+        </div>
 
-          {/* user profile begins here  */}
-          <div className="hidden xl:flex items-center gap-1">
-            <figure className="w-8 h-8">
-              <img
-                src={imageUrl}
-                alt="profile-image"
-                className="w-full h-full rounded-full object-cover object-center"
-              />
-            </figure>
-            <DropdownMenu open={isClicked} onOpenChange={setIsClicked}>
-              <DropdownMenuTrigger asChild>
-                <Button className="bg-transparent italic font-bold capitalize text-base hover:bg-transparent border-none focus:border-transparent focus-visible:border-transparent outline-none focus:outline-none p-0">
-                  {userDetails.firstName}
-                  {isClicked ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56 user-login max-w-[172px] rounded-none mr-4">
-                <DropdownMenuLabel className="flex items-center user-login-dropdown p-0 ">
-                  <Form method="post" action="/logout" className="w-full">
-                    <Link
-                      to={Routes.PROFILE}
-                      className="bg-white p-2 w-full flex items-center justify-start gap-2 hover:bg-primary-100 my-profile transition duration-500 ease-in-out delay-75"
-                      onClick={() => setIsClicked(false)}
-                    >
-                      <UserProfile />
-                      <h5 className="text-lg font-bold italic text-grey-900">
-                        My profile
-                      </h5>
-                    </Link>
-                    <Button
-                      type="submit"
-                      className="bg-white px-2 w-full items-center justify-start hover:bg-primary-100 transition duration-500 ease-in-out delay-75"
-                    >
-                      <Logout />
-                      <h5 className="text-lg font-bold italic text-grey-900">
-                        Logout
-                      </h5>
-                    </Button>
-                  </Form>
-                </DropdownMenuLabel>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+        {/* order track begins here  */}
+        <OrderTrack />
+
+        {/* user profile begins here  */}
+        <div className="items-center hidden gap-1 xl:flex">
+          <figure className="w-8 h-8">
+            <img
+              src={imageUrl ?? '/niel.png'}
+              alt="profile-image"
+              className="object-cover object-center w-full h-full rounded-full"
+            />
+          </figure>
+          <DropdownMenu open={isClicked} onOpenChange={setIsClicked}>
+            <DropdownMenuTrigger asChild>
+              <Button className="p-0 text-base italic font-bold capitalize bg-transparent border-none outline-none hover:bg-transparent focus:border-transparent focus-visible:border-transparent focus:outline-none">
+                {fullName}
+                {isClicked ? <IoIosArrowUp /> : <IoIosArrowDown />}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56 user-login max-w-[172px] rounded-none mr-4">
+              <DropdownMenuLabel className="flex items-center p-0 user-login-dropdown ">
+                <Form method="post" action="/logout" className="w-full">
+                  <Link
+                    to={Routes.PROFILE}
+                    className="flex items-center justify-start w-full gap-2 p-2 transition duration-500 ease-in-out delay-75 bg-white hover:bg-primary-100 my-profile"
+                  >
+                    <UserProfile />
+                    <h5 className="text-lg italic font-bold text-grey-900">
+                      My profile
+                    </h5>
+                  </Link>
+                  <Button
+                    type="submit"
+                    className="items-center justify-start w-full px-2 transition duration-500 ease-in-out delay-75 bg-white hover:bg-primary-100"
+                  >
+                    <Logout />
+                    <h5 className="text-lg italic font-bold text-grey-900">
+                      Logout
+                    </h5>
+                  </Button>
+                </Form>
+              </DropdownMenuLabel>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
-    </>
+    </div>
   );
 }
