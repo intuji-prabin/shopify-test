@@ -135,8 +135,6 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
     setSearchProduct(false);
   }
 
-  const fullName = `${userDetails.firstName} ${userDetails.lastName}`;
-
   const imageUrl = userDetails.meta?.image_url?.value
     ? userDetails.meta?.image_url?.value
     : DEFAULT_IMAGE.DEFAULT;
@@ -247,7 +245,7 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
             <DropdownMenu open={isClicked} onOpenChange={setIsClicked}>
               <DropdownMenuTrigger asChild>
                 <Button className="bg-transparent italic font-bold capitalize text-base hover:bg-transparent border-none focus:border-transparent focus-visible:border-transparent outline-none focus:outline-none p-0">
-                  {fullName}
+                  {userDetails.firstName}
                   {isClicked ? <IoIosArrowUp /> : <IoIosArrowDown />}
                 </Button>
               </DropdownMenuTrigger>
