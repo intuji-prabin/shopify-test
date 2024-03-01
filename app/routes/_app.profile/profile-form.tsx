@@ -90,6 +90,22 @@ const ProfileFormSchema = z
       }, 'Password must be at least 8 characters, one capital letter, one number, and one special character'),
     confirmPassword: z.string().trim().optional(),
   })
+  .refine(({oldPassword, password}) => !(oldPassword && !password), {
+    path: ['password'],
+    message: 'New password is required',
+  })
+  .refine(({oldPassword, password}) => !(!oldPassword && password), {
+    path: ['oldPassword'],
+    message: 'Old password is required',
+  })
+  .refine(
+    ({oldPassword, password}) =>
+      !(oldPassword && password && oldPassword === password),
+    {
+      path: ['password'],
+      message: 'New password cannot be the same as the old password',
+    },
+  )
   .refine(({password, confirmPassword}) => password == confirmPassword, {
     path: ['confirmPassword'],
     message: "Password don't match",

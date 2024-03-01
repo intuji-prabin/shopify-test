@@ -16,7 +16,7 @@ export function BackButton({title}: {title: string}) {
       >
         <ArrowLeft className="text-grey-400" />
       </Button>
-      <h3 className="uppercase">{title}</h3>
+      <h3>{title}</h3>
     </div>
   );
 }

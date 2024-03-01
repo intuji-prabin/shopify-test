@@ -21,7 +21,7 @@ export async function exportPromotion(request: Request) {
     if (contentType && contentType === 'application/zip') {
       const buffer = await response.arrayBuffer();
       fileData = buffer;
-    } else if (contentType && contentType === 'application/octet-stream') {
+    } else if (contentType && contentType === 'stream') {
       const blob = await response.blob();
       fileData = blob;
     } else {
@@ -38,12 +38,13 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 
   const file = await exportPromotion(request);
 
+  console.log(file);
+
   const fileName = file instanceof Blob ? 'promotion.png' : 'promotion.zip';
 
-  return new Response(file, {
-    headers: {
-      'Content-Disposition': `attachment; filename="${fileName}"`,
-      'Content-Type': 'application/octet-stream',
-    },
+  const headers = new Headers({
+    'Content-Disposition': 'attachment; filename=aaaaa.png',
+    'Content-Type': 'stream',
   });
+  return new Response(fileName, {headers});
 }
