@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui/table';
+import {Fragment} from 'react';
 
 type DataTableProps<T> = {
   table: Table<T>;
@@ -68,9 +69,8 @@ export function DataTable<T>({table, columns}: DataTableProps<T>) {
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <>
+              <Fragment key={row.id}>
                 <TableRow
-                  key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   className=" hover:bg-primary-200 data-[state=selected]:bg-primary-200"
                 >
@@ -111,7 +111,7 @@ export function DataTable<T>({table, columns}: DataTableProps<T>) {
                     </TableCell>
                   </TableRow>
                 ) : undefined}
-              </>
+              </Fragment>
             ))
           ) : (
             <TableRow>

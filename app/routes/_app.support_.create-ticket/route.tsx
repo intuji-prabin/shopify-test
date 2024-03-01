@@ -1,6 +1,6 @@
 import {useFetch} from '~/hooks/useFetch';
 import {MetaFunction} from '@shopify/remix-oxygen';
-import {validationError} from 'remix-validated-form';
+import {setFormDefaults, validationError} from 'remix-validated-form';
 import {Routes} from '~/lib/constants/routes.constent';
 import {BackButton} from '~/components/ui/back-button';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
@@ -42,17 +42,26 @@ export type CreateTicketResponse = {
   payload: [];
 };
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
   const supportContact = await getSupportContact({context});
+
+  const {userDetails} = await getUserDetails(request);
+
+  const contactName = `${userDetails.firstName} ${userDetails.lastName}`;
 
   const departmentOptions = supportContact.map((item) => ({
     title: item.department,
     value: item.id.split('/').pop() as string,
   }));
 
-  return json({departmentOptions});
+  return json({
+    departmentOptions,
+    ...setFormDefaults('create-ticket-form', {
+      contactName,
+    }),
+  });
 }
 
 export async function action({request, context}: ActionFunctionArgs) {
