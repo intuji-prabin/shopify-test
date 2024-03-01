@@ -1,8 +1,8 @@
-import {Heart, Link} from 'lucide-react';
-import {CartIcon} from '~/components/icons/cartIcon';
-import {Note} from '~/components/icons/note';
-import {NotificationIcon} from '~/components/icons/notification';
-import {Routes} from '~/lib/constants/routes.constent';
+import { Heart, Link } from 'lucide-react';
+import { CartIcon } from '~/components/icons/cartIcon';
+import { Note } from '~/components/icons/note';
+import { NotificationIcon } from '~/components/icons/notification';
+import { Routes } from '~/lib/constants/routes.constent';
 
 export function NotificationNavbarMobile({
   setIsHamOpen,
@@ -41,9 +41,9 @@ export function NotificationNavbarMobile({
   ];
   return (
     <div className="navbar">
-      <ul className="nav-list flex gap-5 items-center h-full">
+      <ul className="flex items-center h-full gap-5 nav-list">
         {navIcons.map((navIcon) => (
-          <li className="nav-item relative" key={navIcon.id}>
+          <li className="relative nav-item" key={navIcon.id}>
             <Link
               to={navIcon.url}
               className="info-block"
@@ -51,7 +51,7 @@ export function NotificationNavbarMobile({
             >
               {' '}
               <div data-tooltip={navIcon.title}>
-                <div className="absolute bg-semantic-danger-500 h-[14px] w-[14px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium p-2">
+                <div className="absolute bg-semantic-danger-500 h-[14px] min-w-[16px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium py-2 px-1">
                   {navIcon.notification}
                 </div>
                 <div className="nav-link">{navIcon.icon}</div>

@@ -73,7 +73,7 @@ const CarouselThumb = ({
                 : 'flex-row gap-x-2 max-h-[unset]'
             }`}
           >
-            {images.map((image, index) => (
+            {images.map((image : any, index : any) => (
               <div
                 key={index}
                 className={`embla__slide flex justify-center items-center  ${
@@ -87,7 +87,7 @@ const CarouselThumb = ({
                 >
                   <figure>
                     <img
-                      src={image.src}
+                      src={image?.url}
                       alt={image.alt}
                       className="object-cover object-center"
                     />
@@ -120,13 +120,13 @@ const CarouselThumb = ({
       <div className="overflow-hidden embla max-h-[532px] max-w-full  lg:max-w-[492px]">
         <div className="embla__viewport h-full" ref={emblaMainRef}>
           <div className="flex embla__container h-full">
-            {images.map((image, index) => (
+            {images.map((image : any, index : any) => (
               <div
                 key={index}
                 className="min-w-0 embla__slide flex-full h-full"
               >
                 <img
-                  src={image.src}
+                  src={image?.url}
                   alt={image.alt}
                   className="object-cover w-full h-full"
                 />
