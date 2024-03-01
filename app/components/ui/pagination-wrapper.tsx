@@ -65,6 +65,7 @@ export function PaginationWrapper({totalCount, pageSize}: PaginationPropsType) {
               submit(event.currentTarget);
             }}
             className="flex items-center space-x-2"
+            data-cy="pagination-select-form"
           >
             <label
               htmlFor="page"
@@ -92,6 +93,7 @@ export function PaginationWrapper({totalCount, pageSize}: PaginationPropsType) {
               aria-disabled={isPreviousButtonDisabled}
               className={isPreviousButtonDisabled ? 'pointer-events-none' : ''}
               tabIndex={isPreviousButtonDisabled ? -1 : undefined}
+              data-cy="pagination-previous-button"
             />
             <p className="font-medium text-grey-400 w-7">
               <span className="text-grey-900">{currentPage}</span> /{' '}
@@ -102,6 +104,7 @@ export function PaginationWrapper({totalCount, pageSize}: PaginationPropsType) {
               aria-disabled={isNextButtonDisabled}
               className={isNextButtonDisabled ? 'pointer-events-none' : ''}
               tabIndex={isNextButtonDisabled ? -1 : undefined}
+              data-cy="pagination-next-button"
             />
           </PaginationContent>
         </div>
