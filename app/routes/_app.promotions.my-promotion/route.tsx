@@ -231,7 +231,6 @@ export default function MyPromotionsPage() {
         method="GET"
         onChange={(event: FormEvent<HTMLFormElement>) => {
           submit(event.currentTarget);
-          // formRef?.current?.reset();
           setCheckedPromotions([]);
         }}
         className="absolute top-20 inset-x-6 sm:right-6 sm:top-[30px] sm:left-auto pl-0 sm:pl-6 bg-white"
