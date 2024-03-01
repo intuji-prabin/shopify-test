@@ -1,75 +1,56 @@
-import { LoaderFunctionArgs } from '@remix-run/server-runtime';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { Button } from '~/components/ui/button';
+import {LoaderFunctionArgs} from '@remix-run/server-runtime';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {Button} from '~/components/ui/button';
 import PromotionCard from '~/routes/_app.promotions/promotion-card';
 import {
   Form,
-  Link,
   isRouteErrorResponse,
   json,
   useLoaderData,
-  useNavigation,
   useRouteError,
-  useSearchParams,
   useSubmit,
 } from '@remix-run/react';
 import {
   Promotion,
   getPromotions,
 } from '~/routes/_app.promotions/promotion.server';
-import { MetaFunction } from '@shopify/remix-oxygen';
-import { FormEvent } from 'react';
-import {
-  PAGE_LIMIT,
-  filterOptions,
-} from '~/routes/_app.promotions/promotion-constants';
-import { getUserDetails } from '~/lib/utils/user-session.server';
+import {MetaFunction} from '@shopify/remix-oxygen';
+import {FormEvent} from 'react';
+import {filterOptions} from '~/routes/_app.promotions/promotion-constants';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {useLoadMore} from '~/hooks/useLoadMore';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Available Promotion' }];
+  return [{title: 'Available Promotion'}];
 };
 
-export async function loader({ context, request }: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const { userDetails } = await getUserDetails(request);
-  const { searchParams } = new URL(request.url);
+  const {userDetails} = await getUserDetails(request);
+  const {searchParams} = new URL(request.url);
   const paramsList = Object.fromEntries(searchParams);
   const customerId = userDetails?.id;
 
   try {
-    const { promotions, totalPromotionCount } = await getPromotions({
+    const {promotions, totalPromotionCount} = await getPromotions({
       customerId,
       paramsList,
     });
-    return json({ promotions, totalPromotionCount });
+    return json({promotions, totalPromotionCount});
   } catch (error) {
     throw new Error('promotion unavailable');
   }
 }
 
 export default function AvailablePromotionPage() {
-  const { promotions, totalPromotionCount } = useLoaderData<typeof loader>();
-  console.log('promotions', promotions);
-
-  const pageParam = 'page';
-
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const navigation = useNavigation();
+  const {promotions, totalPromotionCount} = useLoaderData<typeof loader>();
 
   const submit = useSubmit();
 
-  const currentPage = Number(searchParams.get(pageParam) || 1);
-
-  const totalPages = Math.ceil(totalPromotionCount / PAGE_LIMIT);
-
-  const nextQuery = new URLSearchParams(searchParams);
-  nextQuery.set(pageParam, String(currentPage + 1));
-
-  const isLoadMoreDisabled = currentPage >= totalPages;
-
-  const isLoading = navigation.state === 'loading';
+  const {isLoading, handleLoadMore, isLoadMoreDisabled} = useLoadMore({
+    totalPromotionCount,
+  });
 
   return (
     <div className="pt-10 sm:pt-0">
@@ -107,13 +88,7 @@ export default function AvailablePromotionPage() {
               className="min-w-64"
               disabled={isLoading}
               data-cy="load-more"
-              onClick={() => {
-                const params = new URLSearchParams();
-                params.set(pageParam, String(currentPage + 1));
-                setSearchParams(params, {
-                  preventScrollReset: true,
-                });
-              }}
+              onClick={handleLoadMore}
             >
               {isLoading ? 'Loading...' : 'Load More'}
             </Button>

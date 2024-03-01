@@ -21,6 +21,7 @@ import {
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE_MB,
 } from '~/lib/constants/form.constant';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 
 type ProfileFormProps = {
   defaultValues?: Omit<
@@ -123,11 +124,16 @@ export default function ProfileForm({
   defaultValues,
 }: ProfileFormProps) {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
   const formId = 'profile-form';
 
   const {reset} = useFormContext(formId);
 
   const isSubmitting = useIsSubmitting(formId);
+
+  const imageUrl = defaultValues?.profileImageUrl
+    ? defaultValues.profileImageUrl
+    : DEFAULT_IMAGE.DEFAULT;
 
   return (
     <ValidatedForm
@@ -146,10 +152,7 @@ export default function ProfileForm({
         </div>
         <div className="sm:col-start-2 sm:col-end-5">
           <div className="grid gap-6 sm:grid-cols-2">
-            <ImageUploadInput
-              name="profileImage"
-              imageUrl={defaultValues?.profileImageUrl}
-            />
+            <ImageUploadInput name="profileImage" imageUrl={imageUrl} />
             <div className="hidden md:block"></div>
             <Input
               required
