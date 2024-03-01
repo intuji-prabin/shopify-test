@@ -27,13 +27,23 @@ export function ShippingLocation() {
         <SelectTrigger className="w-full h-[37px] rounded-none border border-grey-100">
           <SelectValue placeholder="99th Street, Wandiligong, NSW" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="rounded-none">
           <SelectGroup>
-            <SelectItem value="apple">Apple</SelectItem>
-            <SelectItem value="banana">Banana</SelectItem>
-            <SelectItem value="blueberry">Blueberry</SelectItem>
-            <SelectItem value="grapes">Grapes</SelectItem>
-            <SelectItem value="pineapple">Pineapple</SelectItem>
+            <SelectItem value="99th Street, Wandiligong, NSW">
+              99th Street, Wandiligong, NSW
+            </SelectItem>
+            <SelectItem value="18 Ironbark Road, Tathra, VIC">
+              18 Ironbark Road, Tathra, VIC
+            </SelectItem>
+            <SelectItem value=" 77 Koala Crescent, Mullumbimby, NSW">
+              77 Koala Crescent, Mullumbimby, NSW
+            </SelectItem>
+            <SelectItem value="23 Wattle Way, Emerald Beach, QLD">
+              23 Wattle Way, Emerald Beach, QLD
+            </SelectItem>
+            <SelectItem value="  55 Wallaby Walk, Pemberton, WA">
+              55 Wallaby Walk, Pemberton, WA
+            </SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>

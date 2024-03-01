@@ -17,7 +17,7 @@ import {
   MAX_FILE_SIZE_MB,
 } from '~/lib/constants/form.constant';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {AustralianPhoneNumberValidationRegex} from '~/lib/constants/regex.constant';
+import {AUSTRALIAN_PHONENUMBER_VALIDATION_REGEX} from '~/lib/constants/regex.constant';
 
 type TeamFormProps = {
   defaultValues?: Omit<AddTeamFormType, 'profileImage'> & {
@@ -25,6 +25,7 @@ type TeamFormProps = {
   };
   options: SelectInputOptions[];
   customerId?: string;
+  addressId?: string;
 };
 
 const EditTeamFormSchema = z.object({
@@ -57,12 +58,13 @@ const EditTeamFormSchema = z.object({
     .min(1, {message: 'Phone Number is required'})
     .trim()
     .refine(
-      (value) => AustralianPhoneNumberValidationRegex.test(value),
+      (value) => AUSTRALIAN_PHONENUMBER_VALIDATION_REGEX.test(value),
       'Invalid Phone Number',
     ),
   address: z.string().min(1, {message: 'Address is required'}).trim(),
   userRole: z.string().min(1, {message: 'User Role is required'}).trim(),
   customerId: z.string(),
+  addressId: z.string(),
 });
 const AddTeamFormSchema = EditTeamFormSchema.omit({customerId: true}).extend({
   customerID: z.string().optional(),
@@ -81,6 +83,7 @@ export default function TeamForm({
   defaultValues,
   options,
   customerId,
+  addressId,
 }: TeamFormProps) {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
@@ -115,7 +118,7 @@ export default function TeamForm({
     >
       <div className="grid gap-4 sm:grid-cols-4">
         <div className="sm:col-start-1 sm:col-end-2">
-          <h5>Basic Information</h5>
+          <h4>Basic Information</h4>
           <p>View and change the user information</p>
         </div>
         <div className="sm:col-start-2 sm:col-end-5">
@@ -149,6 +152,7 @@ export default function TeamForm({
               label="Address"
               placeholder="address"
             />
+            <input type="hidden" name="addressId" value={addressId} />
             <Input type="hidden" name="customerId" value={customerId} />
           </div>
         </div>
@@ -156,7 +160,7 @@ export default function TeamForm({
       <Separator className="my-8" />
       <div className="grid gap-4 sm:grid-cols-4">
         <div className="sm:col-start-1 sm:col-end-2">
-          <h5>User Roles</h5>
+          <h4>User Roles</h4>
           <p>Set the user roles, change teams</p>
         </div>
         <div className="sm:col-start-2 sm:col-end-5">
@@ -196,7 +200,7 @@ export default function TeamForm({
         <div className="fixed inset-x-0 bottom-0 z-40 py-4 bg-primary-500">
           <div className="container">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h5 className="text-white">Unsaved changes</h5>
+              <h4 className="text-white">Unsaved changes</h4>
               <div className="flex gap-3">
                 <Button
                   type="button"

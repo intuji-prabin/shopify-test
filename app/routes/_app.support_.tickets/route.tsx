@@ -14,7 +14,7 @@ import {HorizontalHamburgerIcon} from '~/components/icons/hamburgerIcon';
 import TicketsFilterForm from '~/routes/_app.support_.tickets/filter-form';
 import {LoaderFunctionArgs, MetaFunction, json} from '@shopify/remix-oxygen';
 import {getAllTickets} from '~/routes/_app.support_.tickets/support-tickets';
-import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
+import {getSupportContact} from '~/routes/_app.support_.contact-us/support-contact-us.server';
 import {
   Sheet,
   SheetContent,
@@ -33,6 +33,8 @@ export const meta: MetaFunction = () => {
   return [{title: 'Ticket List'}];
 };
 
+const PAGE_LIMIT = 8;
+
 export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
@@ -42,13 +44,19 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 
   const {totalCount, tickets} = await getAllTickets({customerId, request});
 
-  const roles = await getCustomerRolePermission(context);
+  const supportContact = await getSupportContact({context});
 
-  return json({totalCount, tickets, roles});
+  const departmentOptions = supportContact.map((item) => ({
+    title: item.department,
+    value: item.id.split('/').pop() as string,
+  }));
+
+  return json({totalCount, tickets, departmentOptions});
 }
 
 export default function TicketsPage() {
-  const {tickets, totalCount, roles} = useLoaderData<typeof loader>();
+  const {tickets, totalCount, departmentOptions} =
+    useLoaderData<typeof loader>();
 
   const {columns} = useColumn();
 
@@ -70,8 +78,8 @@ export default function TicketsPage() {
           <Button>Open A Ticket</Button>
         </Link>
       </div>
-      <div className="flex items-center justify-between bg-neutral-white p-6 border-b">
-        <div className="w-[451px]">
+      <div className="flex gap-2 flex-col bg-neutral-white p-4 border-b sm:flex-row sm:justify-between sm:items-center">
+        <div className="sm:w-[451px]">
           <SearchInput />
         </div>
         <Sheet>
@@ -86,17 +94,13 @@ export default function TicketsPage() {
               <SheetTitle className="text-3xl font-bold">Filter</SheetTitle>
             </SheetHeader>
             <Separator className="" />
-            <TicketsFilterForm options={roles.data} />
+            <TicketsFilterForm options={departmentOptions} />
           </SheetContent>
         </Sheet>
       </div>
       <DataTable table={table} columns={columns} />
-      <div className="bg-neutral-white py-4 px-6 border-t flex items-center justify-between">
-        <p className="w-40 text-grey-400 font-medium">
-          1-7 of {totalCount} Items
-        </p>
-        <PaginationWrapper pageSize={5} totalCount={totalCount} />
-      </div>
+
+      <PaginationWrapper pageSize={PAGE_LIMIT} totalCount={totalCount} />
     </section>
   );
 }

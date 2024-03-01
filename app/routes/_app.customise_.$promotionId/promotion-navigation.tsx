@@ -14,6 +14,9 @@ const PromotionNavigation = ({ canvasRef, imageName }: { canvasRef: any, imageNa
       html2canvas(canvasRefFinal, {
         allowTaint: true,
         useCORS: true,
+        scale: 2,
+        removeContainer: true,
+        width: canvasRefFinal.offsetWidth - 1,
       }).then((canvas) => {
         const link = document.createElement('a');
         document.body.appendChild(link);

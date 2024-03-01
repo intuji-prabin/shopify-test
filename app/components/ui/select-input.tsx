@@ -1,5 +1,5 @@
 import {useField} from 'remix-validated-form';
-import {ScrollArea} from '~/components/ui/scroll-area';
+import {ScrollArea, ScrollBar} from '~/components/ui/scroll-area';
 import {DangerAlert} from '~/components/icons/alert';
 import {TicketsFilterFormFieldNameType} from '~/routes/_app.support_.tickets/filter-form';
 import {CreateTicketFormFieldNameType} from '~/routes/_app.support_.create-ticket/create-ticket-form';
@@ -65,19 +65,17 @@ export default function SelectInput({
             <SelectValue placeholder={label} />
           </SelectTrigger>
           <SelectContent className="rounded-none shadow-base">
-            <ScrollArea className="max-h-[238px] h-full w-full p-2">
-              <SelectGroup>
-                {options?.map((item, index) => (
-                  <SelectItem
-                    value={item.value}
-                    key={index}
-                    className="p-2 focus:bg-primary-50"
-                  >
-                    {item.title}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </ScrollArea>
+            <SelectGroup>
+              {options?.map((item, index) => (
+                <SelectItem
+                  value={item.value}
+                  key={index}
+                  className="p-2 focus:bg-primary-50"
+                >
+                  {item.title}
+                </SelectItem>
+              ))}
+            </SelectGroup>
           </SelectContent>
         </Select>
         {!isDisabled && error && (

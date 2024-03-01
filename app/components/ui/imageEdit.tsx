@@ -1,7 +1,7 @@
-import {RefObject} from 'react';
-import {Call} from '../icons/call';
-import {Fax} from '../icons/fax';
-import {Globe} from '../icons/globe';
+import { RefObject } from 'react';
+import { Call } from '../icons/call';
+import { Fax } from '../icons/fax';
+import { Globe } from '../icons/globe';
 import Mail from '../icons/mail';
 interface ImageEditProps {
   canvasRef?: RefObject<HTMLDivElement>;
@@ -53,14 +53,15 @@ const ImageEdit = ({
               width:
                 renderedImageWidth && renderedImageWidth > 799
                   ? '100%'
-                  : renderedImageWidth,
+                  : renderedImageWidth && (renderedImageWidth - 2),
             }}
           >
             <div
               className="flex flex-wrap items-center justify-between p-4 gap-x-6 gap-y-3"
-              style={{color: companyInfo?.textColor}}
+              style={{ color: companyInfo?.textColor }}
+              data-cy="company-info"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2" data-cy="company-name">
                 <div className="flex items-center justify-center w-12 h-12 p-1 bg-white border border-solid rounded-full border-grey-50">
                   <img
                     src={companyInfo?.companyLogo}
@@ -80,6 +81,7 @@ const ImageEdit = ({
                       color: companyInfo?.textColor,
                       fontFamily: 'Barlow Condensed',
                     }}
+                    data-cy="company-email"
                   >
                     <Mail fillColor="#0F1010" />
                     {companyInfo?.companyEmail}
@@ -90,6 +92,7 @@ const ImageEdit = ({
                       color: companyInfo?.textColor,
                       fontFamily: 'Barlow Condensed',
                     }}
+                    data-cy="company-phone"
                   >
                     <Call />
                     {companyInfo?.companyPhone}
@@ -102,6 +105,7 @@ const ImageEdit = ({
                       color: companyInfo?.textColor,
                       fontFamily: 'Barlow Condensed',
                     }}
+                    data-cy="company-website"
                   >
                     <Globe />
                     {companyInfo?.companyWebsite}
@@ -112,6 +116,7 @@ const ImageEdit = ({
                       color: companyInfo?.textColor,
                       fontFamily: 'Barlow Condensed',
                     }}
+                    data-cy="company-fax"
                   >
                     <Fax />
                     {companyInfo?.companyFax}

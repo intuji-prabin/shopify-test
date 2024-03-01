@@ -14,8 +14,12 @@ export default function WishListProductItem({
   return (
     <>
       <figure className="flex space-x-2">
-        <div className="bg-grey-25 p-3 w-20 h-20">
-          <img src={productImageUrl} alt="item-image" />
+        <div className="bg-grey-25 p-3 !w-20 ">
+          <img
+            src={productImageUrl}
+            alt="item-image"
+            className="h-full object-contain object-center"
+          />
         </div>
         <figcaption className="flex flex-col justify-between max-w-[261px]">
           <h5 className="">{productName}</h5>

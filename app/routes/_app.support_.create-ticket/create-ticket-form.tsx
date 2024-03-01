@@ -1,13 +1,13 @@
 import {z} from 'zod';
 import {Link} from '@remix-run/react';
-import {withZod} from '@remix-validated-form/with-zod';
-import {ValidatedForm, useIsSubmitting} from 'remix-validated-form';
-import {Button} from '~/components/ui/button';
-import {DatePickerInput} from '~/components/ui/date-picker';
 import {Input} from '~/components/ui/input';
-import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
-import {TextAreaInput} from '~/components/ui/text-area-input';
+import {Button} from '~/components/ui/button';
 import {Routes} from '~/lib/constants/routes.constent';
+import {withZod} from '@remix-validated-form/with-zod';
+import {DatePickerInput} from '~/components/ui/date-picker';
+import {TextAreaInput} from '~/components/ui/text-area-input';
+import {ValidatedForm, useIsSubmitting} from 'remix-validated-form';
+import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
 
 type CreateTicketFormProps = {
   options: SelectInputOptions[];
@@ -17,9 +17,17 @@ const CreateTicketFormFieldSchema = z.object({
   date: z
     .string()
     .refine((date) => !isNaN(Date.parse(date)), {message: 'Date is required'}),
-  contactName: z.string().min(1, {message: 'Contact Name is required'}).trim(),
-  department: z.string().min(1, {message: 'Department is required'}).trim(),
-  description: z.string().min(1, {message: 'Description is required'}).trim(),
+  contactName: z
+    .string()
+    .min(1, {message: 'Contact Name is required'})
+    .max(50, {message: 'Contact Name should not exceed 50 characters'})
+    .trim(),
+  departmentId: z.string().min(1, {message: 'Department is required'}).trim(),
+  description: z
+    .string()
+    .min(1, {message: 'Description is required'})
+    .max(1000, {message: 'Description should not exceed 420 characters'})
+    .trim(),
 });
 
 export const CreateTicketFormFieldValidator = withZod(
@@ -47,6 +55,7 @@ export function CreateTicketForm({options}: CreateTicketFormProps) {
               required
               name="contactName"
               label="Contact Name"
+              className="capitalize"
               placeholder="Contact Name"
             />
             <div>
@@ -54,7 +63,7 @@ export function CreateTicketForm({options}: CreateTicketFormProps) {
                 Department <span className="required">*</span>
               </label>
               <SelectInput
-                name="department"
+                name="departmentId"
                 label="Department"
                 options={options}
               />

@@ -1,19 +1,22 @@
 import React from 'react';
 import {useField} from 'remix-validated-form';
 import {DangerAlert} from '~/components/icons/alert';
+import {cn} from '~/lib/utils/utils';
+import {EditFormFieldNameType} from '~/routes/_app.edit_.$promotionId/route';
 import {CreateTicketFormFieldNameType} from '~/routes/_app.support_.create-ticket/create-ticket-form';
+import {LoginFormFieldNameType} from '~/routes/_public.login/login-form';
 import {
   AddTeamFormFieldNameType,
   EditTeamFormFieldNameType,
 } from '~/routes/_app.team_.add/team-form';
-import {LoginFormFieldNameType} from '~/routes/_public.login/login-form';
 
 interface InputType extends React.ComponentPropsWithoutRef<'input'> {
   name:
     | AddTeamFormFieldNameType
     | EditTeamFormFieldNameType
     | LoginFormFieldNameType
-    | CreateTicketFormFieldNameType;
+    | CreateTicketFormFieldNameType
+    | EditFormFieldNameType;
   label?: string;
   placeholder?: string;
   required?: boolean;
@@ -26,13 +29,15 @@ export const Input = ({
   placeholder,
   required,
   icon,
+  disabled,
+  className,
   ...props
 }: InputType) => {
   const {error, getInputProps} = useField(name);
 
   return (
     <div>
-      <label htmlFor={name}>
+      <label htmlFor={name} className={`${disabled && 'text-grey-200'}`}>
         {label}
         {required && <span className="required">*</span>}
       </label>
@@ -40,10 +45,14 @@ export const Input = ({
         <input
           {...props}
           {...getInputProps({id: name})}
+          disabled={disabled}
           placeholder={placeholder}
-          className={`${error ? 'invalid' : ''} ${
-            icon ? 'with-icon' : ''
-          } w-full text-grey-400`}
+          className={cn(
+            `${error ? 'invalid' : ''} ${
+              icon ? 'with-icon' : ''
+            } w-full text-grey-400 disabled:bg-grey-25 disabled:!border-grey-25 disabled:border disabled:opacity-50`,
+            className,
+          )}
         />
         {icon && (
           <span className="absolute -translate-y-1/2 top-1/2 left-3">
@@ -51,7 +60,7 @@ export const Input = ({
           </span>
         )}
       </div>
-      {error && (
+      {!disabled && error && (
         <p className="pt-1 error-msg">
           <DangerAlert />
           <span className="pl-2">{error}</span>

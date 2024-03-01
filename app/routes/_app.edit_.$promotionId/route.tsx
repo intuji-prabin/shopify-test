@@ -24,14 +24,15 @@ import ColorPicker from '~/components/ui/color-picker';
 import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import ImageEdit from '~/components/ui/imageEdit';
+import { Input } from '~/components/ui/input';
 import Loader from '~/components/ui/loader';
 import { displayToast } from '~/components/ui/toast';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 import { Routes } from '~/lib/constants/routes.constent';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
 import PromotionNavigation from '../_app.customise_.$promotionId/promotion-navigation';
 import { getMyPromotionById, updatePromotion } from './edit-promotion.server';
+import { NumberPlusOnly } from '~/lib/constants/regex.constant';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -41,14 +42,8 @@ const ACCEPTED_IMAGE_TYPES = [
   'image/webp',
 ];
 
-type EditFormProps = {
-  defaultValues?: Omit<EditFormType, 'companyLogo'> & {
-    companyLogo: string;
-  };
-};
-
 const EditFormValidator = z.object({
-  companyLogo: zfd.file(
+  logo: zfd.file(
     z
       .custom<File | undefined>()
       .refine((file) => {
@@ -65,6 +60,15 @@ const EditFormValidator = z.object({
         return true;
       }, 'Max file size is 15MB.'),
   ),
+  companyPhone: z.string().min(1, { message: 'Company Phone is required' }).trim()
+    .refine(
+      (value) => NumberPlusOnly.test(value),
+      'Phone Number must only contain numbers and +',
+    ),
+  company_name: z.string().min(1, { message: 'Company Name is required' }),
+  company_email: z.string().min(1, { message: 'Company Email is required' }).email({ message: 'Invalid email address' }),
+  company_domain: z.string().min(1, { message: 'Company Website is required' }),
+  company_fax: z.string().min(1, { message: 'Company Fax is required' }),
 });
 
 export const EditFormSchemaValidator = withZod(EditFormValidator);
@@ -84,10 +88,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
   formData = { ...formData };
   const bannerId = params.promotionId as string;
   await updatePromotion(formData, bannerId);
+
   return json({});
 }
 
-export async function loader({ params, context, request }: LoaderFunctionArgs) {
+export async function loader({ params, context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   try {
     const promotionId = params?.promotionId as string;
@@ -113,7 +118,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   }
 }
 
-const PromotionEdit = ({ defaultValues }: EditFormProps) => {
+const PromotionEdit = () => {
   const { results, promotionId } = useLoaderData<any>();
   const [isLoading, setIsLoading] = useState(false);
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
@@ -140,6 +145,10 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
       [field]: value,
     }));
     setShowUnsavedChanges(true);
+  };
+
+  const handleChangeFile = (field: string, value: string) => {
+    setCompanyInfo({ ...companyInfo, [field]: value });
   };
 
   const resetCompanyInfo = () => {
@@ -170,6 +179,7 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     html2canvas(canvasRef, {
       allowTaint: true,
       useCORS: true,
+      width: canvasRef.offsetWidth - 1,
     }).then((canvas) => {
       const link = document.createElement('a');
       document.body.appendChild(link);
@@ -196,17 +206,20 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     formData.append('company_domain', companyInfo?.companyWebsite);
     formData.append('color', companyInfo?.textColor);
     formData.append('background_color', companyInfo?.bgColor);
-    formData.append('logo', companyInfo?.logo);
+    formData.append('logo', companyInfo?.companyLogo);
+
 
     try {
       const canvas = await html2canvas(canvasRef.current, {
         allowTaint: true,
         useCORS: true,
+        width: canvasRef.current.offsetWidth - 1,
       });
       formData.append("image", canvas.toDataURL());
     } catch (error) {
       console.error("An error occurred:", error);
       alert("An error has occured while creating the image");
+      setIsLoading(false);
     }
 
     try {
@@ -234,8 +247,8 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
     }
   };
 
-  let imageName = companyInfo.companyName;
-  imageName = imageName.replace(/ /g, '_');
+  let imageName = companyInfo?.companyName;
+  imageName = imageName && imageName.replace(/ /g, '_');
 
   return (
     <div className="bg-grey-25">
@@ -283,24 +296,22 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                     Full Screen
                   </p>
                 </DialogTrigger>
-                <DialogContent
-                  style={{
-                    width: renderedImageWidth && renderedImageWidth + 50,
-                  }}
-                  className={`max-w-4xl ${!image && 'flex items-center justify-center'
-                    }`}
-                >
+                <DialogContent className="max-w-[1280px] p-0 border-0 gap-y-0 promotion-view w-auto">
                   {image && renderedImageWidth ? (
-                    <img
-                      src={image}
-                      alt="popupView"
-                      className="h-auto max-h-[calc(100vh_-_150px)] mx-auto"
-                    />
+                    <div style={{ maxWidth: renderedImageWidth }}>
+                      <img
+                        alt="preview"
+                        src={image}
+                        className="h-auto max-h-[calc(100vh_-_100px)] mx-auto"
+                      />
+                    </div>
                   ) : (
-                    <>
+                    <div
+                      className="flex items-center justify-center gap-2 py-4 min-w-52"
+                    >
                       <Loader width="w-10" height="h-10" />
                       <p>Loading...</p>
-                    </>
+                    </div>
                   )}
                 </DialogContent>
               </Dialog>
@@ -326,7 +337,6 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
               method="post"
               validator={EditFormSchemaValidator}
               encType="multipart/form-data"
-              defaultValues={defaultValues}
               id="promotion-form"
               data-cy="customize-promotion"
               onSubmit={(_, event) => {
@@ -343,19 +353,20 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
               <h5 className="py-4">Company Logo</h5>
               <ImageUploadInput
                 name="logo"
-                imageUrl={results?.logo_url ?? DEFAULT_IMAGE.IMAGE}
+                imageUrl={companyInfo.companyLogo ?? DEFAULT_IMAGE.IMAGE}
                 className="pb-4 promotion__edit"
                 unsavedChanges={unsavedChanges}
-                handleChange={(field: string, value: string) => handleChange(field, value)}
+                handleFile={(field: string, value: string) => handleChangeFile(field, value)}
               />
               <div className="accordion__section">
                 <AccordionCustom accordianLabel='company-information' setOpenAccordian={setOpenAccordian} isOpen={openAccordian === "company-information"} accordionTitle="Company Information">
                   <div className="space-y-6">
                     <div>
-                      <label htmlFor="company_name">Company Name</label>
-                      <input
+                      <Input
+                        required
                         type="text"
                         name="company_name"
+                        label='Company Name'
                         value={companyInfo.companyName}
                         className="w-full"
                         placeholder="company name"
@@ -365,12 +376,13 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="company_email">Company Email</label>
-                      <input
+                      <Input
+                        required
                         type="text"
                         name="company_email"
                         value={companyInfo.companyEmail}
                         className="w-full"
+                        label='Company Email'
                         placeholder="company email"
                         onInput={(e) =>
                           handleChange('companyEmail', e.currentTarget.value)
@@ -378,12 +390,13 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="company_domain">Company Website</label>
-                      <input
+                      <Input
+                        required
                         type="text"
                         name="company_domain"
                         value={companyInfo.companyWebsite}
                         className="w-full"
+                        label="Company Website"
                         placeholder="company website"
                         onInput={(e) =>
                           handleChange('companyWebsite', e.currentTarget.value)
@@ -391,26 +404,27 @@ const PromotionEdit = ({ defaultValues }: EditFormProps) => {
                       />
                     </div>
                     <div>
-                      <label htmlFor="companyPhone">Company Phone</label>
-                      <input
-                        type="tel"
+                      <Input
+                        required
+                        type="text"
                         name="companyPhone"
-                        value={companyInfo.companyPhone}
-                        className="w-full"
+                        label="Company Phone"
                         placeholder="company phone"
+                        value={companyInfo.companyPhone}
                         onInput={(e) =>
                           handleChange('companyPhone', e.currentTarget.value)
                         }
                       />
                     </div>
                     <div>
-                      <label htmlFor="company_fax">Company Fax</label>
-                      <input
-                        type="tel"
+                      <Input
+                        required
+                        type="text"
                         name="company_fax"
                         value={companyInfo.companyFax}
                         className="w-full"
                         placeholder="company fax"
+                        label="Company Fax"
                         onInput={(e) =>
                           handleChange('companyFax', e.currentTarget.value)
                         }

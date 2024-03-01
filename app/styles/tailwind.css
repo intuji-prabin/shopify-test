@@ -819,3 +819,8 @@ div[data-state='open'].fixed.inset-0 {
 .track-an-order input[type='number'] {
   -moz-appearance: textfield;
 }
+
+#customize-form input,
+#promotion-form input {
+  @apply text-grey-700;
+}

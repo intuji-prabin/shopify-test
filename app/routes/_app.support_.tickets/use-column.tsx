@@ -1,12 +1,18 @@
 import {useMemo} from 'react';
 import {ColumnDef} from '@tanstack/react-table';
 import {statusVariants} from '~/components/ui/status';
+import {TooltipProvider} from '~/components/ui/tooltip';
+import {
+  HybridTooltip,
+  HybridTooltipContent,
+  HybridTooltipTrigger,
+} from '~/components/ui/hybrid-tooltip';
 
 export type TicketColumn = {
   id: string;
   contactName: string;
   description: string;
-  department: string;
+  supportDepartment: string;
   createdOn: string;
   status: 'pending' | 'in_progress' | 'closed';
 };
@@ -33,23 +39,37 @@ export function useColumn() {
         accessorKey: 'description',
         header: 'Reason',
         enableSorting: false,
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const description = info.getValue() as string;
+          return (
+            <TooltipProvider delayDuration={100}>
+              <HybridTooltip>
+                <HybridTooltipTrigger className="truncate max-w-56 not-italic text-lg text-grey-900 leading-5.5 font-normal">
+                  {description}
+                </HybridTooltipTrigger>
+                <HybridTooltipContent align="start">
+                  <p className="max-w-56 w-auto p-2">{description}</p>
+                </HybridTooltipContent>
+              </HybridTooltip>
+            </TooltipProvider>
+          );
+        },
       },
       {
-        accessorKey: 'department',
+        accessorKey: 'supportDepartment',
         header: 'Department',
         enableSorting: false,
         cell: (info) => info.getValue(),
       },
       {
         accessorKey: 'createdOn',
-        header: 'Created On',
+        header: 'Schedule On',
         enableSorting: false,
         cell: (info) => {
           const date = new Date(info.getValue() as string);
           return date.toLocaleDateString('en-US', {
             year: 'numeric',
-            month: 'long',
+            month: 'short',
             day: 'numeric',
           });
         },

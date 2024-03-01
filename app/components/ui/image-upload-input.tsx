@@ -5,14 +5,15 @@ import {
   AddTeamFormFieldNameType,
   EditTeamFormFieldNameType,
 } from '~/routes/_app.team_.add/team-form';
+import { EditFormFieldNameType } from '~/routes/_app.edit_.$promotionId/route';
 
 type ImageUploadInputProps = {
-  name: AddTeamFormFieldNameType | EditTeamFormFieldNameType;
+  name: AddTeamFormFieldNameType | EditTeamFormFieldNameType | EditFormFieldNameType;
   imageUrl: string | undefined;
   className?: string;
   defaultImage?: string;
   unsavedChanges?: any;
-  handleChange?: any;
+  handleFile?: any;
 };
 
 export default function ImageUploadInput({
@@ -20,7 +21,7 @@ export default function ImageUploadInput({
   imageUrl,
   className,
   defaultImage,
-  handleChange,
+  handleFile,
   unsavedChanges,
 }: ImageUploadInputProps) {
   const { getInputProps, error, clearError } = useField(name);
@@ -47,7 +48,7 @@ export default function ImageUploadInput({
           });
         };
         reader.readAsDataURL(file);
-        handleChange("companyLogo", file);
+        handleFile("companyLogo", file);
         unsavedChanges && unsavedChanges();
       }
     });

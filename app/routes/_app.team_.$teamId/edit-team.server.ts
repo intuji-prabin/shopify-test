@@ -16,6 +16,7 @@ type EditTeamParams = {
   email: string;
   phoneNumber: string;
   address: string;
+  addressId: string;
   context: AppLoadContext;
   userRole: string;
   customerId: string;
@@ -54,6 +55,7 @@ export async function getCustomerById({
 
 export async function updateTeam({
   address,
+  addressId,
   email,
   fullName,
   userRole,
@@ -61,33 +63,31 @@ export async function updateTeam({
   customerId,
   file,
 }: EditTeamParams) {
+  console.log('addressId', addressId);
 
-  const formData : any = new FormData()
-  formData.append("fullName", fullName)
-  formData.append("profileImage", file )
-  formData.append("email", email)
-  formData.append("address", address)
-  formData.append("userRole", userRole)
-  formData.append("phoneNumber", phoneNumber)
-  formData.append("customerId", customerId)
+  const formData: any = new FormData();
+  formData.append('fullName', fullName);
+  formData.append('profileImage', file);
+  formData.append('email', email);
+  formData.append('address', address);
+  formData.append('userRole', userRole);
+  formData.append('phoneNumber', phoneNumber);
+  formData.append('customerId', customerId);
+  formData.append('addressId', addressId);
 
-  const results : any = await fetch(
-    ENDPOINT.CUSTOMER.CREATE,
-    {
-      method: AllowedHTTPMethods.PUT,
-      body: formData,
-    },
-  );
+  const results: any = await fetch(ENDPOINT.CUSTOMER.CREATE, {
+    method: AllowedHTTPMethods.PUT,
+    body: formData,
+  });
 
-  const response = await results.json()
+  const response = await results.json();
 
-  if( response?.error ) {
-    throw new Error("Customer not created")
+  if (response?.error) {
+    throw new Error('Customer not created');
   }
-  console.log("erwerewr ", response)
 
-  if( !response?.status ) {
-    throw new Error(response?.message)
+  if (!response?.status) {
+    throw new Error(response?.message);
   }
 
   return results;
