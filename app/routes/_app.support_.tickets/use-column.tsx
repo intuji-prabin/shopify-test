@@ -63,7 +63,7 @@ export function useColumn() {
       },
       {
         accessorKey: 'createdOn',
-        header: 'Created On',
+        header: 'Schedule On',
         enableSorting: false,
         cell: (info) => {
           const date = new Date(info.getValue() as string);
