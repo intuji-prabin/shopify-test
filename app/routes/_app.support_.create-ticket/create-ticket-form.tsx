@@ -55,6 +55,7 @@ export function CreateTicketForm({options}: CreateTicketFormProps) {
               required
               name="contactName"
               label="Contact Name"
+              className="capitalize"
               placeholder="Contact Name"
             />
             <div>

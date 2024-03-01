@@ -1,12 +1,12 @@
 import {useMemo} from 'react';
 import {ColumnDef} from '@tanstack/react-table';
 import {statusVariants} from '~/components/ui/status';
+import {TooltipProvider} from '~/components/ui/tooltip';
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '~/components/ui/tooltip';
+  HybridTooltip,
+  HybridTooltipContent,
+  HybridTooltipTrigger,
+} from '~/components/ui/hybrid-tooltip';
 
 export type TicketColumn = {
   id: string;
@@ -42,15 +42,15 @@ export function useColumn() {
         cell: (info) => {
           const description = info.getValue() as string;
           return (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger className="truncate max-w-56 not-italic text-lg text-grey-900 leading-5.5 font-normal">
+            <TooltipProvider delayDuration={100}>
+              <HybridTooltip>
+                <HybridTooltipTrigger className="truncate max-w-56 not-italic text-lg text-grey-900 leading-5.5 font-normal">
                   {description}
-                </TooltipTrigger>
-                <TooltipContent align="start">
+                </HybridTooltipTrigger>
+                <HybridTooltipContent align="start">
                   <p className="max-w-56 w-auto p-2">{description}</p>
-                </TooltipContent>
-              </Tooltip>
+                </HybridTooltipContent>
+              </HybridTooltip>
             </TooltipProvider>
           );
         },
