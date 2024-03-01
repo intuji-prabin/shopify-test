@@ -3,8 +3,8 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 export async function getProductDetails(customerId: string, handle: string) {
   try {
     const results: any = await fetch(
-      // `${ENDPOINT.PRODUCT.GET_PRODUCT}/${customerId}/${handle}`,
-      `https://processors-fatty-dvds-destroyed.trycloudflare.com/api/product/${customerId}/${handle}`,
+      `${ENDPOINT.PRODUCT.GET_PRODUCT}/${customerId}/${handle}`,
+      // `https://processors-fatty-dvds-destroyed.trycloudflare.com/api/product/${customerId}/${handle}`,
       {
         method: 'GET',
       },
@@ -28,3 +28,4 @@ export async function getProductDetails(customerId: string, handle: string) {
     );
   }
 }
+

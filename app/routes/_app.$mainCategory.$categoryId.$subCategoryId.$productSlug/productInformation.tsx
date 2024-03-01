@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   CircleInformationMajor,
   Compare,
@@ -25,15 +25,16 @@ import { Product } from './route';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { WarehouseInformation } from './view-warehouse-information';
 import { badgeVariants } from '~/components/ui/badge';
+import { getProductPriceByQty } from './product-detail';
 
-export default function ProductInformation({ product }: { product: Product }) {
+export default function ProductInformation({ product }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
   console.log("first", product);
   return (
     <section className="bg-white">
       <div className="container flex flex-col gap-6 lg:gap-14 lg:flex-row">
         <CarouselThumb
-          images={SliderImageData}
+          images={product?.imageUrl}
           thumbNailCarouseloptions={{ axis: matches ? 'y' : 'x' }}
           mainCarouseloptions={{}}
         />
@@ -54,6 +55,9 @@ export default function ProductInformation({ product }: { product: Product }) {
           pickupStatus={'Pickup available at '}
           pickupAddress={' SUPERCHEAP AUTO NZ PTY LTD'}
           arrivalTime={'Usually ready in 4 hours'}
+          priceRange={product?.priceRange}
+          companyDefaultPrice={product?.companyDefaultPrice}
+          originalPrice={product?.originalPrice}
         />
       </div>
     </section>
@@ -79,6 +83,7 @@ type ProductDetailsProps = {
     unit: string;
     conversion_factor: number;
   }
+  priceRange?: any
 };
 const ProductDetailsSection = ({
   productName,
@@ -94,10 +99,17 @@ const ProductDetailsSection = ({
   pickupAddress,
   arrivalTime,
   unitOfMeasure,
-}: ProductDetailsProps) => {
-  const [heartFill, setHeartFill] = useState(isFavorited);
-  const [quantity, setQuantity] = useState(0);
+  priceRange,
+  companyDefaultPrice,
+  originalPrice
 
+}: any) => {
+  const [heartFill, setHeartFill] = useState(isFavorited);
+  const [quantity, setQuantity] = useState(1);
+  // const price = parseFloat( companyDefaultPrice )
+  const [ productPrice, setProductPrice ] = useState(companyDefaultPrice)
+  const [UOM, setUOM] = useState(box)
+  console.log("urom ", UOM, quantity)
   const handleHeartClick = () => {
     setHeartFill(!heartFill);
   };
@@ -107,15 +119,28 @@ const ProductDetailsSection = ({
   };
 
   function decreaseQuantity() {
-    setQuantity(quantity - 1);
+    const prices = getProductPriceByQty( quantity > 1 ? quantity - 1 : 1,  unitOfMeasure, UOM, box, priceRange, companyDefaultPrice)
+    setProductPrice( prices )
+    setQuantity( quantity > 0 ? quantity - 1 : 0);
   }
   function increaseQuantity() {
+    const prices = getProductPriceByQty( quantity + 1,  unitOfMeasure, UOM, box, priceRange, companyDefaultPrice)
+    setProductPrice( prices )
     setQuantity(quantity + 1);
   }
   function handleInputChange(event?: any) {
-    const inputQuantity = parseInt(event.target.value, 10);
+    const inputQuantity = parseInt(event.target.value);
+    const prices = getProductPriceByQty( isNaN(inputQuantity) ? 0 : inputQuantity,  unitOfMeasure, UOM, box, priceRange, companyDefaultPrice)
+    setProductPrice( prices )
     setQuantity(isNaN(inputQuantity) ? 0 : inputQuantity);
   }
+
+  function handleUOM( selectedUOM : any ) {
+    const prices = getProductPriceByQty( quantity,  unitOfMeasure, selectedUOM, box, priceRange, companyDefaultPrice)
+    setProductPrice( prices )
+    setUOM( selectedUOM )
+  }
+
   return (
     <div className="right-side-info flex flex-col gap-6  max-w-[unset] lg::max-w-[480px] xl:max-w-[588px] py-8">
       <div className="flex flex-col gap-6 top">
@@ -178,8 +203,8 @@ const ProductDetailsSection = ({
                 productName={
                   'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition'
                 }
-                buyPrice={649.22}
-                rppPrice={799.87}
+                buyPrice={productPrice}
+                rppPrice={originalPrice}
                 buyPriceTitle={'BUY PRICE'}
                 exclGst={'Excl. GST'}
                 rppTitle={'RRP'}
@@ -188,7 +213,7 @@ const ProductDetailsSection = ({
                 minimumPieces={'(500 pieces'}
               />
 
-              <ProductInfoTable quantity={'Quantity'} price={'Price'} />
+              { priceRange && priceRange.length > 0 && <ProductInfoTable quantity={'Quantity'} price={'Price'}  volumePrice={priceRange} /> }
             </div>
             <div className="flex gap-2 px-4 py-2 mb-2 border-l-4 border-r-0 bg-semantic-info-100 border-semantic-info-500 border-y-0">
               <CircleInformationMajor />
@@ -218,7 +243,22 @@ const ProductDetailsSection = ({
                 +
               </button>
             </div>
-            <SelectACountryDropdown defaultUOM={box} unitOfMeasure={unitOfMeasure} />
+            <div className="flex flex-col">
+              <select
+                name="filter_by"
+                className="w-full min-w-[116px] place-order h-full border-grey-500!border-grey-100 filter-select"
+                onChange={(e : any) => handleUOM(e.target.value) }
+                defaultValue={UOM}
+              >
+                {unitOfMeasure.length > 0 ? unitOfMeasure?.map((uom: any, index: number) => (
+                  <option value={uom.unit} key={index + 'uom'}>
+                    {uom.unit}
+                  </option>
+                )) : <option value={UOM}>
+                  {UOM}
+                </option>}
+              </select>
+            </div>
             <Button className="flex-grow uppercase" variant="primary">
               {addToCart}
             </Button>
@@ -299,20 +339,26 @@ export function ProductCardInfo({
   );
 }
 
-export function SelectACountryDropdown({ unitOfMeasure, defaultUOM }: {
+export function SelectACountryDropdown({ unitOfMeasure, defaultUOM, setUOM }: {
   unitOfMeasure: {
     unit: string;
     conversion_factor: number;
-  }, defaultUOM: string
+  }, 
+  defaultUOM: string,
+  setUOM : any
 }) {
-  const [uom, setUom] = useState(defaultUOM);
+  // const [uom, setUom] = useState(defaultUOM);
   return (
     <div className="flex flex-col">
       <select
         name="filter_by"
         className="w-full min-w-[116px] place-order h-full border-grey-500!border-grey-100 filter-select"
-        onChange={(e) => setUom(e.target.value)}
-        defaultValue={uom}
+        onChange={(e : any) => {
+          
+          setUOM( e.target.value)
+          // setUom(e.target.value)
+        }}
+        defaultValue={defaultUOM}
       >
         {unitOfMeasure.length > 0 ? unitOfMeasure?.map((uom: any, index: number) => (
           <option value={uom.unit} key={index + 'uom'}>
