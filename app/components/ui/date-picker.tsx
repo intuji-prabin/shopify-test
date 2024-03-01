@@ -8,6 +8,7 @@ import {useControlField, useField} from 'remix-validated-form';
 import {Popover, PopoverContent, PopoverTrigger} from '~/components/ui/popover';
 import {TicketsFilterFormFieldNameType} from '~/routes/_app.support_.tickets/filter-form';
 import {CreateTicketFormFieldNameType} from '~/routes/_app.support_.create-ticket/create-ticket-form';
+import {useState} from 'react';
 
 type DatePickerInputProps = {
   disablePreviousDates?: boolean;
@@ -22,8 +23,10 @@ export function DatePickerInput({
 
   const [date, setDate] = useControlField<Date | undefined>(name);
 
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
   return (
-    <Popover>
+    <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
       <input
         {...getInputProps({id: name})}
         type="hidden"
@@ -56,6 +59,7 @@ export function DatePickerInput({
           onSelect={(date) => {
             setDate(date);
             validate();
+            setIsCalendarOpen(false);
           }}
           initialFocus
         />

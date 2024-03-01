@@ -72,7 +72,7 @@ export default function TicketsFilterForm({options}: TicketsFilterFormProps) {
               </Link>
             </SheetClose>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 gap-4">
             <div className="">
               <p className="pb-1">From</p>
               <DatePickerInput name="createdDateFrom" />
@@ -108,7 +108,11 @@ export default function TicketsFilterForm({options}: TicketsFilterFormProps) {
           </Button>
         </SheetClose>
         <SheetClose asChild>
-          <Button type="submit" data-cy="apply-filter">
+          <Button
+            type="submit"
+            data-cy="apply-filter"
+            className="whitespace-nowrap"
+          >
             apply filter
           </Button>
         </SheetClose>

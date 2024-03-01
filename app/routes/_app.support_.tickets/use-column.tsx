@@ -1,6 +1,12 @@
 import {useMemo} from 'react';
 import {ColumnDef} from '@tanstack/react-table';
 import {statusVariants} from '~/components/ui/status';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '~/components/ui/tooltip';
 
 export type TicketColumn = {
   id: string;
@@ -33,7 +39,21 @@ export function useColumn() {
         accessorKey: 'description',
         header: 'Reason',
         enableSorting: false,
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const description = info.getValue() as string;
+          return (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger className="truncate max-w-56 not-italic text-lg text-grey-900 leading-5.5 font-normal">
+                  {description}
+                </TooltipTrigger>
+                <TooltipContent align="start">
+                  <p className="max-w-56 w-auto p-2">{description}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          );
+        },
       },
       {
         accessorKey: 'supportDepartment',
@@ -49,7 +69,7 @@ export function useColumn() {
           const date = new Date(info.getValue() as string);
           return date.toLocaleDateString('en-US', {
             year: 'numeric',
-            month: 'long',
+            month: 'short',
             day: 'numeric',
           });
         },
