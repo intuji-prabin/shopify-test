@@ -78,8 +78,8 @@ export default function TicketsPage() {
           <Button>Open A Ticket</Button>
         </Link>
       </div>
-      <div className="flex items-center justify-between bg-neutral-white p-6 border-b">
-        <div className="w-[451px]">
+      <div className="flex gap-2 flex-col bg-neutral-white p-4 border-b sm:flex-row sm:justify-between sm:items-center">
+        <div className="sm:w-[451px]">
           <SearchInput />
         </div>
         <Sheet>
