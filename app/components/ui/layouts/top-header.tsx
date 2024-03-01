@@ -26,6 +26,7 @@ import {CustomerData} from '~/routes/_public.login/login.server';
 import {useOutsideClick} from '~/hooks/useOutsideClick';
 import TabletNavmenu from './tablet-navbar/tablet-navmenu';
 import {useHamburgerMenu} from './elements/HamburgerMenuContext';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 
 export function PlaceOrder() {
   const {isOpen, toggleMenu} = useHamburgerMenu();
@@ -134,9 +135,9 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
     setSearchProduct(false);
   }
 
-  const fullName = `${userDetails.firstName} ${userDetails.lastName}`;
-
-  const imageUrl = userDetails.meta?.image_url?.value;
+  const imageUrl = userDetails.meta?.image_url?.value
+    ? userDetails.meta?.image_url?.value
+    : DEFAULT_IMAGE.DEFAULT;
 
   return (
     <>
@@ -236,7 +237,7 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
           <div className="hidden xl:flex items-center gap-1">
             <figure className="w-8 h-8">
               <img
-                src={imageUrl ?? '/niel.png'}
+                src={imageUrl}
                 alt="profile-image"
                 className="w-full h-full rounded-full object-cover object-center"
               />
@@ -244,7 +245,7 @@ export default function TopHeader({userDetails}: {userDetails: CustomerData}) {
             <DropdownMenu open={isClicked} onOpenChange={setIsClicked}>
               <DropdownMenuTrigger asChild>
                 <Button className="bg-transparent italic font-bold capitalize text-base hover:bg-transparent border-none focus:border-transparent focus-visible:border-transparent outline-none focus:outline-none p-0">
-                  {fullName}
+                  {userDetails.firstName}
                   {isClicked ? <IoIosArrowUp /> : <IoIosArrowDown />}
                 </Button>
               </DropdownMenuTrigger>
