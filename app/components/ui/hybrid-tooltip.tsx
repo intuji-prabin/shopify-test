@@ -24,8 +24,12 @@ const useTouch = () => useContext(TouchContext);
 export const TouchProvider = (props: PropsWithChildren) => {
   const [isTouch, setTouch] = useState<boolean>();
 
+  function isTouchEnabled() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  }
+
   useEffect(() => {
-    setTouch(window.matchMedia('(pointer: coarse)').matches);
+    setTouch(isTouchEnabled());
   }, []);
 
   return <TouchContext.Provider value={isTouch} {...props} />;
