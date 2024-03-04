@@ -285,7 +285,7 @@ const PromotionEdit = () => {
                     Full Screen
                   </p>
                 </DialogTrigger>
-                <DialogContent className={` p-0 border-0 gap-y-0 promotion-view w-auto ${image && renderedImageWidth ? "max-w-[1280px]" : "h-full w-full max-w-[unset] opacity-80"}`}>
+                <DialogContent overlayBgColor={`${image && renderedImageWidth ? "bg-black/80" : "bg-white/80"}`} className={`bg-white/80 p-0 border-0 gap-y-0 promotion-view w-auto ${image && renderedImageWidth ? "max-w-[1280px]" : "h-full w-full max-w-[unset]"}`}>
                   {image && renderedImageWidth ? (
                     <div style={{ maxWidth: renderedImageWidth }}>
                       <img
@@ -295,7 +295,12 @@ const PromotionEdit = () => {
                       />
                     </div>
                   ) : (
-                    <FullPageLoading />
+                    <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+                      <p className="text-lg">
+                        Loading...
+                      </p>
+                      <Loader width="w-8" height="h-8" />
+                    </div>
                   )}
                 </DialogContent>
               </Dialog>
