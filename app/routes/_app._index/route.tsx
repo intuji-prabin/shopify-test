@@ -1,4 +1,8 @@
-import {useLoaderData, type MetaFunction} from '@remix-run/react';
+import {
+  useLoaderData,
+  type MetaFunction,
+  useRevalidator,
+} from '@remix-run/react';
 import {json} from '@remix-run/server-runtime';
 import {type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import Carousel from '~/components/ui/carousel';
@@ -36,6 +40,7 @@ export async function loader({context}: LoaderFunctionArgs) {
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
+
   return (
     <article className="home">
       {data?.slides.length > 0 ? (
