@@ -11,6 +11,7 @@ import { addProductToCart, getProductDetails } from './product.server';
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getAccessToken } from '~/lib/utils/auth-session.server';
+import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 
 export type SimilarProduct = {
   name: string;
@@ -140,9 +141,11 @@ export type Product = {
 //   return productDetailsFromAPI;
 // }
 
-export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+export const loader = async ({ params, request, context }: LoaderFunctionArgs) => {
   try {
     const { productSlug } = params;
+    const sessionCartInfo = await context.session.get( CART_SESSION_KEY )
+    console.log("asdfdasf ", sessionCartInfo)
     const { userDetails } = await getUserDetails(request);
     const product = await getProductDetails(userDetails?.id, productSlug as string);
 
@@ -204,7 +207,7 @@ export const action = async ( { request, params, context } : ActionFunctionArgs 
     const accessTocken = await getAccessToken( context ) as string
     console.log("access token", accessTocken)
     // const { userDetails } = await getUserDetails(request);
-    const addToCart = await addProductToCart( cartInfo, accessTocken, context )
+    const addToCart = await addProductToCart( cartInfo, accessTocken, context, request )
     return json({},{
       headers: {
         'Set-Cookie': await session.commit({}),
