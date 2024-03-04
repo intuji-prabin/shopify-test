@@ -1,6 +1,7 @@
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import { getAccessToken } from '~/lib/utils/auth-session.server';
 
 export interface CategoriesType {
   status: boolean;
@@ -111,6 +112,63 @@ const formateCategory = async (categoryesponse: any) => {
   return finalCategories;
 };
 
+export const getSessionCart = async ( customerId : string, context : any ) => {
+  const cartResults = await useFetch<any>({
+    method: AllowedHTTPMethods.GET,
+    url: `${ENDPOINT.PRODUCT.CART}/${customerId}`
+  });
+  if( ! cartResults?.status ) {
+    return false
+  }
+  const accessTocken = await getAccessToken( context ) as string
+  const sessionResponse = await context.storefront.mutate( UPDATE_CART_ACCESS_TOCKEN, { variables : { 
+    buyerIdentity : {
+      customerAccessToken : accessTocken
+    },
+    cartId : cartResults?.payload?.sessionId
+  }})
+  return formateCartSessionResponse( sessionResponse, accessTocken )
+  
+}
+
+const formateCartSessionResponse = ( cartResponse : any, accessTocken : string ) => {
+  const cartBuyerIdentityUpdate = cartResponse?.cartBuyerIdentityUpdate
+  if( cartBuyerIdentityUpdate?.userErrors.length > 0 ) {
+    return false
+  } 
+  const cart = cartBuyerIdentityUpdate?.cart
+  const buyerIdentity = cart?.buyerIdentity?.customer
+  const lines = cart?.lines?.nodes
+  const cartListed = {
+    cartId : cart?.id,
+    customerId : buyerIdentity?.id.replace("gid://shopify/Customer/", ""),
+    accessTocken,
+    lineItems : 0,
+    cartItems : []
+    
+  } as any
+
+  if( lines.length > 0 ) {
+    lines.map(( items : any ) => {
+      const merchandise = items?.merchandise
+      const veriantId = merchandise?.id.replace("gid://shopify/ProductVariant/", "")
+      const productId = merchandise?.product?.id.replace("gid://shopify/Product/", "")
+      cartListed.lineItems = cartListed.lineItems + 1
+      cartListed.cartItems.push({
+        productId ,
+        veriantId,
+        lineId : items?.id,
+        quantity : items?.quantity,
+        UOM : items?.attributes.filter( ( att : any ) => att?.key == "selectedUOM")?.[0]?.value
+      })
+
+    })
+  }
+  console.log("cartResults ", cartListed)
+
+  return cartListed
+}
+
 const GET_CATEGORY_QUEYR = `query getCollection {
   collections(first :  250 ) {
       nodes {
@@ -122,3 +180,47 @@ const GET_CATEGORY_QUEYR = `query getCollection {
   }
   
 }` as const;
+
+const UPDATE_CART_ACCESS_TOCKEN = `mutation cartBuyerIdentityUpdate($buyerIdentity: CartBuyerIdentityInput!, $cartId: ID!) {
+  cartBuyerIdentityUpdate(buyerIdentity: $buyerIdentity, cartId: $cartId) {
+    cart {
+        id
+        buyerIdentity {
+            countryCode
+            email
+            customer {
+                id
+                email
+                firstName
+            }
+        }
+        lines(first : 240 ) {
+            nodes {
+                id
+                quantity
+                attributes {
+                    key
+                    value
+                }
+                merchandise {
+                    __typename
+                    ... on ProductVariant {
+                      id
+                      title
+                      product {
+                          id
+                          handle
+                          title
+                      }
+                  }
+                }
+            }
+        }
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}` as const
+

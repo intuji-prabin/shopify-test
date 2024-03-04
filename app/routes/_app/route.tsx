@@ -7,7 +7,7 @@ import {
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
 import TopHeader from '~/components/ui/layouts/top-header';
-import { Payload, getCagetoryList, getCategories } from './app.server';
+import { Payload, getCagetoryList, getCategories, getSessionCart } from './app.server';
 import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
 import {
   getMessageSession,
@@ -17,21 +17,32 @@ import {
 import { useMediaQuery } from '~/hooks/useMediaQuery';
 import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
 import { getCategoryList } from '../_app.categories/route';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import {  isAuthenticate } from '~/lib/utils/auth-session.server';
 import { CustomerData } from '../_public.login/login.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { HamburgerMenuProvider } from '~/components/ui/layouts/elements/HamburgerMenuContext';
+import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 
 export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
-
   const { userDetails } = await getUserDetails(request);
+
+  
   const categories = await getCagetoryList(context);
   const messageSession = await getMessageSession(request);
+  let sessionCartInfo = await context.session.get( CART_SESSION_KEY )
+  if( ! sessionCartInfo ) {
+    sessionCartInfo = await getSessionCart( userDetails?.id, context )
+    if( sessionCartInfo ) {
+      context.session.set( CART_SESSION_KEY, sessionCartInfo )
+    }
+
+  }
+  console.log("sessionCartInfos ", sessionCartInfo)
   if (!categories) {
     setErrorMessage(messageSession, 'Category not found');
     return json(
-      { categories: [], userDetails },
+      { categories: [], userDetails, sessionCartInfo },
       {
         headers: {
           'Set-Cookie': await messageCommitSession(messageSession),
@@ -39,7 +50,7 @@ export async function loader({ request, context }: ActionFunctionArgs) {
       },
     );
   }
-  return json({ categories, userDetails });
+  return json({ categories, userDetails, sessionCartInfo });
 }
 
 export default function PublicPageLayout() {
