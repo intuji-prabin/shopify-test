@@ -2,7 +2,13 @@ import {useNavigate} from '@remix-run/react';
 import {Button} from '~/components/ui/button';
 import {ArrowLeft} from 'lucide-react';
 
-export function BackButton({title}: {title: string}) {
+export function BackButton({
+  title,
+  className,
+}: {
+  title: string;
+  className?: string;
+}) {
   const navigate = useNavigate();
   return (
     <div className="flex items-center space-x-4">
@@ -16,7 +22,7 @@ export function BackButton({title}: {title: string}) {
       >
         <ArrowLeft className="text-grey-400" />
       </Button>
-      <h3>{title}</h3>
+      <h3 className={className}>{title}</h3>
     </div>
   );
 }

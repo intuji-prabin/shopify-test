@@ -1,16 +1,16 @@
-import { Link } from '@remix-run/react';
-import { useLayoutEffect, useState } from 'react';
+import {Link} from '@remix-run/react';
+import {useLayoutEffect, useState} from 'react';
 import ArrowForward from '~/components/icons/arrowForward';
-import { Payload } from '~/routes/_app/app.server';
+import {Payload} from '~/routes/_app/app.server';
 
-export const MegaMenu = ({ categories }: { categories: Payload[] }) => {
+export const MegaMenu = ({categories}: {categories: Payload[]}) => {
   //State to store the selected/active menu and submenu IDs
   const [activeMenu, setActiveMenu] = useState<{
     menu: Payload;
     subMenu: Payload;
   }>({
-    menu: { id: 1, title: '', identifier: '', child_categories: [] },
-    subMenu: { id: 1, title: '', identifier: '', child_categories: [] },
+    menu: {id: 1, title: '', identifier: '', child_categories: []},
+    subMenu: {id: 1, title: '', identifier: '', child_categories: []},
   });
   useLayoutEffect(() => {
     if (!categories) return;
@@ -51,10 +51,11 @@ export const MegaMenu = ({ categories }: { categories: Payload[] }) => {
               <li
                 key={'list' + menu.id}
                 className={`relative  flex menu-hov justify-between 
-              ${activeMenu.menu?.id === menu.id
-                    ? 'bg-primary-100 text-primary-500'
-                    : ''
-                  }
+              ${
+                activeMenu.menu?.id === menu.id
+                  ? 'bg-primary-100 text-primary-500'
+                  : ''
+              }
             `}
                 onMouseOver={() =>
                   setActiveMenu((prevMenu) => ({
@@ -96,31 +97,40 @@ export const MegaMenu = ({ categories }: { categories: Payload[] }) => {
                   <li
                     key={subMenu.id}
                     className={`relative text-grey-900 flex menu-hov font-medium not-italic text-lg items-center
-               ${activeMenu?.subMenu?.id === subMenu.id
-                        ? 'bg-primary-100 text-primary-500'
-                        : ''
-                      }
+               ${
+                 activeMenu?.subMenu?.id === subMenu.id
+                   ? 'bg-primary-100 text-primary-500'
+                   : ''
+               }
               `}
                     onMouseOver={() =>
-                      setActiveMenu((prevMenu) => ({ ...prevMenu, subMenu }))
+                      setActiveMenu((prevMenu) => ({...prevMenu, subMenu}))
                     }
                   >
-                    <Link
-                      to={`/${activeMenu?.menu?.identifier}/${subMenu?.identifier}`}
-                      className="w-full"
-                    >
-                      <p className="flex items-center justify-between px-2 py-1 rounded menu-hov between">
-                        <span className="w-[calc(100%_-_24px)] text-lg font-medium text-grey-900">
-                          {subMenu.title}
-                        </span>
-                        {subMenu.child_categories &&
-                          subMenu.child_categories.length > 0 && (
-                            <div className='w-6'>
-                              <ArrowForward width={'24px'} height={'24px'} />
-                            </div>
-                          )}
-                      </p>
-                    </Link>
+                    {subMenu.child_categories &&
+                    subMenu.child_categories.length > 0 ? (
+                      <Link to="/categories" className="w-full">
+                        <p className="flex items-center justify-between px-2 py-1 rounded menu-hov between">
+                          <span className="w-[calc(100%_-_24px)] text-lg font-medium text-grey-900">
+                            {subMenu.title}
+                          </span>
+                          <div className="w-6">
+                            <ArrowForward width={'24px'} height={'24px'} />
+                          </div>
+                        </p>
+                      </Link>
+                    ) : (
+                      <Link
+                        to={`/${activeMenu?.menu?.identifier}/${subMenu?.identifier}`}
+                        className="w-full"
+                      >
+                        <p className="flex items-center justify-between px-2 py-1 rounded menu-hov between">
+                          <span className="w-[calc(100%_-_24px)] text-lg font-medium text-grey-900">
+                            {subMenu.title}
+                          </span>
+                        </p>
+                      </Link>
+                    )}
                   </li>
                 );
               })}
