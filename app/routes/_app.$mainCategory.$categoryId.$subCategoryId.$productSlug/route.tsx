@@ -7,9 +7,10 @@ import { FC, ReactNode } from 'react';
 import { json, useLoaderData, useParams } from '@remix-run/react';
 import WelderHelment from 'public/weld-helmet.png';
 import ProductInformation from './productInformation';
-import { getProductDetails } from './product.server';
-import { LoaderFunctionArgs } from '@remix-run/server-runtime';
+import { addProductToCart, getProductDetails } from './product.server';
+import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { getUserDetails } from '~/lib/utils/user-session.server';
+import { getAccessToken } from '~/lib/utils/auth-session.server';
 
 export type SimilarProduct = {
   name: string;
@@ -193,3 +194,31 @@ export default function route() {
 const ProductDetailPageWrapper = ({ children }: { children: ReactNode }) => {
   return <div className="container">{children}</div>;
 };
+
+export const action = async ( { request, params, context } : ActionFunctionArgs ) => {
+  try {
+    const { session } = context
+    const fromData = await request.formData()
+    const cartInfo = Object.fromEntries(fromData)
+    console.log("data is ", cartInfo)
+    const accessTocken = await getAccessToken( context ) as string
+    console.log("access token", accessTocken)
+    // const { userDetails } = await getUserDetails(request);
+    const addToCart = await addProductToCart( cartInfo, accessTocken, context )
+    return json({},{
+      headers: {
+        'Set-Cookie': await session.commit({}),
+      },
+    })
+
+  } catch( error ) {
+    if( error instanceof Error ) {
+      console.log("thisi is err", error?.message)
+      return  error?.message
+    }
+    console.log("thisi is err")
+    return "error occures"
+  }
+  // console.log("head forted ", request)
+  // return true
+}
