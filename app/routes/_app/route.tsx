@@ -25,38 +25,45 @@ import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 
 export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
-  const { userDetails } = await getUserDetails(request);
+  const { userDetails }   = await getUserDetails(request);
+  const categories        = await getCagetoryList(context);
+  const messageSession    = await getMessageSession(request);
+  let sessionCartInfo     = await context.session.get( CART_SESSION_KEY )
+  const headers           = [] as any
 
-  
-  const categories = await getCagetoryList(context);
-  const messageSession = await getMessageSession(request);
-  let sessionCartInfo = await context.session.get( CART_SESSION_KEY )
   if( ! sessionCartInfo ) {
     sessionCartInfo = await getSessionCart( userDetails?.id, context )
     if( sessionCartInfo ) {
+      console.log("faswerwere")
       context.session.set( CART_SESSION_KEY, sessionCartInfo )
+      headers.push( ['Set-Cookie', await context.session.commit({})] )
+      console.log("sdfasdfasdf ")
     }
 
   }
-  console.log("sessionCartInfos ", sessionCartInfo)
+
   if (!categories) {
     setErrorMessage(messageSession, 'Category not found');
-    return json(
-      { categories: [], userDetails, sessionCartInfo },
-      {
-        headers: {
-          'Set-Cookie': await messageCommitSession(messageSession),
-        },
-      },
-    );
+    headers.push(['Set-Cookie', await messageCommitSession(messageSession)])
+    // return json(
+    //   { categories: [], userDetails, sessionCartInfo },
+    //   {
+    //     headers: [
+    //      ['Set-Cookie', await messageCommitSession(messageSession)]
+    //     ],
+    //   },
+    // );
   }
-  return json({ categories, userDetails, sessionCartInfo });
+  return json({ categories : categories ? categories : [] , userDetails, sessionCartInfo },
+    {
+      headers
+  });
 }
 
 export default function PublicPageLayout() {
-  const { categories, userDetails } = useLoaderData<typeof loader>();
-  const cartCount = 2001;
-
+  const { categories, userDetails, sessionCartInfo } = useLoaderData<typeof loader>();
+  const cartCount = sessionCartInfo?.lineItems ?? 0;
+  console.log("sdfsdf ", sessionCartInfo)
   return (
     <Layout categories={categories} cartCount={cartCount} userDetails={userDetails}>
       <Outlet />
