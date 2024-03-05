@@ -51,7 +51,7 @@ export function useColumn() {
                     </DialogTitle>
                     <Separator className="!my-2" />
                     <DialogDescription>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-2 gap-4 justify-start">
                         <div>
                           <h5 className="text-grey-900">Contact Name:</h5>
                           <p className="capitalize">{ticket.contactName}</p>
@@ -69,8 +69,10 @@ export function useColumn() {
                           <p className="capitalize">{ticket.status}</p>
                         </div>
                       </div>
-                      <h5 className="pt-4 text-grey-900">Reason:</h5>
-                      <p>{ticket.description}</p>
+                      <div>
+                        <h5 className="pt-4 text-grey-900">Reason:</h5>
+                        <p>{ticket.description}</p>
+                      </div>
                     </DialogDescription>
                   </DialogHeader>
                 </DialogContent>

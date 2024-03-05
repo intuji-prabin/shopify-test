@@ -98,6 +98,12 @@ export async function action({request, context, params}: ActionFunctionArgs) {
       context,
     });
 
+    //  This must be applied only after implementing the authorization logic
+    //  import {emitter} from '~/lib/utils/emitter.server';
+    //  if (!isNotAdmin) {
+    //    emitter.emit('logout', customerId);
+    //  }
+
     if (userDetails?.email === email) {
       userDetailsSession.unset(USER_DETAILS_KEY);
 
