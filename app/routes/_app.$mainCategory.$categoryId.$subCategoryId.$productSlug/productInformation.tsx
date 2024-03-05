@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
-import { Link } from '@remix-run/react';
+import { Form, Link, useSubmit } from '@remix-run/react';
 import CarouselThumb from './carouselThumb';
 import { SliderImageData } from './slider-image-date';
 import { Product } from './route';
@@ -41,9 +41,9 @@ export default function ProductInformation({ product }: any) {
 
         <ProductDetailsSection
           productName={product?.title}
+          productId={product?.id}
+          productVeriantId={product?.variantId}
           isFavorited={false}
-          productBuyPrice={0}
-          productRRP={0}
           sku={'Sku'}
           skuUnits={product?.supplierSku}
           unitOfMeasurement={'Unit Of Measurement:'}
@@ -101,11 +101,15 @@ const ProductDetailsSection = ({
   unitOfMeasure,
   priceRange,
   companyDefaultPrice,
-  originalPrice
+  originalPrice,
+  productId,
+  productVeriantId
 
 }: any) => {
+
   const [heartFill, setHeartFill] = useState(isFavorited);
   const [quantity, setQuantity] = useState(1);
+  const submit = useSubmit();
   // const price = parseFloat( companyDefaultPrice )
   const [ productPrice, setProductPrice ] = useState(companyDefaultPrice)
   const [UOM, setUOM] = useState(box)
@@ -259,9 +263,20 @@ const ProductDetailsSection = ({
                 </option>}
               </select>
             </div>
-            <Button className="flex-grow uppercase" variant="primary">
-              {addToCart}
-            </Button>
+            <Form
+              method="POST"
+              onSubmit={(event) => {
+                submit(event.currentTarget);
+              }}
+            >
+              <input type="hidden" name='productId' value={productId} />
+              <input type="hidden" name='productVeriantId' value={productVeriantId} />
+              <input type="hidden" name='quantity' value={quantity} />
+              <input type="hidden" name='selectUOM' value={UOM} />
+              <Button className="flex-grow uppercase" variant="primary" type='submit'>
+                {addToCart}
+              </Button>
+            </Form>
           </div>
         </div>
       </div>
@@ -354,9 +369,7 @@ export function SelectACountryDropdown({ unitOfMeasure, defaultUOM, setUOM }: {
         name="filter_by"
         className="w-full min-w-[116px] place-order h-full border-grey-500!border-grey-100 filter-select"
         onChange={(e : any) => {
-          
           setUOM( e.target.value)
-          // setUom(e.target.value)
         }}
         defaultValue={defaultUOM}
       >

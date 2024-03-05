@@ -67,7 +67,7 @@ export async function verifyLogin({email, password, context}: LoginParams) {
     if (!customerAccessTokenCreate?.customerAccessToken?.accessToken) {
       throw new Error(customerAccessTokenCreate?.customerUserErrors[0].message);
     }
-
+    console.log("customerAccessTokenCreate ", customerAccessTokenCreate)
     const {customerAccessToken} = customerAccessTokenCreate;
 
     return customerAccessToken;
