@@ -170,7 +170,11 @@ export async function action({request, context}: ActionFunctionArgs) {
         },
       });
 
-      return logout({context, request});
+      return logout({
+        context,
+        request,
+        logoutMessage: 'Password updated successfully. Please login again.',
+      });
     } else {
       userDetailsSession.unset(USER_DETAILS_KEY);
 

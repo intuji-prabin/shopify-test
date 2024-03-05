@@ -26,7 +26,7 @@ export function DataTable<T>({table, columns}: DataTableProps<T>) {
               return (
                 <TableHead
                   key={header.id}
-                  className="text-grey-900 text-lg leading-5.5 font-medium"
+                  className="text-grey-900 text-lg leading-5.5 font-medium whitespace-nowrap"
                 >
                   {header.isPlaceholder ? null : (
                     <div
@@ -77,7 +77,7 @@ export function DataTable<T>({table, columns}: DataTableProps<T>) {
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className="text-grey-900 text-lg leading-5.5"
+                      className="text-grey-900 text-lg leading-5.5 whitespace-nowrap"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
