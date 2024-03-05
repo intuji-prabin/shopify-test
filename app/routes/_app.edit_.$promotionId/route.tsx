@@ -33,6 +33,7 @@ import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import PromotionNavigation from '../_app.customise_.$promotionId/promotion-navigation';
 import { getMyPromotionById, updatePromotion } from './edit-promotion.server';
 import { NumberPlusOnly } from '~/lib/constants/regex.constant';
+import FullPageLoading from '~/components/ui/fullPageLoading';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -253,16 +254,7 @@ const PromotionEdit = () => {
   return (
     <div className="bg-grey-25">
       {isLoading && (
-        <div className="absolute inset-0 z-[9999]">
-          <div className="flex h-full bg-white/95">
-            <div className="fixed flex flex-wrap items-center justify-center -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 gap-x-4 gap-y-2">
-              <p className="text-lg">
-                The image is being processed. Please wait for few moments ....
-              </p>
-              <Loader width="w-8" height="h-8" />
-            </div>
-          </div>
-        </div>
+        <FullPageLoading description='The image is being processed. Please wait for few moments....' />
       )}
       <section className="container pt-8 pb-1">
         <div className="flex flex-wrap justify-between gap-4">
@@ -296,7 +288,7 @@ const PromotionEdit = () => {
                     Full Screen
                   </p>
                 </DialogTrigger>
-                <DialogContent className="max-w-[1280px] p-0 border-0 gap-y-0 promotion-view w-auto">
+                <DialogContent overlayBgColor={`${image && renderedImageWidth ? "bg-black/80" : "bg-white/80"}`} className={`bg-white/80 p-0 border-0 gap-y-0 promotion-view w-auto ${image && renderedImageWidth ? "max-w-[1280px]" : "h-full w-full max-w-[unset]"}`}>
                   {image && renderedImageWidth ? (
                     <div style={{ maxWidth: renderedImageWidth }}>
                       <img
@@ -306,11 +298,11 @@ const PromotionEdit = () => {
                       />
                     </div>
                   ) : (
-                    <div
-                      className="flex items-center justify-center gap-2 py-4 min-w-52"
-                    >
-                      <Loader width="w-10" height="h-10" />
-                      <p>Loading...</p>
+                    <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+                      <p className="text-lg">
+                        Loading...
+                      </p>
+                      <Loader width="w-8" height="h-8" />
                     </div>
                   )}
                 </DialogContent>

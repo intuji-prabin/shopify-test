@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import {X} from 'lucide-react';
-import {cn} from '~/lib/utils/utils';
+import { X } from 'lucide-react';
+import { cn } from '~/lib/utils/utils';
 
 const Dialog = DialogPrimitive.Root;
 
@@ -13,12 +13,12 @@ const DialogClose = DialogPrimitive.Close;
 
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({className, ...props}, ref) => (
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay> & { overlayBgColor?: string }
+>(({ className, overlayBgColor, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+      `fixed inset-0 z-50 ${overlayBgColor ? overlayBgColor : "bg-black/80"}  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0`,
       className,
     )}
     {...props}
@@ -28,10 +28,10 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({className, children, ...props}, ref) => (
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & { overlayBgColor?: string }
+>(({ className, children, overlayBgColor, ...props }, ref) => (
   <DialogPortal>
-    <DialogOverlay />
+    <DialogOverlay overlayBgColor={overlayBgColor} />
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
@@ -41,7 +41,7 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute bg-white w-5 h-5 flex items-center justify-center shadow-none right-4 top-4 transition-opacity disabled:pointer-events-none data-[state=open]:bg-slate-100 data-[state=open]:text-slate-500 dark:data-[state=open]:bg-slate-800 dark:data-[state=open]:text-slate-400 focus-visible:outline-0 track-order">
+      <DialogPrimitive.Close className="absolute bg-white z-[99999] w-5 h-5 flex items-center justify-center shadow-none right-4 top-4 transition-opacity disabled:pointer-events-none data-[state=open]:bg-slate-100 data-[state=open]:text-slate-500 dark:data-[state=open]:bg-slate-800 dark:data-[state=open]:text-slate-400 focus-visible:outline-0 track-order">
         <X className="w-4 h-4" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
@@ -81,7 +81,7 @@ DialogFooter.displayName = 'DialogFooter';
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
->(({className, ...props}, ref) => (
+>(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
@@ -96,7 +96,7 @@ DialogTitle.displayName = DialogPrimitive.Title.displayName;
 const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
->(({className, ...props}, ref) => (
+>(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
     className={cn('text-sm text-slate-500 dark:text-slate-400', className)}

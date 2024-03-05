@@ -824,3 +824,7 @@ div[data-state='open'].fixed.inset-0 {
 #promotion-form input {
   @apply text-grey-700;
 }
+
+.bg-dialogBgColor {
+  background-color: rgba(255, 255, 255, 0.95);
+}
