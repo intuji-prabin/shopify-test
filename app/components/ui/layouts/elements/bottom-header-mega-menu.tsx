@@ -107,21 +107,30 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                       setActiveMenu((prevMenu) => ({...prevMenu, subMenu}))
                     }
                   >
-                    <Link
-                      to={`/${activeMenu?.menu?.identifier}/${subMenu?.identifier}`}
-                      className="w-full"
-                    >
-                      <p className="flex flex-row-reverse items-center justify-between px-2 py-1 rounded menu-hov between">
-                        {' '}
-                        {subMenu.child_categories &&
-                          subMenu.child_categories.length > 0 && (
+                    {subMenu.child_categories &&
+                    subMenu.child_categories.length > 0 ? (
+                      <Link to="/categories" className="w-full">
+                        <p className="flex items-center justify-between px-2 py-1 rounded menu-hov between">
+                          <span className="w-[calc(100%_-_24px)] text-lg font-medium text-grey-900">
+                            {subMenu.title}
+                          </span>
+                          <div className="w-6">
                             <ArrowForward width={'24px'} height={'24px'} />
-                          )}
-                        <span className="w-[169px] text-lg font-medium text-grey-900">
-                          {subMenu.title}{' '}
-                        </span>
-                      </p>
-                    </Link>
+                          </div>
+                        </p>
+                      </Link>
+                    ) : (
+                      <Link
+                        to={`/${activeMenu?.menu?.identifier}/${subMenu?.identifier}`}
+                        className="w-full"
+                      >
+                        <p className="flex items-center justify-between px-2 py-1 rounded menu-hov between">
+                          <span className="w-[calc(100%_-_24px)] text-lg font-medium text-grey-900">
+                            {subMenu.title}
+                          </span>
+                        </p>
+                      </Link>
+                    )}
                   </li>
                 );
               })}

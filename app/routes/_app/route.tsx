@@ -3,75 +3,69 @@ import {
   isRouteErrorResponse,
   useLoaderData,
   useRouteError,
-  useSubmit,
 } from '@remix-run/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
 import TopHeader from '~/components/ui/layouts/top-header';
-import {Payload, getCagetoryList, getCategories} from './app.server';
-import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
+import { Payload, getCagetoryList, getCategories, getSessionCart } from './app.server';
+import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
 } from '~/lib/utils/toast-session.server';
-import {useMediaQuery} from '~/hooks/useMediaQuery';
+import { useMediaQuery } from '~/hooks/useMediaQuery';
 import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
-import {useEffect} from 'react';
-import {useEventSource} from 'remix-utils/sse/react';
-import {getCategoryList} from '../_app.categories/route';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {CustomerData} from '../_public.login/login.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {HamburgerMenuProvider} from '~/components/ui/layouts/elements/HamburgerMenuContext';
-import {Routes} from '~/lib/constants/routes.constent';
+import { getCategoryList } from '../_app.categories/route';
+import {  isAuthenticate } from '~/lib/utils/auth-session.server';
+import { CustomerData } from '../_public.login/login.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { HamburgerMenuProvider } from '~/components/ui/layouts/elements/HamburgerMenuContext';
+import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 
-export async function loader({request, context}: ActionFunctionArgs) {
+export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
+  const { userDetails }   = await getUserDetails(request);
+  const categories        = await getCagetoryList(context);
+  const messageSession    = await getMessageSession(request);
+  let sessionCartInfo     = await context.session.get( CART_SESSION_KEY )
+  const headers           = [] as any
 
-  const {userDetails} = await getUserDetails(request);
+  if( ! sessionCartInfo ) {
+    sessionCartInfo = await getSessionCart( userDetails?.id, context )
+    if( sessionCartInfo ) {
+      console.log("faswerwere")
+      context.session.set( CART_SESSION_KEY, sessionCartInfo )
+      headers.push( ['Set-Cookie', await context.session.commit({})] )
+      console.log("sdfasdfasdf ")
+    }
 
-  const categories = await getCagetoryList(context);
-
-  const messageSession = await getMessageSession(request);
+  }
 
   if (!categories) {
     setErrorMessage(messageSession, 'Category not found');
-    return json(
-      {categories: [], userDetails},
-      {
-        headers: {
-          'Set-Cookie': await messageCommitSession(messageSession),
-        },
-      },
-    );
+    headers.push(['Set-Cookie', await messageCommitSession(messageSession)])
+    // return json(
+    //   { categories: [], userDetails, sessionCartInfo },
+    //   {
+    //     headers: [
+    //      ['Set-Cookie', await messageCommitSession(messageSession)]
+    //     ],
+    //   },
+    // );
   }
-  return json({categories, userDetails});
+  return json({ categories : categories ? categories : [] , userDetails, sessionCartInfo },
+    {
+      headers
+  });
 }
 
 export default function PublicPageLayout() {
-  const {categories, userDetails} = useLoaderData<typeof loader>();
-
-  const cartCount = 2001;
-
-  const submit = useSubmit();
-
-  const userId = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
-    event: 'logout-event',
-  });
-
-  useEffect(() => {
-    if (userId === userDetails.id) {
-      submit({}, {method: 'POST', action: '/logout'});
-    }
-  }, [userId]);
-
+  const { categories, userDetails, sessionCartInfo } = useLoaderData<typeof loader>();
+  const cartCount = sessionCartInfo?.lineItems ?? 0;
+  console.log("sdfsdf ", sessionCartInfo)
   return (
-    <Layout
-      categories={categories}
-      cartCount={cartCount}
-      userDetails={userDetails}
-    >
+    <Layout categories={categories} cartCount={cartCount} userDetails={userDetails}>
       <Outlet />
     </Layout>
   );
@@ -81,7 +75,7 @@ const Layout = ({
   children,
   categories,
   userDetails,
-  cartCount,
+  cartCount
 }: {
   children: React.ReactNode;
   categories: any;

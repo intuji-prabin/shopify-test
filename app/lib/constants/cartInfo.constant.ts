@@ -1,0 +1,1 @@
+export const CART_SESSION_KEY = "userCartList" 
