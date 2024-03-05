@@ -80,7 +80,7 @@ export function CreateTicketForm({options}: CreateTicketFormProps) {
             required
             label="Ticket Description"
             name="description"
-            placeholder="Description here"
+            placeholder="Description here..."
           />
           <div className="flex items-center space-x-4">
             <Button
