@@ -7,6 +7,17 @@ import {
   HybridTooltipContent,
   HybridTooltipTrigger,
 } from '~/components/ui/hybrid-tooltip';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '~/components/ui/dialog';
+import {EyeOn} from '~/components/icons/eye';
+import {formatDateToLocaleDateString} from '~/lib/helpers/dateTime.helper';
+import {Separator} from '~/components/ui/separator';
 
 export type TicketColumn = {
   id: string;
@@ -24,7 +35,49 @@ export function useColumn() {
         accessorKey: 'id',
         header: 'Ticket ID.',
         enableSorting: false,
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const ticket = info.row.original;
+          return (
+            <div className="flex items-center space-x-2">
+              <p>{ticket.id}</p>
+              <Dialog>
+                <DialogTrigger>
+                  <EyeOn />
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle className="not-italic text-xl">
+                      {ticket.id}
+                    </DialogTitle>
+                    <Separator className="!my-2" />
+                    <DialogDescription>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <h5 className="text-grey-900">Contact Name:</h5>
+                          <p className="capitalize">{ticket.contactName}</p>
+                        </div>
+                        <div>
+                          <h5 className="text-grey-900">Department:</h5>
+                          <p>{ticket.supportDepartment}</p>
+                        </div>
+                        <div>
+                          <h5 className="text-grey-900">Schedule On:</h5>
+                          <p>{formatDateToLocaleDateString(ticket.date)}</p>
+                        </div>
+                        <div>
+                          <h5 className="text-grey-900">Status:</h5>
+                          <p className="capitalize">{ticket.status}</p>
+                        </div>
+                      </div>
+                      <h5 className="pt-4 text-grey-900">Reason:</h5>
+                      <p>{ticket.description}</p>
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+            </div>
+          );
+        },
       },
       {
         accessorKey: 'contactName',
@@ -42,16 +95,9 @@ export function useColumn() {
         cell: (info) => {
           const description = info.getValue() as string;
           return (
-            <TooltipProvider delayDuration={100}>
-              <HybridTooltip>
-                <HybridTooltipTrigger className="truncate max-w-56 not-italic text-lg text-grey-900 leading-5.5 font-normal">
-                  {description}
-                </HybridTooltipTrigger>
-                <HybridTooltipContent align="start">
-                  <p className="max-w-56 w-auto p-2">{description}</p>
-                </HybridTooltipContent>
-              </HybridTooltip>
-            </TooltipProvider>
+            <p className="truncate max-w-56 not-italic text-lg text-grey-900 leading-5.5 font-normal">
+              {description}
+            </p>
           );
         },
       },
@@ -65,14 +111,7 @@ export function useColumn() {
         accessorKey: 'date',
         header: 'Schedule On',
         enableSorting: false,
-        cell: (info) => {
-          const date = new Date(info.getValue() as string);
-          return date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          });
-        },
+        cell: (info) => formatDateToLocaleDateString(info.getValue() as string),
       },
       {
         accessorKey: 'status',
