@@ -13,7 +13,7 @@ export type TicketColumn = {
   contactName: string;
   description: string;
   supportDepartment: string;
-  createdOn: string;
+  date: string;
   status: 'pending' | 'in_progress' | 'closed';
 };
 
@@ -62,7 +62,7 @@ export function useColumn() {
         cell: (info) => info.getValue(),
       },
       {
-        accessorKey: 'createdOn',
+        accessorKey: 'date',
         header: 'Schedule On',
         enableSorting: false,
         cell: (info) => {
