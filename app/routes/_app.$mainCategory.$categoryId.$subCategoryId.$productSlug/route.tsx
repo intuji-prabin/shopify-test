@@ -12,6 +12,7 @@ import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/server-runtim
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getAccessToken } from '~/lib/utils/auth-session.server';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { GET_CART_LIST } from '../_app.cart-list/cart.server';
 
 export type SimilarProduct = {
   name: string;
@@ -145,7 +146,9 @@ export const loader = async ({ params, request, context }: LoaderFunctionArgs) =
   try {
     const { productSlug } = params;
     const sessionCartInfo = await context.session.get( CART_SESSION_KEY )
-    console.log("asdfdasf ", sessionCartInfo)
+    const cartLists =  await context.storefront.query(GET_CART_LIST, { variables : { cartId : sessionCartInfo?.cartId }} )
+    console.log("cartLists ", cartLists)
+    console.log(" cartListssss nodes ", cartLists?.cart?.lines?.nodes)
     const { userDetails } = await getUserDetails(request);
     const product = await getProductDetails(userDetails?.id, productSlug as string);
 
@@ -203,9 +206,7 @@ export const action = async ( { request, params, context } : ActionFunctionArgs 
     const { session } = context
     const fromData = await request.formData()
     const cartInfo = Object.fromEntries(fromData)
-    console.log("data is ", cartInfo)
     const accessTocken = await getAccessToken( context ) as string
-    console.log("access token", accessTocken)
     // const { userDetails } = await getUserDetails(request);
     const addToCart = await addProductToCart( cartInfo, accessTocken, context, request )
     return json({},{

@@ -34,10 +34,8 @@ export async function loader({ request, context }: ActionFunctionArgs) {
   if( ! sessionCartInfo ) {
     sessionCartInfo = await getSessionCart( userDetails?.id, context )
     if( sessionCartInfo ) {
-      console.log("faswerwere")
       context.session.set( CART_SESSION_KEY, sessionCartInfo )
       headers.push( ['Set-Cookie', await context.session.commit({})] )
-      console.log("sdfasdfasdf ")
     }
 
   }
@@ -63,7 +61,6 @@ export async function loader({ request, context }: ActionFunctionArgs) {
 export default function PublicPageLayout() {
   const { categories, userDetails, sessionCartInfo } = useLoaderData<typeof loader>();
   const cartCount = sessionCartInfo?.lineItems ?? 0;
-  console.log("sdfsdf ", sessionCartInfo)
   return (
     <Layout categories={categories} cartCount={cartCount} userDetails={userDetails}>
       <Outlet />

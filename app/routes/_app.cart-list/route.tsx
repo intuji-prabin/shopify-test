@@ -2,6 +2,32 @@ import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
 import MyProducts from './order-my-products/cart-myproduct';
 import OrderSummary from './order-summary/cart-order-summary';
+import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
+import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { getCartList } from './cart.server';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+
+export const loader = async ( { context, request } : LoaderFunctionArgs) => {
+    await isAuthenticate(context);
+    try {
+      let sessionCartInfo     = await context.session.get( CART_SESSION_KEY )
+      
+      if( ! sessionCartInfo ) {
+        throw new Error("Cart not found")
+      }
+
+      const cartList = await getCartList( context, request, sessionCartInfo )
+      return json({})
+    } catch( error ) {
+      if( error instanceof Error ) {
+        console.log("error ", error?.message)
+        return json({})
+      }
+      console.log("error generates ")
+      return json({})
+
+    }
+}
 
 export default function CartList() {
   return (
