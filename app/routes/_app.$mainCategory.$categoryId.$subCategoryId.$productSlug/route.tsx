@@ -45,106 +45,10 @@ export type Product = {
   similarProducts: SimilarProduct[];
 };
 
-// async function getAProduct() {
-//   const productDetailsFromAPI = {
-//     name: 'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition',
-//     imgUrl: '',
-//     isFavorited: false,
-//     productBuyPrice: 649.23423,
-//     productRRP: 79.234234,
-//     sku: '1-1601-EC',
-//     unitOfMeasurement: '1 Box',
-//     isInStock: true,
-//     bulkPricings: [
-//       {
-//         id: 1,
-//         quantity: '1-50',
-//         price: 732,
-//       },
-//       {
-//         id: 2,
-//         quantity: '100+',
-//         price: 500,
-//       },
-//       {
-//         id: 3,
-//         quantity: '1-50',
-//         price: 732,
-//       },
-//       {
-//         id: 4,
-//         quantity: '100+',
-//         price: 500,
-//       },
-//       {
-//         id: 5,
-//         quantity: '1-50',
-//         price: 732,
-//       },
-//       {
-//         id: 6,
-//         quantity: '100+',
-//         price: 500,
-//       },
-//       {
-//         id: 7,
-//         quantity: '1-50',
-//         price: 732,
-//       },
-//       {
-//         id: 8,
-//         quantity: '100+',
-//         price: 500,
-//       },
-//     ],
-//     pickUpLocation: 'SUPERCHEAP AUTO NZ PTY LTD',
-//     pickUpReadyTime: '4 hours',
-//     similarProducts: [
-//       {
-//         name: 'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition',
-//         imageUrl: WelderHelment,
-//         isFavorited: true,
-//         isQtyBuyAvailable: true,
-//         productBuyPrice: 649.23423,
-//         productRRP: 79.234234,
-//         sku: '1-1901-EC',
-//       },
-//       {
-//         name: 'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition',
-//         imageUrl: WelderHelment,
-//         isFavorited: true,
-//         isQtyBuyAvailable: true,
-//         productBuyPrice: 649.23423,
-//         productRRP: 79.234234,
-//         sku: '1-1201-EC',
-//       },
-//       {
-//         name: 'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition',
-//         imageUrl: WelderHelment,
-//         isFavorited: false,
-//         isQtyBuyAvailable: true,
-//         productBuyPrice: 649.23423,
-//         productRRP: 79.234234,
-//         sku: '1-1801-EC',
-//       },
-//       {
-//         name: 'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition',
-//         imageUrl: WelderHelment,
-//         isFavorited: false,
-//         isQtyBuyAvailable: true,
-//         productBuyPrice: 649.23423,
-//         productRRP: 79.234234,
-//         sku: '1-1701-EC',
-//       },
-//     ],
-//   };
-//   return productDetailsFromAPI;
-// }
-
 export const loader = async ({ params, request, context }: LoaderFunctionArgs) => {
   try {
     const { productSlug } = params;
-    const sessionCartInfo = await context.session.get( CART_SESSION_KEY )
+    const sessionCartInfo = await context.session.get(CART_SESSION_KEY)
     console.log("asdfdasf ", sessionCartInfo)
     const { userDetails } = await getUserDetails(request);
     const product = await getProductDetails(userDetails?.id, productSlug as string);
@@ -198,26 +102,26 @@ const ProductDetailPageWrapper = ({ children }: { children: ReactNode }) => {
   return <div className="container">{children}</div>;
 };
 
-export const action = async ( { request, params, context } : ActionFunctionArgs ) => {
+export const action = async ({ request, params, context }: ActionFunctionArgs) => {
   try {
     const { session } = context
     const fromData = await request.formData()
     const cartInfo = Object.fromEntries(fromData)
     console.log("data is ", cartInfo)
-    const accessTocken = await getAccessToken( context ) as string
+    const accessTocken = await getAccessToken(context) as string
     console.log("access token", accessTocken)
     // const { userDetails } = await getUserDetails(request);
-    const addToCart = await addProductToCart( cartInfo, accessTocken, context, request )
-    return json({},{
+    const addToCart = await addProductToCart(cartInfo, accessTocken, context, request)
+    return json({}, {
       headers: {
         'Set-Cookie': await session.commit({}),
       },
     })
 
-  } catch( error ) {
-    if( error instanceof Error ) {
+  } catch (error) {
+    if (error instanceof Error) {
       console.log("thisi is err", error?.message)
-      return  error?.message
+      return error?.message
     }
     console.log("thisi is err")
     return "error occures"

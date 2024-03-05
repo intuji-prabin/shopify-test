@@ -655,6 +655,9 @@ input[type='radio']:checked + label {
     flex: 0 0 50%; /* Breakpoint SM slide covers 50% of the viewport */
     max-height: 85px;
   }
+  .product__detSlider .embla-thumbs__container .embla__slide {
+    max-height: unset;
+  }
 }
 /* Product Detail Page Embla Carousel Styles End Here */
 
