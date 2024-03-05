@@ -62,7 +62,7 @@ export default function TicketsFilterForm({options}: TicketsFilterFormProps) {
       <div>
         <div className="p-6">
           <div className="flex justify-between items-center">
-            <h5 className="pb-2">Created On</h5>
+            <h5 className="pb-2">Schedule On</h5>
             <SheetClose asChild>
               <Link
                 to={Routes.SUPPORT_TICKETS}

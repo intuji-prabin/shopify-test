@@ -17,10 +17,10 @@ export function BackButton({
         size="icon"
         data-cy="back-button"
         variant="ghost"
-        className="border-grey-50 hover:bg-inherit"
+        className="border-grey-50 group group-hover:bg-inherit hover:border-primary-500 duration-300"
         onClick={() => navigate(-1)}
       >
-        <ArrowLeft className="text-grey-400" />
+        <ArrowLeft className="text-grey-400 group-hover:text-primary-500" />
       </Button>
       <h3 className={className}>{title}</h3>
     </div>

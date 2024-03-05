@@ -7,6 +7,7 @@ module.exports = {
   serverNodeBuiltinsPolyfill: {
     modules: {
       crypto: true, // Provide a JSPM polyfill
+      events: true,
     },
   },
   /**

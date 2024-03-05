@@ -35,4 +35,5 @@ export const Routes = {
   PENDING_ORDER: '/pending-order',
   SINGLE_PENDING_ITEM: '/single-pending-item',
   PROFILE: '/profile',
+  LOGOUT_SUBSCRIBE: '/logout/subscribe',
 };
