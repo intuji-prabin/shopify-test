@@ -55,7 +55,7 @@ export function PaginationWrapper({totalCount, pageSize}: PaginationPropsType) {
       <p className="w-40 text-grey-400 font-medium hidden sm:block">
         {startIndex}-{endIndex} of {totalCount} Items
       </p>
-      <Pagination className="items-center justify-end">
+      <Pagination className="items-center justify-center sm:justify-end">
         <div className="flex items-center gap-6">
           <Form
             method="get"
