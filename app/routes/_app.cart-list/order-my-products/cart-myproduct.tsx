@@ -3,7 +3,7 @@ import {DataTable} from '~/components/ui/data-table';
 import {useMyProductColumn} from './use-column';
 import {ProductData} from './productData';
 import CreateGroup from './remove-later-dialogbox';
-export default function MyProducts() {
+export default function MyProducts( { products } : any) {
   const {columns} = useMyProductColumn();
   const {table} = useTable(columns, ProductData);
   function handleRemoveAllItems() {

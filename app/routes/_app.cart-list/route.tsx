@@ -6,6 +6,7 @@ import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 import { getCartList } from './cart.server';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { useLoaderData } from '@remix-run/react';
 
 export const loader = async ( { context, request } : LoaderFunctionArgs) => {
     await isAuthenticate(context);
@@ -17,7 +18,8 @@ export const loader = async ( { context, request } : LoaderFunctionArgs) => {
       }
 
       const cartList = await getCartList( context, request, sessionCartInfo )
-      return json({})
+      // console.log(cartList)
+      return json({cartList})
     } catch( error ) {
       if( error instanceof Error ) {
         console.log("error ", error?.message)
@@ -30,6 +32,8 @@ export const loader = async ( { context, request } : LoaderFunctionArgs) => {
 }
 
 export default function CartList() {
+  const { cartList } : any = useLoaderData<typeof loader>();
+  console.log(".  cartList ", cartList)
   return (
     <>
       <HeroBanner
@@ -38,8 +42,14 @@ export default function CartList() {
       />
       <UploadSearchbar />
       <div className="flex justify-between container my-6 gap-6 items-start flex-col lg:flex-row">
-        <MyProducts />
-        <OrderSummary />
+        <MyProducts products={cartList?.productList} />
+        <OrderSummary 
+          cartSubTotalPrice={ cartList?.cartSubTotalPrice} 
+          cartTotalPrice={ cartList?.cartTotalPrice} 
+          frieght={ cartList?.frieght } 
+          subcharges={ cartList?.subcharges } 
+          gst={ cartList?.gst } 
+        />
       </div>
     </>
   );

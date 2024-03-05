@@ -6,7 +6,6 @@ import { getUserDetails } from "~/lib/utils/user-session.server";
 export const getCartList = async ( context : any, request : Request, sessionCartInfo : any ) => {
     const { userDetails } = await getUserDetails(request);
     const cartLists =  await context.storefront.query(GET_CART_LIST, { variables : { cartId : sessionCartInfo?.cartId }} )
-    console.log("afsfds cartLists ", cartLists)
     if( ! cartLists ) {
         throw new Error("Cart List not found")
     }
@@ -21,31 +20,36 @@ const formateCartList = async ( cartResponse : any, customerId : string) => {
     let productList = [] as any
     cartLine.map(( items : any) => {
         const merchandise = items?.merchandise
-        console.log(" sdfsdf merchandise ", merchandise)
         const veriantId = merchandise?.id.replace("gid://shopify/ProductVariant/", "")
         const productId = merchandise?.product?.id.replace("gid://shopify/Product/", "")
         productList.push({
-          productId ,
-          veriantId,
-          quantity : items?.quantity,
-          UOM : items?.attributes.filter( ( att : any ) => att?.key == "selectedUOM")?.[0]?.value 
+            productId ,
+            veriantId,
+            quantity : items?.quantity,
+            title : merchandise?.product?.title,
+            sku : merchandise?.sku,
+            uom : items?.attributes.filter( ( att : any ) => att?.key == "selectedUOM")?.[0]?.value 
         })
     })
 
-    const priceLIst = await getPrice( customerId, productList )
-    console.log("datassdfsds ", productList)
+    const productWithPrice = await getPrice( customerId, productList )
 
+    return productWithPrice
 }
 
 const getPrice = async ( customerId: string, productList : any ) => {
     // const customerId = userDetails?.id
-    const results = await useFetch<any>({
+    const priceResponse = await useFetch<any>({
       method: AllowedHTTPMethods.POST,
       url: `${ENDPOINT.PRODUCT.CART_DETAIL}/${customerId}`,
       body : JSON.stringify({ productList }),
     });
-
-    console.log("resultssss ", results)
+    
+    if( ! priceResponse?.status ) {
+        throw new Error(priceResponse?.message )
+    }
+    // console.log("resultssss ", results)
+    return priceResponse?.payload
 }
 
 
