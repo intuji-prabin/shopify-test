@@ -1,38 +1,39 @@
-import { Link } from '@remix-run/react';
-import { ColumnDef } from '@tanstack/react-table';
-import { HTMLProps, useEffect, useMemo, useRef, useState } from 'react';
-import { TooltipInfo } from '~/components/icons/orderStatus';
-import { badgeVariants } from '~/components/ui/badge';
-import { Button } from '~/components/ui/button';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import {Link} from '@remix-run/react';
+import {ColumnDef} from '@tanstack/react-table';
+import {HTMLProps, useEffect, useMemo, useRef, useState} from 'react';
+import {TooltipInfo} from '~/components/icons/orderStatus';
+import {badgeVariants} from '~/components/ui/badge';
+import {Button} from '~/components/ui/button';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {getProductPriceByQty} from '~/routes/_app.$mainCategory.$categoryId.$subCategoryId.$productSlug/product-detail';
 
 export type BulkOrderColumn = {
-  "productId": string;
-  "veriantId": string;
-  "quantity": number;
-  "title": string;
-  "featuredImage": string;
-  "sku": string;
-  "uom": string;
-  "defaultPrice": string;
-  "compareAtPrice": string;
-  "companyPrice": string;
-  "currency": string;
-  "defaultUOM": string;
-  "unitOfMeasure": [
+  productId: string;
+  veriantId: string;
+  quantity: number;
+  title: string;
+  featuredImage: string;
+  sku: string;
+  uom: string;
+  defaultPrice: string;
+  compareAtPrice: string;
+  companyPrice: string;
+  currency: string;
+  defaultUOM: string;
+  unitOfMeasure: [
     {
-      "unit": string;
-      "conversion_factor": number;
-    }
-  ],
-  "priceRange": [
+      unit: string;
+      conversion_factor: number;
+    },
+  ];
+  priceRange: [
     {
-      "minQty": number;
-      "maxQty": number;
-      "price": string;
-    }
-  ],
-  "totalPrice": number;
+      minQty: number;
+      maxQty: number;
+      price: string;
+    },
+  ];
+  totalPrice: number;
 };
 
 export function useMyProductColumn() {
@@ -40,7 +41,7 @@ export function useMyProductColumn() {
     () => [
       {
         id: 'select',
-        header: ({ table }) => (
+        header: ({table}) => (
           <IndeterminateCheckbox
             {...{
               checked: table.getIsAllRowsSelected(),
@@ -49,7 +50,7 @@ export function useMyProductColumn() {
             }}
           />
         ),
-        cell: ({ row }) => (
+        cell: ({row}) => (
           <div className="px-1">
             <IndeterminateCheckbox
               {...{
@@ -68,7 +69,13 @@ export function useMyProductColumn() {
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
-          return <ItemsColumn title={product.title} sku={product.sku} featuredImage={product.featuredImage} />;
+          return (
+            <ItemsColumn
+              title={product.title}
+              sku={product.sku}
+              featuredImage={product.featuredImage}
+            />
+          );
         },
       },
       {
@@ -87,7 +94,12 @@ export function useMyProductColumn() {
         cell: (info) => {
           const productMeasurement = info.row.original.uom;
           const uomList = info.row.original.unitOfMeasure;
-          return <ProductMeasurement uom={productMeasurement} unitOfMeasure={uomList} />;
+          return (
+            <ProductMeasurement
+              uom={productMeasurement}
+              unitOfMeasure={uomList}
+            />
+          );
         },
       },
       {
@@ -112,7 +124,7 @@ export function useMyProductColumn() {
     [],
   );
 
-  return { columns };
+  return {columns};
 }
 /**
  * @description Select Column Component
@@ -121,7 +133,7 @@ function IndeterminateCheckbox({
   indeterminate,
   className = '',
   ...rest
-}: { indeterminate?: boolean } & HTMLProps<HTMLInputElement>) {
+}: {indeterminate?: boolean} & HTMLProps<HTMLInputElement>) {
   const ref = useRef<HTMLInputElement>(null!);
   useEffect(() => {
     if (typeof indeterminate === 'boolean') {
@@ -142,7 +154,7 @@ function IndeterminateCheckbox({
  */
 type ItemsColumnType = Pick<BulkOrderColumn, 'title' | 'sku' | 'featuredImage'>;
 
-function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
+function ItemsColumn({title, sku, featuredImage}: ItemsColumnType) {
   return (
     <div className="flex space-x-2">
       <figure className="bg-grey-25 p-3 !w-20 ">
@@ -153,13 +165,13 @@ function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
         />
       </figure>
       <figcaption className="flex flex-col justify-between">
-        <h5 className="">{title && title || "--"}</h5>
+        <h5 className="">{(title && title) || '--'}</h5>
         <div className="flex space-x-5 items-center max-w-[180px] flex-wrap gap-2">
           <p className="mr-2">
             <span className="font-semibold text-grey-900 ">SKU: </span>
-            {sku && sku || "N/A"}
+            {(sku && sku) || 'N/A'}
           </p>
-          <div className={`${badgeVariants({ variant: 'inStock' })} !m-0 `}>
+          <div className={`${badgeVariants({variant: 'inStock'})} !m-0 `}>
             <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>IN
             STOCK
           </div>
@@ -175,12 +187,24 @@ function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
  * @description Quantity Column Component
  */
 type QuantityColumnType = Pick<BulkOrderColumn, 'quantity'>;
-function QuantityColumn({ quantity }: QuantityColumnType) {
+function QuantityColumn({quantity}: QuantityColumnType) {
   const [quantityCounter, setQuantityCounter] = useState(quantity);
+  const [productPrice, setProductPrice] = useState(companyDefaultPrice);
   const handleIncreaseQuantity = () =>
     setQuantityCounter((previousState) => previousState + 1);
-  const handleDecreaseQuantity = () =>
-    setQuantityCounter((previousState) => previousState - 1);
+  const handleDecreaseQuantity = () => {
+    const prices = getProductPriceByQty(
+      quantity > 1 ? quantity - 1 : 1,
+      unitOfMeasure,
+      UOM,
+      box,
+      priceRange,
+      companyDefaultPrice,
+    );
+    setProductPrice(prices);
+    setQuantityCounter(quantity > 0 ? quantity - 1 : 0);
+  };
+  // setQuantityCounter((previousState) => previousState - 1);
   return (
     <div className="flex flex-col gap-[11.5px] mt-[2.4rem] cart-list">
       <div className="flex items-center">
@@ -225,10 +249,10 @@ function QuantityColumn({ quantity }: QuantityColumnType) {
  */
 type MeasurementColumnType = Pick<BulkOrderColumn, 'uom' | 'unitOfMeasure'>;
 
-function ProductMeasurement({ uom, unitOfMeasure }: MeasurementColumnType) {
+function ProductMeasurement({uom, unitOfMeasure}: MeasurementColumnType) {
   return (
     <>
-      {unitOfMeasure.length > 0 ?
+      {unitOfMeasure.length > 0 ? (
         <select
           name="filter_by"
           className="w-full min-w-[92px] place-order h-full border-grey-100"
@@ -239,7 +263,10 @@ function ProductMeasurement({ uom, unitOfMeasure }: MeasurementColumnType) {
               {uom.unit}
             </option>
           ))}
-        </select> : <p>{uom}</p>}
+        </select>
+      ) : (
+        <p>{uom}</p>
+      )}
     </>
   );
 }
@@ -251,7 +278,7 @@ function ProductTotal({
   isBulkDetailVisible,
   setIsBulkDetailsVisible,
   isRowChecked,
-  priceRange
+  priceRange,
 }: {
   totalPrice: number;
   isBulkDetailVisible: boolean;
@@ -259,11 +286,11 @@ function ProductTotal({
   setIsBulkDetailsVisible: () => void;
   priceRange: [
     {
-      "minQty": number;
-      "maxQty": number;
-      "price": string;
-    }
-  ]
+      minQty: number;
+      maxQty: number;
+      price: string;
+    },
+  ];
 }) {
   return (
     <div className="flex flex-col gap-4 items-baseline min-w-[110px]">
@@ -273,7 +300,10 @@ function ProductTotal({
             BUY PRICE
             <div className="info-block">
               <p className="flex items-center justify-center w-5 h-5 text-xs">
-                <div className='cursor-pointer' data-tooltip="Recommended retail price">
+                <div
+                  className="cursor-pointer"
+                  data-tooltip="Recommended retail price"
+                >
                   <span>
                     <TooltipInfo />
                   </span>
@@ -282,20 +312,23 @@ function ProductTotal({
             </div>
           </p>
         </div>
-        <p className="text-grey-900 text-lg leading-5.5 italic">${totalPrice && totalPrice || "N/A"}</p>
+        <p className="text-grey-900 text-lg leading-5.5 italic">
+          ${(totalPrice && totalPrice) || 'N/A'}
+        </p>
         <p className="text-sm italic font-bold leading-normal text-grey-500">
           (Excl. GST)
         </p>
       </div>
-      {priceRange.length > 0 &&
+      {priceRange.length > 0 && (
         <Button
           onClick={setIsBulkDetailsVisible}
-          className={`${isRowChecked ? 'bg-white' : 'bg-primary-200'
-            }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
+          className={`${
+            isRowChecked ? 'bg-white' : 'bg-primary-200'
+          }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
         >
           {isBulkDetailVisible ? 'Hide' : 'View'} BULK PRICE
         </Button>
-      }
+      )}
     </div>
   );
 }
