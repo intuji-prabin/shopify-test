@@ -1,13 +1,14 @@
-import { DataTable } from '~/components/ui/data-table';
-import { useTable } from '~/hooks/useTable';
+import {DataTable} from '~/components/ui/data-table';
+import {useTable} from '~/hooks/useTable';
 import CreateGroup from './remove-later-dialogbox';
-import { useMyProductColumn } from './use-column';
-import { useSubmit } from '@remix-run/react';
+import {useMyProductColumn} from './use-column';
+import {useSubmit} from '@remix-run/react';
+import {BulkTable} from './bulk-table';
 
-export default function MyProducts({ products }: any) {
-  const { columns } = useMyProductColumn();
-  const { table } = useTable(columns, products);
-  console.log("products", products);
+export default function MyProducts({products}: any) {
+  const {columns} = useMyProductColumn();
+  const {table} = useTable(columns, products);
+  console.log('products', products);
   const submit = useSubmit();
   function handleRemoveAllItems() {
     // table.toggleAllPageRowsSelected(false);
@@ -34,18 +35,32 @@ export default function MyProducts({ products }: any) {
       </div>
 
       <div className="border-t border-grey-50 cart-order">
-        <DataTable table={table} />
+        <DataTable table={table} renderSubComponent={renderSubComponent} />
         <button
           className="p-2 mb-2 border rounded"
           onClick={() => {
             const formData = new FormData();
-            table.getSelectedRowModel().flatRows.map((item, index) => formData.append(`${index}id`, item.original.productId));
-            submit(formData, { method: "PUT" });
+            table
+              .getSelectedRowModel()
+              .flatRows.map((item, index) =>
+                formData.append(`${index}id`, item.original.productId),
+              );
+            submit(formData, {method: 'PUT'});
           }}
         >
           Update Cart
         </button>
       </div>
-    </div >
+    </div>
   );
 }
+
+const renderSubComponent = ({row}: any) => {
+  return (
+    <BulkTable
+      product={row.original.priceRange}
+      quantity={'Quantity'}
+      price={'Price'}
+    />
+  );
+};

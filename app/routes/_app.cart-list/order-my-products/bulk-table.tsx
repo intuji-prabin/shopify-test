@@ -4,7 +4,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '~/components/ui/table';
 
 const invoices = [
@@ -37,9 +37,11 @@ const invoices = [
 export function BulkTable({
   quantity,
   price,
+  product,
 }: {
   quantity: string;
   price: string;
+  product: any;
 }) {
   return (
     <div className="flex w-full space-x-6">
@@ -55,13 +57,13 @@ export function BulkTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {invoices.map((invoice) => (
-            <TableRow key={invoice.invoice} className="hover:bg-white">
+          {product.map((product: any, index: number) => (
+            <TableRow key={'volumentric' + index} className="hover:bg-white">
               <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
-                {invoice.invoice}
+                {product.minQty} - {product.maxQty}
               </TableCell>
               <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
-                {invoice.paymentStatus}
+                {product.price}
               </TableCell>
             </TableRow>
           ))}
