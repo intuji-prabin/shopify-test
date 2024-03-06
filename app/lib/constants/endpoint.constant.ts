@@ -3,7 +3,7 @@
 // const BASE_URL = 'https://relaxing-hawk-ace.ngrok-free.app/api'; // Amit NGRok
 
 const BASE_URL = 'https://cig-backend.webo.dev/api'; // Live
-// const BASE_URL = 'https://guess-auctions-directive-doctors.trycloudflare.com/api'; // Live
+// const BASE_URL = 'https://ny-policy-oven-lender.trycloudflare.com/api'; // Live
 
 export const ENDPOINT = {
   AUTH: {
@@ -50,5 +50,6 @@ export const ENDPOINT = {
     GET_PRODUCT: `${BASE_URL}/product`,
     CART: `${BASE_URL}/cart-session`,
     CART_DETAIL: `${BASE_URL}/cart-detail`,
+    ORDER : `${BASE_URL}/order`
   },
 };

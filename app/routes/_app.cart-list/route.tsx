@@ -2,7 +2,7 @@ import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
 import MyProducts from './order-my-products/cart-myproduct';
 import OrderSummary from './order-summary/cart-order-summary';
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from '@remix-run/server-runtime';
+import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from '@remix-run/server-runtime';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 import { getCartList } from './cart.server';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
@@ -11,6 +11,8 @@ import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getAllCompanyShippingAddresses } from '../_app.shipping-address/shipping-address.server';
 import { useTable } from '~/hooks/useTable';
 import { useMyProductColumn } from './order-my-products/use-column';
+import { placeOrder } from './order-place.server';
+import { getMessageSession, messageCommitSession, setSuccessMessage } from '~/lib/utils/toast-session.server';
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
@@ -42,12 +44,21 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   }
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
+  const messageSession = await getMessageSession(request);
+  try {
   let res;
   switch (request.method) {
     case "POST":
-      res = await placeOrder(request);
-      break;
+      res = await placeOrder(request, context);
+      // context.session.set(res)
+      setSuccessMessage(messageSession, "Order successFully creatd");
+      return redirect('/', {
+        headers: [
+          ['Set-Cookie', await context.session.commit({})],
+          ['Set-Cookie', await messageCommitSession(messageSession)],
+        ],
+      });
     case "PUT":
       res = await request.formData()
       console.log("res", res)
@@ -58,6 +69,13 @@ export async function action({ request }: ActionFunctionArgs) {
         message: `${request.method} not supported`,
         payload: null
       }, 404)
+  }
+  } catch( error ) {
+    if( error instanceof Error ) {
+      console.log(" errerdf ", error?.message)
+    }
+    console.log(" errerdf " )
+
   }
 
   return {}
@@ -88,16 +106,3 @@ export default function CartList() {
 }
 
 
-const placeOrder = async (request: Request) => {
-  try {
-    const formData = await request.formData();
-    console.log("res", formData)
-    return { formData }
-  } catch (error) {
-    if (error instanceof Error) {
-      console.log('err', error);
-      return {};
-    }
-    return {};
-  }
-}
