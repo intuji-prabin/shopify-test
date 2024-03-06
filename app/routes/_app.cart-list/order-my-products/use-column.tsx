@@ -189,19 +189,19 @@ function ItemsColumn({title, sku, featuredImage}: ItemsColumnType) {
 type QuantityColumnType = Pick<BulkOrderColumn, 'quantity'>;
 function QuantityColumn({quantity}: QuantityColumnType) {
   const [quantityCounter, setQuantityCounter] = useState(quantity);
-  const [productPrice, setProductPrice] = useState(companyDefaultPrice);
+  // const [productPrice, setProductPrice] = useState(companyDefaultPrice);
   const handleIncreaseQuantity = () =>
     setQuantityCounter((previousState) => previousState + 1);
   const handleDecreaseQuantity = () => {
-    const prices = getProductPriceByQty(
-      quantity > 1 ? quantity - 1 : 1,
-      unitOfMeasure,
-      UOM,
-      box,
-      priceRange,
-      companyDefaultPrice,
-    );
-    setProductPrice(prices);
+    // const prices = getProductPriceByQty(
+    //   quantity > 1 ? quantity - 1 : 1,
+    //   unitOfMeasure,
+    //   UOM,
+    //   box,
+    //   priceRange,
+    //   companyDefaultPrice,
+    // );
+    // setProductPrice(prices);
     setQuantityCounter(quantity > 0 ? quantity - 1 : 0);
   };
   // setQuantityCounter((previousState) => previousState - 1);
