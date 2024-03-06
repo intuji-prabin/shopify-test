@@ -1,4 +1,4 @@
-import {HTMLProps, useEffect, useMemo, useRef, useState} from 'react';
+import {useMemo, useState} from 'react';
 import {ColumnDef} from '@tanstack/react-table';
 import {InfoIcon} from '~/components/icons/info-icon';
 import {badgeVariants} from '~/components/ui/badge';
@@ -13,6 +13,7 @@ import {
 import {TooltipInfo} from '~/components/icons/orderStatus';
 import {Link} from '@remix-run/react';
 import {Button} from '~/components/ui/button';
+import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
 export type BulkOrderColumn = {
   id: string;
   items: {
@@ -103,29 +104,7 @@ export function useMyProductColumn() {
   );
   return {columns};
 }
-/**
- * @description Select Column Component
- */
-function IndeterminateCheckbox({
-  indeterminate,
-  className = '',
-  ...rest
-}: {indeterminate?: boolean} & HTMLProps<HTMLInputElement>) {
-  const ref = useRef<HTMLInputElement>(null!);
-  useEffect(() => {
-    if (typeof indeterminate === 'boolean') {
-      ref.current.indeterminate = !rest.checked && indeterminate;
-    }
-  }, [ref, indeterminate]);
-  return (
-    <input
-      type="checkbox"
-      ref={ref}
-      className={className + ' cursor-pointer'}
-      {...rest}
-    />
-  );
-}
+
 /**
  * @description Items Column Component
  */

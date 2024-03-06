@@ -51,11 +51,20 @@ export function PaginationWrapper({totalCount, pageSize}: PaginationPropsType) {
   const endIndex = Math.min(startIndex + pageSize - 1, totalCount);
 
   return (
-    <div className="bg-neutral-white py-4 px-6 border-t flex items-center justify-between">
-      <p className="w-40 text-grey-400 font-medium hidden sm:block">
+    <div
+      className="bg-neutral-white py-4 px-6 border-t flex items-center justify-between"
+      data-cy="pagination-wrapper"
+    >
+      <p
+        className="w-40 text-grey-400 font-medium hidden sm:block"
+        data-cy="pagination-items-count"
+      >
         {startIndex}-{endIndex} of {totalCount} Items
       </p>
-      <Pagination className="items-center justify-center sm:justify-end">
+      <Pagination
+        className="items-center justify-center sm:justify-end"
+        data-cy="pagination"
+      >
         <div className="flex items-center gap-6">
           <Form
             method="get"
@@ -94,8 +103,10 @@ export function PaginationWrapper({totalCount, pageSize}: PaginationPropsType) {
               data-cy="pagination-previous-button"
             />
             <p className="font-medium text-grey-400 text-center whitespace-nowrap">
-              <span className="text-grey-900">{currentPage}</span> /{' '}
-              {totalPages}
+              <span className="text-grey-900" data-cy="pagination-page-count">
+                {currentPage}
+              </span>{' '}
+              / {totalPages}
             </p>
             <PaginationNext
               to={`?${nextQuery.toString()}`}
