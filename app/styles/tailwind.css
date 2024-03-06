@@ -824,3 +824,7 @@ div[data-state='open'].fixed.inset-0 {
 #promotion-form input {
   @apply text-grey-700;
 }
+
+.cart-order .info-block [data-tooltip]:before {
+  @apply min-w-28;
+}

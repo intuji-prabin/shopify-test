@@ -1,12 +1,10 @@
-import {useState} from 'react';
 import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 
 const invoices = [
@@ -44,7 +42,7 @@ export function BulkTable({
   price: string;
 }) {
   return (
-    <div className="flex space-x-6 w-full">
+    <div className="flex w-full space-x-6">
       <Table className="min-w-[266px] border-[1px] border-grey-50 h-full transition-all duration-700 ease-in-out delay-200">
         <TableHeader>
           <TableRow className="bg-secondary-500 hover:bg-secondary-500">
