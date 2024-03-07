@@ -84,6 +84,7 @@ const formattedResponse = async (response: any, customerId: string) => {
   const productList = response?.collection;
 
   let productIds = '';
+
   productList?.products?.edges.map((items: any) => {
     const productId = items?.node?.id.replace('gid://shopify/Product/', '');
     if (!productIds) {
@@ -94,6 +95,7 @@ const formattedResponse = async (response: any, customerId: string) => {
     return true;
   });
   const priceList = await getPrices(productIds, customerId);
+  
   const finalProductList: any = {
     categorytitle: productList?.title,
     productList: productList?.products?.edges.map((item: any) => {
