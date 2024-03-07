@@ -17,7 +17,7 @@ import {
 import { useMediaQuery } from '~/hooks/useMediaQuery';
 import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
 import { getCategoryList } from '../_app.categories/route';
-import {  isAuthenticate } from '~/lib/utils/auth-session.server';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import { CustomerData } from '../_public.login/login.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { HamburgerMenuProvider } from '~/components/ui/layouts/elements/HamburgerMenuContext';
@@ -25,17 +25,21 @@ import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 
 export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
-  const { userDetails }   = await getUserDetails(request);
-  const categories        = await getCagetoryList(context);
-  const messageSession    = await getMessageSession(request);
-  let sessionCartInfo     = await context.session.get( CART_SESSION_KEY )
-  const headers           = [] as any
+  const { userDetails } = await getUserDetails(request);
+  const categories = await getCagetoryList(context);
+  const messageSession = await getMessageSession(request);
+  let sessionCartInfo = await context.session.get(CART_SESSION_KEY)
+  const headers = [] as any
 
-  if( ! sessionCartInfo ) {
-    sessionCartInfo = await getSessionCart( userDetails?.id, context )
-    if( sessionCartInfo ) {
-      context.session.set( CART_SESSION_KEY, sessionCartInfo )
-      headers.push( ['Set-Cookie', await context.session.commit({})] )
+  console.log("sessionCartInfo", sessionCartInfo)
+
+  if (!sessionCartInfo) {
+    sessionCartInfo = await getSessionCart(userDetails?.id, context)
+    if (sessionCartInfo) {
+      console.log("faswerwere")
+      context.session.set(CART_SESSION_KEY, sessionCartInfo)
+      headers.push(['Set-Cookie', await context.session.commit({})])
+      console.log("sdfasdfasdf ")
     }
 
   }
@@ -52,10 +56,10 @@ export async function loader({ request, context }: ActionFunctionArgs) {
     //   },
     // );
   }
-  return json({ categories : categories ? categories : [] , userDetails, sessionCartInfo },
+  return json({ categories: categories ? categories : [], userDetails, sessionCartInfo },
     {
       headers
-  });
+    });
 }
 
 export default function PublicPageLayout() {
