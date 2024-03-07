@@ -834,3 +834,7 @@ div[data-state='open'].fixed.inset-0 {
 .bg-dialogBgColor {
   background-color: rgba(255, 255, 255, 0.95);
 }
+
+.home-banner .embla__container {
+  @apply !min-h-72;
+}

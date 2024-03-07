@@ -7,6 +7,7 @@ import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+
 export type BulkOrderColumn = {
   productId: string;
   veriantId: string;
@@ -20,6 +21,7 @@ export type BulkOrderColumn = {
   companyPrice: string;
   currency: string;
   defaultUOM: string;
+  id: string;
   unitOfMeasure: [
     {
       unit: string;

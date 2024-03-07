@@ -49,10 +49,10 @@ export type Product = {
 export const loader = async ({ params, request, context }: LoaderFunctionArgs) => {
   try {
     const { productSlug } = params;
-    const sessionCartInfo = await context.session.get( CART_SESSION_KEY )
-    const cartLists =  await context.storefront.query(GET_CART_LIST, { variables : { cartId : sessionCartInfo?.cartId }} )
-    console.log("cartLists ", cartLists)
-    console.log(" cartListssss nodes ", cartLists?.cart?.lines?.nodes)
+    const sessionCartInfo = await context.session.get(CART_SESSION_KEY)
+    if (sessionCartInfo) {
+      const cartLists = await context.storefront.query(GET_CART_LIST, { variables: { cartId: sessionCartInfo?.cartId } })
+    }
     const { userDetails } = await getUserDetails(request);
     const product = await getProductDetails(userDetails?.id, productSlug as string);
 
@@ -69,6 +69,7 @@ export const loader = async ({ params, request, context }: LoaderFunctionArgs) =
       productPage
     });
   } catch (error) {
+    console.log("first", error)
     return json({});
   }
 };

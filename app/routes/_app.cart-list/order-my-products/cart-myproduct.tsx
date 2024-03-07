@@ -1,13 +1,13 @@
-import {DataTable} from '~/components/ui/data-table';
-import {useTable} from '~/hooks/useTable';
+import { DataTable } from '~/components/ui/data-table';
+import { useTable } from '~/hooks/useTable';
 import CreateGroup from './remove-later-dialogbox';
-import {useMyProductColumn} from './use-column';
-import {useSubmit} from '@remix-run/react';
-import {BulkTable} from './bulk-table';
+import { useMyProductColumn } from './use-column';
+import { useSubmit } from '@remix-run/react';
+import { BulkTable } from './bulk-table';
 
-export default function MyProducts({products}: any) {
-  const {columns} = useMyProductColumn();
-  const {table} = useTable(columns, products);
+export default function MyProducts({ products }: any) {
+  const { columns } = useMyProductColumn();
+  const { table } = useTable(columns, products);
   console.log('products', products);
   const submit = useSubmit();
   function handleRemoveAllItems() {
@@ -43,19 +43,19 @@ export default function MyProducts({products}: any) {
             table
               .getSelectedRowModel()
               .flatRows.map((item, index) =>
-                formData.append(`${index}id`, item.original.productId),
+                formData.append(`cartList-${index}`, item.original.id),
               );
-            submit(formData, {method: 'PUT'});
+            submit(formData, { method: 'DELETE' });
           }}
         >
-          Update Cart
+          delete Cart
         </button>
       </div>
     </div>
   );
 }
 
-const renderSubComponent = ({row}: any) => {
+const renderSubComponent = ({ row }: any) => {
   return (
     <BulkTable
       product={row.original.priceRange}
