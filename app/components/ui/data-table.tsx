@@ -1,5 +1,10 @@
+
 import {ColumnDef, Table, flexRender, Row} from '@tanstack/react-table';
 import {LucideArrowDown, LucideArrowUp, LucideArrowUpDown} from 'lucide-react';
+import {Fragment} from 'react';
+import {ChevronsUpDown} from 'lucide-react';
+import ArrowUp from '~/components/icons/arrowUp';
+import ArrowDown from '~/components/icons/arrowDown';
 import {BulkTable} from '~/routes/_app.cart-list/order-my-products/bulk-table';
 import {
   Table as TableShadcn,
@@ -9,7 +14,6 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui/table';
-import {Fragment} from 'react';
 
 type DataTableProps<T> = {
   table: Table<T>;
@@ -33,7 +37,7 @@ export function DataTable<T>({
               return (
                 <TableHead
                   key={header.id}
-                  className="text-grey-900 text-lg leading-5.5 font-medium"
+                  className="text-grey-900 text-lg leading-5.5 font-medium whitespace-nowrap"
                 >
                   {header.isPlaceholder ? null : (
                     <div
@@ -52,13 +56,13 @@ export function DataTable<T>({
                       </span>
                       {header.column.getIsSorted() ? (
                         {
-                          asc: <LucideArrowUp />,
-                          desc: <LucideArrowDown />,
+                          asc: <ArrowUp fillColor="#636969" />,
+                          desc: <ArrowDown fillColor="#636969" />,
                         }[(header.column.getIsSorted() as string) ?? null]
                       ) : (
                         <>
                           {header.column.getCanSort() ? (
-                            <LucideArrowUpDown />
+                            <ChevronsUpDown className="w-4.5 h-4.5" />
                           ) : (
                             ''
                           )}
@@ -84,7 +88,7 @@ export function DataTable<T>({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className="text-grey-900 text-lg leading-5.5"
+                      className="text-grey-900 text-lg leading-5.5 whitespace-nowrap"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

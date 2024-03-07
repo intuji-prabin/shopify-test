@@ -1,4 +1,6 @@
+
 import {Link} from '@remix-run/react';
+import {useMemo, useState} from 'react';
 import {ColumnDef} from '@tanstack/react-table';
 import {HTMLProps, useEffect, useMemo, useRef, useState} from 'react';
 import {TooltipInfo} from '~/components/icons/orderStatus';
@@ -6,7 +8,7 @@ import {badgeVariants} from '~/components/ui/badge';
 import {Button} from '~/components/ui/button';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {getProductPriceByQty} from '~/routes/_app.$mainCategory.$categoryId.$subCategoryId.$productSlug/product-detail';
-
+import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
 export type BulkOrderColumn = {
   productId: string;
   veriantId: string;
@@ -126,29 +128,7 @@ export function useMyProductColumn() {
 
   return {columns};
 }
-/**
- * @description Select Column Component
- */
-function IndeterminateCheckbox({
-  indeterminate,
-  className = '',
-  ...rest
-}: {indeterminate?: boolean} & HTMLProps<HTMLInputElement>) {
-  const ref = useRef<HTMLInputElement>(null!);
-  useEffect(() => {
-    if (typeof indeterminate === 'boolean') {
-      ref.current.indeterminate = !rest.checked && indeterminate;
-    }
-  }, [ref, indeterminate]);
-  return (
-    <input
-      type="checkbox"
-      ref={ref}
-      className={className + ' cursor-pointer'}
-      {...rest}
-    />
-  );
-}
+
 /**
  * @description Items Column Component
  */

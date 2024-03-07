@@ -828,3 +828,6 @@ div[data-state='open'].fixed.inset-0 {
 .cart-order .info-block [data-tooltip]:before {
   @apply min-w-28;
 }
+.bg-dialogBgColor {
+  background-color: rgba(255, 255, 255, 0.95);
+}

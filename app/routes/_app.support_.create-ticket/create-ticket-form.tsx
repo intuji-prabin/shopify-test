@@ -26,7 +26,7 @@ const CreateTicketFormFieldSchema = z.object({
   description: z
     .string()
     .min(1, {message: 'Description is required'})
-    .max(1000, {message: 'Description should not exceed 420 characters'})
+    .max(1000, {message: 'Description should not exceed 1000 characters'})
     .trim(),
 });
 
@@ -80,7 +80,7 @@ export function CreateTicketForm({options}: CreateTicketFormProps) {
             required
             label="Ticket Description"
             name="description"
-            placeholder="Description here"
+            placeholder="Description here..."
           />
           <div className="flex items-center space-x-4">
             <Button

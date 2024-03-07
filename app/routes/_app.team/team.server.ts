@@ -2,6 +2,7 @@ import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {TeamColumn} from '~/routes/_app.team/use-column';
+import {emitter} from '~/lib/utils/emitter.server';
 
 interface MetaField {
   key: string;
@@ -37,7 +38,7 @@ export async function getAllTeams({
       query ? '&search_query=' + query : ''
     }`,
   });
-  
+
   if (results.payload.length < 0) {
     throw new Error(results.message);
   }
@@ -68,4 +69,5 @@ export async function updateStatus({
       status: 404,
     });
   }
+  emitter.emit('logout', customerId);
 }

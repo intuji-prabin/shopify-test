@@ -27,6 +27,7 @@ import {
   isRouteErrorResponse,
   useLoaderData,
   useRouteError,
+  useSearchParams,
 } from '@remix-run/react';
 
 export const meta: MetaFunction = () => {
@@ -58,9 +59,19 @@ export default function TicketsPage() {
   const {tickets, totalCount, departmentOptions} =
     useLoaderData<typeof loader>();
 
+  const [searchParams] = useSearchParams();
+
   const {columns} = useColumn();
 
   const {table} = useTable(columns, tickets);
+
+  let isFilterApplied = false;
+
+  for (const [key, value] of searchParams.entries()) {
+    if (key === '__rvfInternalFormId' && value === 'tickets-filter-form') {
+      isFilterApplied = true;
+    }
+  }
 
   return (
     <section className="container">
@@ -84,9 +95,12 @@ export default function TicketsPage() {
         </div>
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" className="border-grey-50">
+            <Button variant="ghost" className="border-grey-50 relative">
               <HorizontalHamburgerIcon />
               Filter
+              {isFilterApplied && (
+                <div className="bg-primary-500 h-3 w-3 rounded-full absolute top-0.5 right-0.5"></div>
+              )}
             </Button>
           </SheetTrigger>
           <SheetContent className="p-0">
