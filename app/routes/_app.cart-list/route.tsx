@@ -1,38 +1,20 @@
+import { useLoaderData } from '@remix-run/react';
+import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from '@remix-run/server-runtime';
 import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
-import MyProducts from './order-my-products/cart-myproduct';
-import OrderSummary from './order-summary/cart-order-summary';
-<<<<<<< HEAD
-import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from '@remix-run/server-runtime';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
-import { getCartList } from './cart.server';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { useLoaderData } from '@remix-run/react';
+import { getMessageSession, messageCommitSession, setSuccessMessage } from '~/lib/utils/toast-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getAllCompanyShippingAddresses } from '../_app.shipping-address/shipping-address.server';
-import { useTable } from '~/hooks/useTable';
-import { useMyProductColumn } from './order-my-products/use-column';
+import { getCartList } from './cart.server';
+import MyProducts from './order-my-products/cart-myproduct';
 import { placeOrder } from './order-place.server';
-import { getMessageSession, messageCommitSession, setSuccessMessage } from '~/lib/utils/toast-session.server';
-=======
-import {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  json,
-} from '@remix-run/server-runtime';
-import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
-import {getCartList} from './cart.server';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {useLoaderData} from '@remix-run/react';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {getAllCompanyShippingAddresses} from '../_app.shipping-address/shipping-address.server';
-import {useTable} from '~/hooks/useTable';
-import {useMyProductColumn} from './order-my-products/use-column';
->>>>>>> f277c1e36cbf7a29f5e13863e7336c4fa35c00bd
+import OrderSummary from './order-summary/cart-order-summary';
 
-export const loader = async ({context, request}: LoaderFunctionArgs) => {
+export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   const metaParentValue = userDetails.meta.parent.value;
 
@@ -48,7 +30,7 @@ export const loader = async ({context, request}: LoaderFunctionArgs) => {
     const cartList = await getCartList(context, request, sessionCartInfo);
     const shippingAddresses = await getAllCompanyShippingAddresses(customerId);
     // console.log(cartList)
-    return json({cartList, shippingAddresses});
+    return json({ cartList, shippingAddresses });
   } catch (error) {
     if (error instanceof Error) {
       console.log('error ', error?.message);
@@ -62,37 +44,37 @@ export const loader = async ({context, request}: LoaderFunctionArgs) => {
 export async function action({ request, context }: ActionFunctionArgs) {
   const messageSession = await getMessageSession(request);
   try {
-  let res;
-  switch (request.method) {
-    case "POST":
-      res = await placeOrder(request, context);
-      // context.session.set(res)
-      setSuccessMessage(messageSession, "Order successFully creatd");
-      return redirect('/', {
-        headers: [
-          ['Set-Cookie', await context.session.commit({})],
-          ['Set-Cookie', await messageCommitSession(messageSession)],
-        ],
-      });
-    case "PUT":
-      res = await request.formData()
-      console.log("res", res)
-      break;
-    default:
-      res = json(
-        {
-          status: false,
-          message: `${request.method} not supported`,
-          payload: null,
-        },
-        404,
-      );
-  }
-  } catch( error ) {
-    if( error instanceof Error ) {
+    let res;
+    switch (request.method) {
+      case "POST":
+        res = await placeOrder(request, context);
+        // context.session.set(res)
+        setSuccessMessage(messageSession, "Order successFully creatd");
+        return redirect('/', {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        });
+      case "PUT":
+        res = await request.formData()
+        console.log("res", res)
+        break;
+      default:
+        res = json(
+          {
+            status: false,
+            message: `${request.method} not supported`,
+            payload: null,
+          },
+          404,
+        );
+    }
+  } catch (error) {
+    if (error instanceof Error) {
       console.log(" errerdf ", error?.message)
     }
-    console.log(" errerdf " )
+    console.log(" errerdf ")
 
   }
 
@@ -100,7 +82,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function CartList() {
-  const {cartList, shippingAddresses}: any = useLoaderData<typeof loader>();
+  const { cartList, shippingAddresses }: any = useLoaderData<typeof loader>();
   return (
     <>
       <HeroBanner
