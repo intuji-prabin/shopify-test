@@ -12,6 +12,7 @@ import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/server-runtim
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getAccessToken } from '~/lib/utils/auth-session.server';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { GET_CART_LIST } from '../_app.cart-list/cart.server';
 
 export type SimilarProduct = {
   name: string;
@@ -48,8 +49,10 @@ export type Product = {
 export const loader = async ({ params, request, context }: LoaderFunctionArgs) => {
   try {
     const { productSlug } = params;
-    const sessionCartInfo = await context.session.get(CART_SESSION_KEY)
-    console.log("asdfdasf ", sessionCartInfo)
+    const sessionCartInfo = await context.session.get( CART_SESSION_KEY )
+    const cartLists =  await context.storefront.query(GET_CART_LIST, { variables : { cartId : sessionCartInfo?.cartId }} )
+    console.log("cartLists ", cartLists)
+    console.log(" cartListssss nodes ", cartLists?.cart?.lines?.nodes)
     const { userDetails } = await getUserDetails(request);
     const product = await getProductDetails(userDetails?.id, productSlug as string);
 

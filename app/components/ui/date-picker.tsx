@@ -30,7 +30,7 @@ export function DatePickerInput({
       <input
         {...getInputProps({id: name})}
         type="hidden"
-        value={date ? date.toString() : ''}
+        value={date ? format(new Date(date), 'yyyy-MM-dd') : ''}
       />
       <PopoverTrigger asChild>
         <Button

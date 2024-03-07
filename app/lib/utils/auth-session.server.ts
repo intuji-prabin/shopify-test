@@ -1,6 +1,7 @@
 import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
 import {AppLoadContext, redirect} from '@shopify/remix-oxygen';
 import {CustomerData} from '~/routes/_public.login/login.server';
+import {Routes} from '~/lib/constants/routes.constent';
 import {
   getMessageSession,
   messageCommitSession,
@@ -76,7 +77,7 @@ export async function isAuthenticate(context: AppLoadContext) {
   const accessToken = await getAccessToken(context);
 
   if (!accessToken) {
-    throw redirect('/login');
+    throw redirect(Routes.LOGIN);
   }
 
   return accessToken;
@@ -85,18 +86,25 @@ export async function isAuthenticate(context: AppLoadContext) {
 export async function logout({
   context,
   request,
+  logoutMessage = 'Logout Successfully',
 }: {
-  context: AppLoadContext;
   request: Request;
+  context: AppLoadContext;
+  logoutMessage?: string;
 }) {
   const {session} = context;
 
+  const messageSession = await getMessageSession(request);
+
   const userDetailsSession = await getUserDetailsSession(request);
 
-  return redirect('/', {
+  setSuccessMessage(messageSession, logoutMessage);
+
+  return redirect(Routes.LOGIN, {
     headers: [
-      ['Set-Cookie', await session.destroy()],
+      ['Set-Cookie', await messageCommitSession(messageSession)],
       ['Set-Cookie', await destroyUserDetailsSession(userDetailsSession)],
+      ['Set-Cookie', await session.destroy()],
     ],
   });
 }

@@ -14,18 +14,18 @@ export const getCurrentTime = () => {
  */
 export const getMonthNames = (month: number) => {
   const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
 
   return months[month];
@@ -43,5 +43,19 @@ export const formatDatebyDash = (date: Date) => {
   var month = dateTime.getMonth() + 1;
   var day = dateTime.getDate();
 
-  return year + "-" + month + "-" + day;
+  return year + '-' + month + '-' + day;
 };
+
+/**
+ * Format date to locale date string
+ * @param dateString
+ * @returns string
+ */
+export function formatDateToLocaleDateString(dateString: string) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
