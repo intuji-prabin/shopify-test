@@ -9,7 +9,18 @@ export function FilterForm(filterList: any) {
   const {filterdata} = filterList;
 
   const [searchParams] = useSearchParams();
-  console.log('searchParams', searchParams.get('warranty'));
+  const searchParam = Object.fromEntries(searchParams);
+  const searchValues = Object.values(searchParam);
+  const searchKey = Object.keys(searchParam);
+  let searchList: any = [];
+  searchKey.map((value) => {
+    searchList.push({key: value, value: searchParams.getAll(value)});
+  });
+  const filteredData = searchList.filter(
+    (item: any) => item.key !== 'warranty',
+  );
+  const filteredValues = filteredData.map((item: any) => item.value);
+  console.log('filteredValues', filteredValues);
 
   const initialRange = [3, 100];
   const [range, setRange] = useState(initialRange);
@@ -67,6 +78,13 @@ export function FilterForm(filterList: any) {
                 accordionTitle={form.filterLabel}
               >
                 {form?.filterValue?.map((input: any, index: any) => {
+                  const [isChecked, setIsChecked] = useState(
+                    filteredValues.includes(input),
+                  );
+                  console.log('isChecked', isChecked);
+                  const handleChange = (event: any) => {
+                    setIsChecked(event.target.checked);
+                  };
                   return (
                     <div key={index} className="flex items-center py-2 gap-x-2">
                       <input
@@ -74,6 +92,8 @@ export function FilterForm(filterList: any) {
                         id={input}
                         name={form?.filterKey}
                         value={input}
+                        checked={isChecked ? true : false}
+                        onChange={handleChange}
                       />
                       <label
                         htmlFor={input}
