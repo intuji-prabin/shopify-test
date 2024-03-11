@@ -9,22 +9,22 @@ import {
   LoaderFunctionArgs,
   json,
 } from '@remix-run/server-runtime';
-import useEmblaCarousel, {EmblaCarouselType} from 'embla-carousel-react';
-import {BackButton} from '~/components/ui/back-button';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import useEmblaCarousel, { EmblaCarouselType } from 'embla-carousel-react';
+import { BackButton } from '~/components/ui/back-button';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
 import PaginationSimple from '~/components/ui/pagination-simple';
-import {ProductCard} from '~/components/ui/product-card';
-import {Separator} from '~/components/ui/separator';
-import {Routes} from '~/lib/constants/routes.constent';
-import {getCategoryList} from '../_app.categories/route';
-import {FilterForm, SortByFilterForm} from './filter-form';
-import {getProductFilterList} from './product-filter.server';
-import {getProducts} from './product-list.server';
-import {useCallback, useEffect, useState} from 'react';
-import {LeftArrow} from '~/components/icons/left';
-import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {addProductToCart} from '../_app.$mainCategory.$categoryId.$subCategoryId.$productSlug/product.server';
+import { ProductCard } from '~/components/ui/product-card';
+import { Separator } from '~/components/ui/separator';
+import { Routes } from '~/lib/constants/routes.constent';
+import { getCategoryList } from '../_app.categories/route';
+import { FilterForm, SortByFilterForm } from './filter-form';
+import { getProductFilterList } from './product-filter.server';
+import { getProducts } from './product-list.server';
+import { useCallback, useEffect, useState } from 'react';
+import { LeftArrow } from '~/components/icons/left';
+import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { addProductToCart } from '../_app.$mainCategory.$categoryId.$subCategoryId.$productSlug/product.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -32,7 +32,7 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
 
-export async function loader({params, context, request}: LoaderFunctionArgs) {
+export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   const productList = await getProductList(params, context, request);
   const categories = await getCategoryList(context);
@@ -49,7 +49,7 @@ export async function loader({params, context, request}: LoaderFunctionArgs) {
   });
 }
 
-export const action = async ({request, context}: ActionFunctionArgs) => {
+export const action = async ({ request, context }: ActionFunctionArgs) => {
   const messageSession = await getMessageSession(request);
   try {
     const fromData = await request.formData();
@@ -60,9 +60,10 @@ export const action = async ({request, context}: ActionFunctionArgs) => {
     return json(
       {},
       {
-        headers: {
-          'Set-Cookie': await messageCommitSession(messageSession),
-        },
+        headers: [
+          ['Set-Cookie', await context.session.commit({})],
+          ['Set-Cookie', await messageCommitSession(messageSession)],
+        ],
       },
     );
   } catch (error) {
@@ -72,9 +73,10 @@ export const action = async ({request, context}: ActionFunctionArgs) => {
       return json(
         {},
         {
-          headers: {
-            'Set-Cookie': await messageCommitSession(messageSession),
-          },
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
         },
       );
     }
@@ -86,9 +88,10 @@ export const action = async ({request, context}: ActionFunctionArgs) => {
     return json(
       {},
       {
-        headers: {
-          'Set-Cookie': await messageCommitSession(messageSession),
-        },
+        headers: [
+          ['Set-Cookie', await context.session.commit({})],
+          ['Set-Cookie', await messageCommitSession(messageSession)],
+        ],
       },
     );
   }
@@ -98,14 +101,14 @@ const linkStyles =
   'text-center basis-full border-b-2 inline-block duration-300 border-b-grey-50 cursor-pointer bg-grey-50 uppercase text-lg italic font-bold leading-6 text-grey-500 py-3 px-5 hover:bg-none';
 
 export default function SubCategoryPage() {
-  const {categories, productList, categoryId, subCategoryId, mainCategory} =
+  const { categories, productList, categoryId, subCategoryId, mainCategory } =
     useLoaderData<typeof loader>();
-  const {page} = productList;
+  const { page } = productList;
   const paginationInfo = productList?.results?.pageInfo;
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
-  const {productFilter} = productList;
+  const { productFilter } = productList;
 
   const matchingCategory = categories
     .map((category) => {
@@ -113,7 +116,7 @@ export default function SubCategoryPage() {
         (subCategory) => subCategory.identifier === categoryId,
       );
       return matchingSubcategory
-        ? {...category, subCategory: [matchingSubcategory]}
+        ? { ...category, subCategory: [matchingSubcategory] }
         : null;
     })
     .filter((category) => category !== null)[0];
@@ -185,12 +188,12 @@ export default function SubCategoryPage() {
                     <NavLink
                       to={`/${matchingCategory.identifier}/${subCategory?.identifier}/${childCategory?.identifier}`}
                       data-index={index}
-                      className={({isActive, isPending}) =>
+                      className={({ isActive, isPending }) =>
                         isPending
                           ? `active__tab ${linkStyles}`
                           : isActive
-                          ? `active__tab ${linkStyles}`
-                          : linkStyles
+                            ? `active__tab ${linkStyles}`
+                            : linkStyles
                       }
                     >
                       {childCategory.title}
@@ -201,18 +204,16 @@ export default function SubCategoryPage() {
             </div>
           </div>
           <button
-            className={`absolute z-10 flex items-center justify-center w-6 h-auto -translate-y-1/2 cursor-pointer -left-3 embla__button embla__next aspect-square top-1/2 bg-white shadow-md ${
-              prevBtnDisabled ? 'hidden' : 'flex'
-            }`}
+            className={`absolute z-10 flex items-center justify-center w-6 h-auto -translate-y-1/2 cursor-pointer -left-3 embla__button embla__next aspect-square top-1/2 bg-white shadow-md ${prevBtnDisabled ? 'hidden' : 'flex'
+              }`}
             onClick={scrollPrev}
             disabled={prevBtnDisabled}
           >
             <LeftArrow height={10} fill="#000" />
           </button>
           <button
-            className={`absolute z-10 items-center justify-center w-6 h-auto rotate-180 -translate-y-1/2 cursor-pointer -right-3 embla__button embla__prev aspect-square top-1/2 bg-white shadow-md ${
-              nextBtnDisabled ? 'hidden' : 'flex'
-            }`}
+            className={`absolute z-10 items-center justify-center w-6 h-auto rotate-180 -translate-y-1/2 cursor-pointer -right-3 embla__button embla__prev aspect-square top-1/2 bg-white shadow-md ${nextBtnDisabled ? 'hidden' : 'flex'
+              }`}
             onClick={scrollNext}
             disabled={nextBtnDisabled}
           >
@@ -269,10 +270,10 @@ export const getProductList = async (
   request: Request,
 ) => {
   try {
-    const {searchParams} = new URL(request.url);
+    const { searchParams } = new URL(request.url);
     const searchParam = Object.fromEntries(searchParams);
     const pageInfo = searchParams.get('pageNo');
-    const {userDetails} = await getUserDetails(request);
+    const { userDetails } = await getUserDetails(request);
 
     let page = 1;
     if (pageInfo) {
@@ -283,8 +284,8 @@ export const getProductList = async (
     let searchList: any = [];
 
     searchKey.map((value) => {
-      searchList.push({key: value, value: searchParams.getAll(value)});
-      return {[value]: searchParams.getAll(value)};
+      searchList.push({ key: value, value: searchParams.getAll(value) });
+      return { [value]: searchParams.getAll(value) };
     });
 
     const results = await getProducts(
@@ -294,7 +295,7 @@ export const getProductList = async (
       userDetails?.id,
     );
     const productFilter = await getProductFilterList(context);
-    return {productFilter, results, page};
+    return { productFilter, results, page };
   } catch (error) {
     if (error instanceof Error) {
       console.log('err', error);

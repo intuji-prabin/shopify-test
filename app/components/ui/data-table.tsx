@@ -1,25 +1,24 @@
 
-import {ColumnDef, Table, flexRender, Row} from '@tanstack/react-table';
-import {LucideArrowDown, LucideArrowUp, LucideArrowUpDown} from 'lucide-react';
-import {Fragment} from 'react';
-import {ChevronsUpDown} from 'lucide-react';
-import ArrowUp from '~/components/icons/arrowUp';
+import { ColumnDef, Row, Table, flexRender } from '@tanstack/react-table';
+import { ChevronsUpDown } from 'lucide-react';
+import { Fragment } from 'react';
 import ArrowDown from '~/components/icons/arrowDown';
-import {BulkTable} from '~/routes/_app.cart-list/order-my-products/bulk-table';
+import ArrowUp from '~/components/icons/arrowUp';
 import {
-  Table as TableShadcn,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
+  Table as TableShadcn,
 } from '~/components/ui/table';
 
 type DataTableProps<T> = {
   table: Table<T>;
   columns?: ColumnDef<T>[];
-  renderSubComponent?: (props: {row: Row<T>}) => React.ReactElement;
+  renderSubComponent?: (props: { row: Row<T> }) => React.ReactElement;
   getRowCanExpand?: (row: Row<T>) => boolean;
+  className?: string;
 };
 
 export function DataTable<T>({
@@ -27,9 +26,10 @@ export function DataTable<T>({
   columns,
   renderSubComponent,
   getRowCanExpand,
+  className
 }: DataTableProps<T>) {
   return (
-    <TableShadcn className="bg-neutral-white" data-cy="table">
+    <TableShadcn className={`${className} bg-neutral-white`} data-cy="table">
       <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>
@@ -99,9 +99,8 @@ export function DataTable<T>({
                 </TableRow>
                 {row.getIsExpanded() && (
                   <TableRow
-                    className={` ${
-                      row.getIsSelected() ? 'bg-primary-200 ' : ''
-                    } hover:bg-primary-200`}
+                    className={` ${row.getIsSelected() ? 'bg-primary-200 ' : ''
+                      } hover:bg-primary-200`}
                   >
                     <TableCell
                       valign="bottom"
@@ -119,7 +118,7 @@ export function DataTable<T>({
                     </TableCell>
                     <TableCell colSpan={3}>
                       {/* <BulkTable quantity={'Quantity'} price={'Price'} /> */}
-                      {renderSubComponent && renderSubComponent({row})}
+                      {renderSubComponent && renderSubComponent({ row })}
                     </TableCell>
                   </TableRow>
                 )}

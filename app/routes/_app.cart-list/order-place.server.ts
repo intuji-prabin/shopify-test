@@ -91,7 +91,14 @@ export const removeCart = async (
   }
 
   if (remove) {
-    return true;
+    let cartLineItem = 0;
+    if (
+      lineItemRemoveResponse?.cartLinesRemove?.cart?.lines?.nodes.length > 0
+    ) {
+      cartLineItem =
+        lineItemRemoveResponse?.cartLinesRemove?.cart?.lines?.nodes.length;
+    }
+    return cartLineItem;
   }
 
   if (lineItemRemoveResponse?.cartLinesRemove?.cart?.lines?.nodes.length > 0) {
@@ -104,10 +111,38 @@ export const REMOVE_CART =
   `mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
     cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
       cart {
-        lines( first : 10 ) {
-          nodes {
-            id
-          }
+        buyerIdentity {
+            customer {
+                id
+                email
+                firstName
+            }
+        }
+        lines( first : 250 ) {
+            nodes {
+                id
+                quantity
+                attributes {
+                    key
+                    value
+                }
+                merchandise {
+                    __typename
+                    ...on ProductVariant {
+                        id
+                        sku
+                        product {
+                            id
+                            handle
+                            title
+                            featuredImage {
+                                url
+                            }
+                        }
+                    }
+                }  
+                
+            }
         }
       }
       userErrors {

@@ -1,9 +1,9 @@
 import {useFetch} from '~/hooks/useFetch';
 import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
-import { AllowedHTTPMethods } from '~/lib/enums/api.enum';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { GET_CART_LIST } from '../_app.cart-list/cart.server';
+import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {GET_CART_LIST} from '../_app.cart-list/cart.server';
 
 export async function getProductDetails(customerId: string, handle: string) {
   try {
@@ -68,14 +68,20 @@ export const addProductToCart = async (
     return cartSetInfo;
   }
 
-    const cartLineAddResponse = await cartLineAdd( context, cartInfo,  sessionCartInfo ) 
-    //  session.unset( CART_SESSION_KEY)
-    session.set( CART_SESSION_KEY, cartLineAddResponse )
-    const cartLists =  await context.storefront.query(GET_CART_LIST, { variables : { cartId : sessionCartInfo?.cartId }} )
-    console.log("asfsfwerewr cartLists ", cartLists)
-    console.log("asfsfwerewr cartListssss nodes ", cartLists?.cart?.lines?.nodes)
-    return true
-}
+  const cartLineAddResponse = await cartLineAdd(
+    context,
+    cartInfo,
+    sessionCartInfo,
+  );
+  //  session.unset( CART_SESSION_KEY)
+  session.set(CART_SESSION_KEY, cartLineAddResponse);
+  const cartLists = await context.storefront.query(GET_CART_LIST, {
+    variables: {cartId: sessionCartInfo?.cartId},
+  });
+  console.log('asfsfwerewr cartLists ', cartLists);
+  console.log('asfsfwerewr cartListssss nodes ', cartLists?.cart?.lines?.nodes);
+  return true;
+};
 
 const setNewCart = async (
   context: any,
@@ -87,8 +93,8 @@ const setNewCart = async (
     variables: cartFormateVariable(cartInfo, accessTocken),
   });
   const formateResponse = cartResponseFormate(responses, accessTocken);
-  console.log('radfs ', responses);
-  console.log('radfs ', responses?.cartCreate?.userErrors[0]);
+  // console.log('radfs ', responses);
+  // console.log('radfs ', responses?.cartCreate?.userErrors[0]);
   return formateResponse;
 };
 

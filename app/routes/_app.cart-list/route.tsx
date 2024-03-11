@@ -6,12 +6,12 @@ import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import { getMessageSession, messageCommitSession, setErrorMessage, setSuccessMessage } from '~/lib/utils/toast-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
-import { getCartList } from './cart.server';
-import { placeOrder } from './order-place.server';
-import OrderSummary from './order-summary/cart-order-summary';
-import MyProducts from './order-my-products/cart-myproduct';
 import { getAllCompanyShippingAddresses } from '../_app.shipping-address/shipping-address.server';
 import { removeItemFromCart } from './cart-remove.server';
+import { getCartList } from './cart.server';
+import MyProducts from './order-my-products/cart-myproduct';
+import { placeOrder } from './order-place.server';
+import OrderSummary from './order-summary/cart-order-summary';
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
@@ -26,12 +26,8 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   if (!sessionCartInfo) {
     throw new Error('Cart not found');
   }
-  const abc = request.json();
-  console.log("fsfsdxcvxcv ", abc)
-  await getCartList(context, request, sessionCartInfo);
   const cartList = await getCartList(context, request, sessionCartInfo);
   const shippingAddresses = await getAllCompanyShippingAddresses(customerId);
-  console.log("shipping", shippingAddresses)
   return json({ cartList, shippingAddresses });
 };
 
@@ -43,7 +39,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
       case "POST":
         res = await placeOrder(request, context);
         setSuccessMessage(messageSession, "Order created successfully");
-        return redirect('/', {
+        return redirect('/order-successful', {
           headers: [
             ['Set-Cookie', await context.session.commit({})],
             ['Set-Cookie', await messageCommitSession(messageSession)],
@@ -52,7 +48,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
       case "DELETE":
         res = await removeItemFromCart(context, request)
         setErrorMessage(messageSession, "Order deleted successfully");
-        return json({ remove: true }, {
+        return json({}, {
           headers: [
             ['Set-Cookie', await context.session.commit({})],
             ['Set-Cookie', await messageCommitSession(messageSession)],
@@ -81,7 +77,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 export default function CartList() {
   const { cartList, shippingAddresses }: any = useLoaderData<typeof loader>();
-  console.log("shippingAddresses", shippingAddresses)
+
   return (
     <>
       <HeroBanner

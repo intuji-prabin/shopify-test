@@ -281,7 +281,7 @@ function ProductTotal({
             <div className="info-block">
               <p className="flex items-center justify-center w-5 h-5 text-xs">
                 <div
-                  className="cursor-pointer"
+                  className="cursor-pointer price-tooltip"
                   data-tooltip="Recommended retail price"
                 >
                   <span>

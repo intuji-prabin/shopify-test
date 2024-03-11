@@ -29,7 +29,6 @@ import { getProductPriceByQty } from './product-detail';
 
 export default function ProductInformation({ product }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
-  console.log("first", product);
   return (
     <section className="bg-white">
       <div className="container flex flex-col gap-6 lg:gap-14 lg:flex-row">
@@ -111,7 +110,7 @@ const ProductDetailsSection = ({
   const [quantity, setQuantity] = useState(1);
   const submit = useSubmit();
   // const price = parseFloat( companyDefaultPrice )
-  const [ productPrice, setProductPrice ] = useState(companyDefaultPrice)
+  const [productPrice, setProductPrice] = useState(companyDefaultPrice)
   const [UOM, setUOM] = useState(box)
   console.log("urom ", UOM, quantity)
   const handleHeartClick = () => {
@@ -123,26 +122,26 @@ const ProductDetailsSection = ({
   };
 
   function decreaseQuantity() {
-    const prices = getProductPriceByQty( quantity > 1 ? quantity - 1 : 1,  unitOfMeasure, UOM, box, priceRange, companyDefaultPrice)
-    setProductPrice( prices )
-    setQuantity( quantity > 0 ? quantity - 1 : 0);
+    const prices = getProductPriceByQty(quantity > 1 ? quantity - 1 : 1, unitOfMeasure, UOM, box, priceRange, companyDefaultPrice)
+    setProductPrice(prices)
+    setQuantity(quantity > 0 ? quantity - 1 : 0);
   }
   function increaseQuantity() {
-    const prices = getProductPriceByQty( quantity + 1,  unitOfMeasure, UOM, box, priceRange, companyDefaultPrice)
-    setProductPrice( prices )
+    const prices = getProductPriceByQty(quantity + 1, unitOfMeasure, UOM, box, priceRange, companyDefaultPrice)
+    setProductPrice(prices)
     setQuantity(quantity + 1);
   }
   function handleInputChange(event?: any) {
     const inputQuantity = parseInt(event.target.value);
-    const prices = getProductPriceByQty( isNaN(inputQuantity) ? 0 : inputQuantity,  unitOfMeasure, UOM, box, priceRange, companyDefaultPrice)
-    setProductPrice( prices )
+    const prices = getProductPriceByQty(isNaN(inputQuantity) ? 0 : inputQuantity, unitOfMeasure, UOM, box, priceRange, companyDefaultPrice)
+    setProductPrice(prices)
     setQuantity(isNaN(inputQuantity) ? 0 : inputQuantity);
   }
 
-  function handleUOM( selectedUOM : any ) {
-    const prices = getProductPriceByQty( quantity,  unitOfMeasure, selectedUOM, box, priceRange, companyDefaultPrice)
-    setProductPrice( prices )
-    setUOM( selectedUOM )
+  function handleUOM(selectedUOM: any) {
+    const prices = getProductPriceByQty(quantity, unitOfMeasure, selectedUOM, box, priceRange, companyDefaultPrice)
+    setProductPrice(prices)
+    setUOM(selectedUOM)
   }
 
   return (
@@ -217,7 +216,7 @@ const ProductDetailsSection = ({
                 minimumPieces={'(500 pieces'}
               />
 
-              { priceRange && priceRange.length > 0 && <ProductInfoTable quantity={'Quantity'} price={'Price'}  volumePrice={priceRange} /> }
+              {priceRange && priceRange.length > 0 && <ProductInfoTable quantity={'Quantity'} price={'Price'} volumePrice={priceRange} />}
             </div>
             <div className="flex gap-2 px-4 py-2 mb-2 border-l-4 border-r-0 bg-semantic-info-100 border-semantic-info-500 border-y-0">
               <CircleInformationMajor />
@@ -251,7 +250,7 @@ const ProductDetailsSection = ({
               <select
                 name="filter_by"
                 className="w-full min-w-[116px] place-order h-full border-grey-500!border-grey-100 filter-select"
-                onChange={(e : any) => handleUOM(e.target.value) }
+                onChange={(e: any) => handleUOM(e.target.value)}
                 defaultValue={UOM}
               >
                 {unitOfMeasure.length > 0 ? unitOfMeasure?.map((uom: any, index: number) => (
@@ -358,9 +357,9 @@ export function SelectACountryDropdown({ unitOfMeasure, defaultUOM, setUOM }: {
   unitOfMeasure: {
     unit: string;
     conversion_factor: number;
-  }, 
+  },
   defaultUOM: string,
-  setUOM : any
+  setUOM: any
 }) {
   // const [uom, setUom] = useState(defaultUOM);
   return (
@@ -368,8 +367,8 @@ export function SelectACountryDropdown({ unitOfMeasure, defaultUOM, setUOM }: {
       <select
         name="filter_by"
         className="w-full min-w-[116px] place-order h-full border-grey-500!border-grey-100 filter-select"
-        onChange={(e : any) => {
-          setUOM( e.target.value)
+        onChange={(e: any) => {
+          setUOM(e.target.value)
         }}
         defaultValue={defaultUOM}
       >

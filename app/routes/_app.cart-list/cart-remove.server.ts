@@ -1,6 +1,6 @@
 import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
+import {getCartList} from './cart.server';
 import {removeCart} from './order-place.server';
-import {GET_CART_LIST} from './cart.server';
 
 export const removeItemFromCart = async (context: any, request: Request) => {
   const formData = await request.formData();
@@ -24,16 +24,14 @@ export const removeItemFromCart = async (context: any, request: Request) => {
     sessionCartInfo,
     true,
   );
-  const cartSession = {...sessionCartInfo, cartItems: [], lineItems: 0};
+  const cartSession = {
+    ...sessionCartInfo,
+    cartItems: [],
+    lineItems: cartRemoveResponse,
+  };
 
-  if (cartSession) {
-    const cartLists = await context.storefront.query(GET_CART_LIST, {
-      variables: {cartId: cartSession?.cartId},
-    });
-  }
+  await getCartList(context, request, sessionCartInfo);
 
   context.session.set(CART_SESSION_KEY, cartSession);
   return {cartSession};
-  //   console.log('werwerewv ', lineItemId);
-  // if( ! itemList )
 };

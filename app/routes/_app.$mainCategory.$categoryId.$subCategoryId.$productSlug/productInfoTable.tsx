@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -55,7 +55,7 @@ export function ProductInfoTable({
   const volumePriceList = showAllRows
     ? volumePrice
     : volumePrice.slice(0, defaultRowCount);
-   
+
   return (
     <Table className="min-w-[266px] border-[1px] border-grey-50 h-full transition-all duration-700 ease-in-out delay-200">
       <TableHeader>
@@ -69,10 +69,10 @@ export function ProductInfoTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {volumePriceList.map((priceLIst : any, index : any) => (
+        {volumePriceList.map((priceLIst: any, index: any) => (
           <TableRow key={priceLIst?.minQty} className="hover:bg-white">
             <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
-              {`${priceLIst?.minQty} - ${priceLIst?.maxQty ? priceLIst?.maxQty - 1  : ""}`}
+              {`${priceLIst?.minQty} - ${priceLIst?.maxQty ? priceLIst?.maxQty - 1 : "above"}`}
             </TableCell>
             <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
               {priceLIst?.price}

@@ -1,26 +1,24 @@
-import {Form, useSearchParams, useSubmit} from '@remix-run/react';
-import {FormEvent, Fragment, useState} from 'react';
+import { Form, useSearchParams, useSubmit } from '@remix-run/react';
+import { FormEvent, Fragment, useState } from 'react';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import {Button} from '~/components/ui/button';
-import {Separator} from '~/components/ui/separator';
-import {Slider} from '~/components/ui/slider';
+import { Button } from '~/components/ui/button';
+import { Separator } from '~/components/ui/separator';
+import { Slider } from '~/components/ui/slider';
 
 export function FilterForm(filterList: any) {
-  const {filterdata} = filterList;
+  const { filterdata } = filterList;
 
   const [searchParams] = useSearchParams();
   const searchParam = Object.fromEntries(searchParams);
-  const searchValues = Object.values(searchParam);
   const searchKey = Object.keys(searchParam);
   let searchList: any = [];
   searchKey.map((value) => {
-    searchList.push({key: value, value: searchParams.getAll(value)});
+    searchList.push({ key: value, value: searchParams.getAll(value) });
   });
   const filteredData = searchList.filter(
     (item: any) => item.key !== 'warranty',
   );
   const filteredValues = filteredData.map((item: any) => item.value);
-  console.log('filteredValues', filteredValues);
 
   const initialRange = [3, 100];
   const [range, setRange] = useState(initialRange);
@@ -79,9 +77,8 @@ export function FilterForm(filterList: any) {
               >
                 {form?.filterValue?.map((input: any, index: any) => {
                   const [isChecked, setIsChecked] = useState(
-                    filteredValues.includes(input),
+                    filteredValues.flat().includes(input),
                   );
-                  console.log('isChecked', isChecked);
                   const handleChange = (event: any) => {
                     setIsChecked(event.target.checked);
                   };
@@ -194,7 +191,7 @@ export function SortByFilterForm() {
       <select
         name="sort-by"
         value={queryParams.get('sort-by') as string}
-        onChange={() => {}}
+        onChange={() => { }}
         className="!p-2 !border-grey-50 text-base font-medium bg-transparent text-grey-900"
       >
         <option value="">Sort By</option>
