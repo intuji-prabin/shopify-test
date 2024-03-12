@@ -48,6 +48,6 @@ export const ENDPOINT = {
     GET_PRODUCT: `${BASE_URL}/product`,
     CART: `${BASE_URL}/cart-session`,
     CART_DETAIL: `${BASE_URL}/cart-detail`,
-    ORDER : `${BASE_URL}/order`
+    ORDER: `${BASE_URL}/order`,
   },
 };

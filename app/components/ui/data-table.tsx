@@ -1,8 +1,5 @@
-
 import {ColumnDef, Table, flexRender, Row} from '@tanstack/react-table';
-import {LucideArrowDown, LucideArrowUp, LucideArrowUpDown} from 'lucide-react';
 import {Fragment} from 'react';
-import {ColumnDef, Table, flexRender} from '@tanstack/react-table';
 import {BulkTable} from '~/routes/_app.cart-list/order-my-products/bulk-table';
 import {
   ArrowUpDown,
