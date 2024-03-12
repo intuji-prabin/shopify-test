@@ -1,8 +1,8 @@
 // const BASE_URL = 'https://casual-mink-routinely.ngrok-free.app/api'; // Sanchay NGRok
 
-// const BASE_URL = 'https://relaxing-hawk-ace.ngrok-free.app/api'; // Amit NGRok
+const BASE_URL = 'https://relaxing-hawk-ace.ngrok-free.app/api'; // Amit NGRok
 
-const BASE_URL = 'https://cig-backend.webo.dev/api'; // Live
+// const BASE_URL = 'https://cig-backend.webo.dev/api'; // Live
 
 export const ENDPOINT = {
   AUTH: {
@@ -41,8 +41,7 @@ export const ENDPOINT = {
     BULK_EXPORT: `${BASE_URL}/promotion/download-images`,
   },
   SUPPORT: {
-    GET_TICKETS: `${BASE_URL}/support/tickets`,
-    CREATE_TICKET: `${BASE_URL}/support/create-ticket`,
+    TICKETS: `${BASE_URL}/support/tickets`,
   },
   PRODUCT: {
     GET_PRICE: `${BASE_URL}/product/prices`,

@@ -31,7 +31,7 @@ export async function getAllTickets({
       'createdDateFrom',
     ];
 
-    const url = `${ENDPOINT.SUPPORT.GET_TICKETS}/${customerId}?`;
+    const url = `${ENDPOINT.SUPPORT.TICKETS}/${customerId}?`;
 
     const generatedUrl = generateUrlWithParams({url, params, request});
 
