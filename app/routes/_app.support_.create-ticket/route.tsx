@@ -82,17 +82,14 @@ export async function action({request, context}: ActionFunctionArgs) {
       return validationError(result.error);
     }
 
-    const date = new Date(result.data.date);
-
     const body = JSON.stringify({
       ...result.data,
-      date,
       customerId,
     });
 
     const results = await useFetch<CreateTicketResponse>({
       method: AllowedHTTPMethods.POST,
-      url: `${ENDPOINT.SUPPORT.CREATE_TICKET}/${customerId}`,
+      url: `${ENDPOINT.SUPPORT.TICKETS}/${customerId}`,
       body,
     });
 

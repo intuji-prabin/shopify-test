@@ -23,6 +23,6 @@ module.exports = {
   serverPlatform: 'neutral',
   serverMinify: process.env.NODE_ENV === 'production',
   dev: {
-    port: 5011
-  }
+    port: 5011,
+  },
 };

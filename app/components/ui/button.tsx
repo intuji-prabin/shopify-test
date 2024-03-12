@@ -26,6 +26,7 @@ const buttonVariants = cva(
         status_blue:
           'bg-white text-status-shipped border border-status-shipped',
         input: 'text-grey-500 border border-grey-100 not-italic',
+        icon: 'border-grey-200 border',
         disabled:
           'text-grey-400 bg-grey-200 cursor-not-allowed pointer-events-none border border-bg-grey-200',
       },

@@ -4,8 +4,8 @@ export default function ArrowForward({
   height = '25',
 }: {
   fillColor?: string;
-  width: string;
-  height: string;
+  width?: string;
+  height?: string;
 }) {
   return (
     <svg
