@@ -6,7 +6,6 @@ import {ValidatedForm} from 'remix-validated-form';
 import {Separator} from '~/components/ui/separator';
 import {Routes} from '~/lib/constants/routes.constent';
 import {withZod} from '@remix-validated-form/with-zod';
-import {DatePickerInput} from '~/components/ui/date-picker';
 import {SheetClose, SheetFooter} from '~/components/ui/sheet';
 import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
 import {DatePickerWithRange} from '~/components/ui/date-range-picker';
@@ -21,30 +20,16 @@ const ticketsStatusOptions: SelectInputOptions[] = [
   {title: 'In Progress', value: 'in_progress'},
 ];
 
-const TicketsFilterFormSchema = z
-  .object({
-    createdDateFrom: z.string().trim().optional(),
-    createdDateTo: z.string().trim().optional(),
-    departmentId: z.string().trim().optional(),
-    status: z.string().trim().optional(),
-  })
-  .refine(
-    (data) => {
-      // If both dates are provided, check that `createdDateTo` is later than `createdDateFrom`
-      if (data.createdDateFrom && data.createdDateTo) {
-        const fromDate = new Date(data.createdDateFrom);
-        const toDate = new Date(data.createdDateTo);
-        return toDate > fromDate;
-      }
-      // If one or both dates are not provided, validation passes
-      return true;
-    },
-    {
-      // This message is displayed if the validation fails
-      message: 'invalid_date_rang',
-      path: ['createdDateTo'], // This field is marked if validation fails
-    },
-  );
+const TicketsFilterFormSchema = z.object({
+  departmentId: z.string().trim().optional(),
+  status: z.string().trim().optional(),
+  dateRange: z
+    .object({
+      createdDateFrom: z.string().trim().optional(),
+      createdDateTo: z.string().trim().optional(),
+    })
+    .optional(),
+});
 
 export const TicketsFilterFormSchemaValidator = withZod(
   TicketsFilterFormSchema,
@@ -59,16 +44,20 @@ export default function TicketsFilterForm({options}: TicketsFilterFormProps) {
 
   const defaultValues: TicketsFilterFormType = {};
 
-  const keys: TicketsFilterFormFieldNameType[] = [
-    'status',
-    'createdDateFrom',
-    'createdDateTo',
-    'departmentId',
-  ];
+  const keys: TicketsFilterFormFieldNameType[] = ['status', 'departmentId'];
 
   keys.forEach((key) => {
     defaultValues[key] = searchParams.get(key) || undefined;
   });
+
+  const createdDateFrom = searchParams.get('createdDateFrom');
+
+  const createdDateTo = searchParams.get('createdDateTo');
+
+  const defaultRangeValues = {
+    from: createdDateFrom ? new Date(createdDateFrom) : undefined,
+    to: createdDateTo ? new Date(createdDateTo) : undefined,
+  };
 
   return (
     <ValidatedForm
@@ -91,17 +80,7 @@ export default function TicketsFilterForm({options}: TicketsFilterFormProps) {
               </Link>
             </SheetClose>
           </div>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {/* <div className="">
-              <p className="pb-1">From</p>
-              <DatePickerInput name="createdDateFrom" />
-            </div>
-            <div className="">
-              <p className="pb-1">To</p>
-              <DatePickerInput name="createdDateTo" />
-            </div> */}
-            <DatePickerWithRange />
-          </div>
+          <DatePickerWithRange dateRange={defaultRangeValues} />
         </div>
         <Separator />
         <div className="p-6">
