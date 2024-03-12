@@ -19,7 +19,7 @@ export type OrderColumn = {
   cigweldInternalOrderNumber: string;
   orderDate: string;
   estimatedDeliveryDate: string;
-  orderStatus: string;
+  orderStatus: orderStatus;
   orderBy: string;
 };
 
@@ -38,16 +38,14 @@ export function useColumn() {
           />
         ),
         cell: ({row}) => (
-          <div className="px-1">
-            <IndeterminateCheckbox
-              {...{
-                checked: row.getIsSelected(),
-                disabled: !row.getCanSelect(),
-                indeterminate: row.getIsSomeSelected(),
-                onChange: row.getToggleSelectedHandler(),
-              }}
-            />
-          </div>
+          <IndeterminateCheckbox
+            {...{
+              checked: row.getIsSelected(),
+              disabled: !row.getCanSelect(),
+              indeterminate: row.getIsSomeSelected(),
+              onChange: row.getToggleSelectedHandler(),
+            }}
+          />
         ),
       },
       {
@@ -73,6 +71,7 @@ export function useColumn() {
       {
         accessorKey: 'orderStatus',
         header: 'Order Status',
+        enableSorting: false,
         cell: (info) => info.getValue(),
       },
       {
@@ -83,6 +82,7 @@ export function useColumn() {
       {
         accessorKey: 'actions',
         header: 'Actions',
+        enableSorting: false,
         cell: (info) => {
           return (
             <div className="flex justify-center gap-x-2">

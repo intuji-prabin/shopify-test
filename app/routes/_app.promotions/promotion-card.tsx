@@ -64,9 +64,9 @@ const PromotionCard = ({
                 <h5>{title}</h5>
               </div>
               <img
-                alt="preview hello"
+                alt="preview"
                 src={imageURL}
-                className="h-auto max-h-[calc(100vh_-_100px)] mx-auto"
+                className="h-auto max-h-[calc(100vh_-_100px)] mx-auto -mb-0.5"
                 onLoad={(event: any) =>
                   setRenderedImageWidth(event?.target?.width)
                 }
