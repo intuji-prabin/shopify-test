@@ -25,10 +25,6 @@ export function DatePickerInput({
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
-  const invalidDateRange = error === 'invalid_date_rang';
-
-  console.log('error', error);
-
   return (
     <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
       <input
@@ -57,11 +53,7 @@ export function DatePickerInput({
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
-          disabled={
-            disablePreviousDates || invalidDateRange
-              ? {before: new Date()}
-              : undefined
-          }
+          disabled={disablePreviousDates ? {before: new Date()} : undefined}
           mode="single"
           selected={date}
           onSelect={(date) => {
