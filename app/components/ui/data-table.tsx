@@ -1,9 +1,11 @@
 import {Fragment} from 'react';
-import {ChevronsUpDown} from 'lucide-react';
-import ArrowUp from '~/components/icons/arrowUp';
-import ArrowDown from '~/components/icons/arrowDown';
 import {ColumnDef, Table, flexRender} from '@tanstack/react-table';
 import {BulkTable} from '~/routes/_app.cart-list/order-my-products/bulk-table';
+import {
+  ArrowUpDown,
+  BlueArrowDown,
+  BlueArrowUp,
+} from '~/components/icons/arrowUpDown';
 import {
   Table as TableShadcn,
   TableBody,
@@ -47,17 +49,11 @@ export function DataTable<T>({table, columns}: DataTableProps<T>) {
                       </span>
                       {header.column.getIsSorted() ? (
                         {
-                          asc: <ArrowUp fillColor="#636969" />,
-                          desc: <ArrowDown fillColor="#636969" />,
+                          asc: <BlueArrowUp />,
+                          desc: <BlueArrowDown />,
                         }[(header.column.getIsSorted() as string) ?? null]
                       ) : (
-                        <>
-                          {header.column.getCanSort() ? (
-                            <ChevronsUpDown className="w-4.5 h-4.5" />
-                          ) : (
-                            ''
-                          )}
-                        </>
+                        <>{header.column.getCanSort() ? <ArrowUpDown /> : ''}</>
                       )}
                     </div>
                   )}
