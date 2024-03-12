@@ -1,48 +1,56 @@
 import * as React from 'react';
-import {addDays, format} from 'date-fns';
-import {Calendar as CalendarIcon} from 'lucide-react';
-import {DateRange} from 'react-day-picker';
+import {format} from 'date-fns';
 import {cn} from '~/lib/utils/utils';
-import {Popover, PopoverContent, PopoverTrigger} from './popover';
-import {Button} from './button';
-import {Calendar} from './calendar';
+import {DateRange} from 'react-day-picker';
+import {Button} from '~/components/ui/button';
+import {Calendar} from '~/components/ui/calendar';
+import {CalendarIcon} from '~/components/icons/calendar-icon';
+import {Popover, PopoverContent, PopoverTrigger} from '~/components/ui/popover';
 
 export function DatePickerWithRange({
   className,
-}: React.HTMLAttributes<HTMLDivElement>) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2022, 0, 20),
-    to: addDays(new Date(2022, 0, 20), 20),
-  });
+  dateRange,
+}: React.HTMLAttributes<HTMLDivElement> & {dateRange?: DateRange}) {
+  const [date, setDate] = React.useState<DateRange | undefined>(dateRange);
 
   return (
     <div className={cn('grid gap-2', className)}>
       <Popover>
+        <input
+          type="hidden"
+          name="createdDateFrom"
+          value={date?.from ? format(new Date(date.from), 'yyyy-MM-dd') : ''}
+        />
+        <input
+          type="hidden"
+          name="createdDateTo"
+          value={date?.to ? format(new Date(date.to), 'yyyy-MM-dd') : ''}
+        />
         <PopoverTrigger asChild>
           <Button
             id="date"
             variant="input"
             className={cn(
-              'w-[300px] justify-start text-left font-normal',
+              'w-full justify-between text-left text-base font-normal text-grey-400 border-grey-300 px-3',
               !date && 'text-muted-foreground',
             )}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, 'LLL dd, y')} -{' '}
-                  {format(date.to, 'LLL dd, y')}
+                  {format(new Date(date.from), 'dd/MM/yyyy')} -{' '}
+                  {format(new Date(date.to), 'dd/MM/yyyy')}
                 </>
               ) : (
-                format(date.from, 'LLL dd, y')
+                format(new Date(date.from), 'dd/MM/yyyy')
               )
             ) : (
-              <span>Pick a date</span>
+              <span>Pick a date range</span>
             )}
+            <CalendarIcon />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent className="w-full p-0" align="center">
           <Calendar
             initialFocus
             mode="range"
