@@ -57,7 +57,7 @@ export function ProductInfoTable({
     : volumePrice.slice(0, defaultRowCount);
 
   return (
-    <Table className="min-w-[266px] border-[1px] border-grey-50 h-full transition-all duration-700 ease-in-out delay-200">
+    <Table className="border-[1px] border-grey-50 h-full transition-all duration-700 ease-in-out delay-200">
       <TableHeader>
         <TableRow className="bg-secondary-500 hover:bg-secondary-500">
           <TableHead className="text-base font-medium leading-[21px] text-grey-900 text-center">

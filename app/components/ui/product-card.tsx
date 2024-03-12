@@ -10,12 +10,9 @@ import { Button } from '~/components/ui/button';
 export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
 
 export function ProductCard({
-  // buyPrice,
   isBuyQtyAvailable,
   isFavorited,
-  // productImageUrl,
   title,
-  // rppPrice,
   companyPrice,
   defaultPrice,
   variants,
