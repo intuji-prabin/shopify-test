@@ -1,34 +1,34 @@
-import { FaSearch } from 'react-icons/fa';
-import { Form, Link } from '@remix-run/react';
+import {FaSearch} from 'react-icons/fa';
+import {Form, Link, useFetcher, useSubmit} from '@remix-run/react';
 import {
   Heart,
   Logout,
   TabletHamburger,
   UserProfile,
 } from '~/components/icons/orderStatus';
-import { SetStateAction, useRef, useState } from 'react';
-import { Button } from '~/components/ui/button';
+import {SetStateAction, useRef, useState} from 'react';
+import {Button} from '~/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuLabel,
 } from '~/components/ui/dropdown-menu';
-import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
-import { Routes } from '~/lib/constants/routes.constent';
-import { CartIcon } from '~/components/icons/cartIcon';
-import { TrackAnOrderButton } from './elements/track-an-order-dialog';
-import { Note } from '~/components/icons/note';
-import { NotificationIcon } from '~/components/icons/notification';
+import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
+import {Routes} from '~/lib/constants/routes.constent';
+import {CartIcon} from '~/components/icons/cartIcon';
+import {TrackAnOrderButton} from './elements/track-an-order-dialog';
+import {Note} from '~/components/icons/note';
+import {NotificationIcon} from '~/components/icons/notification';
 import SearchIcon from '~/components/icons/search';
 import CloseMenu from '~/components/icons/closeMenu';
-import { CustomerData } from '~/routes/_public.login/login.server';
-import { useOutsideClick } from '~/hooks/useOutsideClick';
+import {CustomerData} from '~/routes/_public.login/login.server';
+import {useOutsideClick} from '~/hooks/useOutsideClick';
 import TabletNavmenu from './tablet-navbar/tablet-navmenu';
-import { useHamburgerMenu } from './elements/HamburgerMenuContext';
+import {useHamburgerMenu} from './elements/HamburgerMenuContext';
 
 export function PlaceOrder() {
-  const { isOpen, toggleMenu } = useHamburgerMenu();
+  const {isOpen, toggleMenu} = useHamburgerMenu();
 
   return (
     <Button
@@ -52,7 +52,7 @@ export function OrderTrack() {
     </div>
   );
 }
-export function LogoIcon({ logo_url }: { logo_url: string }) {
+export function LogoIcon({logo_url}: {logo_url: string}) {
   return (
     <Link to={Routes.HOME}>
       <figure>
@@ -62,8 +62,8 @@ export function LogoIcon({ logo_url }: { logo_url: string }) {
   );
 }
 
-export function NotificationNavbar({ cartCount }: { cartCount: number }) {
-  const { isOpen, toggleMenu } = useHamburgerMenu();
+export function NotificationNavbar({cartCount}: {cartCount: number}) {
+  const {isOpen, toggleMenu} = useHamburgerMenu();
 
   const navIcons = [
     {
@@ -120,9 +120,18 @@ export function NotificationNavbar({ cartCount }: { cartCount: number }) {
   );
 }
 
-export default function TopHeader({ userDetails, cartCount }: { userDetails: CustomerData, cartCount: number }) {
+export default function TopHeader({
+  userDetails,
+  cartCount,
+}: {
+  userDetails: CustomerData;
+  cartCount: number;
+}) {
   const [isClicked, setIsClicked] = useState(false);
   const [searchProduct, setSearchProduct] = useState(false);
+
+  const fetcher = useFetcher();
+
   const searchResultRef = useRef<HTMLDivElement>(null);
   useOutsideClick(searchResultRef, () => setSearchProduct(false));
 
@@ -137,7 +146,7 @@ export default function TopHeader({ userDetails, cartCount }: { userDetails: Cus
   const fullName = `${userDetails.firstName} ${userDetails.lastName}`;
 
   const imageUrl = userDetails.meta?.image_url?.value;
-
+  console.log('fetcherdata', fetcher.data);
   return (
     <div className="bg-grey-900">
       <div className="container flex items-center gap-3 py-5 justify-normal xl:justify-between">
@@ -154,13 +163,24 @@ export default function TopHeader({ userDetails, cartCount }: { userDetails: Cus
         <div className="flex gap-[22px] w-full xl:w-[unset]">
           {/* search bar begins here */}
           <div className="search-bar flex bg-white items-center min-w-[unset] w-full max-h-12 px-4 py-3 xl:min-w-[453px] relative">
-            <FaSearch className="search-icon fill-primary-500" />
-            <input
-              type="text"
-              placeholder="Search Product or Part Number"
-              className="border-none w-full placeholder:italic text-base font-bold text-[#0F1010] placeholder:text-[#0F1010] focus:bg-white"
-              onChange={handleSearchInput}
-            />
+            <Form
+              method="POST"
+              onChange={(event) =>
+                fetcher.submit(event.currentTarget, {
+                  method: 'POST',
+                  action: '/predictive-search',
+                })
+              }
+            >
+              <FaSearch className="search-icon fill-primary-500" />
+              <input
+                type="text"
+                name="searchTerm"
+                placeholder="Search Product or Part Number"
+                className="border-none w-full placeholder:italic text-base font-bold text-[#0F1010] placeholder:text-[#0F1010] focus:bg-white"
+                onChange={handleSearchInput}
+              />
+            </Form>
             {searchProduct && (
               <Button
                 className="p-0 bg-white hover:bg-white active:bg-white"
