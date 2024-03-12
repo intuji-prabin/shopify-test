@@ -9,6 +9,7 @@ import {withZod} from '@remix-validated-form/with-zod';
 import {DatePickerInput} from '~/components/ui/date-picker';
 import {SheetClose, SheetFooter} from '~/components/ui/sheet';
 import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
+import {DatePickerWithRange} from '~/components/ui/date-range-picker';
 
 type TicketsFilterFormProps = {
   options: SelectInputOptions[];
@@ -20,12 +21,30 @@ const ticketsStatusOptions: SelectInputOptions[] = [
   {title: 'In Progress', value: 'in_progress'},
 ];
 
-const TicketsFilterFormSchema = z.object({
-  createdDateFrom: z.string().trim().optional(),
-  createdDateTo: z.string().trim().optional(),
-  departmentId: z.string().trim().optional(),
-  status: z.string().trim().optional(),
-});
+const TicketsFilterFormSchema = z
+  .object({
+    createdDateFrom: z.string().trim().optional(),
+    createdDateTo: z.string().trim().optional(),
+    departmentId: z.string().trim().optional(),
+    status: z.string().trim().optional(),
+  })
+  .refine(
+    (data) => {
+      // If both dates are provided, check that `createdDateTo` is later than `createdDateFrom`
+      if (data.createdDateFrom && data.createdDateTo) {
+        const fromDate = new Date(data.createdDateFrom);
+        const toDate = new Date(data.createdDateTo);
+        return toDate > fromDate;
+      }
+      // If one or both dates are not provided, validation passes
+      return true;
+    },
+    {
+      // This message is displayed if the validation fails
+      message: 'invalid_date_rang',
+      path: ['createdDateTo'], // This field is marked if validation fails
+    },
+  );
 
 export const TicketsFilterFormSchemaValidator = withZod(
   TicketsFilterFormSchema,
@@ -73,14 +92,15 @@ export default function TicketsFilterForm({options}: TicketsFilterFormProps) {
             </SheetClose>
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
-            <div className="">
+            {/* <div className="">
               <p className="pb-1">From</p>
               <DatePickerInput name="createdDateFrom" />
             </div>
             <div className="">
               <p className="pb-1">To</p>
               <DatePickerInput name="createdDateTo" />
-            </div>
+            </div> */}
+            <DatePickerWithRange />
           </div>
         </div>
         <Separator />
