@@ -84,6 +84,7 @@ const formattedResponse = async (response: any, customerId: string) => {
   const productList = response?.collection;
 
   let productIds = '';
+
   productList?.products?.edges.map((items: any) => {
     const productId = items?.node?.id.replace('gid://shopify/Product/', '');
     if (!productIds) {
@@ -94,13 +95,16 @@ const formattedResponse = async (response: any, customerId: string) => {
     return true;
   });
   const priceList = await getPrices(productIds, customerId);
+  
   const finalProductList: any = {
     categorytitle: productList?.title,
     productList: productList?.products?.edges.map((item: any) => {
       const productId = item?.node?.id.replace('gid://shopify/Product/', '');
       return {
+        id: productId,
         title: item?.node?.title,
         handle: item?.node?.handle,
+        uom: item?.node?.uom?.value,
         variants: productVariantDataFormat(item?.node?.variants),
         featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.IMAGE,
         companyPrice: priceList?.[productId]
@@ -117,6 +121,7 @@ const formattedResponse = async (response: any, customerId: string) => {
 
 const productVariantDataFormat = (variant: any) => {
   const finalVariantData = {
+    id: variant?.edges[0]?.node?.id,
     sku: variant?.edges[0]?.node?.sku,
   };
   return finalVariantData;
@@ -158,12 +163,14 @@ const STOREFRONT_PRODUCT_GET_QUERY = (filterList: any, handler: string) => {
                     handle
                     id
                     title
+                    uom : metafield(namespace: "uom", key: "uom") { value }
                     featuredImage {
                       url
                     }
                     variants(first:2) {
                         edges {
                             node {
+                                id
                                 sku
                             }
                         }

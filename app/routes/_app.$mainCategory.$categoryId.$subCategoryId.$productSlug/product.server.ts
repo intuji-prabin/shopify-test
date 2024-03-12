@@ -1,8 +1,9 @@
-import { useFetch } from '~/hooks/useFetch';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import {useFetch} from '~/hooks/useFetch';
+import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import { AllowedHTTPMethods } from '~/lib/enums/api.enum';
 import { getUserDetails } from '~/lib/utils/user-session.server';
+import { GET_CART_LIST } from '../_app.cart-list/cart.server';
 
 export async function getProductDetails(customerId: string, handle: string) {
   try {
@@ -33,239 +34,302 @@ export async function getProductDetails(customerId: string, handle: string) {
   }
 }
 
-export const addProductToCart = async ( cartInfo : any, accessTocken : string, context : any, request : any ) => {
-    const { session, storefront } = context
-    const sessionCartInfo = session.get( CART_SESSION_KEY )
-    if( !sessionCartInfo ) {
-      const cartSetInfo = await setNewCart( context, accessTocken, cartInfo )
-      session.set( CART_SESSION_KEY, cartSetInfo )
-      const storeCartId = await storeCartIdOnBackend( request, sessionCartInfo?.cartId)
-      return cartSetInfo
-    }
-
-    // if( sessionCartInfo?.[cartInfo?.productId] ) {
-    //   const cartUpdateInfo = await updateAllReadyAddedCart( context, accessTocken, cartInfo,  sessionCartInfo )
-    //   console.log("cart data ", cartUpdateInfo)
-    //   session.set( CART_SESSION_KEY, cartUpdateInfo )
-    //   return cartUpdateInfo
-    // }
+export const addProductToCart = async (
+  cartInfo: any,
+  accessTocken: string,
+  context: any,
+  request: any,
+) => {
+  console.log('cartInfo', cartInfo);
+  if (!cartInfo.productId) {
+    throw new Error(
+      'Product Id is not present so, this product cannot be added to the cart.',
+    );
+  }
+  if (!cartInfo.productVeriantId) {
+    throw new Error(
+      'Product Variant is not present so, this product cannot be added to the cart.',
+    );
+  }
+  if (!cartInfo.selectUOM) {
+    throw new Error(
+      'Product UOM is not present so, this product cannot be added to the cart.',
+    );
+  }
+  const {session} = context;
+  const sessionCartInfo = session.get(CART_SESSION_KEY);
+  if (!sessionCartInfo) {
+    const cartSetInfo = await setNewCart(context, accessTocken, cartInfo);
+    session.set(CART_SESSION_KEY, cartSetInfo);
+    const storeCartId = await storeCartIdOnBackend(
+      request,
+      cartSetInfo?.cartId,
+    );
+    return cartSetInfo;
+  }
 
     const cartLineAddResponse = await cartLineAdd( context, cartInfo,  sessionCartInfo ) 
     //  session.unset( CART_SESSION_KEY)
     session.set( CART_SESSION_KEY, cartLineAddResponse )
+    const cartLists =  await context.storefront.query(GET_CART_LIST, { variables : { cartId : sessionCartInfo?.cartId }} )
+    console.log("asfsfwerewr cartLists ", cartLists)
+    console.log("asfsfwerewr cartListssss nodes ", cartLists?.cart?.lines?.nodes)
     return true
 }
 
-const setNewCart = async ( context : any, accessTocken : string, cartInfo : any ) => {
-    const { storefront } = context 
-    const responses = await storefront.mutate(SET_NEW_CART, { variables : cartFormateVariable( cartInfo, accessTocken )})
-    const formateResponse = cartResponseFormate( responses, accessTocken )
-    console.log("radfs ", responses)
-    console.log("radfs ", responses?.cartCreate?.userErrors[0])
-    return formateResponse
-}
+const setNewCart = async (
+  context: any,
+  accessTocken: string,
+  cartInfo: any,
+) => {
+  const {storefront} = context;
+  const responses = await storefront.mutate(SET_NEW_CART, {
+    variables: cartFormateVariable(cartInfo, accessTocken),
+  });
+  const formateResponse = cartResponseFormate(responses, accessTocken);
+  console.log('radfs ', responses);
+  console.log('radfs ', responses?.cartCreate?.userErrors[0]);
+  return formateResponse;
+};
 
-const updateAllReadyAddedCart = async ( context : any, accessTocken : any, cartInfo : any,  sessionCartInfo : any ) => {
-  const { storefront } = context
-  const updateCartResponse = await storefront.mutate(UPDATE_OLD_CART, { variables : cartUpdateFormateVariable( sessionCartInfo, cartInfo )})
-  if( !updateCartResponse ) {
-    throw new Error("Cart not updated")
+const updateAllReadyAddedCart = async (
+  context: any,
+  accessTocken: any,
+  cartInfo: any,
+  sessionCartInfo: any,
+) => {
+  const {storefront} = context;
+  const updateCartResponse = await storefront.mutate(UPDATE_OLD_CART, {
+    variables: cartUpdateFormateVariable(sessionCartInfo, cartInfo),
+  });
+  if (!updateCartResponse) {
+    throw new Error('Cart not updated');
   }
-  console.log("cartLinesUpdate ", updateCartResponse?.cartLinesUpdate)
-  if( updateCartResponse?.cartLinesUpdate?.userErrors.length > 0 ) {
-      throw new Error( updateCartResponse?.cartLinesUpdate?.userErrors[0]?.message )
+  console.log('cartLinesUpdate ', updateCartResponse?.cartLinesUpdate);
+  if (updateCartResponse?.cartLinesUpdate?.userErrors.length > 0) {
+    throw new Error(
+      updateCartResponse?.cartLinesUpdate?.userErrors[0]?.message,
+    );
   }
-  const lines = updateCartResponse?.cartLinesUpdate?.cart?.lines?.nodes
-  console.log("linews ", lines)
-  if( lines.length < 1 ) {
-    throw new Error("You cart system is wrong")
+  const lines = updateCartResponse?.cartLinesUpdate?.cart?.lines?.nodes;
+  console.log('linews ', lines);
+  if (lines.length < 1) {
+    throw new Error('You cart system is wrong');
   }
-  sessionCartInfo.lineItems = 0
-  lines.map(( items : any) => {
-      const merchandise = items?.merchandise
-      const veriantId = merchandise?.id.replace("gid://shopify/ProductVariant/", "")
-      const productId = merchandise?.product?.id.replace("gid://shopify/Product/", "")
-      sessionCartInfo.lineItems = sessionCartInfo.lineItems + 1
-      sessionCartInfo[productId] = {
-        productId ,
-        veriantId,
-        lineId : items?.id,
-        quantity : items?.quantity,
-        UOM : items?.attributes.filter( ( att : any ) => att?.key == "selectedUOM")?.[0]?.value 
-      }
-  })
+  sessionCartInfo.lineItems = 0;
+  lines.map((items: any) => {
+    const merchandise = items?.merchandise;
+    const veriantId = merchandise?.id.replace(
+      'gid://shopify/ProductVariant/',
+      '',
+    );
+    const productId = merchandise?.product?.id.replace(
+      'gid://shopify/Product/',
+      '',
+    );
+    sessionCartInfo.lineItems = sessionCartInfo.lineItems + 1;
+    sessionCartInfo[productId] = {
+      productId,
+      veriantId,
+      lineId: items?.id,
+      quantity: items?.quantity,
+      UOM: items?.attributes.filter(
+        (att: any) => att?.key == 'selectedUOM',
+      )?.[0]?.value,
+    };
+  });
 
-  return sessionCartInfo
-}
+  return sessionCartInfo;
+};
 
-const cartLineAdd = async ( context : any, cartInfo : any,  sessionCartInfo : any ) => {
-  const { storefront } = context 
-    const addItemInCartresponses = await storefront.mutate(ADD_ITEMS_IN_CART, { variables : cartAddLineFormateVariable( cartInfo, sessionCartInfo )})
+const cartLineAdd = async (
+  context: any,
+  cartInfo: any,
+  sessionCartInfo: any,
+) => {
+  const {storefront} = context;
+  const addItemInCartresponses = await storefront.mutate(ADD_ITEMS_IN_CART, {
+    variables: cartAddLineFormateVariable(cartInfo, sessionCartInfo),
+  });
 
-    if( !addItemInCartresponses ) {
-      throw new Error("Cart not updated")
-    }
-    if( addItemInCartresponses?.cartLinesAdd?.userErrors.length > 0 ) {
-        throw new Error( addItemInCartresponses?.cartLinesAdd?.userErrors[0]?.message )
-    }
-    const lines = addItemInCartresponses?.cartLinesAdd?.cart?.lines?.nodes
-    if( lines.length < 1 ) {
-      throw new Error("You cart system is wrong")
-    }
-    sessionCartInfo.lineItems = 0
-    sessionCartInfo.cartItems = []
-    lines.map(( items : any) => {
-        const merchandise = items?.merchandise
-        const veriantId = merchandise?.id.replace("gid://shopify/ProductVariant/", "")
-        const productId = merchandise?.product?.id.replace("gid://shopify/Product/", "")
-        sessionCartInfo.lineItems = sessionCartInfo.lineItems + 1
-        sessionCartInfo.cartItems.push({
-          productId ,
-          veriantId,
-          lineId : items?.id,
-          quantity : items?.quantity,
-          UOM : items?.attributes.filter( ( att : any ) => att?.key == "selectedUOM")?.[0]?.value 
-        })
-        
-    })
-  
-    return sessionCartInfo
-}
+  if (!addItemInCartresponses) {
+    throw new Error('Cart not updated');
+  }
+  if (addItemInCartresponses?.cartLinesAdd?.userErrors.length > 0) {
+    throw new Error(
+      addItemInCartresponses?.cartLinesAdd?.userErrors[0]?.message,
+    );
+  }
+  const lines = addItemInCartresponses?.cartLinesAdd?.cart?.lines?.nodes;
+  if (lines.length < 1) {
+    throw new Error('You cart system is wrong');
+  }
+  sessionCartInfo.lineItems = 0;
+  sessionCartInfo.cartItems = [];
+  lines.map((items: any) => {
+    const merchandise = items?.merchandise;
+    const veriantId = merchandise?.id.replace(
+      'gid://shopify/ProductVariant/',
+      '',
+    );
+    const productId = merchandise?.product?.id.replace(
+      'gid://shopify/Product/',
+      '',
+    );
+    sessionCartInfo.lineItems = sessionCartInfo.lineItems + 1;
+    sessionCartInfo.cartItems.push({
+      productId,
+      veriantId,
+      lineId: items?.id,
+      quantity: items?.quantity,
+      UOM: items?.attributes.filter(
+        (att: any) => att?.key == 'selectedUOM',
+      )?.[0]?.value,
+    });
+  });
 
-const storeCartIdOnBackend = async ( request : any, cartId : string ) => {
-  const { userDetails } = await getUserDetails(request);
+  return sessionCartInfo;
+};
+
+const storeCartIdOnBackend = async (request: any, cartId: string) => {
+  const {userDetails} = await getUserDetails(request);
+  console.log('cartId ', cartId);
   try {
-    const customerId = userDetails?.id
+    const customerId = userDetails?.id;
     const results = await useFetch<any>({
       method: AllowedHTTPMethods.POST,
       url: `${ENDPOINT.PRODUCT.CART}/${customerId}`,
-      body : JSON.stringify({ cartId }),
+      body: JSON.stringify({cartId}),
     });
-    console.log("ssss ", results)
-    return true
+    console.log('ssss ', results);
+    return true;
+  } catch (error) {
+    return true;
+  }
+};
 
-  } catch( error ) {
-    return true
+const cartResponseFormate = (cartResponse: any, accessTocken: string) => {
+  if (!cartResponse) {
+    throw new Error('Cart not added');
   }
-}
-
-const cartResponseFormate = ( cartResponse : any, accessTocken : string ) => {
-  if( !cartResponse ) {
-    throw new Error("Cart not added")
+  const cartCreate = cartResponse?.cartCreate;
+  if (cartCreate?.userErrors.length > 0) {
+    throw new Error(cartCreate?.userErrors[0]?.message);
   }
-  const cartCreate = cartResponse?.cartCreate
-  if( cartCreate?.userErrors.length > 0 ) {
-    throw new Error( cartCreate?.userErrors[0]?.message )
-  }
-  const cart = cartCreate?.cart
-  const buyerIdentity = cart?.buyerIdentity?.customer
-  const lines = cart?.lines?.nodes
+  const cart = cartCreate?.cart;
+  const buyerIdentity = cart?.buyerIdentity?.customer;
+  const lines = cart?.lines?.nodes;
   const cartListed = {
-    cartId : cart?.id,
-    customerId : buyerIdentity?.id.replace("gid://shopify/Customer/", ""),
+    cartId: cart?.id,
+    customerId: buyerIdentity?.id.replace('gid://shopify/Customer/', ''),
     accessTocken,
-    lineItems : 0,
-    cartItems : []
-    
-  } as any
+    lineItems: 0,
+    cartItems: [],
+  } as any;
 
-  if( lines.length > 0 ) {
-    lines.map(( items : any ) => {
-      const merchandise = items?.merchandise
-      const veriantId = merchandise?.id.replace("gid://shopify/ProductVariant/", "")
-      const productId = merchandise?.product?.id.replace("gid://shopify/Product/", "")
-      cartListed.lineItems = cartListed.lineItems + 1
+  if (lines.length > 0) {
+    lines.map((items: any) => {
+      const merchandise = items?.merchandise;
+      const veriantId = merchandise?.id.replace(
+        'gid://shopify/ProductVariant/',
+        '',
+      );
+      const productId = merchandise?.product?.id.replace(
+        'gid://shopify/Product/',
+        '',
+      );
+      cartListed.lineItems = cartListed.lineItems + 1;
       cartListed.cartItems.push({
-        productId ,
+        productId,
         veriantId,
-        lineId : items?.id,
-        quantity : items?.quantity,
-        UOM : items?.attributes.filter( ( att : any ) => att?.key == "selectedUOM")?.[0]?.value
-      })
-
-    })
+        lineId: items?.id,
+        quantity: items?.quantity,
+        UOM: items?.attributes.filter(
+          (att: any) => att?.key == 'selectedUOM',
+        )?.[0]?.value,
+      });
+    });
   }
 
-  return cartListed
-}
+  return cartListed;
+};
 
-const cartFormateVariable = ( cartInfo : any, accessTocken : string ) => {
-  const variantId = `gid://shopify/ProductVariant/${cartInfo?.productVeriantId}`
+const cartFormateVariable = (cartInfo: any, accessTocken: string) => {
+  const variantId = `gid://shopify/ProductVariant/${cartInfo?.productVeriantId}`;
   return {
-      input: {
-        attributes : [
-          {
-            key   : "cigweldCart",
-            value : "Cigweld Cart"
-          }
-        ],
-        buyerIdentity  : {
-          customerAccessToken  :   accessTocken 
+    input: {
+      attributes: [
+        {
+          key: 'cigweldCart',
+          value: 'Cigweld Cart',
         },
-        lines  : [
+      ],
+      buyerIdentity: {
+        customerAccessToken: accessTocken,
+      },
+      lines: [
         {
-          attributes   : [
+          attributes: [
             {
-              key     :   "selectedUOM",
-              value   :   cartInfo?.selectUOM  
-            }
+              key: 'selectedUOM',
+              value: cartInfo?.selectUOM,
+            },
           ],
-          merchandiseId : variantId,
-          quantity      : parseInt(cartInfo?.quantity)
-        }
+          merchandiseId: variantId,
+          quantity: parseInt(cartInfo?.quantity),
+        },
       ],
-      metafields : [
+      metafields: [
         {
-          key :  "cart" ,
-          type :  "string" ,
-          value :  "cart testing" 
-        }
+          key: 'cart',
+          type: 'string',
+          value: 'cart testing',
+        },
       ],
-      note : "cigweld team note"
-    }
-  }
-  
-}
+      note: 'cigweld team note',
+    },
+  };
+};
 
-const cartUpdateFormateVariable = ( sessionCartInfo : any, cartInfo : any ) => {
-  const setCartData = sessionCartInfo?.[cartInfo?.productId]
-  console.log("setCartData ", setCartData , setCartData?.lineId)
+const cartUpdateFormateVariable = (sessionCartInfo: any, cartInfo: any) => {
+  const setCartData = sessionCartInfo?.[cartInfo?.productId];
+  console.log('setCartData ', setCartData, setCartData?.lineId);
   return {
-     cartId :  sessionCartInfo?.cartId,
-     lines : [
+    cartId: sessionCartInfo?.cartId,
+    lines: [
       {
-        id  :  setCartData?.lineId,
-        quantity : parseInt( cartInfo?.quantity ),
-        merchandiseId : `gid://shopify/ProductVariant/${cartInfo?.productVeriantId}`,
-        attributes   : [
+        id: setCartData?.lineId,
+        quantity: parseInt(cartInfo?.quantity),
+        merchandiseId: `gid://shopify/ProductVariant/${cartInfo?.productVeriantId}`,
+        attributes: [
           {
-            key     :   "selectedUOM",
-            value   :   cartInfo?.selectUOM  
-          }
-        ]
-      }
-    ]
-  }
-}
-
-const cartAddLineFormateVariable = ( cartInfo : any, sessionCartInfo : any ) => {
-  const variantId = `gid://shopify/ProductVariant/${cartInfo?.productVeriantId}`
-  return {
-     cartId :  sessionCartInfo?.cartId,
-     lines : [
-      {
-        attributes   : [
-          {
-            key     :   "selectedUOM",
-            value   :   cartInfo?.selectUOM  
-          }
+            key: 'selectedUOM',
+            value: cartInfo?.selectUOM,
+          },
         ],
-         merchandiseId :  variantId,
-         quantity : parseInt( cartInfo?.quantity )
-      }
-    ]
-  }
-}
+      },
+    ],
+  };
+};
+
+const cartAddLineFormateVariable = (cartInfo: any, sessionCartInfo: any) => {
+  const variantId = `gid://shopify/ProductVariant/${cartInfo?.productVeriantId}`;
+  return {
+    cartId: sessionCartInfo?.cartId,
+    lines: [
+      {
+        attributes: [
+          {
+            key: 'selectedUOM',
+            value: cartInfo?.selectUOM,
+          },
+        ],
+        merchandiseId: variantId,
+        quantity: parseInt(cartInfo?.quantity),
+      },
+    ],
+  };
+};
 
 const SET_NEW_CART = `mutation cartCreate( $input : CartInput) {
   cartCreate( input: $input) {
@@ -309,9 +373,10 @@ const SET_NEW_CART = `mutation cartCreate( $input : CartInput) {
       code
     }
   }
-}` as const
+}` as const;
 
-const UPDATE_OLD_CART = `mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+const UPDATE_OLD_CART =
+  `mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
   cartLinesUpdate(cartId: $cartId, lines: $lines) {
     cart {
       id
@@ -343,9 +408,10 @@ const UPDATE_OLD_CART = `mutation cartLinesUpdate($cartId: ID!, $lines: [CartLin
       message
     }
   }
-}` as const
+}` as const;
 
-const ADD_ITEMS_IN_CART = `mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
+const ADD_ITEMS_IN_CART =
+  `mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
   cartLinesAdd(cartId: $cartId, lines: $lines) {
     cart {
       id
@@ -377,5 +443,4 @@ const ADD_ITEMS_IN_CART = `mutation cartLinesAdd($cartId: ID!, $lines: [CartLine
       message
     }
   }
-}` as const
-
+}` as const;

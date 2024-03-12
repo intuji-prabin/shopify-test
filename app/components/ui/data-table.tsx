@@ -1,3 +1,6 @@
+
+import {ColumnDef, Table, flexRender, Row} from '@tanstack/react-table';
+import {LucideArrowDown, LucideArrowUp, LucideArrowUpDown} from 'lucide-react';
 import {Fragment} from 'react';
 import {ColumnDef, Table, flexRender} from '@tanstack/react-table';
 import {BulkTable} from '~/routes/_app.cart-list/order-my-products/bulk-table';
@@ -18,9 +21,16 @@ import {
 type DataTableProps<T> = {
   table: Table<T>;
   columns?: ColumnDef<T>[];
+  renderSubComponent?: (props: {row: Row<T>}) => React.ReactElement;
+  getRowCanExpand?: (row: Row<T>) => boolean;
 };
 
-export function DataTable<T>({table, columns}: DataTableProps<T>) {
+export function DataTable<T>({
+  table,
+  columns,
+  renderSubComponent,
+  getRowCanExpand,
+}: DataTableProps<T>) {
   return (
     <TableShadcn className="bg-neutral-white" data-cy="table">
       <TableHeader>
@@ -84,7 +94,7 @@ export function DataTable<T>({table, columns}: DataTableProps<T>) {
                     </TableCell>
                   ))}
                 </TableRow>
-                {row.getIsExpanded() ? (
+                {row.getIsExpanded() && (
                   <TableRow
                     className={` ${
                       row.getIsSelected() ? 'bg-primary-200 ' : ''
@@ -105,10 +115,11 @@ export function DataTable<T>({table, columns}: DataTableProps<T>) {
                       </div>
                     </TableCell>
                     <TableCell colSpan={3}>
-                      <BulkTable quantity={'Quantity'} price={'Price'} />
+                      {/* <BulkTable quantity={'Quantity'} price={'Price'} /> */}
+                      {renderSubComponent && renderSubComponent({row})}
                     </TableCell>
                   </TableRow>
-                ) : undefined}
+                )}
               </Fragment>
             ))
           ) : (

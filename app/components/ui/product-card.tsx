@@ -1,4 +1,4 @@
-import { Link } from '@remix-run/react';
+import { Form, Link, useSubmit } from '@remix-run/react';
 import { useState } from 'react';
 import {
   ProductLoveRed,
@@ -21,7 +21,9 @@ export function ProductCard({
   variants,
   featuredImageUrl,
   imageBackgroundColor,
-  handle
+  handle,
+  id,
+  uom
 }: ProductCardProps) {
 
   return (
@@ -39,6 +41,9 @@ export function ProductCard({
           companyPrice={companyPrice}
           defaultPrice={defaultPrice}
           handle={handle}
+          id={id}
+          uom={uom}
+          productVariantId={variants?.id}
         />
       </div>
     </div>
@@ -51,10 +56,13 @@ type ProductCardInfoProps = {
   defaultPrice?: string;
   companyPrice?: string;
   handle: string;
+  id: number;
+  uom: string;
 };
 
 type VariantType = {
   sku: string;
+  id: number;
 };
 
 type ProductCardImageProps = {
@@ -69,7 +77,10 @@ export function ProductCardInfo({
   productName,
   defaultPrice,
   companyPrice,
-  handle
+  handle,
+  id,
+  uom,
+  productVariantId
 }: // buyPrice,
   // rppPrice,
   any) {
@@ -78,7 +89,7 @@ export function ProductCardInfo({
       <div className="sm:pb-[146px]">
         <div>
           <p className="text-base font-medium text-primary-500 sku">
-            SKU:{sku}
+            SKU:&nbsp;{sku && sku || "N/A"}
           </p>
           <h5 className="text-lg italic font-bold leading-6 whitespace-normal max-h-12 text-grey-900 line-clamp-2 text-ellipsis">
             <Link to={handle}>
@@ -104,7 +115,7 @@ export function ProductCardInfo({
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
-                {companyPrice ?? "00.00"}
+                {companyPrice && companyPrice || "N/A"}
               </h3>
               <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
             </div>
@@ -126,12 +137,12 @@ export function ProductCardInfo({
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-                {defaultPrice ?? "00.00"}
+                {defaultPrice && defaultPrice || "N/A"}
               </h3>
               <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
             </div>
           </div>
-          <ProductCardButtons handle={handle} />
+          <ProductCardButtons handle={handle} id={id} uom={uom} productVariantId={productVariantId} />
         </div>
       </div>
     </div>
@@ -154,7 +165,7 @@ function ProductCardImage({
 
   return (
     <div
-      className={`relative px-11 py-[39px] border-grey-25 border-b-2 border-x-0 border-top-0 ${imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
+      className={`relative px-11 py-[39px] flex justify-center border-grey-25 border-b-2 border-x-0 border-top-0 ${imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
         }`}
     >
       {isBuyQtyAvailableState && (
@@ -166,16 +177,15 @@ function ProductCardImage({
         {heartFill ? <ProductLoveRed /> : <ProductLoveWhite />}
       </button>
       <figure className="mt-3">
-        <img src={featuredImageUrl} className="" alt="product-image" />
+        <img src={featuredImageUrl} className="max-h-48" alt="product-image" />
       </figure>
     </div>
   );
 }
 
-function ProductCardButtons({ handle }: { handle: string }) {
-  function handleAddToCart() {
-    console.log('add to cart');
-  }
+function ProductCardButtons({ handle, id, uom, productVariantId }: { handle: string, id: number, uom: string, productVariantId: string }) {
+  const submit = useSubmit();
+  const productVariantOnlyId = productVariantId.split('/').pop();
 
   return (
     <div className="flex flex-col items-center justify-center gap-2 mt-6 sm:flex-row product-button">
@@ -185,14 +195,23 @@ function ProductCardButtons({ handle }: { handle: string }) {
         view detail
       </Link>
 
-      <Button
-        variant="ghost"
-        size="default"
+      <Form
+        method="POST"
+        onSubmit={(event) => {
+          submit(event.currentTarget);
+        }}
         className="w-full"
-        onClick={handleAddToCart}
       >
-        Add to cart
-      </Button>
+        <input type="hidden" name='productId' value={id} />
+        <input type="hidden" name='productVeriantId' value={productVariantOnlyId} />
+        <input type="hidden" name='quantity' value='1' />
+        <input type="hidden" name='selectUOM' value={uom} />
+        <Button variant="ghost"
+          size="default"
+          type='submit'>
+          Add to cart
+        </Button>
+      </Form>
     </div>
   );
 }

@@ -34,19 +34,21 @@ import {useEffect} from 'react';
 
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
   const categories = await getCagetoryList(context);
   const messageSession = await getMessageSession(request);
-  let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
-  const headers = [] as any;
+  let sessionCartInfo = await context.session.get(CART_SESSION_KEY)
+  const headers = [] as any
+
+  console.log("sessionCartInfo", sessionCartInfo)
 
   if (!sessionCartInfo) {
-    sessionCartInfo = await getSessionCart(userDetails?.id, context);
+    sessionCartInfo = await getSessionCart(userDetails?.id, context)
     if (sessionCartInfo) {
-      console.log('faswerwere');
-      context.session.set(CART_SESSION_KEY, sessionCartInfo);
-      headers.push(['Set-Cookie', await context.session.commit({})]);
-      console.log('sdfasdfasdf ');
+      console.log("faswerwere")
+      context.session.set(CART_SESSION_KEY, sessionCartInfo)
+      headers.push(['Set-Cookie', await context.session.commit({})])
+      console.log("sdfasdfasdf ")
     }
   }
 
