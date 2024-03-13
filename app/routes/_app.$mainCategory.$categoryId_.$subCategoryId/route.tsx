@@ -24,13 +24,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { LeftArrow } from '~/components/icons/left';
 import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
-import { addProductToCart } from '../_app.$mainCategory.$categoryId.$subCategoryId.$productSlug/product.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
+import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 import { getFilterProduct } from './filter.server';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
@@ -47,7 +47,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     categoryId,
     subCategoryId,
     mainCategory,
-  }, { headers : [ ['Set-Cookie', await context.session.commit({})] ]});
+  }, { headers: [['Set-Cookie', await context.session.commit({})]] });
 }
 
 export const action = async ({ request, context }: ActionFunctionArgs) => {
@@ -290,11 +290,11 @@ export const getProductList = async (
     });
 
     let results
-    if( searchList.length > 0 ) {
-      results = await getFilterProduct( context,
+    if (searchList.length > 0) {
+      results = await getFilterProduct(context,
         params,
         searchList,
-        userDetails?.id, )
+        userDetails?.id,)
     } else {
       results = await getProducts(
         context,
