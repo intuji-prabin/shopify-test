@@ -1,6 +1,6 @@
-import { ColumnDef, Row, Table, flexRender } from '@tanstack/react-table';
-import { ChevronsUpDown } from 'lucide-react';
-import { Fragment } from 'react';
+import {ColumnDef, Row, Table, flexRender} from '@tanstack/react-table';
+import {ChevronsUpDown} from 'lucide-react';
+import {Fragment} from 'react';
 import ArrowDown from '~/components/icons/arrowDown';
 import ArrowUp from '~/components/icons/arrowUp';
 import {
@@ -11,11 +11,12 @@ import {
   TableRow,
   Table as TableShadcn,
 } from '~/components/ui/table';
+import {ArrowUpDown, BlueArrowDown, BlueArrowUp} from '../icons/arrowUpDown';
 
 type DataTableProps<T> = {
   table: Table<T>;
   columns?: ColumnDef<T>[];
-  renderSubComponent?: (props: { row: Row<T> }) => React.ReactElement;
+  renderSubComponent?: (props: {row: Row<T>}) => React.ReactElement;
   getRowCanExpand?: (row: Row<T>) => boolean;
   className?: string;
 };
@@ -25,7 +26,7 @@ export function DataTable<T>({
   columns,
   renderSubComponent,
   getRowCanExpand,
-  className
+  className,
 }: DataTableProps<T>) {
   return (
     <TableShadcn className={`${className} bg-neutral-white`} data-cy="table">
@@ -92,8 +93,9 @@ export function DataTable<T>({
                 </TableRow>
                 {row.getIsExpanded() && (
                   <TableRow
-                    className={` ${row.getIsSelected() ? 'bg-primary-200 ' : ''
-                      } hover:bg-primary-200`}
+                    className={` ${
+                      row.getIsSelected() ? 'bg-primary-200 ' : ''
+                    } hover:bg-primary-200`}
                   >
                     <TableCell
                       valign="bottom"
@@ -111,7 +113,7 @@ export function DataTable<T>({
                     </TableCell>
                     <TableCell colSpan={3}>
                       {/* <BulkTable quantity={'Quantity'} price={'Price'} /> */}
-                      {renderSubComponent && renderSubComponent({ row })}
+                      {renderSubComponent && renderSubComponent({row})}
                     </TableCell>
                   </TableRow>
                 )}
