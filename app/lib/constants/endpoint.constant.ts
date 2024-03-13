@@ -49,5 +49,6 @@ export const ENDPOINT = {
     CART: `${BASE_URL}/cart-session`,
     CART_DETAIL: `${BASE_URL}/cart-detail`,
     ORDER: `${BASE_URL}/order`,
+    FILTER : `${BASE_URL}/product/filter`
   },
 };
