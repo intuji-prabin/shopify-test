@@ -10,12 +10,9 @@ import { Button } from '~/components/ui/button';
 export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
 
 export function ProductCard({
-  // buyPrice,
   isBuyQtyAvailable,
   isFavorited,
-  // productImageUrl,
   title,
-  // rppPrice,
   companyPrice,
   defaultPrice,
   variants,
@@ -115,7 +112,7 @@ export function ProductCardInfo({
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
-                {companyPrice && companyPrice || "N/A"}
+                ${companyPrice && companyPrice || "N/A"}
               </h3>
               <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
             </div>
@@ -137,7 +134,7 @@ export function ProductCardInfo({
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-                {defaultPrice && defaultPrice || "N/A"}
+                ${defaultPrice && defaultPrice || "N/A"}
               </h3>
               <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
             </div>

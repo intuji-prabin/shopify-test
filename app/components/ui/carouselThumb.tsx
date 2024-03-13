@@ -1,6 +1,6 @@
-import useEmblaCarousel, {EmblaOptionsType} from 'embla-carousel-react';
-import React, {useCallback, useEffect, useState} from 'react';
-import {LeftBlueArrow} from '../icons/left';
+import useEmblaCarousel, { EmblaOptionsType } from 'embla-carousel-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { LeftBlueArrow } from '../icons/left';
 
 type ImageType = {
   src: string;
@@ -13,7 +13,7 @@ type PropType = {
 };
 
 const CarouselThumb = (props: PropType) => {
-  const {options, images} = props;
+  const { options, images } = props;
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [emblaMainRef, emblaMainApi] = useEmblaCarousel(options);
   const [emblaThumbsRef, emblaThumbsApi] = useEmblaCarousel(options);
@@ -52,7 +52,7 @@ const CarouselThumb = (props: PropType) => {
     <>
       <div className="overflow-hidden embla">
         <div className="embla__viewport" ref={emblaMainRef}>
-          <div className="flex embla__container">
+          <div className="flex embla__container items-start">
             {images.map((image, index) => (
               <div key={index} className="min-w-0 embla__slide flex-full">
                 <img
