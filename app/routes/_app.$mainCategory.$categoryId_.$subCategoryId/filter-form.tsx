@@ -168,6 +168,9 @@ export function FilterForm(filterList: any) {
           value={range}
           onValueChange={handleRangeChange}
           formatLabel={(value) => `$${value}`}
+          setIsMaxChecked={setIsMaxChecked}
+          setIsMinChecked={setIsMinChecked}
+          setRange={setRange}
         />
       </div>
     </>

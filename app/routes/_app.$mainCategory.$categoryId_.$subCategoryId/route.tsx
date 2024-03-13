@@ -304,9 +304,10 @@ export const getProductList = async (
         [],
         true
       );
-      // console.log('fewrerfdfad ', results)
     }
+
     const productFilter = await getProductFilterList(context);
+    console.log("productFilter", productFilter)
     return { productFilter, results, page };
   } catch (error) {
     if (error instanceof Error) {
