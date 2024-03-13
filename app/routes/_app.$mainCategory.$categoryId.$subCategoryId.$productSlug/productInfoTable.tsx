@@ -39,11 +39,13 @@ const invoices = [
 export function ProductInfoTable({
   quantity,
   price,
-  volumePrice
+  volumePrice,
+  className,
 }: {
   quantity: string;
   price: string;
-  volumePrice?: any
+  volumePrice?: any;
+  className?: string;
 }) {
   const [showAllRows, setShowAllRows] = useState(false);
   const defaultRowCount = 2;
@@ -55,9 +57,11 @@ export function ProductInfoTable({
   const volumePriceList = showAllRows
     ? volumePrice
     : volumePrice.slice(0, defaultRowCount);
-   
+
   return (
-    <Table className="min-w-[266px] border-[1px] border-grey-50 h-full transition-all duration-700 ease-in-out delay-200">
+    <Table
+      className={`border-[1px] border-grey-50 h-full transition-all duration-700 ease-in-out delay-200 ${className}`}
+    >
       <TableHeader>
         <TableRow className="bg-secondary-500 hover:bg-secondary-500">
           <TableHead className="text-base font-medium leading-[21px] text-grey-900 text-center">
@@ -69,10 +73,12 @@ export function ProductInfoTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {volumePriceList.map((priceLIst : any, index : any) => (
+        {volumePriceList.map((priceLIst: any, index: any) => (
           <TableRow key={priceLIst?.minQty} className="hover:bg-white">
             <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
-              {`${priceLIst?.minQty} - ${priceLIst?.maxQty ? priceLIst?.maxQty - 1  : ""}`}
+              {`${priceLIst?.minQty} - ${
+                priceLIst?.maxQty ? priceLIst?.maxQty - 1 : 'above'
+              }`}
             </TableCell>
             <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
               {priceLIst?.price}

@@ -1,18 +1,17 @@
-import ProductTab from './productTabs';
-import ProductsRelatedProduct from './productsRelatedProduct';
+import { json, useLoaderData } from '@remix-run/react';
+import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/server-runtime';
+import { ReactNode } from 'react';
 import { BackButton } from '~/components/ui/back-button';
 import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
-import { Routes } from '~/lib/constants/routes.constent';
-import { FC, ReactNode } from 'react';
-import { json, useLoaderData, useParams } from '@remix-run/react';
-import WelderHelment from 'public/weld-helmet.png';
-import ProductInformation from './productInformation';
-import { addProductToCart, getProductDetails } from './product.server';
-import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/server-runtime';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { getAccessToken } from '~/lib/utils/auth-session.server';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { Routes } from '~/lib/constants/routes.constent';
+import { getAccessToken } from '~/lib/utils/auth-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
 import { GET_CART_LIST } from '../_app.cart-list/cart.server';
+import { addProductToCart, getProductDetails } from './product.server';
+import ProductInformation from './productInformation';
+import ProductTab from './productTabs';
+import ProductsRelatedProduct from './productsRelatedProduct';
 
 export type SimilarProduct = {
   name: string;
@@ -49,10 +48,10 @@ export type Product = {
 export const loader = async ({ params, request, context }: LoaderFunctionArgs) => {
   try {
     const { productSlug } = params;
-    const sessionCartInfo = await context.session.get( CART_SESSION_KEY )
-    const cartLists =  await context.storefront.query(GET_CART_LIST, { variables : { cartId : sessionCartInfo?.cartId }} )
-    console.log("cartLists ", cartLists)
-    console.log(" cartListssss nodes ", cartLists?.cart?.lines?.nodes)
+    const sessionCartInfo = await context.session.get(CART_SESSION_KEY)
+    if (sessionCartInfo) {
+      const cartLists = await context.storefront.query(GET_CART_LIST, { variables: { cartId: sessionCartInfo?.cartId } })
+    }
     const { userDetails } = await getUserDetails(request);
     const product = await getProductDetails(userDetails?.id, productSlug as string);
 
@@ -69,6 +68,7 @@ export const loader = async ({ params, request, context }: LoaderFunctionArgs) =
       productPage
     });
   } catch (error) {
+    console.log("first", error)
     return json({});
   }
 };
@@ -95,8 +95,8 @@ export default function route() {
         </Breadcrumb>
       </div>
       <ProductInformation product={product} />
-      <ProductTab />
-      {/* <ProductsRelatedProduct products={product.similarProducts} /> */}
+      <ProductTab description={product?.description} />
+      <ProductsRelatedProduct />
     </ProductDetailPageWrapper>
   );
 }
@@ -110,10 +110,7 @@ export const action = async ({ request, params, context }: ActionFunctionArgs) =
     const { session } = context
     const fromData = await request.formData()
     const cartInfo = Object.fromEntries(fromData)
-    console.log("data is ", cartInfo)
     const accessTocken = await getAccessToken(context) as string
-    console.log("access token", accessTocken)
-    // const { userDetails } = await getUserDetails(request);
     const addToCart = await addProductToCart(cartInfo, accessTocken, context, request)
     return json({}, {
       headers: {
@@ -123,12 +120,10 @@ export const action = async ({ request, params, context }: ActionFunctionArgs) =
 
   } catch (error) {
     if (error instanceof Error) {
-      console.log("thisi is err", error?.message)
-      return error?.message
+      console.log("This is error", error?.message);
+      return error?.message;
     }
-    console.log("thisi is err")
-    return "error occures"
+    console.log("This is error");
+    return "error occured";
   }
-  // console.log("head forted ", request)
-  // return true
 }

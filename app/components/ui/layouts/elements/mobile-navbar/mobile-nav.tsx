@@ -1,23 +1,23 @@
-import {SetStateAction, useRef, useState} from 'react';
+import { SetStateAction, useRef, useState } from 'react';
 import CloseMenu from '~/components/icons/closeMenu';
 import HamburgerIcon from '~/components/icons/hamburgerIcon';
-import {Button} from '../../../button';
+import { Button } from '../../../button';
 import SearchIcon from '~/components/icons/search';
-import {LogoIcon, NotificationNavbar} from '../../top-header';
-import {useOutsideClick} from '~/hooks/useOutsideClick';
+import { LogoIcon, NotificationNavbar } from '../../top-header';
+import { useOutsideClick } from '~/hooks/useOutsideClick';
 import UserProfle from './user-profle';
 import NavMenu from './nav-menu';
 import OrderTrackMobile from './order-track';
 import LogoutForm from './logout-form';
 import UserProfile from './user-profle';
-import {mobileMenuItemsData} from '../bottom-header-menu-items';
-import {Link} from '@remix-run/react';
-import {useHamburgerMenu} from '../HamburgerMenuContext';
+import { mobileMenuItemsData } from '../bottom-header-menu-items';
+import { Link } from '@remix-run/react';
+import { useHamburgerMenu } from '../HamburgerMenuContext';
 
 export default function MobileNav() {
   // const [isOpen, setisOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const {isOpen, toggleMenu} = useHamburgerMenu();
+  const { isOpen, toggleMenu } = useHamburgerMenu();
   const mobileNavSectionRef = useRef<HTMLDivElement>(null);
   useOutsideClick(mobileNavSectionRef, () => toggleMenu(false));
 

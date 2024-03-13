@@ -1,25 +1,24 @@
-import {ColumnDef, Table, flexRender, Row} from '@tanstack/react-table';
+import {ColumnDef, Row, Table, flexRender} from '@tanstack/react-table';
+import {ChevronsUpDown} from 'lucide-react';
 import {Fragment} from 'react';
-import {BulkTable} from '~/routes/_app.cart-list/order-my-products/bulk-table';
+import ArrowDown from '~/components/icons/arrowDown';
+import ArrowUp from '~/components/icons/arrowUp';
 import {
-  ArrowUpDown,
-  BlueArrowDown,
-  BlueArrowUp,
-} from '~/components/icons/arrowUpDown';
-import {
-  Table as TableShadcn,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
+  Table as TableShadcn,
 } from '~/components/ui/table';
+import {ArrowUpDown, BlueArrowDown, BlueArrowUp} from '../icons/arrowUpDown';
 
 type DataTableProps<T> = {
   table: Table<T>;
   columns?: ColumnDef<T>[];
   renderSubComponent?: (props: {row: Row<T>}) => React.ReactElement;
   getRowCanExpand?: (row: Row<T>) => boolean;
+  className?: string;
 };
 
 export function DataTable<T>({
@@ -27,9 +26,10 @@ export function DataTable<T>({
   columns,
   renderSubComponent,
   getRowCanExpand,
+  className,
 }: DataTableProps<T>) {
   return (
-    <TableShadcn className="bg-neutral-white" data-cy="table">
+    <TableShadcn className={`${className} bg-neutral-white`} data-cy="table">
       <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>

@@ -1,11 +1,11 @@
-import {useEffect} from 'react';
-import {displayToast} from '~/components/ui/toast';
-import {Toaster} from '~/components/ui/toaster';
-import {useNonce} from '@shopify/hydrogen';
+import { useEffect } from 'react';
+import { displayToast } from '~/components/ui/toast';
+import { Toaster } from '~/components/ui/toaster';
+import { useNonce } from '@shopify/hydrogen';
 import tailwindStyles from '~/styles/tailwind.css';
-import type {CustomerAccessToken} from '@shopify/hydrogen/storefront-api-types';
+import type { CustomerAccessToken } from '@shopify/hydrogen/storefront-api-types';
 import favicon from '../public/favicon.svg';
-import {Layout} from '~/components/Layout';
+import { Layout } from '~/components/Layout';
 import nProgressStyles from 'nprogress/nprogress.css';
 import {
   defer,
@@ -31,7 +31,7 @@ import {
   getMessageSession,
   messageCommitSession,
 } from '~/lib/utils/toast-session.server';
-import {useGlobalLoader} from './hooks/useGlobalLoader';
+import { useGlobalLoader } from './hooks/useGlobalLoader';
 
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
@@ -56,7 +56,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 
 export function links() {
   return [
-    {rel: 'stylesheet', href: tailwindStyles},
+    { rel: 'stylesheet', href: tailwindStyles },
     {
       rel: 'preconnect',
       href: 'https://cdn.shopify.com',
@@ -65,8 +65,8 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
-    {rel: 'stylesheet', href: nProgressStyles},
-    {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    { rel: 'stylesheet', href: nProgressStyles },
+    { rel: 'icon', type: 'image/svg+xml', href: favicon },
   ];
 }
 
@@ -75,13 +75,13 @@ export const useRootLoaderData = () => {
   return root?.data as SerializeFrom<typeof loader>;
 };
 
-export async function loader({context, request}: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
   const messageSession = await getMessageSession(request);
 
   const toastMessage = messageSession.get('toastMessage') as ToastMessage;
 
   if (!toastMessage) {
-    return json({toastMessage: null});
+    return json({ toastMessage: null });
   }
 
   if (!toastMessage.type) {
@@ -132,15 +132,15 @@ export async function loader({context, request}: LoaderFunctionArgs) {
   // );
 
   return json(
-    {toastMessage},
-    {headers: {'Set-Cookie': await messageCommitSession(messageSession)}},
+    { toastMessage },
+    { headers: { 'Set-Cookie': await messageCommitSession(messageSession) } },
   );
 }
 
 export default function App() {
   const nonce = useNonce();
 
-  const {toastMessage} = useLoaderData<typeof loader>();
+  const { toastMessage } = useLoaderData<typeof loader>();
 
   useGlobalLoader();
 
@@ -148,14 +148,14 @@ export default function App() {
     if (!toastMessage) {
       return;
     }
-    const {message, type} = toastMessage;
+    const { message, type } = toastMessage;
 
     switch (type) {
       case 'success':
-        displayToast({message, type});
+        displayToast({ message, type });
         break;
       case 'error':
-        displayToast({message, type});
+        displayToast({ message, type });
         break;
       default:
         throw new Error(`${type} is not handled`);
@@ -242,7 +242,7 @@ async function validateCustomerAccessToken(
   let isLoggedIn = false;
   const headers = new Headers();
   if (!customerAccessToken?.accessToken || !customerAccessToken?.expiresAt) {
-    return {isLoggedIn, headers};
+    return { isLoggedIn, headers };
   }
 
   const expiresAt = new Date(customerAccessToken.expiresAt).getTime();
@@ -256,7 +256,7 @@ async function validateCustomerAccessToken(
     isLoggedIn = true;
   }
 
-  return {isLoggedIn, headers};
+  return { isLoggedIn, headers };
 }
 
 const MENU_FRAGMENT = `#graphql

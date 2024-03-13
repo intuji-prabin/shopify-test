@@ -1,5 +1,5 @@
-import {PlaceOrder} from '../../top-header';
-import {TrackAnOrderButton} from '../track-an-order-dialog';
+import { PlaceOrder } from '../../top-header';
+import { TrackAnOrderButton } from '../track-an-order-dialog';
 
 export default function OrderTrackMobile() {
   return (
