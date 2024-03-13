@@ -7,7 +7,7 @@ export function SearchInput() {
   const submit = useSubmit();
   const [searchParams] = useSearchParams();
 
-  const debounceSubmit = debounce((form: any) => submit(form), 300);
+  const debounceSubmit = debounce((form: HTMLFormElement) => submit(form), 300);
   const handleSubmit = (event: FormEvent<HTMLFormElement>) =>
     debounceSubmit(event.currentTarget);
 

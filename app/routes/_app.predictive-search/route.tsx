@@ -1,81 +1,147 @@
+import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
+import {AppLoadContext} from '@shopify/remix-oxygen';
 import {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  json,
-} from '@remix-run/server-runtime';
+  PredictiveCollectionFragment,
+  PredictiveProductFragment,
+  PredictiveQueryFragment,
+  PredictiveSearchQuery,
+} from 'storefrontapi.generated';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 
-export interface TProduct {
-  __typename: string;
+type PredicticeSearchResultItemImage =
+  | PredictiveCollectionFragment['image']
+  | PredictiveProductFragment['variants']['nodes'][0]['image'];
+
+type PredictiveSearchResultItemPrice =
+  | PredictiveProductFragment['variants']['nodes'][0]['price'];
+
+export type NormalizedPredictiveSearchResultItem = {
+  __typename: string | undefined;
+  handle: string;
   id: string;
+  image?: PredicticeSearchResultItemImage;
+  price?: PredictiveSearchResultItemPrice;
+  styledTitle?: string;
   title: string;
-  handle: string;
-  trackingParameters: string;
-  collections: Collections;
-  variants: Variants;
-}
-
-export interface Collections {
-  nodes: CollectionsNode[];
-}
-
-export interface CollectionsNode {
-  id: string;
-  handle: string;
-  parent_handle: ParentHandle;
-}
-
-export interface ParentHandle {
-  value: string;
-}
-
-export interface Variants {
-  nodes: VariantsNode[];
-}
-
-export interface VariantsNode {
-  id: string;
-  image: Image;
-  price: Price;
-}
-
-export interface Image {
   url: string;
-  altText: null;
-  width: number;
-  height: number;
+};
+
+type NormalizedPredictiveSearchResults = Array<
+  | {type: 'queries'; items: Array<NormalizedPredictiveSearchResultItem>}
+  | {type: 'products'; items: Array<NormalizedPredictiveSearchResultItem>}
+>;
+
+export type NormalizedPredictiveSearch = {
+  results: NormalizedPredictiveSearchResults;
+};
+
+const NO_PREDICTIVE_SEARCH_RESULTS: NormalizedPredictiveSearchResults = [
+  {type: 'queries', items: []},
+  {type: 'products', items: []},
+];
+
+/**
+ *
+ * @description normalize the predictive search results
+ * @param predictiveSearch
+ */
+function normalizePredictiveSearchResults(
+  predictiveSearch: PredictiveSearchQuery['predictiveSearch'],
+): NormalizedPredictiveSearch {
+  const results: NormalizedPredictiveSearchResults = [];
+
+  if (!predictiveSearch) {
+    return {
+      results: NO_PREDICTIVE_SEARCH_RESULTS,
+    };
+  }
+
+  if (predictiveSearch.queries.length) {
+    results.push({
+      type: 'queries',
+      items: predictiveSearch.queries.map((query: PredictiveQueryFragment) => {
+        return {
+          __typename: query.__typename,
+          handle: '',
+          id: query.text,
+          image: undefined,
+          title: query.text,
+          styledTitle: query.styledText,
+          url: '',
+        };
+      }),
+    });
+  }
+
+  if (predictiveSearch.products.length) {
+    results.push({
+      type: 'products',
+      items: predictiveSearch.products.map(
+        (product: PredictiveProductFragment) => {
+          return {
+            __typename: product.__typename,
+            handle: product.handle,
+            id: product.id,
+            image: product.variants?.nodes?.[0]?.image,
+            title: product.title,
+            url: '',
+            price: product.variants.nodes[0].price,
+          };
+        },
+      ),
+    });
+  }
+
+  return {results};
 }
 
-export interface Price {
-  amount: string;
-  currencyCode: string;
-}
-
-export const searchProduct = async (
-  searchTerm: string,
-  context: any,
-  limit?: number,
-) => {
-  const searchData = await context.storefront.query(SEARCH_QUERY, {
-    variables: {
-      limit: 10,
-      limitScope: 'EACH',
-      searchTerm,
-      types: ['PRODUCT', 'QUERY'],
+async function getSearchProduct({
+  limit = 6,
+  context,
+  searchTerm,
+}: {
+  searchTerm: string;
+  context: AppLoadContext;
+  limit?: number;
+}) {
+  const searchData: PredictiveSearchQuery = await context.storefront.query(
+    PREDICTIVE_SEARCH_QUERY,
+    {
+      variables: {
+        limit,
+        limitScope: 'EACH',
+        searchTerm,
+        types: ['PRODUCT', 'QUERY'],
+      },
     },
-  });
+  );
 
   if (!searchData) {
     throw new Error('No data returned from Shopify API');
   }
 
-  const data = {
-    ...formatData(searchData),
-    queries: searchData?.predictiveSearch?.queries,
-  };
-  return searchData;
-};
+  const {results} = normalizePredictiveSearchResults(
+    searchData.predictiveSearch,
+  );
 
-const SEARCH_QUERY = `#graphql
+  return results;
+}
+
+export async function loader({context, request}: LoaderFunctionArgs) {
+  await isAuthenticate(context);
+
+  const {searchParams} = new URL(request.url);
+
+  const searchTerm = searchParams.get('searchTerm');
+  if (searchTerm) {
+    const results = await getSearchProduct({searchTerm, context});
+
+    return json({results});
+  }
+  return null;
+}
+
+const PREDICTIVE_SEARCH_QUERY = `#graphql
   fragment PredictiveProduct on Product {
   __typename
   id
@@ -121,6 +187,7 @@ query predictiveSearch($limit: Int!, $limitScope: PredictiveSearchLimitScope!, $
     limitScope: $limitScope
     query: $searchTerm
     types: $types
+    searchableFields:[VARIANTS_SKU,TITLE,VARIANTS_TITLE]
   ) {
     products {
       ...PredictiveProduct
@@ -131,49 +198,3 @@ query predictiveSearch($limit: Int!, $limitScope: PredictiveSearchLimitScope!, $
   }
 }
 ` as const;
-
-const formatData = (data: any) => {
-  let products: any[] = [];
-
-  if (data?.predictiveSearch?.products) {
-    data.predictiveSearch.products.forEach((item: TProduct) => {
-      console.log('item', item);
-
-      console.log('collections', item.collections.nodes);
-
-      products.push({
-        title: item.title,
-        handle: item.handle,
-        image: item.variants.nodes[0].image.url,
-        price: item.variants.nodes[0].price.amount,
-        currencyCode: item.variants.nodes[0].price.currencyCode,
-        parent: item.collections.nodes[0].parent_handle.value,
-        childCategory: item.collections.nodes[0].handle,
-        detailUrl:
-          item.collections.nodes[0].parent_handle.value +
-          '/' +
-          item.collections.nodes[0].handle +
-          '/' +
-          item.handle,
-      });
-    });
-  }
-
-  console.log('products', products);
-
-  return {products};
-};
-export async function loader({}: LoaderFunctionArgs) {
-  return null;
-}
-
-export async function action({request, context}: ActionFunctionArgs) {
-  const formData = await request.formData();
-  const searchTerm = formData.get('searchTerm') as string;
-
-  const results = await searchProduct(searchTerm, context);
-
-  console.log('results', results);
-
-  return json({products: results.products});
-}

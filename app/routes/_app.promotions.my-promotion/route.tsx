@@ -1,14 +1,14 @@
-import React, { FormEvent, useRef, useState } from 'react';
-import { Button } from '~/components/ui/button';
-import { MetaFunction } from '@shopify/remix-oxygen';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { UploadIcon } from '~/components/icons/upload';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { ENDPOINT } from '~/lib/constants/endpoint.constant';
-import { useLoadMore } from '~/hooks/useLoadMore';
+import React, {FormEvent, useRef, useState} from 'react';
+import {Button} from '~/components/ui/button';
+import {MetaFunction} from '@shopify/remix-oxygen';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {UploadIcon} from '~/components/icons/upload';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {useLoadMore} from '~/hooks/useLoadMore';
 import PromotionCard from '~/routes/_app.promotions/promotion-card';
-import { filterOptions } from '~/routes/_app.promotions/promotion-constants';
-import { deletePromotion } from '~/routes/_app.promotions.my-promotion/my-promotion.server';
+import {filterOptions} from '~/routes/_app.promotions/promotion-constants';
+import {deletePromotion} from '~/routes/_app.promotions.my-promotion/my-promotion.server';
 import {
   Form,
   NavLink,
@@ -34,33 +34,33 @@ import {
 } from '~/lib/utils/toast-session.server';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'My Promotion' }];
+  return [{title: 'My Promotion'}];
 };
 
-export async function loader({ context, request }: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
 
-  const { searchParams } = new URL(request.url);
+  const {searchParams} = new URL(request.url);
 
   const paramsList = Object.fromEntries(searchParams);
 
   const customerId = userDetails?.id;
 
-  const { promotions, totalPromotionCount } = await getPromotions({
+  const {promotions, totalPromotionCount} = await getPromotions({
     customerId,
     custom: true,
     paramsList,
   });
 
-  return json({ promotions, totalPromotionCount });
+  return json({promotions, totalPromotionCount});
 }
 
-export async function action({ request, context }: ActionFunctionArgs) {
+export async function action({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
 
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
   const customerId = userDetails?.id;
 
   const messageSession = await getMessageSession(request);
@@ -100,13 +100,13 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function MyPromotionsPage() {
-  const { promotions, totalPromotionCount } = useLoaderData<typeof loader>();
+  const {promotions, totalPromotionCount} = useLoaderData<typeof loader>();
 
   const [checkedPromotions, setCheckedPromotions] = useState<string[]>([]);
 
   const submit = useSubmit();
 
-  const { isLoading, isLoadMoreDisabled, handleLoadMore } = useLoadMore({
+  const {isLoading, isLoadMoreDisabled, handleLoadMore} = useLoadMore({
     totalPromotionCount,
   });
 
@@ -124,8 +124,9 @@ export default function MyPromotionsPage() {
     );
   };
 
-  const exportUrl = `${ENDPOINT.PROMOTION.BULK_EXPORT
-    }?promotion_id=${checkedPromotions.join(',')}`;
+  const exportUrl = `${
+    ENDPOINT.PROMOTION.BULK_EXPORT
+  }?promotion_id=${checkedPromotions.join(',')}`;
 
   return (
     <div className="pt-10 sm:pt-0">
@@ -167,19 +168,25 @@ export default function MyPromotionsPage() {
 
             <div className="absolute inset-x-0 -top-14 sm:-top-16 sm:right-0 sm:left-auto">
               {checkedPromotions.length > 0 ? (
-                <div className="flex items-center gap-x-2" data-cy="item-select-header">
-                  <p className="font-bold text-lg leading-5.5 italic basis-full sm:basis-auto" data-cy="item-selected">
+                <div
+                  className="flex items-center gap-x-2"
+                  data-cy="item-select-header"
+                >
+                  <p
+                    className="font-bold text-lg leading-5.5 italic basis-full sm:basis-auto"
+                    data-cy="item-selected"
+                  >
                     {checkedPromotions.length} items selected
                   </p>
                   <NavLink
                     to={exportUrl}
                     reloadDocument
-                    className={({ isActive, isPending }) =>
+                    className={({isActive, isPending}) =>
                       isPending
                         ? 'bg-red-500'
                         : isActive
-                          ? 'active'
-                          : 'text-neutral-white font-bold italic uppercase bg-primary-500 disabled:bg-grey-50 px-6 py-2 text-sm leading-6 flex items-center gap-x-1.5'
+                        ? 'active'
+                        : 'text-neutral-white font-bold italic uppercase bg-primary-500 disabled:bg-grey-50 px-6 py-2 text-sm leading-6 flex items-center gap-x-1.5'
                     }
                   >
                     <UploadIcon /> Export
@@ -262,7 +269,10 @@ export function ErrorBoundary() {
     return (
       <div className="flex justify-center items-center h-[220px] flex-col gap-2">
         {' '}
-        <h4 className="text-center font-bold leading-[29px] text-2xl">
+        <h4
+          className="text-center font-bold leading-[29px] text-2xl"
+          data-cy="not-found"
+        >
           No promotions found
         </h4>
         <p className="text-lg leading-[22px]">Try editing promotions</p>
