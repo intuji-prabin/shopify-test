@@ -1,17 +1,17 @@
 import { json, useLoaderData } from '@remix-run/react';
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { ReactNode } from 'react';
+import { GET_CART_LIST } from '../_app.cart-list/cart.server';
+import { addProductToCart, getProductDetails } from './product.server';
+import ProductInformation from './productInformation';
+import ProductTab from './productTabs';
+import ProductsRelatedProduct from './productsRelatedProduct';
 import { BackButton } from '~/components/ui/back-button';
 import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 import { Routes } from '~/lib/constants/routes.constent';
 import { getAccessToken } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
-import { GET_CART_LIST } from '../_app.cart-list/cart.server';
-import { addProductToCart, getProductDetails } from './product.server';
-import ProductInformation from './productInformation';
-import ProductTab from './productTabs';
-import ProductsRelatedProduct from './productsRelatedProduct';
 
 export type SimilarProduct = {
   name: string;
@@ -55,16 +55,10 @@ export const loader = async ({ params, request, context }: LoaderFunctionArgs) =
     const { userDetails } = await getUserDetails(request);
     const product = await getProductDetails(userDetails?.id, productSlug as string);
 
-    const mainCategory = params.mainCategory;
-    const categoryId = params.categoryId;
-    const subCategoryId = params.subCategoryId;
     const productPage = params.productSlug;
 
     return json({
       product,
-      mainCategory,
-      categoryId,
-      subCategoryId,
       productPage
     });
   } catch (error) {
@@ -74,20 +68,14 @@ export const loader = async ({ params, request, context }: LoaderFunctionArgs) =
 };
 
 export default function route() {
-  const { product, mainCategory, categoryId, subCategoryId, productPage } = useLoaderData<typeof loader>();
+  const { product, productPage } = useLoaderData<typeof loader>();
   return (
     <ProductDetailPageWrapper>
       <div className="flex items-center pt-6 pb-4 ">
         <BackButton title="" />
         <Breadcrumb>
-          <BreadcrumbItem href={Routes.CATEGORIES} className="capitalize">
-            {mainCategory?.split('-').join(' ')}
-          </BreadcrumbItem>
-          <BreadcrumbItem href={Routes.CATEGORIES} className="capitalize">
-            {categoryId?.split('-').join(' ')}
-          </BreadcrumbItem>
-          <BreadcrumbItem href={`/${mainCategory}/${categoryId}/${subCategoryId}`} className="capitalize">
-            {subCategoryId?.split('-').join(' ')}
+          <BreadcrumbItem href="/categories" className="capitalize">
+            Product
           </BreadcrumbItem>
           <BreadcrumbItem className="capitalize text-grey-800">
             {productPage?.split('-').join(' ')}

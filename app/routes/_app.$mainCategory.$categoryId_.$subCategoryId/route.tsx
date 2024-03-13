@@ -24,13 +24,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { LeftArrow } from '~/components/icons/left';
 import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
-import { addProductToCart } from '../_app.$mainCategory.$categoryId.$subCategoryId.$productSlug/product.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
+import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
