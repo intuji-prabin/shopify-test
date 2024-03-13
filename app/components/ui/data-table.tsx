@@ -1,4 +1,3 @@
-
 import { ColumnDef, Row, Table, flexRender } from '@tanstack/react-table';
 import { ChevronsUpDown } from 'lucide-react';
 import { Fragment } from 'react';
@@ -56,17 +55,11 @@ export function DataTable<T>({
                       </span>
                       {header.column.getIsSorted() ? (
                         {
-                          asc: <ArrowUp fillColor="#636969" />,
-                          desc: <ArrowDown fillColor="#636969" />,
+                          asc: <BlueArrowUp />,
+                          desc: <BlueArrowDown />,
                         }[(header.column.getIsSorted() as string) ?? null]
                       ) : (
-                        <>
-                          {header.column.getCanSort() ? (
-                            <ChevronsUpDown className="w-4.5 h-4.5" />
-                          ) : (
-                            ''
-                          )}
-                        </>
+                        <>{header.column.getCanSort() ? <ArrowUpDown /> : ''}</>
                       )}
                     </div>
                   )}

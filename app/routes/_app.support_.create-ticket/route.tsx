@@ -89,7 +89,7 @@ export async function action({request, context}: ActionFunctionArgs) {
 
     const results = await useFetch<CreateTicketResponse>({
       method: AllowedHTTPMethods.POST,
-      url: `${ENDPOINT.SUPPORT.CREATE_TICKET}/${customerId}`,
+      url: `${ENDPOINT.SUPPORT.TICKETS}/${customerId}`,
       body,
     });
 
