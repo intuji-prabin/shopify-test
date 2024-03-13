@@ -20,7 +20,7 @@ export function FilterForm(filterList: any) {
   );
   const filteredValues = filteredData.map((item: any) => item.value);
 
-  const initialRange = [3, 100];
+  const initialRange = [1, 300];
   const [range, setRange] = useState(initialRange);
   const [isMinChecked, setIsMinChecked] = useState(false);
   const [isMaxChecked, setIsMaxChecked] = useState(false);

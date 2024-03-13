@@ -31,6 +31,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
+import { getFilterProduct } from './filter.server';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -46,7 +47,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     categoryId,
     subCategoryId,
     mainCategory,
-  });
+  }, { headers : [ ['Set-Cookie', await context.session.commit({})] ]});
 }
 
 export const action = async ({ request, context }: ActionFunctionArgs) => {
@@ -288,12 +289,23 @@ export const getProductList = async (
       return { [value]: searchParams.getAll(value) };
     });
 
-    const results = await getProducts(
-      context,
-      params,
-      searchList,
-      userDetails?.id,
-    );
+    let results
+    if( searchList.length > 0 ) {
+      results = await getFilterProduct( context,
+        params,
+        searchList,
+        userDetails?.id, )
+    } else {
+      results = await getProducts(
+        context,
+        params,
+        searchList,
+        userDetails?.id,
+        [],
+        true
+      );
+      // console.log('fewrerfdfad ', results)
+    }
     const productFilter = await getProductFilterList(context);
     return { productFilter, results, page };
   } catch (error) {
