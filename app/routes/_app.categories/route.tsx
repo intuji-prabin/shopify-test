@@ -19,7 +19,6 @@ export async function loader({ context }: ActionFunctionArgs) {
 export default function CategoriesPage() {
   const { handleScroll } = useScroll('categories-menu');
   const { categoriesDetail } = useLoaderData<typeof loader>();
-  console.log("first", categoriesDetail)
 
   useEffect(() => {
     const handleScroll: EventListener = () => {

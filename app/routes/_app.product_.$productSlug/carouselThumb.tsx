@@ -1,11 +1,11 @@
 import useEmblaCarousel, { EmblaOptionsType } from 'embla-carousel-react';
-import React, { useCallback, useEffect, useState } from 'react';
-import ArrowDown, { BlueArrowDown } from '~/components/icons/arrowDown';
+import { useCallback, useEffect, useState } from 'react';
+import { BlueArrowDown } from '~/components/icons/arrowDown';
 import ArrowForward, { BlueArrowForward } from '~/components/icons/arrowForward';
-import { LeftBlueArrow } from '~/components/icons/left';
-import { useMediaQuery } from '../../hooks/useMediaQuery';
-import { ArrowLeft } from 'lucide-react';
 import ArrowPrevious from '~/components/icons/arrowPrevious';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
+import AutoHeight from 'embla-carousel-auto-height';
+
 type ImageType = {
   src: string;
   alt: string;
@@ -23,7 +23,7 @@ const CarouselThumb = ({
   images,
 }: PropType) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [emblaMainRef, emblaMainApi] = useEmblaCarousel(mainCarouseloptions);
+  const [emblaMainRef, emblaMainApi] = useEmblaCarousel(mainCarouseloptions, [AutoHeight()]);
   const [emblaThumbsRef, emblaThumbsApi] = useEmblaCarousel(
     thumbNailCarouseloptions,
   );
@@ -56,18 +56,56 @@ const CarouselThumb = ({
     onSelect();
     emblaMainApi.on('select', onSelect);
     emblaMainApi.on('reInit', onSelect);
+    console.log("reInit")
   }, [emblaMainApi, onSelect]);
+
+  type UsePrevNextButtonsType = {
+    prevBtnDisabled: boolean
+    nextBtnDisabled: boolean
+  }
+
+  const usePrevNextButtons = (
+    emblaApi: EmblaOptionsType | undefined,
+  ): UsePrevNextButtonsType => {
+    const [prevBtnDisabled, setPrevBtnDisabled] = useState(true)
+    const [nextBtnDisabled, setNextBtnDisabled] = useState(true)
+
+    const onSelect = useCallback((emblaApi: EmblaOptionsType) => {
+      setPrevBtnDisabled(!emblaApi.canScrollPrev())
+      setNextBtnDisabled(!emblaApi.canScrollNext())
+    }, [])
+
+    useEffect(() => {
+      if (!emblaApi) return
+
+      onSelect(emblaApi)
+      emblaApi.on('reInit', onSelect)
+      emblaApi.on('select', onSelect)
+    }, [emblaApi, onSelect])
+
+    return {
+      prevBtnDisabled,
+      nextBtnDisabled,
+    }
+  }
+
+  const {
+    prevBtnDisabled,
+    nextBtnDisabled,
+  } = usePrevNextButtons(emblaThumbsApi)
+
   const matches = useMediaQuery('(min-width: 1024px)');
+
   return (
-    <section className="flex flex-col-reverse gap-[17px] overflow-y-hidden lg:flex-row product__detSlider">
+    <div className="flex flex-col-reverse gap-y-4 gap-x-2.5 overflow-y-hidden lg:flex-row product__detSlider items-start">
       {/* Thumbnail Carousel Begins Here */}
-      <div className="relative  embla-thumbs  lg:min-w-[85px] overflow-y-hidden">
+      <div className="relative embla-thumbs w-full lg:w-[85px] lg:my-4.5">
         <div
           className="overflow-hidden embla-thumbs__viewport "
           ref={emblaThumbsRef}
         >
           <div
-            className={`flex embla-thumbs__container ${matches
+            className={`flex embla-thumbs__container max-h-[457px] ${matches
               ? 'flex-col gap-y-2'
               : 'flex-row gap-x-2 max-h-[unset]'
               }`}
@@ -80,14 +118,14 @@ const CarouselThumb = ({
               >
                 <button
                   onClick={() => onThumbClick(index)}
-                  className={`p-0 m-0 transition-opacity delay-75 bg-transparent appearance-none cursor-pointer embla-thumbs__slide__button touch-manipulation decoration-0 lg:px-4 lg:py-[10px] border-[1px] border-grey-50  w-full flex items-center justify-center `}
+                  className={`py-2 px-1 m-0 transition-opacity delay-75 bg-transparent appearance-none cursor-pointer embla-thumbs__slide__button touch-manipulation decoration-0 lg:p-2.5 border-[1px] border-grey-50 flex items-center justify-center w-full min-w-[85px] lg:min-w-[unset] h-[85px]`}
                   type="button"
                 >
-                  <figure>
+                  <figure className='h-full'>
                     <img
                       src={image?.url}
                       alt={image.alt}
-                      className="object-center"
+                      className="object-contain h-full"
                     />
                   </figure>
                 </button>
@@ -96,16 +134,19 @@ const CarouselThumb = ({
           </div>
         </div>
         <button
-          className={`absolute z-10 flex items-center justify-center h-auto transform lg:translate-x-[-50%] bg-white rounded-full cursor-pointer embla__button embla__prev w-9 aspect-square  swiper-button image-swiperthumb-button-next shadow-base top-1/2 translate-x-0 -translate-y-1/2 left-0 lg:left-[50%] lg:top-[2%] ${matches ? 'flex-col' : 'flex-row'
+          className={`absolute z-10 flex items-center justify-center h-auto transform lg:-translate-x-1/2 bg-white rounded-full cursor-pointer embla__button embla__prev w-9 aspect-square swiper-button image-swiperthumb-button-next shadow-base top-1/2 -translate-y-1/2 left-0 lg:left-[50%] lg:top-0 ${matches ? 'flex-col' : 'flex-row'
             }`}
           onClick={scrollPrev}
+          disabled={prevBtnDisabled}
         >
           {matches ? <BlueArrowForward /> : <ArrowPrevious />}
         </button>
         <button
-          className={`absolute z-10 flex items-center justify-center h-auto transform translate-x-[-50%] bg-white rounded-full cursor-pointer embla__button embla__next  w-9 aspect-square  swiper-button image-swiperthumb-button-next shadow-base top-1/2 -translate-y-1/2 right-0  lg:top-[92%] lg:left-[50%] lg:-translate-y-0 ${matches ? 'flex-col' : 'flex-row'
+          className={`absolute z-10 flex items-center justify-center h-auto transform lg:-translate-x-1/2 bg-white rounded-full cursor-pointer embla__button embla__next w-9 aspect-square swiper-button image-swiperthumb-button-next shadow-base top-1/2 -translate-y-1/2 right-0 lg:top-full lg:left-[50%] 
+         ${matches ? 'flex-col' : 'flex-row'
             }`}
           onClick={scrollNext}
+          disabled={nextBtnDisabled}
         >
           {matches ? <BlueArrowDown /> : <ArrowForward fillColor={'#0092CF'} />}
         </button>
@@ -113,7 +154,7 @@ const CarouselThumb = ({
       {/* Thumbnail Carousel Ends Here */}
 
       {/* Main Product Image Carousel Begins Here */}
-      <div className="overflow-hidden embla max-h-[532px] max-w-full  lg:max-w-[492px]">
+      <div className="overflow-hidden embla lg:h-[532px] w-full lg:w-[calc(100%_-_95px)]">
         <div className="h-full embla__viewport" ref={emblaMainRef}>
           <div className="flex h-full embla__container">
             {images.map((image: any, index: any) => (
@@ -134,7 +175,7 @@ const CarouselThumb = ({
         </div>
       </div>
       {/* Main Product Image Carousel Ends Here */}
-    </section>
+    </div>
   );
 };
 

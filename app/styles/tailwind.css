@@ -643,20 +643,12 @@ input[type='radio']:checked + label {
   align-items: flex-start;
 }
 
-/* Styling Single Embla Slide */
 .embla-thumbs__container .embla__slide {
-  flex: 0 0 100%; /* Default slide covers 100% of the viewport */
-  max-height: 85px;
-  max-width: 85px;
+  flex: 0 0 calc(20% - 7px);
 }
-
-@media (min-width: 1024px) {
+@media (max-width: 768px) {
   .embla-thumbs__container .embla__slide {
-    flex: 0 0 50%; /* Breakpoint SM slide covers 50% of the viewport */
-    max-height: 85px;
-  }
-  .product__detSlider .embla-thumbs__container .embla__slide {
-    max-height: unset;
+    flex: 0 0 calc(25% - 6px);
   }
 }
 /* Product Detail Page Embla Carousel Styles End Here */
@@ -833,4 +825,28 @@ div[data-state='open'].fixed.inset-0 {
 }
 .bg-dialogBgColor {
   background-color: rgba(255, 255, 255, 0.95);
+}
+.price-tooltip[data-tooltip]:before {
+  @apply left-[unset] -right-2;
+}
+.embla-thumbs button:disabled svg path {
+  fill: #0092cf !important;
+}
+.embla-thumbs .embla__button:disabled {
+  @apply opacity-30 hidden lg:flex;
+}
+.product_det__pricing {
+  @apply p-0;
+}
+.product_det__pricing .price {
+  @apply text-[40px];
+}
+.product_det__table th {
+  @apply h-[33px];
+}
+.product_det__table td {
+  @apply p-2;
+}
+.product_det__table tfoot td {
+  @apply py-1.5;
 }

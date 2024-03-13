@@ -17,9 +17,11 @@ export default function OrderSummary({
         frieght={frieght}
         subcharges={subcharges}
         gst={gst} />
-      <Form method="POST">
-        <ShoppingDetails shippingAddresses={shippingAddresses} />
-      </Form>
+      {shippingAddresses ?
+        <Form method="POST">
+          <ShoppingDetails shippingAddresses={shippingAddresses} />
+        </Form>
+        : <p className='p-6 text-red-500 font-medium'>You do not have any shipping address added. Please add one to place order.</p>}
     </div>
   );
 }

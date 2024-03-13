@@ -1,7 +1,7 @@
-import {useCallback, useState, useEffect} from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import {EmblaCarouselType, EmblaOptionsType} from 'embla-carousel-react';
-import {LeftArrow} from '../icons/left';
+import { EmblaCarouselType, EmblaOptionsType } from 'embla-carousel-react';
+import { LeftArrow } from '../icons/left';
 import AutoHeight from 'embla-carousel-auto-height';
 
 type ImageType = {
@@ -16,7 +16,7 @@ type PropType = {
 };
 
 const Carousel = (props: PropType) => {
-  const {options, images, sectionClass} = props;
+  const { options, images, sectionClass } = props;
   const [emblaRef, emblaApi] = useEmblaCarousel(options, [AutoHeight()]);
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
@@ -61,9 +61,9 @@ const Carousel = (props: PropType) => {
       <div
         className="embla__viewport"
         ref={emblaRef}
-        // style={{maxHeight: maxHeight + 'px'}}
+      // style={{maxHeight: maxHeight + 'px'}}
       >
-        <div className="flex embla__container">
+        <div className="flex embla__container items-start">
           {images.map((image, index) => {
             return (
               image?.src && (

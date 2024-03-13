@@ -1,6 +1,7 @@
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import { PRODUCT_STOCK_CODE, PRODUCT_STOCK_CODE_INFO } from '~/lib/constants/product.session';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 
 type FilterItem = {
@@ -14,21 +15,36 @@ export async function getProducts(
   params: any,
   filterList: FilterType,
   customerId: string,
+  stockCode = [],
+  toNotFilter = false
 ) {
   const {storefront} = context;
   const categoryIdentifier = params.subCategoryId;
-  const filters = filterBuilder(filterList);
+  // const filters = filterBuilder(filterList);
+  const filters = filterBuilder(filterList, stockCode);
 
   const products = await storefront.query(
     STOREFRONT_PRODUCT_GET_QUERY(filters, categoryIdentifier),
   );
 
+  if (
+    !products?.collection 
+  ) {
+    throw new Error("Category of product not found")
+  }
+
   const pageInfo = products?.collection?.products?.pageInfo;
   const formattedData = await formattedResponse(products, customerId);
+
+  if( toNotFilter ) {
+    context.session.unset(PRODUCT_STOCK_CODE)
+    context.session.unset(PRODUCT_STOCK_CODE_INFO)
+  }
+
   return {formattedData, pageInfo};
 }
 
-const filterBuilder = (filterList: FilterType) => {
+const filterBuilder = (filterList: FilterType, stockCode : any) => {
   let filterData = `{}`;
   let cursor = null;
   let after = false;
@@ -40,6 +56,8 @@ const filterBuilder = (filterList: FilterType) => {
         item?.key != 'page' &&
         item.key != 'after' &&
         item.key != 'before' &&
+        item.key != 'minPrice' &&
+        item.key != 'maxPrice' &&
         item.key != 'pageNo'
       ) {
         if (item?.key == 'brand') {
@@ -62,9 +80,16 @@ const filterBuilder = (filterList: FilterType) => {
       }
     });
   }
-  if (cursor && after) {
+
+  if( stockCode.length > 0 ) {
+    stockCode.map(( stList : any) => {
+      filterData = filterData + ` { productMetafield: { namespace: "stock_code" key: "stock_code" value: "${stList?.stockCode}"}  }`;
+    })
+  }
+
+  if (cursor && after && stockCode.length < 1) {
     pageinfo = `first: 9 after: "${cursor}"`;
-  } else if (cursor && before) {
+  } else if (cursor && before && stockCode.length < 1) {
     pageinfo = `last: 9 before: "${cursor}"`;
   } else {
     pageinfo = `first: 9`;
@@ -74,14 +99,16 @@ const filterBuilder = (filterList: FilterType) => {
 };
 
 const formattedResponse = async (response: any, customerId: string) => {
-  if (
-    !response?.collection ||
-    response?.collection?.products?.edges.length < 1
-  ) {
-    return [];
-  }
 
   const productList = response?.collection;
+
+  if( productList?.products?.edges.length < 1 ) {
+    return {
+      categorytitle: productList?.title,
+      productList : [],
+
+    }
+  }
 
   let productIds = '';
 
@@ -101,19 +128,18 @@ const formattedResponse = async (response: any, customerId: string) => {
     productList: productList?.products?.edges.map((item: any) => {
       const productId = item?.node?.id.replace('gid://shopify/Product/', '');
       return {
-        id: productId,
-        title: item?.node?.title,
-        handle: item?.node?.handle,
-        uom: item?.node?.uom?.value,
-        variants: productVariantDataFormat(item?.node?.variants),
-        featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.IMAGE,
-        companyPrice: priceList?.[productId]
+        title             : item?.node?.title,
+        handle            : item?.node?.handle,
+        stockCode         : item?.node?.stockCode?.value,
+        variants          : productVariantDataFormat(item?.node?.variants),
+        featuredImageUrl  : item?.node?.featuredImage?.url || DEFAULT_IMAGE.IMAGE,
+        companyPrice      : priceList?.[productId]
           ? priceList?.[productId][0]?.company_price
           : null,
         defaultPrice: priceList?.[productId]
           ? priceList?.[productId][0]?.default_price
           : null,
-      };
+      }
     }),
   };
   return finalProductList;
@@ -163,6 +189,7 @@ const STOREFRONT_PRODUCT_GET_QUERY = (filterList: any, handler: string) => {
                     handle
                     id
                     title
+                    stockCode : metafield( namespace: "stock_code" key: "stock_code" ) { value }
                     uom : metafield(namespace: "uom", key: "uom") { value }
                     featuredImage {
                       url

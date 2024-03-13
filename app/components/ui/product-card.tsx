@@ -10,12 +10,9 @@ import { Button } from '~/components/ui/button';
 export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
 
 export function ProductCard({
-  // buyPrice,
   isBuyQtyAvailable,
   isFavorited,
-  // productImageUrl,
   title,
-  // rppPrice,
   companyPrice,
   defaultPrice,
   variants,
@@ -115,7 +112,7 @@ export function ProductCardInfo({
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
-                {companyPrice && companyPrice || "N/A"}
+                ${companyPrice && companyPrice || "N/A"}
               </h3>
               <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
             </div>
@@ -137,7 +134,7 @@ export function ProductCardInfo({
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-                {defaultPrice && defaultPrice || "N/A"}
+                ${defaultPrice && defaultPrice || "N/A"}
               </h3>
               <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
             </div>
@@ -177,7 +174,7 @@ function ProductCardImage({
         {heartFill ? <ProductLoveRed /> : <ProductLoveWhite />}
       </button>
       <figure className="mt-3">
-        <img src={featuredImageUrl} className="max-h-48" alt="product-image" />
+        <img src={featuredImageUrl} className="object-contain h-48 max-h-48" alt={featuredImageUrl} />
       </figure>
     </div>
   );
@@ -189,7 +186,7 @@ function ProductCardButtons({ handle, id, uom, productVariantId }: { handle: str
 
   return (
     <div className="flex flex-col items-center justify-center gap-2 mt-6 sm:flex-row product-button">
-      <Link to={handle}
+      <Link to={`/product/${handle}`}
         className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600"
       >
         view detail

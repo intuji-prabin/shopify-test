@@ -11,6 +11,9 @@ type SliderProps = {
   formatLabel?: (value: number) => string;
   value?: number[] | readonly number[];
   onValueChange?: (values: number[]) => void;
+  setIsMinChecked: (value: boolean) => void;
+  setIsMaxChecked: (value: boolean) => void;
+  setRange: (range: number[]) => void;
 };
 
 const Slider = React.forwardRef(
@@ -23,6 +26,9 @@ const Slider = React.forwardRef(
       formatLabel,
       value,
       onValueChange,
+      setIsMinChecked,
+      setIsMaxChecked,
+      setRange,
       ...props
     }: SliderProps,
     ref,
@@ -43,6 +49,8 @@ const Slider = React.forwardRef(
      * @param value
      */
     const handleInputChange = (index: number, value: number) => {
+      setIsMinChecked(true);
+      setIsMaxChecked(true);
       if (
         (index === 0 && value >= min && value <= max) ||
         (index === 1 && value <= max)
@@ -50,6 +58,7 @@ const Slider = React.forwardRef(
         const newRange = [...localValues];
         newRange[index] = value;
         setLocalValues(newRange);
+        setRange(newRange);
       }
     };
 

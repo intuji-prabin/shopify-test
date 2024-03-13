@@ -7,10 +7,27 @@ import { Slider } from '~/components/ui/slider';
 
 export function FilterForm(filterList: any) {
   const { filterdata } = filterList;
-  const initialRange = [3, 100];
+
+  const [searchParams] = useSearchParams();
+  const searchParam = Object.fromEntries(searchParams);
+  const searchKey = Object.keys(searchParam);
+  let searchList: any = [];
+  searchKey.map((value) => {
+    searchList.push({ key: value, value: searchParams.getAll(value) });
+  });
+  const filteredData = searchList.filter(
+    (item: any) => item.key !== 'warranty',
+  );
+  const filteredValues = filteredData.map((item: any) => item.value);
+
+  const initialRange = [1, 300];
   const [range, setRange] = useState(initialRange);
   const [isMinChecked, setIsMinChecked] = useState(false);
   const [isMaxChecked, setIsMaxChecked] = useState(false);
+
+  const [selectedWarrantyValue, setSelectedWarrantyValue] = useState(
+    searchParams.get('warranty'),
+  );
 
   const handleRangeChange = (newValues: number[]) => {
     setIsMinChecked(true);
@@ -24,53 +41,69 @@ export function FilterForm(filterList: any) {
     (item: any) => item.filterKey !== 'warranty',
   );
 
-  const [openAccordian, setOpenAccordian] = useState<any>("");
+  const [openAccordian, setOpenAccordian] = useState<any>('');
+
+  const handleWarranty = (e: any) => {
+    setSelectedWarrantyValue(e.target.value);
+  };
 
   return (
     <>
       <Form method="get">
-        <div className='flex items-end gap-2 px-4 py-5 border-b border-solid border-grey-50'>
-          <h4 className='leading-none'>
-            All Filters
-          </h4>
-          <div className='text-xs lg:text-sm !leading-none italic font-bold cursor-pointer text-primary-500 border-b border-solid !border-primary-500' onClick={() => {
-            window.history.replaceState(
-              {},
-              document.title,
-              window.location.pathname,
-            );
-            window.location.reload();
-          }}>
+        <div className="flex items-end gap-2 px-4 py-5 border-b border-solid border-grey-50">
+          <h4 className="leading-none">All Filters</h4>
+          <div
+            className="text-xs lg:text-sm !leading-none italic font-bold cursor-pointer text-primary-500 border-b border-solid !border-primary-500"
+            onClick={() => {
+              window.history.replaceState(
+                {},
+                document.title,
+                window.location.pathname,
+              );
+              window.location.reload();
+            }}
+          >
             CLEAR FILTER
           </div>
         </div>
-        <div className='px-4'>
-          {
-            otherFilters?.map((form: any, index: any) => (
-              <Fragment key={index}>
-                <AccordionCustom accordianLabel={form.filterLabel} setOpenAccordian={setOpenAccordian} isOpen={openAccordian === form.filterLabel} accordionTitle={form.filterLabel}>
-                  {form?.filterValue?.map((input: any, index: any) => {
-                    return (
-                      <div key={index} className="flex items-center py-2 gap-x-2">
-                        <input
-                          type="checkbox"
-                          id={input}
-                          name={form?.filterKey}
-                          value={input}
-                        />
-                        <label
-                          htmlFor={input}
-                          className="text-lg not-italic font-medium text-grey-700"
-                        >
-                          {input}
-                        </label>
-                      </div>
-                    );
-                  })}
-                </AccordionCustom>
-              </Fragment>
-            ))
-          }
+        <div className="px-4">
+          {otherFilters?.map((form: any, index: any) => (
+            <Fragment key={index}>
+              <AccordionCustom
+                accordianLabel={form.filterLabel}
+                setOpenAccordian={setOpenAccordian}
+                isOpen={openAccordian === form.filterLabel}
+                accordionTitle={form.filterLabel}
+              >
+                {form?.filterValue?.map((input: any, index: any) => {
+                  const [isChecked, setIsChecked] = useState(
+                    filteredValues.flat().includes(input),
+                  );
+                  const handleChange = (event: any) => {
+                    setIsChecked(event.target.checked);
+                  };
+                  return (
+                    <div key={index} className="flex items-center py-2 gap-x-2">
+                      <input
+                        type="checkbox"
+                        id={input}
+                        name={form?.filterKey}
+                        value={input}
+                        checked={isChecked ? true : false}
+                        onChange={handleChange}
+                      />
+                      <label
+                        htmlFor={input}
+                        className="text-lg not-italic font-medium text-grey-700"
+                      >
+                        {input}
+                      </label>
+                    </div>
+                  );
+                })}
+              </AccordionCustom>
+            </Fragment>
+          ))}
           <div className="py-4">
             <h5>Warranty</h5>
             <div className="flex flex-wrap gap-1">
@@ -84,6 +117,8 @@ export function FilterForm(filterList: any) {
                         className="hidden"
                         value={value}
                         name={radio?.filterKey}
+                        checked={value === selectedWarrantyValue ? true : false}
+                        onChange={handleWarranty}
                       />
                       <label
                         htmlFor={value}
@@ -100,7 +135,7 @@ export function FilterForm(filterList: any) {
           <Separator />
           <input
             type="checkbox"
-            className='hidden'
+            className="hidden"
             id="minPrice"
             name="minPrice"
             value={range[0]}
@@ -108,18 +143,21 @@ export function FilterForm(filterList: any) {
           />
           <input
             type="checkbox"
-            className='hidden'
+            className="hidden"
             id="maxPrice"
             name="maxPrice"
             value={range[1]}
             checked={isMaxChecked}
           />
 
-          <Button type="submit" className="absolute p-0 text-xs italic font-bold !leading-none bg-transparent border-b border-solid lg:text-sm top-6 lg:top-7 right-4 text-grey-500 border-grey-500 hover:bg-transparent">
+          <Button
+            type="submit"
+            className="absolute p-0 text-xs italic font-bold !leading-none bg-transparent border-b border-solid lg:text-sm top-6 lg:top-7 right-4 text-grey-500 border-grey-500 hover:bg-transparent"
+          >
             APPLY FILTER
           </Button>
         </div>
-      </Form >
+      </Form>
       <div className="p-4">
         <h5 className="mb-16">Price</h5>
         <Slider
@@ -130,6 +168,9 @@ export function FilterForm(filterList: any) {
           value={range}
           onValueChange={handleRangeChange}
           formatLabel={(value) => `$${value}`}
+          setIsMaxChecked={setIsMaxChecked}
+          setIsMinChecked={setIsMinChecked}
+          setRange={setRange}
         />
       </div>
     </>

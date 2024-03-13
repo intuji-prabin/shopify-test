@@ -4,7 +4,11 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from '@remix-run/server-runtime';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  json,
+} from '@remix-run/server-runtime';
 import useEmblaCarousel, { EmblaCarouselType } from 'embla-carousel-react';
 import { BackButton } from '~/components/ui/back-button';
 import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
@@ -20,8 +24,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { LeftArrow } from '~/components/icons/left';
 import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
-import { addProductToCart } from '../_app.$mainCategory.$categoryId.$subCategoryId.$productSlug/product.server';
-import { getMessageSession, messageCommitSession, setErrorMessage, setSuccessMessage } from '~/lib/utils/toast-session.server';
+import {
+  getMessageSession,
+  messageCommitSession,
+  setErrorMessage,
+  setSuccessMessage,
+} from '~/lib/utils/toast-session.server';
+import { addProductToCart } from '../_app.product_.$productSlug/product.server';
+import { getFilterProduct } from './filter.server';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -37,41 +47,56 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     categoryId,
     subCategoryId,
     mainCategory,
-  });
+  }, { headers: [['Set-Cookie', await context.session.commit({})]] });
 }
 
 export const action = async ({ request, context }: ActionFunctionArgs) => {
   const messageSession = await getMessageSession(request);
   try {
-    const fromData = await request.formData()
-    const cartInfo = Object.fromEntries(fromData)
-    const accessTocken = await getAccessToken(context) as string
+    const fromData = await request.formData();
+    const cartInfo = Object.fromEntries(fromData);
+    const accessTocken = (await getAccessToken(context)) as string;
     await addProductToCart(cartInfo, accessTocken, context, request);
     setSuccessMessage(messageSession, 'Item added to cart successfully');
-    return json({}, {
-      headers: {
-        'Set-Cookie': await messageCommitSession(messageSession),
+    return json(
+      {},
+      {
+        headers: [
+          ['Set-Cookie', await context.session.commit({})],
+          ['Set-Cookie', await messageCommitSession(messageSession)],
+        ],
       },
-    })
+    );
   } catch (error) {
     if (error instanceof Error) {
-      console.log("this is err", error?.message)
-      setErrorMessage(messageSession, error?.message)
-      return json({}, {
-        headers: {
-          'Set-Cookie': await messageCommitSession(messageSession),
+      console.log('this is err', error?.message);
+      setErrorMessage(messageSession, error?.message);
+      return json(
+        {},
+        {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
         },
-      })
+      );
     }
-    console.log("this is err")
-    setErrorMessage(messageSession, 'Item not added to cart. Please try again later.')
-    return json({}, {
-      headers: {
-        'Set-Cookie': await messageCommitSession(messageSession),
+    console.log('this is err');
+    setErrorMessage(
+      messageSession,
+      'Item not added to cart. Please try again later.',
+    );
+    return json(
+      {},
+      {
+        headers: [
+          ['Set-Cookie', await context.session.commit({})],
+          ['Set-Cookie', await messageCommitSession(messageSession)],
+        ],
       },
-    })
+    );
   }
-}
+};
 
 const linkStyles =
   'text-center basis-full border-b-2 inline-block duration-300 border-b-grey-50 cursor-pointer bg-grey-50 uppercase text-lg italic font-bold leading-6 text-grey-500 py-3 px-5 hover:bg-none';
@@ -197,47 +222,54 @@ export default function SubCategoryPage() {
           </button>
         </div>
       </div>
-      {(productList?.results?.formattedData?.productList?.length > 0 && (
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-4">
-          <div className="xl:col-span-1">
-            <div className="sticky top-[100px] bg-neutral-white">
-              <FilterForm filterdata={productFilter} />
-            </div>
-          </div>
-          <div className="xl:col-start-2 xl:col-end-5">
-            <div className="flex flex-col justify-between gap-2 sm:items-center sm:flex-row">
-              <p className="text-lg text-grey-700">
-                Products found for{' '}
-                <span className="font-medium">
-                  “ {productList?.results?.formattedData?.categorytitle} ”
-                </span>
-              </p>
-              <SortByFilterForm />
-            </div>
-            <div className="grid gap-6 my-6 sm:grid-cols-2 lg:grid-cols-3">
-              {productList?.results?.formattedData.productList?.map(
-                (product: any, index: any) => (
-                  <ProductCard key={index} {...product} />
-                ),
-              )}
-            </div>
-            <div className="flex flex-col justify-start w-full gap-3 px-6 py-4 border-t sm:items-center sm:justify-between sm:flex-row bg-neutral-white">
-              <PaginationSimple
-                totalProductLength={
-                  productList?.results?.formattedData?.productList?.length
-                }
-                paginationInfo={paginationInfo}
-                page={page}
-              />
-            </div>
+
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-4">
+        <div className="xl:col-span-1">
+          <div className="sticky top-[100px] bg-neutral-white">
+            <FilterForm filterdata={productFilter} />
           </div>
         </div>
-      )) || <h1>No products found</h1>}
+        <div className="xl:col-start-2 xl:col-end-5">
+          {(productList?.results?.formattedData?.productList?.length > 0 && (
+            <>
+              <div className="flex flex-col justify-between gap-2 sm:items-center sm:flex-row">
+                <p className="text-lg text-grey-700">
+                  Products found for{' '}
+                  <span className="font-medium">
+                    “ {productList?.results?.formattedData?.categorytitle} ”
+                  </span>
+                </p>
+                <SortByFilterForm />
+              </div>
+              <div className="grid gap-6 my-6 sm:grid-cols-2 lg:grid-cols-3">
+                {productList?.results?.formattedData.productList?.map(
+                  (product: any, index: any) => (
+                    <ProductCard key={index} {...product} />
+                  ),
+                )}
+              </div>
+              <div className="flex flex-col justify-start w-full gap-3 px-6 py-4 border-t sm:items-center sm:justify-between sm:flex-row bg-neutral-white">
+                <PaginationSimple
+                  totalProductLength={
+                    productList?.results?.formattedData?.productList?.length
+                  }
+                  paginationInfo={paginationInfo}
+                  page={page}
+                />
+              </div>
+            </>
+          )) || <h1>No products found</h1>}
+        </div>
+      </div>
     </section>
   );
 }
 
-export const getProductList = async (params: any, context: any, request: Request) => {
+export const getProductList = async (
+  params: any,
+  context: any,
+  request: Request,
+) => {
   try {
     const { searchParams } = new URL(request.url);
     const searchParam = Object.fromEntries(searchParams);
@@ -257,13 +289,25 @@ export const getProductList = async (params: any, context: any, request: Request
       return { [value]: searchParams.getAll(value) };
     });
 
-    const results = await getProducts(
-      context,
-      params,
-      searchList,
-      userDetails?.id,
-    );
+    let results
+    if (searchList.length > 0) {
+      results = await getFilterProduct(context,
+        params,
+        searchList,
+        userDetails?.id,)
+    } else {
+      results = await getProducts(
+        context,
+        params,
+        searchList,
+        userDetails?.id,
+        [],
+        true
+      );
+    }
+
     const productFilter = await getProductFilterList(context);
+    console.log("productFilter", productFilter)
     return { productFilter, results, page };
   } catch (error) {
     if (error instanceof Error) {

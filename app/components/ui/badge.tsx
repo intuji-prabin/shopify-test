@@ -17,6 +17,7 @@ const badgeVariants = cva(
         inStock: 'bg-semantic-success-100 text-semantic-success-500',
         lowStock: 'bg-semantic-danger-100 text-semantic-danger-500',
         outOfStock: 'bg-semantic-warning-100 text-semantic-warning-500',
+        primary: 'bg-[#CDEBF7] text-primary-500',
       },
     },
     defaultVariants: {

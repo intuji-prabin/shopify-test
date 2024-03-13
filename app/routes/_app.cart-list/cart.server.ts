@@ -7,7 +7,7 @@ export const getCartList = async (
   context: any,
   request: Request,
   sessionCartInfo: any,
-  fronOrder = false
+  fronOrder = false,
 ) => {
   const {userDetails} = await getUserDetails(request);
   const cartLists = await context.storefront.query(GET_CART_LIST, {
@@ -19,7 +19,11 @@ export const getCartList = async (
   return await formateCartList(cartLists, userDetails?.id, fronOrder);
 };
 
-const formateCartList = async (cartResponse: any, customerId: string, fronOrder : boolean) => {
+const formateCartList = async (
+  cartResponse: any,
+  customerId: string,
+  fronOrder: boolean,
+) => {
   const cartLine = cartResponse?.cart?.lines?.nodes;
   if (cartLine.length < 1) {
     throw new Error('Cart List is empty');
@@ -49,8 +53,8 @@ const formateCartList = async (cartResponse: any, customerId: string, fronOrder 
     });
   });
 
-  if( fronOrder ) {
-    return productList
+  if (fronOrder) {
+    return productList;
   }
 
   const productWithPrice = await getPrice(customerId, productList);
