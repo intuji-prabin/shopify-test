@@ -4,27 +4,11 @@ import {EyeOn} from '~/components/icons/eye';
 import {ReOrder} from '~/components/icons/reorder';
 import {Button} from '~/components/ui/button';
 import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
-
-type orderStatus =
-  | 'received'
-  | 'processing'
-  | 'order_picked'
-  | 'dispatched'
-  | 'in_transit'
-  | 'delivered';
-
-export type OrderColumn = {
-  id: string;
-  customerPurchaseOrderNumber: string;
-  cigweldInternalOrderNumber: string;
-  orderDate: string;
-  estimatedDeliveryDate: string;
-  orderStatus: orderStatus;
-  orderBy: string;
-};
+import {Order} from './orders.server';
+import {formatDateToLocaleDateString} from '~/lib/helpers/dateTime.helper';
 
 export function useColumn() {
-  const columns = useMemo<ColumnDef<OrderColumn>[]>(
+  const columns = useMemo<ColumnDef<Order>[]>(
     () => [
       {
         id: 'select',
@@ -49,30 +33,51 @@ export function useColumn() {
         ),
       },
       {
-        accessorKey: 'customerPurchaseOrderNumber',
+        accessorKey: 'poNumber',
         header: 'Customer Purchase Order Number',
         cell: (info) => info.getValue(),
       },
       {
-        accessorKey: 'cigweldInternalOrderNumber',
+        accessorKey: 'internalOrderNumber',
         header: 'Cigweld Internal Order Number',
         cell: (info) => info.getValue(),
       },
       {
         accessorKey: 'orderDate',
         header: 'Order Date',
-        cell: (info) => info.getValue(),
+        cell: (info) => formatDateToLocaleDateString(info.getValue() as string),
       },
       {
-        accessorKey: 'estimatedDeliveryDate',
+        accessorKey: 'estimatedDate',
         header: 'Estimated Delivery Date',
-        cell: (info) => info.getValue(),
+        cell: (info) =>
+          info.getValue()
+            ? formatDateToLocaleDateString(info.getValue() as string)
+            : 'N/A',
       },
       {
         accessorKey: 'orderStatus',
         header: 'Order Status',
         enableSorting: false,
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const status = info.row.original.orderStatus;
+          switch (status) {
+            case 'received':
+              return 'Received';
+            case 'processing':
+              return 'Processing';
+            case 'order_picked':
+              return 'Order Picked';
+            case 'dispatched':
+              return 'Dispatched';
+            case 'in_transit':
+              return 'In Transit';
+            case 'delivered':
+              return 'Delivered';
+            default:
+              return 'N/A';
+          }
+        },
       },
       {
         accessorKey: 'orderBy',
