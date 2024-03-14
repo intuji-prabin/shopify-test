@@ -2,20 +2,31 @@ import {FormEvent, useRef, useState} from 'react';
 import {FaSearch} from 'react-icons/fa';
 import {Link, useFetcher} from '@remix-run/react';
 import {debounce} from '~/lib/helpers/general.helper';
+import {Button} from '~/components/ui/button';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {useOutsideClick} from '~/hooks/useOutsideClick';
+import CloseMenu from '~/components/icons/closeMenu';
 import {
   NormalizedPredictiveSearch,
   NormalizedPredictiveSearchResultItem,
 } from '~/routes/_app.predictive-search/route';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {useOutsideClick} from '~/hooks/useOutsideClick';
 
+/**
+ * Renders a predictive search component.
+ * @returns {JSX.Element} rendered predictive search component.
+ */
 export function PredictiveSearch() {
+  const [searchProduct, setSearchProduct] = useState(false);
+
+  const searchResultRef = useRef<HTMLDivElement>(null);
+
+  const searchFormRef = useRef<HTMLFormElement>(null);
+
   const fetcher = useFetcher();
 
-  // For handling the clicked outsite the search
-  // const [searchProduct, setSearchProduct] = useState(false);
-  // const searchResultRef = useRef<HTMLDivElement>(null);
-  // useOutsideClick(searchResultRef, () => setSearchProduct(false));
+  const searchResults = fetcher.data as NormalizedPredictiveSearch;
+
+  useOutsideClick(searchResultRef, () => setSearchProduct(false));
 
   const debounceSubmit = debounce(
     (form: HTMLFormElement) =>
@@ -25,31 +36,48 @@ export function PredictiveSearch() {
       }),
     300,
   );
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) =>
     debounceSubmit(event.currentTarget);
 
-  const searchResults = fetcher.data as NormalizedPredictiveSearch;
+  const handleClose = () => {
+    setSearchProduct(false);
+    searchFormRef.current?.reset();
+  };
 
   return (
-    <>
+    <div ref={searchResultRef} className="w-full">
       <fetcher.Form
         method="GET"
-        onChange={handleSubmit}
-        className="relative w-full"
+        onChange={(event) => {
+          handleSubmit(event);
+          setSearchProduct(true);
+        }}
+        ref={searchFormRef}
+        className="relative w-full flex items-center"
       >
         <span className="absolute top-1/3 ">
           <FaSearch className="fill-primary-500" />
         </span>
         <input
-          type="search"
+          type="text"
           name="searchTerm"
           placeholder="Search Product or SKU Number"
           className="!pl-6 border-none w-full placeholder:italic text-base font-bold text-grey-900 placeholder:text-grey-900 focus:bg-white"
         />
+        {searchProduct && (
+          <Button
+            className="p-0 bg-white hover:bg-white active:bg-white"
+            onClick={handleClose}
+          >
+            {' '}
+            <CloseMenu fillColor="#D92F28" />
+          </Button>
+        )}
       </fetcher.Form>
-      {fetcher.data && (
+      {searchProduct && (
         <div className="bg-white absolute top-[52px] left-0 w-full z-20 py-4 px-6 space-y-4">
-          {searchResults?.results.length > 0 ? (
+          {searchResults?.results?.length > 0 ? (
             searchResults?.results.map((result) => {
               switch (result.type) {
                 case 'products':
@@ -57,6 +85,7 @@ export function PredictiveSearch() {
                     <SearchResultsProductsGrid
                       key={result.type}
                       products={result.items}
+                      setSearchProduct={setSearchProduct}
                     />
                   );
                 case 'queries':
@@ -73,14 +102,22 @@ export function PredictiveSearch() {
           )}
         </div>
       )}
-    </>
+    </div>
   );
 }
 
+/**
+ * Renders a grid of product search results.
+ * @param {Array<NormalizedPredictiveSearchResultItem>} products - The array of product search results.
+ * @param {React.Dispatch<React.SetStateAction<boolean>>} setSearchProduct - The state setter for the search product.
+ * @returns {JSX.Element} rendered grid of product search results.
+ */
 function SearchResultsProductsGrid({
   products,
+  setSearchProduct,
 }: {
   products: Array<NormalizedPredictiveSearchResultItem>;
+  setSearchProduct: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   return (
     <div className="grid gap-y-4">
@@ -101,6 +138,7 @@ function SearchResultsProductsGrid({
               <Link
                 prefetch="intent"
                 to={`/product/${product.handle}`}
+                onClick={() => setSearchProduct(false)}
                 className="text-base font-bold text-grey-900"
               >
                 {product.title}
