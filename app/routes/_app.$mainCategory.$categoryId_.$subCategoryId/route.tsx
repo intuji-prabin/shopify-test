@@ -105,6 +105,7 @@ export default function SubCategoryPage() {
   const { categories, productList, categoryId, subCategoryId, mainCategory } =
     useLoaderData<typeof loader>();
   const { page } = productList;
+  console.log("productList ", productList)
   const paginationInfo = productList?.results?.pageInfo;
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);

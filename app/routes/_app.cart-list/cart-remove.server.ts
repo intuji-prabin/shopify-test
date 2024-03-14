@@ -1,5 +1,4 @@
 import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
-import {getCartList} from './cart.server';
 import {removeCart} from './order-place.server';
 
 export const removeItemFromCart = async (context: any, request: Request) => {
@@ -29,8 +28,6 @@ export const removeItemFromCart = async (context: any, request: Request) => {
     cartItems: [],
     lineItems: cartRemoveResponse,
   };
-
-  await getCartList(context, request, sessionCartInfo);
 
   context.session.set(CART_SESSION_KEY, cartSession);
   return {cartSession};

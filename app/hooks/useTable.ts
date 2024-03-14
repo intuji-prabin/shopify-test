@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import type {
   ColumnDef,
   RowSelectionState,
@@ -12,8 +12,14 @@ import {
 } from '@tanstack/react-table';
 
 export function useTable<T>(columns: ColumnDef<T>[], data: T[]) {
+  console.log('dataHello', data);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [originalData, setOriginalData] = useState<T[]>(data);
+
+  useEffect(() => {
+    setOriginalData(data);
+  }, [data]);
 
   const table = useReactTable<T>({
     data,
@@ -28,6 +34,10 @@ export function useTable<T>(columns: ColumnDef<T>[], data: T[]) {
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel<T>(),
     getSortedRowModel: getSortedRowModel<T>(),
+    meta: {
+      setOriginalData,
+      originalData,
+    },
   });
   return {table, sorting, setSorting};
 }

@@ -1,4 +1,4 @@
-import { Form, useSubmit } from '@remix-run/react';
+import { Form, useFetcher, useSubmit } from '@remix-run/react';
 import { useState } from 'react';
 import RemoveItem from '~/components/icons/removeItem';
 import { Button } from '~/components/ui/button';
@@ -15,11 +15,15 @@ import {
 import { useTable } from '~/hooks/useTable';
 import { BulkTable } from './bulk-table';
 import { useMyProductColumn } from './use-column';
+import FullPageLoading from '~/components/ui/fullPageLoading';
 
 export default function MyProducts({ products }: any) {
   const { columns } = useMyProductColumn();
   const { table } = useTable(columns, products);
-  const submit = useSubmit();
+
+  const fetcher = useFetcher();
+
+  let isLoading = fetcher.formData?.get('cartList-0');
 
   const [open, setOpen] = useState(false);
 
@@ -43,7 +47,7 @@ export default function MyProducts({ products }: any) {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[360px] track-an-order p-0 block">
                   <DialogHeader>
-                    <DialogTitle className="leading-6 font-bold italic text-lg text-grey-900 flex p-4 justify-center items-center flex-col gap-3">
+                    <DialogTitle className="flex flex-col items-center justify-center gap-3 p-4 text-lg italic font-bold leading-6 text-grey-900">
                       <div className="bg-semantic-danger-100 p-[10px] rounded-[50%]">
                         <RemoveItem />
                       </div>
@@ -57,15 +61,15 @@ export default function MyProducts({ products }: any) {
                     </DialogTitle>
                   </DialogHeader>
 
-                  <DialogFooter className="px-4 pb-4 flex">
+                  <DialogFooter className="flex px-4 pb-4">
                     <DialogClose asChild>
-                      <Button type="button" className="uppercase w-full" variant="ghost">
+                      <Button type="button" className="w-full uppercase" variant="ghost">
                         cancel
                       </Button>
                     </DialogClose>
                     <Button
                       type="submit"
-                      className="w-full italic font-bold uppercase leading6 text-sm "
+                      className="w-full text-sm italic font-bold uppercase leading6 "
                       variant="primary"
                       onClick={() => {
                         const formData = new FormData();
@@ -74,7 +78,7 @@ export default function MyProducts({ products }: any) {
                           .flatRows.map((item, index) =>
                             formData.append(`cartList-${index}`, item.original.id),
                           );
-                        submit(formData, { method: 'DELETE' });
+                        fetcher.submit(formData, { method: 'DELETE' });
                         table.resetRowSelection();
                         setOpen(false);
                       }}
@@ -90,7 +94,9 @@ export default function MyProducts({ products }: any) {
       </div>
 
       <div className="border-t border-grey-50 cart-order">
-        <DataTable table={table} renderSubComponent={renderSubComponent} key={tableKey} />
+        {isLoading ? <FullPageLoading description='Loading....' /> :
+          <DataTable table={table} renderSubComponent={renderSubComponent} key={tableKey} />
+        }
         <Button variant="primary" type='submit' onClick={() => {
           console.log("first")
         }}>Update cart</Button>

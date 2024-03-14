@@ -1,5 +1,5 @@
-import {Form, Link, useSubmit} from '@remix-run/react';
-import {useState} from 'react';
+import { Form, Link, useSubmit } from '@remix-run/react';
+import { useState } from 'react';
 import {
   CircleInformationMajor,
   Compare,
@@ -8,15 +8,15 @@ import {
   ProductLoveRed,
   ProductLoveWhite,
 } from '~/components/icons/orderStatus';
-import {badgeVariants} from '~/components/ui/badge';
-import {Button} from '~/components/ui/button';
-import {useMediaQuery} from '../../hooks/useMediaQuery';
+import { badgeVariants } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 import CarouselThumb from './carouselThumb';
-import {getProductPriceByQty} from './product-detail';
-import {ProductInfoTable} from './productInfoTable';
-import {WarehouseInformation} from './view-warehouse-information';
+import { getProductPriceByQty } from './product-detail';
+import { ProductInfoTable } from './productInfoTable';
+import { WarehouseInformation } from './view-warehouse-information';
 
-export default function ProductInformation({product}: any) {
+export default function ProductInformation({ product }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
   return (
     <section className="bg-white">
@@ -25,7 +25,7 @@ export default function ProductInformation({product}: any) {
           <div className="w-full lg:w-[calc(50%_-_28px)] pt-6 pb-8">
             <CarouselThumb
               images={product?.imageUrl}
-              thumbNailCarouseloptions={{axis: matches ? 'y' : 'x'}}
+              thumbNailCarouseloptions={{ axis: matches ? 'y' : 'x' }}
               mainCarouseloptions={{}}
             />
           </div>
@@ -101,11 +101,10 @@ const ProductDetailsSection = ({
 }: any) => {
   const [heartFill, setHeartFill] = useState(isFavorited);
   const [quantity, setQuantity] = useState(1);
-  const submit = useSubmit();
-  // const price = parseFloat( companyDefaultPrice )
   const [productPrice, setProductPrice] = useState(companyDefaultPrice);
   const [UOM, setUOM] = useState(box);
-  console.log('urom ', UOM, quantity);
+  const submit = useSubmit();
+
   const handleHeartClick = () => {
     setHeartFill(!heartFill);
   };
@@ -167,9 +166,8 @@ const ProductDetailsSection = ({
 
   return (
     <div
-      className={`w-full ${
-        productImageLength > 0 && 'lg:w-[calc(50%_-_28px)]'
-      } py-8`}
+      className={`w-full ${productImageLength > 0 && 'lg:w-[calc(50%_-_28px)]'
+        } py-8`}
     >
       <div className="flex justify-between">
         <figure>
@@ -195,7 +193,7 @@ const ProductDetailsSection = ({
         </ul>
       </div>
       <h3 className="pt-4">{productName}</h3>
-      <div className="flex flex-col justify-between sm:flex-row pt-4 gap-y-2">
+      <div className="flex flex-col justify-between pt-4 sm:flex-row gap-y-2">
         <div className="flex flex-wrap gap-x-5 gap-y-2">
           <div className="flex items-center gap-1 text-base">
             <p className="font-semibold leading-6 ">{sku}: </p>
@@ -203,20 +201,20 @@ const ProductDetailsSection = ({
           </div>
           <div className="flex items-center gap-2">
             <p className="text-base font-semibold leading-6 text-grey-600">
-              {unitOfMeasurement}:
+              {unitOfMeasurement}
             </p>
             <p className="font-normal text-Grey-500">{box}</p>
-            <div className={`${badgeVariants({variant: 'primary'})} !m-0`}>
+            <div className={`${badgeVariants({ variant: 'primary' })} !m-0`}>
               {defaultButton}
             </div>
           </div>
         </div>
-        <div className={`${badgeVariants({variant: 'inStock'})} !m-0 w-max`}>
+        <div className={`${badgeVariants({ variant: 'inStock' })} !m-0 w-max`}>
           <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>
           IN STOCK
         </div>
       </div>
-      <div className="flex flex-col gap-3 lg:gap-8 lg:flex-row pt-6">
+      <div className="flex flex-col gap-3 pt-6 lg:gap-8 lg:flex-row">
         <ProductCardInfo
           className="product_det__pricing"
           productName={
@@ -242,13 +240,13 @@ const ProductDetailsSection = ({
           </div>
         )}
       </div>
-      <div className="flex mt-2 gap-2 px-4 py-2 border-l-4 border-r-0 bg-semantic-info-100 border-semantic-info-500 border-y-0">
+      <div className="flex gap-2 px-4 py-2 mt-2 border-l-4 border-r-0 bg-semantic-info-100 border-semantic-info-500 border-y-0">
         <CircleInformationMajor />
         <p className="text-base font-normal leading-[21px]">
           Price will change if you increase quantity of items.
         </p>
       </div>
-      <div className="flex flex-col gap-4 sm:flex-row pt-6">
+      <div className="flex flex-col gap-4 pt-6 sm:flex-row">
         <div className="flex">
           <button
             className="border-[1px] border-grey-500 flex justify-center items-center w-14 aspect-square"
@@ -303,7 +301,7 @@ const ProductDetailsSection = ({
           <input type="hidden" name="quantity" value={quantity} />
           <input type="hidden" name="selectUOM" value={UOM} />
           <Button
-            className="flex-grow uppercase w-full min-h-14"
+            className="flex-grow w-full uppercase min-h-14"
             variant="primary"
             type="submit"
           >
@@ -316,7 +314,7 @@ const ProductDetailsSection = ({
         <div>
           <p>
             {pickupStatus}{' '}
-            <span className="uppercase italic bold">{pickupAddress}</span>
+            <span className="italic uppercase bold">{pickupAddress}</span>
           </p>
           <p className="pb-2">{arrivalTime}</p>
           <WarehouseInformation
@@ -356,7 +354,7 @@ export function ProductCardInfo({
   return (
     <div className={`flex flex-col gap-6 p-4 ${className}`}>
       <div className="tag flex flex-col gap-[11px]">
-        <div className="flex gap-6 flex-wrap">
+        <div className="flex flex-wrap gap-6">
           <div className="flex flex-col">
             <div className="flex items-center gap-1">
               <p className="text-semantic-success-500 text-base font-bold uppercase leading-[21px]">
@@ -384,43 +382,6 @@ export function ProductCardInfo({
       <p className="text-lg font-normal leading-[22px]">
         {minimumOrder} ({minimumPieces})
       </p>
-    </div>
-  );
-}
-
-export function SelectACountryDropdown({
-  unitOfMeasure,
-  defaultUOM,
-  setUOM,
-}: {
-  unitOfMeasure: {
-    unit: string;
-    conversion_factor: number;
-  };
-  defaultUOM: string;
-  setUOM: any;
-}) {
-  // const [uom, setUom] = useState(defaultUOM);
-  return (
-    <div className="flex flex-col">
-      <select
-        name="filter_by"
-        className="w-full min-w-[116px] place-order h-full border-grey-500!border-grey-100 filter-select"
-        onChange={(e: any) => {
-          setUOM(e.target.value);
-        }}
-        defaultValue={defaultUOM}
-      >
-        {unitOfMeasure.length > 0 ? (
-          unitOfMeasure?.map((uom: any, index: number) => (
-            <option value={uom.unit} key={index + 'uom'}>
-              {uom.unit}
-            </option>
-          ))
-        ) : (
-          <option value={defaultUOM}>{defaultUOM}</option>
-        )}
-      </select>
     </div>
   );
 }
