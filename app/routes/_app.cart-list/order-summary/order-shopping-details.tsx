@@ -1,4 +1,3 @@
-import { Link } from '@remix-run/react';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -6,22 +5,51 @@ import Tick from '~/components/icons/tick';
 import { Button } from '~/components/ui/button';
 import { Calendar } from '~/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
-import { Routes } from '~/lib/constants/routes.constent';
 
 function concatDefaultAddress(address1: string, address2: string) {
   return address1.concat(' ', address2).trim();
 }
 
-export function ShippingLocation({ addressList, defaultAddress, defaultId }: any) {
+export function ShippingLocation({ addressList, mergedAddressList, defaultAddress1, defaultAddress2, defaultId, defaultCountry, defaultFax, defaultPhone, defaultZip }: any) {
+  const [country, setCountry] = useState(defaultCountry);
+  const [address1, setAddress1] = useState(defaultAddress1);
+  const [address2, setAddress2] = useState(defaultAddress2);
+  const [zip, setZip] = useState(defaultZip);
+  const [phone, setPhone] = useState(defaultPhone);
+  const [fax, setFax] = useState(defaultFax);
+
+  const getAddressDetail = (e: any) => {
+    const selectedAddressId = e.target.value;
+    const selectedAddress = mergedAddressList.find((address: any) => address.id === selectedAddressId);
+    setCountry(selectedAddress?.country);
+    setAddress1(selectedAddress?.address1);
+    setAddress2(selectedAddress?.address2);
+    setZip(selectedAddress?.zip);
+    setPhone(selectedAddress?.phone);
+    setFax(selectedAddress?.fax);
+  };
+
+  const defaultAddress = concatDefaultAddress(
+    defaultAddress1,
+    defaultAddress2,
+  );
+
   return (
     <div className="ship-location">
       <p className="after:content-['*'] after:ml-0.5 after:text-red-500 block text-base font-normal text-grey-800 leading-[21px]">
         Change Shipping Location
       </p>
+      <input type="text" name="country" value={country} />
+      <input type="text" name="address1" value={address1} />
+      <input type="text" name="address2" value={address2} />
+      <input type="text" name="zip" value={zip} />
+      <input type="text" name="phone" value={phone} />
+      <input type="text" name="fax" value={fax} />
       <select
         name="addressId"
         className="w-full min-w-[92px] place-order h-full border-grey-100"
         defaultValue={defaultAddress}
+        onChange={getAddressDetail}
       >
         <option value={defaultId}>
           {defaultAddress}
@@ -193,6 +221,8 @@ export function ShippingAddress({
 export function ShoppingDetails({ shippingAddresses }: any) {
   const addressList = shippingAddresses.addresses;
   const defaultAddress = shippingAddresses.defaultAddress;
+  const mergedAddressList = [shippingAddresses.defaultAddress, ...shippingAddresses.addresses];
+  console.log("defaultAddress", defaultAddress)
 
   const defaultAddress1 = defaultAddress.address1 ?? "";
   const defaultAddress2 = defaultAddress.address2 ?? "";
@@ -201,6 +231,7 @@ export function ShoppingDetails({ shippingAddresses }: any) {
     defaultAddress1,
     defaultAddress2,
   );
+
   return (
     <div className="flex flex-col gap-4 p-6 border-b order border-grey-50">
       <h3 className="font-bold leading-[29px] text-2xl capitalize">
@@ -208,7 +239,7 @@ export function ShoppingDetails({ shippingAddresses }: any) {
       </h3>
       {/* shipping detail form starts here */}
       <div className="flex flex-col gap-4">
-        <ShippingLocation addressList={addressList} defaultAddress={defaultAddresses} defaultId={defaultAddress.id} />
+        <ShippingLocation addressList={addressList} mergedAddressList={mergedAddressList} defaultAddress1={defaultAddress1} defaultAddress2={defaultAddress2} defaultId={defaultAddress.id} defaultCountry={defaultAddress.country} defaultFax={defaultAddress.fax} defaultPhone={defaultAddress.phone} defaultZip={defaultAddress.zip} />
         <DateDelivery />
         <PurchaseOrder />
         <TextArea />
@@ -223,14 +254,6 @@ export function ShoppingDetails({ shippingAddresses }: any) {
         />
       </div>
       {/* place order starts here */}
-      {/* <Button className="p-0" variant="primary">
-        <Link
-          to={Routes.Order_SUCCESSFUL}
-          className="flex items-center justify-center w-full text-lg font-bold min-h-14"
-        >
-          Place order
-        </Link>
-      </Button> */}
       <Button className="text-lg min-h-14" variant="primary" type="submit">
         Place order
       </Button>
