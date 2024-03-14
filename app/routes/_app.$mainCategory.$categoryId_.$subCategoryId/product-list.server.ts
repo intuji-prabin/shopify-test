@@ -1,7 +1,10 @@
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import { PRODUCT_STOCK_CODE, PRODUCT_STOCK_CODE_INFO } from '~/lib/constants/product.session';
+import {
+  PRODUCT_STOCK_CODE,
+  PRODUCT_STOCK_CODE_INFO,
+} from '~/lib/constants/product.session';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 
 type FilterItem = {
@@ -16,7 +19,7 @@ export async function getProducts(
   filterList: FilterType,
   customerId: string,
   stockCode = [],
-  toNotFilter = false
+  toNotFilter = false,
 ) {
   const {storefront} = context;
   const categoryIdentifier = params.subCategoryId;
@@ -27,24 +30,22 @@ export async function getProducts(
     STOREFRONT_PRODUCT_GET_QUERY(filters, categoryIdentifier),
   );
 
-  if (
-    !products?.collection 
-  ) {
-    throw new Error("Category of product not found")
+  if (!products?.collection) {
+    throw new Error('Category of product not found');
   }
 
   const pageInfo = products?.collection?.products?.pageInfo;
   const formattedData = await formattedResponse(products, customerId);
 
-  if( toNotFilter ) {
-    context.session.unset(PRODUCT_STOCK_CODE)
-    context.session.unset(PRODUCT_STOCK_CODE_INFO)
+  if (toNotFilter) {
+    context.session.unset(PRODUCT_STOCK_CODE);
+    context.session.unset(PRODUCT_STOCK_CODE_INFO);
   }
 
   return {formattedData, pageInfo};
 }
 
-const filterBuilder = (filterList: FilterType, stockCode : any) => {
+const filterBuilder = (filterList: FilterType, stockCode: any) => {
   let filterData = `{}`;
   let cursor = null;
   let after = false;
@@ -81,10 +82,12 @@ const filterBuilder = (filterList: FilterType, stockCode : any) => {
     });
   }
 
-  if( stockCode.length > 0 ) {
-    stockCode.map(( stList : any) => {
-      filterData = filterData + ` { productMetafield: { namespace: "stock_code" key: "stock_code" value: "${stList?.stockCode}"}  }`;
-    })
+  if (stockCode.length > 0) {
+    stockCode.map((stList: any) => {
+      filterData =
+        filterData +
+        ` { productMetafield: { namespace: "stock_code" key: "stock_code" value: "${stList?.stockCode}"}  }`;
+    });
   }
 
   if (cursor && after && stockCode.length < 1) {
@@ -99,15 +102,13 @@ const filterBuilder = (filterList: FilterType, stockCode : any) => {
 };
 
 const formattedResponse = async (response: any, customerId: string) => {
-
   const productList = response?.collection;
 
-  if( productList?.products?.edges.length < 1 ) {
+  if (productList?.products?.edges.length < 1) {
     return {
       categorytitle: productList?.title,
-      productList : [],
-
-    }
+      productList: [],
+    };
   }
 
   let productIds = '';
@@ -122,24 +123,26 @@ const formattedResponse = async (response: any, customerId: string) => {
     return true;
   });
   const priceList = await getPrices(productIds, customerId);
-  
+
   const finalProductList: any = {
     categorytitle: productList?.title,
     productList: productList?.products?.edges.map((item: any) => {
       const productId = item?.node?.id.replace('gid://shopify/Product/', '');
       return {
-        title             : item?.node?.title,
-        handle            : item?.node?.handle,
-        stockCode         : item?.node?.stockCode?.value,
-        variants          : productVariantDataFormat(item?.node?.variants),
-        featuredImageUrl  : item?.node?.featuredImage?.url || DEFAULT_IMAGE.IMAGE,
-        companyPrice      : priceList?.[productId]
+        id: productId,
+        title: item?.node?.title,
+        handle: item?.node?.handle,
+        stockCode: item?.node?.stockCode?.value,
+        uom: item?.node?.uom?.value,
+        variants: productVariantDataFormat(item?.node?.variants),
+        featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.IMAGE,
+        companyPrice: priceList?.[productId]
           ? priceList?.[productId][0]?.company_price
           : null,
         defaultPrice: priceList?.[productId]
           ? priceList?.[productId][0]?.default_price
           : null,
-      }
+      };
     }),
   };
   return finalProductList;
