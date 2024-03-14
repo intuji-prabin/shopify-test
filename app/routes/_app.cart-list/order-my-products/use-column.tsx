@@ -87,6 +87,8 @@ export function useMyProductColumn() {
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
+          const meta = info.table.options.meta;
+          console.log("meta", meta)
           return <QuantityColumn quantity={product.quantity} unitOfMeasure={product.unitOfMeasure} defaultUOM={product.defaultUOM} priceRange={product.priceRange} totalPrice={product.totalPrice} />;
         },
       },
