@@ -39,12 +39,12 @@ export function ShippingLocation({ addressList, mergedAddressList, defaultAddres
       <p className="after:content-['*'] after:ml-0.5 after:text-red-500 block text-base font-normal text-grey-800 leading-[21px]">
         Change Shipping Location
       </p>
-      <input type="text" name="country" value={country} />
-      <input type="text" name="address1" value={address1} />
-      <input type="text" name="address2" value={address2} />
-      <input type="text" name="zip" value={zip} />
-      <input type="text" name="phone" value={phone} />
-      <input type="text" name="fax" value={fax} />
+      <input type="text" name="country" value={country} className='hidden' />
+      <input type="text" name="address1" value={address1} className='hidden' />
+      <input type="text" name="address2" value={address2} className='hidden' />
+      <input type="text" name="zip" value={zip} className='hidden' />
+      <input type="text" name="phone" value={phone} className='hidden' />
+      <input type="text" name="fax" value={fax} className='hidden' />
       <select
         name="addressId"
         className="w-full min-w-[92px] place-order h-full border-grey-100"

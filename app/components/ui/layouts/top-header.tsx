@@ -19,7 +19,7 @@ import {CustomerData} from '~/routes/_public.login/login.server';
 import TabletNavmenu from './tablet-navbar/tablet-navmenu';
 import {useHamburgerMenu} from './elements/HamburgerMenuContext';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {PredictiveSearch} from '../predictive-search';
+import {PredictiveSearch} from '~/components/ui/predictive-search';
 
 export function PlaceOrder() {
   const {isOpen, toggleMenu} = useHamburgerMenu();
