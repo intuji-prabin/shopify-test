@@ -1,13 +1,12 @@
-
-import { Link } from '@remix-run/react';
-import { ColumnDef } from '@tanstack/react-table';
-import { useMemo, useState } from 'react';
-import { TooltipInfo } from '~/components/icons/orderStatus';
-import { badgeVariants } from '~/components/ui/badge';
-import { Button } from '~/components/ui/button';
-import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { getProductPriceByQty } from '~/routes/_app.product_.$productSlug/product-detail';
+import {Link} from '@remix-run/react';
+import {ColumnDef} from '@tanstack/react-table';
+import {useMemo, useState} from 'react';
+import {TooltipInfo} from '~/components/icons/orderStatus';
+import {badgeVariants} from '~/components/ui/badge';
+import {Button} from '~/components/ui/button';
+import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {getProductPriceByQty} from '~/routes/_app.product_.$productSlug/product-detail';
 
 export type BulkOrderColumn = {
   productId: string;
@@ -23,6 +22,7 @@ export type BulkOrderColumn = {
   currency: string;
   defaultUOM: string;
   id: string;
+  UOM: string;
   unitOfMeasure: [
     {
       unit: string;
@@ -44,7 +44,7 @@ export function useMyProductColumn() {
     () => [
       {
         id: 'select',
-        header: ({ table }) => (
+        header: ({table}) => (
           <IndeterminateCheckbox
             {...{
               checked: table.getIsAllRowsSelected(),
@@ -53,7 +53,7 @@ export function useMyProductColumn() {
             }}
           />
         ),
-        cell: ({ row }) => (
+        cell: ({row}) => (
           <div className="px-1">
             <IndeterminateCheckbox
               {...{
@@ -87,7 +87,16 @@ export function useMyProductColumn() {
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
-          return <QuantityColumn quantity={product.quantity} unitOfMeasure={product.unitOfMeasure} defaultUOM={product.defaultUOM} priceRange={product.priceRange} totalPrice={product.totalPrice} info={info} />;
+          return (
+            <QuantityColumn
+              quantity={product.quantity}
+              unitOfMeasure={product.unitOfMeasure}
+              defaultUOM={product.defaultUOM}
+              priceRange={product.priceRange}
+              totalPrice={product.totalPrice}
+              info={info}
+            />
+          );
         },
       },
       {
@@ -111,11 +120,12 @@ export function useMyProductColumn() {
         header: 'Price',
         enableSorting: false,
         cell: (info) => {
-          const productTotal = info.row.original.totalPrice;
+          const productTotal = info.row.original.companyPrice;
           const priceRange = info.row.original.priceRange;
           const quantity = info.row.original.quantity;
           const product = info.row.original;
-          const UOM = info.row.original.uom;
+          const UOM = info.row.original.UOM ?? info.row.original.uom;
+          console.log('UOM', info.row.original.UOM);
           return (
             <ProductTotal
               totalPrice={productTotal}
@@ -135,7 +145,7 @@ export function useMyProductColumn() {
     [],
   );
 
-  return { columns };
+  return {columns};
 }
 
 /**
@@ -143,7 +153,7 @@ export function useMyProductColumn() {
  */
 type ItemsColumnType = Pick<BulkOrderColumn, 'title' | 'sku' | 'featuredImage'>;
 
-function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
+function ItemsColumn({title, sku, featuredImage}: ItemsColumnType) {
   return (
     <div className="flex space-x-2">
       <figure className="bg-grey-25 p-3 !w-20 ">
@@ -160,7 +170,7 @@ function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
             <span className="font-semibold text-grey-900 ">SKU: </span>
             {(sku && sku) || 'N/A'}
           </p>
-          <div className={`${badgeVariants({ variant: 'inStock' })} !m-0 `}>
+          <div className={`${badgeVariants({variant: 'inStock'})} !m-0 `}>
             <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>IN
             STOCK
           </div>
@@ -175,9 +185,18 @@ function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
 /**
  * @description Quantity Column Component
  */
-type QuantityColumnType = Pick<BulkOrderColumn, 'quantity' | 'unitOfMeasure' | 'defaultUOM' | 'priceRange' | 'totalPrice'> & { 'info': any };
-function QuantityColumn({ quantity, unitOfMeasure, defaultUOM, priceRange, totalPrice, info }: QuantityColumnType) {
-
+type QuantityColumnType = Pick<
+  BulkOrderColumn,
+  'quantity' | 'unitOfMeasure' | 'defaultUOM' | 'priceRange' | 'totalPrice'
+> & {info: any};
+function QuantityColumn({
+  quantity,
+  unitOfMeasure,
+  defaultUOM,
+  priceRange,
+  totalPrice,
+  info,
+}: QuantityColumnType) {
   const meta = info.table.options.meta;
 
   const handleIncreaseQuantity = () => {
@@ -191,7 +210,7 @@ function QuantityColumn({ quantity, unitOfMeasure, defaultUOM, priceRange, total
     // );
     // setProductPrice(prices);
     meta?.updateData(info.row.index, info.column.id, quantity + 1);
-  }
+  };
 
   const handleDecreaseQuantity = () => {
     // const prices: any = getProductPriceByQty(
@@ -203,7 +222,11 @@ function QuantityColumn({ quantity, unitOfMeasure, defaultUOM, priceRange, total
     //   totalPrice,
     // );
     // setProductPrice(prices);
-    meta?.updateData(info.row.index, info.column.id, quantity > 0 ? quantity - 1 : 0);
+    meta?.updateData(
+      info.row.index,
+      info.column.id,
+      quantity > 0 ? quantity - 1 : 0,
+    );
   };
 
   function handleInputChange(event?: any) {
@@ -217,7 +240,11 @@ function QuantityColumn({ quantity, unitOfMeasure, defaultUOM, priceRange, total
     //   totalPrice,
     // );
     // setProductPrice(prices);
-    meta?.updateData(info.row.index, info.column.id, isNaN(inputQuantity) ? 0 : inputQuantity);
+    meta?.updateData(
+      info.row.index,
+      info.column.id,
+      isNaN(inputQuantity) ? 0 : inputQuantity,
+    );
   }
 
   return (
@@ -266,20 +293,28 @@ function QuantityColumn({ quantity, unitOfMeasure, defaultUOM, priceRange, total
 /**
  * @description Measurement Column Component
  */
-type MeasurementColumnType = Pick<BulkOrderColumn, 'uom' | 'unitOfMeasure'> & { 'info': any };
+type MeasurementColumnType = Pick<BulkOrderColumn, 'uom' | 'unitOfMeasure'> & {
+  info: any;
+};
 
-function ProductMeasurement({ uom, unitOfMeasure, info }: MeasurementColumnType) {
+function ProductMeasurement({uom, unitOfMeasure, info}: MeasurementColumnType) {
   const [UOM, setUOM] = useState(uom);
   const meta = info.table.options.meta;
 
   const handleUOMChange = (val: any) => {
     setUOM(val);
-    console.log(val)
+    console.log(val);
     meta?.updateData(info.row.index, info.column.id, val);
+  };
+
+  function handleUOM(selectedUOM: any) {
+    setUOM(selectedUOM);
+    meta?.updateData(info.row.index, info.column.id, selectedUOM);
   }
+
   return (
     <>
-      {unitOfMeasure.length > 0 ? (
+      {/* {unitOfMeasure.length > 0 ? (
         <select
           name="filter_by"
           className="w-full min-w-[92px] place-order h-full border-grey-100"
@@ -294,7 +329,24 @@ function ProductMeasurement({ uom, unitOfMeasure, info }: MeasurementColumnType)
         </select>
       ) : (
         <p>{uom}</p>
-      )}
+      )} */}
+
+      <select
+        name="filter_by"
+        className="w-full min-w-[120px] min-h-14 place-order h-full !border-grey-500 filter-select"
+        onChange={(e: any) => handleUOM(e.target.value)}
+        defaultValue={UOM}
+      >
+        {unitOfMeasure.length > 0 ? (
+          unitOfMeasure?.map((uom: any, index: number) => (
+            <option value={uom.unit} key={index + 'uom'}>
+              {uom.unit}
+            </option>
+          ))
+        ) : (
+          <option value={UOM}>{UOM}</option>
+        )}
+      </select>
     </>
   );
 }
@@ -310,9 +362,9 @@ function ProductTotal({
   quantity,
   unitOfMeasure,
   defaultUOM,
-  UOM
+  UOM,
 }: {
-  totalPrice: number;
+  totalPrice: string;
   isBulkDetailVisible: boolean;
   isRowChecked: boolean;
   setIsBulkDetailsVisible: () => void;
@@ -328,7 +380,6 @@ function ProductTotal({
   quantity: number;
   UOM: any;
 }) {
-
   const prices = getProductPriceByQty(
     quantity,
     unitOfMeasure,
@@ -368,8 +419,9 @@ function ProductTotal({
       {priceRange.length > 0 && (
         <Button
           onClick={setIsBulkDetailsVisible}
-          className={`${isRowChecked ? 'bg-white' : 'bg-primary-200'
-            }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
+          className={`${
+            isRowChecked ? 'bg-white' : 'bg-primary-200'
+          }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
         >
           {isBulkDetailVisible ? 'Hide' : 'View'} BULK PRICE
         </Button>
