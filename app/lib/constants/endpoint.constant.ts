@@ -51,4 +51,7 @@ export const ENDPOINT = {
     ORDER: `${BASE_URL}/order`,
     FILTER: `${BASE_URL}/product/filter`,
   },
+  ORDERS: {
+    GET: `${BASE_URL}/order`,
+  },
 };
