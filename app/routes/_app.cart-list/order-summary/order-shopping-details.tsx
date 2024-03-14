@@ -137,7 +137,7 @@ export function TextArea() {
         cols={30}
         rows={10}
         className="w-full h-full resize-none"
-        value="I kindly request your assistance in ensuring that my order is dispatched and delivered as per the requested delivery date."
+        placeholder="I kindly request your assistance in ensuring that my order is dispatched and delivered as per the requested delivery date."
       />
     </div>
   );

@@ -87,9 +87,7 @@ export function useMyProductColumn() {
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
-          const meta = info.table.options.meta;
-          console.log("meta", meta)
-          return <QuantityColumn quantity={product.quantity} unitOfMeasure={product.unitOfMeasure} defaultUOM={product.defaultUOM} priceRange={product.priceRange} totalPrice={product.totalPrice} />;
+          return <QuantityColumn quantity={product.quantity} unitOfMeasure={product.unitOfMeasure} defaultUOM={product.defaultUOM} priceRange={product.priceRange} totalPrice={product.totalPrice} info={info} />;
         },
       },
       {
@@ -103,6 +101,7 @@ export function useMyProductColumn() {
             <ProductMeasurement
               uom={productMeasurement}
               unitOfMeasure={uomList}
+              info={info}
             />
           );
         },
@@ -114,9 +113,16 @@ export function useMyProductColumn() {
         cell: (info) => {
           const productTotal = info.row.original.totalPrice;
           const priceRange = info.row.original.priceRange;
+          const quantity = info.row.original.quantity;
+          const product = info.row.original;
+          const UOM = info.row.original.uom;
           return (
             <ProductTotal
               totalPrice={productTotal}
+              quantity={quantity}
+              UOM={UOM}
+              unitOfMeasure={product.unitOfMeasure}
+              defaultUOM={product.defaultUOM}
               priceRange={priceRange}
               isBulkDetailVisible={info?.row?.getIsExpanded()}
               setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
@@ -169,50 +175,49 @@ function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
 /**
  * @description Quantity Column Component
  */
-type QuantityColumnType = Pick<BulkOrderColumn, 'quantity' | 'unitOfMeasure' | 'defaultUOM' | 'priceRange' | 'totalPrice'>;
-function QuantityColumn({ quantity, unitOfMeasure, defaultUOM, priceRange, totalPrice }: QuantityColumnType) {
-  const [quantityCounter, setQuantityCounter] = useState(quantity);
-  const [productPrice, setProductPrice] = useState(totalPrice);
-  const [UOM, setUOM] = useState(defaultUOM);
+type QuantityColumnType = Pick<BulkOrderColumn, 'quantity' | 'unitOfMeasure' | 'defaultUOM' | 'priceRange' | 'totalPrice'> & { 'info': any };
+function QuantityColumn({ quantity, unitOfMeasure, defaultUOM, priceRange, totalPrice, info }: QuantityColumnType) {
+
+  const meta = info.table.options.meta;
 
   const handleIncreaseQuantity = () => {
-    const prices = getProductPriceByQty(
-      quantityCounter + 1,
-      unitOfMeasure,
-      UOM,
-      defaultUOM,
-      priceRange,
-      totalPrice,
-    );
-    setProductPrice(prices);
-    setQuantityCounter(quantityCounter + 1);
+    // const prices = getProductPriceByQty(
+    //   quantity + 1,
+    //   unitOfMeasure,
+    //   UOM,
+    //   defaultUOM,
+    //   priceRange,
+    //   totalPrice,
+    // );
+    // setProductPrice(prices);
+    meta?.updateData(info.row.index, info.column.id, quantity + 1);
   }
 
   const handleDecreaseQuantity = () => {
-    const prices: any = getProductPriceByQty(
-      quantityCounter > 1 ? quantityCounter - 1 : 1,
-      unitOfMeasure,
-      UOM,
-      defaultUOM,
-      priceRange,
-      totalPrice,
-    );
-    setProductPrice(prices);
-    setQuantityCounter(quantityCounter > 0 ? quantityCounter - 1 : 0);
+    // const prices: any = getProductPriceByQty(
+    //   quantity > 1 ? quantity - 1 : 1,
+    //   unitOfMeasure,
+    //   UOM,
+    //   defaultUOM,
+    //   priceRange,
+    //   totalPrice,
+    // );
+    // setProductPrice(prices);
+    meta?.updateData(info.row.index, info.column.id, quantity > 0 ? quantity - 1 : 0);
   };
 
   function handleInputChange(event?: any) {
     const inputQuantity = parseInt(event.target.value);
-    const prices = getProductPriceByQty(
-      isNaN(inputQuantity) ? 0 : inputQuantity,
-      unitOfMeasure,
-      UOM,
-      defaultUOM,
-      priceRange,
-      totalPrice,
-    );
-    setProductPrice(prices);
-    setQuantityCounter(isNaN(inputQuantity) ? 0 : inputQuantity);
+    // const prices = getProductPriceByQty(
+    //   isNaN(inputQuantity) ? 0 : inputQuantity,
+    //   unitOfMeasure,
+    //   UOM,
+    //   defaultUOM,
+    //   priceRange,
+    //   totalPrice,
+    // );
+    // setProductPrice(prices);
+    meta?.updateData(info.row.index, info.column.id, isNaN(inputQuantity) ? 0 : inputQuantity);
   }
 
   return (
@@ -228,7 +233,7 @@ function QuantityColumn({ quantity, unitOfMeasure, defaultUOM, priceRange, total
           type="text"
           className="flex items-center justify-center w-10 text-center border-solid border-x-0 border-grey-200 min-h-10"
           min="1"
-          value={quantityCounter}
+          value={quantity}
           onChange={handleInputChange}
         />
         <button
@@ -252,7 +257,7 @@ function QuantityColumn({ quantity, unitOfMeasure, defaultUOM, priceRange, total
           </p>
         </div>
         <p className="text-grey-700 text-[14px] font-normal capitalize  leading-[16px]">
-          Minimum Order Quantity {productPrice}
+          Minimum Order Quantity
         </p>
       </div>
     </div>
@@ -261,16 +266,25 @@ function QuantityColumn({ quantity, unitOfMeasure, defaultUOM, priceRange, total
 /**
  * @description Measurement Column Component
  */
-type MeasurementColumnType = Pick<BulkOrderColumn, 'uom' | 'unitOfMeasure'>;
+type MeasurementColumnType = Pick<BulkOrderColumn, 'uom' | 'unitOfMeasure'> & { 'info': any };
 
-function ProductMeasurement({ uom, unitOfMeasure }: MeasurementColumnType) {
+function ProductMeasurement({ uom, unitOfMeasure, info }: MeasurementColumnType) {
+  const [UOM, setUOM] = useState(uom);
+  const meta = info.table.options.meta;
+
+  const handleUOMChange = (val: any) => {
+    setUOM(val);
+    console.log(val)
+    meta?.updateData(info.row.index, info.column.id, val);
+  }
   return (
     <>
       {unitOfMeasure.length > 0 ? (
         <select
           name="filter_by"
           className="w-full min-w-[92px] place-order h-full border-grey-100"
-          defaultValue={uom}
+          defaultValue={UOM}
+          onChange={(e: any) => handleUOMChange(e.target.value)}
         >
           {unitOfMeasure?.map((uom: any, index: number) => (
             <option value={uom.unit} key={index + 'uom'}>
@@ -293,6 +307,10 @@ function ProductTotal({
   setIsBulkDetailsVisible,
   isRowChecked,
   priceRange,
+  quantity,
+  unitOfMeasure,
+  defaultUOM,
+  UOM
 }: {
   totalPrice: number;
   isBulkDetailVisible: boolean;
@@ -305,7 +323,21 @@ function ProductTotal({
       price: string;
     },
   ];
+  unitOfMeasure: any;
+  defaultUOM: any;
+  quantity: number;
+  UOM: any;
 }) {
+
+  const prices = getProductPriceByQty(
+    quantity,
+    unitOfMeasure,
+    UOM,
+    defaultUOM,
+    priceRange,
+    totalPrice,
+  );
+
   return (
     <div className="flex flex-col gap-4 items-baseline min-w-[110px]">
       <div className="flex flex-col gap-1">
@@ -327,7 +359,7 @@ function ProductTotal({
           </p>
         </div>
         <p className="text-grey-900 text-lg leading-5.5 italic">
-          ${(totalPrice && totalPrice) || 'N/A'}
+          ${prices || 'N/A'}
         </p>
         <p className="text-sm italic font-bold leading-normal text-grey-500">
           (Excl. GST)
