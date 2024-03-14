@@ -7,6 +7,7 @@ import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { getProductPriceByQty } from '~/routes/_app.product_.$productSlug/product-detail';
 
 export type BulkOrderColumn = {
   productId: string;
@@ -85,8 +86,8 @@ export function useMyProductColumn() {
         header: 'Quantity',
         enableSorting: false,
         cell: (info) => {
-          const productQuantity = info.row.original.quantity;
-          return <QuantityColumn quantity={productQuantity} />;
+          const product = info.row.original;
+          return <QuantityColumn quantity={product.quantity} unitOfMeasure={product.unitOfMeasure} defaultUOM={product.defaultUOM} priceRange={product.priceRange} totalPrice={product.totalPrice} />;
         },
       },
       {
@@ -166,25 +167,52 @@ function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
 /**
  * @description Quantity Column Component
  */
-type QuantityColumnType = Pick<BulkOrderColumn, 'quantity'>;
-function QuantityColumn({ quantity }: QuantityColumnType) {
+type QuantityColumnType = Pick<BulkOrderColumn, 'quantity' | 'unitOfMeasure' | 'defaultUOM' | 'priceRange' | 'totalPrice'>;
+function QuantityColumn({ quantity, unitOfMeasure, defaultUOM, priceRange, totalPrice }: QuantityColumnType) {
   const [quantityCounter, setQuantityCounter] = useState(quantity);
-  // const [productPrice, setProductPrice] = useState(companyDefaultPrice);
-  const handleIncreaseQuantity = () =>
-    setQuantityCounter((previousState) => previousState + 1);
+  const [productPrice, setProductPrice] = useState(totalPrice);
+  const [UOM, setUOM] = useState(defaultUOM);
+
+  const handleIncreaseQuantity = () => {
+    const prices = getProductPriceByQty(
+      quantityCounter + 1,
+      unitOfMeasure,
+      UOM,
+      defaultUOM,
+      priceRange,
+      totalPrice,
+    );
+    setProductPrice(prices);
+    setQuantityCounter(quantityCounter + 1);
+  }
+
   const handleDecreaseQuantity = () => {
-    // const prices = getProductPriceByQty(
-    //   quantity > 1 ? quantity - 1 : 1,
-    //   unitOfMeasure,
-    //   UOM,
-    //   box,
-    //   priceRange,
-    //   companyDefaultPrice,
-    // );
-    // setProductPrice(prices);
-    setQuantityCounter(quantity > 0 ? quantity - 1 : 0);
+    const prices: any = getProductPriceByQty(
+      quantityCounter > 1 ? quantityCounter - 1 : 1,
+      unitOfMeasure,
+      UOM,
+      defaultUOM,
+      priceRange,
+      totalPrice,
+    );
+    setProductPrice(prices);
+    setQuantityCounter(quantityCounter > 0 ? quantityCounter - 1 : 0);
   };
-  // setQuantityCounter((previousState) => previousState - 1);
+
+  function handleInputChange(event?: any) {
+    const inputQuantity = parseInt(event.target.value);
+    const prices = getProductPriceByQty(
+      isNaN(inputQuantity) ? 0 : inputQuantity,
+      unitOfMeasure,
+      UOM,
+      defaultUOM,
+      priceRange,
+      totalPrice,
+    );
+    setProductPrice(prices);
+    setQuantityCounter(isNaN(inputQuantity) ? 0 : inputQuantity);
+  }
+
   return (
     <div className="flex flex-col gap-[11.5px] mt-[2.4rem] cart-list">
       <div className="flex items-center">
@@ -194,9 +222,13 @@ function QuantityColumn({ quantity }: QuantityColumnType) {
         >
           -
         </button>
-        <p className="flex items-center justify-center w-10 border-solid border-y border-grey-200 min-h-10">
-          {quantityCounter}
-        </p>
+        <input
+          type="text"
+          className="flex items-center justify-center w-10 text-center border-solid border-x-0 border-grey-200 min-h-10"
+          min="1"
+          value={quantityCounter}
+          onChange={handleInputChange}
+        />
         <button
           className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
           onClick={handleIncreaseQuantity}
@@ -218,7 +250,7 @@ function QuantityColumn({ quantity }: QuantityColumnType) {
           </p>
         </div>
         <p className="text-grey-700 text-[14px] font-normal capitalize  leading-[16px]">
-          Minimum Order Quantity
+          Minimum Order Quantity {productPrice}
         </p>
       </div>
     </div>
