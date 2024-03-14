@@ -12,7 +12,6 @@ import {
 } from '@tanstack/react-table';
 
 export function useTable<T>(columns: ColumnDef<T>[], data: T[]) {
-  console.log('dataHello', data);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [originalData, setOriginalData] = useState<T[]>(data);
