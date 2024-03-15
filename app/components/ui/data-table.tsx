@@ -1,8 +1,6 @@
-import { ColumnDef, Row, Table, flexRender } from '@tanstack/react-table';
-import { ChevronsUpDown } from 'lucide-react';
-import { Fragment } from 'react';
-import ArrowDown from '~/components/icons/arrowDown';
-import ArrowUp from '~/components/icons/arrowUp';
+import {Fragment} from 'react';
+import {useSearchParams} from '@remix-run/react';
+import {ColumnDef, Row, Table, flexRender} from '@tanstack/react-table';
 import {
   TableBody,
   TableCell,
@@ -11,12 +9,16 @@ import {
   TableRow,
   Table as TableShadcn,
 } from '~/components/ui/table';
-import { ArrowUpDown, BlueArrowDown, BlueArrowUp } from '../icons/arrowUpDown';
+import {
+  ArrowUpDown,
+  BlueArrowDown,
+  BlueArrowUp,
+} from '~/components/icons/arrowUpDown';
 
 type DataTableProps<T> = {
   table: Table<T>;
   columns?: ColumnDef<T>[];
-  renderSubComponent?: (props: { row: Row<T> }) => React.ReactElement;
+  renderSubComponent?: (props: {row: Row<T>}) => React.ReactElement;
   getRowCanExpand?: (row: Row<T>) => boolean;
   className?: string;
 };
@@ -28,6 +30,47 @@ export function DataTable<T>({
   getRowCanExpand,
   className,
 }: DataTableProps<T>) {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const params = new URLSearchParams(searchParams);
+
+  const orderBy = params.get('orderBy') || '';
+
+  const order = params.get('order') || '';
+
+  const toggleSorting = (columnId: string) => {
+    let orderState = 'asc';
+
+    if (orderBy === columnId) {
+      // If already sorting by this column
+      if (order === 'asc') {
+        orderState = 'desc'; // If currently ascending, change to descending
+      } else {
+        // If currently descending, remove sorting
+        params.delete('orderBy');
+        params.delete('order');
+        setSearchParams(params);
+        return;
+      }
+    }
+    // Remove the existing pagination parameters
+    ['page', 'after', 'before', 'pageNo'].forEach((key) => {
+      params.delete(key);
+    });
+
+    params.set('orderBy', columnId);
+    params.set('order', orderState);
+    setSearchParams(params);
+  };
+
+  // Render sorting icons based on sorting parameters
+  const renderSortingIcon = (columnId: string) => {
+    if (orderBy === columnId) {
+      return order === 'asc' ? <BlueArrowUp /> : <BlueArrowDown />;
+    }
+    return <ArrowUpDown />;
+  };
+
   return (
     <TableShadcn className={`${className} bg-neutral-white`} data-cy="table">
       <TableHeader>
@@ -45,7 +88,9 @@ export function DataTable<T>({
                         className: header.column.getCanSort()
                           ? 'flex items-center gap-x-2 cursor-pointer'
                           : '',
-                        onClick: header.column.getToggleSortingHandler(),
+                        onClick: () =>
+                          header.column.getCanSort() &&
+                          toggleSorting(header.id),
                       }}
                     >
                       <span className="">
@@ -54,14 +99,8 @@ export function DataTable<T>({
                           header.getContext(),
                         )}
                       </span>
-                      {header.column.getIsSorted() ? (
-                        {
-                          asc: <BlueArrowUp />,
-                          desc: <BlueArrowDown />,
-                        }[(header.column.getIsSorted() as string) ?? null]
-                      ) : (
-                        <>{header.column.getCanSort() ? <ArrowUpDown /> : ''}</>
-                      )}
+                      {header.column.getCanSort() &&
+                        renderSortingIcon(header.id)}
                     </div>
                   )}
                 </TableHead>
@@ -93,8 +132,9 @@ export function DataTable<T>({
                 </TableRow>
                 {row.getIsExpanded() && (
                   <TableRow
-                    className={` ${row.getIsSelected() ? 'bg-primary-200 ' : ''
-                      } hover:bg-primary-200`}
+                    className={` ${
+                      row.getIsSelected() ? 'bg-primary-200 ' : ''
+                    } hover:bg-primary-200`}
                   >
                     <TableCell
                       valign="bottom"
@@ -112,7 +152,7 @@ export function DataTable<T>({
                     </TableCell>
                     <TableCell colSpan={3}>
                       {/* <BulkTable quantity={'Quantity'} price={'Price'} /> */}
-                      {renderSubComponent && renderSubComponent({ row })}
+                      {renderSubComponent && renderSubComponent({row})}
                     </TableCell>
                   </TableRow>
                 )}
