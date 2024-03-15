@@ -1,12 +1,6 @@
 import {useMemo} from 'react';
 import {ColumnDef} from '@tanstack/react-table';
 import {statusVariants} from '~/components/ui/status';
-import {TooltipProvider} from '~/components/ui/tooltip';
-import {
-  HybridTooltip,
-  HybridTooltipContent,
-  HybridTooltipTrigger,
-} from '~/components/ui/hybrid-tooltip';
 import {
   Dialog,
   DialogContent,

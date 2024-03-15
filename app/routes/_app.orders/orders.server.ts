@@ -40,13 +40,37 @@ type ResponseData = {
   payload: Payload;
 };
 
-export async function getAllOrders({customerId}: {customerId: string}) {
+export async function getAllOrders({
+  customerId,
+  searchParams,
+}: {
+  customerId: string;
+  searchParams: URLSearchParams;
+}) {
   try {
-    const url = `${ENDPOINT.ORDERS.GET}/${customerId}`;
+    const paramsList = Object.fromEntries(searchParams);
+
+    let url = `${ENDPOINT.ORDERS.GET}/${customerId}?`;
+
+    if (paramsList?.page) {
+      url += `page=${paramsList?.page}`;
+    }
+
+    if (paramsList?.after) {
+      url += `&after=true`;
+    }
+
+    if (paramsList?.before) {
+      url += `&before=true`;
+    }
+
+    if (paramsList?.search) {
+      url += `search=${paramsList?.search}`;
+    }
 
     const results = await useFetch<ResponseData>({
-      url,
       method: AllowedHTTPMethods.GET,
+      url,
     });
 
     if (!results.status) {
