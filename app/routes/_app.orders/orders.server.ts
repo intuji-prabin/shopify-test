@@ -50,27 +50,39 @@ export async function getAllOrders({
   try {
     const paramsList = Object.fromEntries(searchParams);
 
-    let url = `${ENDPOINT.ORDERS.GET}/${customerId}?`;
+    const url = new URL(`${ENDPOINT.ORDERS.GET}/${customerId}`);
+
+    const params = new URLSearchParams();
+
+    if (paramsList?.search) {
+      params.append('search', paramsList.search);
+    }
 
     if (paramsList?.page) {
-      url += `page=${paramsList?.page}`;
+      params.append('page', paramsList.page);
     }
 
     if (paramsList?.after) {
-      url += `&after=true`;
+      params.append('after', 'true');
     }
 
     if (paramsList?.before) {
-      url += `&before=true`;
+      params.append('before', 'true');
     }
 
-    if (paramsList?.search) {
-      url += `search=${paramsList?.search}`;
+    if (paramsList?.orderBy) {
+      params.append('orderBy', paramsList.orderBy);
     }
+
+    if (paramsList?.order) {
+      params.append('order', paramsList.order);
+    }
+
+    url.search = params.toString();
 
     const results = await useFetch<ResponseData>({
       method: AllowedHTTPMethods.GET,
-      url,
+      url: url.toString(),
     });
 
     if (!results.status) {
