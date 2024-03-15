@@ -223,6 +223,7 @@ function QuantityColumn({
           className="flex items-center justify-center w-10 text-center border-solid border-x-0 border-grey-200 min-h-10"
           min="1"
           value={quantity}
+          name="quantity"
           onChange={handleInputChange}
         />
         <button
@@ -269,24 +270,22 @@ function ProductMeasurement({ uom, unitOfMeasure, info }: MeasurementColumnType)
   }
 
   return (
-    <>
+    <select
+      name="uomSelector"
+      className="w-full min-w-[92px] place-order h-full border-grey-100"
+      onChange={(e: any) => handleUOMChange(e.target.value)}
+      defaultValue={UOM}
+    >
       {unitOfMeasure.length > 0 ? (
-        <select
-          name="uomSelector"
-          className="w-full min-w-[92px] place-order h-full border-grey-100"
-          onChange={(e: any) => handleUOMChange(e.target.value)}
-          defaultValue={UOM}
-        >
-          {unitOfMeasure?.map((uom: any, index: number) => (
-            <option value={uom.unit} key={index + 'uom'}>
-              {uom.unit}
-            </option>
-          ))}
-        </select>
+        unitOfMeasure?.map((uom: any, index: number) => (
+          <option value={uom.unit} key={index + 'uom'}>
+            {uom.unit}
+          </option>
+        ))
       ) : (
-        <p>{UOM}</p>
+        <option value={UOM}>{UOM}</option>
       )}
-    </>
+    </select>
   );
 }
 /**

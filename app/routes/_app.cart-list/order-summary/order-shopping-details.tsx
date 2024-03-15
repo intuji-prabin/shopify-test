@@ -55,13 +55,11 @@ export function ShippingLocation({ addressList, mergedAddressList, defaultAddres
           {defaultAddress}
         </option>
         {addressList?.map((address: any, index: number) => {
-          const concatAddressList = concatDefaultAddress(
-            address.address1,
-            address.address2,
-          );
+          const concatAddressList = `${address.address1}${address.address2 ? ', ' + address.address2 : ''}`;
+          const addressDetails = [address.zip, concatAddressList, address.country].filter(Boolean).join(', ');
           return (
-            <option value={address.id} key={index + 'address'}>
-              {address.zip + ", " + concatAddressList + ", " + address.country}
+            <option value={address.id} key={`${index}address`}>
+              {addressDetails}
             </option>
           )
         })}

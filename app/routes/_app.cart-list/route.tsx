@@ -33,6 +33,9 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
 
 export async function action({ request, context }: ActionFunctionArgs) {
   const messageSession = await getMessageSession(request);
+  const formData = await request.formData();
+  const UOMS = formData.getAll('uomSelector');
+  const finalQuantity = formData.getAll('quantity');
   try {
     let res;
     switch (request.method) {
@@ -79,7 +82,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         try {
           res = await removeItemFromCart(context, request);
           await getCartList(context, request, res.cartSession);
-          setErrorMessage(messageSession, "Order deleted successfully");
+          setSuccessMessage(messageSession, "Order deleted successfully");
           return json({}, {
             headers: [
               ['Set-Cookie', await context.session.commit({})],
@@ -115,6 +118,17 @@ export async function action({ request, context }: ActionFunctionArgs) {
             },
           );
         }
+      case "PUT":
+        const formData = [];
+        for (let i = 0; i < UOMS.length; i++) {
+          const selectedUOM = UOMS[i];
+          const quantity = finalQuantity[i];
+          formData.push({
+            quantity,
+            selectedUOM
+          });
+        }
+        console.log("putNow", formData)
       default:
         res = json(
           {

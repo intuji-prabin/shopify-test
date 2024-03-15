@@ -410,7 +410,7 @@ const UPDATE_OLD_CART =
   }
 }` as const;
 
-const ADD_ITEMS_IN_CART =
+export const ADD_ITEMS_IN_CART =
   `mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
   cartLinesAdd(cartId: $cartId, lines: $lines) {
     cart {

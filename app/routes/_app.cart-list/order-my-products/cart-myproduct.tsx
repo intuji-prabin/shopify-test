@@ -12,10 +12,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/ui/dialog';
+import FullPageLoading from '~/components/ui/fullPageLoading';
 import { useTable } from '~/hooks/useTable';
 import { BulkTable } from './bulk-table';
 import { useMyProductColumn } from './use-column';
-import FullPageLoading from '~/components/ui/fullPageLoading';
 
 export default function MyProducts({ products }: any) {
   const { columns } = useMyProductColumn();
@@ -95,11 +95,11 @@ export default function MyProducts({ products }: any) {
 
       <div className="border-t border-grey-50 cart-order">
         {isLoading ? <FullPageLoading description='Loading....' /> :
-          <DataTable table={table} renderSubComponent={renderSubComponent} key={tableKey} />
+          <Form method="PUT">
+            <DataTable table={table} renderSubComponent={renderSubComponent} key={tableKey} />
+            <Button variant="primary" type='submit'>Update cart</Button>
+          </Form>
         }
-        <Button variant="primary" type='submit' onClick={() => {
-          console.log("first")
-        }}>Update cart</Button>
       </div>
     </div>
   );
