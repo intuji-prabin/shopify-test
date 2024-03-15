@@ -49,7 +49,7 @@ export async function getPromotions({
 
     const response = await useFetch<PromotionsResponse>({
       method: AllowedHTTPMethods.GET,
-      url: url,
+      url,
     });
 
     if (!response.status) {

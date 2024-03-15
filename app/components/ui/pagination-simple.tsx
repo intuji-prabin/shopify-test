@@ -1,4 +1,4 @@
-import { useNavigation, useSearchParams } from '@remix-run/react';
+import {useNavigation, useSearchParams} from '@remix-run/react';
 import {
   PaginationContent,
   PaginationNext,
@@ -7,12 +7,14 @@ import {
 
 const PaginationSimple = ({
   paginationInfo,
-  totalProductLength,
-  page
+  totalLength,
+  page,
+  pageSize,
 }: {
   paginationInfo: any;
-  totalProductLength: number;
-  page: number
+  totalLength: number;
+  page: number;
+  pageSize: number;
 }) => {
   const navigation = useNavigation();
   const [searchParams] = useSearchParams();
@@ -20,14 +22,14 @@ const PaginationSimple = ({
   // Getting all query parameters
   let searchParamList = '';
   for (const [key, value] of searchParams.entries()) {
-    if (key != "page" && key != "after" && key != "before" && key != "pageNo") {
-      searchParamList += key + '=' + value + "&"
+    if (key != 'page' && key != 'after' && key != 'before' && key != 'pageNo') {
+      searchParamList += key + '=' + value + '&';
     }
   }
 
-  const showProductPerPage = 9;
-  const currentPageStartData = (page - 1) * showProductPerPage;
-  const currentPageEndData = totalProductLength + currentPageStartData;
+  const currentPageStartData = (page - 1) * pageSize;
+
+  const currentPageEndData = totalLength + currentPageStartData;
   return (
     <>
       <p className="w-40 font-medium text-grey-400">
@@ -50,8 +52,9 @@ const PaginationSimple = ({
         <li>
           <ul className="flex gap-x-3">
             <PaginationPrevious
-              to={`?${searchParamList}page=${paginationInfo?.startCursor}&before=true&pageNo=${page - 1
-                }`}
+              to={`?${searchParamList}page=${
+                paginationInfo?.startCursor
+              }&before=true&pageNo=${page - 1}`}
               aria-disabled={!paginationInfo?.hasPreviousPage}
               className={
                 !paginationInfo?.hasPreviousPage
@@ -61,8 +64,9 @@ const PaginationSimple = ({
               tabIndex={!paginationInfo?.hasPreviousPage ? -1 : undefined}
             />
             <PaginationNext
-              to={`?${searchParamList}page=${paginationInfo?.endCursor}&after=true&pageNo=${page + 1
-                }`}
+              to={`?${searchParamList}page=${
+                paginationInfo?.endCursor
+              }&after=true&pageNo=${page + 1}`}
               aria-disabled={!paginationInfo?.hasNextPage}
               className={
                 !paginationInfo?.hasNextPage
