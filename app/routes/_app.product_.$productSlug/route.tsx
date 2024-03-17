@@ -1,14 +1,22 @@
-import { json, useLoaderData } from '@remix-run/react';
-import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/server-runtime';
-import { ReactNode } from 'react';
-import { BackButton } from '~/components/ui/back-button';
-import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
-import { getAccessToken } from '~/lib/utils/auth-session.server';
-import { getMessageSession, messageCommitSession, setErrorMessage, setSuccessMessage } from '~/lib/utils/toast-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { GET_CART_LIST } from '../_app.cart-list/cart.server';
-import { addProductToCart, getProductDetails } from './product.server';
+import {json, useLoaderData} from '@remix-run/react';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+} from '@remix-run/server-runtime';
+import {ReactNode} from 'react';
+import {BackButton} from '~/components/ui/back-button';
+import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
+import {getAccessToken} from '~/lib/utils/auth-session.server';
+import {
+  getMessageSession,
+  messageCommitSession,
+  setErrorMessage,
+  setSuccessMessage,
+} from '~/lib/utils/toast-session.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {GET_CART_LIST} from '../_app.cart-list/cart.server';
+import {addProductToCart, getProductDetails} from './product.server';
 import ProductInformation from './productInformation';
 import ProductTab from './productTabs';
 import ProductsRelatedProduct from './productsRelatedProduct';
@@ -45,30 +53,39 @@ export type Product = {
   similarProducts: SimilarProduct[];
 };
 
-export const loader = async ({ params, request, context }: LoaderFunctionArgs) => {
+export const loader = async ({
+  params,
+  request,
+  context,
+}: LoaderFunctionArgs) => {
   try {
-    const { productSlug } = params;
-    const sessionCartInfo = await context.session.get(CART_SESSION_KEY)
+    const {productSlug} = params;
+    const sessionCartInfo = await context.session.get(CART_SESSION_KEY);
     if (sessionCartInfo) {
-      const cartLists = await context.storefront.query(GET_CART_LIST, { variables: { cartId: sessionCartInfo?.cartId } })
+      const cartLists = await context.storefront.query(GET_CART_LIST, {
+        variables: {cartId: sessionCartInfo?.cartId},
+      });
     }
-    const { userDetails } = await getUserDetails(request);
-    const product = await getProductDetails(userDetails?.id, productSlug as string);
+    const {userDetails} = await getUserDetails(request);
+    const product = await getProductDetails(
+      userDetails?.id,
+      productSlug as string,
+    );
 
     const productPage = params.productSlug;
 
     return json({
       product,
-      productPage
+      productPage,
     });
   } catch (error) {
-    console.log("first", error)
+    console.log('first', error);
     return json({});
   }
 };
 
 export default function route() {
-  const { product, productPage } = useLoaderData<typeof loader>();
+  const {product, productPage} = useLoaderData<typeof loader>();
   return (
     <ProductDetailPageWrapper>
       <div className="flex items-center pt-6 pb-4 ">
@@ -89,18 +106,28 @@ export default function route() {
   );
 }
 
-const ProductDetailPageWrapper = ({ children }: { children: ReactNode }) => {
+const ProductDetailPageWrapper = ({children}: {children: ReactNode}) => {
   return <div className="container">{children}</div>;
 };
 
-export const action = async ({ request, params, context }: ActionFunctionArgs) => {
+export const action = async ({
+  request,
+  params,
+  context,
+}: ActionFunctionArgs) => {
   const messageSession = await getMessageSession(request);
   try {
-    const { session } = context
-    const fromData = await request.formData()
-    const cartInfo = Object.fromEntries(fromData)
-    const accessTocken = await getAccessToken(context) as string
-    const addToCart = await addProductToCart(cartInfo, accessTocken, context, request);
+    const {session} = context;
+    const fromData = await request.formData();
+    const cartInfo = Object.fromEntries(fromData);
+    const accessTocken = (await getAccessToken(context)) as string;
+    console.log('cartInfo', cartInfo);
+    const addToCart = await addProductToCart(
+      cartInfo,
+      accessTocken,
+      context,
+      request,
+    );
     setSuccessMessage(messageSession, 'Item added to cart successfully');
     return json(
       {},
@@ -111,7 +138,6 @@ export const action = async ({ request, params, context }: ActionFunctionArgs) =
         ],
       },
     );
-
   } catch (error) {
     if (error instanceof Error) {
       console.log('this is err', error?.message);
@@ -141,4 +167,4 @@ export const action = async ({ request, params, context }: ActionFunctionArgs) =
       },
     );
   }
-}
+};

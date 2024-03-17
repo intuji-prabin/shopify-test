@@ -1,8 +1,8 @@
-import { Form, useFetcher, useSubmit } from '@remix-run/react';
-import { useState } from 'react';
+import {Form, useFetcher, useSubmit} from '@remix-run/react';
+import {useState} from 'react';
 import RemoveItem from '~/components/icons/removeItem';
-import { Button } from '~/components/ui/button';
-import { DataTable } from '~/components/ui/data-table';
+import {Button} from '~/components/ui/button';
+import {DataTable} from '~/components/ui/data-table';
 import {
   Dialog,
   DialogClose,
@@ -13,13 +13,14 @@ import {
   DialogTrigger,
 } from '~/components/ui/dialog';
 import FullPageLoading from '~/components/ui/fullPageLoading';
-import { useTable } from '~/hooks/useTable';
-import { BulkTable } from './bulk-table';
-import { useMyProductColumn } from './use-column';
+import {useTable} from '~/hooks/useTable';
+import {BulkTable} from './bulk-table';
+import {useMyProductColumn} from './use-column';
 
-export default function MyProducts({ products }: any) {
-  const { columns } = useMyProductColumn();
-  const { table } = useTable(columns, products);
+export default function MyProducts({products}: any) {
+  const {columns} = useMyProductColumn();
+  const {table} = useTable(columns, products);
+  console.log('objectooo', products);
 
   const fetcher = useFetcher();
 
@@ -38,9 +39,13 @@ export default function MyProducts({ products }: any) {
             <div className="product-remove">
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                  <Button variant={table.getSelectedRowModel().rows.length === 0
-                    ? 'disabled'
-                    : 'danger_dark'} className="min-w-[111px] min-h-10"
+                  <Button
+                    variant={
+                      table.getSelectedRowModel().rows.length === 0
+                        ? 'disabled'
+                        : 'danger_dark'
+                    }
+                    className="min-w-[111px] min-h-10"
                   >
                     Remove
                   </Button>
@@ -55,15 +60,19 @@ export default function MyProducts({ products }: any) {
                         clear cart
                       </h3>
                       <p className="font-normal leading-[21px] text-base text-center">
-                        All products will be removed from your cart. Are you sure you want
-                        to continue?
+                        All products will be removed from your cart. Are you
+                        sure you want to continue?
                       </p>
                     </DialogTitle>
                   </DialogHeader>
 
                   <DialogFooter className="flex px-4 pb-4">
                     <DialogClose asChild>
-                      <Button type="button" className="w-full uppercase" variant="ghost">
+                      <Button
+                        type="button"
+                        className="w-full uppercase"
+                        variant="ghost"
+                      >
                         cancel
                       </Button>
                     </DialogClose>
@@ -76,9 +85,12 @@ export default function MyProducts({ products }: any) {
                         table
                           .getSelectedRowModel()
                           .flatRows.map((item, index) =>
-                            formData.append(`cartList-${index}`, item.original.id),
+                            formData.append(
+                              `cartList-${index}`,
+                              item.original.id,
+                            ),
                           );
-                        fetcher.submit(formData, { method: 'DELETE' });
+                        fetcher.submit(formData, {method: 'DELETE'});
                         table.resetRowSelection();
                         setOpen(false);
                       }}
@@ -94,18 +106,26 @@ export default function MyProducts({ products }: any) {
       </div>
 
       <div className="border-t border-grey-50 cart-order">
-        {isLoading ? <FullPageLoading description='Loading....' /> :
+        {isLoading ? (
+          <FullPageLoading description="Loading...." />
+        ) : (
           <Form method="PUT">
-            <DataTable table={table} renderSubComponent={renderSubComponent} key={tableKey} />
-            <Button variant="primary" type='submit'>Update cart</Button>
+            <DataTable
+              table={table}
+              renderSubComponent={renderSubComponent}
+              key={tableKey}
+            />
+            <Button variant="primary" type="submit">
+              Update cart
+            </Button>
           </Form>
-        }
+        )}
       </div>
     </div>
   );
 }
 
-const renderSubComponent = ({ row }: any) => {
+const renderSubComponent = ({row}: any) => {
   return (
     <BulkTable
       product={row.original.priceRange}
