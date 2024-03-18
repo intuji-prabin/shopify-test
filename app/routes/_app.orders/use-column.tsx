@@ -1,11 +1,12 @@
-import {ColumnDef} from '@tanstack/react-table';
 import {useMemo} from 'react';
 import {EyeOn} from '~/components/icons/eye';
-import {ReOrder} from '~/components/icons/reorder';
 import {Button} from '~/components/ui/button';
-import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
-import {Order} from './orders.server';
+import {ColumnDef} from '@tanstack/react-table';
+import {ReOrder} from '~/components/icons/reorder';
+import {statusVariants} from '~/components/ui/status';
+import {Order} from '~/routes/_app.orders/orders.server';
 import {formatDateToLocaleDateString} from '~/lib/helpers/dateTime.helper';
+import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
 
 export function useColumn() {
   const columns = useMemo<ColumnDef<Order>[]>(
@@ -40,6 +41,7 @@ export function useColumn() {
       {
         accessorKey: 'internalOrderNumber',
         header: 'Cigweld Internal Order Number',
+        enableSorting: false,
         cell: (info) => info.getValue(),
       },
       {
@@ -50,6 +52,7 @@ export function useColumn() {
       {
         accessorKey: 'estimatedDate',
         header: 'Estimated Delivery Date',
+        enableSorting: false,
         cell: (info) =>
           info.getValue()
             ? formatDateToLocaleDateString(info.getValue() as string)
@@ -65,15 +68,27 @@ export function useColumn() {
             case 'received':
               return 'Received';
             case 'processing':
-              return 'Processing';
+              return (
+                <div className={statusVariants({variant: 'awaiting'})}>
+                  Processing
+                </div>
+              );
             case 'order_picked':
               return 'Order Picked';
             case 'dispatched':
               return 'Dispatched';
             case 'in_transit':
-              return 'In Transit';
+              return (
+                <div className={statusVariants({variant: 'partially_shipped'})}>
+                  In Transit
+                </div>
+              );
             case 'delivered':
-              return 'Delivered';
+              return (
+                <div className={statusVariants({variant: 'shipped'})}>
+                  Delivered
+                </div>
+              );
             default:
               return 'N/A';
           }
