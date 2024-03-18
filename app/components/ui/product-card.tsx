@@ -25,7 +25,7 @@ export function ProductCard({
 }: ProductCardProps) {
 
   function checkProductIdExists(productId: number) {
-    return wishListItems.some((item: any) => item.productId === productId);
+    return wishListItems?.some((item: any) => item?.productId === productId);
   }
 
   return (
