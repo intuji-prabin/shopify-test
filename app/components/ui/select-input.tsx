@@ -1,5 +1,4 @@
 import {useField} from 'remix-validated-form';
-import {ScrollArea, ScrollBar} from '~/components/ui/scroll-area';
 import {DangerAlert} from '~/components/icons/alert';
 import {TicketsFilterFormFieldNameType} from '~/routes/_app.support_.tickets/filter-form';
 import {CreateTicketFormFieldNameType} from '~/routes/_app.support_.create-ticket/create-ticket-form';
@@ -15,6 +14,7 @@ import {
   AddTeamFormFieldNameType,
   EditTeamFormFieldNameType,
 } from '~/routes/_app.team_.add/team-form';
+import {OrderFilterFormFieldNameType} from '~/routes/_app.orders/filter-form';
 
 type SelectInputType = {value: string; title: string};
 
@@ -29,8 +29,8 @@ export type SelectInputProps = {
     | AddTeamFormFieldNameType
     | EditTeamFormFieldNameType
     | CreateTicketFormFieldNameType
-    | TicketsFilterFormFieldNameType;
-  // | OrderFilterFormFieldNameType
+    | TicketsFilterFormFieldNameType
+    | OrderFilterFormFieldNameType;
   label: string;
   isDisabled?: boolean;
   options: SelectInputOptions[];
