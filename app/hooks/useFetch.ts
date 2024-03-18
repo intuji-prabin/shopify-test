@@ -25,7 +25,7 @@ export async function useFetch<T>({
   const response = await fetch(url, fetchOptions);
 
   // Experiment code for testing the error handling, can be removed later if not working as expected
-  if (!response.ok) {
+  if (response.status === 500) {
     throw new Response(DEFAULT_ERRROR_MESSAGE, {
       status: 500,
     });

@@ -36,4 +36,5 @@ export const Routes = {
   SINGLE_PENDING_ITEM: '/single-pending-item',
   PROFILE: '/profile',
   LOGOUT_SUBSCRIBE: '/logout/subscribe',
+  INVOICE: '/invoice',
 };

@@ -1,16 +1,20 @@
+import {Suspense} from 'react';
 import {
+  Await,
+  defer,
   isRouteErrorResponse,
-  json,
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
 import {LoaderFunctionArgs, MetaFunction} from '@shopify/remix-oxygen';
-import {BackButton} from '~/components/ui/back-button';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {Button} from '~/components/ui/button';
-import {Routes} from '~/lib/constants/routes.constent';
+import {DeferDataTable} from '~/components/ui/defer-data-table';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import OrderTopDetail from '../_app.order-details/orderTopDetail';
+import {useColumn} from '~/routes/_app.order_.$orderId/use-column';
+import OrderSteps from '~/routes/_app.order_.$orderId/order-steps';
+import OrderInformation from '~/routes/_app.order_.$orderId/order-information';
+import {OrderBreadcrumb} from '~/routes/_app.order_.$orderId/order-breadcrumb';
+import OrderNumberDetails from '~/routes/_app.order_.$orderId/order-number-details';
+import {getOrdersProductDetails} from '~/routes/_app.order_.$orderId/order-details.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Order Details'}];
@@ -19,32 +23,41 @@ export const meta: MetaFunction = () => {
 export async function loader({context, request, params}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const orderId = params.orderId;
+  const orderId = params.orderId as string;
 
-  return json({orderId});
+  const ordersProductDetailsPromise = getOrdersProductDetails({orderId});
+
+  return defer({orderId, ordersProductDetails: ordersProductDetailsPromise});
 }
 
 export default function OrderDetailPage() {
-  const {orderId} = useLoaderData<typeof loader>();
+  const {orderId, ordersProductDetails} = useLoaderData<typeof loader>();
+
+  const {columns} = useColumn();
 
   return (
     <section className="container">
-      <div className=" pt-6 pb-4 flex items-center justify-between">
-        <div>
-          <BackButton title="Order Details" />
-          <Breadcrumb>
-            <BreadcrumbItem href={Routes.ORDERS}>Order</BreadcrumbItem>
-            <BreadcrumbItem className="text-grey-900">{orderId}</BreadcrumbItem>
-          </Breadcrumb>
-        </div>
-        <div className="flex gap-2 items-center">
-          <p className="text-lg italic font-bold leading-[22p-x]">6 items</p>
-          <Button variant="primary">re-order</Button>
-        </div>
-      </div>
+      <OrderBreadcrumb orderId={orderId!} />
       <div className="bg-white p-6 flex flex-col gap-6">
-        <OrderTopDetail orderNumber={orderId!} orderStatus="processing" />
+        <OrderNumberDetails orderNumber={orderId!} orderStatus="processing" />
+        <OrderSteps />
+        <OrderInformation />
       </div>
+
+      {/* Loading Fallback UI needs to be added as per the design */}
+      <Suspense fallback={<h1>Loading</h1>}>
+        <Await resolve={ordersProductDetails}>
+          {(orderProductDetails) => {
+            console.log('orderProductDetails', orderProductDetails);
+            return (
+              <DeferDataTable
+                columns={columns}
+                tableData={orderProductDetails.products}
+              />
+            );
+          }}
+        </Await>
+      </Suspense>
     </section>
   );
 }

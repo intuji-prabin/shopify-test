@@ -53,5 +53,6 @@ export const ENDPOINT = {
   },
   ORDERS: {
     GET: `${BASE_URL}/order`,
+    GET_ORDER_DETAIL: `${BASE_URL}/order-detail`,
   },
 };

@@ -7,7 +7,7 @@ import {statusVariants} from '~/components/ui/status';
  * @returns {JSX.Element} - Order Status
  */
 
-export function OrderStatus({status}: {status: OrderStatus}) {
+export function OrderStatusChip({status}: {status: OrderStatus}) {
   switch (status) {
     case 'received':
       return 'Received';
