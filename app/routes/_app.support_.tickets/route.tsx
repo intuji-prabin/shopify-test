@@ -13,7 +13,7 @@ import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
 import {HorizontalHamburgerIcon} from '~/components/icons/hamburgerIcon';
 import TicketsFilterForm from '~/routes/_app.support_.tickets/filter-form';
 import {LoaderFunctionArgs, MetaFunction, json} from '@shopify/remix-oxygen';
-import {getAllTickets} from '~/routes/_app.support_.tickets/support-tickets';
+import {getAllTickets} from '~/routes/_app.support_.tickets/support-tickets.server';
 import {getSupportContact} from '~/routes/_app.support_.contact-us/support-contact-us.server';
 import {
   Sheet,
