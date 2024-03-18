@@ -15,7 +15,7 @@ export const ENDPOINT = {
     GET: `${BASE_URL}/customer-roles`,
   },
   FILE: {
-    POST: `https://casual-mink-routinely.ngrok-free.app/api/customer-image`,
+    POST: `${BASE_URL}/customer-image`,
   },
   CUSTOMER: {
     GET: `${BASE_URL}/customer`,
@@ -51,7 +51,11 @@ export const ENDPOINT = {
     ORDER: `${BASE_URL}/order`,
     FILTER: `${BASE_URL}/product/filter`,
   },
+
   WISHLIST: {
     ADD: `${BASE_URL}/wishlist`,
+  },
+  ORDERS: {
+    GET: `${BASE_URL}/order`,
   },
 };

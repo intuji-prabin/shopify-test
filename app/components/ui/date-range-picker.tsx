@@ -7,10 +7,17 @@ import {Calendar} from '~/components/ui/calendar';
 import {CalendarIcon} from '~/components/icons/calendar-icon';
 import {Popover, PopoverContent, PopoverTrigger} from '~/components/ui/popover';
 
+type DatePickerWithRangeProps = {
+  dateRange?: DateRange;
+  fromFieldName: string;
+  toFieldName: string;
+};
 export function DatePickerWithRange({
   className,
   dateRange,
-}: React.HTMLAttributes<HTMLDivElement> & {dateRange?: DateRange}) {
+  fromFieldName,
+  toFieldName,
+}: React.HTMLAttributes<HTMLDivElement> & DatePickerWithRangeProps) {
   const [date, setDate] = React.useState<DateRange | undefined>(dateRange);
 
   return (
@@ -18,12 +25,12 @@ export function DatePickerWithRange({
       <Popover>
         <input
           type="hidden"
-          name="createdDateFrom"
+          name={fromFieldName}
           value={date?.from ? format(new Date(date.from), 'yyyy-MM-dd') : ''}
         />
         <input
           type="hidden"
-          name="createdDateTo"
+          name={toFieldName}
           value={date?.to ? format(new Date(date.to), 'yyyy-MM-dd') : ''}
         />
         <PopoverTrigger asChild>
@@ -45,7 +52,7 @@ export function DatePickerWithRange({
                 format(new Date(date.from), 'dd/MM/yyyy')
               )
             ) : (
-              <span>Pick a date range</span>
+              <span className="capitalize">Pick a date range</span>
             )}
             <CalendarIcon />
           </Button>

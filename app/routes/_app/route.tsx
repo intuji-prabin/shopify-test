@@ -35,21 +35,20 @@ import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
 
 export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
   const categories = await getCagetoryList(context);
   const messageSession = await getMessageSession(request);
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
   const headers = [] as any
   const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY)
-  console.log("sessionCartInfo", wishlistSession)
 
   if (!sessionCartInfo) {
-    sessionCartInfo = await getSessionCart(userDetails?.id, context)
+    sessionCartInfo = await getSessionCart(userDetails?.id, context);
     if (sessionCartInfo) {
-      console.log("faswerwere")
-      context.session.set(CART_SESSION_KEY, sessionCartInfo)
-      headers.push(['Set-Cookie', await context.session.commit({})])
-      console.log("sdfasdfasdf ")
+      console.log('faswerwere');
+      context.session.set(CART_SESSION_KEY, sessionCartInfo);
+      headers.push(['Set-Cookie', await context.session.commit({})]);
+      console.log('sdfasdfasdf ');
     }
   }
 
@@ -81,7 +80,6 @@ export default function PublicPageLayout() {
 
   const cartCount = sessionCartInfo?.lineItems ?? 0;
   const wishlistCount = wishlistSession?.totalWishList ?? 0;
-  console.log('sdfsdf ', wishlistCount);
 
   const userId = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
     event: 'logout-event',

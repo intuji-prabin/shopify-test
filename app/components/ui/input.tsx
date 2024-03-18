@@ -9,6 +9,7 @@ import {
   AddTeamFormFieldNameType,
   EditTeamFormFieldNameType,
 } from '~/routes/_app.team_.add/team-form';
+import {OrderFilterFormFieldNameType} from '~/routes/_app.orders/filter-form';
 
 interface InputType extends React.ComponentPropsWithoutRef<'input'> {
   name:
@@ -16,7 +17,8 @@ interface InputType extends React.ComponentPropsWithoutRef<'input'> {
     | EditTeamFormFieldNameType
     | LoginFormFieldNameType
     | CreateTicketFormFieldNameType
-    | EditFormFieldNameType;
+    | EditFormFieldNameType
+    | OrderFilterFormFieldNameType;
   label?: string;
   placeholder?: string;
   required?: boolean;

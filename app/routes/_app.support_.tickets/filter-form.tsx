@@ -80,7 +80,11 @@ export default function TicketsFilterForm({options}: TicketsFilterFormProps) {
               </Link>
             </SheetClose>
           </div>
-          <DatePickerWithRange dateRange={defaultRangeValues} />
+          <DatePickerWithRange
+            fromFieldName="createdDateFrom"
+            toFieldName="createdDateTo"
+            dateRange={defaultRangeValues}
+          />
         </div>
         <Separator />
         <div className="p-6">

@@ -1,18 +1,9 @@
-import type {
-  ColumnDef,
-  RowSelectionState,
-  SortingState,
-} from '@tanstack/react-table';
-import {useState} from 'react';
 
-import {
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+import {useEffect, useState} from 'react';
+import type {ColumnDef, RowSelectionState} from '@tanstack/react-table';
+import {getCoreRowModel, useReactTable} from '@tanstack/react-table';
 
 export function useTable<T>(columns: ColumnDef<T>[], apiData: T[]) {
-  const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [data, setData] = useState(apiData);
 
@@ -20,15 +11,12 @@ export function useTable<T>(columns: ColumnDef<T>[], apiData: T[]) {
     data,
     columns,
     state: {
-      sorting,
       rowSelection,
     },
     enableRowSelection: true,
     manualSorting: true,
-    onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel<T>(),
-    getSortedRowModel: getSortedRowModel<T>(),
     meta: {
       updateData: (rowIndex: number, columnId: string, value: string) => {
         setData((old) =>
@@ -45,5 +33,5 @@ export function useTable<T>(columns: ColumnDef<T>[], apiData: T[]) {
       },
     },
   });
-  return {table, sorting, setSorting};
+  return {table};
 }
