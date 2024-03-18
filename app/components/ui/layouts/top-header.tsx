@@ -56,8 +56,8 @@ export function LogoIcon({logo_url}: {logo_url: string}) {
   );
 }
 
-export function NotificationNavbar({cartCount}: {cartCount: number}) {
-  const {isOpen, toggleMenu} = useHamburgerMenu();
+export function NotificationNavbar({ cartCount, wishlistCount }: { cartCount: number, wishlistCount: number }) {
+  const { isOpen, toggleMenu } = useHamburgerMenu();
 
   const navIcons = [
     {
@@ -79,7 +79,7 @@ export function NotificationNavbar({cartCount}: {cartCount: number}) {
       icon: <Heart width={'20px'} height={'20px'} />,
       url: Routes.WISHLIST,
       title: 'Wishlist',
-      notification: '3',
+      notification: wishlistCount,
     },
     {
       id: 4,
@@ -143,7 +143,7 @@ export default function TopHeader({
           </div>
 
           {/* notification menu starts here */}
-          <NotificationNavbar cartCount={cartCount} />
+          <NotificationNavbar cartCount={cartCount} wishlistCount={wishlistCount} />
         </div>
 
         {/* order track begins here  */}
