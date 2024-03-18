@@ -18,7 +18,7 @@ export default function route() {
 
       {/* order card starts here */}
       <div className="bg-white p-6 flex flex-col gap-6">
-        <OrderTopDetail order_no={'0005145629'} />
+        {/* <OrderTopDetail order_no={'0005145629'} /> */}
         <OrderSteps />
         <OrderStats />
       </div>
