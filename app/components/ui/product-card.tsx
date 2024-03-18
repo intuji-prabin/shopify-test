@@ -111,7 +111,7 @@ export function ProductCardInfo({
                 </p>
                 <div className="info-block">
                   <p className="flex items-center justify-center w-5 h-5 ">
-                    <div className='cursor-pointer' data-tooltip="Recommended retail price">
+                    <div className='cursor-pointer' data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts">
                       <span>
                         <TooltipInfo />
                       </span>
@@ -125,14 +125,14 @@ export function ProductCardInfo({
               <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
             </div>
             <div className="flex flex-col pl-6 border-l-2 border-r-0 border-grey-50 border-y-0">
-              <div className="flex items-center ">
+              <div className="flex items-center gap-1">
                 <p className="text-grey-300 not-italic text-base font-bold uppercase leading-[21px]">
                   rrp
                 </p>
                 <div className="info-block">
                   <p className="flex items-center justify-center w-5 h-5 ">
                     <div className='cursor-pointer'
-                      data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts"
+                      data-tooltip="Recommended retail price"
                     >
                       <span>
                         <TooltipInfo />

@@ -26,7 +26,7 @@ import { getCartList } from './cart.server';
 import MyProducts from './order-my-products/cart-myproduct';
 import { placeOrder } from './order-place.server';
 import OrderSummary from './order-summary/cart-order-summary';
-import { addProductToCart } from '../_app.product_.$productSlug/product.server';
+import { cartUpdate } from './cart-update.server';
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
@@ -154,7 +154,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         }
         console.log('putNowNow', formData);
         const accessTocken = (await getAccessToken(context)) as string;
-        await addProductToCart(formData[0], accessTocken, context, request);
+        await cartUpdate(formData[0], accessTocken, context, request);
       default:
         res = json(
           {

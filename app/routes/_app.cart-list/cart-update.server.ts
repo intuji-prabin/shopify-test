@@ -69,7 +69,6 @@ const setNewCart = async (
 
 const storeCartIdOnBackend = async (request: any, cartId: string) => {
   const {userDetails} = await getUserDetails(request);
-  console.log('cartId ', cartId);
   try {
     const customerId = userDetails?.id;
     const results = await useFetch<any>({
@@ -77,7 +76,6 @@ const storeCartIdOnBackend = async (request: any, cartId: string) => {
       url: `${ENDPOINT.PRODUCT.CART}/${customerId}`,
       body: JSON.stringify({cartId}),
     });
-    console.log('ssss ', results);
     return true;
   } catch (error) {
     return true;
