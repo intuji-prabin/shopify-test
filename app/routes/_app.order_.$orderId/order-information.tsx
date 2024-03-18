@@ -3,12 +3,11 @@ import {
   CopyLink,
   CurrentStatus,
   Orderstats,
-  Ordertrack,
   Printblue,
 } from '~/components/icons/orderStatus';
 import {Button} from '~/components/ui/button';
 
-export default function OrderStats() {
+export default function OrderInformation() {
   const orderStatus = [
     {
       id: 0,

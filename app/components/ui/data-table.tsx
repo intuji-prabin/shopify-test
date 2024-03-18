@@ -15,7 +15,7 @@ import {
   BlueArrowUp,
 } from '~/components/icons/arrowUpDown';
 
-type DataTableProps<T> = {
+export type DataTableProps<T> = {
   table: Table<T>;
   columns?: ColumnDef<T>[];
   renderSubComponent?: (props: {row: Row<T>}) => React.ReactElement;
