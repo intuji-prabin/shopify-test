@@ -6,11 +6,11 @@ import {UploadIcon} from '~/components/icons/upload';
 import {DataTable} from '~/components/ui/data-table';
 import {BackButton} from '~/components/ui/back-button';
 import {SearchInput} from '~/components/ui/search-input';
-import {useColumn} from '~/routes/_app.orders/use-column';
+import {useColumn} from '~/routes/_app.order/use-column';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
-import OrderFilterForm from '~/routes/_app.orders/filter-form';
-import {getAllOrders} from '~/routes/_app.orders/orders.server';
+import OrderFilterForm from '~/routes/_app.order/filter-form';
+import {getAllOrders} from '~/routes/_app.order/orders.server';
 import PaginationSimple from '~/components/ui/pagination-simple';
 import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
 import {
