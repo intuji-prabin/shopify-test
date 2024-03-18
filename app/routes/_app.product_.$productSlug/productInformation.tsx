@@ -19,7 +19,7 @@ import { WarehouseInformation } from './view-warehouse-information';
 export default function ProductInformation({ product, wishListItems }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
   function checkProductIdExists(productId: number) {
-    return wishListItems.some((item: any) => item.productId === productId);
+    return wishListItems?.some((item: any) => item?.productId === productId);
   }
   return (
     <section className="bg-white">
