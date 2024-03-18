@@ -67,6 +67,7 @@ export const addProductToCart = async (
     cartInfo,
     sessionCartInfo,
   );
+  console.log('cartLineAddResponseHello', cartLineAddResponse);
   //  session.unset( CART_SESSION_KEY)
   session.set(CART_SESSION_KEY, cartLineAddResponse);
   const cartLists = await context.storefront.query(GET_CART_LIST, {
@@ -331,7 +332,7 @@ const cartAddLineFormateVariable = (cartInfo: any, sessionCartInfo: any) => {
   };
 };
 
-const SET_NEW_CART = `mutation cartCreate( $input : CartInput) {
+export const SET_NEW_CART = `mutation cartCreate( $input : CartInput) {
   cartCreate( input: $input) {
     cart {
         id

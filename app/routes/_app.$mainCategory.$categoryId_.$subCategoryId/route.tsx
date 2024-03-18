@@ -32,11 +32,14 @@ import {
 } from '~/lib/utils/toast-session.server';
 import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 import { getFilterProduct } from './filter.server';
+import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
+import { addToWishlist, removeFromWishlist } from '../_app.product_.$productSlug/wishlist.server';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   const productList = await getProductList(params, context, request);
   const categories = await getCategoryList(context);
+  const sessionWishListInfo = await context.session.get(WISHLIST_SESSION_KEY);
 
   const categoryId = params.categoryId;
   const subCategoryId = params.subCategoryId;
@@ -47,65 +50,171 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     categoryId,
     subCategoryId,
     mainCategory,
+    sessionWishListInfo,
   }, { headers: [['Set-Cookie', await context.session.commit({})]] });
 }
 
-export const action = async ({ request, context }: ActionFunctionArgs) => {
+export const action = async ({
+  request,
+  context,
+}: ActionFunctionArgs) => {
   const messageSession = await getMessageSession(request);
-  try {
-    const fromData = await request.formData();
-    const cartInfo = Object.fromEntries(fromData);
-    const accessTocken = (await getAccessToken(context)) as string;
-    await addProductToCart(cartInfo, accessTocken, context, request);
-    setSuccessMessage(messageSession, 'Item added to cart successfully');
-    return json(
-      {},
-      {
-        headers: [
-          ['Set-Cookie', await context.session.commit({})],
-          ['Set-Cookie', await messageCommitSession(messageSession)],
-        ],
-      },
-    );
-  } catch (error) {
-    if (error instanceof Error) {
-      console.log('this is err', error?.message);
-      setErrorMessage(messageSession, error?.message);
-      return json(
-        {},
-        {
-          headers: [
-            ['Set-Cookie', await context.session.commit({})],
-            ['Set-Cookie', await messageCommitSession(messageSession)],
-          ],
-        },
-      );
+  const fromData = await request.formData();
+  switch (fromData.get("action")) {
+    case "addToCart": {
+      try {
+        const cartInfo = Object.fromEntries(fromData);
+        const accessTocken = (await getAccessToken(context)) as string;
+        const addToCart = await addProductToCart(
+          cartInfo,
+          accessTocken,
+          context,
+          request,
+        );
+        setSuccessMessage(messageSession, 'Item added to cart successfully');
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log('this is err', error?.message);
+          setErrorMessage(messageSession, error?.message);
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        }
+        console.log('this is err');
+        setErrorMessage(
+          messageSession,
+          'Item not added to cart. Please try again later.',
+        );
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      }
     }
-    console.log('this is err');
-    setErrorMessage(
-      messageSession,
-      'Item not added to cart. Please try again later.',
-    );
-    return json(
-      {},
-      {
-        headers: [
-          ['Set-Cookie', await context.session.commit({})],
-          ['Set-Cookie', await messageCommitSession(messageSession)],
-        ],
-      },
-    );
+    case "addToWishList": {
+      try {
+        const productInfo = Object.fromEntries(fromData);
+        console.log("productInfo", productInfo)
+        await addToWishlist(productInfo, context, request);
+        setSuccessMessage(messageSession, 'Item added to wishlist successfully');
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log('this is err', error?.message);
+          setErrorMessage(messageSession, error?.message);
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        }
+        console.log('this is err');
+        setErrorMessage(
+          messageSession,
+          'Item not added to wishlist. Please try again later.',
+        );
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      }
+    }
+    case "removeFromWishList": {
+      try {
+        const productInfo = Object.fromEntries(fromData);
+        await removeFromWishlist(productInfo, context, request);
+        setSuccessMessage(messageSession, 'Item removed from wishlist successfully');
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log('this is err', error?.message);
+          setErrorMessage(messageSession, error?.message);
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        }
+        console.log('this is err');
+        setErrorMessage(
+          messageSession,
+          'Item not removed from the wishlist. Please try again later.',
+        );
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      }
+    }
+    default: {
+      throw new Error("Unknown action");
+    }
   }
 };
+
 
 const linkStyles =
   'text-center basis-full border-b-2 inline-block duration-300 border-b-grey-50 cursor-pointer bg-grey-50 uppercase text-lg italic font-bold leading-6 text-grey-500 py-3 px-5 hover:bg-none';
 
 export default function SubCategoryPage() {
-  const { categories, productList, categoryId, subCategoryId, mainCategory } =
+  const { categories, productList, categoryId, subCategoryId, mainCategory, sessionWishListInfo } =
     useLoaderData<typeof loader>();
   const { page } = productList;
-  console.log("productList ", productList)
+  console.log("sessionWishListInfoProduct ", sessionWishListInfo)
   const paginationInfo = productList?.results?.pageInfo;
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
@@ -245,7 +354,7 @@ export default function SubCategoryPage() {
               <div className="grid gap-6 my-6 sm:grid-cols-2 lg:grid-cols-3">
                 {productList?.results?.formattedData.productList?.map(
                   (product: any, index: any) => (
-                    <ProductCard key={index} {...product} />
+                    <ProductCard key={index} {...product} wishListItems={sessionWishListInfo?.wishItems} />
                   ),
                 )}
               </div>

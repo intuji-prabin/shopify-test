@@ -20,17 +20,23 @@ export function ProductCard({
   imageBackgroundColor,
   handle,
   id,
-  uom
+  uom,
+  wishListItems
 }: ProductCardProps) {
+
+  function checkProductIdExists(productId: number) {
+    return wishListItems.some((item: any) => item.productId === productId);
+  }
 
   return (
     <div className="bg-white single-product-card">
       <div className="relative h-full">
         <ProductCardImage
           isBuyQtyAvailable={isBuyQtyAvailable}
-          isFavorited={isFavorited}
+          isFavorited={checkProductIdExists(id)}
           featuredImageUrl={featuredImageUrl}
           imageBackgroundColor={imageBackgroundColor}
+          productId={id}
         />
         <ProductCardInfo
           sku={variants?.sku}
@@ -55,6 +61,7 @@ type ProductCardInfoProps = {
   handle: string;
   id: number;
   uom: string;
+  wishListItems?: any;
 };
 
 type VariantType = {
@@ -67,6 +74,7 @@ type ProductCardImageProps = {
   isFavorited: boolean;
   imageBackgroundColor: string;
   featuredImageUrl: string;
+  productId: number;
 };
 
 export function ProductCardInfo({
@@ -151,6 +159,7 @@ function ProductCardImage({
   isBuyQtyAvailable,
   isFavorited,
   imageBackgroundColor,
+  productId
 }: ProductCardImageProps) {
   const [heartFill, setHeartFill] = useState(isFavorited);
   const [isBuyQtyAvailableState, setIsBuyQtyAvailable] =
@@ -170,9 +179,12 @@ function ProductCardImage({
           QTY Buy Available
         </div>
       )}
-      <button className="absolute top-2 right-2" onClick={handleHeartClick}>
-        {heartFill ? <ProductLoveRed /> : <ProductLoveWhite />}
-      </button>
+      <Form method={isFavorited ? 'DELETE' : 'POST'} className='flex'>
+        <input type="hidden" name="productId" value={productId} />
+        <button className="absolute top-2 right-2" value={isFavorited ? "removeFromWishList" : "addToWishList"} name="action">
+          {isFavorited ? <ProductLoveRed /> : <ProductLoveWhite />}
+        </button>
+      </Form>
       <figure className="mt-3">
         <img src={featuredImageUrl} className="object-contain h-48 max-h-48" alt={featuredImageUrl} />
       </figure>
@@ -205,7 +217,10 @@ function ProductCardButtons({ handle, id, uom, productVariantId }: { handle: str
         <input type="hidden" name='selectUOM' value={uom} />
         <Button variant="ghost"
           size="default"
-          type='submit'>
+          type='submit'
+          value="addToCart"
+          name="action"
+        >
           Add to cart
         </Button>
       </Form>
