@@ -16,7 +16,7 @@ export const Routes = {
   COMPANY_INFORMATION: '/company-info',
   COMPANY_PROFILE: '/company-profile',
   SHIPPING_ADDRESS: '/shipping-address',
-  ORDERS: '/orders',
+  ORDERS: '/order',
   INVOICES: '/invoices',
   STATEMENTS: './statements',
   PROMOTIONS: '/promotions/available-promotion',
@@ -36,4 +36,5 @@ export const Routes = {
   SINGLE_PENDING_ITEM: '/single-pending-item',
   PROFILE: '/profile',
   LOGOUT_SUBSCRIBE: '/logout/subscribe',
+  INVOICE: '/invoice',
 };
