@@ -1,13 +1,13 @@
-import {badgeVariants} from '~/components/ui/badge';
+import { badgeVariants } from '~/components/ui/badge';
 
 type ProductCardDetail = {
-  productImageUrl: string;
+  // productImageUrl: string;
   sku: string;
   productName: string;
-  inStock: boolean;
+  // inStock: boolean;
 };
 export default function WishListProductItem({
-  productImageUrl,
+  // productImageUrl,
   productName,
   sku,
 }: ProductCardDetail) {
@@ -15,20 +15,20 @@ export default function WishListProductItem({
     <>
       <figure className="flex space-x-2">
         <div className="bg-grey-25 p-3 !w-20 ">
-          <img
+          {/* <img
             src={productImageUrl}
             alt="item-image"
-            className="h-full object-contain object-center"
-          />
+            className="object-contain object-center h-full"
+          /> */}
         </div>
         <figcaption className="flex flex-col justify-between max-w-[261px]">
           <h5 className="">{productName}</h5>
           <div className="flex space-x-5 items-center max-w-[180px] flex-wrap gap-2">
             <p>
-              <span className="text-grey-900 font-semibold ">SKU: </span>
+              <span className="font-semibold text-grey-900 ">SKU: </span>
               {sku}
             </p>
-            <div className={badgeVariants({variant: 'inStock'})}>
+            <div className={badgeVariants({ variant: 'inStock' })}>
               <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>IN
               STOCK
             </div>

@@ -6,6 +6,10 @@ import {getUserDetails} from '~/lib/utils/user-session.server';
 import {GET_CART_LIST} from '../_app.cart-list/cart.server';
 
 export async function getProductDetails(customerId: string, handle: string) {
+  console.log(
+    '`${ENDPOINT.PRODUCT.GET_PRODUCT}/${customerId}/${handle}`',
+    `${ENDPOINT.PRODUCT.GET_PRODUCT}/${customerId}/${handle}`,
+  );
   try {
     const results: any = await fetch(
       `${ENDPOINT.PRODUCT.GET_PRODUCT}/${customerId}/${handle}`,
@@ -14,6 +18,7 @@ export async function getProductDetails(customerId: string, handle: string) {
       },
     );
     const response = await results.json();
+    console.log('response', response);
     if (response?.errors) {
       throw new Error('Something went wrong');
     }

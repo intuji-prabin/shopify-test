@@ -1,12 +1,12 @@
-import {Link} from '@remix-run/react';
-import {ColumnDef} from '@tanstack/react-table';
-import {useMemo, useState} from 'react';
-import {TooltipInfo} from '~/components/icons/orderStatus';
-import {badgeVariants} from '~/components/ui/badge';
-import {Button} from '~/components/ui/button';
-import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {getProductPriceByQty} from '~/routes/_app.product_.$productSlug/product-detail';
+import { Link } from '@remix-run/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { useEffect, useMemo, useState } from 'react';
+import { TooltipInfo } from '~/components/icons/orderStatus';
+import { badgeVariants } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { getProductPriceByQty } from '~/routes/_app.product_.$productSlug/product-detail';
 
 export type BulkOrderColumn = {
   productId: string;
@@ -43,7 +43,7 @@ export function useMyProductColumn() {
     () => [
       {
         id: 'select',
-        header: ({table}) => (
+        header: ({ table }) => (
           <IndeterminateCheckbox
             {...{
               checked: table.getIsAllRowsSelected(),
@@ -52,7 +52,7 @@ export function useMyProductColumn() {
             }}
           />
         ),
-        cell: ({row}) => (
+        cell: ({ row }) => (
           <div className="px-1">
             <IndeterminateCheckbox
               {...{
@@ -107,6 +107,7 @@ export function useMyProductColumn() {
               uom={product.uom}
               unitOfMeasure={product.unitOfMeasure}
               info={info}
+              selectedUOMName={product.uomName}
             />
           );
         },
@@ -140,7 +141,7 @@ export function useMyProductColumn() {
     [],
   );
 
-  return {columns};
+  return { columns };
 }
 
 /**
@@ -148,7 +149,7 @@ export function useMyProductColumn() {
  */
 type ItemsColumnType = Pick<BulkOrderColumn, 'title' | 'sku' | 'featuredImage'>;
 
-function ItemsColumn({title, sku, featuredImage}: ItemsColumnType) {
+export function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
   return (
     <div className="flex space-x-2">
       <figure className="bg-grey-25 p-3 !w-20 ">
@@ -165,7 +166,7 @@ function ItemsColumn({title, sku, featuredImage}: ItemsColumnType) {
             <span className="font-semibold text-grey-900 ">SKU: </span>
             {(sku && sku) || 'N/A'}
           </p>
-          <div className={`${badgeVariants({variant: 'inStock'})} !m-0 `}>
+          <div className={`${badgeVariants({ variant: 'inStock' })} !m-0 `}>
             <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>IN
             STOCK
           </div>
@@ -183,8 +184,8 @@ function ItemsColumn({title, sku, featuredImage}: ItemsColumnType) {
 type QuantityColumnType = Pick<
   BulkOrderColumn,
   'quantity' | 'productId' | 'veriantId'
-> & {info: any};
-function QuantityColumn({
+> & { info: any };
+export function QuantityColumn({
   quantity,
   info,
   productId,
@@ -268,7 +269,9 @@ type MeasurementColumnType = Pick<BulkOrderColumn, 'uom' | 'unitOfMeasure'> & {
   info: any;
 };
 
-function ProductMeasurement({uom, unitOfMeasure, info}: MeasurementColumnType) {
+export function ProductMeasurement({ uom, unitOfMeasure, info, selectedUOMName }: MeasurementColumnType) {
+  console.log("rwerwerwer", { uom, unitOfMeasure, info, selectedUOMName })
+
   const [UOM, setUom] = useState(uom);
   const meta = info.table.options.meta;
 
@@ -286,12 +289,12 @@ function ProductMeasurement({uom, unitOfMeasure, info}: MeasurementColumnType) {
     >
       {unitOfMeasure.length > 0 ? (
         unitOfMeasure?.map((uom: any, index: number) => (
-          <option value={uom.unit} key={index + 'uom'}>
+          <option value={uom.code} key={index + 'uom'}>
             {uom.unit}
           </option>
         ))
       ) : (
-        <option value={UOM}>{UOM}</option>
+        <option value={UOM}>{selectedUOMName}</option>
       )}
     </select>
   );
@@ -299,7 +302,7 @@ function ProductMeasurement({uom, unitOfMeasure, info}: MeasurementColumnType) {
 /**
  * @description Total Column Component
  */
-function ProductTotal({
+export function ProductTotal({
   totalPrice,
   isBulkDetailVisible,
   setIsBulkDetailsVisible,
@@ -365,9 +368,8 @@ function ProductTotal({
       {priceRange.length > 0 && (
         <Button
           onClick={setIsBulkDetailsVisible}
-          className={`${
-            isRowChecked ? 'bg-white' : 'bg-primary-200'
-          }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
+          className={`${isRowChecked ? 'bg-white' : 'bg-primary-200'
+            }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
         >
           {isBulkDetailVisible ? 'Hide' : 'View'} BULK PRICE
         </Button>

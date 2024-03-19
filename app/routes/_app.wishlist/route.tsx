@@ -1,9 +1,13 @@
-import {useLoaderData} from '@remix-run/react';
-import {json} from '@remix-run/server-runtime';
-import {WishListTable} from './wishlist';
-import {items} from './wishlistItems';
+import { isRouteErrorResponse, useLoaderData, useRouteError } from '@remix-run/react';
+import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
+import { DataTable } from '~/components/ui/data-table';
+import { useTable } from '~/hooks/useTable';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getWishlist } from './wishlist.server';
+import { useMyWishListColumn } from './wishlist';
+import { useMyProductColumn } from '../_app.cart-list/order-my-products/use-column';
+import { BulkTable } from '../_app.cart-list/order-my-products/bulk-table';
 
-//Type Definitions for the Wishlist Page
 export type WishListProductType = {
   productImageUrl: string;
   productName: string;
@@ -18,21 +22,60 @@ export type WishListItem = {
   action: string;
 };
 
-//API calling function to fetch wishlisted products
-async function getWishlistedItems() {
-  return items;
-}
-
-export const loader = async () => {
-  const items = await getWishlistedItems();
-  return json({items});
+export const loader = async ({ request, context }: LoaderFunctionArgs) => {
+  await isAuthenticate(context);
+  const items = await getWishlist(request);
+  return json({ items });
 };
 
 export default function route() {
-  const {items} = useLoaderData<typeof loader>();
+  const { columns } = useMyWishListColumn();
+  const { items } = useLoaderData<typeof loader>();
+  const { table } = useTable(columns, items);
+  console.log("items", items);
+  const tableKey = new Date().getTime();
   return (
-    <>
-      <WishListTable title="Wishlist" data={items} />
-    </>
+    <DataTable table={table} renderSubComponent={renderSubComponent}
+      key={tableKey} />
   );
 }
+
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div>
+        <h1>
+          {error.status} {error.statusText}
+        </h1>
+        <p>{error.data}</p>
+      </div>
+    );
+  } else if (error instanceof Error) {
+    return (
+      <div className="container pt-6">
+        <div className="min-h-[400px] flex justify-center items-center ">
+          <div className="flex flex-col items-center gap-2">
+            <h3>Error has occured</h3>
+            <p className="leading-[22px] text-lg text-grey uppercase font-medium text-red-500">
+              {error?.message}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  } else {
+    return <h1>Unknown Error</h1>;
+  }
+}
+
+const renderSubComponent = ({ row }: any) => {
+  return (
+    <BulkTable
+      product={row.original.priceRange}
+      quantity={'Quantity'}
+      price={'Price'}
+    />
+  );
+};
