@@ -1,32 +1,31 @@
 /**
  * Generates a URL with query parameters.
- * @param {string} params.url - The base URL.
- * @param {Request} params.request - The request object containing the search parameters.
- * @param {string[]} params.params - The list of parameter names to include in the URL.
+ * @param {string} params.baseUrl - The base URL.
+ * @param {Request} params.searchParams - The request object containing the search parameters.
  * @returns {string} The generated URL with query parameters.
  */
 export function generateUrlWithParams({
-  url,
-  request,
-  params,
+  baseUrl,
+  searchParams,
 }: {
-  url: string;
-  params: string[];
-  request: Request;
+  baseUrl: string;
+  searchParams: URLSearchParams;
 }) {
-  const {searchParams} = new URL(request.url);
+  const paramsList = Object.fromEntries(searchParams);
 
-  params.forEach((param) => {
-    const value = searchParams.get(param);
-    if (value) {
-      url += `${param}=${value}&`;
+  const url = new URL(baseUrl);
+
+  const params = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(paramsList)) {
+    if (key === 'after' || key === 'before') {
+      params.append(key, 'true'); // This is a workaround for the Cursor-based pagination
     }
-  });
-
-  // Remove the trailing '&' if it exists
-  if (url.endsWith('&')) {
-    url = url.slice(0, -1);
+    if (value) {
+      params.append(key, value);
+    }
   }
 
-  return url;
+  url.search = params.toString();
+  return url.toString();
 }
