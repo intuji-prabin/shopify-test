@@ -9,6 +9,7 @@ import {
 } from '~/components/icons/orderStatus';
 import {Steps} from '~/components/ui/steps';
 import ProcessingPopover from './order-processing-popover';
+
 export default function OrderSteps() {
   return (
     <Steps simple={false} className="steps__order">

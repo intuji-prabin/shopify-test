@@ -9,7 +9,7 @@ import {
   AddTeamFormFieldNameType,
   EditTeamFormFieldNameType,
 } from '~/routes/_app.team_.add/team-form';
-import {OrderFilterFormFieldNameType} from '~/routes/_app.orders/filter-form';
+import {OrderFilterFormFieldNameType} from '~/routes/_app.order/filter-form';
 
 interface InputType extends React.ComponentPropsWithoutRef<'input'> {
   name:

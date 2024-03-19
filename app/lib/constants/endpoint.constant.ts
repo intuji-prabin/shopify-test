@@ -52,7 +52,12 @@ export const ENDPOINT = {
     ORDER: `${BASE_URL}/order`,
     FILTER: `${BASE_URL}/product/filter`,
   },
+
+  WISHLIST: {
+    ADD: `${BASE_URL}/wishlist`,
+  },
   ORDERS: {
     GET: `${BASE_URL}/order`,
+    GET_ORDER_DETAIL: `${BASE_URL}/order-detail`,
   },
 };

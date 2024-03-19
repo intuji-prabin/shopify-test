@@ -14,31 +14,33 @@ import {
   getCategories,
   getSessionCart,
 } from './app.server';
-import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
+import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
 } from '~/lib/utils/toast-session.server';
-import {useMediaQuery} from '~/hooks/useMediaQuery';
+import { useMediaQuery } from '~/hooks/useMediaQuery';
 import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
-import {getCategoryList} from '../_app.categories/route';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {CustomerData} from '../_public.login/login.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {HamburgerMenuProvider} from '~/components/ui/layouts/elements/HamburgerMenuContext';
-import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
-import {useEventSource} from 'remix-utils/sse/react';
-import {Routes} from '~/lib/constants/routes.constent';
-import {useEffect} from 'react';
+import { getCategoryList } from '../_app.categories/route';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { CustomerData } from '../_public.login/login.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { HamburgerMenuProvider } from '~/components/ui/layouts/elements/HamburgerMenuContext';
+import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { useEventSource } from 'remix-utils/sse/react';
+import { Routes } from '~/lib/constants/routes.constent';
+import { useEffect } from 'react';
+import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
 
-export async function loader({request, context}: ActionFunctionArgs) {
+export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
   const {userDetails} = await getUserDetails(request);
   const categories = await getCagetoryList(context);
   const messageSession = await getMessageSession(request);
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
-  const headers = [] as any;
+  const headers = [] as any
+  const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY)
 
   if (!sessionCartInfo) {
     sessionCartInfo = await getSessionCart(userDetails?.id, context);
@@ -63,7 +65,7 @@ export async function loader({request, context}: ActionFunctionArgs) {
     // );
   }
   return json(
-    {categories: categories ? categories : [], userDetails, sessionCartInfo},
+    { categories: categories ? categories : [], userDetails, sessionCartInfo, wishlistSession },
     {
       headers,
     },
@@ -71,12 +73,13 @@ export async function loader({request, context}: ActionFunctionArgs) {
 }
 
 export default function PublicPageLayout() {
-  const {categories, userDetails, sessionCartInfo} =
+  const { categories, userDetails, sessionCartInfo, wishlistSession } =
     useLoaderData<typeof loader>();
 
   const submit = useSubmit();
 
   const cartCount = sessionCartInfo?.lineItems ?? 0;
+  const wishlistCount = wishlistSession?.totalWishList ?? 0;
 
   const userId = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
     event: 'logout-event',
@@ -84,7 +87,7 @@ export default function PublicPageLayout() {
 
   useEffect(() => {
     if (userId === userDetails.id) {
-      submit({}, {method: 'POST', action: '/logout'});
+      submit({}, { method: 'POST', action: '/logout' });
     }
   }, [userId]);
   return (
@@ -92,6 +95,7 @@ export default function PublicPageLayout() {
       categories={categories}
       cartCount={cartCount}
       userDetails={userDetails}
+      wishlistCount={wishlistCount}
     >
       <Outlet />
     </Layout>
@@ -103,18 +107,20 @@ const Layout = ({
   categories,
   userDetails,
   cartCount,
+  wishlistCount
 }: {
   children: React.ReactNode;
   categories: any;
   userDetails: CustomerData;
   cartCount: number;
+  wishlistCount: number;
 }) => {
   const matches = useMediaQuery('(min-width: 768px)');
   return (
     <HamburgerMenuProvider>
       {matches ? (
         <header>
-          <TopHeader cartCount={cartCount} userDetails={userDetails} />
+          <TopHeader cartCount={cartCount} userDetails={userDetails} wishlistCount={wishlistCount} />
           <BottomHeader categories={categories} />
         </header>
       ) : (

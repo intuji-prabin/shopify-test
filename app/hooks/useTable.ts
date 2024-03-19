@@ -2,13 +2,13 @@ import {useEffect, useState} from 'react';
 import type {ColumnDef, RowSelectionState} from '@tanstack/react-table';
 import {getCoreRowModel, useReactTable} from '@tanstack/react-table';
 
-export function useTable<T>(columns: ColumnDef<T>[], data: T[]) {
+export function useTable<T>(columns: ColumnDef<T>[], apiData: T[]) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [originalData, setOriginalData] = useState<T[]>(data);
+  const [data, setData] = useState(apiData);
 
   useEffect(() => {
-    setOriginalData(data);
-  }, [data]);
+    setData(apiData);
+  }, [apiData]);
 
   const table = useReactTable<T>({
     data,
@@ -21,8 +21,19 @@ export function useTable<T>(columns: ColumnDef<T>[], data: T[]) {
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel<T>(),
     meta: {
-      setOriginalData,
-      originalData,
+      updateData: (rowIndex: number, columnId: string, value: string) => {
+        setData((old) =>
+          old.map((row, index) => {
+            if (index === rowIndex) {
+              return {
+                ...old[rowIndex],
+                [columnId]: value,
+              };
+            }
+            return row;
+          }),
+        );
+      },
     },
   });
   return {table};

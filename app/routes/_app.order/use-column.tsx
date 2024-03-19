@@ -1,12 +1,14 @@
 import {useMemo} from 'react';
+import {Link} from '@remix-run/react';
 import {EyeOn} from '~/components/icons/eye';
 import {Button} from '~/components/ui/button';
 import {ColumnDef} from '@tanstack/react-table';
 import {ReOrder} from '~/components/icons/reorder';
-import {statusVariants} from '~/components/ui/status';
-import {Order} from '~/routes/_app.orders/orders.server';
+import {Order} from '~/routes/_app.order/order.server';
+import {Routes} from '~/lib/constants/routes.constent';
 import {formatDateToLocaleDateString} from '~/lib/helpers/dateTime.helper';
 import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
+import {OrderStatusChip} from '~/components/ui/order-status-chip';
 
 export function useColumn() {
   const columns = useMemo<ColumnDef<Order>[]>(
@@ -64,34 +66,7 @@ export function useColumn() {
         enableSorting: false,
         cell: (info) => {
           const status = info.row.original.orderStatus;
-          switch (status) {
-            case 'received':
-              return 'Received';
-            case 'processing':
-              return (
-                <div className={statusVariants({variant: 'awaiting'})}>
-                  Processing
-                </div>
-              );
-            case 'order_picked':
-              return 'Order Picked';
-            case 'dispatched':
-              return 'Dispatched';
-            case 'in_transit':
-              return (
-                <div className={statusVariants({variant: 'partially_shipped'})}>
-                  In Transit
-                </div>
-              );
-            case 'delivered':
-              return (
-                <div className={statusVariants({variant: 'shipped'})}>
-                  Delivered
-                </div>
-              );
-            default:
-              return 'N/A';
-          }
+          <OrderStatusChip status={status} />;
         },
       },
       {
@@ -104,11 +79,17 @@ export function useColumn() {
         header: 'Actions',
         enableSorting: false,
         cell: (info) => {
+          const orderId = info.row.original.id;
+
+          const orderDetailsRoute = `${Routes.ORDERS}/${orderId}`;
+
           return (
             <div className="flex justify-center gap-x-2">
-              <Button size="icon" variant="icon">
-                <EyeOn />
-              </Button>
+              <Link to={orderDetailsRoute}>
+                <Button size="icon" variant="icon">
+                  <EyeOn />
+                </Button>
+              </Link>
               <Button size="icon" variant="icon">
                 <ReOrder />
               </Button>

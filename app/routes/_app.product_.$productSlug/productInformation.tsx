@@ -16,8 +16,11 @@ import { getProductPriceByQty } from './product-detail';
 import { ProductInfoTable } from './productInfoTable';
 import { WarehouseInformation } from './view-warehouse-information';
 
-export default function ProductInformation({ product }: any) {
+export default function ProductInformation({ product, wishListItems }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
+  function checkProductIdExists(productId: number) {
+    return wishListItems?.some((item: any) => item?.productId === productId);
+  }
   return (
     <section className="bg-white">
       <div className="flex flex-col flex-wrap items-start gap-6 px-6 lg:gap-14 lg:flex-row">
@@ -36,7 +39,7 @@ export default function ProductInformation({ product }: any) {
           productName={product?.title}
           productId={product?.id}
           productVeriantId={product?.variantId}
-          isFavorited={false}
+          isFavorited={checkProductIdExists(product?.id)}
           sku={'Sku'}
           skuUnits={product?.supplierSku}
           unitOfMeasurement={'Unit Of Measurement:'}
@@ -104,14 +107,6 @@ const ProductDetailsSection = ({
   const [productPrice, setProductPrice] = useState(companyDefaultPrice);
   const [UOM, setUOM] = useState(box);
   const submit = useSubmit();
-
-  const handleHeartClick = () => {
-    setHeartFill(!heartFill);
-  };
-
-  const handlePrintPDF = () => {
-    window.print();
-  };
 
   function decreaseQuantity() {
     const prices = getProductPriceByQty(
@@ -181,14 +176,12 @@ const ProductDetailsSection = ({
             </Link>
           </li>
           <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]">
-            <button onClick={handlePrintPDF}>
-              <Pdf />
-            </button>
-          </li>
-          <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]">
-            <button onClick={handleHeartClick}>
-              {heartFill ? <ProductLoveRed /> : <ProductLoveWhite />}
-            </button>
+            <Form method={isFavorited ? 'DELETE' : 'POST'} className='flex'>
+              <input type="hidden" name="productId" value={productId} />
+              <button value={isFavorited ? "removeFromWishList" : "addToWishList"} name="action">
+                {isFavorited ? <ProductLoveRed /> : <ProductLoveWhite />}
+              </button>
+            </Form>
           </li>
         </ul>
       </div>
@@ -304,6 +297,8 @@ const ProductDetailsSection = ({
             className="flex-grow w-full uppercase min-h-14"
             variant="primary"
             type="submit"
+            value="addToCart"
+            name="action"
           >
             {addToCart}
           </Button>

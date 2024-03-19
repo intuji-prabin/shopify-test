@@ -1,0 +1,1 @@
+export const WISHLIST_SESSION_KEY = "userWishList" 
