@@ -11,7 +11,6 @@ export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
 
 export function ProductCard({
   isBuyQtyAvailable,
-  isFavorited,
   title,
   companyPrice,
   defaultPrice,
@@ -47,6 +46,7 @@ export function ProductCard({
           id={id}
           uom={uom}
           productVariantId={variants?.id}
+          moq={variants?.moq}
         />
       </div>
     </div>
@@ -67,6 +67,7 @@ type ProductCardInfoProps = {
 type VariantType = {
   sku: string;
   id: number;
+  moq: number;
 };
 
 type ProductCardImageProps = {
@@ -85,10 +86,12 @@ export function ProductCardInfo({
   handle,
   id,
   uom,
-  productVariantId
+  productVariantId,
+  moq
 }: // buyPrice,
   // rppPrice,
   any) {
+  console.log("uomHello", uom)
   return (
     <div className="p-4">
       <div className="sm:pb-[146px]">
@@ -111,7 +114,7 @@ export function ProductCardInfo({
                 </p>
                 <div className="info-block">
                   <p className="flex items-center justify-center w-5 h-5 ">
-                    <div className='cursor-pointer' data-tooltip="Recommended retail price">
+                    <div className='cursor-pointer' data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts">
                       <span>
                         <TooltipInfo />
                       </span>
@@ -125,14 +128,14 @@ export function ProductCardInfo({
               <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
             </div>
             <div className="flex flex-col pl-6 border-l-2 border-r-0 border-grey-50 border-y-0">
-              <div className="flex items-center ">
+              <div className="flex items-center gap-1">
                 <p className="text-grey-300 not-italic text-base font-bold uppercase leading-[21px]">
                   rrp
                 </p>
                 <div className="info-block">
                   <p className="flex items-center justify-center w-5 h-5 ">
                     <div className='cursor-pointer'
-                      data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts"
+                      data-tooltip="Recommended retail price"
                     >
                       <span>
                         <TooltipInfo />
@@ -147,7 +150,7 @@ export function ProductCardInfo({
               <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
             </div>
           </div>
-          <ProductCardButtons handle={handle} id={id} uom={uom} productVariantId={productVariantId} />
+          <ProductCardButtons handle={handle} id={id} uom={uom} moq={moq} productVariantId={productVariantId} />
         </div>
       </div>
     </div>
@@ -192,9 +195,10 @@ function ProductCardImage({
   );
 }
 
-function ProductCardButtons({ handle, id, uom, productVariantId }: { handle: string, id: number, uom: string, productVariantId: string }) {
+function ProductCardButtons({ handle, id, uom, productVariantId, moq }: { handle: string, id: number, uom: string, productVariantId: string, moq: number }) {
   const submit = useSubmit();
   const productVariantOnlyId = productVariantId.split('/').pop();
+  console.log(":", uom)
 
   return (
     <div className="flex flex-col items-center justify-center gap-2 mt-6 sm:flex-row product-button">
@@ -213,7 +217,7 @@ function ProductCardButtons({ handle, id, uom, productVariantId }: { handle: str
       >
         <input type="hidden" name='productId' value={id} />
         <input type="hidden" name='productVeriantId' value={productVariantOnlyId} />
-        <input type="hidden" name='quantity' value='1' />
+        <input type="hidden" name='quantity' value={moq} />
         <input type="hidden" name='selectUOM' value={uom} />
         <Button variant="ghost"
           size="default"

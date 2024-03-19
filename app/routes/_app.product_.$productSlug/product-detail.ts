@@ -15,11 +15,11 @@ export function getProductPriceByQty(
     companyDefaultPrice,
   });
   let finalQty = qty;
-  if (defaultUom != selectedUOM) {
+  if (defaultUom != selectedUOM && uomList.length > 0) {
     const selectUomWithConversion = uomList.find((item: any) => {
-      return item?.unit == selectedUOM;
+      return item?.code == selectedUOM;
     });
-    finalQty = qty * selectUomWithConversion?.conversion_factor;
+    finalQty = qty * selectUomWithConversion?.conversionFactor;
   }
   if (priceRange.length > 0) {
     const priceRan = priceRange.find((items: any) => {

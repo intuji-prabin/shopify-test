@@ -10,6 +10,7 @@ export const getCartList = async (
   fronOrder = false,
 ) => {
   const {userDetails} = await getUserDetails(request);
+
   const cartLists = await context.storefront.query(GET_CART_LIST, {
     variables: {cartId: sessionCartInfo?.cartId},
   });
@@ -56,8 +57,9 @@ const formateCartList = async (
   if (fronOrder) {
     return productList;
   }
-
+  console.log('productList', productList);
   const productWithPrice = await getPrice(customerId, productList);
+  console.log('productWithPrice', productWithPrice);
 
   return productWithPrice;
 };

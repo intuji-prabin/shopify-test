@@ -7,6 +7,7 @@ import {
   PickupLocation,
   ProductLoveRed,
   ProductLoveWhite,
+  TooltipInfo,
 } from '~/components/icons/orderStatus';
 import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -21,6 +22,7 @@ export default function ProductInformation({ product, wishListItems }: any) {
   function checkProductIdExists(productId: number) {
     return wishListItems?.some((item: any) => item?.productId === productId);
   }
+  console.log("product", product)
   return (
     <section className="bg-white">
       <div className="flex flex-col flex-wrap items-start gap-6 px-6 lg:gap-14 lg:flex-row">
@@ -102,7 +104,6 @@ const ProductDetailsSection = ({
   productVeriantId,
   productImageLength,
 }: any) => {
-  const [heartFill, setHeartFill] = useState(isFavorited);
   const [quantity, setQuantity] = useState(1);
   const [productPrice, setProductPrice] = useState(companyDefaultPrice);
   const [UOM, setUOM] = useState(box);
@@ -252,6 +253,7 @@ const ProductDetailsSection = ({
             className="max-w-[61px] min-h-14 h-full text-center border-x-0 !border-grey-500"
             value={quantity}
             onChange={handleInputChange}
+            min={20}
           />
           <button
             className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-14"
@@ -269,7 +271,7 @@ const ProductDetailsSection = ({
           >
             {unitOfMeasure.length > 0 ? (
               unitOfMeasure?.map((uom: any, index: number) => (
-                <option value={uom.unit} key={index + 'uom'}>
+                <option value={uom.code} key={index + 'uom'}>
                   {uom.unit}
                 </option>
               ))
@@ -355,6 +357,15 @@ export function ProductCardInfo({
               <p className="text-semantic-success-500 text-base font-bold uppercase leading-[21px]">
                 {buyPriceTitle}
               </p>
+              <div className="info-block">
+                <p className="flex items-center justify-center w-5 h-5 ">
+                  <div className='cursor-pointer' data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts">
+                    <span>
+                      <TooltipInfo />
+                    </span>
+                  </div>
+                </p>
+              </div>
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727] price">
               ${buyPrice}
@@ -362,10 +373,21 @@ export function ProductCardInfo({
             <p className="text-[14px] font-normal leading-4">{exclGst}</p>
           </div>
           <div className="flex flex-col pl-6 border-l-2 border-r-0 border-grey-50 border-y-0">
-            <div className="flex items-center ">
+            <div className="flex items-center gap-1">
               <p className="text-grey-300 not-italic text-base font-bold uppercase leading-[21px]">
                 {rppTitle}
               </p>
+              <div className="info-block">
+                <p className="flex items-center justify-center w-5 h-5 ">
+                  <div className='cursor-pointer'
+                    data-tooltip="Recommended retail price"
+                  >
+                    <span>
+                      <TooltipInfo />
+                    </span>
+                  </div>
+                </p>
+              </div>
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300 price">
               ${rppPrice}
