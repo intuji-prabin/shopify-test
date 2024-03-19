@@ -18,11 +18,12 @@ export type Product = {
 };
 
 type OrderDetails = {
+  totalPrice: string;
   subTotal: string;
-  freight: number;
-  sruCharges: number;
-  totalExclGst: number;
-  gst: number;
+  freight: string;
+  surCharges: string;
+  totalExclGst: string;
+  gst: string;
   products: Product[];
 };
 
