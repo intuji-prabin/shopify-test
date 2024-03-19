@@ -62,7 +62,11 @@ export function useColumn() {
           const invoiceId = info.row.original.invoiceId;
           const invoiceLink = `${Routes.INVOICE}/${invoiceId}`;
           return (
-            <Link to={invoiceLink} prefetch="intent">
+            <Link
+              to={invoiceLink}
+              prefetch="intent"
+              className="text-primary-500 underline text-lg leading-5.5"
+            >
               {invoiceId}
             </Link>
           );
@@ -81,7 +85,10 @@ export function useColumn() {
         accessorKey: 'total',
         header: 'Total',
         enableSorting: false,
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const totalAmount = `$${info.getValue()}`;
+          return totalAmount;
+        },
       },
     ],
     [],
