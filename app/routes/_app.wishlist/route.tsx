@@ -32,11 +32,15 @@ export default function route() {
   const { columns } = useMyWishListColumn();
   const { items } = useLoaderData<typeof loader>();
   const { table } = useTable(columns, items);
-  console.log("items", items);
   const tableKey = new Date().getTime();
   return (
-    <DataTable table={table} renderSubComponent={renderSubComponent}
-      key={tableKey} />
+    <div className='container pt-6'>
+      <h3>Wishlist</h3>
+      <section>
+        <DataTable table={table} renderSubComponent={renderSubComponent}
+          key={tableKey} />
+      </section>
+    </div>
   );
 }
 

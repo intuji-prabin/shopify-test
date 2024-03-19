@@ -267,10 +267,10 @@ export function QuantityColumn({
  */
 type MeasurementColumnType = Pick<BulkOrderColumn, 'uom' | 'unitOfMeasure'> & {
   info: any;
+  selectedUOMName: any;
 };
 
 export function ProductMeasurement({ uom, unitOfMeasure, info, selectedUOMName }: MeasurementColumnType) {
-  console.log("rwerwerwer", { uom, unitOfMeasure, info, selectedUOMName })
 
   const [UOM, setUom] = useState(uom);
   const meta = info.table.options.meta;
@@ -359,7 +359,7 @@ export function ProductTotal({
           </p>
         </div>
         <p className="text-grey-900 text-lg leading-5.5 italic">
-          ${prices || 'N/A'}
+          ${prices || "N/A"}
         </p>
         <p className="text-sm italic font-bold leading-normal text-grey-500">
           (Excl. GST)
