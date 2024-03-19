@@ -22,6 +22,7 @@ export default function ProductInformation({ product, wishListItems }: any) {
   function checkProductIdExists(productId: number) {
     return wishListItems?.some((item: any) => item?.productId === productId);
   }
+  console.log("product", product)
   return (
     <section className="bg-white">
       <div className="flex flex-col flex-wrap items-start gap-6 px-6 lg:gap-14 lg:flex-row">
@@ -103,7 +104,6 @@ const ProductDetailsSection = ({
   productVeriantId,
   productImageLength,
 }: any) => {
-  const [heartFill, setHeartFill] = useState(isFavorited);
   const [quantity, setQuantity] = useState(1);
   const [productPrice, setProductPrice] = useState(companyDefaultPrice);
   const [UOM, setUOM] = useState(box);
@@ -253,6 +253,7 @@ const ProductDetailsSection = ({
             className="max-w-[61px] min-h-14 h-full text-center border-x-0 !border-grey-500"
             value={quantity}
             onChange={handleInputChange}
+            min={20}
           />
           <button
             className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-14"
@@ -270,7 +271,7 @@ const ProductDetailsSection = ({
           >
             {unitOfMeasure.length > 0 ? (
               unitOfMeasure?.map((uom: any, index: number) => (
-                <option value={uom.unit} key={index + 'uom'}>
+                <option value={uom.code} key={index + 'uom'}>
                   {uom.unit}
                 </option>
               ))

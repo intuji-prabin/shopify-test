@@ -123,6 +123,7 @@ const formattedResponse = async (response: any, customerId: string) => {
     return true;
   });
   const priceList = await getPrices(productIds, customerId);
+  console.log('first priceList', priceList);
 
   const finalProductList: any = {
     categorytitle: productList?.title,
@@ -137,10 +138,10 @@ const formattedResponse = async (response: any, customerId: string) => {
         variants: productVariantDataFormat(item?.node?.variants),
         featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.IMAGE,
         companyPrice: priceList?.[productId]
-          ? priceList?.[productId][0]?.company_price
+          ? priceList?.[productId]?.company_price
           : null,
         defaultPrice: priceList?.[productId]
-          ? priceList?.[productId][0]?.default_price
+          ? priceList?.[productId]?.default_price
           : null,
       };
     }),
@@ -152,6 +153,7 @@ const productVariantDataFormat = (variant: any) => {
   const finalVariantData = {
     id: variant?.edges[0]?.node?.id,
     sku: variant?.edges[0]?.node?.sku,
+    moq: variant?.edges[0]?.node?.moq?.value || 1,
   };
   return finalVariantData;
 };
@@ -202,6 +204,7 @@ const STOREFRONT_PRODUCT_GET_QUERY = (filterList: any, handler: string) => {
                             node {
                                 id
                                 sku
+                                moq : metafield( namespace: "moq", key: "moq" ) { value }
                             }
                         }
                     }

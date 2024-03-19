@@ -37,6 +37,7 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   const customerId =
     metaParentValue === 'null' ? userDetails.id : metaParentValue;
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
+  console.log("first", sessionCartInfo)
 
   if (!sessionCartInfo) {
     throw new Error('Cart not found');
