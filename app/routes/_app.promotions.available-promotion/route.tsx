@@ -73,7 +73,10 @@ export default function AvailablePromotionPage() {
       ) : (
         <div className="flex justify-center items-center h-[220px] flex-col gap-2">
           {' '}
-          <h4 className="text-center font-bold leading-[29px] text-2xl">
+          <h4
+            className="text-center font-bold leading-[29px] text-2xl"
+            data-cy="not-found"
+          >
             No promotions found
           </h4>
         </div>
