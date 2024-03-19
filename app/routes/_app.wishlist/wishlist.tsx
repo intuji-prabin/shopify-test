@@ -1,18 +1,20 @@
-import {
-  ColumnDef
-} from '@tanstack/react-table';
+import {ColumnDef} from '@tanstack/react-table';
 import * as React from 'react';
-import { Button } from '~/components/ui/button';
-import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
-import { ItemsColumn, ProductMeasurement, ProductTotal, QuantityColumn } from '../_app.cart-list/order-my-products/use-column';
-
+import {Button} from '~/components/ui/button';
+import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
+import {
+  ItemsColumn,
+  ProductMeasurement,
+  ProductTotal,
+  QuantityColumn,
+} from '../_app.cart-list/order-my-products/use-column';
 
 export function useMyWishListColumn() {
   const columns = React.useMemo<ColumnDef<any>[]>(
     () => [
       {
         id: 'select',
-        header: ({ table }) => (
+        header: ({table}) => (
           <IndeterminateCheckbox
             {...{
               checked: table.getIsAllRowsSelected(),
@@ -21,7 +23,7 @@ export function useMyWishListColumn() {
             }}
           />
         ),
-        cell: ({ row }) => (
+        cell: ({row}) => (
           <div className="px-1">
             <IndeterminateCheckbox
               {...{
@@ -86,6 +88,7 @@ export function useMyWishListColumn() {
               info={info}
               productId={product.productId}
               veriantId={product.variantId}
+              moq={product.moq}
             />
           );
         },
@@ -111,13 +114,17 @@ export function useMyWishListColumn() {
         header: 'Action',
         enableSorting: false,
         cell: (info) => {
+          const product = info.row.original;
           return (
-            <Button
-              className="uppercase flex-grow max-h-[unset] lg:max-h-[28px] min-w-[86px]"
-              variant="primary"
-            >
-              Add to cart
-            </Button>
+            <>
+              {product.quantity < product.moq ? 'hello' : 'world'}
+              <Button
+                className="uppercase flex-grow max-h-[unset] lg:max-h-[28px] min-w-[86px]"
+                variant="primary"
+              >
+                Add to cart
+              </Button>
+            </>
           );
         },
       },
@@ -125,5 +132,5 @@ export function useMyWishListColumn() {
     [],
   );
 
-  return { columns };
+  return {columns};
 }
