@@ -32,7 +32,7 @@ const formateCartList = async (
   let productList = [] as any;
   cartLine.map((items: any) => {
     const merchandise = items?.merchandise;
-    const veriantId = merchandise?.id.replace(
+    const variantId = merchandise?.id.replace(
       'gid://shopify/ProductVariant/',
       '',
     );
@@ -43,7 +43,7 @@ const formateCartList = async (
     productList.push({
       id: items?.id,
       productId,
-      veriantId,
+      variantId,
       quantity: items?.quantity,
       title: merchandise?.product?.title,
       sku: merchandise?.sku,

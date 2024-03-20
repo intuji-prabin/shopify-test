@@ -10,7 +10,7 @@ import { getProductPriceByQty } from '~/routes/_app.product_.$productSlug/produc
 
 export type BulkOrderColumn = {
   productId: string;
-  veriantId: string;
+  variantId: string;
   quantity: number;
   title: string;
   featuredImage: string;
@@ -23,6 +23,7 @@ export type BulkOrderColumn = {
   defaultUOM: string;
   id: string;
   moq: number;
+  uomName: string;
   unitOfMeasure: [
     {
       unit: string;
@@ -92,7 +93,7 @@ export function useMyProductColumn() {
               quantity={product.quantity}
               info={info}
               productId={product.productId}
-              veriantId={product.veriantId}
+              variantId={product.variantId}
               moq={product.moq}
             />
           );
@@ -109,7 +110,7 @@ export function useMyProductColumn() {
               uom={product.uom}
               unitOfMeasure={product.unitOfMeasure}
               info={info}
-              selectedUOMName={product.uom}
+              selectedUOMName={product.uomName}
             />
           );
         },
@@ -185,13 +186,13 @@ export function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
  */
 type QuantityColumnType = Pick<
   BulkOrderColumn,
-  'quantity' | 'productId' | 'veriantId' | 'moq'
+  'quantity' | 'productId' | 'variantId' | 'moq'
 > & { info: any };
 export function QuantityColumn({
   quantity,
   info,
   productId,
-  veriantId,
+  variantId,
   moq,
 }: QuantityColumnType) {
   const meta = info.table.options.meta;
@@ -261,7 +262,7 @@ export function QuantityColumn({
         </div>
       </div>
       <input type="hidden" name="productCode" value={productId} />
-      <input type="hidden" name="productVarient" value={veriantId} />
+      <input type="hidden" name="productVariant" value={variantId} />
     </>
   );
 }

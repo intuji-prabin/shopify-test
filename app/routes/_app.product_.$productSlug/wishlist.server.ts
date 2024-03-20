@@ -61,6 +61,7 @@ export async function removeFromWishlist(
 ) {
   const {userDetails} = await getUserDetails(request);
   const {session} = context;
+  console.log("productIdWish", productId)
   try {
     const customerId = userDetails?.id;
     const results = await useFetch<WishListResponse>({

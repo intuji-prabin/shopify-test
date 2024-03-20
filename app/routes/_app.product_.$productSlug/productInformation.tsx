@@ -41,7 +41,7 @@ export default function ProductInformation({ product, wishListItems }: any) {
           productImageLength={product?.imageUrl?.length}
           productName={product?.title}
           productId={product?.id}
-          productVeriantId={product?.variantId}
+          productVariantId={product?.variantId}
           isFavorited={checkProductIdExists(product?.id)}
           sku={'Sku'}
           skuUnits={product?.supplierSku}
@@ -104,7 +104,7 @@ const ProductDetailsSection = ({
   companyDefaultPrice,
   originalPrice,
   productId,
-  productVeriantId,
+  productVariantId,
   productImageLength,
   moq,
   uomCode
@@ -284,7 +284,7 @@ const ProductDetailsSection = ({
                 </option>
               ))
             ) : (
-              <option value={UOM}>{UOM}</option>
+              <option value={UOM}>{box}</option>
             )}
           </select>
         </div>
@@ -298,8 +298,8 @@ const ProductDetailsSection = ({
           <input type="hidden" name="productId" value={productId} />
           <input
             type="hidden"
-            name="productVeriantId"
-            value={productVeriantId}
+            name="productVariantId"
+            value={productVariantId}
           />
           <input type="hidden" name="quantity" value={quantity} />
           <input type="hidden" name="selectUOM" value={UOM} />
