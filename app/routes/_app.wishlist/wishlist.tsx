@@ -60,7 +60,7 @@ export function useMyWishListColumn() {
         cell: (info) => {
           const productTotal = info.row.original.companyPrice;
           const priceRange = info.row.original.priceRange;
-          const quantity = info.row.original.quantity || info.row.original.moq;
+          const quantity = info.row.original.quantity || info.row.original.moq || 1;
           const product = info.row.original;
           const UOM = info.row.original.uom;
           return (
@@ -86,7 +86,7 @@ export function useMyWishListColumn() {
           const product = info.row.original;
           return (
             <QuantityColumn
-              quantity={product.quantity || product.moq}
+              quantity={product.quantity || product.moq || 1}
               info={info}
               productId={product.productId}
               variantId={product.variantId}
@@ -106,7 +106,7 @@ export function useMyWishListColumn() {
               uom={product.uom}
               unitOfMeasure={product.unitOfMeasure}
               info={info}
-              selectedUOMName={product.uom}
+              selectedUOMName={product.uomName}
             />
           );
         },
@@ -137,7 +137,7 @@ export function useMyWishListColumn() {
                     name="productVariantId"
                     value={product.variantId}
                   />
-                  <input type="hidden" name="quantity" value={product.quantity || product.moq} />
+                  <input type="hidden" name="quantity" value={product.quantity || product.moq || 1} />
                   <input type="hidden" name="selectUOM" value={product.uom} />
                   <Button
                     className="uppercase flex-grow max-h-[unset] text-xs lg:max-h-[28px] min-w-[86px]"

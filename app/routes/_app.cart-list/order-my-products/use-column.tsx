@@ -23,6 +23,7 @@ export type BulkOrderColumn = {
   defaultUOM: string;
   id: string;
   moq: number;
+  uomName: string;
   unitOfMeasure: [
     {
       unit: string;
@@ -109,7 +110,7 @@ export function useMyProductColumn() {
               uom={product.uom}
               unitOfMeasure={product.unitOfMeasure}
               info={info}
-              selectedUOMName={product.uom}
+              selectedUOMName={product.uomName}
             />
           );
         },

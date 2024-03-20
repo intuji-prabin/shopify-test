@@ -2,16 +2,18 @@ import {
   isRouteErrorResponse,
   useLoaderData,
   useRouteError,
+  useSubmit,
 } from '@remix-run/react';
 import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
+import { Button } from '~/components/ui/button';
 import { DataTable } from '~/components/ui/data-table';
 import { useTable } from '~/hooks/useTable';
 import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
-import { BulkTable } from '../_app.cart-list/order-my-products/bulk-table';
-import { useMyWishListColumn } from './wishlist';
-import { getWishlist } from './wishlist.server';
 import { getMessageSession, messageCommitSession, setErrorMessage, setSuccessMessage } from '~/lib/utils/toast-session.server';
+import { BulkTable } from '../_app.cart-list/order-my-products/bulk-table';
 import { addProductToCart } from '../_app.product_.$productSlug/product.server';
+import { useMyWishListColumn } from './wishlist';
+import { getWishlist, removeBulkFromWishlist } from './wishlist.server';
 
 export type WishListProductType = {
   productImageUrl: string;
@@ -37,53 +39,108 @@ export const action = async ({ request, context }: LoaderFunctionArgs) => {
   const messageSession = await getMessageSession(request);
   const formData = await request.formData();
   try {
-    const cartInfo = Object.fromEntries(formData);
-    const accessTocken = (await getAccessToken(context)) as string;
-    const addToCart = await addProductToCart(
-      cartInfo,
-      accessTocken,
-      context,
-      request,
-    );
-    setSuccessMessage(messageSession, 'Item added to cart successfully');
-    return json(
-      {},
-      {
-        headers: [
-          ['Set-Cookie', await context.session.commit({})],
-          ['Set-Cookie', await messageCommitSession(messageSession)],
-        ],
-      },
-    );
+    switch (request.method) {
+      case 'POST':
+        try {
+          const cartInfo = Object.fromEntries(formData);
+          const accessTocken = (await getAccessToken(context)) as string;
+          const addToCart = await addProductToCart(
+            cartInfo,
+            accessTocken,
+            context,
+            request,
+          );
+          setSuccessMessage(messageSession, 'Item added to cart successfully');
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        } catch (error) {
+          if (error instanceof Error) {
+            console.log('this is err', error?.message);
+            setErrorMessage(messageSession, error?.message);
+            return json(
+              {},
+              {
+                headers: [
+                  ['Set-Cookie', await context.session.commit({})],
+                  ['Set-Cookie', await messageCommitSession(messageSession)],
+                ],
+              },
+            );
+          }
+          console.log('this is err');
+          setErrorMessage(
+            messageSession,
+            'Item not added to cart. Please try again later.',
+          );
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        }
+      case 'DELETE':
+        const productInfo = Object.fromEntries(formData);
+        try {
+          const productInfo = Object.fromEntries(formData);
+          await removeBulkFromWishlist(productInfo, context, request);
+          setSuccessMessage(messageSession, 'Item removed from wishlist successfully');
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        } catch (error) {
+          if (error instanceof Error) {
+            console.log('this is err', error?.message);
+            setErrorMessage(messageSession, error?.message);
+            return json(
+              {},
+              {
+                headers: [
+                  ['Set-Cookie', await context.session.commit({})],
+                  ['Set-Cookie', await messageCommitSession(messageSession)],
+                ],
+              },
+            );
+          }
+          console.log('this is err');
+          setErrorMessage(
+            messageSession,
+            'Item not removed from the wishlist. Please try again later.',
+          );
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        }
+    }
   } catch (error) {
     if (error instanceof Error) {
-      console.log('this is err', error?.message);
-      setErrorMessage(messageSession, error?.message);
-      return json(
-        {},
-        {
-          headers: [
-            ['Set-Cookie', await context.session.commit({})],
-            ['Set-Cookie', await messageCommitSession(messageSession)],
-          ],
-        },
-      );
+      console.log(' errerdf ', error?.message);
     }
-    console.log('this is err');
-    setErrorMessage(
-      messageSession,
-      'Item not added to cart. Please try again later.',
-    );
-    return json(
-      {},
-      {
-        headers: [
-          ['Set-Cookie', await context.session.commit({})],
-          ['Set-Cookie', await messageCommitSession(messageSession)],
-        ],
-      },
-    );
+    console.log(' errerdf ');
   }
+
 }
 
 export default function route() {
@@ -91,9 +148,41 @@ export default function route() {
   const { items } = useLoaderData<typeof loader>();
   const { table } = useTable(columns, items);
   const tableKey = new Date().getTime();
+  const submit = useSubmit();
+
   return (
     <div className="container pt-6">
-      <h3>Wishlist</h3>
+      <div className='flex justify-between'>
+        <h3>Wishlist</h3>
+        {table.getSelectedRowModel().rows.length > 0 &&
+          <div className='flex items-center gap-2'>
+            <p className='text-lg italic font-bold'>{table.getSelectedRowModel().rows.length} item selected</p>
+            <Button
+              variant='primary'
+            >
+              Add all to cart
+            </Button>
+            <Button
+              variant='danger_dark'
+              onClick={() => {
+                const formData = new FormData();
+                table
+                  .getSelectedRowModel()
+                  .flatRows.map((item, index) =>
+                    formData.append(
+                      `wishList-${index}`,
+                      item.original.productId,
+                    ),
+                  );
+                submit(formData, { method: 'DELETE' });
+                table.resetRowSelection();
+              }}
+            >
+              Remove
+            </Button>
+          </div>
+        }
+      </div>
       <section>
         <DataTable
           table={table}
