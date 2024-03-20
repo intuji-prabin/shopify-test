@@ -1,4 +1,8 @@
-import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  json,
+} from '@remix-run/server-runtime';
 import {AppLoadContext} from '@shopify/remix-oxygen';
 import {
   PredictiveCollectionFragment,
@@ -6,7 +10,14 @@ import {
   PredictiveQueryFragment,
   PredictiveSearchQuery,
 } from 'storefrontapi.generated';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
+import {
+  getMessageSession,
+  messageCommitSession,
+  setErrorMessage,
+  setSuccessMessage,
+} from '~/lib/utils/toast-session.server';
+import {addProductToCart} from '../_app.product_.$productSlug/product.server';
 
 type PredicticeSearchResultItemImage =
   | PredictiveCollectionFragment['image']
@@ -83,9 +94,13 @@ function normalizePredictiveSearchResults(
             handle: product.handle,
             id: product.id,
             image: product.variants?.nodes?.[0]?.image,
+            variantId: product.variants?.nodes[0]?.id,
             title: product.title,
+            uom: product.uom,
             url: '',
-            price: product.variants.nodes[0].price,
+            price: product.variants.nodes[0]?.price,
+            sku: product.variants.nodes[0]?.sku,
+            moq: product.variants.nodes[0]?.moq?.value,
           };
         },
       ),
@@ -141,6 +156,59 @@ export async function loader({context, request}: LoaderFunctionArgs) {
   return null;
 }
 
+export const action = async ({request, context}: ActionFunctionArgs) => {
+  const messageSession = await getMessageSession(request);
+  const fromData = await request.formData();
+  try {
+    const cartInfo = Object.fromEntries(fromData);
+    const accessTocken = (await getAccessToken(context)) as string;
+    const addToCart = await addProductToCart(
+      cartInfo,
+      accessTocken,
+      context,
+      request,
+    );
+    setSuccessMessage(messageSession, 'Item added to cart successfully');
+    return json(
+      {},
+      {
+        headers: [
+          ['Set-Cookie', await context.session.commit({})],
+          ['Set-Cookie', await messageCommitSession(messageSession)],
+        ],
+      },
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log('this is err', error?.message);
+      setErrorMessage(messageSession, error?.message);
+      return json(
+        {},
+        {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        },
+      );
+    }
+    console.log('this is err');
+    setErrorMessage(
+      messageSession,
+      'Item not added to cart. Please try again later.',
+    );
+    return json(
+      {},
+      {
+        headers: [
+          ['Set-Cookie', await context.session.commit({})],
+          ['Set-Cookie', await messageCommitSession(messageSession)],
+        ],
+      },
+    );
+  }
+};
+
 const PREDICTIVE_SEARCH_QUERY = `#graphql
   fragment PredictiveProduct on Product {
   __typename
@@ -148,6 +216,7 @@ const PREDICTIVE_SEARCH_QUERY = `#graphql
   title
   handle
   trackingParameters
+  uom : metafield(namespace: "uom", key: "uom") { value }
   collections(first: 10) {
     nodes {
       id
@@ -160,6 +229,8 @@ const PREDICTIVE_SEARCH_QUERY = `#graphql
   variants(first: 1) {
     nodes {
       id
+      sku
+      moq : metafield( namespace: "moq", key: "moq" ) { value }
       image {
         url
         altText
