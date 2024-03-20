@@ -95,6 +95,7 @@ export function useMyProductColumn() {
               productId={product.productId}
               variantId={product.variantId}
               moq={product.moq}
+              lineItemId={product.id}
             />
           );
         },
@@ -111,6 +112,7 @@ export function useMyProductColumn() {
               unitOfMeasure={product.unitOfMeasure}
               info={info}
               selectedUOMName={product.uomName}
+              productId={product.productId}
             />
           );
         },
@@ -187,13 +189,14 @@ export function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
 type QuantityColumnType = Pick<
   BulkOrderColumn,
   'quantity' | 'productId' | 'variantId' | 'moq'
-> & { info: any };
+> & { info: any, lineItemId?: string };
 export function QuantityColumn({
   quantity,
   info,
   productId,
   variantId,
   moq,
+  lineItemId
 }: QuantityColumnType) {
   const meta = info.table.options.meta;
 
@@ -261,8 +264,10 @@ export function QuantityColumn({
           </p>
         </div>
       </div>
-      <input type="hidden" name="productCode" value={productId} />
-      <input type="hidden" name="productVariant" value={variantId} />
+      <input type="hidden" name={`${productId}_productId`} value={productId} />
+      <input type="hidden" name={`${productId}_productVariant`} value={variantId} />
+      <input type="hidden" name={`${productId}_lineItemId`} value={lineItemId} />
+      <input type="hidden" name={`${productId}_quantity`} value={quantity} />
     </>
   );
 }
@@ -272,6 +277,7 @@ export function QuantityColumn({
 type MeasurementColumnType = Pick<BulkOrderColumn, 'uom' | 'unitOfMeasure'> & {
   info: any;
   selectedUOMName: any;
+  productId?: string;
 };
 
 export function ProductMeasurement({
@@ -279,6 +285,7 @@ export function ProductMeasurement({
   unitOfMeasure,
   info,
   selectedUOMName,
+  productId,
 }: MeasurementColumnType) {
   const [UOM, setUom] = useState(uom);
   const meta = info.table.options.meta;
@@ -289,22 +296,25 @@ export function ProductMeasurement({
   };
 
   return (
-    <select
-      name="uomSelector"
-      className="w-full min-w-[92px] place-order h-full border-grey-100"
-      onChange={(e: any) => handleUOMChange(e.target.value)}
-      defaultValue={UOM}
-    >
-      {unitOfMeasure.length > 0 ? (
-        unitOfMeasure?.map((uom: any, index: number) => (
-          <option value={uom.code} key={index + 'uom'}>
-            {uom.unit}
-          </option>
-        ))
-      ) : (
-        <option value={UOM}>{selectedUOMName}</option>
-      )}
-    </select>
+    <>
+      <select
+        name="uomSelector"
+        className="w-full min-w-[92px] place-order h-full border-grey-100"
+        onChange={(e: any) => handleUOMChange(e.target.value)}
+        defaultValue={UOM}
+      >
+        {unitOfMeasure.length > 0 ? (
+          unitOfMeasure?.map((uom: any, index: number) => (
+            <option value={uom.code} key={index + 'uom'}>
+              {uom.unit}
+            </option>
+          ))
+        ) : (
+          <option value={UOM}>{selectedUOMName}</option>
+        )}
+      </select>
+      <input type="hidden" name={`${productId}_uom`} value={UOM} />
+    </>
   );
 }
 /**
