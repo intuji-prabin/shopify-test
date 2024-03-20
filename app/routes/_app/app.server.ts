@@ -159,7 +159,7 @@ const formateCartSessionResponse = (
   if (lines.length > 0) {
     lines.map((items: any) => {
       const merchandise = items?.merchandise;
-      const veriantId = merchandise?.id.replace(
+      const variantId = merchandise?.id.replace(
         'gid://shopify/ProductVariant/',
         '',
       );
@@ -170,7 +170,7 @@ const formateCartSessionResponse = (
       cartListed.lineItems = cartListed.lineItems + 1;
       cartListed.cartItems.push({
         productId,
-        veriantId,
+        variantId,
         lineId: items?.id,
         quantity: items?.quantity,
         UOM: items?.attributes.filter(

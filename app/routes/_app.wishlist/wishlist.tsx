@@ -8,8 +8,10 @@ import {
   ProductTotal,
   QuantityColumn,
 } from '../_app.cart-list/order-my-products/use-column';
+import { Form, useSubmit } from '@remix-run/react';
 
 export function useMyWishListColumn() {
+  const submit = useSubmit();
   const columns = React.useMemo<ColumnDef<any>[]>(
     () => [
       {
@@ -87,7 +89,7 @@ export function useMyWishListColumn() {
               quantity={product.quantity || product.moq}
               info={info}
               productId={product.productId}
-              veriantId={product.variantId}
+              variantId={product.variantId}
               moq={product.moq}
             />
           );
@@ -124,12 +126,26 @@ export function useMyWishListColumn() {
                 >
                   Add to cart
                 </button> :
-                <Button
-                  className="uppercase flex-grow max-h-[unset] text-xs lg:max-h-[28px] min-w-[86px]"
-                  variant="primary"
-                >
-                  Add to cart
-                </Button>
+                <Form method="POST"
+                  onSubmit={(event) => {
+                    submit(event.currentTarget);
+                  }}
+                  className="w-full">
+                  <input type="hidden" name="productId" value={product.productId} />
+                  <input
+                    type="hidden"
+                    name="productVariantId"
+                    value={product.variantId}
+                  />
+                  <input type="hidden" name="quantity" value={product.quantity || product.moq} />
+                  <input type="hidden" name="selectUOM" value={product.uom} />
+                  <Button
+                    className="uppercase flex-grow max-h-[unset] text-xs lg:max-h-[28px] min-w-[86px]"
+                    variant="primary"
+                  >
+                    Add to cart
+                  </Button>
+                </Form>
               }
             </>
           );

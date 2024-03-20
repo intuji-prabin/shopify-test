@@ -20,7 +20,7 @@ export const cartUpdate = async (context: any, request: any) => {
     quantity: finalQuantity[i],
     selectUOM,
     productId: productCode[i],
-    productVeriantId: productVarient[i],
+    productVariantId: productVarient[i],
   }));
 
   console.log('FinalAlData', allFormData);
@@ -32,7 +32,7 @@ export const cartUpdate = async (context: any, request: any) => {
   //     'Product Id is not present so, this product cannot be added to the cart.',
   //   );
   // }
-  // if (!cartInfo.productVeriantId) {
+  // if (!cartInfo.productVariantId) {
   //   throw new Error(
   //     'Product Variant is not present so, this product cannot be added to the cart.',
   //   );
@@ -120,7 +120,7 @@ const cartLineAdd = async (
   sessionCartInfo.cartItems = [];
   lines.map((items: any) => {
     const merchandise = items?.merchandise;
-    const veriantId = merchandise?.id.replace(
+    const variantId = merchandise?.id.replace(
       'gid://shopify/ProductVariant/',
       '',
     );
@@ -131,7 +131,7 @@ const cartLineAdd = async (
     sessionCartInfo.lineItems = sessionCartInfo.lineItems + 1;
     sessionCartInfo.cartItems.push({
       productId,
-      veriantId,
+      variantId,
       lineId: items?.id,
       quantity: items?.quantity,
       UOM: items?.attributes.filter(
@@ -144,7 +144,7 @@ const cartLineAdd = async (
 };
 
 const cartFormateVariable = (cartInfo: any, accessTocken: string) => {
-  const variantId = `gid://shopify/ProductVariant/${cartInfo?.productVeriantId}`;
+  const variantId = `gid://shopify/ProductVariant/${cartInfo?.productVariantId}`;
   return {
     input: {
       attributes: [
@@ -202,7 +202,7 @@ const cartResponseFormate = (cartResponse: any, accessTocken: string) => {
   if (lines.length > 0) {
     lines.map((items: any) => {
       const merchandise = items?.merchandise;
-      const veriantId = merchandise?.id.replace(
+      const variantId = merchandise?.id.replace(
         'gid://shopify/ProductVariant/',
         '',
       );
@@ -213,7 +213,7 @@ const cartResponseFormate = (cartResponse: any, accessTocken: string) => {
       cartListed.lineItems = cartListed.lineItems + 1;
       cartListed.cartItems.push({
         productId,
-        veriantId,
+        variantId,
         lineId: items?.id,
         quantity: items?.quantity,
         UOM: items?.attributes.filter(
@@ -227,7 +227,7 @@ const cartResponseFormate = (cartResponse: any, accessTocken: string) => {
 };
 
 const cartAddLineFormateVariable = (cartInfo: any, sessionCartInfo: any) => {
-  const variantId = `gid://shopify/ProductVariant/${cartInfo?.productVeriantId}`;
+  const variantId = `gid://shopify/ProductVariant/${cartInfo?.productVariantId}`;
   return {
     cartId: sessionCartInfo?.cartId,
     lines: [

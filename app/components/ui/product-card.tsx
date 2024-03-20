@@ -1,11 +1,11 @@
-import {Form, Link, useSubmit} from '@remix-run/react';
-import {useState} from 'react';
+import { Form, Link, useSubmit } from '@remix-run/react';
+import { useState } from 'react';
 import {
   ProductLoveRed,
   ProductLoveWhite,
   TooltipInfo,
 } from '~/components/icons/orderStatus';
-import {Button} from '~/components/ui/button';
+import { Button } from '~/components/ui/button';
 
 export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
 
@@ -88,8 +88,8 @@ export function ProductCardInfo({
   productVariantId,
   moq,
 }: // buyPrice,
-// rppPrice,
-any) {
+  // rppPrice,
+  any) {
   return (
     <div className="p-4">
       <div className="sm:pb-[146px]">
@@ -181,9 +181,8 @@ function ProductCardImage({
 
   return (
     <div
-      className={`relative px-11 py-[39px] flex justify-center border-grey-25 border-b-2 border-x-0 border-top-0 ${
-        imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
-      }`}
+      className={`relative px-11 py-[39px] flex justify-center border-grey-25 border-b-2 border-x-0 border-top-0 ${imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
+        }`}
     >
       {isBuyQtyAvailableState && (
         <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px]">
@@ -226,7 +225,6 @@ function ProductCardButtons({
 }) {
   const submit = useSubmit();
   const productVariantOnlyId = productVariantId.split('/').pop();
-  console.log(':', uom);
 
   return (
     <div className="flex flex-col items-center justify-center gap-2 mt-6 sm:flex-row product-button">
@@ -247,7 +245,7 @@ function ProductCardButtons({
         <input type="hidden" name="productId" value={id} />
         <input
           type="hidden"
-          name="productVeriantId"
+          name="productVariantId"
           value={productVariantOnlyId}
         />
         <input type="hidden" name="quantity" value={moq} />

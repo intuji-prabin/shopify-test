@@ -6,11 +6,12 @@ import {
 import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
 import { DataTable } from '~/components/ui/data-table';
 import { useTable } from '~/hooks/useTable';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { getWishlist } from './wishlist.server';
-import { useMyWishListColumn } from './wishlist';
-import { useMyProductColumn } from '../_app.cart-list/order-my-products/use-column';
+import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import { BulkTable } from '../_app.cart-list/order-my-products/bulk-table';
+import { useMyWishListColumn } from './wishlist';
+import { getWishlist } from './wishlist.server';
+import { getMessageSession, messageCommitSession, setErrorMessage, setSuccessMessage } from '~/lib/utils/toast-session.server';
+import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 
 export type WishListProductType = {
   productImageUrl: string;
@@ -31,6 +32,59 @@ export const loader = async ({ request, context }: LoaderFunctionArgs) => {
   const items = await getWishlist(request);
   return json({ items });
 };
+
+export const action = async ({ request, context }: LoaderFunctionArgs) => {
+  const messageSession = await getMessageSession(request);
+  const formData = await request.formData();
+  try {
+    const cartInfo = Object.fromEntries(formData);
+    const accessTocken = (await getAccessToken(context)) as string;
+    const addToCart = await addProductToCart(
+      cartInfo,
+      accessTocken,
+      context,
+      request,
+    );
+    setSuccessMessage(messageSession, 'Item added to cart successfully');
+    return json(
+      {},
+      {
+        headers: [
+          ['Set-Cookie', await context.session.commit({})],
+          ['Set-Cookie', await messageCommitSession(messageSession)],
+        ],
+      },
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log('this is err', error?.message);
+      setErrorMessage(messageSession, error?.message);
+      return json(
+        {},
+        {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        },
+      );
+    }
+    console.log('this is err');
+    setErrorMessage(
+      messageSession,
+      'Item not added to cart. Please try again later.',
+    );
+    return json(
+      {},
+      {
+        headers: [
+          ['Set-Cookie', await context.session.commit({})],
+          ['Set-Cookie', await messageCommitSession(messageSession)],
+        ],
+      },
+    );
+  }
+}
 
 export default function route() {
   const { columns } = useMyWishListColumn();
