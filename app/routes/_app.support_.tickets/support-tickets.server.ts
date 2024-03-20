@@ -16,28 +16,19 @@ type ResponseData = {
 
 export async function getAllTickets({
   customerId,
-  request,
+  searchParams,
 }: {
   customerId: string;
-  request: Request;
+  searchParams: URLSearchParams;
 }) {
   try {
-    const params = [
-      'page',
-      'search',
-      'status',
-      'departmentId',
-      'createdDateTo',
-      'createdDateFrom',
-    ];
+    const baseUrl = `${ENDPOINT.SUPPORT.TICKETS}/${customerId}`;
 
-    const url = `${ENDPOINT.SUPPORT.TICKETS}/${customerId}?`;
-
-    const generatedUrl = generateUrlWithParams({url, params, request});
+    const url = generateUrlWithParams({baseUrl, searchParams});
 
     const results = await useFetch<ResponseData>({
       method: AllowedHTTPMethods.GET,
-      url: generatedUrl,
+      url,
     });
 
     if (!results.status) {

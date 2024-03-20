@@ -70,6 +70,7 @@ export default function OrdersPage() {
       isFilterApplied = true;
     }
   }
+  console.log('orderList', orderList);
 
   return (
     <section className="container">
