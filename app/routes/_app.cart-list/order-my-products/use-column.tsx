@@ -197,7 +197,6 @@ export function QuantityColumn({
   const meta = info.table.options.meta;
 
   const handleIncreaseQuantity = () => {
-    console.log("first", info.row.index, info.column.id, quantity);
     meta?.updateData(info.row.index, info.column.id, quantity + 1);
   };
 

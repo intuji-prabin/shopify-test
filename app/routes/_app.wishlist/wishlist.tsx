@@ -58,7 +58,7 @@ export function useMyWishListColumn() {
         cell: (info) => {
           const productTotal = info.row.original.companyPrice;
           const priceRange = info.row.original.priceRange;
-          const quantity = info.row.original.moq;
+          const quantity = info.row.original.quantity || info.row.original.moq;
           const product = info.row.original;
           const UOM = info.row.original.uom;
           return (
@@ -84,7 +84,7 @@ export function useMyWishListColumn() {
           const product = info.row.original;
           return (
             <QuantityColumn
-              quantity={product.moq}
+              quantity={product.quantity || product.moq}
               info={info}
               productId={product.productId}
               veriantId={product.variantId}
@@ -117,13 +117,20 @@ export function useMyWishListColumn() {
           const product = info.row.original;
           return (
             <>
-              {product.quantity < product.moq ? 'hello' : 'world'}
-              <Button
-                className="uppercase flex-grow max-h-[unset] lg:max-h-[28px] min-w-[86px]"
-                variant="primary"
-              >
-                Add to cart
-              </Button>
+              {product.quantity < product.moq ?
+                <button
+                  className="uppercase flex justify-center items-center text-xs max-h-[unset] lg:max-h-[28px] min-w-[86px] cursor-not-allowed bg-grey-200 text-grey-400 px-6 py-2"
+                  disabled
+                >
+                  Add to cart
+                </button> :
+                <Button
+                  className="uppercase flex-grow max-h-[unset] text-xs lg:max-h-[28px] min-w-[86px]"
+                  variant="primary"
+                >
+                  Add to cart
+                </Button>
+              }
             </>
           );
         },
