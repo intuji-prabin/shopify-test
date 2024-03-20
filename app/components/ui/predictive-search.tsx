@@ -15,7 +15,13 @@ import {
  * Renders a predictive search component.
  * @returns {JSX.Element} rendered predictive search component.
  */
-export function PredictiveSearch() {
+export function PredictiveSearch({
+  inputPlaceholder = 'Search Product or SKU Number',
+  addToCart = false,
+}: {
+  inputPlaceholder?: string;
+  addToCart?: boolean;
+}) {
   const [searchProduct, setSearchProduct] = useState(false);
 
   const searchResultRef = useRef<HTMLDivElement>(null);
@@ -62,7 +68,7 @@ export function PredictiveSearch() {
         <input
           type="text"
           name="searchTerm"
-          placeholder="Search Product or SKU Number"
+          placeholder={inputPlaceholder}
           className="!pl-6 border-none w-full placeholder:italic text-base font-bold text-grey-900 placeholder:text-grey-900 focus:bg-white"
         />
         {searchProduct && (
@@ -86,6 +92,7 @@ export function PredictiveSearch() {
                       key={result.type}
                       products={result.items}
                       setSearchProduct={setSearchProduct}
+                      addToCart={addToCart}
                     />
                   );
                 case 'queries':
@@ -115,9 +122,11 @@ export function PredictiveSearch() {
 function SearchResultsProductsGrid({
   products,
   setSearchProduct,
+  addToCart,
 }: {
   products: Array<NormalizedPredictiveSearchResultItem>;
   setSearchProduct: React.Dispatch<React.SetStateAction<boolean>>;
+  addToCart?: boolean;
 }) {
   return (
     <div className="grid gap-y-4">
@@ -144,6 +153,7 @@ function SearchResultsProductsGrid({
                 {product.title}
               </Link>
             </figcaption>
+            {addToCart && 'hello'}
           </figure>
         );
       })}
