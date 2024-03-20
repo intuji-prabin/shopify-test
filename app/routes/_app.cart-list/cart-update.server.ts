@@ -9,49 +9,61 @@ import {useFetch} from '~/hooks/useFetch';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 
-export const cartUpdate = async (
-  cartInfo: any,
-  accessTocken: string,
-  context: any,
-  request: any,
-) => {
-  if (!cartInfo.productId) {
-    throw new Error(
-      'Product Id is not present so, this product cannot be added to the cart.',
-    );
-  }
-  if (!cartInfo.productVeriantId) {
-    throw new Error(
-      'Product Variant is not present so, this product cannot be added to the cart.',
-    );
-  }
-  if (!cartInfo.selectUOM) {
-    throw new Error(
-      'Product UOM is not present so, this product cannot be added to the cart.',
-    );
-  }
-  const {session} = context;
-  const sessionCartInfo = session.get(CART_SESSION_KEY);
-  if (!sessionCartInfo) {
-    const cartSetInfo = await setNewCart(context, accessTocken, cartInfo);
-    session.set(CART_SESSION_KEY, cartSetInfo);
-    const storeCartId = await storeCartIdOnBackend(
-      request,
-      cartSetInfo?.cartId,
-    );
-    return cartSetInfo;
-  }
+export const cartUpdate = async (context: any, request: any) => {
+  const formData = await request.formData();
+  const UOMS = formData.getAll('uomSelector');
+  const finalQuantity = formData.getAll('quantity');
+  const productCode = formData.getAll('productCode');
+  const productVarient = formData.getAll('productVarient');
 
-  const cartLineAddResponse = await cartLineAdd(
-    context,
-    cartInfo,
-    sessionCartInfo,
-  );
-  session.set(CART_SESSION_KEY, cartLineAddResponse);
-  const cartLists = await context.storefront.query(GET_CART_LIST, {
-    variables: {cartId: sessionCartInfo?.cartId},
-  });
+  const allFormData = UOMS.map((selectUOM: any, i: number) => ({
+    quantity: finalQuantity[i],
+    selectUOM,
+    productId: productCode[i],
+    productVeriantId: productVarient[i],
+  }));
+
+  console.log('FinalAlData', allFormData);
+
   return true;
+
+  // if (!cartInfo.productId) {
+  //   throw new Error(
+  //     'Product Id is not present so, this product cannot be added to the cart.',
+  //   );
+  // }
+  // if (!cartInfo.productVeriantId) {
+  //   throw new Error(
+  //     'Product Variant is not present so, this product cannot be added to the cart.',
+  //   );
+  // }
+  // if (!cartInfo.selectUOM) {
+  //   throw new Error(
+  //     'Product UOM is not present so, this product cannot be added to the cart.',
+  //   );
+  // }
+  // const {session} = context;
+  // const sessionCartInfo = session.get(CART_SESSION_KEY);
+  // if (!sessionCartInfo) {
+  //   const cartSetInfo = await setNewCart(context, accessTocken, cartInfo);
+  //   session.set(CART_SESSION_KEY, cartSetInfo);
+  //   const storeCartId = await storeCartIdOnBackend(
+  //     request,
+  //     cartSetInfo?.cartId,
+  //   );
+  //   return cartSetInfo;
+  // }
+
+  // const cartLineAddResponse = await cartLineAdd(
+  //   context,
+  //   cartInfo,
+  //   sessionCartInfo,
+  // );
+  // session.set(CART_SESSION_KEY, cartLineAddResponse);
+  // const cartLists = await context.storefront.query(GET_CART_LIST, {
+  //   variables: {cartId: sessionCartInfo?.cartId},
+  // });
+  // return true;
 };
 
 const setNewCart = async (

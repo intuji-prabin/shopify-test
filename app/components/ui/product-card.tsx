@@ -1,11 +1,11 @@
-import { Form, Link, useSubmit } from '@remix-run/react';
-import { useState } from 'react';
+import {Form, Link, useSubmit} from '@remix-run/react';
+import {useState} from 'react';
 import {
   ProductLoveRed,
   ProductLoveWhite,
   TooltipInfo,
 } from '~/components/icons/orderStatus';
-import { Button } from '~/components/ui/button';
+import {Button} from '~/components/ui/button';
 
 export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
 
@@ -20,9 +20,8 @@ export function ProductCard({
   handle,
   id,
   uom,
-  wishListItems
+  wishListItems,
 }: ProductCardProps) {
-
   function checkProductIdExists(productId: number) {
     return wishListItems?.some((item: any) => item?.productId === productId);
   }
@@ -87,23 +86,21 @@ export function ProductCardInfo({
   id,
   uom,
   productVariantId,
-  moq
+  moq,
 }: // buyPrice,
-  // rppPrice,
-  any) {
-  console.log("uomHello", uom)
+// rppPrice,
+any) {
   return (
     <div className="p-4">
       <div className="sm:pb-[146px]">
         <div>
           <p className="text-base font-medium text-primary-500 sku">
-            SKU:&nbsp;{sku && sku || "N/A"}
+            SKU:&nbsp;{(sku && sku) || 'N/A'}
           </p>
           <h5 className="text-lg italic font-bold leading-6 whitespace-normal max-h-12 text-grey-900 line-clamp-2 text-ellipsis">
-            <Link to={handle}>
-              {productName}
-            </Link>
+            <Link to={handle}>{productName}</Link>
           </h5>
+          <p className="text-sm text-grey-300">Minimum Order Quantity: {moq}</p>
         </div>
         <div className="mt-3 sm:absolute bottom-4 inset-x-4">
           <div className="flex gap-6">
@@ -114,7 +111,10 @@ export function ProductCardInfo({
                 </p>
                 <div className="info-block">
                   <p className="flex items-center justify-center w-5 h-5 ">
-                    <div className='cursor-pointer' data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts">
+                    <div
+                      className="cursor-pointer"
+                      data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts"
+                    >
                       <span>
                         <TooltipInfo />
                       </span>
@@ -123,7 +123,7 @@ export function ProductCardInfo({
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
-                ${companyPrice && companyPrice || "N/A"}
+                ${(companyPrice && companyPrice) || 'N/A'}
               </h3>
               <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
             </div>
@@ -134,7 +134,8 @@ export function ProductCardInfo({
                 </p>
                 <div className="info-block">
                   <p className="flex items-center justify-center w-5 h-5 ">
-                    <div className='cursor-pointer'
+                    <div
+                      className="cursor-pointer"
                       data-tooltip="Recommended retail price"
                     >
                       <span>
@@ -145,12 +146,18 @@ export function ProductCardInfo({
                 </div>
               </div>
               <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-                ${defaultPrice && defaultPrice || "N/A"}
+                ${(defaultPrice && defaultPrice) || 'N/A'}
               </h3>
               <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
             </div>
           </div>
-          <ProductCardButtons handle={handle} id={id} uom={uom} moq={moq} productVariantId={productVariantId} />
+          <ProductCardButtons
+            handle={handle}
+            id={id}
+            uom={uom}
+            moq={moq}
+            productVariantId={productVariantId}
+          />
         </div>
       </div>
     </div>
@@ -162,7 +169,7 @@ function ProductCardImage({
   isBuyQtyAvailable,
   isFavorited,
   imageBackgroundColor,
-  productId
+  productId,
 }: ProductCardImageProps) {
   const [heartFill, setHeartFill] = useState(isFavorited);
   const [isBuyQtyAvailableState, setIsBuyQtyAvailable] =
@@ -174,35 +181,57 @@ function ProductCardImage({
 
   return (
     <div
-      className={`relative px-11 py-[39px] flex justify-center border-grey-25 border-b-2 border-x-0 border-top-0 ${imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
-        }`}
+      className={`relative px-11 py-[39px] flex justify-center border-grey-25 border-b-2 border-x-0 border-top-0 ${
+        imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
+      }`}
     >
       {isBuyQtyAvailableState && (
         <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px]">
           QTY Buy Available
         </div>
       )}
-      <Form method={isFavorited ? 'DELETE' : 'POST'} className='flex'>
+      <Form method={isFavorited ? 'DELETE' : 'POST'} className="flex">
         <input type="hidden" name="productId" value={productId} />
-        <button className="absolute top-2 right-2" value={isFavorited ? "removeFromWishList" : "addToWishList"} name="action">
+        <button
+          className="absolute top-2 right-2"
+          value={isFavorited ? 'removeFromWishList' : 'addToWishList'}
+          name="action"
+        >
           {isFavorited ? <ProductLoveRed /> : <ProductLoveWhite />}
         </button>
       </Form>
       <figure className="mt-3">
-        <img src={featuredImageUrl} className="object-contain h-48 max-h-48" alt={featuredImageUrl} />
+        <img
+          src={featuredImageUrl}
+          className="object-contain h-48 max-h-48"
+          alt={featuredImageUrl}
+        />
       </figure>
     </div>
   );
 }
 
-function ProductCardButtons({ handle, id, uom, productVariantId, moq }: { handle: string, id: number, uom: string, productVariantId: string, moq: number }) {
+function ProductCardButtons({
+  handle,
+  id,
+  uom,
+  productVariantId,
+  moq,
+}: {
+  handle: string;
+  id: number;
+  uom: string;
+  productVariantId: string;
+  moq: number;
+}) {
   const submit = useSubmit();
   const productVariantOnlyId = productVariantId.split('/').pop();
-  console.log(":", uom)
+  console.log(':', uom);
 
   return (
     <div className="flex flex-col items-center justify-center gap-2 mt-6 sm:flex-row product-button">
-      <Link to={`/product/${handle}`}
+      <Link
+        to={`/product/${handle}`}
         className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600"
       >
         view detail
@@ -215,13 +244,18 @@ function ProductCardButtons({ handle, id, uom, productVariantId, moq }: { handle
         }}
         className="w-full"
       >
-        <input type="hidden" name='productId' value={id} />
-        <input type="hidden" name='productVeriantId' value={productVariantOnlyId} />
-        <input type="hidden" name='quantity' value={moq} />
-        <input type="hidden" name='selectUOM' value={uom} />
-        <Button variant="ghost"
+        <input type="hidden" name="productId" value={id} />
+        <input
+          type="hidden"
+          name="productVeriantId"
+          value={productVariantOnlyId}
+        />
+        <input type="hidden" name="quantity" value={moq} />
+        <input type="hidden" name="selectUOM" value={uom} />
+        <Button
+          variant="ghost"
           size="default"
-          type='submit'
+          type="submit"
           value="addToCart"
           name="action"
         >

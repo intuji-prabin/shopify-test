@@ -56,6 +56,7 @@ export default function ProductInformation({ product, wishListItems }: any) {
           priceRange={product?.priceRange}
           companyDefaultPrice={product?.companyDefaultPrice}
           originalPrice={product?.originalPrice}
+          moq={product?.moq}
         />
       </div>
     </section>
@@ -103,8 +104,9 @@ const ProductDetailsSection = ({
   productId,
   productVeriantId,
   productImageLength,
+  moq
 }: any) => {
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(parseFloat(moq) || 1);
   const [productPrice, setProductPrice] = useState(companyDefaultPrice);
   const [UOM, setUOM] = useState(box);
   const submit = useSubmit();
@@ -221,7 +223,7 @@ const ProductDetailsSection = ({
           rppTitle={'RRP'}
           incGst={'Inc. GST'}
           minimumOrder={'Minimum Order'}
-          minimumPieces={'500 pieces'}
+          minimumPieces={moq}
         />
         {priceRange && priceRange.length > 0 && (
           <div className="w-full max-w-64">
@@ -240,7 +242,7 @@ const ProductDetailsSection = ({
           Price will change if you increase quantity of items.
         </p>
       </div>
-      <div className="flex flex-col gap-4 pt-6 sm:flex-row">
+      <div className="flex flex-col items-start gap-4 pt-6 sm:flex-row">
         <div className="flex">
           <button
             className="border-[1px] border-grey-500 flex justify-center items-center w-14 aspect-square"
@@ -253,7 +255,6 @@ const ProductDetailsSection = ({
             className="max-w-[61px] min-h-14 h-full text-center border-x-0 !border-grey-500"
             value={quantity}
             onChange={handleInputChange}
-            min={20}
           />
           <button
             className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-14"
@@ -295,15 +296,26 @@ const ProductDetailsSection = ({
           />
           <input type="hidden" name="quantity" value={quantity} />
           <input type="hidden" name="selectUOM" value={UOM} />
-          <Button
-            className="flex-grow w-full uppercase min-h-14"
-            variant="primary"
-            type="submit"
-            value="addToCart"
-            name="action"
-          >
-            {addToCart}
-          </Button>
+          {quantity < moq ?
+            <>
+              <button
+                className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-not-allowed text-grey-400 bg-grey-200 min-h-14"
+                disabled
+              >
+                {addToCart}
+              </button>
+              <p className='text-red-500'>Minimum order quantity is {moq}</p>
+            </>
+            : <Button
+              className="flex-grow w-full uppercase min-h-14"
+              variant="primary"
+              type="submit"
+              value="addToCart"
+              name="action"
+            >
+              {addToCart}
+            </Button>
+          }
         </Form>
       </div>
       <div className="flex max-w-[483px] gap-2 pt-6">
