@@ -1,6 +1,6 @@
 import { Link } from '@remix-run/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { TooltipInfo } from '~/components/icons/orderStatus';
 import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -22,6 +22,7 @@ export type BulkOrderColumn = {
   currency: string;
   defaultUOM: string;
   id: string;
+  moq: number;
   unitOfMeasure: [
     {
       unit: string;
@@ -92,6 +93,7 @@ export function useMyProductColumn() {
               info={info}
               productId={product.productId}
               veriantId={product.veriantId}
+              moq={product.moq}
             />
           );
         },
@@ -107,7 +109,7 @@ export function useMyProductColumn() {
               uom={product.uom}
               unitOfMeasure={product.unitOfMeasure}
               info={info}
-              selectedUOMName={product.uomName}
+              selectedUOMName={product.uom}
             />
           );
         },
@@ -183,13 +185,14 @@ export function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
  */
 type QuantityColumnType = Pick<
   BulkOrderColumn,
-  'quantity' | 'productId' | 'veriantId'
+  'quantity' | 'productId' | 'veriantId' | 'moq'
 > & { info: any };
 export function QuantityColumn({
   quantity,
   info,
   productId,
   veriantId,
+  moq,
 }: QuantityColumnType) {
   const meta = info.table.options.meta;
 
@@ -253,7 +256,7 @@ export function QuantityColumn({
             </p>
           </div>
           <p className="text-grey-700 text-[14px] font-normal capitalize  leading-[16px]">
-            Minimum Order Quantity
+            Minimum Order Quantity {moq}
           </p>
         </div>
       </div>
@@ -267,11 +270,15 @@ export function QuantityColumn({
  */
 type MeasurementColumnType = Pick<BulkOrderColumn, 'uom' | 'unitOfMeasure'> & {
   info: any;
+  selectedUOMName: any;
 };
 
-export function ProductMeasurement({ uom, unitOfMeasure, info, selectedUOMName }: MeasurementColumnType) {
-  console.log("rwerwerwer", { uom, unitOfMeasure, info, selectedUOMName })
-
+export function ProductMeasurement({
+  uom,
+  unitOfMeasure,
+  info,
+  selectedUOMName,
+}: MeasurementColumnType) {
   const [UOM, setUom] = useState(uom);
   const meta = info.table.options.meta;
 

@@ -1,4 +1,8 @@
-import { isRouteErrorResponse, useLoaderData, useRouteError } from '@remix-run/react';
+import {
+  isRouteErrorResponse,
+  useLoaderData,
+  useRouteError,
+} from '@remix-run/react';
 import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
 import { DataTable } from '~/components/ui/data-table';
 import { useTable } from '~/hooks/useTable';
@@ -32,14 +36,20 @@ export default function route() {
   const { columns } = useMyWishListColumn();
   const { items } = useLoaderData<typeof loader>();
   const { table } = useTable(columns, items);
-  console.log("items", items);
   const tableKey = new Date().getTime();
   return (
-    <DataTable table={table} renderSubComponent={renderSubComponent}
-      key={tableKey} />
+    <div className="container pt-6">
+      <h3>Wishlist</h3>
+      <section>
+        <DataTable
+          table={table}
+          renderSubComponent={renderSubComponent}
+          key={tableKey}
+        />
+      </section>
+    </div>
   );
 }
-
 
 export function ErrorBoundary() {
   const error = useRouteError();

@@ -12,7 +12,7 @@ import {
 import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
-import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -22,11 +22,11 @@ import {
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getAllCompanyShippingAddresses } from '../_app.shipping-address/shipping-address.server';
 import { removeItemFromCart } from './cart-remove.server';
+import { cartUpdate } from './cart-update.server';
 import { getCartList } from './cart.server';
 import MyProducts from './order-my-products/cart-myproduct';
 import { placeOrder } from './order-place.server';
 import OrderSummary from './order-summary/cart-order-summary';
-import { cartUpdate } from './cart-update.server';
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
@@ -49,11 +49,6 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
 
 export async function action({ request, context }: ActionFunctionArgs) {
   const messageSession = await getMessageSession(request);
-  const formData = await request.formData();
-  const UOMS = formData.getAll('uomSelector');
-  const finalQuantity = formData.getAll('quantity');
-  const productCode = formData.getAll('productCode');
-  const productVarient = formData.getAll('productVarient');
   try {
     let res;
     switch (request.method) {
@@ -99,7 +94,6 @@ export async function action({ request, context }: ActionFunctionArgs) {
       case 'DELETE':
         try {
           res = await removeItemFromCart(context, request);
-          await getCartList(context, request, res.cartSession);
           setSuccessMessage(messageSession, 'Order deleted successfully');
           return json(
             {},
@@ -140,22 +134,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
           );
         }
       case 'PUT':
-        const formData = [];
-        for (let i = 0; i < UOMS.length; i++) {
-          const selectUOM = UOMS[i];
-          const quantity = finalQuantity[i];
-          const productId = productCode[i];
-          const productVeriantId = productVarient[i];
-          formData.push({
-            quantity,
-            selectUOM,
-            productId,
-            productVeriantId,
-          });
-        }
-        console.log('putNowNow', formData);
-        const accessTocken = (await getAccessToken(context)) as string;
-        await cartUpdate(formData[0], accessTocken, context, request);
+        const response = await cartUpdate(context, request);
+        return response
       default:
         res = json(
           {
