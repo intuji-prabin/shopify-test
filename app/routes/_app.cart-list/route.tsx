@@ -134,8 +134,47 @@ export async function action({ request, context }: ActionFunctionArgs) {
           );
         }
       case 'PUT':
-        const response = await cartUpdate(context, request);
-        return response
+        try {
+          const response = await cartUpdate(context, request);
+          setSuccessMessage(messageSession, 'Cart updated successfully');
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        } catch( error ) {
+          if (error instanceof Error) {
+            // console.log('this is err', error?.message);
+            setErrorMessage(messageSession, error?.message);
+            return json(
+              {},
+              {
+                headers: [
+                  ['Set-Cookie', await context.session.commit({})],
+                  ['Set-Cookie', await messageCommitSession(messageSession)],
+                ],
+              },
+            );
+          }
+          // console.log('this is err');
+          setErrorMessage(
+            messageSession,
+            'Something went wrong during update cart. Please try again later.',
+          );
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        }
       default:
         res = json(
           {

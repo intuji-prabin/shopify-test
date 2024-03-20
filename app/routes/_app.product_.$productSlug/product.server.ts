@@ -95,6 +95,56 @@ const setNewCart = async (
   return formateResponse;
 };
 
+const updateAllReadyAddedCart = async (
+  context: any,
+  accessTocken: any,
+  cartInfo: any,
+  sessionCartInfo: any,
+) => {
+  const {storefront} = context;
+  const updateCartResponse = await storefront.mutate(UPDATE_OLD_CART, {
+    variables: cartUpdateFormateVariable(sessionCartInfo, cartInfo),
+  });
+  if (!updateCartResponse) {
+    throw new Error('Cart not updated');
+  }
+  // console.log('cartLinesUpdate ', updateCartResponse?.cartLinesUpdate);
+  if (updateCartResponse?.cartLinesUpdate?.userErrors.length > 0) {
+    throw new Error(
+      updateCartResponse?.cartLinesUpdate?.userErrors[0]?.message,
+    );
+  }
+  const lines = updateCartResponse?.cartLinesUpdate?.cart?.lines?.nodes;
+  // console.log('linews ', lines);
+  if (lines.length < 1) {
+    throw new Error('You cart system is wrong');
+  }
+  sessionCartInfo.lineItems = 0;
+  lines.map((items: any) => {
+    const merchandise = items?.merchandise;
+    const variantId = merchandise?.id.replace(
+      CONSTANT?.variantId,
+      '',
+    );
+    const productId = merchandise?.product?.id.replace(
+      CONSTANT?.productId,
+      '',
+    );
+    sessionCartInfo.lineItems = sessionCartInfo.lineItems + 1;
+    sessionCartInfo[productId] = {
+      productId,
+      variantId,
+      lineId: items?.id,
+      quantity: items?.quantity,
+      UOM: items?.attributes.filter(
+        (att: any) => att?.key == 'selectedUOM',
+      )?.[0]?.value,
+    };
+  });
+
+  return sessionCartInfo;
+};
+
 const cartLineAdd = async (
   context: any,
   cartInfo: any,
@@ -243,6 +293,125 @@ const cartFormateVariable = (cartInfo: any, accessTocken: string) => {
     },
   };
 };
+
+const cartUpdateFormateVariable = (sessionCartInfo: any, cartInfo: any) => {
+  const setCartData = sessionCartInfo?.[cartInfo?.productId];
+  // console.log('setCartData ', setCartData, setCartData?.lineId);
+  return {
+    cartId: sessionCartInfo?.cartId,
+    lines: [
+      {
+        id: setCartData?.lineId,
+        quantity: parseInt(cartInfo?.quantity),
+        merchandiseId: `${CONSTANT?.variantId}${cartInfo?.productVariantId}`,
+        attributes: [
+          {
+            key: 'selectedUOM',
+            value: cartInfo?.selectUOM,
+          },
+        ],
+      },
+    ],
+  };
+};
+
+const cartAddLineFormateVariable = (cartInfo: any, sessionCartInfo: any) => {
+  const variantId = `${CONSTANT?.variantId}${cartInfo?.productVariantId}`;
+  return {
+    cartId: sessionCartInfo?.cartId,
+    lines: [
+      {
+        attributes: [
+          {
+            key: 'selectedUOM',
+            value: cartInfo?.selectUOM,
+          },
+        ],
+        merchandiseId: variantId,
+        quantity: parseInt(cartInfo?.quantity),
+      },
+    ],
+  };
+};
+
+export const SET_NEW_CART = `mutation cartCreate( $input : CartInput) {
+  cartCreate( input: $input) {
+    cart {
+        id
+        buyerIdentity {
+            countryCode
+            email
+            customer {
+                id
+                email
+                firstName
+            }
+        }
+        lines(first : 240 ) {
+            nodes {
+                id
+                quantity
+                attributes {
+                    key
+                    value
+                }
+                merchandise {
+                    __typename
+                    ... on ProductVariant {
+                      id
+                      title
+                      product {
+                          id
+                          handle
+                          title
+                      }
+                  }
+                }
+            }
+        }
+    }
+    userErrors {
+      field
+      message
+      code
+    }
+  }
+}` as const;
+
+const UPDATE_OLD_CART =
+  `mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+  cartLinesUpdate(cartId: $cartId, lines: $lines) {
+    cart {
+      id
+      lines(first : 240 ) {
+        nodes {
+          id
+          quantity
+          attributes {
+            key
+            value
+          }
+          merchandise {
+            __typename
+            ... on ProductVariant {
+              id
+              title
+              product {
+                  id
+                  handle
+                  title
+              }
+            }
+          }
+        }
+      }
+  }
+    userErrors {
+      field
+      message
+    }
+  }
+}` as const;
 
 export const ADD_ITEMS_IN_CART =
   `mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {

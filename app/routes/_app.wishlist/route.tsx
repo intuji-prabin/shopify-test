@@ -168,11 +168,12 @@ export default function route() {
                 const formData = new FormData();
                 table
                   .getSelectedRowModel()
-                  .flatRows.map((item, index) =>
+                  .flatRows.map((item, index) => {
+                    console.log('"rererwer "', item)
                     formData.append(
                       `wishList-${index}`,
                       item.original.productId,
-                    ),
+                    )},
                   );
                 submit(formData, { method: 'DELETE' });
                 table.resetRowSelection();
