@@ -284,7 +284,7 @@ const ProductDetailsSection = ({
                 </option>
               ))
             ) : (
-              <option value={UOM}>{UOM}</option>
+              <option value={UOM}>{box}</option>
             )}
           </select>
         </div>
