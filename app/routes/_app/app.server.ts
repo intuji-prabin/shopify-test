@@ -118,7 +118,7 @@ export const getSessionCart = async (customerId: string, context: any) => {
     method: AllowedHTTPMethods.GET,
     url: `${ENDPOINT.PRODUCT.CART}/${customerId}`,
   });
-  console.log('cartResults', cartResults);
+  // console.log('cartResults', cartResults);
   if (!cartResults?.status) {
     return false;
   }
@@ -179,7 +179,7 @@ const formateCartSessionResponse = (
       });
     });
   }
-  console.log('cartResults ', cartListed);
+  // console.log('cartResults ', cartListed);
 
   return cartListed;
 };

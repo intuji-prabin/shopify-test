@@ -57,9 +57,9 @@ const formateCartList = async (
   if (fronOrder) {
     return productList;
   }
-  console.log('productList', productList);
+  // console.log('productList', productList);
   const productWithPrice = await getPrice(customerId, productList);
-  console.log('productWithPrice', productWithPrice);
+  // console.log('productWithPrice', productWithPrice);
 
   return productWithPrice;
 };

@@ -37,7 +37,7 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   const customerId =
     metaParentValue === 'null' ? userDetails.id : metaParentValue;
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
-  console.log("first", sessionCartInfo)
+  // console.log("first", sessionCartInfo)
 
   if (!sessionCartInfo) {
     throw new Error('Cart not found');
@@ -64,7 +64,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           });
         } catch (error) {
           if (error instanceof Error) {
-            console.log('this is err', error?.message);
+            // console.log('this is err', error?.message);
             setErrorMessage(messageSession, error?.message);
             return json(
               {},
@@ -76,7 +76,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
               },
             );
           }
-          console.log('this is err');
+          // console.log('this is err');
           setErrorMessage(
             messageSession,
             'Order not placed to some issue. Please try again later.',
@@ -106,7 +106,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           );
         } catch (error) {
           if (error instanceof Error) {
-            console.log('this is err', error?.message);
+            // console.log('this is err', error?.message);
             setErrorMessage(messageSession, error?.message);
             return json(
               {},
@@ -118,7 +118,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
               },
             );
           }
-          console.log('this is err');
+          // console.log('this is err');
           setErrorMessage(
             messageSession,
             'Order not deleted due to some issue. Please try again later.',
