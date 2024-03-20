@@ -3,14 +3,14 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
-import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
-import {DataTable} from '~/components/ui/data-table';
-import {useTable} from '~/hooks/useTable';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {getWishlist} from './wishlist.server';
-import {useMyWishListColumn} from './wishlist';
-import {useMyProductColumn} from '../_app.cart-list/order-my-products/use-column';
-import {BulkTable} from '../_app.cart-list/order-my-products/bulk-table';
+import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
+import { DataTable } from '~/components/ui/data-table';
+import { useTable } from '~/hooks/useTable';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getWishlist } from './wishlist.server';
+import { useMyWishListColumn } from './wishlist';
+import { useMyProductColumn } from '../_app.cart-list/order-my-products/use-column';
+import { BulkTable } from '../_app.cart-list/order-my-products/bulk-table';
 
 export type WishListProductType = {
   productImageUrl: string;
@@ -26,18 +26,17 @@ export type WishListItem = {
   action: string;
 };
 
-export const loader = async ({request, context}: LoaderFunctionArgs) => {
+export const loader = async ({ request, context }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
   const items = await getWishlist(request);
-  return json({items});
+  return json({ items });
 };
 
 export default function route() {
-  const {columns} = useMyWishListColumn();
-  const {items} = useLoaderData<typeof loader>();
-  const {table} = useTable(columns, items);
+  const { columns } = useMyWishListColumn();
+  const { items } = useLoaderData<typeof loader>();
+  const { table } = useTable(columns, items);
   const tableKey = new Date().getTime();
-  console.log('items', items);
   return (
     <div className="container pt-6">
       <h3>Wishlist</h3>
@@ -81,7 +80,7 @@ export function ErrorBoundary() {
   }
 }
 
-const renderSubComponent = ({row}: any) => {
+const renderSubComponent = ({ row }: any) => {
   return (
     <BulkTable
       product={row.original.priceRange}
