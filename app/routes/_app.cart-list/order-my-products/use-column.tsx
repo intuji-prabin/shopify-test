@@ -261,7 +261,7 @@ export function QuantityColumn({
         </div>
       </div>
       <input type="hidden" name="productCode" value={productId} />
-      <input type="hidden" name="productVarient" value={variantId} />
+      <input type="hidden" name="productVariant" value={variantId} />
     </>
   );
 }

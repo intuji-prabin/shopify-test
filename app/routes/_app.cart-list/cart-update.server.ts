@@ -14,13 +14,13 @@ export const cartUpdate = async (context: any, request: any) => {
   const UOMS = formData.getAll('uomSelector');
   const finalQuantity = formData.getAll('quantity');
   const productCode = formData.getAll('productCode');
-  const productVarient = formData.getAll('productVarient');
+  const productVariant = formData.getAll('productVariant');
 
   const allFormData = UOMS.map((selectUOM: any, i: number) => ({
     quantity: finalQuantity[i],
     selectUOM,
     productId: productCode[i],
-    productVariantId: productVarient[i],
+    productVariantId: productVariant[i],
   }));
 
   console.log('FinalAlData', allFormData);
