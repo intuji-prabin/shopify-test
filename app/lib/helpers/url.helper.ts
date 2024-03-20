@@ -11,13 +11,11 @@ export function generateUrlWithParams({
   baseUrl: string;
   searchParams: URLSearchParams;
 }) {
-  const paramsList = Object.fromEntries(searchParams);
-
   const url = new URL(baseUrl);
 
   const params = new URLSearchParams();
 
-  for (const [key, value] of Object.entries(paramsList)) {
+  for (const [key, value] of searchParams) {
     if (key === 'after' || key === 'before') {
       params.append(key, 'true'); // This is a workaround for the Cursor-based pagination
     }
