@@ -1,4 +1,4 @@
-import { Form, useFetcher, useSubmit } from '@remix-run/react';
+import { Form, useFetcher } from '@remix-run/react';
 import { useState } from 'react';
 import RemoveItem from '~/components/icons/removeItem';
 import { Button } from '~/components/ui/button';
@@ -20,7 +20,6 @@ import { useMyProductColumn } from './use-column';
 export default function MyProducts({ products }: any) {
   const { columns } = useMyProductColumn();
   const { table } = useTable(columns, products);
-  console.log("products", products)
 
   const fetcher = useFetcher();
 

@@ -1,5 +1,6 @@
 import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
 import {removeCart} from './order-place.server';
+import {getCartList} from './cart.server';
 
 export const removeItemFromCart = async (context: any, request: Request) => {
   const formData = await request.formData();
@@ -30,5 +31,6 @@ export const removeItemFromCart = async (context: any, request: Request) => {
   };
 
   context.session.set(CART_SESSION_KEY, cartSession);
+  await getCartList(context, request, cartSession);
   return {cartSession};
 };

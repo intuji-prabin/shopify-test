@@ -16,7 +16,6 @@ export const placeOrder = async (request: Request, context: any) => {
     }
     const formData = await request.formData();
     const allData = Object.fromEntries(formData);
-
     const cartList = await getCartList(context, request, sessionCartInfo, true);
 
     const orderPlaceResponse = await orderCreate(

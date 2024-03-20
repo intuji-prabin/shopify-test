@@ -1,12 +1,12 @@
-import {Link} from '@remix-run/react';
-import {ColumnDef} from '@tanstack/react-table';
-import {useEffect, useMemo, useState} from 'react';
-import {TooltipInfo} from '~/components/icons/orderStatus';
-import {badgeVariants} from '~/components/ui/badge';
-import {Button} from '~/components/ui/button';
-import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {getProductPriceByQty} from '~/routes/_app.product_.$productSlug/product-detail';
+import { Link } from '@remix-run/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { useMemo, useState } from 'react';
+import { TooltipInfo } from '~/components/icons/orderStatus';
+import { badgeVariants } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { getProductPriceByQty } from '~/routes/_app.product_.$productSlug/product-detail';
 
 export type BulkOrderColumn = {
   productId: string;
@@ -44,7 +44,7 @@ export function useMyProductColumn() {
     () => [
       {
         id: 'select',
-        header: ({table}) => (
+        header: ({ table }) => (
           <IndeterminateCheckbox
             {...{
               checked: table.getIsAllRowsSelected(),
@@ -53,7 +53,7 @@ export function useMyProductColumn() {
             }}
           />
         ),
-        cell: ({row}) => (
+        cell: ({ row }) => (
           <div className="px-1">
             <IndeterminateCheckbox
               {...{
@@ -109,7 +109,7 @@ export function useMyProductColumn() {
               uom={product.uom}
               unitOfMeasure={product.unitOfMeasure}
               info={info}
-              selectedUOMName={product.uomName}
+              selectedUOMName={product.uom}
             />
           );
         },
@@ -143,7 +143,7 @@ export function useMyProductColumn() {
     [],
   );
 
-  return {columns};
+  return { columns };
 }
 
 /**
@@ -151,7 +151,7 @@ export function useMyProductColumn() {
  */
 type ItemsColumnType = Pick<BulkOrderColumn, 'title' | 'sku' | 'featuredImage'>;
 
-export function ItemsColumn({title, sku, featuredImage}: ItemsColumnType) {
+export function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
   return (
     <div className="flex space-x-2">
       <figure className="bg-grey-25 p-3 !w-20 ">
@@ -168,7 +168,7 @@ export function ItemsColumn({title, sku, featuredImage}: ItemsColumnType) {
             <span className="font-semibold text-grey-900 ">SKU: </span>
             {(sku && sku) || 'N/A'}
           </p>
-          <div className={`${badgeVariants({variant: 'inStock'})} !m-0 `}>
+          <div className={`${badgeVariants({ variant: 'inStock' })} !m-0 `}>
             <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>IN
             STOCK
           </div>
@@ -186,7 +186,7 @@ export function ItemsColumn({title, sku, featuredImage}: ItemsColumnType) {
 type QuantityColumnType = Pick<
   BulkOrderColumn,
   'quantity' | 'productId' | 'veriantId' | 'moq'
-> & {info: any};
+> & { info: any };
 export function QuantityColumn({
   quantity,
   info,
@@ -197,6 +197,7 @@ export function QuantityColumn({
   const meta = info.table.options.meta;
 
   const handleIncreaseQuantity = () => {
+    console.log("first", info.row.index, info.column.id, quantity);
     meta?.updateData(info.row.index, info.column.id, quantity + 1);
   };
 
@@ -375,9 +376,8 @@ export function ProductTotal({
       {priceRange.length > 0 && (
         <Button
           onClick={setIsBulkDetailsVisible}
-          className={`${
-            isRowChecked ? 'bg-white' : 'bg-primary-200'
-          }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
+          className={`${isRowChecked ? 'bg-white' : 'bg-primary-200'
+            }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
         >
           {isBulkDetailVisible ? 'Hide' : 'View'} BULK PRICE
         </Button>

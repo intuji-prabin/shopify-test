@@ -1,7 +1,7 @@
-import {ColumnDef} from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import * as React from 'react';
-import {Button} from '~/components/ui/button';
-import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
+import { Button } from '~/components/ui/button';
+import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
 import {
   ItemsColumn,
   ProductMeasurement,
@@ -14,7 +14,7 @@ export function useMyWishListColumn() {
     () => [
       {
         id: 'select',
-        header: ({table}) => (
+        header: ({ table }) => (
           <IndeterminateCheckbox
             {...{
               checked: table.getIsAllRowsSelected(),
@@ -23,7 +23,7 @@ export function useMyWishListColumn() {
             }}
           />
         ),
-        cell: ({row}) => (
+        cell: ({ row }) => (
           <div className="px-1">
             <IndeterminateCheckbox
               {...{
@@ -52,7 +52,7 @@ export function useMyWishListColumn() {
         },
       },
       {
-        accessorKey: 'price',
+        accessorKey: 'total',
         header: 'Price',
         enableSorting: false,
         cell: (info) => {
@@ -101,7 +101,7 @@ export function useMyWishListColumn() {
           const product = info.row.original;
           return (
             <ProductMeasurement
-              uom={product.uomCode}
+              uom={product.uom}
               unitOfMeasure={product.unitOfMeasure}
               info={info}
               selectedUOMName={product.uom}
@@ -132,5 +132,5 @@ export function useMyWishListColumn() {
     [],
   );
 
-  return {columns};
+  return { columns };
 }
