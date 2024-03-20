@@ -11,19 +11,49 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 
 export const cartUpdate = async (context: any, request: any) => {
   const formData = await request.formData();
-  const UOMS = formData.getAll('uomSelector');
-  const finalQuantity = formData.getAll('quantity');
-  const productCode = formData.getAll('productCode');
-  const productVariant = formData.getAll('productVariant');
+  const allFormData = Object.fromEntries(formData);
+  const keyList = Object.keys(allFormData);
+  console.log('FinalAllDatattt', allFormData);
+  const productId = [] as any;
+  const formateData = keyList.map((key: any) => {
+    const keySplit = key.split('_');
+    // console.log('keySplit', key);
+    if (key != 'quantity' && key != 'uomSelector') {
+      if (!productId.some((item: any) => item == keySplit[0])) {
+        productId.push(keySplit[0]);
+        // productId[keySplit[0]][keySplit[1]] = 'sdfsafsda';
+      }
+    }
+    return true;
+  });
 
-  const allFormData = UOMS.map((selectUOM: any, i: number) => ({
-    quantity: finalQuantity[i],
-    selectUOM,
-    productId: productCode[i],
-    productVariantId: productVariant[i],
-  }));
+  const itemData = productId.map((id: any) => {
+    return {
+      attributes: [
+        {
+          key: 'selectedUOM',
+          value: allFormData[`${id}_uom`],
+        },
+      ],
+      id: allFormData[`${id}_lineItemId`],
+      merchandiseId: allFormData[`${id}_productVariant`],
+      quantity: allFormData[`${id}_quantity`],
+    };
+  });
+  console.log('serwersanchaysdf ', itemData);
+  // const UOMS = formData.getAll('uomSelector');
+  // const finalQuantity = formData.getAll('quantity');
+  // const productCode = formData.getAll('productCode');
+  // const productVariant = formData.getAll('productVariant');
+  // const productLineItem = formData.getAll('lineItemId');
 
-  console.log('FinalAlData', allFormData);
+  // const allFormData = UOMS.map((selectUOM: any, i: number) => ({
+  //   quantity: finalQuantity[i],
+  //   selectUOM,
+  //   productId: productCode[i],
+  //   productVariantId: productVariant[i],
+  //   productLineItems: productLineItem[i],
+  // }));
 
   return true;
 

@@ -158,6 +158,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 export default function CartList() {
   const { cartList, shippingAddresses }: any = useLoaderData<typeof loader>();
+  console.log("cartList", cartList)
 
   return (
     <>
