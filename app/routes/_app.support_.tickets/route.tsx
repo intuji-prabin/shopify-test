@@ -43,7 +43,12 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 
   const customerId = userDetails.id.split('/').pop() as string;
 
-  const {totalCount, tickets} = await getAllTickets({customerId, request});
+  const {searchParams} = new URL(request.url);
+
+  const {totalCount, tickets} = await getAllTickets({
+    customerId,
+    searchParams,
+  });
 
   const supportContact = await getSupportContact({context});
 

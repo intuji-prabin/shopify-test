@@ -38,13 +38,13 @@ export function useColumn() {
       {
         accessorKey: 'poNumber',
         header: 'Customer Purchase Order Number',
-        cell: (info) => info.getValue(),
+        cell: (info) => info.getValue() ?? 'N/A',
       },
       {
         accessorKey: 'internalOrderNumber',
         header: 'Cigweld Internal Order Number',
         enableSorting: false,
-        cell: (info) => info.getValue(),
+        cell: (info) => info.getValue() ?? 'N/A',
       },
       {
         accessorKey: 'orderDate',
@@ -66,7 +66,7 @@ export function useColumn() {
         enableSorting: false,
         cell: (info) => {
           const status = info.row.original.orderStatus;
-          <OrderStatusChip status={status} />;
+          return <OrderStatusChip status={status} />;
         },
       },
       {

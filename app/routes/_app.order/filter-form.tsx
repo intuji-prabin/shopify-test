@@ -18,7 +18,7 @@ const orderStatusOptions: SelectInputOptions[] = [
 ];
 
 const OrderFilterFormSchema = z.object({
-  purchaseOrderNumber: z.string().trim().optional(),
+  poNumber: z.string().trim().optional(),
   orderStatus: z.string().trim().optional(),
   orderDateRange: z
     .object({
@@ -46,10 +46,7 @@ export default function OrderFilterForm() {
 
   const defaultValues: OrderFilterFormType = {};
 
-  const keys: OrderFilterFormFieldNameType[] = [
-    'purchaseOrderNumber',
-    'orderStatus',
-  ];
+  const keys: OrderFilterFormFieldNameType[] = ['poNumber', 'orderStatus'];
 
   keys.forEach((key) => {
     defaultValues[key] = searchParams.get(key) || undefined;
@@ -125,9 +122,9 @@ export default function OrderFilterForm() {
         <div className="p-6">
           <h5 className="pb-2">Purchase Order Number</h5>
           <Input
-            name="purchaseOrderNumber"
+            name="poNumber"
             placeholder="Purchase Order Number"
-            data-cy="purchaseOrderNumber"
+            data-cy="poNumber"
           />
         </div>
       </div>
