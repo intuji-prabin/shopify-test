@@ -13,6 +13,7 @@ import {
 import {TooltipInfo} from '~/components/icons/orderStatus';
 import {Link} from '@remix-run/react';
 import {Button} from '~/components/ui/button';
+import {Product} from '../_app.pending-order_.$groupId/pending-order-details.server';
 export type BulkOrderColumn = {
   id: string;
   items: {
@@ -26,7 +27,7 @@ export type BulkOrderColumn = {
   UDM: string;
 };
 export function useMyProductColumn() {
-  const columns = useMemo<ColumnDef<BulkOrderColumn>[]>(
+  const columns = useMemo<ColumnDef<BulkOrderColumn | Product>[]>(
     () => [
       {
         id: 'select',
