@@ -146,7 +146,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
               ],
             },
           );
-        } catch( error ) {
+        } catch (error) {
           if (error instanceof Error) {
             // console.log('this is err', error?.message);
             setErrorMessage(messageSession, error?.message);
@@ -197,7 +197,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 export default function CartList() {
   const { cartList, shippingAddresses }: any = useLoaderData<typeof loader>();
-  console.log("cartList", cartList)
+  // console.log("cartList.productList", cartList);
 
   return (
     <>
@@ -207,13 +207,14 @@ export default function CartList() {
       />
       <UploadSearchbar />
       <div className="container flex flex-col items-start justify-between gap-6 my-6 lg:flex-row">
-        <MyProducts products={cartList?.productList} />
+        <MyProducts products={cartList?.productList} currency={cartList?.currency} />
         <OrderSummary
           cartSubTotalPrice={cartList?.cartSubTotalPrice}
           cartTotalPrice={cartList?.cartTotalPrice}
-          frieght={cartList?.frieght}
-          subcharges={cartList?.subcharges}
+          freight={cartList?.freight}
+          surcharges={cartList?.surcharges}
           gst={cartList?.gst}
+          currency={cartList?.currency}
           shippingAddresses={shippingAddresses}
         />
       </div>

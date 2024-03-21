@@ -17,8 +17,8 @@ import { useTable } from '~/hooks/useTable';
 import { BulkTable } from './bulk-table';
 import { useMyProductColumn } from './use-column';
 
-export default function MyProducts({ products }: any) {
-  const { columns } = useMyProductColumn();
+export default function MyProducts({ products, currency }: any) {
+  const { columns } = useMyProductColumn(currency);
   const { table } = useTable(columns, products);
 
   const fetcher = useFetcher();
@@ -30,7 +30,7 @@ export default function MyProducts({ products }: any) {
   const tableKey = new Date().getTime();
 
   return (
-    <div className="flex flex-col w-full bg-white my-product-wrapper">
+    <div className="relative flex flex-col w-full bg-white my-product-wrapper">
       <div className="flex justify-between md:items-center my-[30px] flex-col gap-4 md:flex-row md:gap-0 items-baseline uppercase mx-6">
         <h3>My products</h3>
         <div className="flex gap-2 items-center w-full justify-between md:justify-[unset] md:w-[unset]">
@@ -114,7 +114,7 @@ export default function MyProducts({ products }: any) {
               renderSubComponent={renderSubComponent}
               key={tableKey}
             />
-            <Button variant="primary" type="submit">
+            <Button className='absolute top-[31px] right-40' variant="primary" type="submit">
               Update cart
             </Button>
           </Form>

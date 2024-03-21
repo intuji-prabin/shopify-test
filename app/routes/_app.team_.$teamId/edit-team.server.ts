@@ -63,7 +63,7 @@ export async function updateTeam({
   customerId,
   file,
 }: EditTeamParams) {
-  console.log('addressId', addressId);
+  // console.log('addressId', addressId);
 
   const formData: any = new FormData();
   formData.append('fullName', fullName);

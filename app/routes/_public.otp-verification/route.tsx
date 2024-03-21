@@ -1,13 +1,13 @@
-import {Form, Link, useActionData} from '@remix-run/react';
-import {ActionFunctionArgs} from '@remix-run/server-runtime';
-import {useState, Fragment, useRef, useEffect} from 'react';
-import {DangerAlert} from '~/components/icons/alert';
-import {ArrowLeftSmall} from '~/components/icons/arrowleft';
-import {Button} from '~/components/ui/button';
+import { Form, Link, useActionData } from '@remix-run/react';
+import { ActionFunctionArgs } from '@remix-run/server-runtime';
+import { useState, Fragment, useRef, useEffect } from 'react';
+import { DangerAlert } from '~/components/icons/alert';
+import { ArrowLeftSmall } from '~/components/icons/arrowleft';
+import { Button } from '~/components/ui/button';
 
 let currentOtpIndex: number = 0;
 
-export const action = async ({request}: ActionFunctionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const otpKey = formData.getAll('otp');
   const finalOtp = otpKey.join('');
@@ -21,10 +21,10 @@ export const action = async ({request}: ActionFunctionArgs) => {
   const formErrors = {
     otp: validateOtp(finalOtp),
   };
-  if (Object.values(formErrors).some(Boolean)) return {formErrors};
+  if (Object.values(formErrors).some(Boolean)) return { formErrors };
 
   // Return final OTP if no form errors
-  return {finalOtp};
+  return { finalOtp };
 };
 
 type ActionData = {
@@ -48,7 +48,7 @@ const OtpVerification = () => {
   const handleOnchange = ({
     target,
   }: React.ChangeEvent<HTMLInputElement>): void => {
-    const {value} = target;
+    const { value } = target;
     const newOtp: string[] = [...tempOtp];
     newOtp[currentOtpIndex] = value.substring(value.length - 1);
 
@@ -63,7 +63,7 @@ const OtpVerification = () => {
   };
 
   const handleOnKeyDown = (
-    {key}: React.KeyboardEvent<HTMLInputElement>,
+    { key }: React.KeyboardEvent<HTMLInputElement>,
     index: number,
   ) => {
     currentOtpIndex = index;
@@ -77,7 +77,7 @@ const OtpVerification = () => {
   }, [activeOtpIndex]);
 
   const actionData = useActionData<ActionData>();
-  console.log('actionData', actionData);
+  // console.log('actionData', actionData);
 
   return (
     <div className="md:w-[398px] w-full min-h-[414px]">

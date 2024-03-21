@@ -40,7 +40,7 @@ export type BulkOrderColumn = {
   totalPrice: number;
 };
 
-export function useMyProductColumn() {
+export function useMyProductColumn(currency?: string) {
   const columns = useMemo<ColumnDef<BulkOrderColumn>[]>(
     () => [
       {
@@ -78,6 +78,7 @@ export function useMyProductColumn() {
               title={product.title}
               sku={product.sku}
               featuredImage={product.featuredImage}
+              moq={product.moq}
             />
           );
         },
@@ -138,6 +139,7 @@ export function useMyProductColumn() {
               isBulkDetailVisible={info?.row?.getIsExpanded()}
               setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
               isRowChecked={info?.row?.getIsSelected()}
+              currency={currency || '$'}
             />
           );
         },
@@ -152,9 +154,9 @@ export function useMyProductColumn() {
 /**
  * @description Items Column Component
  */
-type ItemsColumnType = Pick<BulkOrderColumn, 'title' | 'sku' | 'featuredImage'>;
+type ItemsColumnType = Pick<BulkOrderColumn, 'title' | 'sku' | 'featuredImage' | 'moq'>;
 
-export function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
+export function ItemsColumn({ title, sku, featuredImage, moq }: ItemsColumnType) {
   return (
     <div className="flex space-x-2">
       <figure className="bg-grey-25 p-3 !w-20 ">
@@ -164,7 +166,7 @@ export function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
           className="object-contain object-center h-full"
         />
       </figure>
-      <figcaption className="flex flex-col justify-between">
+      <figcaption className="flex flex-col gap-y-1">
         <h5 className="">{(title && title) || '--'}</h5>
         <div className="flex space-x-5 items-center max-w-[180px] flex-wrap gap-2">
           <p className="mr-2">
@@ -175,10 +177,10 @@ export function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
             <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>IN
             STOCK
           </div>
-          <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize ">
-            minimum order(500 pieces)
-          </p>
         </div>
+        <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize ">
+          minimum order({moq})
+        </p>
       </figcaption>
     </div>
   );
@@ -330,6 +332,7 @@ export function ProductTotal({
   unitOfMeasure,
   defaultUOM,
   UOM,
+  currency,
 }: {
   totalPrice: string;
   isBulkDetailVisible: boolean;
@@ -346,6 +349,7 @@ export function ProductTotal({
   defaultUOM: any;
   quantity: number;
   UOM: any;
+  currency: string;
 }) {
   const prices = getProductPriceByQty(
     quantity,
@@ -377,7 +381,7 @@ export function ProductTotal({
           </p>
         </div>
         <p className="text-grey-900 text-lg leading-5.5 italic">
-          ${prices || 'N/A'}
+          {currency}{prices || 'N/A'}
         </p>
         <p className="text-sm italic font-bold leading-normal text-grey-500">
           (Excl. GST)
