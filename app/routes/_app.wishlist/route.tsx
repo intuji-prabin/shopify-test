@@ -14,6 +14,7 @@ import { BulkTable } from '../_app.cart-list/order-my-products/bulk-table';
 import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 import { useMyWishListColumn } from './wishlist';
 import { getWishlist, removeBulkFromWishlist } from './wishlist.server';
+import { addedBulkCart } from './bulk.cart.server';
 
 export type WishListProductType = {
   productImageUrl: string;
@@ -44,12 +45,17 @@ export const action = async ({ request, context }: LoaderFunctionArgs) => {
         try {
           const cartInfo = Object.fromEntries(formData);
           const accessTocken = (await getAccessToken(context)) as string;
-          const addToCart = await addProductToCart(
-            cartInfo,
-            accessTocken,
-            context,
-            request,
-          );
+          if( cartInfo?.bulkCart && cartInfo?.bulkCart == "true" ) {
+            const bulkCart = await addedBulkCart( cartInfo, context, accessTocken )
+          } else {
+            const addToCart = await addProductToCart(
+              cartInfo,
+              accessTocken,
+              context,
+              request,
+            );
+          }
+          // return true
           setSuccessMessage(messageSession, 'Item added to cart successfully');
           return json(
             {},
@@ -159,6 +165,38 @@ export default function route() {
             <p className='text-lg italic font-bold'>{table.getSelectedRowModel().rows.length} item selected</p>
             <Button
               variant='primary'
+              onClick={() => {
+                console.log("errewrwrwe ")
+                const formData = new FormData();
+                table
+                  .getSelectedRowModel()
+                  .flatRows.map((item, index) => {
+                    console.log('"rererwer "', item)
+                    formData.append(
+                      `${item.original.productId}_productId`,
+                      item.original.productId,
+                    )
+                    formData.append(
+                      `${item.original.productId}_variantId`,
+                      item.original.variantId,
+                    )
+                    formData.append(
+                      `${item.original.productId}_quantity`,
+                      item.original.quantity,
+                    )
+                    formData.append(
+                      `${item.original.productId}_uom`,
+                      item.original.uom,
+                    )
+                    formData.append(
+                      `bulkCart`,
+                      "true",
+                    )
+                  },
+                  );
+                submit(formData, { method: 'POST' });
+                table.resetRowSelection();
+              }}
             >
               Add all to cart
             </Button>
