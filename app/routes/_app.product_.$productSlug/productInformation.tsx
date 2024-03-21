@@ -23,7 +23,7 @@ export default function ProductInformation({ product, wishListItems }: any) {
   function checkProductIdExists(productId: number) {
     return wishListItems?.some((item: any) => item?.productId === productId);
   }
-  console.log("product", product);
+  // console.log("product", product);
   return (
     <section className="bg-white">
       <div className="flex flex-col flex-wrap items-start gap-6 px-6 lg:gap-14 lg:flex-row">
@@ -59,6 +59,7 @@ export default function ProductInformation({ product, wishListItems }: any) {
           originalPrice={product?.originalPrice}
           moq={product?.moq}
           uomCode={product?.uomCode}
+          currency={product?.currency}
         />
       </div>
     </section>
@@ -107,7 +108,8 @@ const ProductDetailsSection = ({
   productVariantId,
   productImageLength,
   moq,
-  uomCode
+  uomCode,
+  currency
 }: any) => {
   const [quantity, setQuantity] = useState(parseFloat(moq) || 1);
   const [productPrice, setProductPrice] = useState(companyDefaultPrice);
@@ -226,6 +228,7 @@ const ProductDetailsSection = ({
         incGst={'Inc. GST'}
         minimumOrder={'Minimum Order'}
         minimumPieces={moq}
+        currency={currency}
       />
       {priceRange && priceRange.length > 0 && (
         <div className="w-full pt-4">
@@ -354,6 +357,7 @@ type ProductCardInfoProps = {
   minimumOrder: string;
   minimumPieces: string;
   className?: string;
+  currency?: string;
 };
 export function ProductCardInfo({
   productName,
@@ -366,6 +370,7 @@ export function ProductCardInfo({
   minimumOrder,
   minimumPieces,
   className,
+  currency
 }: ProductCardInfoProps) {
   return (
     <div className={`flex flex-col gap-6 p-4 ${className}`}>
@@ -387,7 +392,7 @@ export function ProductCardInfo({
               </div>
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727] price">
-              <span className='text-lg font-medium'>$</span>&nbsp;{buyPrice}
+              <span className='text-lg font-medium'>{currency ? currency : '$'}</span>&nbsp;{buyPrice}
             </h3>
             <p className="text-[14px] font-normal leading-4 pt-1">({exclGst})</p>
           </div>
@@ -409,7 +414,7 @@ export function ProductCardInfo({
               </div>
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300 price">
-              <span className='text-lg font-medium'>$</span>&nbsp;{rppPrice}
+              <span className='text-lg font-medium'>{currency ? currency : '$'}</span>&nbsp;{rppPrice}
             </h3>
             <p className="text-[14px] font-normal leading-4 pt-1">({incGst})</p>
           </div>

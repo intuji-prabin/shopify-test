@@ -1,12 +1,12 @@
-import { Link } from '@remix-run/react';
-import { ColumnDef } from '@tanstack/react-table';
-import { useMemo, useState } from 'react';
-import { TooltipInfo } from '~/components/icons/orderStatus';
-import { badgeVariants } from '~/components/ui/badge';
-import { Button } from '~/components/ui/button';
-import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { getProductPriceByQty } from '~/routes/_app.product_.$productSlug/product-detail';
+import {Link} from '@remix-run/react';
+import {ColumnDef} from '@tanstack/react-table';
+import {useMemo, useState} from 'react';
+import {TooltipInfo} from '~/components/icons/orderStatus';
+import {badgeVariants} from '~/components/ui/badge';
+import {Button} from '~/components/ui/button';
+import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {getProductPriceByQty} from '~/routes/_app.product_.$productSlug/product-detail';
 
 export type BulkOrderColumn = {
   productId: string;
@@ -40,12 +40,12 @@ export type BulkOrderColumn = {
   totalPrice: number;
 };
 
-export function useMyProductColumn() {
+export function useMyProductColumn(currency?: string) {
   const columns = useMemo<ColumnDef<BulkOrderColumn>[]>(
     () => [
       {
         id: 'select',
-        header: ({ table }) => (
+        header: ({table}) => (
           <IndeterminateCheckbox
             {...{
               checked: table.getIsAllRowsSelected(),
@@ -54,7 +54,7 @@ export function useMyProductColumn() {
             }}
           />
         ),
-        cell: ({ row }) => (
+        cell: ({row}) => (
           <div className="px-1">
             <IndeterminateCheckbox
               {...{
@@ -78,6 +78,7 @@ export function useMyProductColumn() {
               title={product.title}
               sku={product.sku}
               featuredImage={product.featuredImage}
+              moq={product.moq}
             />
           );
         },
@@ -102,7 +103,7 @@ export function useMyProductColumn() {
       },
       {
         accessorKey: 'uom',
-        header: 'UOM',
+        header: 'Unit Of Measurement',
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
@@ -138,6 +139,7 @@ export function useMyProductColumn() {
               isBulkDetailVisible={info?.row?.getIsExpanded()}
               setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
               isRowChecked={info?.row?.getIsSelected()}
+              currency={currency || '$'}
             />
           );
         },
@@ -146,15 +148,18 @@ export function useMyProductColumn() {
     [],
   );
 
-  return { columns };
+  return {columns};
 }
 
 /**
  * @description Items Column Component
  */
-type ItemsColumnType = Pick<BulkOrderColumn, 'title' | 'sku' | 'featuredImage'>;
+type ItemsColumnType = Pick<
+  BulkOrderColumn,
+  'title' | 'sku' | 'featuredImage' | 'moq'
+>;
 
-export function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
+export function ItemsColumn({title, sku, featuredImage, moq}: ItemsColumnType) {
   return (
     <div className="flex space-x-2">
       <figure className="bg-grey-25 p-3 !w-20 ">
@@ -164,21 +169,21 @@ export function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
           className="object-contain object-center h-full"
         />
       </figure>
-      <figcaption className="flex flex-col justify-between">
+      <figcaption className="flex flex-col gap-y-1">
         <h5 className="">{(title && title) || '--'}</h5>
         <div className="flex space-x-5 items-center max-w-[180px] flex-wrap gap-2">
           <p className="mr-2">
             <span className="font-semibold text-grey-900 ">SKU: </span>
             {(sku && sku) || 'N/A'}
           </p>
-          <div className={`${badgeVariants({ variant: 'inStock' })} !m-0 `}>
+          <div className={`${badgeVariants({variant: 'inStock'})} !m-0 `}>
             <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>IN
             STOCK
           </div>
-          <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize ">
-            minimum order(500 pieces)
-          </p>
         </div>
+        <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize ">
+          minimum order({moq})
+        </p>
       </figcaption>
     </div>
   );
@@ -189,14 +194,14 @@ export function ItemsColumn({ title, sku, featuredImage }: ItemsColumnType) {
 type QuantityColumnType = Pick<
   BulkOrderColumn,
   'quantity' | 'productId' | 'variantId' | 'moq'
-> & { info: any, lineItemId?: string };
+> & {info: any; lineItemId?: string};
 export function QuantityColumn({
   quantity,
   info,
   productId,
   variantId,
   moq,
-  lineItemId
+  lineItemId,
 }: QuantityColumnType) {
   const meta = info.table.options.meta;
 
@@ -265,8 +270,16 @@ export function QuantityColumn({
         </div>
       </div>
       <input type="hidden" name={`${productId}_productId`} value={productId} />
-      <input type="hidden" name={`${productId}_productVariant`} value={variantId} />
-      <input type="hidden" name={`${productId}_lineItemId`} value={lineItemId} />
+      <input
+        type="hidden"
+        name={`${productId}_productVariant`}
+        value={variantId}
+      />
+      <input
+        type="hidden"
+        name={`${productId}_lineItemId`}
+        value={lineItemId}
+      />
       <input type="hidden" name={`${productId}_quantity`} value={quantity} />
     </>
   );
@@ -330,6 +343,7 @@ export function ProductTotal({
   unitOfMeasure,
   defaultUOM,
   UOM,
+  currency,
 }: {
   totalPrice: string;
   isBulkDetailVisible: boolean;
@@ -346,6 +360,7 @@ export function ProductTotal({
   defaultUOM: any;
   quantity: number;
   UOM: any;
+  currency: string;
 }) {
   const prices = getProductPriceByQty(
     quantity,
@@ -377,7 +392,8 @@ export function ProductTotal({
           </p>
         </div>
         <p className="text-grey-900 text-lg leading-5.5 italic">
-          ${prices || 'N/A'}
+          {currency}
+          {prices || 'N/A'}
         </p>
         <p className="text-sm italic font-bold leading-normal text-grey-500">
           (Excl. GST)
@@ -386,8 +402,9 @@ export function ProductTotal({
       {priceRange.length > 0 && (
         <Button
           onClick={setIsBulkDetailsVisible}
-          className={`${isRowChecked ? 'bg-white' : 'bg-primary-200'
-            }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
+          className={`${
+            isRowChecked ? 'bg-white' : 'bg-primary-200'
+          }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
         >
           {isBulkDetailVisible ? 'Hide' : 'View'} BULK PRICE
         </Button>

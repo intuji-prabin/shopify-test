@@ -4,7 +4,7 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import {GET_CART_LIST} from '../_app.cart-list/cart.server';
-import { CONSTANT } from '~/lib/constants/product.session';
+import {CONSTANT} from '~/lib/constants/product.session';
 
 export async function getProductDetails(customerId: string, handle: string) {
   try {
@@ -122,14 +122,8 @@ const updateAllReadyAddedCart = async (
   sessionCartInfo.lineItems = 0;
   lines.map((items: any) => {
     const merchandise = items?.merchandise;
-    const variantId = merchandise?.id.replace(
-      CONSTANT?.variantId,
-      '',
-    );
-    const productId = merchandise?.product?.id.replace(
-      CONSTANT?.productId,
-      '',
-    );
+    const variantId = merchandise?.id.replace(CONSTANT?.variantId, '');
+    const productId = merchandise?.product?.id.replace(CONSTANT?.productId, '');
     sessionCartInfo.lineItems = sessionCartInfo.lineItems + 1;
     sessionCartInfo[productId] = {
       productId,
@@ -171,14 +165,8 @@ const cartLineAdd = async (
   sessionCartInfo.cartItems = [];
   lines.map((items: any) => {
     const merchandise = items?.merchandise;
-    const variantId = merchandise?.id.replace(
-      CONSTANT?.variantId,
-      '',
-    );
-    const productId = merchandise?.product?.id.replace(
-      CONSTANT?.productId,
-      '',
-    );
+    const variantId = merchandise?.id.replace(CONSTANT?.variantId, '');
+    const productId = merchandise?.product?.id.replace(CONSTANT?.productId, '');
     sessionCartInfo.lineItems = sessionCartInfo.lineItems + 1;
     sessionCartInfo.cartItems.push({
       productId,
@@ -233,10 +221,7 @@ const cartResponseFormate = (cartResponse: any, accessTocken: string) => {
   if (lines.length > 0) {
     lines.map((items: any) => {
       const merchandise = items?.merchandise;
-      const variantId = merchandise?.id.replace(
-        CONSTANT?.variantId,
-        '',
-      );
+      const variantId = merchandise?.id.replace(CONSTANT?.variantId, '');
       const productId = merchandise?.product?.id.replace(
         CONSTANT?.productId,
         '',

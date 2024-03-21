@@ -49,6 +49,7 @@ export function useMyWishListColumn() {
               title={product.title}
               sku={product.sku}
               featuredImage={product.featuredImage}
+              moq={product.moq}
             />
           );
         },
@@ -74,6 +75,7 @@ export function useMyWishListColumn() {
               isBulkDetailVisible={info?.row?.getIsExpanded()}
               setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
               isRowChecked={info?.row?.getIsSelected()}
+              currency={product?.currency || '$'}
             />
           );
         },

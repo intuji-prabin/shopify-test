@@ -5,23 +5,24 @@ import { ShoppingDetails } from './order-shopping-details';
 export default function OrderSummary({
   cartSubTotalPrice,
   cartTotalPrice,
-  frieght,
-  subcharges,
+  freight,
+  surcharges,
   gst,
-  shippingAddresses
+  shippingAddresses,
+  currency
 }: any) {
   return (
     <div className="bg-white max-w-[unset] w-full lg:max-w-[411px] ">
       <EstimatedTotal cartSubTotalPrice={cartSubTotalPrice}
         cartTotalPrice={cartTotalPrice}
-        frieght={frieght}
-        subcharges={subcharges}
-        gst={gst} />
+        freight={freight}
+        surcharges={surcharges}
+        gst={gst} currency={currency} />
       {shippingAddresses ?
         <Form method="POST">
           <ShoppingDetails shippingAddresses={shippingAddresses} />
         </Form>
-        : <p className='p-6 text-red-500 font-medium'>You do not have any shipping address added. Please add one to place order.</p>}
+        : <p className='p-6 font-medium text-red-500'>You do not have any shipping address added. Please add one to place order.</p>}
     </div>
   );
 }
