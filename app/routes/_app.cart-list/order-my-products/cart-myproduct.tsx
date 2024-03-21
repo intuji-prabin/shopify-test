@@ -16,6 +16,7 @@ import FullPageLoading from '~/components/ui/fullPageLoading';
 import { useTable } from '~/hooks/useTable';
 import { BulkTable } from './bulk-table';
 import { useMyProductColumn } from './use-column';
+import Loader from '~/components/ui/loader';
 
 export default function MyProducts({ products, currency }: any) {
   const { columns } = useMyProductColumn(currency);
@@ -106,7 +107,14 @@ export default function MyProducts({ products, currency }: any) {
 
       <div className="border-t border-grey-50 cart-order">
         {isLoading ? (
-          <FullPageLoading description="Loading...." />
+          <div className="absolute inset-0 z-[9999] bg-white/95">
+            <div className='flex items-center justify-center h-full gap-x-4 gap-y-2'>
+              <p className="text-lg">
+                Loading....
+              </p>
+              <Loader width="w-8" height="h-8" />
+            </div>
+          </div>
         ) : (
           <Form method="PUT">
             <DataTable
