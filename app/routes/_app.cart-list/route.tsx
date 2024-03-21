@@ -11,48 +11,44 @@ import {
 } from '@remix-run/server-runtime';
 import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
-import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
+import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { getAllCompanyShippingAddresses } from '../_app.shipping-address/shipping-address.server';
-import { removeItemFromCart } from './cart-remove.server';
-import { getCartList } from './cart.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {getAllCompanyShippingAddresses} from '../_app.shipping-address/shipping-address.server';
+import {removeItemFromCart} from './cart-remove.server';
+import {cartUpdate} from './cart-update.server';
+import {getCartList} from './cart.server';
 import MyProducts from './order-my-products/cart-myproduct';
-import { placeOrder } from './order-place.server';
+import {placeOrder} from './order-place.server';
 import OrderSummary from './order-summary/cart-order-summary';
-import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 
-export const loader = async ({ context, request }: LoaderFunctionArgs) => {
+export const loader = async ({context, request}: LoaderFunctionArgs) => {
   await isAuthenticate(context);
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
 
   const metaParentValue = userDetails.meta.parent.value;
 
   const customerId =
     metaParentValue === 'null' ? userDetails.id : metaParentValue;
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
+  // console.log("first", sessionCartInfo)
 
   if (!sessionCartInfo) {
     throw new Error('Cart not found');
   }
   const cartList = await getCartList(context, request, sessionCartInfo);
   const shippingAddresses = await getAllCompanyShippingAddresses(customerId);
-  return json({ cartList, shippingAddresses });
+  return json({cartList, shippingAddresses});
 };
 
-export async function action({ request, context }: ActionFunctionArgs) {
+export async function action({request, context}: ActionFunctionArgs) {
   const messageSession = await getMessageSession(request);
-  const formData = await request.formData();
-  const UOMS = formData.getAll('uomSelector');
-  const finalQuantity = formData.getAll('quantity');
-  const productCode = formData.getAll('productCode');
-  const productVarient = formData.getAll('productVarient');
   try {
     let res;
     switch (request.method) {
@@ -68,7 +64,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           });
         } catch (error) {
           if (error instanceof Error) {
-            console.log('this is err', error?.message);
+            // console.log('this is err', error?.message);
             setErrorMessage(messageSession, error?.message);
             return json(
               {},
@@ -80,7 +76,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
               },
             );
           }
-          console.log('this is err');
+          // console.log('this is err');
           setErrorMessage(
             messageSession,
             'Order not placed to some issue. Please try again later.',
@@ -98,7 +94,6 @@ export async function action({ request, context }: ActionFunctionArgs) {
       case 'DELETE':
         try {
           res = await removeItemFromCart(context, request);
-          await getCartList(context, request, res.cartSession);
           setSuccessMessage(messageSession, 'Order deleted successfully');
           return json(
             {},
@@ -111,7 +106,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           );
         } catch (error) {
           if (error instanceof Error) {
-            console.log('this is err', error?.message);
+            // console.log('this is err', error?.message);
             setErrorMessage(messageSession, error?.message);
             return json(
               {},
@@ -123,7 +118,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
               },
             );
           }
-          console.log('this is err');
+          // console.log('this is err');
           setErrorMessage(
             messageSession,
             'Order not deleted due to some issue. Please try again later.',
@@ -139,22 +134,47 @@ export async function action({ request, context }: ActionFunctionArgs) {
           );
         }
       case 'PUT':
-        const formData = [];
-        for (let i = 0; i < UOMS.length; i++) {
-          const selectUOM = UOMS[i];
-          const quantity = finalQuantity[i];
-          const productId = productCode[i];
-          const productVeriantId = productVarient[i];
-          formData.push({
-            quantity,
-            selectUOM,
-            productId,
-            productVeriantId,
-          });
+        try {
+          const response = await cartUpdate(context, request);
+          setSuccessMessage(messageSession, 'Cart updated successfully');
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        } catch (error) {
+          if (error instanceof Error) {
+            // console.log('this is err', error?.message);
+            setErrorMessage(messageSession, error?.message);
+            return json(
+              {},
+              {
+                headers: [
+                  ['Set-Cookie', await context.session.commit({})],
+                  ['Set-Cookie', await messageCommitSession(messageSession)],
+                ],
+              },
+            );
+          }
+          // console.log('this is err');
+          setErrorMessage(
+            messageSession,
+            'Something went wrong during update cart. Please try again later.',
+          );
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
         }
-        console.log('putNowNow', formData);
-        const accessTocken = (await getAccessToken(context)) as string;
-        await addProductToCart(formData[0], accessTocken, context, request);
       default:
         res = json(
           {
@@ -176,23 +196,25 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function CartList() {
-  const { cartList, shippingAddresses }: any = useLoaderData<typeof loader>();
+  const {cartList, shippingAddresses}: any = useLoaderData<typeof loader>();
+  // console.log("cartList.productList", cartList);
 
   return (
     <>
-      <HeroBanner
-        image_url={'/place-order.png'}
-        section_name={'SHOPPING CART'}
-      />
+      <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
       <UploadSearchbar />
       <div className="container flex flex-col items-start justify-between gap-6 my-6 lg:flex-row">
-        <MyProducts products={cartList?.productList} />
+        <MyProducts
+          products={cartList?.productList}
+          currency={cartList?.currency}
+        />
         <OrderSummary
           cartSubTotalPrice={cartList?.cartSubTotalPrice}
           cartTotalPrice={cartList?.cartTotalPrice}
-          frieght={cartList?.frieght}
-          subcharges={cartList?.subcharges}
+          freight={cartList?.freight}
+          surcharges={cartList?.surcharges}
           gst={cartList?.gst}
+          currency={cartList?.currency}
           shippingAddresses={shippingAddresses}
         />
       </div>

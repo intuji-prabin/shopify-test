@@ -10,7 +10,7 @@ import {getProductPriceByQty} from '~/routes/_app.product_.$productSlug/product-
 
 export type BulkOrderColumn = {
   productId: string;
-  veriantId: string;
+  variantId: string;
   quantity: number;
   title: string;
   featuredImage: string;
@@ -22,6 +22,8 @@ export type BulkOrderColumn = {
   currency: string;
   defaultUOM: string;
   id: string;
+  moq: number;
+  uomName: string;
   unitOfMeasure: [
     {
       unit: string;
@@ -38,7 +40,7 @@ export type BulkOrderColumn = {
   totalPrice: number;
 };
 
-export function useMyProductColumn() {
+export function useMyProductColumn(currency?: string) {
   const columns = useMemo<ColumnDef<BulkOrderColumn>[]>(
     () => [
       {
@@ -76,6 +78,7 @@ export function useMyProductColumn() {
               title={product.title}
               sku={product.sku}
               featuredImage={product.featuredImage}
+              moq={product.moq}
             />
           );
         },
@@ -91,14 +94,16 @@ export function useMyProductColumn() {
               quantity={product.quantity}
               info={info}
               productId={product.productId}
-              veriantId={product.veriantId}
+              variantId={product.variantId}
+              moq={product.moq}
+              lineItemId={product.id}
             />
           );
         },
       },
       {
         accessorKey: 'uom',
-        header: 'UOM',
+        header: 'Unit Of Measurement',
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
@@ -107,6 +112,8 @@ export function useMyProductColumn() {
               uom={product.uom}
               unitOfMeasure={product.unitOfMeasure}
               info={info}
+              selectedUOMName={product.uomName}
+              productId={product.productId}
             />
           );
         },
@@ -132,6 +139,7 @@ export function useMyProductColumn() {
               isBulkDetailVisible={info?.row?.getIsExpanded()}
               setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
               isRowChecked={info?.row?.getIsSelected()}
+              currency={currency || '$'}
             />
           );
         },
@@ -146,9 +154,12 @@ export function useMyProductColumn() {
 /**
  * @description Items Column Component
  */
-type ItemsColumnType = Pick<BulkOrderColumn, 'title' | 'sku' | 'featuredImage'>;
+type ItemsColumnType = Pick<
+  BulkOrderColumn,
+  'title' | 'sku' | 'featuredImage' | 'moq'
+>;
 
-function ItemsColumn({title, sku, featuredImage}: ItemsColumnType) {
+export function ItemsColumn({title, sku, featuredImage, moq}: ItemsColumnType) {
   return (
     <div className="flex space-x-2">
       <figure className="bg-grey-25 p-3 !w-20 ">
@@ -158,7 +169,7 @@ function ItemsColumn({title, sku, featuredImage}: ItemsColumnType) {
           className="object-contain object-center h-full"
         />
       </figure>
-      <figcaption className="flex flex-col justify-between">
+      <figcaption className="flex flex-col gap-y-1">
         <h5 className="">{(title && title) || '--'}</h5>
         <div className="flex space-x-5 items-center max-w-[180px] flex-wrap gap-2">
           <p className="mr-2">
@@ -169,10 +180,10 @@ function ItemsColumn({title, sku, featuredImage}: ItemsColumnType) {
             <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>IN
             STOCK
           </div>
-          <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize ">
-            minimum order(500 pieces)
-          </p>
         </div>
+        <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize ">
+          minimum order({moq})
+        </p>
       </figcaption>
     </div>
   );
@@ -182,13 +193,15 @@ function ItemsColumn({title, sku, featuredImage}: ItemsColumnType) {
  */
 type QuantityColumnType = Pick<
   BulkOrderColumn,
-  'quantity' | 'productId' | 'veriantId'
-> & {info: any};
-function QuantityColumn({
+  'quantity' | 'productId' | 'variantId' | 'moq'
+> & {info: any; lineItemId?: string};
+export function QuantityColumn({
   quantity,
   info,
   productId,
-  veriantId,
+  variantId,
+  moq,
+  lineItemId,
 }: QuantityColumnType) {
   const meta = info.table.options.meta;
 
@@ -252,12 +265,22 @@ function QuantityColumn({
             </p>
           </div>
           <p className="text-grey-700 text-[14px] font-normal capitalize  leading-[16px]">
-            Minimum Order Quantity
+            Minimum Order Quantity {moq}
           </p>
         </div>
       </div>
-      <input type="hidden" name="productCode" value={productId} />
-      <input type="hidden" name="productVarient" value={veriantId} />
+      <input type="hidden" name={`${productId}_productId`} value={productId} />
+      <input
+        type="hidden"
+        name={`${productId}_productVariant`}
+        value={variantId}
+      />
+      <input
+        type="hidden"
+        name={`${productId}_lineItemId`}
+        value={lineItemId}
+      />
+      <input type="hidden" name={`${productId}_quantity`} value={quantity} />
     </>
   );
 }
@@ -266,9 +289,17 @@ function QuantityColumn({
  */
 type MeasurementColumnType = Pick<BulkOrderColumn, 'uom' | 'unitOfMeasure'> & {
   info: any;
+  selectedUOMName: any;
+  productId?: string;
 };
 
-function ProductMeasurement({uom, unitOfMeasure, info}: MeasurementColumnType) {
+export function ProductMeasurement({
+  uom,
+  unitOfMeasure,
+  info,
+  selectedUOMName,
+  productId,
+}: MeasurementColumnType) {
   const [UOM, setUom] = useState(uom);
   const meta = info.table.options.meta;
 
@@ -278,28 +309,31 @@ function ProductMeasurement({uom, unitOfMeasure, info}: MeasurementColumnType) {
   };
 
   return (
-    <select
-      name="uomSelector"
-      className="w-full min-w-[92px] place-order h-full border-grey-100"
-      onChange={(e: any) => handleUOMChange(e.target.value)}
-      defaultValue={UOM}
-    >
-      {unitOfMeasure.length > 0 ? (
-        unitOfMeasure?.map((uom: any, index: number) => (
-          <option value={uom.unit} key={index + 'uom'}>
-            {uom.unit}
-          </option>
-        ))
-      ) : (
-        <option value={UOM}>{UOM}</option>
-      )}
-    </select>
+    <>
+      <select
+        name="uomSelector"
+        className="w-full min-w-[92px] place-order h-full border-grey-100"
+        onChange={(e: any) => handleUOMChange(e.target.value)}
+        defaultValue={UOM}
+      >
+        {unitOfMeasure.length > 0 ? (
+          unitOfMeasure?.map((uom: any, index: number) => (
+            <option value={uom.code} key={index + 'uom'}>
+              {uom.unit}
+            </option>
+          ))
+        ) : (
+          <option value={UOM}>{selectedUOMName}</option>
+        )}
+      </select>
+      <input type="hidden" name={`${productId}_uom`} value={UOM} />
+    </>
   );
 }
 /**
  * @description Total Column Component
  */
-function ProductTotal({
+export function ProductTotal({
   totalPrice,
   isBulkDetailVisible,
   setIsBulkDetailsVisible,
@@ -309,6 +343,7 @@ function ProductTotal({
   unitOfMeasure,
   defaultUOM,
   UOM,
+  currency,
 }: {
   totalPrice: string;
   isBulkDetailVisible: boolean;
@@ -325,6 +360,7 @@ function ProductTotal({
   defaultUOM: any;
   quantity: number;
   UOM: any;
+  currency: string;
 }) {
   const prices = getProductPriceByQty(
     quantity,
@@ -356,7 +392,8 @@ function ProductTotal({
           </p>
         </div>
         <p className="text-grey-900 text-lg leading-5.5 italic">
-          ${prices || 'N/A'}
+          {currency}
+          {prices || 'N/A'}
         </p>
         <p className="text-sm italic font-bold leading-normal text-grey-500">
           (Excl. GST)

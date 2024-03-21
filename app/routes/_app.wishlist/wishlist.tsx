@@ -1,222 +1,161 @@
+import { ColumnDef } from '@tanstack/react-table';
 import * as React from 'react';
+import { Button } from '~/components/ui/button';
+import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import {Button} from '~/components/ui/button';
-import {Checkbox} from '~/components/ui/checkbox';
+  ItemsColumn,
+  ProductMeasurement,
+  ProductTotal,
+  QuantityColumn,
+} from '../_app.cart-list/order-my-products/use-column';
+import { Form, useSubmit } from '@remix-run/react';
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '~/components/ui/table';
-import WishlistPriceItem from './sections/wishlist-price-item';
-import WishlistQuantity from './sections/wishlist-quantity';
-import WishListProductItem from './sections/wishlist-product-item';
-import {WishListItem, WishListProductType} from './route';
-import RemoveDialogbox from './sections/remove-dialogbox';
-
-export const columns: ColumnDef<WishListItem>[] = [
-  {
-    id: 'select',
-    header: ({table}) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected()
-          // || (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({row}) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: 'product',
-    cell: ({row}) => (
-      <WishListProductItem
-        productImageUrl={
-          (row.getValue('product') as WishListProductType).productImageUrl
-        }
-        sku={(row.getValue('product') as WishListProductType).sku}
-        productName={
-          (row.getValue('product') as WishListProductType).productName
-        }
-        inStock={(row.getValue('product') as WishListProductType).inStock}
-      />
-    ),
-    header: 'Items',
-  },
-  {
-    accessorKey: 'buyPrice',
-    header: 'Price',
-    cell: ({row}) => <WishlistPriceItem buyPrice={row.getValue('buyPrice')} />,
-  },
-  {
-    accessorKey: 'quantity',
-    header: 'Quantity',
-    cell: ({row}) => <WishlistQuantity count={row.getValue('quantity')} />,
-  },
-  {
-    accessorKey: 'action',
-    header: 'Action',
-    cell: ({row}) => (
-      <Button
-        className="uppercase flex-grow max-h-[unset] lg:max-h-[28px] min-w-[86px]"
-        variant="primary"
-      >
-        Add to cart
-      </Button>
-    ),
-  },
-];
-
-export function WishListTable({
-  title,
-  data,
-}: {
-  title: string;
-  data: WishListItem[];
-}) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+export function useMyWishListColumn() {
+  const submit = useSubmit();
+  const columns = React.useMemo<ColumnDef<any>[]>(
+    () => [
+      {
+        id: 'select',
+        header: ({ table }) => (
+          <IndeterminateCheckbox
+            {...{
+              checked: table.getIsAllRowsSelected(),
+              indeterminate: table.getIsSomeRowsSelected(),
+              onChange: table.getToggleAllRowsSelectedHandler(),
+            }}
+          />
+        ),
+        cell: ({ row }) => (
+          <div className="px-1">
+            <IndeterminateCheckbox
+              {...{
+                checked: row.getIsSelected(),
+                disabled: !row.getCanSelect(),
+                indeterminate: row.getIsSomeSelected(),
+                onChange: row.getToggleSelectedHandler(),
+              }}
+            />
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'items',
+        header: 'Items',
+        enableSorting: false,
+        cell: (info) => {
+          const product = info.row.original;
+          return (
+            <ItemsColumn
+              title={product.title}
+              sku={product.sku}
+              featuredImage={product.featuredImage}
+              moq={product.moq}
+            />
+          );
+        },
+      },
+      {
+        accessorKey: 'total',
+        header: 'Price',
+        enableSorting: false,
+        cell: (info) => {
+          const productTotal = info.row.original.companyPrice;
+          const priceRange = info.row.original.priceRange;
+          const quantity = info.row.original.quantity || info.row.original.moq || 1;
+          const product = info.row.original;
+          const UOM = info.row.original.uom;
+          return (
+            <ProductTotal
+              totalPrice={productTotal}
+              quantity={quantity}
+              UOM={UOM}
+              unitOfMeasure={product.unitOfMeasure}
+              defaultUOM={product.uomCode}
+              priceRange={priceRange}
+              isBulkDetailVisible={info?.row?.getIsExpanded()}
+              setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
+              isRowChecked={info?.row?.getIsSelected()}
+              currency={product?.currency || '$'}
+            />
+          );
+        },
+      },
+      {
+        accessorKey: 'quantity',
+        header: 'Quantity',
+        enableSorting: false,
+        cell: (info) => {
+          const product = info.row.original;
+          return (
+            <QuantityColumn
+              quantity={product.quantity || product.moq || 1}
+              info={info}
+              productId={product.productId}
+              variantId={product.variantId}
+              moq={product.moq}
+            />
+          );
+        },
+      },
+      {
+        accessorKey: 'uom',
+        header: 'UOM',
+        enableSorting: false,
+        cell: (info) => {
+          const product = info.row.original;
+          return (
+            <ProductMeasurement
+              uom={product.uom}
+              unitOfMeasure={product.unitOfMeasure}
+              info={info}
+              selectedUOMName={product.uomName}
+            />
+          );
+        },
+      },
+      {
+        accessorKey: 'action',
+        header: 'Action',
+        enableSorting: false,
+        cell: (info) => {
+          const product = info.row.original;
+          return (
+            <>
+              {product.quantity < product.moq ?
+                <button
+                  className="uppercase flex justify-center items-center text-xs max-h-[unset] lg:max-h-[28px] min-w-[86px] cursor-not-allowed bg-grey-200 text-grey-400 px-6 py-2"
+                  disabled
+                >
+                  Add to cart
+                </button> :
+                <Form method="POST"
+                  onSubmit={(event) => {
+                    submit(event.currentTarget);
+                  }}
+                  className="w-full">
+                  <input type="hidden" name="productId" value={product.productId} />
+                  <input
+                    type="hidden"
+                    name="productVariantId"
+                    value={product.variantId}
+                  />
+                  <input type="hidden" name="quantity" value={product.quantity || product.moq || 1} />
+                  <input type="hidden" name="selectUOM" value={product.uom} />
+                  <Button
+                    className="uppercase flex-grow max-h-[unset] text-xs lg:max-h-[28px] min-w-[86px]"
+                    variant="primary"
+                  >
+                    Add to cart
+                  </Button>
+                </Form>
+              }
+            </>
+          );
+        },
+      },
+    ],
     [],
   );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
 
-  const table = useReactTable({
-    data,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
-  });
-
-  function handleAddAllToCart() {
-    table.toggleAllPageRowsSelected(true);
-  }
-
-  function handleRemoveAllItems() {
-    table.toggleAllRowsSelected(false);
-    console.log('All rows deselected');
-  }
-
-  return (
-    <article className="container bg-grey-25 py-6">
-      <section className="flex justify-between">
-        <h3>{title}</h3>
-        {/* Only show this div if there are selected rows */}
-        {table.getSelectedRowModel().rows.length ? (
-          <div className="flex flex-row gap-2 items-center">
-            {/* Get the number of selected rows */}
-            <p className="italic font-bold leading-[22px] text-lg">
-              {table.getSelectedRowModel().rows.length === 1
-                ? '1 item selected'
-                : `${table.getSelectedRowModel().rows.length} items selected`}
-            </p>
-            {/* Toggle select all rows */}
-            <Button
-              onClick={handleAddAllToCart}
-              className="uppercase flex-grow"
-              variant="primary"
-            >
-              Add All to cart
-            </Button>
-            <div className="remove-dialogue">
-              <RemoveDialogbox handleRemoveAllItems={handleRemoveAllItems} />
-            </div>
-          </div>
-        ) : undefined}
-      </section>
-
-      {/* Table Begins Here */}
-      <div className="rounded-md border bg-white mt-6  wishlist">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      className="text-lg font-medium leading-[22px] text-grey-900"
-                      key={header.id}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  className="hover:bg-white"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </article>
-  );
+  return { columns };
 }

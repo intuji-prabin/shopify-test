@@ -137,10 +137,13 @@ const formattedResponse = async (response: any, customerId: string) => {
         variants: productVariantDataFormat(item?.node?.variants),
         featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.IMAGE,
         companyPrice: priceList?.[productId]
-          ? priceList?.[productId][0]?.company_price
+          ? priceList?.[productId]?.company_price
+          : null,
+        currency: priceList?.[productId]
+          ? priceList?.[productId]?.currency
           : null,
         defaultPrice: priceList?.[productId]
-          ? priceList?.[productId][0]?.default_price
+          ? priceList?.[productId]?.default_price
           : null,
       };
     }),
@@ -152,11 +155,12 @@ const productVariantDataFormat = (variant: any) => {
   const finalVariantData = {
     id: variant?.edges[0]?.node?.id,
     sku: variant?.edges[0]?.node?.sku,
+    moq: variant?.edges[0]?.node?.moq?.value || 1,
   };
   return finalVariantData;
 };
 
-const getPrices = async (produdctId: string, customerId: string) => {
+export const getPrices = async (produdctId: string, customerId: string) => {
   const customerID = customerId;
   const results = await useFetch<any>({
     method: AllowedHTTPMethods.GET,
@@ -202,6 +206,7 @@ const STOREFRONT_PRODUCT_GET_QUERY = (filterList: any, handler: string) => {
                             node {
                                 id
                                 sku
+                                moq : metafield( namespace: "moq", key: "moq" ) { value }
                             }
                         }
                     }

@@ -5,7 +5,11 @@ import {Routes} from '~/lib/constants/routes.constent';
 import {OrderStatusChip} from '~/components/ui/order-status-chip';
 import {Product} from '~/routes/_app.order_.$orderId/order-details.server';
 
-export function useColumn() {
+export function useColumn({
+  prefixWithCurrency,
+}: {
+  prefixWithCurrency(price: string): string;
+}) {
   const columns = useMemo<ColumnDef<Product>[]>(
     () => [
       {
@@ -41,7 +45,7 @@ export function useColumn() {
         header: 'Amount',
         enableSorting: false,
         cell: (info) => {
-          const amount = `$${info.getValue()}`;
+          const amount = prefixWithCurrency(info.getValue() as string);
           return amount;
         },
       },
@@ -86,7 +90,7 @@ export function useColumn() {
         header: 'Total',
         enableSorting: false,
         cell: (info) => {
-          const totalAmount = `$${info.getValue()}`;
+          const totalAmount = prefixWithCurrency(info.getValue() as string);
           return totalAmount;
         },
       },

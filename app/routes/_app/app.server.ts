@@ -113,12 +113,10 @@ const formateCategory = async (categoryesponse: any) => {
 };
 
 export const getSessionCart = async (customerId: string, context: any) => {
-  console.log(customerId);
   const cartResults = await useFetch<any>({
     method: AllowedHTTPMethods.GET,
     url: `${ENDPOINT.PRODUCT.CART}/${customerId}`,
   });
-  console.log('cartResults', cartResults);
   if (!cartResults?.status) {
     return false;
   }
@@ -159,7 +157,7 @@ const formateCartSessionResponse = (
   if (lines.length > 0) {
     lines.map((items: any) => {
       const merchandise = items?.merchandise;
-      const veriantId = merchandise?.id.replace(
+      const variantId = merchandise?.id.replace(
         'gid://shopify/ProductVariant/',
         '',
       );
@@ -170,7 +168,7 @@ const formateCartSessionResponse = (
       cartListed.lineItems = cartListed.lineItems + 1;
       cartListed.cartItems.push({
         productId,
-        veriantId,
+        variantId,
         lineId: items?.id,
         quantity: items?.quantity,
         UOM: items?.attributes.filter(
@@ -179,7 +177,6 @@ const formateCartSessionResponse = (
       });
     });
   }
-  console.log('cartResults ', cartListed);
 
   return cartListed;
 };

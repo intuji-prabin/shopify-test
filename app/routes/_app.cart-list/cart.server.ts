@@ -10,6 +10,7 @@ export const getCartList = async (
   fronOrder = false,
 ) => {
   const {userDetails} = await getUserDetails(request);
+
   const cartLists = await context.storefront.query(GET_CART_LIST, {
     variables: {cartId: sessionCartInfo?.cartId},
   });
@@ -31,7 +32,7 @@ const formateCartList = async (
   let productList = [] as any;
   cartLine.map((items: any) => {
     const merchandise = items?.merchandise;
-    const veriantId = merchandise?.id.replace(
+    const variantId = merchandise?.id.replace(
       'gid://shopify/ProductVariant/',
       '',
     );
@@ -42,7 +43,7 @@ const formateCartList = async (
     productList.push({
       id: items?.id,
       productId,
-      veriantId,
+      variantId,
       quantity: items?.quantity,
       title: merchandise?.product?.title,
       sku: merchandise?.sku,
@@ -56,14 +57,12 @@ const formateCartList = async (
   if (fronOrder) {
     return productList;
   }
-
   const productWithPrice = await getPrice(customerId, productList);
 
   return productWithPrice;
 };
 
 const getPrice = async (customerId: string, productList: any) => {
-  // const customerId = userDetails?.id
   const priceResponse = await useFetch<any>({
     method: AllowedHTTPMethods.POST,
     url: `${ENDPOINT.PRODUCT.CART_DETAIL}/${customerId}`,
@@ -73,7 +72,6 @@ const getPrice = async (customerId: string, productList: any) => {
   if (!priceResponse?.status) {
     throw new Error(priceResponse?.message);
   }
-  // console.log("resultssss ", results)
   return priceResponse?.payload;
 };
 
