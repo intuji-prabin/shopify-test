@@ -1,8 +1,8 @@
-import { Form, useFetcher } from '@remix-run/react';
-import { useState } from 'react';
+import {Form, useFetcher} from '@remix-run/react';
+import {useState} from 'react';
 import RemoveItem from '~/components/icons/removeItem';
-import { Button } from '~/components/ui/button';
-import { DataTable } from '~/components/ui/data-table';
+import {Button} from '~/components/ui/button';
+import {DataTable} from '~/components/ui/data-table';
 import {
   Dialog,
   DialogClose,
@@ -13,13 +13,13 @@ import {
   DialogTrigger,
 } from '~/components/ui/dialog';
 import FullPageLoading from '~/components/ui/fullPageLoading';
-import { useTable } from '~/hooks/useTable';
-import { BulkTable } from './bulk-table';
-import { useMyProductColumn } from './use-column';
+import {useTable} from '~/hooks/useTable';
+import {BulkTable} from './bulk-table';
+import {useMyProductColumn} from './use-column';
 
-export default function MyProducts({ products, currency }: any) {
-  const { columns } = useMyProductColumn(currency);
-  const { table } = useTable(columns, products);
+export default function MyProducts({products, currency}: any) {
+  const {columns} = useMyProductColumn(currency);
+  const {table} = useTable(columns, products);
 
   const fetcher = useFetcher();
 
@@ -89,7 +89,7 @@ export default function MyProducts({ products, currency }: any) {
                               item.original.id,
                             ),
                           );
-                        fetcher.submit(formData, { method: 'DELETE' });
+                        fetcher.submit(formData, {method: 'DELETE'});
                         table.resetRowSelection();
                         setOpen(false);
                       }}
@@ -114,7 +114,11 @@ export default function MyProducts({ products, currency }: any) {
               renderSubComponent={renderSubComponent}
               key={tableKey}
             />
-            <Button className='absolute top-[31px] right-40' variant="primary" type="submit">
+            <Button
+              className="absolute top-[31px] right-40"
+              variant="primary"
+              type="submit"
+            >
               Update cart
             </Button>
           </Form>
@@ -124,7 +128,7 @@ export default function MyProducts({ products, currency }: any) {
   );
 }
 
-const renderSubComponent = ({ row }: any) => {
+export const renderSubComponent = ({row}: any) => {
   return (
     <BulkTable
       product={row.original.priceRange}
