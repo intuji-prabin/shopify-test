@@ -1,23 +1,37 @@
-import {LoaderFunctionArgs, MetaFunction} from '@shopify/remix-oxygen';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from '@shopify/remix-oxygen';
 import HeroBanner from '~/components/ui/hero-section';
-import {useFetch} from '~/hooks/useFetch';
-import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
-import {getGroupDetails} from './pending-order-details.server';
+import {
+  getGroupDetails,
+  updateGroupDetails,
+} from './pending-order-details.server';
 import {
   isRouteErrorResponse,
   json,
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
-import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
-import SingleItem from '../_app.single-pending-item/single-item';
 
 import {useTable} from '~/hooks/useTable';
 import {useMyProductColumn} from '../_app.cart-list/order-my-products/use-column';
-import {renderSubComponent} from '../_app.cart-list/order-my-products/cart-myproduct';
+
 import {DataTable} from '~/components/ui/data-table';
+import {renderSubComponent} from '../_app.cart-list/order-my-products/cart-myproduct';
+import {ActionBar} from './action-bar';
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {useFetch} from '~/hooks/useFetch';
+import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {
+  getMessageSession,
+  messageCommitSession,
+  setErrorMessage,
+  setSuccessMessage,
+} from '~/lib/utils/toast-session.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Pending Order Details'}];
@@ -36,11 +50,66 @@ export async function loader({context, request, params}: LoaderFunctionArgs) {
 
   return json({groupDetails});
 }
+
+export async function action({request, context, params}: ActionFunctionArgs) {
+  await isAuthenticate(context);
+  const messageSession = await getMessageSession(request);
+
+  const formData = await request.formData();
+
+  const action = formData.get('_action') as string;
+
+  switch (action) {
+    case 'edit': {
+      try {
+        const groupId = Number(params.groupId);
+
+        const groupName = formData.get('groupName') as string;
+
+        const {userDetails} = await getUserDetails(request);
+
+        const customerId = userDetails.id.split('/').pop() as string;
+
+        const updatedGroup = await updateGroupDetails({
+          customerId,
+          groupId,
+          groupName,
+        });
+
+        setSuccessMessage(messageSession, updatedGroup.message);
+        return json(
+          {},
+          {
+            headers: {
+              'Set-Cookie': await messageCommitSession(messageSession),
+            },
+          },
+        );
+      } catch (error) {
+        if (error instanceof Error) {
+          setErrorMessage(messageSession, error.message);
+          return json(
+            {error},
+            {
+              headers: {
+                'Set-Cookie': await messageCommitSession(messageSession),
+              },
+            },
+          );
+        }
+        return json({error}, {status: 500});
+      }
+    }
+    default: {
+      throw new Error('Unexpected action');
+    }
+  }
+}
 export default function PendingOrderDetailsPage() {
   const {groupDetails} = useLoaderData<typeof loader>();
-  console.log('groupDetails', groupDetails.products);
 
   const {columns} = useMyProductColumn();
+
   const {table} = useTable(columns, groupDetails.products);
   return (
     <>
@@ -48,11 +117,14 @@ export default function PendingOrderDetailsPage() {
         imageUrl={'/place-order.png'}
         sectionName={groupDetails.groupName}
       />
-      <DataTable
-        table={table}
-        columns={columns}
-        renderSubComponent={renderSubComponent}
-      />
+      <section className="container">
+        <ActionBar groupName={groupDetails.groupName} table={table} />
+        <DataTable
+          table={table}
+          columns={columns}
+          renderSubComponent={renderSubComponent}
+        />
+      </section>
     </>
   );
 }

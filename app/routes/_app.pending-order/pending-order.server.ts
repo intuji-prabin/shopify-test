@@ -16,7 +16,7 @@ type GetProductGroupResponseSchema = {
 
 export async function getProductGroup({customerId}: {customerId: string}) {
   try {
-    const url = `${ENDPOINT.PENDING_ORDERS.GET_PRODUCT_GROUP}/${customerId}`;
+    const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
 
     const results = await useFetch<GetProductGroupResponseSchema>({url});
 

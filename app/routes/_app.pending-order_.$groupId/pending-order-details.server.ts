@@ -1,37 +1,16 @@
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {BulkOrderColumn} from '../_app.cart-list/order-my-products/use-column';
+import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {
+  messageCommitSession,
+  setErrorMessage,
+  setSuccessMessage,
+} from '~/lib/utils/toast-session.server';
+import {Session, SessionData, json} from '@remix-run/server-runtime';
 
-export type Product = {
-  uom: string;
-  uomName: string;
-  defaultUOM: string;
-  defaultUOMName: string;
-  defaultPrice: number;
-  compareAtPrice: number;
-  companyPrice: number;
-  unitOfMeasure: [
-    {
-      unit: string;
-      conversion_factor: number;
-    },
-  ];
-  priceRange: [
-    {
-      minQty: number;
-      maxQty: number;
-      price: string;
-    },
-  ];
-  totalPrice: number;
-  moq: number;
-  quantity: number;
-  sku: string;
-  title: string;
-  variantId: string;
-  productId: string;
-  featureImage: string;
-};
+export type Product = BulkOrderColumn;
 
 type Group = {
   groupName: string;
@@ -71,4 +50,35 @@ export async function getGroupDetails({
       status: 500,
     });
   }
+}
+
+type UpdateGroupDetailsResponseSchema = {
+  status: boolean;
+  message: string;
+};
+
+export async function updateGroupDetails({
+  groupId,
+  groupName,
+  customerId,
+}: {
+  groupId: number;
+  groupName: string;
+  customerId: string;
+}) {
+  const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
+
+  const body = JSON.stringify({groupId, groupName});
+
+  const response = await useFetch<UpdateGroupDetailsResponseSchema>({
+    url,
+    method: AllowedHTTPMethods.PUT,
+    body,
+  });
+
+  if (!response.status) {
+    throw new Error(response.message);
+  }
+
+  return response;
 }
