@@ -123,7 +123,6 @@ const formattedResponse = async (response: any, customerId: string) => {
     return true;
   });
   const priceList = await getPrices(productIds, customerId);
-  console.log('first priceList', priceList);
 
   const finalProductList: any = {
     categorytitle: productList?.title,
@@ -139,6 +138,9 @@ const formattedResponse = async (response: any, customerId: string) => {
         featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.IMAGE,
         companyPrice: priceList?.[productId]
           ? priceList?.[productId]?.company_price
+          : null,
+        currency: priceList?.[productId]
+          ? priceList?.[productId]?.currency
           : null,
         defaultPrice: priceList?.[productId]
           ? priceList?.[productId]?.default_price
@@ -158,7 +160,7 @@ const productVariantDataFormat = (variant: any) => {
   return finalVariantData;
 };
 
-const getPrices = async (produdctId: string, customerId: string) => {
+export const getPrices = async (produdctId: string, customerId: string) => {
   const customerID = customerId;
   const results = await useFetch<any>({
     method: AllowedHTTPMethods.GET,

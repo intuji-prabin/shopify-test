@@ -1,18 +1,18 @@
-import {LoaderFunctionArgs, MetaFunction, json} from '@shopify/remix-oxygen';
-import {useTable} from '~/hooks/useTable';
-import {Button} from '~/components/ui/button';
-import {Separator} from '~/components/ui/separator';
-import {UploadIcon} from '~/components/icons/upload';
-import {DataTable} from '~/components/ui/data-table';
-import {BackButton} from '~/components/ui/back-button';
-import {SearchInput} from '~/components/ui/search-input';
-import {useColumn} from '~/routes/_app.order/use-column';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
+import { LoaderFunctionArgs, MetaFunction, json } from '@shopify/remix-oxygen';
+import { useTable } from '~/hooks/useTable';
+import { Button } from '~/components/ui/button';
+import { Separator } from '~/components/ui/separator';
+import { UploadIcon } from '~/components/icons/upload';
+import { DataTable } from '~/components/ui/data-table';
+import { BackButton } from '~/components/ui/back-button';
+import { SearchInput } from '~/components/ui/search-input';
+import { useColumn } from '~/routes/_app.order/use-column';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
 import OrderFilterForm from '~/routes/_app.order/filter-form';
-import {getAllOrders} from '~/routes/_app.order/order.server';
+import { getAllOrders } from '~/routes/_app.order/order.server';
 import PaginationSimple from '~/components/ui/pagination-simple';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
 import {
   isRouteErrorResponse,
   useLoaderData,
@@ -26,42 +26,42 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '~/components/ui/sheet';
-import {HorizontalHamburgerIcon} from '~/components/icons/hamburgerIcon';
-import {Routes} from '~/lib/constants/routes.constent';
+import { HorizontalHamburgerIcon } from '~/components/icons/hamburgerIcon';
+import { Routes } from '~/lib/constants/routes.constent';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Orders List'}];
+  return [{ title: 'Orders List' }];
 };
 
 const PAGE_LIMIT = 10;
 
-export async function loader({context, request}: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   const customerId = userDetails.id.split('/').pop() as string;
 
-  const {searchParams} = new URL(request.url);
+  const { searchParams } = new URL(request.url);
 
   const pageNumber = searchParams.get('pageNo') || 1;
 
-  const {orderList, orderPageInfo} = await getAllOrders({
+  const { orderList, orderPageInfo } = await getAllOrders({
     customerId,
     searchParams,
   });
 
-  return json({orderList, orderPageInfo, pageNumber});
+  return json({ orderList, orderPageInfo, pageNumber });
 }
 
 export default function OrdersPage() {
-  const {orderList, orderPageInfo, pageNumber} = useLoaderData<typeof loader>();
+  const { orderList, orderPageInfo, pageNumber } = useLoaderData<typeof loader>();
 
-  const {columns} = useColumn();
+  const { columns } = useColumn();
 
   const [searchParams] = useSearchParams();
 
-  const {table} = useTable(columns, orderList);
+  const { table } = useTable(columns, orderList);
 
   let isFilterApplied = false;
 
@@ -70,11 +70,11 @@ export default function OrdersPage() {
       isFilterApplied = true;
     }
   }
-  console.log('orderList', orderList);
+  // console.log('orderList', orderList);
 
   return (
     <section className="container">
-      <div className=" pt-6 pb-4 flex items-center justify-between">
+      <div className="flex items-center justify-between pt-6 pb-4 ">
         <div>
           <BackButton title="Orders" />
           <Breadcrumb>
@@ -88,13 +88,13 @@ export default function OrdersPage() {
           <UploadIcon /> Export
         </Button>
       </div>
-      <div className="flex gap-2 flex-col bg-neutral-white p-4 border-b sm:flex-row sm:justify-between sm:items-center">
+      <div className="flex flex-col gap-2 p-4 border-b bg-neutral-white sm:flex-row sm:justify-between sm:items-center">
         <div className="sm:w-[451px]">
           <SearchInput />
         </div>
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" className="border-grey-50 relative">
+            <Button variant="ghost" className="relative border-grey-50">
               <HorizontalHamburgerIcon />
               Filter
               {isFilterApplied && (

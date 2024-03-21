@@ -56,7 +56,7 @@ const CarouselThumb = ({
     onSelect();
     emblaMainApi.on('select', onSelect);
     emblaMainApi.on('reInit', onSelect);
-    console.log("reInit")
+    // console.log("reInit")
   }, [emblaMainApi, onSelect]);
 
   type UsePrevNextButtonsType = {

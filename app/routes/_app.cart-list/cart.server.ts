@@ -57,15 +57,12 @@ const formateCartList = async (
   if (fronOrder) {
     return productList;
   }
-  console.log('productList', productList);
   const productWithPrice = await getPrice(customerId, productList);
-  console.log('productWithPrice', productWithPrice);
 
   return productWithPrice;
 };
 
 const getPrice = async (customerId: string, productList: any) => {
-  // const customerId = userDetails?.id
   const priceResponse = await useFetch<any>({
     method: AllowedHTTPMethods.POST,
     url: `${ENDPOINT.PRODUCT.CART_DETAIL}/${customerId}`,
@@ -75,7 +72,6 @@ const getPrice = async (customerId: string, productList: any) => {
   if (!priceResponse?.status) {
     throw new Error(priceResponse?.message);
   }
-  // console.log("resultssss ", results)
   return priceResponse?.payload;
 };
 

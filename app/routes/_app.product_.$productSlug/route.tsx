@@ -174,7 +174,7 @@ export const action = async ({
     case "addToWishList": {
       try {
         const productInfo = Object.fromEntries(fromData);
-        console.log("productInfo", productInfo)
+        // console.log("productInfo", productInfo)
         await addToWishlist(productInfo, context, request);
         setSuccessMessage(messageSession, 'Item added to wishlist successfully');
         return json(

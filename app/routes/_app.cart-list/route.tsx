@@ -37,7 +37,7 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   const customerId =
     metaParentValue === 'null' ? userDetails.id : metaParentValue;
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
-  console.log("first", sessionCartInfo)
+  // console.log("first", sessionCartInfo)
 
   if (!sessionCartInfo) {
     throw new Error('Cart not found');
@@ -64,7 +64,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           });
         } catch (error) {
           if (error instanceof Error) {
-            console.log('this is err', error?.message);
+            // console.log('this is err', error?.message);
             setErrorMessage(messageSession, error?.message);
             return json(
               {},
@@ -76,7 +76,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
               },
             );
           }
-          console.log('this is err');
+          // console.log('this is err');
           setErrorMessage(
             messageSession,
             'Order not placed to some issue. Please try again later.',
@@ -106,7 +106,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           );
         } catch (error) {
           if (error instanceof Error) {
-            console.log('this is err', error?.message);
+            // console.log('this is err', error?.message);
             setErrorMessage(messageSession, error?.message);
             return json(
               {},
@@ -118,7 +118,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
               },
             );
           }
-          console.log('this is err');
+          // console.log('this is err');
           setErrorMessage(
             messageSession,
             'Order not deleted due to some issue. Please try again later.',
@@ -134,8 +134,47 @@ export async function action({ request, context }: ActionFunctionArgs) {
           );
         }
       case 'PUT':
-        const response = await cartUpdate(context, request);
-        return response
+        try {
+          const response = await cartUpdate(context, request);
+          setSuccessMessage(messageSession, 'Cart updated successfully');
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        } catch (error) {
+          if (error instanceof Error) {
+            // console.log('this is err', error?.message);
+            setErrorMessage(messageSession, error?.message);
+            return json(
+              {},
+              {
+                headers: [
+                  ['Set-Cookie', await context.session.commit({})],
+                  ['Set-Cookie', await messageCommitSession(messageSession)],
+                ],
+              },
+            );
+          }
+          // console.log('this is err');
+          setErrorMessage(
+            messageSession,
+            'Something went wrong during update cart. Please try again later.',
+          );
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        }
       default:
         res = json(
           {
@@ -158,7 +197,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 export default function CartList() {
   const { cartList, shippingAddresses }: any = useLoaderData<typeof loader>();
-  console.log("cartList", cartList)
+  // console.log("cartList.productList", cartList);
 
   return (
     <>
@@ -168,13 +207,14 @@ export default function CartList() {
       />
       <UploadSearchbar />
       <div className="container flex flex-col items-start justify-between gap-6 my-6 lg:flex-row">
-        <MyProducts products={cartList?.productList} />
+        <MyProducts products={cartList?.productList} currency={cartList?.currency} />
         <OrderSummary
           cartSubTotalPrice={cartList?.cartSubTotalPrice}
           cartTotalPrice={cartList?.cartTotalPrice}
-          frieght={cartList?.frieght}
-          subcharges={cartList?.subcharges}
+          freight={cartList?.freight}
+          surcharges={cartList?.surcharges}
           gst={cartList?.gst}
+          currency={cartList?.currency}
           shippingAddresses={shippingAddresses}
         />
       </div>

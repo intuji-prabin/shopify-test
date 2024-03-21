@@ -4,12 +4,9 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import {GET_CART_LIST} from '../_app.cart-list/cart.server';
+import {CONSTANT} from '~/lib/constants/product.session';
 
 export async function getProductDetails(customerId: string, handle: string) {
-  console.log(
-    '`${ENDPOINT.PRODUCT.GET_PRODUCT}/${customerId}/${handle}`',
-    `${ENDPOINT.PRODUCT.GET_PRODUCT}/${customerId}/${handle}`,
-  );
   try {
     const results: any = await fetch(
       `${ENDPOINT.PRODUCT.GET_PRODUCT}/${customerId}/${handle}`,
@@ -18,7 +15,7 @@ export async function getProductDetails(customerId: string, handle: string) {
       },
     );
     const response = await results.json();
-    console.log('response', response);
+    // console.log('response', response);
     if (response?.errors) {
       throw new Error('Something went wrong');
     }
@@ -39,7 +36,7 @@ export const addProductToCart = async (
   context: any,
   request: any,
 ) => {
-  console.log('cartInfo', cartInfo);
+  // console.log('cartInfo', cartInfo);
   if (!cartInfo.productId) {
     throw new Error(
       'Product Id is not present so, this product cannot be added to the cart.',
@@ -72,14 +69,14 @@ export const addProductToCart = async (
     cartInfo,
     sessionCartInfo,
   );
-  console.log('cartLineAddResponseHello', cartLineAddResponse);
+  // console.log('cartLineAddResponseHello', cartLineAddResponse);
   //  session.unset( CART_SESSION_KEY)
   session.set(CART_SESSION_KEY, cartLineAddResponse);
   const cartLists = await context.storefront.query(GET_CART_LIST, {
     variables: {cartId: sessionCartInfo?.cartId},
   });
-  console.log('asfsfwerewr cartLists ', cartLists);
-  console.log('asfsfwerewr cartListssss nodes ', cartLists?.cart?.lines?.nodes);
+  // console.log('asfsfwerewr cartLists ', cartLists);
+  // console.log('asfsfwerewr cartListssss nodes ', cartLists?.cart?.lines?.nodes);
   return true;
 };
 
@@ -111,28 +108,22 @@ const updateAllReadyAddedCart = async (
   if (!updateCartResponse) {
     throw new Error('Cart not updated');
   }
-  console.log('cartLinesUpdate ', updateCartResponse?.cartLinesUpdate);
+  // console.log('cartLinesUpdate ', updateCartResponse?.cartLinesUpdate);
   if (updateCartResponse?.cartLinesUpdate?.userErrors.length > 0) {
     throw new Error(
       updateCartResponse?.cartLinesUpdate?.userErrors[0]?.message,
     );
   }
   const lines = updateCartResponse?.cartLinesUpdate?.cart?.lines?.nodes;
-  console.log('linews ', lines);
+  // console.log('linews ', lines);
   if (lines.length < 1) {
     throw new Error('You cart system is wrong');
   }
   sessionCartInfo.lineItems = 0;
   lines.map((items: any) => {
     const merchandise = items?.merchandise;
-    const variantId = merchandise?.id.replace(
-      'gid://shopify/ProductVariant/',
-      '',
-    );
-    const productId = merchandise?.product?.id.replace(
-      'gid://shopify/Product/',
-      '',
-    );
+    const variantId = merchandise?.id.replace(CONSTANT?.variantId, '');
+    const productId = merchandise?.product?.id.replace(CONSTANT?.productId, '');
     sessionCartInfo.lineItems = sessionCartInfo.lineItems + 1;
     sessionCartInfo[productId] = {
       productId,
@@ -174,14 +165,8 @@ const cartLineAdd = async (
   sessionCartInfo.cartItems = [];
   lines.map((items: any) => {
     const merchandise = items?.merchandise;
-    const variantId = merchandise?.id.replace(
-      'gid://shopify/ProductVariant/',
-      '',
-    );
-    const productId = merchandise?.product?.id.replace(
-      'gid://shopify/Product/',
-      '',
-    );
+    const variantId = merchandise?.id.replace(CONSTANT?.variantId, '');
+    const productId = merchandise?.product?.id.replace(CONSTANT?.productId, '');
     sessionCartInfo.lineItems = sessionCartInfo.lineItems + 1;
     sessionCartInfo.cartItems.push({
       productId,
@@ -199,7 +184,7 @@ const cartLineAdd = async (
 
 const storeCartIdOnBackend = async (request: any, cartId: string) => {
   const {userDetails} = await getUserDetails(request);
-  console.log('cartId ', cartId);
+  // console.log('cartId ', cartId);
   try {
     const customerId = userDetails?.id;
     const results = await useFetch<any>({
@@ -207,7 +192,7 @@ const storeCartIdOnBackend = async (request: any, cartId: string) => {
       url: `${ENDPOINT.PRODUCT.CART}/${customerId}`,
       body: JSON.stringify({cartId}),
     });
-    console.log('ssss ', results);
+    // console.log('ssss ', results);
     return true;
   } catch (error) {
     return true;
@@ -227,7 +212,7 @@ const cartResponseFormate = (cartResponse: any, accessTocken: string) => {
   const lines = cart?.lines?.nodes;
   const cartListed = {
     cartId: cart?.id,
-    customerId: buyerIdentity?.id.replace('gid://shopify/Customer/', ''),
+    customerId: buyerIdentity?.id.replace(CONSTANT?.customer, ''),
     accessTocken,
     lineItems: 0,
     cartItems: [],
@@ -236,12 +221,9 @@ const cartResponseFormate = (cartResponse: any, accessTocken: string) => {
   if (lines.length > 0) {
     lines.map((items: any) => {
       const merchandise = items?.merchandise;
-      const variantId = merchandise?.id.replace(
-        'gid://shopify/ProductVariant/',
-        '',
-      );
+      const variantId = merchandise?.id.replace(CONSTANT?.variantId, '');
       const productId = merchandise?.product?.id.replace(
-        'gid://shopify/Product/',
+        CONSTANT?.productId,
         '',
       );
       cartListed.lineItems = cartListed.lineItems + 1;
@@ -261,7 +243,7 @@ const cartResponseFormate = (cartResponse: any, accessTocken: string) => {
 };
 
 const cartFormateVariable = (cartInfo: any, accessTocken: string) => {
-  const variantId = `gid://shopify/ProductVariant/${cartInfo?.productVariantId}`;
+  const variantId = `${CONSTANT?.variantId}${cartInfo?.productVariantId}`;
   return {
     input: {
       attributes: [
@@ -299,14 +281,14 @@ const cartFormateVariable = (cartInfo: any, accessTocken: string) => {
 
 const cartUpdateFormateVariable = (sessionCartInfo: any, cartInfo: any) => {
   const setCartData = sessionCartInfo?.[cartInfo?.productId];
-  console.log('setCartData ', setCartData, setCartData?.lineId);
+  // console.log('setCartData ', setCartData, setCartData?.lineId);
   return {
     cartId: sessionCartInfo?.cartId,
     lines: [
       {
         id: setCartData?.lineId,
         quantity: parseInt(cartInfo?.quantity),
-        merchandiseId: `gid://shopify/ProductVariant/${cartInfo?.productVariantId}`,
+        merchandiseId: `${CONSTANT?.variantId}${cartInfo?.productVariantId}`,
         attributes: [
           {
             key: 'selectedUOM',
@@ -319,7 +301,7 @@ const cartUpdateFormateVariable = (sessionCartInfo: any, cartInfo: any) => {
 };
 
 const cartAddLineFormateVariable = (cartInfo: any, sessionCartInfo: any) => {
-  const variantId = `gid://shopify/ProductVariant/${cartInfo?.productVariantId}`;
+  const variantId = `${CONSTANT?.variantId}${cartInfo?.productVariantId}`;
   return {
     cartId: sessionCartInfo?.cartId,
     lines: [
