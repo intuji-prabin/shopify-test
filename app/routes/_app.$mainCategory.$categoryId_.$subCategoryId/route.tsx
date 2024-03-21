@@ -114,7 +114,6 @@ export const action = async ({
     case "addToWishList": {
       try {
         const productInfo = Object.fromEntries(fromData);
-        console.log("productInfo", productInfo)
         await addToWishlist(productInfo, context, request);
         setSuccessMessage(messageSession, 'Item added to wishlist successfully');
         return json(
@@ -215,9 +214,7 @@ const PAGE_LIMIT = 9;
 export default function SubCategoryPage() {
   const { categories, productList, categoryId, subCategoryId, mainCategory, sessionWishListInfo } =
     useLoaderData<typeof loader>();
-  console.log("productList", productList)
   const { page } = productList;
-  console.log("sessionWishListInfoProduct ", sessionWishListInfo)
   const paginationInfo = productList?.results?.pageInfo;
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
@@ -268,8 +265,6 @@ export default function SubCategoryPage() {
     emblaApi.on('reInit', onSelect);
     emblaApi.on('select', onSelect);
   }, [emblaApi, onInit, onSelect]);
-
-  console.log("productList?.results?.formattedData.productList", productList?.results?.formattedData.productList)
 
   return (
     <section className="container">
