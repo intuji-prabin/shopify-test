@@ -154,7 +154,7 @@ const CarouselThumb = ({
       {/* Thumbnail Carousel Ends Here */}
 
       {/* Main Product Image Carousel Begins Here */}
-      <div className=''>
+      <div className='w-full lg:max-w-[calc(100%_-_95px)]'>
         <div className="embla lg:h-[532px] overflow-hidden">
           <div className="flex items-center h-full embla__viewport bg-grey-25" ref={emblaMainRef}>
             <div className="flex h-full embla__container">
