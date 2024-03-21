@@ -49,6 +49,9 @@ export default function OrderDetailPage() {
         <Suspense fallback={<h1>Loading</h1>}>
           <Await resolve={ordersProductDetails}>
             {(orderProductDetails) => {
+              function prefixWithCurrency(price: string) {
+                return `${orderProductDetails.currency} ${price}`;
+              }
               return (
                 <>
                   <DeferDataTable
@@ -70,27 +73,37 @@ export default function OrderDetailPage() {
                     <table className="w-48">
                       <tr>
                         <th className="text-left">Subtotal</th>
-                        <td>{`$${orderProductDetails.subTotal}`}</td>
+                        <td>
+                          {prefixWithCurrency(orderProductDetails.subTotal)}
+                        </td>
                       </tr>
                       <tr>
                         <th className="text-left">Freight</th>
-                        <td>{`$${orderProductDetails.freight}`}</td>
+                        <td>
+                          {prefixWithCurrency(orderProductDetails.freight)}
+                        </td>
                       </tr>
                       <tr>
                         <th className="text-left">Surcharges</th>
-                        <td>{`$${orderProductDetails.surCharges}`}</td>
+                        <td>
+                          {prefixWithCurrency(orderProductDetails.surCharges)}
+                        </td>
                       </tr>
                       <tr>
                         <th className="text-left"> Total Excl GST</th>
-                        <td>{`$${orderProductDetails.totalExclGst}`}</td>
+                        <td>
+                          {prefixWithCurrency(orderProductDetails.totalExclGst)}
+                        </td>
                       </tr>
                       <tr>
                         <th className="text-left">GST</th>
-                        <td>{`$${orderProductDetails.gst}`}</td>
+                        <td>{prefixWithCurrency(orderProductDetails.gst)}</td>
                       </tr>
                       <tr className="leading-7.5 text-[22px]">
                         <th className="text-left">Total</th>
-                        <td className="font-bold text-primary-500">{`$${orderProductDetails.totalPrice}`}</td>
+                        <td className="font-bold text-primary-500">
+                          {prefixWithCurrency(orderProductDetails.totalPrice)}
+                        </td>
                       </tr>
                     </table>
                   </div>
