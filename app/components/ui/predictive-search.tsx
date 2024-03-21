@@ -1,10 +1,10 @@
-import {FormEvent, useRef, useState} from 'react';
-import {FaSearch} from 'react-icons/fa';
-import {Form, Link, useFetcher, useSubmit} from '@remix-run/react';
-import {debounce} from '~/lib/helpers/general.helper';
-import {Button} from '~/components/ui/button';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {useOutsideClick} from '~/hooks/useOutsideClick';
+import { FormEvent, useRef, useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
+import { Form, Link, useFetcher, useSubmit } from '@remix-run/react';
+import { debounce } from '~/lib/helpers/general.helper';
+import { Button } from '~/components/ui/button';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { useOutsideClick } from '~/hooks/useOutsideClick';
 import CloseMenu from '~/components/icons/closeMenu';
 import {
   NormalizedPredictiveSearch,
@@ -60,7 +60,7 @@ export function PredictiveSearch({
           setSearchProduct(true);
         }}
         ref={searchFormRef}
-        className="relative w-full flex items-center"
+        className="relative flex items-center w-full"
       >
         <span className="absolute top-1/3 ">
           <FaSearch className="fill-primary-500" />
@@ -83,9 +83,8 @@ export function PredictiveSearch({
       </fetcher.Form>
       {searchProduct && (
         <div
-          className={`bg-white absolute top-[52px] left-0 w-full z-20 py-4 px-6 space-y-4 ${
-            addToCart ? 'max-w-[550px] max-h-[350px] overflow-y-auto' : null
-          }`}
+          className={`bg-white absolute top-[52px] left-0 w-full z-20 py-4 px-6 space-y-4 ${addToCart ? 'max-w-[550px] max-h-[350px] overflow-y-auto shadow-lg' : null
+            }`}
         >
           {searchResults?.results?.length > 0 ? (
             searchResults?.results.map((result) => {
@@ -107,7 +106,7 @@ export function PredictiveSearch({
               }
             })
           ) : (
-            <p className="text-center text-base font-bold text-grey-400">
+            <p className="text-base font-bold text-center text-grey-400">
               No results found
             </p>
           )}
@@ -151,11 +150,7 @@ function SearchResultsProductsGrid({
           setQuantity(isNaN(inputQuantity) ? 0 : inputQuantity);
         }
         const submit = useSubmit();
-        const productParts = product?.id?.split('/');
-        const productId = productParts[productParts.length - 1];
 
-        const variantParts = product?.variantId?.split('/');
-        const variantId = variantParts[variantParts.length - 1];
         return (
           <>
             {!addToCart ? (
@@ -164,7 +159,7 @@ function SearchResultsProductsGrid({
                   <img
                     src={productUrl}
                     alt="product-image"
-                    className="size-full object-cover object-center"
+                    className="object-cover object-center size-full"
                   />
                 </div>
                 <figcaption>
@@ -179,17 +174,17 @@ function SearchResultsProductsGrid({
                 </figcaption>
               </figure>
             ) : (
-              <div className="flex gap-4 justify-between">
-                <div className="flex gap-3 items-center">
+              <div className="flex justify-between gap-4">
+                <div className="flex items-center gap-3">
                   <div className="size-16">
                     <img
                       src={productUrl}
                       alt="product-image"
-                      className="size-full object-contain object-center"
+                      className="object-contain object-center size-full"
                     />
                   </div>
                   <div>
-                    <p>
+                    <p className='text-sm text-primary-500'>
                       SKU: <span>{product.sku}</span>
                     </p>
                     <p>
@@ -197,14 +192,13 @@ function SearchResultsProductsGrid({
                         prefetch="intent"
                         to={`/product/${product.handle}`}
                         onClick={() => setSearchProduct(false)}
-                        className="text-base font-bold text-grey-900"
+                        className="text-base font-medium text-grey-900"
                       >
                         {product.title}
                       </Link>
                     </p>
-                    <p>
-                      {product?.price?.currencyCode}
-                      {product?.price?.amount}(Excl. GST)
+                    <p className='text-2xl italic font-bold text-grey-900'>
+                      {product?.currency || '$'}{product?.price}<span className='text-sm italic font-bold text-grey-500'> (Excl. GST)</span>
                     </p>
                   </div>
                 </div>
@@ -230,35 +224,39 @@ function SearchResultsProductsGrid({
                     </button>
                   </div>
                   {quantity < product.moq || quantity < 1 ? (
-                    <Button
-                      variant="primary"
-                      className="mt-2 px-8 bg-grey-500 cursor-not-allowed"
-                      disabled
-                    >
-                      Add to Cart
-                    </Button>
+                    <>
+                      <Button
+                        variant="primary"
+                        className="px-8 mt-2 cursor-not-allowed bg-grey-500"
+                        disabled
+                      >
+                        Add to Cart
+                      </Button>
+                      <p className='text-xs text-red-500'>Minimum Order Quantity {product?.moq || 1}</p>
+                    </>
                   ) : (
                     <Form
                       method="POST"
                       action="/predictive-search"
                       onSubmit={(event) => {
                         submit(event.currentTarget);
+                        setSearchProduct(false);
                       }}
                       className="w-full"
                     >
-                      <input type="hidden" name="productId" value={productId} />
+                      <input type="hidden" name="productId" value={product?.id} />
                       <input
                         type="hidden"
                         name="productVariantId"
-                        value={variantId}
+                        value={product?.variantId}
                       />
                       <input type="hidden" name="quantity" value={quantity} />
                       <input
                         type="hidden"
                         name="selectUOM"
-                        value={product?.uom?.value}
+                        value={product?.uom}
                       />
-                      <Button variant="primary" className="mt-2 px-8">
+                      <Button variant="primary" className="px-8 mt-2">
                         Add to Cart
                       </Button>
                     </Form>
