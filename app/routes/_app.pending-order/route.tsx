@@ -1,15 +1,15 @@
 import HeroBanner from '~/components/ui/hero-section';
-import {ProductGroupCardGrid} from './order-cards';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {LoaderFunctionArgs, MetaFunction} from '@shopify/remix-oxygen';
+import {ProductGroupCardGrid} from '~/routes/_app.pending-order/order-cards';
+import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
 import {
   isRouteErrorResponse,
   json,
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
-import {LoaderFunctionArgs, MetaFunction} from '@shopify/remix-oxygen';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {getProductGroup} from './pending-order.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Pending Order'}];
@@ -28,6 +28,7 @@ export async function loader({context, params, request}: LoaderFunctionArgs) {
 }
 export default function PendingOrderPage() {
   const {productGroup} = useLoaderData<typeof loader>();
+
   const sectionName = `Pending Order (${productGroup?.length}/10 Group Cards)`;
   return (
     <>

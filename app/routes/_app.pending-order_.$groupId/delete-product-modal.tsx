@@ -1,3 +1,8 @@
+import {useSubmit} from '@remix-run/react';
+import {Table} from '@tanstack/react-table';
+import {Button} from '~/components/ui/button';
+import RemoveItem from '~/components/icons/removeItem';
+import {Product} from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
 import {
   DialogHeader,
   DialogFooter,
@@ -8,12 +13,25 @@ import {
   DialogClose,
 } from '~/components/ui/dialog';
 
-import {Button} from '~/components/ui/button';
-import RemoveItem from '~/components/icons/removeItem';
-import {Table} from '@tanstack/react-table';
+export function DeleteProductModal({table}: {table: Table<Product>}) {
+  const submit = useSubmit();
 
-export function DeleteProductModal<T>({table}: {table: Table<T>}) {
-  console.log('data-table', table.getSelectedRowModel().flatRows);
+  const handleDelete = () => {
+    const formData = new FormData();
+
+    table
+      .getSelectedRowModel()
+      .flatRows.map((product) =>
+        formData.append('productIds', product.original.productId),
+      );
+
+    formData.append('_action', 'delete');
+
+    submit(formData, {
+      method: 'POST',
+    });
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -55,14 +73,18 @@ export function DeleteProductModal<T>({table}: {table: Table<T>}) {
               cancel
             </Button>
           </DialogClose>
-          <Button
-            type="submit"
-            className="w-full italic font-bold uppercase leading6 text-sm "
-            variant="primary"
-            // onClick={handleRemoveAllItems}
-          >
-            Continue
-          </Button>
+          <DialogClose asChild>
+            <Button
+              type="submit"
+              variant="primary"
+              className="w-full italic font-bold uppercase leading6 text-sm "
+              onClick={() => {
+                handleDelete();
+              }}
+            >
+              Continue
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

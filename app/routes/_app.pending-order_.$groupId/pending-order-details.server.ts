@@ -1,16 +1,15 @@
 import {useFetch} from '~/hooks/useFetch';
-import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
-import {ENDPOINT} from '~/lib/constants/endpoint.constant';
-import {BulkOrderColumn} from '../_app.cart-list/order-my-products/use-column';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
-import {
-  messageCommitSession,
-  setErrorMessage,
-  setSuccessMessage,
-} from '~/lib/utils/toast-session.server';
-import {Session, SessionData, json} from '@remix-run/server-runtime';
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {BulkOrderColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 
 export type Product = BulkOrderColumn;
+
+interface DefaultResponse {
+  status: boolean;
+  message: string;
+}
 
 type Group = {
   groupName: string;
@@ -19,11 +18,9 @@ type Group = {
   products: Product[];
 };
 
-type GetProductResponseSchema = {
-  status: boolean;
-  message: string;
+interface GetProductGroupResponse extends DefaultResponse {
   payload: Group;
-};
+}
 
 export async function getGroupDetails({
   groupId,
@@ -35,7 +32,7 @@ export async function getGroupDetails({
   try {
     const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}?groupId=${groupId}`;
 
-    const results = await useFetch<GetProductResponseSchema>({url});
+    const results = await useFetch<GetProductGroupResponse>({url});
 
     if (!results.status) {
       throw new Error(results.message);
@@ -52,11 +49,6 @@ export async function getGroupDetails({
   }
 }
 
-type UpdateGroupDetailsResponseSchema = {
-  status: boolean;
-  message: string;
-};
-
 export async function updateGroupDetails({
   groupId,
   groupName,
@@ -70,9 +62,31 @@ export async function updateGroupDetails({
 
   const body = JSON.stringify({groupId, groupName});
 
-  const response = await useFetch<UpdateGroupDetailsResponseSchema>({
+  const response = await useFetch<DefaultResponse>({
     url,
     method: AllowedHTTPMethods.PUT,
+    body,
+  });
+
+  if (!response.status) {
+    throw new Error(response.message);
+  }
+
+  return response;
+}
+
+export async function deleteGroupProduct({
+  body,
+  customerId,
+}: {
+  body: string;
+  customerId: string;
+}) {
+  const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
+
+  const response = await useFetch<DefaultResponse>({
+    method: AllowedHTTPMethods.DELETE,
+    url,
     body,
   });
 

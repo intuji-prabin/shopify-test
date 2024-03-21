@@ -1,6 +1,6 @@
 import {useFetch} from '~/hooks/useFetch';
-import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 
 export type ProductGroup = {
   groupId: number;

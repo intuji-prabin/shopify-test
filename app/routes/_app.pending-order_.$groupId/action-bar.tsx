@@ -1,24 +1,25 @@
+import {useState} from 'react';
 import {Form, Link} from '@remix-run/react';
 import {Table} from '@tanstack/react-table';
-import {useState} from 'react';
 import {Done} from '~/components/icons/done';
+import {Button} from '~/components/ui/button';
+import {Routes} from '~/lib/constants/routes.constent';
+import {BackButton} from '~/components/ui/back-button';
+import {Alert, AlertDescription} from '~/components/ui/alert';
+import {Product} from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
+import {DeleteProductModal} from '~/routes/_app.pending-order_.$groupId/delete-product-modal';
 import {
   Cancel,
   CircleInformationMajor,
   EditItems,
 } from '~/components/icons/orderStatus';
-import {Alert, AlertDescription} from '~/components/ui/alert';
-import {BackButton} from '~/components/ui/back-button';
-import {Button} from '~/components/ui/button';
-import {Routes} from '~/lib/constants/routes.constent';
-import {DeleteProductModal} from './delete-product-modal';
 
-export function ActionBar<T>({
-  groupName,
+export function ActionBar({
   table,
+  groupName,
 }: {
   groupName: string;
-  table: Table<T>;
+  table: Table<Product>;
 }) {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -48,7 +49,7 @@ export function ActionBar<T>({
                   defaultValue={groupName}
                   className="border-none hover:bg-primary-25 bg-primary-25 text-grey-900 font-bold leading-[36px] text-[30px] italic max-w-[204px] focus:bg-primary-25 !p-0"
                 />
-                <button type="submit" name="_action" value="edit">
+                <button type="submit" name="_action" value="update">
                   <Done />
                 </button>
                 <button
@@ -101,17 +102,7 @@ export function ActionBar<T>({
               Add to cart
             </Link>
           </Button>
-          <div className="remove-dialogue">
-            {/* <CreateGroup
-              buttonVariant={
-                table.getSelectedRowModel().rows.length === 0
-                  ? 'disabled'
-                  : 'danger_dark'
-              }
-              handleRemoveAllItems={handleRemoveAllItems}
-            /> */}
-            <DeleteProductModal table={table} />
-          </div>
+          <DeleteProductModal table={table} />
         </div>
       </div>
     </div>

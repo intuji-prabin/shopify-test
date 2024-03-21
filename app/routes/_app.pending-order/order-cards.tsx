@@ -1,7 +1,7 @@
 import {Link} from '@remix-run/react';
 import {Button} from '~/components/ui/button';
 import {Routes} from '~/lib/constants/routes.constent';
-import {ProductGroup} from './pending-order.server';
+import {ProductGroup} from '~/routes/_app.pending-order/pending-order.server';
 
 const TOTAL_GROUP_NUMBER = 10;
 
