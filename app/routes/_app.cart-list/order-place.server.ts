@@ -23,6 +23,7 @@ export const placeOrder = async (request: Request, context: any) => {
       userDetails?.id,
       allData,
     );
+    console.log('orderPlaceResponse', orderPlaceResponse);
 
     const lineItems = [] as any;
     cartList.map((items: any) => {
@@ -61,6 +62,7 @@ const orderCreate = async (cartList: any, customerId: string, data: any) => {
   if (!orderPlaceResponse?.status) {
     throw new Error(orderPlaceResponse?.message);
   }
+  console.log('orderPlaceResponse', orderPlaceResponse);
 
   return orderPlaceResponse?.payload;
 };
@@ -77,7 +79,7 @@ export const removeCart = async (
       lineIds: lineItems,
     },
   });
-  console.log('lineItemRemoveResponse', lineItemRemoveResponse);
+  // console.log('lineItemRemoveResponse', lineItemRemoveResponse);
 
   if (lineItemRemoveResponse?.errors) {
     throw new Error('Cart not remove but order is placed');

@@ -63,7 +63,6 @@ const formateCartList = async (
 };
 
 const getPrice = async (customerId: string, productList: any) => {
-  // const customerId = userDetails?.id
   const priceResponse = await useFetch<any>({
     method: AllowedHTTPMethods.POST,
     url: `${ENDPOINT.PRODUCT.CART_DETAIL}/${customerId}`,
