@@ -34,8 +34,6 @@ export async function loader({context, request, params}: LoaderFunctionArgs) {
 export default function OrderDetailPage() {
   const {orderId, ordersProductDetails} = useLoaderData<typeof loader>();
 
-  const {columns} = useColumn();
-
   return (
     <section className="container">
       <OrderBreadcrumb orderId={orderId!} />
@@ -52,6 +50,9 @@ export default function OrderDetailPage() {
               function prefixWithCurrency(price: string) {
                 return `${orderProductDetails.currency} ${price}`;
               }
+
+              const {columns} = useColumn({prefixWithCurrency});
+
               return (
                 <>
                   <DeferDataTable
