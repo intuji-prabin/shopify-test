@@ -24,6 +24,7 @@ type OrderDetails = {
   surCharges: string;
   totalExclGst: string;
   gst: string;
+  currency: string;
   products: Product[];
 };
 
