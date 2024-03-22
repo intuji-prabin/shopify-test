@@ -1,8 +1,6 @@
-import { useCallback, useState, useEffect } from 'react';
-import useEmblaCarousel from 'embla-carousel-react';
-import { EmblaCarouselType, EmblaOptionsType } from 'embla-carousel-react';
+import useEmblaCarousel, { EmblaCarouselType, EmblaOptionsType } from 'embla-carousel-react';
+import { useCallback, useEffect, useState } from 'react';
 import { LeftArrow } from '../icons/left';
-import AutoHeight from 'embla-carousel-auto-height';
 
 type ImageType = {
   src: string;
@@ -17,7 +15,7 @@ type PropType = {
 
 const Carousel = (props: PropType) => {
   const { options, images, sectionClass } = props;
-  const [emblaRef, emblaApi] = useEmblaCarousel(options, [AutoHeight()]);
+  const [emblaRef, emblaApi] = useEmblaCarousel(options);
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -63,7 +61,7 @@ const Carousel = (props: PropType) => {
         ref={emblaRef}
       // style={{maxHeight: maxHeight + 'px'}}
       >
-        <div className="flex embla__container items-start">
+        <div className="flex items-start embla__container">
           {images.map((image, index) => {
             return (
               image?.src && (
@@ -81,7 +79,7 @@ const Carousel = (props: PropType) => {
       </div>
       {images.length > 1 && (
         <>
-          <div className="container absolute inset-y-1/2 inset-x-0">
+          <div className="container absolute inset-x-0 inset-y-1/2">
             <button
               className="absolute z-10 flex items-center justify-center h-auto -translate-y-1/2 cursor-pointer w-7 sm:w-12 left-4 md:left-8 embla__button embla__next aspect-square top-1/2 bg-grey-900/70"
               onClick={scrollPrev}
