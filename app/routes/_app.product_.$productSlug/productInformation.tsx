@@ -7,6 +7,7 @@ import {
   PickupLocation,
   ProductLoveRed,
   ProductLoveWhite,
+  TooltipInfo,
 } from '~/components/icons/orderStatus';
 import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -15,12 +16,14 @@ import CarouselThumb from './carouselThumb';
 import { getProductPriceByQty } from './product-detail';
 import { ProductInfoTable } from './productInfoTable';
 import { WarehouseInformation } from './view-warehouse-information';
+import Info from '~/components/icons/info';
 
 export default function ProductInformation({ product, wishListItems }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
   function checkProductIdExists(productId: number) {
     return wishListItems?.some((item: any) => item?.productId === productId);
   }
+  // console.log("product", product);
   return (
     <section className="bg-white">
       <div className="flex flex-col flex-wrap items-start gap-6 px-6 lg:gap-14 lg:flex-row">
@@ -38,7 +41,7 @@ export default function ProductInformation({ product, wishListItems }: any) {
           productImageLength={product?.imageUrl?.length}
           productName={product?.title}
           productId={product?.id}
-          productVeriantId={product?.variantId}
+          productVariantId={product?.variantId}
           isFavorited={checkProductIdExists(product?.id)}
           sku={'Sku'}
           skuUnits={product?.supplierSku}
@@ -54,6 +57,9 @@ export default function ProductInformation({ product, wishListItems }: any) {
           priceRange={product?.priceRange}
           companyDefaultPrice={product?.companyDefaultPrice}
           originalPrice={product?.originalPrice}
+          moq={product?.moq}
+          uomCode={product?.uomCode}
+          currency={product?.currency}
         />
       </div>
     </section>
@@ -99,13 +105,15 @@ const ProductDetailsSection = ({
   companyDefaultPrice,
   originalPrice,
   productId,
-  productVeriantId,
+  productVariantId,
   productImageLength,
+  moq,
+  uomCode,
+  currency
 }: any) => {
-  const [heartFill, setHeartFill] = useState(isFavorited);
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(parseFloat(moq) || 1);
   const [productPrice, setProductPrice] = useState(companyDefaultPrice);
-  const [UOM, setUOM] = useState(box);
+  const [UOM, setUOM] = useState(uomCode);
   const submit = useSubmit();
 
   function decreaseQuantity() {
@@ -207,58 +215,63 @@ const ProductDetailsSection = ({
           IN STOCK
         </div>
       </div>
-      <div className="flex flex-col gap-3 pt-6 lg:gap-8 lg:flex-row">
-        <ProductCardInfo
-          className="product_det__pricing"
-          productName={
-            'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition'
-          }
-          buyPrice={productPrice}
-          rppPrice={originalPrice}
-          buyPriceTitle={'BUY PRICE'}
-          exclGst={'Excl. GST'}
-          rppTitle={'RRP'}
-          incGst={'Inc. GST'}
-          minimumOrder={'Minimum Order'}
-          minimumPieces={'500 pieces'}
-        />
-        {priceRange && priceRange.length > 0 && (
-          <div className="w-full max-w-64">
-            <ProductInfoTable
-              quantity={'Quantity'}
-              price={'Price'}
-              volumePrice={priceRange}
-              className="product_det__table"
-            />
-          </div>
-        )}
-      </div>
-      <div className="flex gap-2 px-4 py-2 mt-2 border-l-4 border-r-0 bg-semantic-info-100 border-semantic-info-500 border-y-0">
+      <ProductCardInfo
+        className="mt-6 product_det__pricing"
+        productName={
+          'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition'
+        }
+        buyPrice={productPrice}
+        rppPrice={originalPrice}
+        buyPriceTitle={'BUY PRICE'}
+        exclGst={'Excl. GST'}
+        rppTitle={'RRP'}
+        incGst={'Inc. GST'}
+        minimumOrder={'Minimum Order'}
+        minimumPieces={moq}
+        currency={currency}
+      />
+      {priceRange && priceRange.length > 0 && (
+        <div className="w-full pt-4">
+          <ProductInfoTable
+            quantity={'Quantity'}
+            price={'Price'}
+            volumePrice={priceRange}
+            className="product_det__table"
+          />
+        </div>
+      )}
+      <div className="flex gap-2 px-4 py-2 mt-6 border-l-4 border-r-0 bg-semantic-info-100 border-semantic-info-500 border-y-0">
         <CircleInformationMajor />
         <p className="text-base font-normal leading-[21px]">
           Price will change if you increase quantity of items.
         </p>
       </div>
-      <div className="flex flex-col gap-4 pt-6 sm:flex-row">
-        <div className="flex">
-          <button
-            className="border-[1px] border-grey-500 flex justify-center items-center w-14 aspect-square"
-            onClick={decreaseQuantity}
-          >
-            -
-          </button>
-          <input
-            type="text"
-            className="max-w-[61px] min-h-14 h-full text-center border-x-0 !border-grey-500"
-            value={quantity}
-            onChange={handleInputChange}
-          />
-          <button
-            className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-14"
-            onClick={increaseQuantity}
-          >
-            +
-          </button>
+      <div className="flex flex-col items-start gap-4 pt-6 sm:flex-row">
+        <div>
+          <div className="flex">
+            <button
+              className="border-[1px] border-grey-500 flex justify-center items-center w-14 aspect-square"
+              onClick={decreaseQuantity}
+            >
+              -
+            </button>
+            <input
+              type="text"
+              className="max-w-[61px] min-h-14 h-full text-center border-x-0 !border-grey-500"
+              value={quantity}
+              onChange={handleInputChange}
+            />
+            <button
+              className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-14"
+              onClick={increaseQuantity}
+            >
+              +
+            </button>
+          </div>
+          <p className='text-sm text-grey-700 pt-2.5 flex gap-x-1'>
+            <Info />
+            Minimum Order Quantity {moq}
+          </p>
         </div>
         <div className="flex flex-col">
           <select
@@ -269,12 +282,12 @@ const ProductDetailsSection = ({
           >
             {unitOfMeasure.length > 0 ? (
               unitOfMeasure?.map((uom: any, index: number) => (
-                <option value={uom.unit} key={index + 'uom'}>
+                <option value={uom.code} key={index + 'uom'}>
                   {uom.unit}
                 </option>
               ))
             ) : (
-              <option value={UOM}>{UOM}</option>
+              <option value={UOM}>{box}</option>
             )}
           </select>
         </div>
@@ -288,23 +301,34 @@ const ProductDetailsSection = ({
           <input type="hidden" name="productId" value={productId} />
           <input
             type="hidden"
-            name="productVeriantId"
-            value={productVeriantId}
+            name="productVariantId"
+            value={productVariantId}
           />
           <input type="hidden" name="quantity" value={quantity} />
           <input type="hidden" name="selectUOM" value={UOM} />
-          <Button
-            className="flex-grow w-full uppercase min-h-14"
-            variant="primary"
-            type="submit"
-            value="addToCart"
-            name="action"
-          >
-            {addToCart}
-          </Button>
+          {quantity < moq ?
+            <>
+              <button
+                className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-not-allowed text-grey-400 bg-grey-200 min-h-14"
+                disabled
+              >
+                {addToCart}
+              </button>
+              <p className='text-red-500'>Minimum order quantity is {moq}</p>
+            </>
+            : <Button
+              className="flex-grow w-full uppercase min-h-14"
+              variant="primary"
+              type="submit"
+              value="addToCart"
+              name="action"
+            >
+              {addToCart}
+            </Button>
+          }
         </Form>
       </div>
-      <div className="flex max-w-[483px] gap-2 pt-6">
+      {/* <div className="flex max-w-[483px] gap-2 pt-6">
         <PickupLocation />
         <div>
           <p>
@@ -317,7 +341,7 @@ const ProductDetailsSection = ({
             pickupTitle={'Pick Availability'}
           />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
@@ -333,6 +357,7 @@ type ProductCardInfoProps = {
   minimumOrder: string;
   minimumPieces: string;
   className?: string;
+  currency?: string;
 };
 export function ProductCardInfo({
   productName,
@@ -345,6 +370,7 @@ export function ProductCardInfo({
   minimumOrder,
   minimumPieces,
   className,
+  currency
 }: ProductCardInfoProps) {
   return (
     <div className={`flex flex-col gap-6 p-4 ${className}`}>
@@ -352,25 +378,45 @@ export function ProductCardInfo({
         <div className="flex flex-wrap gap-6">
           <div className="flex flex-col">
             <div className="flex items-center gap-1">
-              <p className="text-semantic-success-500 text-base font-bold uppercase leading-[21px]">
+              <p className="text-semantic-success-500 text-base font-medium uppercase leading-[21px]">
                 {buyPriceTitle}
               </p>
+              <div className="info-block">
+                <p className="flex items-center justify-center w-5 h-5 ">
+                  <div className='cursor-pointer' data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts">
+                    <span>
+                      <TooltipInfo />
+                    </span>
+                  </div>
+                </p>
+              </div>
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727] price">
-              ${buyPrice}
+              <span className='text-lg font-medium'>{currency ? currency : '$'}</span>&nbsp;{buyPrice}
             </h3>
-            <p className="text-[14px] font-normal leading-4">{exclGst}</p>
+            <p className="text-[14px] font-normal leading-4 pt-1">({exclGst})</p>
           </div>
           <div className="flex flex-col pl-6 border-l-2 border-r-0 border-grey-50 border-y-0">
-            <div className="flex items-center ">
-              <p className="text-grey-300 not-italic text-base font-bold uppercase leading-[21px]">
+            <div className="flex items-center gap-1">
+              <p className="text-grey-300 not-italic text-base font-medium uppercase leading-[21px]">
                 {rppTitle}
               </p>
+              <div className="info-block">
+                <p className="flex items-center justify-center w-5 h-5 ">
+                  <div className='cursor-pointer'
+                    data-tooltip="Recommended retail price"
+                  >
+                    <span>
+                      <TooltipInfo />
+                    </span>
+                  </div>
+                </p>
+              </div>
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300 price">
-              ${rppPrice}
+              <span className='text-lg font-medium'>{currency ? currency : '$'}</span>&nbsp;{rppPrice}
             </h3>
-            <p className="text-[14px] font-normal leading-4">{incGst}</p>
+            <p className="text-[14px] font-normal leading-4 pt-1">({incGst})</p>
           </div>
         </div>
       </div>

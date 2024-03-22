@@ -75,7 +75,7 @@ export function DateDelivery() {
     setDate(newDate);
   };
 
-  console.log("date", format(new Date(date), 'yyyy-MM-dd'));
+  // console.log("date", format(new Date(date), 'yyyy-MM-dd'));
 
   return (
     <div>
@@ -112,7 +112,7 @@ export function PurchaseOrder() {
     <div className="flex flex-col gap-1 ">
       <label
         htmlFor="orderNumber"
-        className="text-base text-normal leading-[21px] text-grey-800"
+        className="text-base text-normal leading-[21px] text-grey-800 after:content-['*'] after:ml-0.5 after:text-red-500"
       >
         Purchase Order Number Or Order Number
       </label>
@@ -122,6 +122,7 @@ export function PurchaseOrder() {
         name="poNumber"
         placeholder="Order Number"
         className="active:!border-grey-100 focus:!border-grey-100 hover:!border-grey-100 focus:bg-white active:bg-white hover:bg-white !bg-white"
+        required
       />
     </div>
   );
@@ -220,7 +221,7 @@ export function ShoppingDetails({ shippingAddresses }: any) {
   const addressList = shippingAddresses.addresses;
   const defaultAddress = shippingAddresses.defaultAddress;
   const mergedAddressList = [shippingAddresses.defaultAddress, ...shippingAddresses.addresses];
-  console.log("defaultAddress", defaultAddress)
+  // console.log("defaultAddress", defaultAddress)
 
   const defaultAddress1 = defaultAddress.address1 ?? "";
   const defaultAddress2 = defaultAddress.address2 ?? "";

@@ -2,6 +2,7 @@ import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import {generateUrlWithParams} from '~/lib/helpers/url.helper';
 
 export type OrderStatus =
   | 'received'
@@ -48,41 +49,12 @@ export async function getAllOrders({
   searchParams: URLSearchParams;
 }) {
   try {
-    const paramsList = Object.fromEntries(searchParams);
-
-    const url = new URL(`${ENDPOINT.ORDERS.GET}/${customerId}`);
-
-    const params = new URLSearchParams();
-
-    if (paramsList?.search) {
-      params.append('search', paramsList.search);
-    }
-
-    if (paramsList?.page) {
-      params.append('page', paramsList.page);
-    }
-
-    if (paramsList?.after) {
-      params.append('after', 'true');
-    }
-
-    if (paramsList?.before) {
-      params.append('before', 'true');
-    }
-
-    if (paramsList?.orderBy) {
-      params.append('orderBy', paramsList.orderBy);
-    }
-
-    if (paramsList?.order) {
-      params.append('order', paramsList.order);
-    }
-
-    url.search = params.toString();
+    const baseUrl = `${ENDPOINT.ORDERS.GET}/${customerId}`;
+    const url = generateUrlWithParams({baseUrl, searchParams});
 
     const results = await useFetch<ResponseData>({
       method: AllowedHTTPMethods.GET,
-      url: url.toString(),
+      url,
     });
 
     if (!results.status) {
