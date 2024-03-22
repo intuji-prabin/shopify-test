@@ -394,7 +394,7 @@ export function ProductCardInfo({
               </div>
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727] price">
-              <span className='text-lg font-medium'>{currency ? currency : '$'}</span>&nbsp;{buyPrice.toFixed(2)}
+              <span className='text-lg font-medium'>{currency ? currency : '$'}</span>&nbsp;{buyPrice?.toFixed(2)}
             </h3>
             <p className="text-[14px] font-normal leading-4 pt-1">({exclGst})</p>
           </div>
@@ -416,7 +416,7 @@ export function ProductCardInfo({
               </div>
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300 price">
-              <span className='text-lg font-medium'>{currency ? currency : '$'}</span>&nbsp;{rppPrice.toFixed(2)}
+              <span className='text-lg font-medium'>{currency ? currency : '$'}</span>&nbsp;{rppPrice?.toFixed(2)}
             </h3>
             <p className="text-[14px] font-normal leading-4 pt-1">({incGst})</p>
           </div>
