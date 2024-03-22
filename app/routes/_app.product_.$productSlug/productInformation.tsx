@@ -114,8 +114,17 @@ const ProductDetailsSection = ({
   currency
 }: any) => {
   const [quantity, setQuantity] = useState(parseFloat(moq) || 1);
-  const [productPrice, setProductPrice] = useState(companyDefaultPrice);
   const [UOM, setUOM] = useState(uomCode);
+  const firstPrice = getProductPriceByQty(
+    quantity,
+    unitOfMeasure,
+    UOM,
+    box,
+    priceRange,
+    companyDefaultPrice,
+  );
+  const [productPrice, setProductPrice] = useState(firstPrice);
+
   const submit = useSubmit();
 
   function decreaseQuantity() {
