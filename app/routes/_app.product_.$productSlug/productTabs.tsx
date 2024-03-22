@@ -144,7 +144,7 @@ const ProductTab = ({ description }: ProductTabType) => (
       >
         <ProductDownloads
           mainTitle={'FILES FOR DOWNLOADS'}
-          download={'downloadFiles.png'}
+          download={'/downloadFiles.png'}
           btnTitle={'Download'}
         />
       </Tabs.Content>
@@ -172,7 +172,7 @@ const ProductTab = ({ description }: ProductTabType) => (
       >
         <ProductDownloads
           mainTitle={'FILES FOR DOWNLOADS'}
-          download={'downloadFiles.png'}
+          download={'/downloadFiles.png'}
           btnTitle={'Download'}
         />
       </Tabs.Content>
@@ -182,7 +182,7 @@ const ProductTab = ({ description }: ProductTabType) => (
       >
         <ProductDownloads
           mainTitle={'FILES FOR DOWNLOADS'}
-          download={'downloadFiles.png'}
+          download={'/downloadFiles.png'}
           btnTitle={'Download'}
         />
       </Tabs.Content>
