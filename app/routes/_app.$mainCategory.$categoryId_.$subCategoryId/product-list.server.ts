@@ -123,6 +123,7 @@ const formattedResponse = async (response: any, customerId: string) => {
     return true;
   });
   const priceList = await getPrices(productIds, customerId);
+  console.log('firstPriceList', priceList);
 
   const finalProductList: any = {
     categorytitle: productList?.title,
@@ -136,6 +137,11 @@ const formattedResponse = async (response: any, customerId: string) => {
         uom: item?.node?.uom?.value,
         variants: productVariantDataFormat(item?.node?.variants),
         featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.IMAGE,
+        volumePrice:
+          priceList?.[productId] &&
+          priceList?.[productId]?.priceRange.length > 0
+            ? true
+            : false,
         companyPrice: priceList?.[productId]
           ? priceList?.[productId]?.company_price
           : null,
