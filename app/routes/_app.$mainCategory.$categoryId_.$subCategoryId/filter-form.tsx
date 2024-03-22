@@ -53,7 +53,7 @@ export function FilterForm(filterList: any) {
         <div className="flex items-end gap-2 px-4 py-5 border-b border-solid border-grey-50">
           <h4 className="leading-none">All Filters</h4>
           <div
-            className="text-xs lg:text-sm !leading-none italic font-bold cursor-pointer text-primary-500 border-b border-solid !border-primary-500"
+            className="text-xs lg:text-sm !leading-none italic font-bold cursor-pointer text-grey-500 border-b border-solid !border-grey-500"
             onClick={() => {
               window.history.replaceState(
                 {},
@@ -152,7 +152,7 @@ export function FilterForm(filterList: any) {
 
           <Button
             type="submit"
-            className="absolute p-0 text-xs italic font-bold !leading-none bg-transparent border-b border-solid lg:text-sm top-6 lg:top-7 right-4 text-grey-500 border-grey-500 hover:bg-transparent"
+            className="absolute p-0 text-xs italic font-bold !leading-none bg-transparent border-b border-solid lg:text-sm top-6 lg:top-7 right-4 text-primary-500 border-primary-500 hover:bg-transparent"
           >
             APPLY FILTER
           </Button>
