@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -76,9 +76,8 @@ export function ProductInfoTable({
         {volumePriceList.map((priceLIst: any, index: any) => (
           <TableRow key={priceLIst?.minQty} className="hover:bg-white">
             <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
-              {`${priceLIst?.minQty} - ${
-                priceLIst?.maxQty ? priceLIst?.maxQty - 1 : 'above'
-              }`}
+              {`${priceLIst?.minQty} - ${priceLIst?.maxQty ? priceLIst?.maxQty : 'above'
+                }`}
             </TableCell>
             <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
               {priceLIst?.price}
