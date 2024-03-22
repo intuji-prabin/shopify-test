@@ -393,7 +393,7 @@ export function ProductTotal({
         </div>
         <p className="text-grey-900 text-lg leading-5.5 italic">
           {currency}
-          {prices?.toFixed(2) || 'N/A'}
+          &nbsp;{prices?.toFixed(2) || 'N/A'}
         </p>
         <p className="text-sm italic font-bold leading-normal text-grey-500">
           (Excl. GST)
