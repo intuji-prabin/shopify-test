@@ -11,7 +11,7 @@ export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, frei
         <li className="flex justify-between">
           <p className="capitalize">subtotal</p>
           <span className="text-lg font-medium">
-            <span className="text-base">{currency ? currency : '$'}</span>{cartSubTotalPrice.toFixed(2)}
+            <span className="text-base">{currency ? currency : '$'}</span>{cartSubTotalPrice?.toFixed(2)}
           </span>
         </li>
         <li className="flex justify-between">
@@ -35,7 +35,7 @@ export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, frei
       </ul>
       <div className="flex justify-between [&>p]:font-medium [&>p]:text-2xl [&>p]:text-grey-900">
         <p>Estimated Total</p>
-        <p className="total_amout"><span className="text-base">{currency ? currency : '$'}</span>{cartTotalPrice.toFixed(2)}</p>
+        <p className="total_amout"><span className="text-base">{currency ? currency : '$'}</span>{cartTotalPrice?.toFixed(2)}</p>
       </div>
       <div className="flex gap-3 py-2 pl-2 pr-4 border-l-4 border-r-0 bg-semantic-danger-100 border-semantic-danger-500 border-y-0">
         <span className="flex items-center text-semantic-danger-500">*</span>
