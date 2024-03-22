@@ -10,7 +10,7 @@ import { Button } from '~/components/ui/button';
 export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
 
 export function ProductCard({
-  isBuyQtyAvailable,
+  volumePrice,
   title,
   companyPrice,
   defaultPrice,
@@ -31,7 +31,7 @@ export function ProductCard({
     <div className="bg-white single-product-card">
       <div className="relative h-full">
         <ProductCardImage
-          isBuyQtyAvailable={isBuyQtyAvailable}
+          volumePrice={volumePrice}
           isFavorited={checkProductIdExists(id)}
           featuredImageUrl={featuredImageUrl}
           imageBackgroundColor={imageBackgroundColor}
@@ -64,6 +64,7 @@ type ProductCardInfoProps = {
   uom: string;
   wishListItems?: any;
   currency: string;
+  volumePrice?: boolean;
 };
 
 type VariantType = {
@@ -127,7 +128,7 @@ export function ProductCardInfo({
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
               <span className="text-lg font-medium">{currency} </span>
-              {(companyPrice && companyPrice) || 'N/A'}
+              {(companyPrice && companyPrice.toFixed(2)) || 'N/A'}
             </h3>
             <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
           </div>
@@ -150,7 +151,7 @@ export function ProductCardInfo({
               </div>
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-              <span className="text-lg font-medium">{currency} </span>{(defaultPrice && defaultPrice) || 'N/A'}
+              <span className="text-lg font-medium">{currency} </span>{(defaultPrice && defaultPrice.toFixed(2)) || 'N/A'}
             </h3>
             <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
           </div>
@@ -171,14 +172,14 @@ export function ProductCardInfo({
 
 function ProductCardImage({
   featuredImageUrl,
-  isBuyQtyAvailable,
+  volumePrice,
   isFavorited,
   imageBackgroundColor,
   productId,
 }: ProductCardImageProps) {
   const [heartFill, setHeartFill] = useState(isFavorited);
-  const [isBuyQtyAvailableState, setIsBuyQtyAvailable] =
-    useState(isBuyQtyAvailable);
+  // const [isBuyQtyAvailableState, setIsBuyQtyAvailable] =
+  //   useState(isBuyQtyAvailable);
 
   const handleHeartClick = () => {
     setHeartFill(!heartFill);
@@ -189,7 +190,7 @@ function ProductCardImage({
       className={`relative px-11 py-[39px] flex justify-center border-grey-25 border-b-2 border-x-0 border-top-0 ${imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
         }`}
     >
-      {isBuyQtyAvailableState && (
+      {volumePrice && (
         <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px]">
           QTY Buy Available
         </div>
