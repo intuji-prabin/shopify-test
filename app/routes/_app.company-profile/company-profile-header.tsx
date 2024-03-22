@@ -8,7 +8,7 @@ export default function CompanyInfoHeader({title}: {title: string}) {
       <BackButton title="Company Profile Management" />
       <Breadcrumb>
         <BreadcrumbItem href={Routes.COMPANY_INFORMATION}>
-          Company Settings
+          Company Information
         </BreadcrumbItem>
         <BreadcrumbItem href={Routes.COMPANY_PROFILE} className="text-grey-900">
           {title}

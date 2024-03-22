@@ -8,7 +8,7 @@ export default function ShippingAddressHeader({title}: {title: string}) {
       <BackButton title="Shipping Address " />
       <Breadcrumb>
         <BreadcrumbItem href={Routes.COMPANY_INFORMATION}>
-          Company Settings
+          Company Information
         </BreadcrumbItem>
         <BreadcrumbItem
           href={Routes.SHIPPING_ADDRESS}
