@@ -181,7 +181,6 @@ const PromotionEdit = () => {
       allowTaint: true,
       useCORS: true,
       width: canvasRef.offsetWidth - 1,
-      scale: 2,
     }).then((canvas) => {
       const link = document.createElement('a');
       document.body.appendChild(link);

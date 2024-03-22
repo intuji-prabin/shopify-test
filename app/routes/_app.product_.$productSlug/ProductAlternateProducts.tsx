@@ -1,6 +1,6 @@
-import {useState} from 'react';
-import {ProductLoveRed, ProductLoveWhite} from '~/components/icons/orderStatus';
-import {Button} from '~/components/ui/button';
+import { useState } from 'react';
+import { ProductLoveRed, ProductLoveWhite } from '~/components/icons/orderStatus';
+import { Button } from '~/components/ui/button';
 
 // Product Card Info Props
 type ProductCardInfoProps = {
@@ -31,12 +31,12 @@ export function ProductCardInfo({
   gst_rrp,
 }: ProductCardInfoProps) {
   return (
-    <div className="p-4 flex flex-col gap-6">
+    <div className="flex flex-col gap-6 p-4">
       {/* Upper tag and paragraph */}
       <div className="tag flex flex-col gap-[11px]">
         <div>
           <p className="text-base font-medium text-grey-400">{sku}</p>
-          <h5 className="text-lg italic font-bold leading-6 text-grey-900 line-clamp-2 text-ellipsis whitespace-normal h-12">
+          <h5 className="h-12 text-lg italic font-bold leading-6 whitespace-normal text-grey-900 line-clamp-2 text-ellipsis">
             {product_name}
           </h5>
         </div>
@@ -90,7 +90,7 @@ export function ProductCardButtons({
   add_to_cart,
 }: ProductCartButtons) {
   return (
-    <div className="flex gap-2 justify-center items-center">
+    <div className="flex items-center justify-center gap-2">
       <Button variant="primary" size="default" className="w-full">
         {view_details}
       </Button>
@@ -109,13 +109,13 @@ export default function AlternativeProduct() {
       <h3 className="text-[36px] italic font-bold leading-[36px] mb-8 uppercase">
         alternative products
       </h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-[18px]">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-[18px]">
         {[1, 2, 3].map((item) => (
-          <div key={item} className="bg-white max-w-[unset] md:max-w-[302px]">
+          <div key={item} className="bg-white">
             <ProductCardImage
               is_buy_qty_available={true}
               is_favorited={false}
-              product_image_url="product.png"
+              product_image_url="/product.png"
             />
             <ProductCardInfo
               sku="SKU: 1-1601-EC"
