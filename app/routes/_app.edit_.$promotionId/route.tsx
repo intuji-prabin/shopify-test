@@ -181,6 +181,7 @@ const PromotionEdit = () => {
       allowTaint: true,
       useCORS: true,
       width: canvasRef.offsetWidth - 1,
+      scale: 2,
     }).then((canvas) => {
       const link = document.createElement('a');
       document.body.appendChild(link);
@@ -440,7 +441,7 @@ const PromotionEdit = () => {
                 </AccordionCustom>
               </div>
               {showUnsavedChanges && (
-                <div className="fixed inset-x-0 bottom-0 py-4 bg-primary-500">
+                <div className="fixed inset-x-0 bottom-0 z-50 py-4 bg-primary-500">
                   <div className="container">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <h5 className="text-white">Unsaved changes</h5>

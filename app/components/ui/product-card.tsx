@@ -102,7 +102,7 @@ export function ProductCardInfo({
             SKU:&nbsp;{(sku && sku) || 'N/A'}
           </p>
           <h5 className="text-lg italic font-bold leading-6 whitespace-normal max-h-12 text-grey-900 line-clamp-2 text-ellipsis">
-            <Link to={handle}>{productName}</Link>
+            <Link to={`/product/${handle}`}>{productName}</Link>
           </h5>
           <p className="text-sm text-grey-300">Minimum Order Quantity: {moq}</p>
         </div>
