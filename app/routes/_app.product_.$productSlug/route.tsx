@@ -96,7 +96,7 @@ export default function route() {
         <BackButton title="" />
         <Breadcrumb>
           <BreadcrumbItem href="/categories" className="capitalize">
-            Product
+            Products
           </BreadcrumbItem>
           <BreadcrumbItem className="capitalize text-grey-800">
             {productPage?.split('-').join(' ')}
