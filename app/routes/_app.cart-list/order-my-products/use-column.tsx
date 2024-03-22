@@ -1,12 +1,12 @@
-import {Link} from '@remix-run/react';
-import {ColumnDef} from '@tanstack/react-table';
-import {useMemo, useState} from 'react';
-import {TooltipInfo} from '~/components/icons/orderStatus';
-import {badgeVariants} from '~/components/ui/badge';
-import {Button} from '~/components/ui/button';
-import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {getProductPriceByQty} from '~/routes/_app.product_.$productSlug/product-detail';
+import { Link } from '@remix-run/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { useMemo, useState } from 'react';
+import { TooltipInfo } from '~/components/icons/orderStatus';
+import { badgeVariants } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { getProductPriceByQty } from '~/routes/_app.product_.$productSlug/product-detail';
 
 export type BulkOrderColumn = {
   productId: string;
@@ -45,7 +45,7 @@ export function useMyProductColumn(currency?: string) {
     () => [
       {
         id: 'select',
-        header: ({table}) => (
+        header: ({ table }) => (
           <IndeterminateCheckbox
             {...{
               checked: table.getIsAllRowsSelected(),
@@ -54,7 +54,7 @@ export function useMyProductColumn(currency?: string) {
             }}
           />
         ),
-        cell: ({row}) => (
+        cell: ({ row }) => (
           <div className="px-1">
             <IndeterminateCheckbox
               {...{
@@ -148,7 +148,7 @@ export function useMyProductColumn(currency?: string) {
     [],
   );
 
-  return {columns};
+  return { columns };
 }
 
 /**
@@ -159,7 +159,7 @@ type ItemsColumnType = Pick<
   'title' | 'sku' | 'featuredImage' | 'moq'
 >;
 
-export function ItemsColumn({title, sku, featuredImage, moq}: ItemsColumnType) {
+export function ItemsColumn({ title, sku, featuredImage, moq }: ItemsColumnType) {
   return (
     <div className="flex space-x-2">
       <figure className="bg-grey-25 p-3 !w-20 ">
@@ -176,7 +176,7 @@ export function ItemsColumn({title, sku, featuredImage, moq}: ItemsColumnType) {
             <span className="font-semibold text-grey-900 ">SKU: </span>
             {(sku && sku) || 'N/A'}
           </p>
-          <div className={`${badgeVariants({variant: 'inStock'})} !m-0 `}>
+          <div className={`${badgeVariants({ variant: 'inStock' })} !m-0 `}>
             <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>IN
             STOCK
           </div>
@@ -194,7 +194,7 @@ export function ItemsColumn({title, sku, featuredImage, moq}: ItemsColumnType) {
 type QuantityColumnType = Pick<
   BulkOrderColumn,
   'quantity' | 'productId' | 'variantId' | 'moq'
-> & {info: any; lineItemId?: string};
+> & { info: any; lineItemId?: string };
 export function QuantityColumn({
   quantity,
   info,
@@ -393,7 +393,7 @@ export function ProductTotal({
         </div>
         <p className="text-grey-900 text-lg leading-5.5 italic">
           {currency}
-          {prices || 'N/A'}
+          {prices.toFixed(2) || 'N/A'}
         </p>
         <p className="text-sm italic font-bold leading-normal text-grey-500">
           (Excl. GST)
@@ -402,9 +402,8 @@ export function ProductTotal({
       {priceRange.length > 0 && (
         <Button
           onClick={setIsBulkDetailsVisible}
-          className={`${
-            isRowChecked ? 'bg-white' : 'bg-primary-200'
-          }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
+          className={`${isRowChecked ? 'bg-white' : 'bg-primary-200'
+            }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
         >
           {isBulkDetailVisible ? 'Hide' : 'View'} BULK PRICE
         </Button>
