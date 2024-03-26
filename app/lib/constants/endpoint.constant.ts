@@ -61,6 +61,6 @@ export const ENDPOINT = {
   },
   PENDING_ORDERS: {
     PRODUCT_GROUP: `${BASE_URL}/product/group`,
-    PRODUCT_GROUP_ITEM: `${BASE_URL}/product-group/add-items`,
+    PRODUCT_GROUP_ITEM: `${BASE_URL}/product-group/items`,
   },
 };
