@@ -1,4 +1,5 @@
 import {useFetch} from '~/hooks/useFetch';
+import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getUserDetails} from '~/lib/utils/user-session.server';
@@ -17,19 +18,29 @@ export const getCartList = async (
   if (!cartLists) {
     throw new Error('Cart List not found');
   }
-  return await formateCartList(cartLists, userDetails?.id, fronOrder);
+  return await formateCartList(
+    cartLists,
+    userDetails?.id,
+    fronOrder,
+    // sessionCartInfo,
+    // context,
+  );
 };
 
 const formateCartList = async (
   cartResponse: any,
   customerId: string,
   fronOrder: boolean,
+  // sessionCartInfo: any,
+  // context: any,
 ) => {
   const cartLine = cartResponse?.cart?.lines?.nodes;
   if (cartLine.length < 1) {
     throw new Error('Cart List is empty');
   }
   let productList = [] as any;
+  // sessionCartInfo.lineItems = cartLine.length;
+  // await context.session.set(CART_SESSION_KEY, sessionCartInfo);
   cartLine.map((items: any) => {
     const merchandise = items?.merchandise;
     const variantId = merchandise?.id.replace(
@@ -58,7 +69,7 @@ const formateCartList = async (
     return productList;
   }
   const productWithPrice = await getPrice(customerId, productList);
-
+  // console.log('werwerwed ', productWithPrice);
   return productWithPrice;
 };
 
