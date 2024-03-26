@@ -22,6 +22,56 @@ interface GetProductGroupResponse extends DefaultResponse {
   payload: Group;
 }
 
+export async function updateGroup({
+  groupId,
+  groupName,
+  customerId,
+}: {
+  groupId: number;
+  groupName: string;
+  customerId: string;
+}) {
+  const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
+
+  const body = JSON.stringify({groupId, groupName});
+
+  const response = await useFetch<DefaultResponse>({
+    url,
+    method: AllowedHTTPMethods.PUT,
+    body,
+  });
+
+  if (!response.status) {
+    throw new Error(response.message);
+  }
+
+  return response;
+}
+
+export async function deleteGroup({
+  groupId,
+  customerId,
+}: {
+  groupId: number;
+  customerId: string;
+}) {
+  const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
+
+  const body = JSON.stringify({groupId});
+
+  const response = await useFetch<DefaultResponse>({
+    url,
+    method: AllowedHTTPMethods.DELETE,
+    body,
+  });
+
+  if (!response.status) {
+    throw new Error(response.message);
+  }
+
+  return response;
+}
+
 export async function getGroupDetails({
   groupId,
   customerId,
@@ -49,22 +99,18 @@ export async function getGroupDetails({
   }
 }
 
-export async function updateGroupDetails({
-  groupId,
-  groupName,
+export async function addProductToGroup({
+  body,
   customerId,
 }: {
-  groupId: number;
-  groupName: string;
+  body: string;
   customerId: string;
 }) {
-  const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
-
-  const body = JSON.stringify({groupId, groupName});
+  const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
 
   const response = await useFetch<DefaultResponse>({
+    method: AllowedHTTPMethods.POST,
     url,
-    method: AllowedHTTPMethods.PUT,
     body,
   });
 

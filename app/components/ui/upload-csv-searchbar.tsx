@@ -34,7 +34,7 @@ export function ProductSearchBar() {
     >
       <PredictiveSearch
         inputPlaceholder="Rapid Product Search..."
-        addToCart={true}
+        searchVariant="cart"
       />
     </div>
   );
