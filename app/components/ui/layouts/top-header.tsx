@@ -1,28 +1,28 @@
-import { FaSearch } from 'react-icons/fa';
-import { Form, Link } from '@remix-run/react';
-import { Heart, Logout, UserProfile } from '~/components/icons/orderStatus';
-import { useState } from 'react';
-import { Button } from '~/components/ui/button';
+import {FaSearch} from 'react-icons/fa';
+import {Form, Link} from '@remix-run/react';
+import {Heart, Logout, UserProfile} from '~/components/icons/orderStatus';
+import {useState} from 'react';
+import {Button} from '~/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuLabel,
 } from '~/components/ui/dropdown-menu';
-import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
-import { Routes } from '~/lib/constants/routes.constent';
-import { CartIcon } from '~/components/icons/cartIcon';
-import { TrackAnOrderButton } from './elements/track-an-order-dialog';
-import { Note } from '~/components/icons/note';
-import { NotificationIcon } from '~/components/icons/notification';
-import { CustomerData } from '~/routes/_public.login/login.server';
+import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
+import {Routes} from '~/lib/constants/routes.constent';
+import {CartIcon} from '~/components/icons/cartIcon';
+import {TrackAnOrderButton} from './elements/track-an-order-dialog';
+import {Note} from '~/components/icons/note';
+import {NotificationIcon} from '~/components/icons/notification';
+import {CustomerData} from '~/routes/_public.login/login.server';
 import TabletNavmenu from './tablet-navbar/tablet-navmenu';
-import { useHamburgerMenu } from './elements/HamburgerMenuContext';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { PredictiveSearch } from '~/components/ui/predictive-search';
+import {useHamburgerMenu} from './elements/HamburgerMenuContext';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {PredictiveSearch} from '~/components/ui/predictive-search';
 
 export function PlaceOrder() {
-  const { isOpen, toggleMenu } = useHamburgerMenu();
+  const {isOpen, toggleMenu} = useHamburgerMenu();
 
   return (
     <Button
@@ -46,7 +46,7 @@ export function OrderTrack() {
     </div>
   );
 }
-export function LogoIcon({ logo_url }: { logo_url: string }) {
+export function LogoIcon({logo_url}: {logo_url: string}) {
   return (
     <Link to={Routes.HOME}>
       <figure>
@@ -56,8 +56,14 @@ export function LogoIcon({ logo_url }: { logo_url: string }) {
   );
 }
 
-export function NotificationNavbar({ cartCount, wishlistCount }: { cartCount: number, wishlistCount: number }) {
-  const { isOpen, toggleMenu } = useHamburgerMenu();
+export function NotificationNavbar({
+  cartCount,
+  wishlistCount,
+}: {
+  cartCount: number;
+  wishlistCount: number;
+}) {
+  const {isOpen, toggleMenu} = useHamburgerMenu();
 
   const navIcons = [
     {
@@ -117,7 +123,7 @@ export function NotificationNavbar({ cartCount, wishlistCount }: { cartCount: nu
 export default function TopHeader({
   userDetails,
   cartCount,
-  wishlistCount
+  wishlistCount,
 }: {
   userDetails: CustomerData;
   cartCount: number;
@@ -141,11 +147,14 @@ export default function TopHeader({
         <div className="flex gap-[22px] w-full xl:w-[unset]">
           {/* search bar begins here */}
           <div className="search-bar flex bg-white items-center min-w-[unset] w-full max-h-12 px-4 py-3 xl:min-w-[453px] relative">
-            <PredictiveSearch />
+            <PredictiveSearch searchVariant="normal" />
           </div>
 
           {/* notification menu starts here */}
-          <NotificationNavbar cartCount={cartCount} wishlistCount={wishlistCount} />
+          <NotificationNavbar
+            cartCount={cartCount}
+            wishlistCount={wishlistCount}
+          />
         </div>
 
         {/* order track begins here  */}
