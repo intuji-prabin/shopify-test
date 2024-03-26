@@ -5,8 +5,33 @@ export async function getSingleProduct(context: any, productID: string) {
     STOREFRONT_SINGLE_PRODUCT_GET_QUERY(`gid://shopify/Product/${productID}`),
   );
 
-  return {products};
+  const formattedResponse = formatProduct(products?.product);
+
+  return {formattedResponse};
 }
+
+const formatProduct = (product: any) => {
+  return {
+    id: product?.id,
+    handle: product?.handle,
+    title: product?.title,
+    warranty: product?.warranty?.value,
+    material: product?.material?.value,
+    product_weight: product?.product_weight?.value,
+    supplier: product?.supplier?.value,
+    featuredImage: product?.featuredImage?.url,
+    variants: productVariantDataFormat(product?.variants),
+  };
+};
+
+const productVariantDataFormat = (variant: any) => {
+  const finalVariantData = {
+    id: variant?.edges[0]?.node?.id,
+    sku: variant?.edges[0]?.node?.sku,
+    moq: variant?.edges[0]?.node?.moq?.value || 1,
+  };
+  return finalVariantData;
+};
 
 const STOREFRONT_SINGLE_PRODUCT_GET_QUERY = (productID: string) => {
   const single_product_query = `query getProductById {

@@ -5,32 +5,28 @@ import { useLoaderData } from '@remix-run/react';
 import { getSingleProduct } from './getProduct.server';
 
 export const loader = async ({ params, context }: LoaderFunctionArgs) => {
-  let productId;
-  switch (true) {
-    case Boolean(params?.product2):
-      productId = params.product2 ?? '';
-      break;
-    case Boolean(params?.product3):
-      productId = params.product3 ?? '';
-      break;
-    case Boolean(params?.product4):
-      productId = params.product4 ?? '';
-      break;
-    default:
-      productId = params.product1 ?? '';
-      break;
+  const productResponse = {} as any;
+  if (params?.product1) {
+    productResponse.product1 = await getSingleProduct(context, params?.product1);
   }
-  const productResponse = await getSingleProduct(context, productId);
+  if (params?.product2) {
+    productResponse.product2 = await getSingleProduct(context, params?.product2);
+  }
+  if (params?.product3) {
+    productResponse.product3 = await getSingleProduct(context, params?.product3);
+  }
+  if (params?.product4) {
+    productResponse.product4 = await getSingleProduct(context, params?.product4);
+  }
   return { productResponse }
 }
 
 export default function route() {
   const { productResponse } = useLoaderData<typeof loader>();
-  console.log("product", productResponse)
   return (
     <section className="container py-12">
       <ComparisonBreadcrumb title={'compare'} />
-      <ComparisonWrapper />
+      <ComparisonWrapper productResponse={productResponse} />
     </section>
   );
 }
