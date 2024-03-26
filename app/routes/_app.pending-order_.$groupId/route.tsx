@@ -10,6 +10,7 @@ import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   MetaFunction,
+  redirect,
 } from '@shopify/remix-oxygen';
 import {
   isRouteErrorResponse,
@@ -18,9 +19,10 @@ import {
   useRouteError,
 } from '@remix-run/react';
 import {
+  deleteGroup,
   deleteGroupProduct,
   getGroupDetails,
-  updateGroupDetails,
+  updateGroup,
 } from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
 import {
   getMessageSession,
@@ -28,6 +30,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
+import {Routes} from '~/lib/constants/routes.constent';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Pending Order Details'}];
@@ -54,7 +57,11 @@ export async function action({request, context, params}: ActionFunctionArgs) {
 
   const formData = await request.formData();
 
-  const action = formData.get('_action') as 'update' | 'delete' | 'add_to_cart';
+  const action = formData.get('_action') as
+    | 'update_group'
+    | 'delete_group'
+    | 'delete_product'
+    | 'add_to_cart';
 
   const groupId = Number(params.groupId);
 
@@ -63,11 +70,11 @@ export async function action({request, context, params}: ActionFunctionArgs) {
   const customerId = userDetails.id.split('/').pop() as string;
 
   switch (action) {
-    case 'update': {
+    case 'update_group': {
       try {
         const groupName = formData.get('groupName') as string;
 
-        const updatedGroup = await updateGroupDetails({
+        const updatedGroup = await updateGroup({
           customerId,
           groupId,
           groupName,
@@ -98,7 +105,38 @@ export async function action({request, context, params}: ActionFunctionArgs) {
         return json({error}, {status: 500});
       }
     }
-    case 'delete': {
+
+    case 'delete_group': {
+      try {
+        const deletedGroup = await deleteGroup({
+          groupId,
+          customerId,
+        });
+
+        setSuccessMessage(messageSession, deletedGroup.message);
+
+        return redirect(Routes.PENDING_ORDER, {
+          headers: {
+            'Set-Cookie': await messageCommitSession(messageSession),
+          },
+        });
+      } catch (error) {
+        if (error instanceof Error) {
+          setErrorMessage(messageSession, error.message);
+          return json(
+            {error},
+            {
+              headers: {
+                'Set-Cookie': await messageCommitSession(messageSession),
+              },
+            },
+          );
+        }
+        return json({error}, {status: 500});
+      }
+    }
+
+    case 'delete_product': {
       try {
         const body = JSON.stringify({
           groupId,
@@ -135,10 +173,12 @@ export async function action({request, context, params}: ActionFunctionArgs) {
         return json({error}, {status: 500});
       }
     }
+
     case 'add_to_cart': {
       // API integration for add to cart
       break;
     }
+
     default: {
       throw new Error('Unexpected action');
     }

@@ -1,8 +1,7 @@
 import {useSubmit} from '@remix-run/react';
-import {Table} from '@tanstack/react-table';
 import {Button} from '~/components/ui/button';
 import RemoveItem from '~/components/icons/removeItem';
-import {Product} from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
+import {Delete} from '~/components/icons/delete';
 import {
   DialogHeader,
   DialogFooter,
@@ -13,19 +12,13 @@ import {
   DialogClose,
 } from '~/components/ui/dialog';
 
-export function DeleteProductModal({table}: {table: Table<Product>}) {
+export function DeleteGroupModal({groupName}: {groupName: string}) {
   const submit = useSubmit();
 
   const handleDelete = () => {
     const formData = new FormData();
 
-    table
-      .getSelectedRowModel()
-      .flatRows.map((product) =>
-        formData.append('productIds', product.original.productId),
-      );
-
-    formData.append('_action', 'delete_product');
+    formData.append('_action', 'delete_group');
 
     submit(formData, {
       method: 'POST',
@@ -35,16 +28,9 @@ export function DeleteProductModal({table}: {table: Table<Product>}) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant={
-            table.getSelectedRowModel().rows.length === 0
-              ? 'disabled'
-              : 'destructive'
-          }
-          className="min-w-[111px] min-h-10"
-        >
-          Remove
-        </Button>
+        <button>
+          <Delete />
+        </button>
       </DialogTrigger>
       <DialogContent
         className="sm:max-w-[425px] track-an-order p-0 block"
@@ -57,7 +43,7 @@ export function DeleteProductModal({table}: {table: Table<Product>}) {
             </div>
             <div className="flex items-center justify-center flex-col gap-1">
               <h3 className=" text-grey-800 leading-[22px] text-lg font-medium">
-                Delete
+                Delete Group "{groupName}"
               </h3>
               <p className="text-center font-normal leading-[21px] text-base text-neutral-400">
                 All products will be removed from your List. Are you sure you
