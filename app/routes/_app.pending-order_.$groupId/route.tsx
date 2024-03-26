@@ -19,6 +19,7 @@ import {
   useRouteError,
 } from '@remix-run/react';
 import {
+  addProductToGroup,
   deleteGroup,
   deleteGroupProduct,
   getGroupDetails,
@@ -31,10 +32,18 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
 import {Routes} from '~/lib/constants/routes.constent';
+import {PredictiveSearch} from '~/components/ui/predictive-search';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Pending Order Details'}];
 };
+
+type ActionType =
+  | 'update_group'
+  | 'delete_group'
+  | 'delete_product'
+  | 'add_to_cart'
+  | 'add_product';
 
 export async function loader({context, request, params}: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -57,11 +66,7 @@ export async function action({request, context, params}: ActionFunctionArgs) {
 
   const formData = await request.formData();
 
-  const action = formData.get('_action') as
-    | 'update_group'
-    | 'delete_group'
-    | 'delete_product'
-    | 'add_to_cart';
+  const action = formData.get('_action') as ActionType;
 
   const groupId = Number(params.groupId);
 
@@ -179,11 +184,51 @@ export async function action({request, context, params}: ActionFunctionArgs) {
       break;
     }
 
+    case 'add_product': {
+      try {
+        const body = JSON.stringify({
+          groupId,
+          productId: formData.get('productId'),
+          quantity: formData.get('quantity'),
+        });
+
+        const productResponse = await addProductToGroup({
+          body,
+          customerId,
+        });
+
+        setSuccessMessage(messageSession, productResponse.message);
+
+        return json(
+          {},
+          {
+            headers: {
+              'Set-Cookie': await messageCommitSession(messageSession),
+            },
+          },
+        );
+      } catch (error) {
+        if (error instanceof Error) {
+          setErrorMessage(messageSession, error.message);
+          return json(
+            {error},
+            {
+              headers: {
+                'Set-Cookie': await messageCommitSession(messageSession),
+              },
+            },
+          );
+        }
+        return json({error}, {status: 500});
+      }
+    }
+
     default: {
       throw new Error('Unexpected action');
     }
   }
 }
+
 export default function PendingOrderDetailsPage() {
   const {groupDetails} = useLoaderData<typeof loader>();
 
@@ -197,9 +242,18 @@ export default function PendingOrderDetailsPage() {
         imageUrl={'/place-order.png'}
         sectionName={groupDetails.groupName}
       />
+      <div className="  bg-primary-500 ">
+        <div className="container flex gap-6 items-center py-6">
+          <div className="search-bar flex bg-white items-center min-w-[unset] w-full px-4 py-3 xl:min-w-[453px] max-h-14 relative">
+            <PredictiveSearch
+              searchVariant="pending_order"
+              inputPlaceholder="Rapid Product Search..."
+            />
+          </div>
+        </div>
+      </div>
       <section className="container">
         <ActionBar groupName={groupDetails.groupName} table={table} />
-
         <DataTable
           table={table}
           columns={columns}
