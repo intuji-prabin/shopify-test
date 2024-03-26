@@ -33,6 +33,7 @@ import {
 } from '~/lib/utils/toast-session.server';
 import {Routes} from '~/lib/constants/routes.constent';
 import {PredictiveSearch} from '~/components/ui/predictive-search';
+import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Pending Order Details'}];
@@ -45,6 +46,8 @@ type ActionType =
   | 'add_to_cart'
   | 'add_product';
 
+const PAGE_LIMIT = 10;
+
 export async function loader({context, request, params}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
@@ -54,7 +57,13 @@ export async function loader({context, request, params}: LoaderFunctionArgs) {
 
   const groupId = params.groupId as string;
 
-  const groupDetails = await getGroupDetails({customerId, groupId});
+  const {searchParams} = new URL(request.url);
+
+  const groupDetails = await getGroupDetails({
+    customerId,
+    groupId,
+    searchParams,
+  });
 
   return json({groupDetails});
 }
@@ -258,6 +267,10 @@ export default function PendingOrderDetailsPage() {
           table={table}
           columns={columns}
           renderSubComponent={renderSubComponent}
+        />
+        <PaginationWrapper
+          pageSize={PAGE_LIMIT}
+          totalCount={groupDetails.totalProduct}
         />
       </section>
     </>
