@@ -75,18 +75,37 @@ export async function deleteGroup({
 export async function getGroupDetails({
   groupId,
   customerId,
+  searchParams,
 }: {
   groupId: string;
   customerId: string;
+  searchParams: URLSearchParams;
 }) {
   try {
-    const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}?groupId=${groupId}`;
+    const baseUrl = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
 
-    const results = await useFetch<GetProductGroupResponse>({url});
+    const url = new URL(baseUrl);
+
+    const params = new URLSearchParams();
+
+    params.append('groupId', groupId);
+
+    for (const [key, value] of searchParams) {
+      if (value) {
+        params.append(key, value);
+      }
+    }
+
+    url.search = params.toString();
+
+    const results = await useFetch<GetProductGroupResponse>({
+      url: url.toString(),
+    });
 
     if (!results.status) {
       throw new Error(results.message);
     }
+
     return results.payload;
   } catch (error) {
     if (error instanceof Error) {
