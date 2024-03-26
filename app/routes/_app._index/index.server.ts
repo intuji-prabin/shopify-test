@@ -6,6 +6,7 @@ export interface Node {
   type: string;
   slider_title: SliderTitle;
   slider_image: SliderImage;
+  productHanlde : any
 }
 
 export interface SliderImage {
@@ -42,10 +43,12 @@ export async function getSlides({context}: any) {
 }
 
 const formattedResponse = (response: SliderType[]) => {
-  const data = response.map((item) => ({
+  const data = response.map((item  : any) => ({
     src: item?.node?.slider_image?.reference?.previewImage?.url,
     alt: item.node.slider_title.value,
+    prouductHandle : item?.node?.productHandle?.reference?.handle
   }));
+  // console.log("sdfsdf ", data)
   return data;
 };
 
@@ -55,6 +58,13 @@ const SLIDER_DATA_QUERY = `query getHomepageSlider {
         node {
             type
             slider_title: field(key: "title") { value }
+            productHandle : field( key: "product" ) { 
+              reference {
+                ... on Product {
+                  handle
+                }
+              }
+            }
             slider_image: field(key: "image_url") { 
                 reference {
                     ... on MediaImage {
