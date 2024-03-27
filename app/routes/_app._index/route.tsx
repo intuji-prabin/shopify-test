@@ -1,7 +1,6 @@
 import {
   useLoaderData,
   type MetaFunction,
-  useRevalidator,
 } from '@remix-run/react';
 import { json } from '@remix-run/server-runtime';
 import { type LoaderFunctionArgs } from '@shopify/remix-oxygen';
@@ -40,11 +39,11 @@ export async function loader({ context }: LoaderFunctionArgs) {
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
-
+  const sliderData = data?.slides;
   return (
     <article className="home">
       {data?.slides.length > 0 ? (
-        <Carousel images={data?.slides} sectionClass="mt-0 home-banner" />
+        <Carousel images={sliderData} sectionClass="mt-0 home-banner" />
       ) : null}
       <Profile sectionClass="mt-10" />
       <CtaHome />
