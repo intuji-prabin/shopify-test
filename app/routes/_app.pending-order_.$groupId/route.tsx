@@ -1,9 +1,13 @@
 import {useTable} from '~/hooks/useTable';
 import {DataTable} from '~/components/ui/data-table';
 import HeroBanner from '~/components/ui/hero-section';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import {ActionBar} from '~/routes/_app.pending-order_.$groupId/action-bar';
+import {Routes} from '~/lib/constants/routes.constent';
+import {PredictiveSearch} from '~/components/ui/predictive-search';
+import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
+import {addedBulkCart} from '~/routes/_app.wishlist/bulk.cart.server';
 import {useMyProductColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
 import {renderSubComponent} from '~/routes/_app.cart-list/order-my-products/cart-myproduct';
 import {
@@ -31,9 +35,6 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {Routes} from '~/lib/constants/routes.constent';
-import {PredictiveSearch} from '~/components/ui/predictive-search';
-import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Pending Order Details'}];
@@ -189,8 +190,51 @@ export async function action({request, context, params}: ActionFunctionArgs) {
     }
 
     case 'add_to_cart': {
-      // API integration for add to cart
-      break;
+      try {
+        const cartInfo = Object.fromEntries(formData);
+
+        const accessTocken = (await getAccessToken(context)) as string;
+
+        await addedBulkCart(cartInfo, context, accessTocken, request);
+
+        setSuccessMessage(messageSession, 'Item added to cart successfully');
+
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      } catch (error) {
+        if (error instanceof Error) {
+          setErrorMessage(messageSession, error?.message);
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        }
+        setErrorMessage(
+          messageSession,
+          'Item not added to cart. Please try again later.',
+        );
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      }
     }
 
     case 'add_product': {

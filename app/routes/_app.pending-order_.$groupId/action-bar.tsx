@@ -1,9 +1,8 @@
 import {useState} from 'react';
-import {Form, Link} from '@remix-run/react';
+import {Form, Link, useSubmit} from '@remix-run/react';
 import {Table} from '@tanstack/react-table';
 import {Done} from '~/components/icons/done';
 import {Button} from '~/components/ui/button';
-import {Routes} from '~/lib/constants/routes.constent';
 import {BackButton} from '~/components/ui/back-button';
 import {Alert, AlertDescription} from '~/components/ui/alert';
 import {DeleteGroupModal} from '~/routes/_app.pending-order_.$groupId/delete-group-modal';
@@ -24,6 +23,38 @@ export function ActionBar({
 }) {
   const [isEditing, setIsEditing] = useState(false);
 
+  const submit = useSubmit();
+
+  const handleAddToCart = () => {
+    const formData = new FormData();
+
+    table.getSelectedRowModel().flatRows.map((item) => {
+      formData.append(
+        `${item.original.productId}_productId`,
+        item.original.productId,
+      );
+
+      formData.append(
+        `${item.original.productId}_variantId`,
+        item.original.variantId,
+      );
+
+      formData.append(
+        `${item.original.productId}_quantity`,
+        item.original.quantity.toString(),
+      );
+
+      formData.append(`${item.original.productId}_uom`, item.original.uom);
+
+      formData.append('bulkCart', 'true');
+
+      formData.append('_action', 'add_to_cart');
+
+      submit(formData, {method: 'POST'});
+
+      table.resetRowSelection();
+    });
+  };
   return (
     <div className="flex justify-between md:items-center my-[30px] flex-col gap-4 md:flex-row md:gap-0 items-baseline ">
       <div className="flex items-baseline gap-4  flex-col sm:flex-row sm:items-center">
@@ -99,10 +130,9 @@ export function ActionBar({
                 : 'primary'
             }
             className="min-w-[111px] min-h-10 p-0"
+            onClick={handleAddToCart}
           >
-            <Link to={Routes.CART_LIST} className="w-full">
-              Add to cart
-            </Link>
+            Add to cart
           </Button>
           <DeleteProductModal table={table} />
         </div>
