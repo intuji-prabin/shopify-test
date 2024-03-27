@@ -1,10 +1,12 @@
 import useEmblaCarousel, { EmblaCarouselType, EmblaOptionsType } from 'embla-carousel-react';
 import { useCallback, useEffect, useState } from 'react';
 import { LeftArrow } from '../icons/left';
+import { Link } from '@remix-run/react';
 
 type ImageType = {
-  src: string;
+  src?: string;
   alt: string;
+  productHandle: string;
 };
 
 type PropType = {
@@ -66,11 +68,21 @@ const Carousel = (props: PropType) => {
             return (
               image?.src && (
                 <div key={index} className="min-w-0 embla__slide flex-full">
-                  <img
-                    src={image?.src}
-                    alt={image?.alt}
-                    className="object-cover object-center w-full"
-                  />
+                  {image.productHandle ? (
+                    <Link to={`product/${image.productHandle}`}>
+                      <img
+                        src={image.src}
+                        alt={image.alt}
+                        className="object-cover object-center w-full"
+                      />
+                    </Link>
+                  ) : (
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      className="object-cover object-center w-full"
+                    />
+                  )}
                 </div>
               )
             );
