@@ -5,9 +5,9 @@ export async function getSingleProduct(context: any, productID: string) {
     STOREFRONT_SINGLE_PRODUCT_GET_QUERY(`gid://shopify/Product/${productID}`),
   );
 
-  const formattedResponse = formatProduct(products?.product);
+  const product = formatProduct(products?.product);
 
-  return {formattedResponse};
+  return {product};
 }
 
 export type ProductResponse = {
@@ -31,7 +31,7 @@ const formatProduct = (product: ProductResponse) => {
     material: product?.material?.value,
     product_weight: product?.product_weight?.value,
     supplier: product?.supplier?.value,
-    featuredImage: product?.featuredImage?.url,
+    featuredImage: product?.featuredImage,
     variants: productVariantDataFormat(product?.variants),
   };
 };

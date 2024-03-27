@@ -25,8 +25,12 @@ export default function route() {
   const { productResponse } = useLoaderData<typeof loader>();
   return (
     <section className="container py-12">
-      <ComparisonBreadcrumb title={'compare'} />
-      <ComparisonWrapper productResponse={productResponse} />
+      {Object.keys(productResponse).length > 0 ?
+        <>
+          <ComparisonBreadcrumb title={'compare'} />
+          <ComparisonWrapper productResponse={productResponse} />
+        </> : <div>Please add initial product to compare from product detail page</div>
+      }
     </section>
   );
 }
