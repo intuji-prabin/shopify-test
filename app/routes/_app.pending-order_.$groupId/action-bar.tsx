@@ -6,6 +6,7 @@ import {Button} from '~/components/ui/button';
 import {Routes} from '~/lib/constants/routes.constent';
 import {BackButton} from '~/components/ui/back-button';
 import {Alert, AlertDescription} from '~/components/ui/alert';
+import {DeleteGroupModal} from '~/routes/_app.pending-order_.$groupId/delete-group-modal';
 import {Product} from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
 import {DeleteProductModal} from '~/routes/_app.pending-order_.$groupId/delete-product-modal';
 import {
@@ -49,7 +50,7 @@ export function ActionBar({
                   defaultValue={groupName}
                   className="border-none hover:bg-primary-25 bg-primary-25 text-grey-900 font-bold leading-[36px] text-[30px] italic max-w-[204px] focus:bg-primary-25 !p-0"
                 />
-                <button type="submit" name="_action" value="update">
+                <button type="submit" name="_action" value="update_group">
                   <Done />
                 </button>
                 <button
@@ -65,6 +66,7 @@ export function ActionBar({
                 <button onClick={() => setIsEditing(true)}>
                   <EditItems />
                 </button>
+                <DeleteGroupModal groupName={groupName} />
               </div>
             )}
           </div>
