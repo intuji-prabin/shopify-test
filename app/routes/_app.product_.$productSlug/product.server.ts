@@ -35,27 +35,30 @@ export const addProductToCart = async (
   accessTocken: string,
   context: any,
   request: any,
+  cartItems = []
 ) => {
   // console.log('cartInfo', cartInfo);
-  if (!cartInfo.productId) {
-    throw new Error(
-      'Product Id is not present so, this product cannot be added to the cart.',
-    );
-  }
-  if (!cartInfo.productVariantId) {
-    throw new Error(
-      'Product Variant is not present so, this product cannot be added to the cart.',
-    );
-  }
-  if (!cartInfo.selectUOM) {
-    throw new Error(
-      'Product UOM is not present so, this product cannot be added to the cart.',
-    );
+  if( cartItems.length < 0 ) {
+    if (!cartInfo.productId) {
+      throw new Error(
+        'Product Id is not present so, this product cannot be added to the cart.',
+      );
+    }
+    if (!cartInfo.productVariantId) {
+      throw new Error(
+        'Product Variant is not present so, this product cannot be added to the cart.',
+      );
+    }
+    if (!cartInfo.selectUOM) {
+      throw new Error(
+        'Product UOM is not present so, this product cannot be added to the cart.',
+      );
+    }
   }
   const {session} = context;
   const sessionCartInfo = session.get(CART_SESSION_KEY);
   if (!sessionCartInfo) {
-    const cartSetInfo = await setNewCart(context, accessTocken, cartInfo);
+    const cartSetInfo = await setNewCart(context, accessTocken, cartInfo, cartItems);
     session.set(CART_SESSION_KEY, cartSetInfo);
     const storeCartId = await storeCartIdOnBackend(
       request,
@@ -68,6 +71,7 @@ export const addProductToCart = async (
     context,
     cartInfo,
     sessionCartInfo,
+    cartItems
   );
   // console.log('cartLineAddResponseHello', cartLineAddResponse);
   //  session.unset( CART_SESSION_KEY)
@@ -84,10 +88,11 @@ const setNewCart = async (
   context: any,
   accessTocken: string,
   cartInfo: any,
+  cartItems = []
 ) => {
   const {storefront} = context;
   const responses = await storefront.mutate(SET_NEW_CART, {
-    variables: cartFormateVariable(cartInfo, accessTocken),
+    variables: cartFormateVariable(cartInfo, accessTocken, cartItems),
   });
   const formateResponse = cartResponseFormate(responses, accessTocken);
   // console.log('radfs ', responses);
@@ -143,12 +148,12 @@ const cartLineAdd = async (
   context: any,
   cartInfo: any,
   sessionCartInfo: any,
+  cartItems = []
 ) => {
   const {storefront} = context;
   const addItemInCartresponses = await storefront.mutate(ADD_ITEMS_IN_CART, {
-    variables: cartAddLineFormateVariable(cartInfo, sessionCartInfo),
+    variables: cartAddLineFormateVariable(cartInfo, sessionCartInfo, cartItems),
   });
-
   if (!addItemInCartresponses) {
     throw new Error('Cart not updated');
   }
@@ -242,7 +247,7 @@ const cartResponseFormate = (cartResponse: any, accessTocken: string) => {
   return cartListed;
 };
 
-const cartFormateVariable = (cartInfo: any, accessTocken: string) => {
+const cartFormateVariable = (cartInfo: any, accessTocken: string, cartItems = []) => {
   const variantId = `${CONSTANT?.variantId}${cartInfo?.productVariantId}`;
   return {
     input: {
@@ -255,7 +260,7 @@ const cartFormateVariable = (cartInfo: any, accessTocken: string) => {
       buyerIdentity: {
         customerAccessToken: accessTocken,
       },
-      lines: [
+      lines: cartItems.length > 0 ? cartItems : [
         {
           attributes: [
             {
@@ -300,11 +305,11 @@ const cartUpdateFormateVariable = (sessionCartInfo: any, cartInfo: any) => {
   };
 };
 
-const cartAddLineFormateVariable = (cartInfo: any, sessionCartInfo: any) => {
+const cartAddLineFormateVariable = (cartInfo: any, sessionCartInfo: any, cartItems = []) => {
   const variantId = `${CONSTANT?.variantId}${cartInfo?.productVariantId}`;
   return {
     cartId: sessionCartInfo?.cartId,
-    lines: [
+    lines: cartItems.length > 0 ? cartItems : [
       {
         attributes: [
           {
