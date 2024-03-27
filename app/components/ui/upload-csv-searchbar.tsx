@@ -3,9 +3,13 @@ import {FaSearch} from 'react-icons/fa';
 import {CSVFileType, UploadCsv} from '~/routes/_app.place-an-order/upload-csv';
 import RecomendedProduct from './layouts/elements/recomended-products/recomended-product';
 import {useOutsideClick} from '~/hooks/useOutsideClick';
-import {PredictiveSearch} from './predictive-search';
+import {PredictiveSearch, SearchVariant} from './predictive-search';
 
-export function ProductSearchBar() {
+export function ProductSearchBar({
+  searchVariant,
+}: {
+  searchVariant: SearchVariant;
+}) {
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   function handleInputClick() {
@@ -34,19 +38,23 @@ export function ProductSearchBar() {
     >
       <PredictiveSearch
         inputPlaceholder="Rapid Product Search..."
-        searchVariant="cart"
+        searchVariant={searchVariant}
       />
     </div>
   );
 }
 
-export default function UploadSearchbar() {
+export default function UploadSearchbar({
+  searchVariant,
+}: {
+  searchVariant: SearchVariant;
+}) {
   const [csvToArray, setCsvToArray] = useState<CSVFileType[]>([]);
 
   return (
     <div className="  bg-primary-500 ">
       <div className="container flex gap-6 items-center py-6">
-        <ProductSearchBar />
+        <ProductSearchBar searchVariant={searchVariant} />
         <UploadCsv setCsvToArray={setCsvToArray} />
       </div>
     </div>
