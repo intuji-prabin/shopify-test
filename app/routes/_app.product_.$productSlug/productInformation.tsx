@@ -189,8 +189,7 @@ const ProductDetailsSection = ({
         </figure>
         <ul className="flex gap-[7px]">
           <li className="w-[36px] h-[36px] flex justify-center items-center border-grey-50 border-[1px]">
-            <Link to="">
-              {' '}
+            <Link to={`/product-comparison/${productId}`}>
               <Compare />
             </Link>
           </li>

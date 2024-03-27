@@ -111,25 +111,23 @@ export default function ComparisonProperties() {
   ];
 
   return (
-    <>
-      <div className="p-6 flex flex-col gap-6">
-        <ComparisionTableRow
-          title="Filter Lens Dimensions"
-          items={dimensions}
-        />
-        <ComparisionTableRow title="On/Off Control" items={onOffControl} />
+    <div className="flex flex-col gap-6 p-6">
+      <ComparisionTableRow
+        title="Filter Lens Dimensions"
+        items={dimensions}
+      />
+      <ComparisionTableRow title="On/Off Control" items={onOffControl} />
 
-        <ComparisionTableRow
-          title="operating temperature"
-          items={operatingTemp}
-        />
+      <ComparisionTableRow
+        title="operating temperature"
+        items={operatingTemp}
+      />
 
-        <ComparisionTableRow title="sensor" items={sensor} />
+      <ComparisionTableRow title="sensor" items={sensor} />
 
-        <ComparisionTableRow title="Power Supply" items={powerSupply} />
+      <ComparisionTableRow title="Power Supply" items={powerSupply} />
 
-        <ComparisionTableRow title="Weight" items={weight} />
-      </div>
-    </>
+      <ComparisionTableRow title="Weight" items={weight} />
+    </div>
   );
 }

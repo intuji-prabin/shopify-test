@@ -1,17 +1,18 @@
-import {FormEvent, useRef, useState} from 'react';
-import {FaSearch} from 'react-icons/fa';
-import {Form, Link, useFetcher, useSubmit} from '@remix-run/react';
-import {debounce} from '~/lib/helpers/general.helper';
-import {Button} from '~/components/ui/button';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {useOutsideClick} from '~/hooks/useOutsideClick';
+import { FormEvent, useRef, useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
+import { Form, Link, useFetcher, useSubmit } from '@remix-run/react';
+import { debounce } from '~/lib/helpers/general.helper';
+import { Button } from '~/components/ui/button';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { useOutsideClick } from '~/hooks/useOutsideClick';
 import CloseMenu from '~/components/icons/closeMenu';
 import {
   NormalizedPredictiveSearch,
   NormalizedPredictiveSearchResultItem,
 } from '~/routes/_app.predictive-search/route';
+import { CompareSearch } from '../icons/compareSearch';
 
-type SearchVariant = 'normal' | 'cart' | 'pending_order';
+type SearchVariant = 'normal' | 'cart' | 'pending_order' | 'compare';
 
 /**
  * Renders a predictive search component.
@@ -64,14 +65,18 @@ export function PredictiveSearch({
         ref={searchFormRef}
         className="relative flex items-center w-full"
       >
-        <span className="absolute top-1/3 ">
-          <FaSearch className="fill-primary-500" />
+        <span className="absolute top-1/3">
+          {searchVariant === 'compare' ?
+            <CompareSearch />
+            :
+            <FaSearch className="fill-primary-500" />
+          }
         </span>
         <input
           type="text"
           name="searchTerm"
           placeholder={inputPlaceholder}
-          className="!pl-6 border-none w-full placeholder:italic text-base font-bold text-grey-900 placeholder:text-grey-900 focus:bg-white"
+          className={`!pl-6 border-none w-full text-base ${searchVariant === 'compare' ? "font-normal" : "font-bold placeholder:italic"} text-grey-900 placeholder:text-grey-900 focus:bg-white`}
         />
         {searchProduct && (
           <Button
@@ -85,11 +90,10 @@ export function PredictiveSearch({
       </fetcher.Form>
       {searchProduct && (
         <div
-          className={`bg-white absolute top-[52px] left-0 w-full z-20 py-4 px-6 space-y-4 ${
-            searchVariant === 'cart' || searchVariant === 'pending_order'
-              ? 'max-w-[550px] max-h-[350px] overflow-y-auto shadow-lg'
-              : null
-          }`}
+          className={`bg-white absolute top-[52px] left-0 w-full z-20 py-4 px-6 space-y-4 ${searchVariant === 'cart' || searchVariant === 'compare' || searchVariant === 'pending_order'
+            ? 'max-w-[550px] max-h-[350px] overflow-y-auto shadow-lg'
+            : null
+            }`}
         >
           {fetcher.state === 'loading' ? (
             <p className="text-base font-bold text-center text-grey-400">
@@ -378,6 +382,30 @@ function SearchResultsProductsGrid({
             </div>
           </div>
         );
+      }
+
+      case 'compare': {
+        return (
+          <figure className="flex items-center space-x-4" key={product.id}>
+            <div className="size-14">
+              <img
+                src={productUrl}
+                alt="product-image"
+                className="object-cover object-center size-full"
+              />
+            </div>
+            <figcaption>
+              <Link
+                prefetch="intent"
+                to={product.id}
+                onClick={() => setSearchProduct(false)}
+                className="text-base font-bold text-grey-900"
+              >
+                {product.title}
+              </Link>
+            </figcaption>
+          </figure>
+        )
       }
 
       default:
