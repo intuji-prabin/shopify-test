@@ -24,7 +24,7 @@ export type ProductResponse = {
 
 const formatProduct = (product: ProductResponse) => {
   return {
-    id: product?.id,
+    id: product?.id.replace('gid://shopify/Product/', ''),
     handle: product?.handle,
     title: product?.title,
     warranty: product?.warranty?.value,

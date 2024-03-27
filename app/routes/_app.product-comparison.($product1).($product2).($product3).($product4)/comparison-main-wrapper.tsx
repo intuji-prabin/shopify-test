@@ -1,12 +1,12 @@
-import { Link } from '@remix-run/react';
-import ComparisonItems from './comparison-items';
-import ComparisonProperties from './comparison-properties';
+import { Link, useLocation } from '@remix-run/react';
 import { TooltipInfo } from '~/components/icons/orderStatus';
-import { ProductResponse } from './getProduct.server';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 import { PredictiveSearch } from '~/components/ui/predictive-search';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { ProductResponse } from './getProduct.server';
+import { Button } from '~/components/ui/button';
+import CloseMenu from '~/components/icons/closeMenu';
 
-type finalProductResponse = {
+export type finalProductResponse = {
   productResponse: {
     product1: productResponse;
     product2: productResponse;
@@ -20,12 +20,23 @@ type productResponse = {
 }
 
 export default function ComparisonWrapper(productResponse: finalProductResponse) {
-  console.log("productResponse", productResponse.productResponse);
   const finalResponse = productResponse?.productResponse;
   const product1 = finalResponse?.product1;
   const product2 = finalResponse?.product2;
   const product3 = finalResponse?.product3;
   const product4 = finalResponse?.product4;
+
+  const location = useLocation();
+
+  const clearSelectedProduct = (productId: string) => {
+    console.log("clicked", location.pathname)
+    console.log("productId", productId)
+
+    const originalURL = location.pathname;
+    const updatedURL = originalURL.replace(/\/\d+\//, `/${productId}/`);
+    console.log("updatedURL", updatedURL)
+  }
+
   return (
     <div className="mt-6 overflow-x-auto bg-white">
       <div className='flex gap-6 p-6'>
@@ -99,8 +110,14 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
         <div className='min-w-[290px] w-full max-w-[290px]'>
           {product2?.product ?
             <>
-              <figure className='flex items-center justify-center h-48 p-5 bg-grey-25'>
+              <figure className='relative flex items-center justify-center h-48 p-5 bg-grey-25'>
                 <img src={product2?.product?.featuredImage?.url || DEFAULT_IMAGE?.IMAGE} alt="product2" className='object-contain h-full overflow-hidden' />
+                <Button
+                  className="absolute top-2 right-2 bg-white max-h-5 max-w-5 md:max-h-8 md:max-w-8 p-[3px] md:p-2 hover:bg-white"
+                  onClick={() => clearSelectedProduct(product2?.product?.id)}
+                >
+                  <CloseMenu fillColor="#0F1010" />
+                </Button>
               </figure>
               <div className='pt-3'>
                 <p className='text-lg font-medium leading-[22px] text-grey-900'>
@@ -181,8 +198,14 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
         <div className='min-w-[290px] w-full max-w-[290px]'>
           {product3?.product ?
             <>
-              <figure className='flex items-center justify-center h-48 p-5 bg-grey-25'>
+              <figure className='relative flex items-center justify-center h-48 p-5 bg-grey-25'>
                 <img src={product3?.product?.featuredImage?.url || DEFAULT_IMAGE?.IMAGE} alt="product3" className='object-contain h-full overflow-hidden' />
+                <Button
+                  className="absolute top-2 right-2 bg-white max-h-5 max-w-5 md:max-h-8 md:max-w-8 p-[3px] md:p-2 hover:bg-white"
+                  onClick={() => clearSelectedProduct(product2?.product?.id)}
+                >
+                  <CloseMenu fillColor="#0F1010" />
+                </Button>
               </figure>
               <div className='pt-3'>
                 <p className='text-lg font-medium leading-[22px] text-grey-900'>
@@ -263,8 +286,14 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
         <div className='min-w-[290px] w-full max-w-[290px]'>
           {product4?.product ?
             <>
-              <figure className='flex items-center justify-center h-48 p-5 bg-grey-25'>
+              <figure className='relative flex items-center justify-center h-48 p-5 bg-grey-25'>
                 <img src={product4?.product?.featuredImage?.url || DEFAULT_IMAGE?.IMAGE} alt="product4" className='object-contain h-full overflow-hidden' />
+                <Button
+                  className="absolute top-2 right-2 bg-white max-h-5 max-w-5 md:max-h-8 md:max-w-8 p-[3px] md:p-2 hover:bg-white"
+                  onClick={() => clearSelectedProduct(product2?.product?.id)}
+                >
+                  <CloseMenu fillColor="#0F1010" />
+                </Button>
               </figure>
               <div className='pt-3'>
                 <p className='text-lg font-medium leading-[22px] text-grey-900'>
