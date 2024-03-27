@@ -28,13 +28,13 @@ export function CategoryCard({ category }: { category: any }) {
             <div className="p-6" key={subCategoryItem.id}>
               {subCategoryItem?.child_categories?.length > 0 ?
                 <h4 className="mb-4">{subCategoryItem.title}</h4> :
-                <h4 className="mb-4 text-primary-500"><Link to={`/${identifier}/${subCategoryItem?.identifier}`}>{subCategoryItem.title}</Link></h4>
+                <h4 className="mb-4 text-primary-500"><Link to={`/category/${identifier}/${subCategoryItem?.identifier}`}>{subCategoryItem.title}</Link></h4>
               }
               <ul>
                 {subCategoryItem?.child_categories?.map((childCategoryItem) => (
                   <li key={childCategoryItem.id}>
                     <Link
-                      to={`/${identifier}/${subCategoryItem.identifier}/${childCategoryItem.identifier}`}
+                      to={`/category/${identifier}/${subCategoryItem.identifier}/${childCategoryItem.identifier}`}
                       className="text-base font-medium leading-5.5 text-grey-600 duration-150 hover:text-primary-500"
                     >
                       {childCategoryItem.title}
