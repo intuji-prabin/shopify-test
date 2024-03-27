@@ -10,7 +10,19 @@ export async function getSingleProduct(context: any, productID: string) {
   return {formattedResponse};
 }
 
-const formatProduct = (product: any) => {
+export type ProductResponse = {
+  id: string;
+  handle: string;
+  title: string;
+  warranty: {value: string};
+  material: {value: string};
+  product_weight?: {value: string};
+  supplier: {value: string};
+  featuredImage: {url: string};
+  variants: Variant;
+};
+
+const formatProduct = (product: ProductResponse) => {
   return {
     id: product?.id,
     handle: product?.handle,
@@ -24,7 +36,19 @@ const formatProduct = (product: any) => {
   };
 };
 
-const productVariantDataFormat = (variant: any) => {
+type Variant = {
+  edges: {
+    node: {
+      id: string;
+      sku: string;
+      moq: {
+        value: number;
+      };
+    };
+  }[];
+};
+
+const productVariantDataFormat = (variant: Variant) => {
   const finalVariantData = {
     id: variant?.edges[0]?.node?.id,
     sku: variant?.edges[0]?.node?.sku,
