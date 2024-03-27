@@ -1,11 +1,12 @@
 import { CONSTANT } from "~/lib/constants/product.session";
-import { ADD_ITEMS_IN_CART } from "../_app.product_.$productSlug/product.server";
+import { ADD_ITEMS_IN_CART, addProductToCart } from "../_app.product_.$productSlug/product.server";
 import { CART_SESSION_KEY } from "~/lib/constants/cartInfo.constant";
+import { getAccessToken } from "~/lib/utils/auth-session.server";
 
-export const addedBulkCart = async ( cartInfo : any, context : any, accessTocken : any ) => {
+export const addedBulkCart = async ( cartInfo : any, context : any, accessTocken : any, request : Request ) => {
     const {storefront, session} = context;
     const sessionCartInfo = session.get(CART_SESSION_KEY)
-    // if()
+    console.log("dfwerewv ", cartInfo)
     const keyList = Object.keys(cartInfo);
     const productData = [] as any;
     const formateData = keyList.map((key: any) => {
@@ -17,7 +18,6 @@ export const addedBulkCart = async ( cartInfo : any, context : any, accessTocken
         }
         return true;
     });
-
     const itemData = productData.map((id: any) => {
         return {
         attributes: [
@@ -30,16 +30,11 @@ export const addedBulkCart = async ( cartInfo : any, context : any, accessTocken
         quantity: parseInt(cartInfo[`${id}_quantity`]),
         };
     });
+    console.log("werwerdfsd ", itemData)
+    const data = await addProductToCart( {}, accessTocken, context, request, itemData )
+    if( ! data ) {
+        throw new Error("Cart not added")
+    }
+    return true
 
-    const addItemInCartresponses = await storefront.mutate(ADD_ITEMS_IN_CART, {
-        variables: cartAddLineFormateVariable(cartInfo, sessionCartInfo),
-    });
 }
-
-const cartAddLineFormateVariable = (cartItemList: any, sessionCartInfo: any) => {
-    // const variantId = `${CONSTANT?.variantId}${cartItemList?.productVariantId}`;
-    return {
-      cartId: sessionCartInfo?.cartId,
-      lines: cartItemList,
-    };
-  };

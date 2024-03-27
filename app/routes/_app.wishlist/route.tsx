@@ -46,7 +46,7 @@ export const action = async ({ request, context }: LoaderFunctionArgs) => {
           const cartInfo = Object.fromEntries(formData);
           const accessTocken = (await getAccessToken(context)) as string;
           if( cartInfo?.bulkCart && cartInfo?.bulkCart == "true" ) {
-            const bulkCart = await addedBulkCart( cartInfo, context, accessTocken )
+            const bulkCart = await addedBulkCart( cartInfo, context, accessTocken, request )
           } else {
             const addToCart = await addProductToCart(
               cartInfo,
@@ -80,7 +80,6 @@ export const action = async ({ request, context }: LoaderFunctionArgs) => {
               },
             );
           }
-          console.log('this is err');
           setErrorMessage(
             messageSession,
             'Item not added to cart. Please try again later.',
