@@ -1,3 +1,5 @@
+import {LoaderFunctionArgs} from '@remix-run/server-runtime';
+
 export interface SliderType {
   node: Node;
 }
@@ -6,7 +8,15 @@ export interface Node {
   type: string;
   slider_title: SliderTitle;
   slider_image: SliderImage;
-  productHanlde : any
+  productHandle: SliderHandle;
+}
+
+export interface SliderHandle {
+  reference: ReferenceHandle;
+}
+
+export interface ReferenceHandle {
+  handle: string;
 }
 
 export interface SliderImage {
@@ -43,12 +53,11 @@ export async function getSlides({context}: any) {
 }
 
 const formattedResponse = (response: SliderType[]) => {
-  const data = response.map((item  : any) => ({
+  const data = response.map((item) => ({
     src: item?.node?.slider_image?.reference?.previewImage?.url,
     alt: item.node.slider_title.value,
-    prouductHandle : item?.node?.productHandle?.reference?.handle
+    productHandle: item?.node?.productHandle?.reference?.handle,
   }));
-  // console.log("sdfsdf ", data)
   return data;
 };
 
