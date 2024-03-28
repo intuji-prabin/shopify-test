@@ -14,6 +14,7 @@ import {CompareSearch} from '../icons/compareSearch';
 
 export type SearchVariant =
   | 'normal'
+  | 'mobile'
   | 'cart'
   | 'pending_order'
   | 'compare'
@@ -70,24 +71,35 @@ export function PredictiveSearch({
         ref={searchFormRef}
         className="relative flex items-center w-full"
       >
-        <span className="absolute top-1/3">
-          {searchVariant === 'compare' ? (
-            <CompareSearch />
-          ) : (
-            <FaSearch className="fill-primary-500" />
-          )}
-        </span>
-        <input
-          type="text"
-          name="searchTerm"
-          placeholder={inputPlaceholder}
-          className={`!pl-6 border-none w-full text-base ${
-            searchVariant === 'compare'
-              ? 'font-normal'
-              : 'font-bold placeholder:italic'
-          } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
-        />
-        {searchProduct && (
+        {searchVariant === 'mobile' ? (
+          <input
+            type="text"
+            name="searchTerm"
+            placeholder="Search product or part number"
+            className="w-full outline-none border-none focus:bg-transparent bg-transparent placeholder:text-white text-white"
+          />
+        ) : (
+          <>
+            <span className="absolute top-1/3">
+              {searchVariant === 'compare' ? (
+                <CompareSearch />
+              ) : (
+                <FaSearch className="fill-primary-500" />
+              )}
+            </span>
+            <input
+              type="text"
+              name="searchTerm"
+              placeholder={inputPlaceholder}
+              className={`!pl-6 border-none w-full text-base ${
+                searchVariant === 'compare'
+                  ? 'font-normal'
+                  : 'font-bold placeholder:italic'
+              } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
+            />
+          </>
+        )}
+        {searchVariant !== 'mobile' && searchProduct && (
           <Button
             className="p-0 bg-white hover:bg-white active:bg-white"
             onClick={handleClose}
@@ -99,8 +111,10 @@ export function PredictiveSearch({
       </fetcher.Form>
       {searchProduct && (
         <div
-          className={`bg-white absolute top-[52px] left-0 w-full z-20 py-4 px-6 space-y-4 ${
-            searchVariant === 'normal'
+          className={`${
+            searchVariant === 'mobile' ? 'top-[65px]' : 'top-[52px]'
+          } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${
+            searchVariant === 'normal' || searchVariant === 'mobile'
               ? null
               : 'max-w-[600px] max-h-[350px] overflow-y-auto shadow-lg'
           }`}
@@ -541,6 +555,30 @@ function SearchResultsProductsGrid({
               )}
             </div>
           </div>
+        );
+      }
+
+      case 'mobile': {
+        return (
+          <figure className="flex items-center space-x-4" key={product.id}>
+            <div className="size-14">
+              <img
+                src={productUrl}
+                alt="product-image"
+                className="object-cover object-center size-full"
+              />
+            </div>
+            <figcaption>
+              <Link
+                prefetch="intent"
+                to={`/product/${product.handle}`}
+                onClick={() => setSearchProduct(false)}
+                className="text-base font-bold text-grey-900"
+              >
+                {product.title}
+              </Link>
+            </figcaption>
+          </figure>
         );
       }
       default:
