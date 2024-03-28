@@ -1,11 +1,17 @@
-export async function getSingleProduct(context: any, productID: string) {
+import {getPrices} from '../_app.category_.$mainCategory.$categoryId_.$subCategoryId/product-list.server';
+
+export async function getSingleProduct(
+  context: any,
+  productID: string,
+  customerId: string,
+) {
   const {storefront} = context;
 
   const products = await storefront.query(
     STOREFRONT_SINGLE_PRODUCT_GET_QUERY(`gid://shopify/Product/${productID}`),
   );
-
-  const product = formatProduct(products?.product);
+  const prices = await getPrices(productID, customerId);
+  const product = formatProduct(products?.product, prices);
 
   return {product};
 }
@@ -20,19 +26,32 @@ export type ProductResponse = {
   supplier: {value: string};
   featuredImage: {url: string};
   variants: Variant;
+  companyPrice: string;
+  currency: string;
+  defaultPrice: string;
+  vendor: string;
 };
 
-const formatProduct = (product: ProductResponse) => {
+const formatProduct = (product: ProductResponse, prices: any) => {
+  const productId = product?.id.replace('gid://shopify/Product/', '');
   return {
-    id: product?.id,
+    id: productId,
     handle: product?.handle,
     title: product?.title,
-    warranty: product?.warranty?.value,
-    material: product?.material?.value,
-    product_weight: product?.product_weight?.value,
-    supplier: product?.supplier?.value,
+    vendor: product?.vendor,
+    warranty: product?.warranty,
+    material: product?.material,
+    product_weight: product?.product_weight,
+    supplier: product?.supplier,
     featuredImage: product?.featuredImage,
     variants: productVariantDataFormat(product?.variants),
+    companyPrice: prices?.[productId]
+      ? prices?.[productId]?.company_price
+      : 'N/A',
+    currency: prices?.[productId] ? prices?.[productId]?.currency : '$',
+    defaultPrice: prices?.[productId]
+      ? prices?.[productId]?.default_price
+      : 'N/A',
   };
 };
 
@@ -67,6 +86,7 @@ const STOREFRONT_SINGLE_PRODUCT_GET_QUERY = (productID: string) => {
       material : metafield( namespace: "material", key: "material" ) { value }
       product_weight : metafield( namespace: "product_weight", key: "product_weight" ) { value }
       supplier : metafield( namespace: "supplier", key: "supplier" ) { value }
+      vendor
       featuredImage {
         url
       }
