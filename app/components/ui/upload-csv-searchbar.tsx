@@ -53,7 +53,7 @@ export default function UploadSearchbar({
 
   return (
     <div className="  bg-primary-500 ">
-      <div className="container flex gap-6 items-center py-6">
+      <div className="container flex flex-col sm:flex-row gap-6 items-center py-6">
         <ProductSearchBar searchVariant={searchVariant} />
         <UploadCsv setCsvToArray={setCsvToArray} />
       </div>

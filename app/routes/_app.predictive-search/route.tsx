@@ -41,7 +41,10 @@ export type NormalizedPredictiveSearchResultItem = {
   price: string;
   currency: string;
   uom: string;
+  uomCode: string;
   variantId: string;
+  unitOfMeasure: {unit: string; code: string; conversionFactor: number}[];
+  defaultUomValue: string;
 };
 
 type NormalizedPredictiveSearchResults = Array<
@@ -80,6 +83,7 @@ async function normalizePredictiveSearchResults(
       predictiveSearch.products,
       customerId,
     );
+
     results.push({
       type: 'products',
       items: predictiveSearch.products.map(
@@ -89,6 +93,7 @@ async function normalizePredictiveSearchResults(
             'gid://shopify/ProductVariant/',
             '',
           );
+
           return {
             __typename: product.__typename,
             handle: product.handle,
@@ -107,6 +112,9 @@ async function normalizePredictiveSearchResults(
             sku: product.variants.nodes[0]?.sku,
             //@ts-ignore
             moq: product.variants.nodes[0]?.moq?.value,
+            unitOfMeasure: prices?.[productId]?.unitOfMeasure,
+            uomCode: prices?.[productId]?.uomCode,
+            defaultUomValue: prices?.[productId]?.uom,
           };
         },
       ),
@@ -132,6 +140,7 @@ const formattedProductPrice = async (
   });
 
   const priceList = await getPrices(productIds, customerId);
+
   return priceList;
 };
 

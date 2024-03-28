@@ -100,11 +100,9 @@ export function PredictiveSearch({
       {searchProduct && (
         <div
           className={`bg-white absolute top-[52px] left-0 w-full z-20 py-4 px-6 space-y-4 ${
-            searchVariant === 'cart' ||
-            searchVariant === 'compare' ||
-            searchVariant === 'pending_order'
-              ? 'max-w-[550px] max-h-[350px] overflow-y-auto shadow-lg'
-              : null
+            searchVariant === 'normal'
+              ? null
+              : 'max-w-[600px] max-h-[350px] overflow-y-auto shadow-lg'
           }`}
         >
           {fetcher.state === 'loading' ? (
@@ -178,8 +176,6 @@ function SearchResultsProductsGrid({
     }
     const submit = useSubmit();
 
-    console.log('search proudct', product);
-
     switch (searchVariant) {
       case 'normal': {
         return (
@@ -206,8 +202,8 @@ function SearchResultsProductsGrid({
       }
       case 'cart': {
         return (
-          <div className="flex justify-between gap-4">
-            <div className="flex items-center gap-3">
+          <div className="flex justify-between gap-4 flex-col sm:flex-row">
+            <div className="flex items-center gap-3 sm:w-3/4">
               <div className="size-16">
                 <img
                   src={productUrl}
@@ -239,22 +235,22 @@ function SearchResultsProductsGrid({
                 </p>
               </div>
             </div>
-            <div>
+            <div className="sm:w-[calc(25%_-1rem)]">
               <div className="flex">
                 <button
-                  className="border-[1px] border-grey-500 flex justify-center items-center w-10 aspect-square"
+                  className="border border-grey-500 flex justify-center items-center flex-1 sm:w-10 sm:flex-initial"
                   onClick={decreaseQuantity}
                 >
                   -
                 </button>
                 <input
                   type="text"
-                  className="max-w-12 min-h-10 h-full text-center border-x-0 !border-grey-500"
+                  className="flex-1 text-center border-x-0 !border-grey-500 sm:min-w-12"
                   value={quantity}
                   onChange={handleInputChange}
                 />
                 <button
-                  className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-10"
+                  className="border border-grey-500  flex justify-center items-center flex-1 sm:w-10 sm:flex-initial"
                   onClick={increaseQuantity}
                 >
                   +
@@ -264,7 +260,7 @@ function SearchResultsProductsGrid({
                 <>
                   <Button
                     variant="primary"
-                    className="px-8 mt-2 cursor-not-allowed bg-grey-500"
+                    className="px-8 mt-2 cursor-not-allowed bg-grey-500 w-full"
                     disabled
                   >
                     Add to Cart
@@ -291,7 +287,10 @@ function SearchResultsProductsGrid({
                   />
                   <input type="hidden" name="quantity" value={quantity} />
                   <input type="hidden" name="selectUOM" value={product?.uom} />
-                  <Button variant="primary" className="px-8 mt-2">
+                  <Button
+                    variant="primary"
+                    className="px-8 mt-2 whitespace-nowrap w-full"
+                  >
                     Add to Cart
                   </Button>
                 </Form>
@@ -302,8 +301,8 @@ function SearchResultsProductsGrid({
       }
       case 'pending_order': {
         return (
-          <div className="flex justify-between gap-4">
-            <div className="flex items-center gap-3">
+          <div className="flex justify-between gap-4 flex-col sm:flex-row">
+            <div className="flex items-center gap-3 sm:w-3/4">
               <div className="size-16">
                 <img
                   src={productUrl}
@@ -335,22 +334,22 @@ function SearchResultsProductsGrid({
                 </p>
               </div>
             </div>
-            <div>
+            <div className="sm:w-[calc(25%_-1rem)]">
               <div className="flex">
                 <button
-                  className="border-[1px] border-grey-500 flex justify-center items-center w-10 aspect-square"
+                  className="border border-grey-500 flex justify-center items-center flex-1 sm:w-10 sm:flex-initial"
                   onClick={decreaseQuantity}
                 >
                   -
                 </button>
                 <input
                   type="text"
-                  className="max-w-12 min-h-10 h-full text-center border-x-0 !border-grey-500"
+                  className="flex-1 text-center border-x-0 !border-grey-500 sm:min-w-12"
                   value={quantity}
                   onChange={handleInputChange}
                 />
                 <button
-                  className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-10"
+                  className="border border-grey-500  flex justify-center items-center flex-1 sm:w-10 sm:flex-initial"
                   onClick={increaseQuantity}
                 >
                   +
@@ -360,7 +359,7 @@ function SearchResultsProductsGrid({
                 <>
                   <Button
                     variant="primary"
-                    className="px-8 mt-2 cursor-not-allowed bg-grey-500"
+                    className="px-8 mt-2 cursor-not-allowed w-full bg-grey-500"
                     disabled
                   >
                     Add to List
@@ -383,7 +382,7 @@ function SearchResultsProductsGrid({
                   <Button
                     type="submit"
                     variant="primary"
-                    className="px-8 mt-2"
+                    className="px-8 mt-2 whitespace-nowrap w-full"
                     name="_action"
                     value="add_product"
                   >
@@ -419,9 +418,14 @@ function SearchResultsProductsGrid({
         );
       }
       case 'place_an_order': {
+        const [UOM, setUOM] = useState(product.uomCode);
+        function handleUOM(selectedUOM: string) {
+          setUOM(selectedUOM);
+        }
+
         return (
-          <div className="flex justify-between gap-4">
-            <div className="flex items-center gap-3">
+          <div className="flex justify-between gap-4 flex-col sm:flex-row">
+            <div className="flex items-center gap-3 sm:w-1/2">
               <div className="size-16">
                 <img
                   src={productUrl}
@@ -453,37 +457,62 @@ function SearchResultsProductsGrid({
                 </p>
               </div>
             </div>
-            <div>
+            <div className="grid grid-cols-1 gap-x-4 w-full gap-y-2 sm:grid-cols-2 sm:w-[calc(50%_-1rem)]">
+              <select
+                name="filter_by"
+                className="w-full min-w-[120px] place-order !border-grey-500 filter-select"
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  handleUOM(e.target.value)
+                }
+                defaultValue={UOM}
+              >
+                {product.unitOfMeasure.length > 0 ? (
+                  product.unitOfMeasure?.map(
+                    (uom: {unit: string; code: string}, index: number) => (
+                      <option
+                        className="px-4"
+                        value={uom.code}
+                        key={index + 'uom'}
+                      >
+                        {uom.unit}
+                      </option>
+                    ),
+                  )
+                ) : (
+                  <option value={UOM}>{product.defaultUomValue}</option>
+                )}
+              </select>
               <div className="flex">
                 <button
-                  className="border-[1px] border-grey-500 flex justify-center items-center w-10 aspect-square"
+                  className="border border-grey-500 flex justify-center items-center flex-1 sm:w-10 sm:flex-initial"
                   onClick={decreaseQuantity}
                 >
                   -
                 </button>
                 <input
                   type="text"
-                  className="max-w-12 min-h-10 h-full text-center border-x-0 !border-grey-500"
+                  className="flex-1 text-center border-x-0 !border-grey-500 sm:min-w-12"
                   value={quantity}
                   onChange={handleInputChange}
                 />
                 <button
-                  className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-10"
+                  className="border border-grey-500  flex justify-center items-center flex-1 sm:w-10 sm:flex-initial"
                   onClick={increaseQuantity}
                 >
                   +
                 </button>
               </div>
+              <div className="hidden sm:block"></div>
               {quantity < Number(product.moq) || quantity < 1 ? (
                 <>
                   <Button
                     variant="primary"
-                    className="px-8 mt-2 cursor-not-allowed bg-grey-500"
+                    className="px-8 mt-2 cursor-not-allowed bg-grey-500 whitespace-nowrap"
                     disabled
                   >
                     Add to List
                   </Button>
-                  <p className="text-xs text-red-500">
+                  <p className="text-xs text-red-500 w-full">
                     Minimum Order Quantity {product?.moq || 1}
                   </p>
                 </>
@@ -498,10 +527,11 @@ function SearchResultsProductsGrid({
                 >
                   <input type="hidden" name="productId" value={product.id} />
                   <input type="hidden" name="quantity" value={quantity} />
+                  <input type="hidden" name="uom" value={UOM} />
                   <Button
                     type="submit"
                     variant="primary"
-                    className="px-8 mt-2"
+                    className="px-8 mt-2 whitespace-nowrap w-full"
                     name="_action"
                     value="add_product"
                   >

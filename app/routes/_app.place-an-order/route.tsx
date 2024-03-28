@@ -1,7 +1,11 @@
 import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
 import OrderTable from './order-table';
-import {LoaderFunctionArgs, MetaFunction} from '@shopify/remix-oxygen';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from '@shopify/remix-oxygen';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
 
 export const meta: MetaFunction = () => {
@@ -13,6 +17,22 @@ export async function loader({context, request}: LoaderFunctionArgs) {
   return null;
 }
 
+export async function action({context, request}: ActionFunctionArgs) {
+  await isAuthenticate(context);
+
+  const formData = await request.formData();
+
+  const action = formData.get('_action') as 'add_product';
+
+  switch (action) {
+    case 'add_product': {
+      console.log('data list', Object.fromEntries(formData));
+    }
+    default:
+      break;
+  }
+  return null;
+}
 export default function BulkOrderPage({measurement}: {measurement?: string}) {
   return (
     <>
