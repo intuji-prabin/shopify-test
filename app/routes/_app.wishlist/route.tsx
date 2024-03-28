@@ -45,8 +45,8 @@ export const action = async ({ request, context }: LoaderFunctionArgs) => {
         try {
           const cartInfo = Object.fromEntries(formData);
           const accessTocken = (await getAccessToken(context)) as string;
-          if( cartInfo?.bulkCart && cartInfo?.bulkCart == "true" ) {
-            const bulkCart = await addedBulkCart( cartInfo, context, accessTocken, request )
+          if (cartInfo?.bulkCart && cartInfo?.bulkCart == "true") {
+            const bulkCart = await addedBulkCart(cartInfo, context, accessTocken, request)
           } else {
             const addToCart = await addProductToCart(
               cartInfo,
@@ -210,7 +210,8 @@ export default function route() {
                     formData.append(
                       `wishList-${index}`,
                       item.original.productId,
-                    )},
+                    )
+                  },
                   );
                 submit(formData, { method: 'DELETE' });
                 table.resetRowSelection();

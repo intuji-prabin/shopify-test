@@ -27,6 +27,7 @@ import { getCartList } from './cart.server';
 import MyProducts from './order-my-products/cart-myproduct';
 import { placeOrder } from './order-place.server';
 import OrderSummary from './order-summary/cart-order-summary';
+import { useState } from 'react';
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
@@ -53,155 +54,146 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
 
 export async function action({ request, context }: ActionFunctionArgs) {
   const messageSession = await getMessageSession(request);
-  try {
-    let res;
-    switch (request.method) {
-      case 'POST':
-        try {
-          res = await placeOrder(request, context);
-          setSuccessMessage(messageSession, 'Order placed successfully');
-          return redirect('/order-successful', {
+  let res;
+  switch (request.method) {
+    case 'POST':
+      try {
+        res = await placeOrder(request, context);
+        setSuccessMessage(messageSession, 'Order placed successfully');
+        return redirect('/order-successful', {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        });
+      } catch (error) {
+        if (error instanceof Error) {
+          // console.log('this is err', error?.message);
+          setErrorMessage(messageSession, error?.message);
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        }
+        // console.log('this is err');
+        setErrorMessage(
+          messageSession,
+          'Order not placed to some issue. Please try again later.',
+        );
+        return json(
+          {},
+          {
             headers: [
               ['Set-Cookie', await context.session.commit({})],
               ['Set-Cookie', await messageCommitSession(messageSession)],
             ],
-          });
-        } catch (error) {
-          if (error instanceof Error) {
-            // console.log('this is err', error?.message);
-            setErrorMessage(messageSession, error?.message);
-            return json(
-              {},
-              {
-                headers: [
-                  ['Set-Cookie', await context.session.commit({})],
-                  ['Set-Cookie', await messageCommitSession(messageSession)],
-                ],
-              },
-            );
-          }
-          // console.log('this is err');
-          setErrorMessage(
-            messageSession,
-            'Order not placed to some issue. Please try again later.',
-          );
-          return json(
-            {},
-            {
-              headers: [
-                ['Set-Cookie', await context.session.commit({})],
-                ['Set-Cookie', await messageCommitSession(messageSession)],
-              ],
-            },
-          );
-        }
-      case 'DELETE':
-        try {
-          res = await removeItemFromCart(context, request);
-          setSuccessMessage(messageSession, 'Order deleted successfully');
-          return json(
-            {},
-            {
-              headers: [
-                ['Set-Cookie', await context.session.commit({})],
-                ['Set-Cookie', await messageCommitSession(messageSession)],
-              ],
-            },
-          );
-        } catch (error) {
-          if (error instanceof Error) {
-            // console.log('this is err', error?.message);
-            setErrorMessage(messageSession, error?.message);
-            return json(
-              {},
-              {
-                headers: [
-                  ['Set-Cookie', await context.session.commit({})],
-                  ['Set-Cookie', await messageCommitSession(messageSession)],
-                ],
-              },
-            );
-          }
-          // console.log('this is err');
-          setErrorMessage(
-            messageSession,
-            'Order not deleted due to some issue. Please try again later.',
-          );
-          return json(
-            {},
-            {
-              headers: [
-                ['Set-Cookie', await context.session.commit({})],
-                ['Set-Cookie', await messageCommitSession(messageSession)],
-              ],
-            },
-          );
-        }
-      case 'PUT':
-        try {
-          const response = await cartUpdate(context, request);
-          setSuccessMessage(messageSession, 'Cart updated successfully');
-          return json(
-            {},
-            {
-              headers: [
-                ['Set-Cookie', await context.session.commit({})],
-                ['Set-Cookie', await messageCommitSession(messageSession)],
-              ],
-            },
-          );
-        } catch (error) {
-          if (error instanceof Error) {
-            // console.log('this is err', error?.message);
-            setErrorMessage(messageSession, error?.message);
-            return json(
-              {},
-              {
-                headers: [
-                  ['Set-Cookie', await context.session.commit({})],
-                  ['Set-Cookie', await messageCommitSession(messageSession)],
-                ],
-              },
-            );
-          }
-          // console.log('this is err');
-          setErrorMessage(
-            messageSession,
-            'Something went wrong during update cart. Please try again later.',
-          );
-          return json(
-            {},
-            {
-              headers: [
-                ['Set-Cookie', await context.session.commit({})],
-                ['Set-Cookie', await messageCommitSession(messageSession)],
-              ],
-            },
-          );
-        }
-      default:
-        res = json(
-          {
-            status: false,
-            message: `${request.method} not supported`,
-            payload: null,
           },
-          404,
         );
-    }
-  } catch (error) {
-    if (error instanceof Error) {
-      console.log(' errerdf ', error?.message);
-    }
-    console.log(' errerdf ');
+      }
+    case 'DELETE':
+      try {
+        res = await removeItemFromCart(context, request);
+        setSuccessMessage(messageSession, 'Order deleted successfully');
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      } catch (error) {
+        if (error instanceof Error) {
+          // console.log('this is err', error?.message);
+          setErrorMessage(messageSession, error?.message);
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        }
+        // console.log('this is err');
+        setErrorMessage(
+          messageSession,
+          'Order not deleted due to some issue. Please try again later.',
+        );
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      }
+    case 'PUT':
+      try {
+        const response = await cartUpdate(context, request);
+        setSuccessMessage(messageSession, 'Cart updated successfully');
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      } catch (error) {
+        if (error instanceof Error) {
+          // console.log('this is err', error?.message);
+          setErrorMessage(messageSession, error?.message);
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        }
+        // console.log('this is err');
+        setErrorMessage(
+          messageSession,
+          'Something went wrong during update cart. Please try again later.',
+        );
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      }
+    default:
+      res = json(
+        {
+          status: false,
+          message: `${request.method} not supported`,
+          payload: null,
+        },
+        404,
+      );
   }
-
-  return {};
 }
 
 export default function CartList() {
   const { cartList, shippingAddresses }: any = useLoaderData<typeof loader>();
-  // console.log("cartList.productList", cartList);
+  const [updateCart, setUpdateCart] = useState(false);
 
   return (
     <>
@@ -211,6 +203,8 @@ export default function CartList() {
         <MyProducts
           products={cartList?.productList}
           currency={cartList?.currency}
+          updateCart={updateCart}
+          setUpdateCart={setUpdateCart}
         />
         <OrderSummary
           cartSubTotalPrice={cartList?.cartSubTotalPrice}
@@ -220,6 +214,7 @@ export default function CartList() {
           gst={cartList?.gst}
           currency={cartList?.currency}
           shippingAddresses={shippingAddresses}
+          updateCart={updateCart}
         />
       </div>
     </>

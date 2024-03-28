@@ -127,7 +127,7 @@ export function ProductCardInfo({
               </div>
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
-              <span className="text-lg font-medium">{currency} </span>
+              <span className="text-lg font-medium">{currency ? currency : '$'} </span>
               {(companyPrice && companyPrice?.toFixed(2)) || 'N/A'}
             </h3>
             <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
@@ -151,7 +151,7 @@ export function ProductCardInfo({
               </div>
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-              <span className="text-lg font-medium">{currency} </span>{(defaultPrice && defaultPrice?.toFixed(2)) || 'N/A'}
+              <span className="text-lg font-medium">{currency ? currency : '$'} </span>{(defaultPrice && defaultPrice?.toFixed(2)) || 'N/A'}
             </h3>
             <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
           </div>

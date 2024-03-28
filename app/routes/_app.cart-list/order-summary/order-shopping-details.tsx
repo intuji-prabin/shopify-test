@@ -217,7 +217,7 @@ export function ShippingAddress({
   );
 }
 
-export function ShoppingDetails({ shippingAddresses }: any) {
+export function ShoppingDetails({ shippingAddresses, updateCart }: any) {
   const addressList = shippingAddresses.addresses;
   const defaultAddress = shippingAddresses.defaultAddress;
   const mergedAddressList = [shippingAddresses.defaultAddress, ...shippingAddresses.addresses];
@@ -230,6 +230,7 @@ export function ShoppingDetails({ shippingAddresses }: any) {
     defaultAddress1,
     defaultAddress2,
   );
+  console.log("updateCart", updateCart)
 
   return (
     <div className="flex flex-col gap-4 p-6 border-b order border-grey-50">
@@ -253,9 +254,19 @@ export function ShoppingDetails({ shippingAddresses }: any) {
         />
       </div>
       {/* place order starts here */}
-      <Button className="text-lg min-h-14" variant="primary" type="submit">
-        Place order
-      </Button>
+      {!updateCart ?
+        <Button className="text-lg min-h-14" variant="primary" type="submit">
+          Place order
+        </Button>
+        : <div>
+          <button
+            className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-not-allowed text-grey-400 bg-grey-200 min-h-14"
+            disabled
+          >
+            Place order
+          </button>
+          <p className='text-red-500'>Please update your cart to "PLACE ORDER"</p>
+        </div>}
       <p className="text-lg font-normal leading-[22px] text-grey-700">
         <span className="underline text-primary-500">
           Availability, shipping, tax & promotions

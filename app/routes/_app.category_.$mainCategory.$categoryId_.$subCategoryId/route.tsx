@@ -266,6 +266,7 @@ export default function SubCategoryPage() {
     emblaApi.on('select', onSelect);
   }, [emblaApi, onInit, onSelect]);
 
+  console.log("productList?.results?.formattedData.productList", productList?.results?.formattedData.productList)
   return (
     <section className="container">
       <div className="pt-6">

@@ -24,6 +24,7 @@ export type BulkOrderColumn = {
   id: string;
   moq: number;
   uomName: string;
+  handle: string;
   unitOfMeasure: [
     {
       unit: string;
@@ -40,7 +41,7 @@ export type BulkOrderColumn = {
   totalPrice: number;
 };
 
-export function useMyProductColumn(currency?: string) {
+export function useMyProductColumn(currency?: string, setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>) {
   const columns = useMemo<ColumnDef<BulkOrderColumn>[]>(
     () => [
       {
@@ -79,6 +80,7 @@ export function useMyProductColumn(currency?: string) {
               sku={product.sku}
               featuredImage={product.featuredImage}
               moq={product.moq}
+              handle={product?.handle}
             />
           );
         },
@@ -97,6 +99,7 @@ export function useMyProductColumn(currency?: string) {
               variantId={product.variantId}
               moq={product.moq}
               lineItemId={product.id}
+              setUpdateCart={setUpdateCart}
             />
           );
         },
@@ -114,6 +117,7 @@ export function useMyProductColumn(currency?: string) {
               info={info}
               selectedUOMName={product.uomName}
               productId={product.productId}
+              setUpdateCart={setUpdateCart}
             />
           );
         },
@@ -157,9 +161,9 @@ export function useMyProductColumn(currency?: string) {
 type ItemsColumnType = Pick<
   BulkOrderColumn,
   'title' | 'sku' | 'featuredImage' | 'moq'
->;
+> & { handle?: string };
 
-export function ItemsColumn({ title, sku, featuredImage, moq }: ItemsColumnType) {
+export function ItemsColumn({ title, sku, featuredImage, moq, handle }: ItemsColumnType) {
   return (
     <div className="flex space-x-2">
       <figure className="bg-grey-25 p-3 !w-20 ">
@@ -170,7 +174,9 @@ export function ItemsColumn({ title, sku, featuredImage, moq }: ItemsColumnType)
         />
       </figure>
       <figcaption className="flex flex-col gap-y-1">
-        <h5 className="">{(title && title) || '--'}</h5>
+        <h5>
+          {handle ? <Link to={`/product/${handle}`}>{(title && title) || '--'}</Link> : (title && title) || '--'}
+        </h5>
         <div className="flex space-x-5 items-center max-w-[180px] flex-wrap gap-2">
           <p className="mr-2">
             <span className="font-semibold text-grey-900 ">SKU: </span>
@@ -194,7 +200,7 @@ export function ItemsColumn({ title, sku, featuredImage, moq }: ItemsColumnType)
 type QuantityColumnType = Pick<
   BulkOrderColumn,
   'quantity' | 'productId' | 'variantId' | 'moq'
-> & { info: any; lineItemId?: string };
+> & { info: any; lineItemId?: string; setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>> };
 export function QuantityColumn({
   quantity,
   info,
@@ -202,28 +208,44 @@ export function QuantityColumn({
   variantId,
   moq,
   lineItemId,
+  setUpdateCart,
 }: QuantityColumnType) {
   const meta = info.table.options.meta;
 
   const handleIncreaseQuantity = () => {
-    meta?.updateData(info.row.index, info.column.id, quantity + 1);
+    if (quantity + 1 >= moq && quantity + 1 > 1) {
+      setUpdateCart && setUpdateCart(quantity + 1 >= moq ? true : false);
+      meta?.updateData(info.row.index, info.column.id, quantity + 1);
+    }
+    else {
+      return false;
+    }
   };
 
   const handleDecreaseQuantity = () => {
-    meta?.updateData(
-      info.row.index,
-      info.column.id,
-      quantity > 0 ? quantity - 1 : 0,
-    );
+    if (quantity - 1 >= moq && quantity - 1 > 1) {
+      setUpdateCart && setUpdateCart(quantity - 1 >= moq ? true : false);
+      meta?.updateData(
+        info.row.index,
+        info.column.id,
+        quantity > 0 ? quantity - 1 : 0,
+      );
+    }
+    else {
+      return false;
+    }
   };
 
   function handleInputChange(event?: any) {
     const inputQuantity = parseInt(event.target.value);
-    meta?.updateData(
-      info.row.index,
-      info.column.id,
-      isNaN(inputQuantity) ? 0 : inputQuantity,
-    );
+    if (inputQuantity >= moq && inputQuantity > 1) {
+      setUpdateCart && setUpdateCart(inputQuantity >= moq ? true : false);
+      meta?.updateData(
+        info.row.index,
+        info.column.id,
+        isNaN(inputQuantity) ? 0 : inputQuantity,
+      );
+    }
   }
 
   return (
@@ -232,13 +254,14 @@ export function QuantityColumn({
         <div className="flex items-center">
           <button
             className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
+            type='button'
             onClick={handleDecreaseQuantity}
           >
             -
           </button>
           <input
             type="text"
-            className="flex items-center justify-center w-10 text-center border-solid border-x-0 border-grey-200 min-h-10"
+            className="flex items-center justify-center w-10 text-center border-solid appearance-none border-x-0 border-grey-200 min-h-10"
             min="1"
             value={quantity}
             name="quantity"
@@ -246,6 +269,7 @@ export function QuantityColumn({
           />
           <button
             className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
+            type='button'
             onClick={handleIncreaseQuantity}
           >
             +
@@ -291,6 +315,7 @@ type MeasurementColumnType = Pick<BulkOrderColumn, 'uom' | 'unitOfMeasure'> & {
   info: any;
   selectedUOMName: any;
   productId?: string;
+  setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export function ProductMeasurement({
@@ -299,11 +324,13 @@ export function ProductMeasurement({
   info,
   selectedUOMName,
   productId,
+  setUpdateCart,
 }: MeasurementColumnType) {
   const [UOM, setUom] = useState(uom);
   const meta = info.table.options.meta;
 
   const handleUOMChange = (selectedUOM: string) => {
+    setUpdateCart && setUpdateCart(true);
     setUom(selectedUOM);
     meta?.updateData(info.row.index, info.column.id, selectedUOM);
   };
