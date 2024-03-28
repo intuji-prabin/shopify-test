@@ -158,7 +158,7 @@ const CarouselThumb = ({
       {/* Main Product Image Carousel Begins Here */}
       <div className='w-full lg:max-w-[calc(100%_-_95px)] lg:w-[unset] relative'>
         {volumePrice && (
-          <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px] z-[99]">
+          <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px] z-10">
             QTY Buy Available
           </div>
         )}
