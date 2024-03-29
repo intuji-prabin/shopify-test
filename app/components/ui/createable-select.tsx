@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Check, ChevronsUpDown} from 'lucide-react';
+import {ChevronsUpDown} from 'lucide-react';
 import {Popover, PopoverContent, PopoverTrigger} from './popover';
 import {Button} from './button';
 import {
@@ -10,42 +10,26 @@ import {
   CommandItem,
   CommandList,
 } from './command';
-import {cn} from '~/lib/utils/utils';
 
-const frameworks = [
-  {
-    value: 'next.js',
-    label: 'Next.js',
-  },
-  {
-    value: 'sveltekit',
-    label: 'SvelteKit',
-  },
-  {
-    value: 'nuxt.js',
-    label: 'Nuxt.js',
-  },
-  {
-    value: 'remix',
-    label: 'Remix',
-  },
-  {
-    value: 'astro',
-    label: 'Astro',
-  },
-];
-
-export function ComboboxDemo() {
+export function ComboboxDemo({
+  options,
+  selectedValue,
+  setSelectedValue,
+}: {
+  selectedValue: string | null;
+  setSelectedValue: React.Dispatch<React.SetStateAction<string | null>>;
+  options: {value: string; label: string}[];
+}) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState('');
   const [search, setSearch] = React.useState('');
-  console.log('search', search);
-  console.log();
+
+  const isFound = options.find((option) => option.value === selectedValue);
+
+  const placeHolderValue = isFound?.label || selectedValue;
 
   React.useEffect(() => {
     if (open) {
       setSearch('');
-      setValue('');
     }
   }, [open]);
   return (
@@ -55,15 +39,14 @@ export function ComboboxDemo() {
           variant="input"
           role="combobox"
           aria-expanded={open}
-          className="justify-between"
+          className="justify-between px-3 font-medium normal-case"
         >
-          {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : 'Select a Group'}
+          {placeHolderValue ?? 'Select a Group'}
+
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0 w-[26rem]">
+      <PopoverContent className="p-0 w-[26rem] rounded-none">
         <Command>
           <CommandInput
             className="w-full px-0 border-0 border-grey-100 active:!border-grey-100 focus:!border-grey-100 hover:!border-grey-100 focu:bg-white active:bg-white hover:bg-white !bg-white placeholder:text-grey-500"
@@ -71,25 +54,30 @@ export function ComboboxDemo() {
             onValueChange={setSearch}
             placeholder="Search group..."
           />
-          <CommandEmpty>No framework found.</CommandEmpty>
+          <CommandEmpty className="p-3">
+            <Button
+              variant="primary"
+              className="w-full"
+              onClick={() => {
+                setSelectedValue(search);
+                setOpen(false);
+              }}
+            >
+              Create a New Group
+            </Button>
+          </CommandEmpty>
           <CommandList>
             <CommandGroup>
-              {frameworks.map((framework) => (
+              {options.map((option) => (
                 <CommandItem
-                  key={framework.value}
-                  value={framework.value}
+                  key={option.value}
+                  value={option.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? '' : currentValue);
+                    setSelectedValue(currentValue);
                     setOpen(false);
                   }}
                 >
-                  <Check
-                    className={cn(
-                      'mr-2 h-4 w-4',
-                      value === framework.value ? 'opacity-100' : 'opacity-0',
-                    )}
-                  />
-                  {framework.label}
+                  {option.label}
                 </CommandItem>
               ))}
             </CommandGroup>

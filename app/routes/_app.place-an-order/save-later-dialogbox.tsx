@@ -1,4 +1,5 @@
 import {VariantProps} from 'class-variance-authority';
+import React, {useEffect} from 'react';
 import RemoveItem from '~/components/icons/removeItem';
 import {Button, ButtonProps, buttonVariants} from '~/components/ui/button';
 import {ComboboxDemo} from '~/components/ui/createable-select';
@@ -10,26 +11,47 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/ui/dialog';
+
+const frameworks = [
+  {
+    value: 'next.js',
+    label: 'Next.js',
+  },
+  {
+    value: 'sveltekit',
+    label: 'SvelteKit',
+  },
+  {
+    value: 'nuxt.js',
+    label: 'Nuxt.js',
+  },
+  {
+    value: 'remix',
+    label: 'Remix',
+  },
+  {
+    value: 'astro',
+    label: 'Astro',
+  },
+];
+
 export default function CreateGroup({
-  handleRemoveAllItems,
-  buttonVariant,
+  isDisabled,
+  productGroupOptions,
 }: {
-  handleRemoveAllItems: () => void;
-  buttonVariant:
-    | 'link'
-    | 'input'
-    | 'primary'
-    | 'secondary'
-    | 'disabled'
-    | 'ghost'
-    | 'danger'
-    | null
-    | undefined;
+  isDisabled: boolean;
+  productGroupOptions: {value: string; label: string}[];
 }) {
+  const [selectedValue, setSelectedValue] = React.useState<string | null>(null);
+  console.log('selectedValue', selectedValue);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={buttonVariant} className="min-w-[111px] min-h-10">
+        <Button
+          variant={isDisabled ? 'disabled' : 'primary'}
+          className="min-w-[111px] min-h-10"
+        >
           Save for later
         </Button>
       </DialogTrigger>
@@ -46,14 +68,11 @@ export default function CreateGroup({
           >
             Group Name
           </label>
-          {/* <input
-            type="text"
-            id="group-name"
-            name="group-name"
-            placeholder="Group Name"
-            className="border border-grey-100 active:!border-grey-100 focus:!border-grey-100 hover:!border-grey-100 focu:bg-white active:bg-white hover:bg-white !bg-white placeholder:text-grey-500"
-          /> */}
-          <ComboboxDemo />
+          <ComboboxDemo
+            selectedValue={selectedValue}
+            setSelectedValue={setSelectedValue}
+            options={productGroupOptions}
+          />
         </div>
         <DialogFooter className="block p-4">
           <Button

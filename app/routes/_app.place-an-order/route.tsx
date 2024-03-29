@@ -1,13 +1,13 @@
 import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
-import OrderTable from './order-table';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   MetaFunction,
+  redirect,
 } from '@shopify/remix-oxygen';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {ComboboxDemo} from '~/components/ui/createable-select';
+import {Outlet} from '@remix-run/react';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Place an Order'}];
@@ -28,6 +28,7 @@ export async function action({context, request}: ActionFunctionArgs) {
   switch (action) {
     case 'add_product': {
       console.log('data list', Object.fromEntries(formData));
+      return redirect('/place-an-order/list');
     }
     default:
       break;
@@ -43,7 +44,7 @@ export default function BulkOrderPage({measurement}: {measurement?: string}) {
         sectionName={'PLACE AN ORDER'}
       />
       <UploadSearchbar searchVariant="place_an_order" />
-      <OrderTable />
+      <Outlet />
     </>
   );
 }

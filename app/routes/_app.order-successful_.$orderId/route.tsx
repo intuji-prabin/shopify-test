@@ -34,7 +34,10 @@ export default function OrderSuccessPage() {
       <div className="flex flex-col gap-6">
         <h3>Your order has been successfully placed</h3>
         <div className="flex flex-col items-center">
-          <p>{userName}, thank you for your order!</p>
+          <p>
+            <span className="capitalize">{userName.trim()}</span>, thank you for
+            your order!
+          </p>
           <p>
             We’ve received your order and will contact your via email address.
           </p>
