@@ -1,6 +1,6 @@
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
-import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
+import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getAccessToken} from '~/lib/utils/auth-session.server';
 
@@ -66,8 +66,7 @@ export const getCagetoryList = async (context: any) => {
   }
 };
 
-export const getSessionData = async ( userDetails : any , context : any ) => {
-  console.log("fsdfads ", `${ENDPOINT.AUTH.SESSION}/${userDetails?.id}`)
+export const getSessionData = async (userDetails: any, context: any) => {
   const cartResults = await useFetch<any>({
     method: AllowedHTTPMethods.GET,
     url: `${ENDPOINT.AUTH.SESSION}/${userDetails?.id}`,
@@ -75,14 +74,17 @@ export const getSessionData = async ( userDetails : any , context : any ) => {
   if (!cartResults?.status) {
     return false;
   }
-  console.log("dfd ",cartResults?.payload )
+  // console.log('dfd ', cartResults?.payload);
   // const sessions = {
   //   totalWishList: cartResults?.payload?.wishlist,
   //   wishItems: [ { id: 8, productId: '9077965127966' } ]
   // }
-  await context.session.set(WISHLIST_SESSION_KEY, cartResults?.payload?.wishlist)
-  return true
-}
+  await context.session.set(
+    WISHLIST_SESSION_KEY,
+    cartResults?.payload?.wishlist,
+  );
+  return true;
+};
 
 const formateCategory = async (categoryesponse: any) => {
   const items = categoryesponse?.collections?.nodes;
