@@ -35,15 +35,12 @@ export async function addToWishlist(
       url: `${ENDPOINT.WISHLIST.ADD}/${customerId}`,
       body: JSON.stringify({productId: productId?.productId}),
     });
-    const sessionWishlistInfo = session.get(WISHLIST_SESSION_KEY);
     if (results.status === false) {
       throw new Error('Failed to add to wishlist');
     }
-
     const payload = results.payload;
     const productWishlist = payload.product;
     const numberOfWishListed = productWishlist.length;
-    // const sessionSetData = numberOfWishListed;
     session.set(WISHLIST_SESSION_KEY, numberOfWishListed);
     return payload;
   } catch (error) {
@@ -58,7 +55,6 @@ export async function removeFromWishlist(
 ) {
   const {userDetails} = await getUserDetails(request);
   const {session} = context;
-  // console.log("productIdWish", productId)
   try {
     const customerId = userDetails?.id;
     const results = await useFetch<WishListResponse>({
@@ -66,11 +62,9 @@ export async function removeFromWishlist(
       url: `${ENDPOINT.WISHLIST.ADD}/${customerId}`,
       body: JSON.stringify({productId: productId?.productId}),
     });
-    const sessionWishlistInfo = session.get(WISHLIST_SESSION_KEY);
     if (results.status === false) {
       throw new Error('Failed to add to wishlist');
     }
-
     const payload = results.payload;
     const productWishlist = payload.product;
     const numberOfWishListed = productWishlist.length;

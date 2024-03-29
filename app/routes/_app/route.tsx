@@ -43,7 +43,7 @@ export async function loader({ request, context }: ActionFunctionArgs) {
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
   const headers = [] as any
   const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY)
-console.log("werwerew ", wishlistSession)
+  console.log("werwerew ", wishlistSession);
   if (!sessionCartInfo) {
     sessionCartInfo = await getSessionCart(userDetails?.id, context);
     if (sessionCartInfo) {
@@ -79,7 +79,7 @@ export default function PublicPageLayout() {
   const submit = useSubmit();
 
   const cartCount = sessionCartInfo?.lineItems ?? 0;
-  const wishlistCount = wishlistSession?.totalWishList ?? 0;
+  const wishlistCount = wishlistSession ?? 0;
 
   const userId = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
     event: 'logout-event',
