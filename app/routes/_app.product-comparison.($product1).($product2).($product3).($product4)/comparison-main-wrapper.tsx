@@ -71,8 +71,8 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
             <img src={product1?.product?.featuredImage?.url || DEFAULT_IMAGE?.IMAGE} alt="product1" className='object-contain h-full overflow-hidden' />
           </figure>
           <div className='pt-3'>
-            <p className='text-lg font-medium leading-[22px] text-grey-900'>
-              <Link to={`/product/${product1?.product?.handle}`}>
+            <p className='text-lg font-medium leading-[22px] text-grey-900 overflow-y-hidden h-11'>
+              <Link to={`/product/${product1?.product?.handle}`} title={product1?.product?.title}>
                 {product1?.product?.title}
               </Link>
             </p>
@@ -85,11 +85,11 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
                 </p>
                 <div className="info-block">
                   <p className="flex items-center justify-center w-5 h-5 ">
-                    <Link to="" data-tooltip="Recommended retail price">
+                    <div className='cursor-pointer' data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts">
                       <span>
                         <TooltipInfo />
                       </span>
-                    </Link>
+                    </div>
                   </p>
                 </div>
               </div>
@@ -107,21 +107,20 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
                 </p>
                 <div className="info-block">
                   <p className="flex items-center justify-center w-5 h-5 ">
-                    <Link
-                      to=""
-                      data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts"
+                    <div className='cursor-pointer'
+                      data-tooltip="Recommended retail price"
                     >
                       <span>
                         <TooltipInfo />
                       </span>
-                    </Link>
+                    </div>
                   </p>
                 </div>
               </div>
-              <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-[#252727]">
+              <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-grey-300">
                 <span className='text-lg font-medium'>{product1?.product?.currency}</span>{product1?.product?.defaultPrice}
               </h3>
-              <p className="text-[14px] font-normal leading-4">
+              <p className="text-[14px] font-normal leading-4 text-grey-300">
                 (inc. GST)
               </p>
             </div>
@@ -141,7 +140,7 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
                 </Button>
               </figure>
               <div className='pt-3'>
-                <p className='text-lg font-medium leading-[22px] text-grey-900'>
+                <p className='text-lg font-medium leading-[22px] text-grey-900 overflow-y-hidden h-11'>
                   <Link to={`/product/${product2?.product?.handle}`}>
                     {product2?.product?.title}
                   </Link>
@@ -188,10 +187,10 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
                       </p>
                     </div>
                   </div>
-                  <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-[#252727]">
+                  <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-grey-300">
                     <span className='text-lg font-medium'>{product2?.product?.currency}</span>{product2?.product?.defaultPrice}
                   </h3>
-                  <p className="text-[14px] font-normal leading-4">
+                  <p className="text-[14px] font-normal leading-4 text-grey-300">
                     (inc. GST)
                   </p>
                 </div>
@@ -224,7 +223,7 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
                 </Button>
               </figure>
               <div className='pt-3'>
-                <p className='text-lg font-medium leading-[22px] text-grey-900'>
+                <p className='text-lg font-medium leading-[22px] text-grey-900 overflow-y-hidden h-11'>
                   <Link to={`/product/${product3?.product?.handle}`}>
                     {product3?.product?.title}
                   </Link>
@@ -271,10 +270,10 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
                       </p>
                     </div>
                   </div>
-                  <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-[#252727]">
+                  <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-grey-300">
                     <span className='text-lg font-medium'>{product3?.product?.currency}</span>{product3?.product?.defaultPrice}
                   </h3>
-                  <p className="text-[14px] font-normal leading-4">
+                  <p className="text-[14px] font-normal leading-4 text-grey-300">
                     (inc. GST)
                   </p>
                 </div>
@@ -307,7 +306,7 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
                 </Button>
               </figure>
               <div className='pt-3'>
-                <p className='text-lg font-medium leading-[22px] text-grey-900'>
+                <p className='text-lg font-medium leading-[22px] text-grey-900 overflow-y-hidden h-11'>
                   <Link to={`/product/${product4?.product?.handle}`}>
                     {product4?.product?.title}
                   </Link>
@@ -354,10 +353,10 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
                       </p>
                     </div>
                   </div>
-                  <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-[#252727]">
+                  <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-grey-300">
                     <span className='text-lg font-medium'>{product4?.product?.currency}</span>{product4?.product?.defaultPrice}
                   </h3>
-                  <p className="text-[14px] font-normal leading-4">
+                  <p className="text-[14px] font-normal leading-4 text-grey-300">
                     (inc. GST)
                   </p>
                 </div>
