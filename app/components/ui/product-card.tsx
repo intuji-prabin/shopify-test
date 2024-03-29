@@ -1,5 +1,4 @@
 import { Form, Link, useSubmit } from '@remix-run/react';
-import { useState } from 'react';
 import {
   ProductLoveRed,
   ProductLoveWhite,
@@ -20,19 +19,15 @@ export function ProductCard({
   handle,
   id,
   uom,
-  wishListItems,
-  currency
+  currency,
+  liked
 }: ProductCardProps) {
-  function checkProductIdExists(productId: number) {
-    return wishListItems?.some((item: any) => item?.productId === productId);
-  }
-
   return (
     <div className="bg-white single-product-card">
       <div className="relative h-full">
         <ProductCardImage
           volumePrice={volumePrice}
-          isFavorited={checkProductIdExists(id)}
+          liked={liked}
           featuredImageUrl={featuredImageUrl}
           imageBackgroundColor={imageBackgroundColor}
           productId={id}
@@ -62,7 +57,6 @@ type ProductCardInfoProps = {
   handle: string;
   id: number;
   uom: string;
-  wishListItems?: any;
   currency: string;
   volumePrice?: boolean;
 };
@@ -74,11 +68,11 @@ type VariantType = {
 };
 
 type ProductCardImageProps = {
-  isBuyQtyAvailable: boolean;
-  isFavorited: boolean;
+  liked: boolean;
   imageBackgroundColor: string;
   featuredImageUrl: string;
   productId: number;
+  volumePrice: boolean;
 };
 
 export function ProductCardInfo({
@@ -173,17 +167,10 @@ export function ProductCardInfo({
 function ProductCardImage({
   featuredImageUrl,
   volumePrice,
-  isFavorited,
+  liked,
   imageBackgroundColor,
   productId,
 }: ProductCardImageProps) {
-  const [heartFill, setHeartFill] = useState(isFavorited);
-  // const [isBuyQtyAvailableState, setIsBuyQtyAvailable] =
-  //   useState(isBuyQtyAvailable);
-
-  const handleHeartClick = () => {
-    setHeartFill(!heartFill);
-  };
 
   return (
     <div
@@ -195,14 +182,14 @@ function ProductCardImage({
           QTY Buy Available
         </div>
       )}
-      <Form method={isFavorited ? 'DELETE' : 'POST'} className="flex">
+      <Form method={liked ? 'DELETE' : 'POST'} className="flex">
         <input type="hidden" name="productId" value={productId} />
         <button
           className="absolute top-2 right-2"
-          value={isFavorited ? 'removeFromWishList' : 'addToWishList'}
+          value={liked ? 'removeFromWishList' : 'addToWishList'}
           name="action"
         >
-          {isFavorited ? <ProductLoveRed /> : <ProductLoveWhite />}
+          {liked ? <ProductLoveRed /> : <ProductLoveWhite />}
         </button>
       </Form>
       <figure className="mt-3">

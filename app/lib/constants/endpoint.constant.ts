@@ -10,6 +10,7 @@ export const ENDPOINT = {
     REGISTER: '/auth/register',
     FORGOT_PASSWORD: '/auth/forgot-password',
     RESET_PASSWORD: '/auth/reset-password',
+    SESSION : `${BASE_URL}/session`
   },
   ROLE: {
     GET: `${BASE_URL}/customer-roles`,
