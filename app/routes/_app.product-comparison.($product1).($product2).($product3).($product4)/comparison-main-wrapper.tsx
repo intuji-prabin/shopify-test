@@ -71,7 +71,7 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
             <img src={product1?.product?.featuredImage?.url || DEFAULT_IMAGE?.IMAGE} alt="product1" className='object-contain h-full overflow-hidden' />
           </figure>
           <div className='pt-3'>
-            <p className='text-lg font-medium leading-[22px] text-grey-900 overflow-y-hidden h-11'>
+            <p className='text-lg font-medium leading-[22px] text-grey-900 overflow-y-hidden h-11 line-clamp-2'>
               <Link to={`/product/${product1?.product?.handle}`} title={product1?.product?.title}>
                 {product1?.product?.title}
               </Link>
@@ -140,8 +140,8 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
                 </Button>
               </figure>
               <div className='pt-3'>
-                <p className='text-lg font-medium leading-[22px] text-grey-900 overflow-y-hidden h-11'>
-                  <Link to={`/product/${product2?.product?.handle}`}>
+                <p className='text-lg font-medium leading-[22px] text-grey-900 overflow-y-hidden h-11 line-clamp-2'>
+                  <Link to={`/product/${product2?.product?.handle}`} title={product2?.product?.title}>
                     {product2?.product?.title}
                   </Link>
                 </p>
@@ -223,8 +223,8 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
                 </Button>
               </figure>
               <div className='pt-3'>
-                <p className='text-lg font-medium leading-[22px] text-grey-900 overflow-y-hidden h-11'>
-                  <Link to={`/product/${product3?.product?.handle}`}>
+                <p className='text-lg font-medium leading-[22px] text-grey-900 overflow-y-hidden h-11 line-clamp-2'>
+                  <Link to={`/product/${product3?.product?.handle}`} title={product3?.product?.title}>
                     {product3?.product?.title}
                   </Link>
                 </p>
@@ -306,8 +306,8 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
                 </Button>
               </figure>
               <div className='pt-3'>
-                <p className='text-lg font-medium leading-[22px] text-grey-900 overflow-y-hidden h-11'>
-                  <Link to={`/product/${product4?.product?.handle}`}>
+                <p className='text-lg font-medium leading-[22px] text-grey-900 overflow-y-hidden h-11 line-clamp-2'>
+                  <Link to={`/product/${product4?.product?.handle}`} title={product4?.product?.title}>
                     {product4?.product?.title}
                   </Link>
                 </p>
