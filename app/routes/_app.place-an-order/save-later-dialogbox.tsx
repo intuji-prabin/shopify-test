@@ -1,6 +1,7 @@
 import {VariantProps} from 'class-variance-authority';
 import RemoveItem from '~/components/icons/removeItem';
 import {Button, ButtonProps, buttonVariants} from '~/components/ui/button';
+import {ComboboxDemo} from '~/components/ui/createable-select';
 import {
   Dialog,
   DialogContent,
@@ -45,13 +46,14 @@ export default function CreateGroup({
           >
             Group Name
           </label>
-          <input
+          {/* <input
             type="text"
             id="group-name"
             name="group-name"
             placeholder="Group Name"
             className="border border-grey-100 active:!border-grey-100 focus:!border-grey-100 hover:!border-grey-100 focu:bg-white active:bg-white hover:bg-white !bg-white placeholder:text-grey-500"
-          />
+          /> */}
+          <ComboboxDemo />
         </div>
         <DialogFooter className="block p-4">
           <Button

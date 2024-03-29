@@ -7,6 +7,7 @@ import {
   MetaFunction,
 } from '@shopify/remix-oxygen';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {ComboboxDemo} from '~/components/ui/createable-select';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Place an Order'}];
@@ -33,6 +34,7 @@ export async function action({context, request}: ActionFunctionArgs) {
   }
   return null;
 }
+
 export default function BulkOrderPage({measurement}: {measurement?: string}) {
   return (
     <>
