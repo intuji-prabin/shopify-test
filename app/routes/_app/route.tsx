@@ -40,7 +40,7 @@ export async function loader({ request, context }: ActionFunctionArgs) {
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
   const headers = [] as any
   const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY)
-  console.log("werwerew ", wishlistSession);
+  // console.log("werwerew ", wishlistSession);
   if (!sessionCartInfo) {
     sessionCartInfo = await getSessionCart(userDetails?.id, context);
     if (sessionCartInfo) {
