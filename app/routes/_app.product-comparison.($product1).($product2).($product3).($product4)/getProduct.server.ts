@@ -10,10 +10,14 @@ export async function getSingleProduct(
   const products = await storefront.query(
     STOREFRONT_SINGLE_PRODUCT_GET_QUERY(`gid://shopify/Product/${productID}`),
   );
-  const prices = await getPrices(productID, customerId);
-  const product = formatProduct(products?.product, prices);
-
-  return {product};
+  if (products?.product === null) {
+    console.log('error has occured');
+    throw new Error('Invalid Product ID');
+  } else {
+    const prices = await getPrices(productID, customerId);
+    const product = formatProduct(products?.product, prices);
+    return {product};
+  }
 }
 
 export type ProductResponse = {
