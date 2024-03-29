@@ -43,11 +43,8 @@ export async function addToWishlist(
     const payload = results.payload;
     const productWishlist = payload.product;
     const numberOfWishListed = productWishlist.length;
-    const sessionSetData = {
-      totalWishList: numberOfWishListed,
-      wishItems: productWishlist,
-    };
-    session.set(WISHLIST_SESSION_KEY, sessionSetData);
+    // const sessionSetData = numberOfWishListed;
+    session.set(WISHLIST_SESSION_KEY, numberOfWishListed);
     return payload;
   } catch (error) {
     return true;
@@ -77,11 +74,7 @@ export async function removeFromWishlist(
     const payload = results.payload;
     const productWishlist = payload.product;
     const numberOfWishListed = productWishlist.length;
-    const sessionSetData = {
-      totalWishList: numberOfWishListed,
-      wishItems: productWishlist,
-    };
-    session.set(WISHLIST_SESSION_KEY, sessionSetData);
+    session.set(WISHLIST_SESSION_KEY, numberOfWishListed);
     return payload;
   } catch (error) {
     return true;

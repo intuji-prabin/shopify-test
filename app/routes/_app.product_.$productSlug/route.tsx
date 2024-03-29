@@ -90,6 +90,7 @@ export const loader = async ({
 
 export default function route() {
   const { product, productPage, sessionWishListInfo } = useLoaderData<typeof loader>();
+  // console.log("dfsdfdsf ", product)
   return (
     <ProductDetailPageWrapper>
       <div className="flex items-center pt-6 pb-4 ">

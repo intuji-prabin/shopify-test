@@ -214,6 +214,7 @@ const PAGE_LIMIT = 9;
 export default function SubCategoryPage() {
   const { categories, productList, categoryId, subCategoryId, mainCategory, sessionWishListInfo } =
     useLoaderData<typeof loader>();
+    console.log("rdfffsfd ", productList)
   const { page } = productList;
   const paginationInfo = productList?.results?.pageInfo;
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);

@@ -13,6 +13,7 @@ import {
   getCagetoryList,
   getCategories,
   getSessionCart,
+  // getSessionData,
 } from './app.server';
 import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
 import {
@@ -36,12 +37,13 @@ import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
 export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
   const { userDetails } = await getUserDetails(request);
+  // const sessionData = await getSessionData(userDetails, context )
   const categories = await getCagetoryList(context);
   const messageSession = await getMessageSession(request);
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
   const headers = [] as any
   const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY)
-
+console.log("werwerew ", wishlistSession)
   if (!sessionCartInfo) {
     sessionCartInfo = await getSessionCart(userDetails?.id, context);
     if (sessionCartInfo) {
