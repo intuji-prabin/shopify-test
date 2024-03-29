@@ -75,12 +75,12 @@ export const getSessionData = async ( userDetails : any , context : any ) => {
   if (!cartResults?.status) {
     return false;
   }
-  console.log("dfd ",cartResults?.payload?.wishlist )
-  const sessions = {
-    totalWishList: cartResults?.payload?.wishlist,
-    wishItems: [ { id: 8, productId: '9077965127966' } ]
-  }
-  await context.session.set(WISHLIST_SESSION_KEY, sessions)
+  console.log("dfd ",cartResults?.payload )
+  // const sessions = {
+  //   totalWishList: cartResults?.payload?.wishlist,
+  //   wishItems: [ { id: 8, productId: '9077965127966' } ]
+  // }
+  await context.session.set(WISHLIST_SESSION_KEY, cartResults?.payload?.wishlist)
   return true
 }
 
