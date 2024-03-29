@@ -1,13 +1,12 @@
 import { Form, Link, useSubmit } from '@remix-run/react';
 import { useState } from 'react';
+import Info from '~/components/icons/info';
 import {
   CircleInformationMajor,
   Compare,
-  Pdf,
-  PickupLocation,
   ProductLoveRed,
   ProductLoveWhite,
-  TooltipInfo,
+  TooltipInfo
 } from '~/components/icons/orderStatus';
 import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -15,14 +14,9 @@ import { useMediaQuery } from '../../hooks/useMediaQuery';
 import CarouselThumb from './carouselThumb';
 import { getProductPriceByQty } from './product-detail';
 import { ProductInfoTable } from './productInfoTable';
-import { WarehouseInformation } from './view-warehouse-information';
-import Info from '~/components/icons/info';
 
-export default function ProductInformation({ product, wishListItems }: any) {
+export default function ProductInformation({ product }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
-  function checkProductIdExists(productId: number) {
-    return wishListItems?.some((item: any) => item?.productId === productId);
-  }
   const volumePrice = product?.priceRange?.length > 0 ? true : false;
 
   return (
@@ -44,7 +38,7 @@ export default function ProductInformation({ product, wishListItems }: any) {
           productName={product?.title}
           productId={product?.id}
           productVariantId={product?.variantId}
-          isFavorited={checkProductIdExists(product?.id)}
+          isFavorited={product?.liked}
           sku={'Sku'}
           skuUnits={product?.supplierSku}
           unitOfMeasurement={'Unit Of Measurement:'}

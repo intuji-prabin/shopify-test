@@ -214,6 +214,7 @@ const PAGE_LIMIT = 9;
 export default function SubCategoryPage() {
   const { categories, productList, categoryId, subCategoryId, mainCategory, sessionWishListInfo } =
     useLoaderData<typeof loader>();
+  console.log("rdfffsfd ", productList)
   const { page } = productList;
   const paginationInfo = productList?.results?.pageInfo;
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
@@ -355,7 +356,7 @@ export default function SubCategoryPage() {
               <div className="grid gap-6 my-6 sm:grid-cols-2 lg:grid-cols-3">
                 {productList?.results?.formattedData.productList?.map(
                   (product: any, index: any) => (
-                    <ProductCard key={index} {...product} wishListItems={sessionWishListInfo?.wishItems} />
+                    <ProductCard key={index} {...product} />
                   ),
                 )}
               </div>

@@ -1,28 +1,31 @@
-import {Link, json, useLoaderData} from '@remix-run/react';
-import {LoaderFunctionArgs, MetaFunction} from '@shopify/remix-oxygen';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {OrderSuccessfull} from '~/components/icons/orderStatus';
-import {Button} from '~/components/ui/button';
-import {Routes} from '~/lib/constants/routes.constent';
+import { Link, json, useLoaderData, useLocation } from '@remix-run/react';
+import { LoaderFunctionArgs, MetaFunction } from '@shopify/remix-oxygen';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { OrderSuccessfull } from '~/components/icons/orderStatus';
+import { Button } from '~/components/ui/button';
+import { Routes } from '~/lib/constants/routes.constent';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Order Successfull'}];
+  return [{ title: 'Order Successful' }];
 };
 
-export async function loader({context, request}: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   const userName = `${userDetails.firstName} ${userDetails.lastName}`;
 
-  return json({userName});
+  return json({ userName });
 }
 
 export default function OrderSuccessPage() {
-  const {userName} = useLoaderData<typeof loader>();
-
+  const { userName } = useLoaderData<typeof loader>();
+  const location = useLocation();
+  const originalURL = location.pathname;
+  const orderId = originalURL.split('/').pop();
+  const finalOrderId = orderId ? "/" + orderId : '';
   return (
     <section className="max-w-[538px] bg-white flex flex-col mx-auto justify-center items-center gap-6 py-6">
       <figure className="bg-semantic-success-100 rounded-[50%] h-12 w-12 flex items-center justify-center">
@@ -40,7 +43,7 @@ export default function OrderSuccessPage() {
 
       <div className="flex justify-between gap-4">
         <Button variant="primary">
-          <Link to={Routes.ORDERS}>track order</Link>
+          <Link to={Routes.ORDERS + finalOrderId}>track order</Link>
         </Button>
         <Button variant="ghost">
           <Link to={Routes.CATEGORIES}>All products</Link>

@@ -28,6 +28,7 @@ import MyProducts from './order-my-products/cart-myproduct';
 import { placeOrder } from './order-place.server';
 import OrderSummary from './order-summary/cart-order-summary';
 import { useState } from 'react';
+import { Routes } from '~/lib/constants/routes.constent';
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
@@ -59,8 +60,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
     case 'POST':
       try {
         res = await placeOrder(request, context);
+        // console.log("orderPlacedResponseFInal", res);
+        const shopifyID = res?.shopifyOrderId ? "/" + res?.shopifyOrderId : '';
         setSuccessMessage(messageSession, 'Order placed successfully');
-        return redirect('/order-successful', {
+        return redirect(Routes.ORDER_SUCCESSFUL + shopifyID, {
           headers: [
             ['Set-Cookie', await context.session.commit({})],
             ['Set-Cookie', await messageCommitSession(messageSession)],
