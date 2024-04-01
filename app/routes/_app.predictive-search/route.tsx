@@ -4,25 +4,25 @@ import {
   json,
   redirect,
 } from '@remix-run/server-runtime';
-import { AppLoadContext } from '@shopify/remix-oxygen';
+import {AppLoadContext} from '@shopify/remix-oxygen';
 import {
   PredictiveCollectionFragment,
   PredictiveProductFragment,
   PredictiveQueryFragment,
   PredictiveSearchQuery,
 } from 'storefrontapi.generated';
-import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
+import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import { addProductToCart } from '../_app.product_.$productSlug/product.server';
-import { getCartList } from '../_app.cart-list/cart.server';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
-import { getPrices } from '../_app.category_.$mainCategory.$categoryId_.$subCategoryId/product-list.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
+import {addProductToCart} from '../_app.product_.$productSlug/product.server';
+import {getCartList} from '../_app.cart-list/cart.server';
+import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
+import {getPrices} from '../_app.category_.$mainCategory.$categoryId_.$subCategoryId/product-list.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 
 type PredicticeSearchResultItemImage =
   | PredictiveCollectionFragment['image']
@@ -41,12 +41,15 @@ export type NormalizedPredictiveSearchResultItem = {
   price: string;
   currency: string;
   uom: string;
+  uomCode: string;
   variantId: string;
+  unitOfMeasure: {unit: string; code: string; conversionFactor: number}[];
+  defaultUomValue: string;
 };
 
 type NormalizedPredictiveSearchResults = Array<
-  | { type: 'queries'; items: Array<NormalizedPredictiveSearchResultItem> }
-  | { type: 'products'; items: Array<NormalizedPredictiveSearchResultItem> }
+  | {type: 'queries'; items: Array<NormalizedPredictiveSearchResultItem>}
+  | {type: 'products'; items: Array<NormalizedPredictiveSearchResultItem>}
 >;
 
 export type NormalizedPredictiveSearch = {
@@ -54,8 +57,8 @@ export type NormalizedPredictiveSearch = {
 };
 
 const NO_PREDICTIVE_SEARCH_RESULTS: NormalizedPredictiveSearchResults = [
-  { type: 'queries', items: [] },
-  { type: 'products', items: [] },
+  {type: 'queries', items: []},
+  {type: 'products', items: []},
 ];
 
 /**
@@ -80,6 +83,7 @@ async function normalizePredictiveSearchResults(
       predictiveSearch.products,
       customerId,
     );
+
     results.push({
       type: 'products',
       items: predictiveSearch.products.map(
@@ -89,6 +93,7 @@ async function normalizePredictiveSearchResults(
             'gid://shopify/ProductVariant/',
             '',
           );
+
           return {
             __typename: product.__typename,
             handle: product.handle,
@@ -107,13 +112,16 @@ async function normalizePredictiveSearchResults(
             sku: product.variants.nodes[0]?.sku,
             //@ts-ignore
             moq: product.variants.nodes[0]?.moq?.value,
+            unitOfMeasure: prices?.[productId]?.unitOfMeasure,
+            uomCode: prices?.[productId]?.uomCode,
+            defaultUomValue: prices?.[productId]?.uom,
           };
         },
       ),
     });
   }
 
-  return { results };
+  return {results};
 }
 
 const formattedProductPrice = async (
@@ -132,6 +140,7 @@ const formattedProductPrice = async (
   });
 
   const priceList = await getPrices(productIds, customerId);
+
   return priceList;
 };
 
@@ -162,7 +171,7 @@ async function getSearchProduct({
     throw new Error('No data returned from Shopify API');
   }
 
-  const { results } = await normalizePredictiveSearchResults(
+  const {results} = await normalizePredictiveSearchResults(
     searchData.predictiveSearch,
     customerId,
   );
@@ -170,11 +179,11 @@ async function getSearchProduct({
   return results;
 }
 
-export async function loader({ context, request }: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const { searchParams } = new URL(request.url);
-  const { userDetails } = await getUserDetails(request);
+  const {searchParams} = new URL(request.url);
+  const {userDetails} = await getUserDetails(request);
   const searchTerm = searchParams.get('searchTerm');
   if (searchTerm) {
     const results = await getSearchProduct({
@@ -183,12 +192,12 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
       customerId: userDetails?.id,
     });
 
-    return json({ results });
+    return json({results});
   }
   return null;
 }
 
-export const action = async ({ request, context }: ActionFunctionArgs) => {
+export const action = async ({request, context}: ActionFunctionArgs) => {
   const messageSession = await getMessageSession(request);
   const fromData = await request.formData();
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);

@@ -121,7 +121,7 @@ export const UploadCsv = ({
     <>
       <Button
         variant="primary"
-        className="bg-secondary-500 py-4 px-8 font-bold italic leading-6 text-lg text-grey-800 md:min-w-[193px] max-h-14 hover:bg-grey-800 hover:text-white"
+        className="bg-secondary-500 w-full sm:w-[unset] py-4 px-8 font-bold italic leading-6 text-lg text-grey-800 md:min-w-[193px] max-h-14 hover:bg-grey-800 hover:text-white"
         onClick={() =>
           setDialogState((previousState) => ({
             ...previousState,

@@ -1,0 +1,55 @@
+import {useFetch} from '~/hooks/useFetch';
+import {getProductGroup} from '../_app.pending-order/pending-order.server';
+import {BulkOrderColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+
+export async function getProductGroupOptions({
+  customerId,
+}: {
+  customerId: string;
+}) {
+  const productGroup = await getProductGroup({customerId});
+
+  const productGroupOptions = productGroup.map((group) => ({
+    label: group.groupName,
+    value: String(group.groupId),
+  }));
+
+  return productGroupOptions;
+}
+
+export type Product = BulkOrderColumn;
+interface DefaultResponse {
+  status: boolean;
+  message: string;
+}
+
+interface Payload {
+  products: Product[];
+  totalProduct: number;
+}
+interface GetPlaceAnOrderListResponse extends DefaultResponse {
+  payload: Payload;
+}
+
+export async function getPlaceAnOrderList({customerId}: {customerId: string}) {
+  try {
+    const url = `${ENDPOINT.PLACE_AN_ORDER}/${customerId}`;
+
+    const response = await useFetch<GetPlaceAnOrderListResponse>({url});
+
+    if (!response.status) {
+      throw new Error(response.message);
+    }
+    return response.payload;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+
+    throw new Response(DEFAULT_ERRROR_MESSAGE, {
+      status: 500,
+    });
+  }
+}
