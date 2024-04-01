@@ -1,11 +1,12 @@
 import { Link } from '@remix-run/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { TooltipInfo } from '~/components/icons/orderStatus';
 import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { debounce } from '~/lib/helpers/general.helper';
 import { getProductPriceByQty } from '~/routes/_app.product_.$productSlug/product-detail';
 
 export type BulkOrderColumn = {
@@ -79,7 +80,7 @@ export function useMyProductColumn(currency?: string, setUpdateCart?: React.Disp
               title={product.title}
               sku={product.sku}
               featuredImage={product.featuredImage}
-              moq={product.moq}
+              moq={product.moq || 1}
               handle={product?.handle}
             />
           );
@@ -97,7 +98,7 @@ export function useMyProductColumn(currency?: string, setUpdateCart?: React.Disp
               info={info}
               productId={product.productId}
               variantId={product.variantId}
-              moq={product.moq}
+              moq={product.moq || 1}
               lineItemId={product.id}
               setUpdateCart={setUpdateCart}
             />
@@ -200,7 +201,7 @@ export function ItemsColumn({ title, sku, featuredImage, moq, handle }: ItemsCol
 type QuantityColumnType = Pick<
   BulkOrderColumn,
   'quantity' | 'productId' | 'variantId' | 'moq'
-> & { info: any; lineItemId?: string; setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>> };
+> & { info: any; lineItemId?: string; setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>; };
 export function QuantityColumn({
   quantity,
   info,
@@ -213,40 +214,24 @@ export function QuantityColumn({
   const meta = info.table.options.meta;
 
   const handleIncreaseQuantity = () => {
-    if (quantity + 1 >= moq && quantity + 1 > 1) {
-      setUpdateCart && setUpdateCart(quantity + 1 >= moq ? true : false);
-      meta?.updateData(info.row.index, info.column.id, quantity + 1);
-    }
-    else {
-      return false;
-    }
-  };
+    meta?.updateData(info.row.index, info.column.id, quantity + 1 < 1 ? 1 : quantity + 1);
+    const updateCart = quantity + 1 >= moq;
+    setUpdateCart && setUpdateCart(updateCart);
+  }
 
   const handleDecreaseQuantity = () => {
-    if (quantity - 1 >= moq && quantity - 1 > 1) {
-      setUpdateCart && setUpdateCart(quantity - 1 >= moq ? true : false);
-      meta?.updateData(
-        info.row.index,
-        info.column.id,
-        quantity > 0 ? quantity - 1 : 0,
-      );
-    }
-    else {
-      return false;
-    }
-  };
-
-  function handleInputChange(event?: any) {
-    const inputQuantity = parseInt(event.target.value);
-    if (inputQuantity >= moq && inputQuantity > 1) {
-      setUpdateCart && setUpdateCart(inputQuantity >= moq ? true : false);
-      meta?.updateData(
-        info.row.index,
-        info.column.id,
-        isNaN(inputQuantity) ? 0 : inputQuantity,
-      );
-    }
+    meta?.updateData(info.row.index, info.column.id, quantity - 1 < 1 ? 1 : quantity - 1);
+    const updateCart = quantity - 1 >= moq;
+    setUpdateCart && setUpdateCart(updateCart);
   }
+
+  const handleInputChange = (event?: any) => {
+    const inputQuantity = parseInt(event.target.value);
+    meta?.updateData(info.row.index, info.column.id, isNaN(inputQuantity) ? 1 : inputQuantity);
+    const updateCart = inputQuantity >= moq;
+    setUpdateCart && setUpdateCart(updateCart);
+  }
+
 
   return (
     <>
@@ -256,13 +241,13 @@ export function QuantityColumn({
             className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
             type='button'
             onClick={handleDecreaseQuantity}
+            disabled={quantity - 1 < moq}
           >
             -
           </button>
           <input
-            type="text"
-            className="flex items-center justify-center w-10 text-center border-solid appearance-none border-x-0 border-grey-200 min-h-10"
-            min="1"
+            type="number"
+            className={`flex items-center justify-center w-20 text-center border-solid appearance-none border-x-0 border-grey-200 min-h-10 test${info.row.index}`}
             value={quantity}
             name="quantity"
             onChange={handleInputChange}
@@ -271,6 +256,7 @@ export function QuantityColumn({
             className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
             type='button'
             onClick={handleIncreaseQuantity}
+            disabled={quantity + 1 < moq}
           >
             +
           </button>
@@ -278,17 +264,17 @@ export function QuantityColumn({
         <div className="flex items-center gap-1">
           <div className="info-block">
             <p className="flex items-center justify-center h-5 min-w-5 ">
-              <Link
-                to=""
-                data-tooltip="The minimum order quantity is 500. Orders below this quantity will incur additional surcharges."
+              <div
+                data-tooltip={`The minimum order quantity is ${moq}. Orders below this quantity will incur additional surcharges.`}
+                className='cursor-pointer'
               >
                 <span>
                   <TooltipInfo fillColor="#0092CF" />
                 </span>
-              </Link>
+              </div>
             </p>
           </div>
-          <p className="text-grey-700 text-[14px] font-normal capitalize  leading-[16px]">
+          <p className={`text-[14px] font-normal capitalize  leading-[16px] text-grey-700`}>
             Minimum Order Quantity {moq}
           </p>
         </div>

@@ -152,7 +152,6 @@ export default function route() {
   const { columns } = useMyWishListColumn();
   const { items } = useLoaderData<typeof loader>();
   const { table } = useTable(columns, items);
-  const tableKey = new Date().getTime();
   const submit = useSubmit();
 
   return (
@@ -226,7 +225,6 @@ export default function route() {
         <DataTable
           table={table}
           renderSubComponent={renderSubComponent}
-          key={tableKey}
         />
       </section>
     </div>

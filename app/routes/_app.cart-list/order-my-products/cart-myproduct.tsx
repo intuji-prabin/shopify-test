@@ -28,7 +28,6 @@ export default function MyProducts({ products, currency, setUpdateCart, updateCa
 
   const [open, setOpen] = useState(false);
 
-  const tableKey = new Date().getTime();
   const submit = useSubmit();
 
   return (
@@ -124,7 +123,6 @@ export default function MyProducts({ products, currency, setUpdateCart, updateCa
             <DataTable
               table={table}
               renderSubComponent={renderSubComponent}
-              key={tableKey}
             />
             {updateCart &&
               <Button

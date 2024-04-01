@@ -10,7 +10,7 @@ export default function OrderSummary({
   gst,
   shippingAddresses,
   currency,
-  updateCart
+  updateCart,
 }: any) {
   return (
     <div className="bg-white max-w-[unset] w-full lg:max-w-[411px] ">

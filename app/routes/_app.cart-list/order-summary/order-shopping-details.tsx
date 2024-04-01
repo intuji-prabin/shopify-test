@@ -217,7 +217,7 @@ export function ShippingAddress({
   );
 }
 
-export function ShoppingDetails({ shippingAddresses, updateCart }: any) {
+export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: any) {
   const addressList = shippingAddresses.addresses;
   const defaultAddress = shippingAddresses.defaultAddress;
   const mergedAddressList = [shippingAddresses.defaultAddress, ...shippingAddresses.addresses];
@@ -230,7 +230,6 @@ export function ShoppingDetails({ shippingAddresses, updateCart }: any) {
     defaultAddress1,
     defaultAddress2,
   );
-  console.log("updateCart", updateCart)
 
   return (
     <div className="flex flex-col gap-4 p-6 border-b order border-grey-50">
@@ -265,7 +264,7 @@ export function ShoppingDetails({ shippingAddresses, updateCart }: any) {
           >
             Place order
           </button>
-          <p className='text-red-500'>Please update your cart to "PLACE ORDER"</p>
+          <p className='italic font-normal'>Please <span className='text-red-500'>update your cart</span> to "PLACE ORDER"</p>
         </div>}
       <p className="text-lg font-normal leading-[22px] text-grey-700">
         <span className="underline text-primary-500">
