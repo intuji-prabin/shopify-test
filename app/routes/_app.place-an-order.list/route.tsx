@@ -1,7 +1,11 @@
-import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  json,
+} from '@remix-run/server-runtime';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
 import {
   isRouteErrorResponse,
   useLoaderData,
@@ -18,8 +22,17 @@ import {renderSubComponent} from '~/routes/_app.cart-list/order-my-products/cart
 import {ActionBar} from './action-bar';
 import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
 import {MetaFunction} from '@shopify/remix-oxygen';
+import {
+  getMessageSession,
+  messageCommitSession,
+  setErrorMessage,
+  setSuccessMessage,
+} from '~/lib/utils/toast-session.server';
+import {addedBulkCart} from '../_app.wishlist/bulk.cart.server';
 
 const PAGE_LIMIT = 6;
+
+type ActionType = 'add_to_cart';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Place an Order List'}];
@@ -37,6 +50,69 @@ export async function loader({context, request}: LoaderFunctionArgs) {
   const placeAnOrderList = await getPlaceAnOrderList({customerId});
 
   return json({productGroupOptions, placeAnOrderList});
+}
+
+export async function action({context, request}: ActionFunctionArgs) {
+  await isAuthenticate(context);
+
+  const messageSession = await getMessageSession(request);
+
+  const formData = await request.formData();
+
+  const action = formData.get('_action') as ActionType;
+
+  switch (action) {
+    case 'add_to_cart': {
+      try {
+        const cartInfo = Object.fromEntries(formData);
+
+        const accessTocken = (await getAccessToken(context)) as string;
+
+        await addedBulkCart(cartInfo, context, accessTocken, request);
+
+        setSuccessMessage(messageSession, 'Item added to cart successfully');
+
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      } catch (error) {
+        if (error instanceof Error) {
+          setErrorMessage(messageSession, error?.message);
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        }
+        setErrorMessage(
+          messageSession,
+          'Item not added to cart. Please try again later.',
+        );
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      }
+    }
+
+    default:
+      throw new Error('Unexpected action');
+  }
 }
 
 export default function PlaceAnOrderListPage() {
