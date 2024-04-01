@@ -1,7 +1,5 @@
-import {VariantProps} from 'class-variance-authority';
-import React, {useEffect} from 'react';
-import RemoveItem from '~/components/icons/removeItem';
-import {Button, ButtonProps, buttonVariants} from '~/components/ui/button';
+import React from 'react';
+import {Button} from '~/components/ui/button';
 import {ComboboxDemo} from '~/components/ui/createable-select';
 import {
   Dialog,
@@ -11,29 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/ui/dialog';
-
-const frameworks = [
-  {
-    value: 'next.js',
-    label: 'Next.js',
-  },
-  {
-    value: 'sveltekit',
-    label: 'SvelteKit',
-  },
-  {
-    value: 'nuxt.js',
-    label: 'Nuxt.js',
-  },
-  {
-    value: 'remix',
-    label: 'Remix',
-  },
-  {
-    value: 'astro',
-    label: 'Astro',
-  },
-];
 
 export default function CreateGroup({
   isDisabled,

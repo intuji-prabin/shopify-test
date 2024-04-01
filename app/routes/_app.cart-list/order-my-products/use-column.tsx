@@ -172,7 +172,7 @@ export function ItemsColumn({title, sku, featuredImage, moq}: ItemsColumnType) {
         />
       </figure>
       <figcaption className="flex flex-col gap-y-1">
-        <h5 className="">{(title && title) || '--'}</h5>
+        <h5 className="text-wrap">{(title && title) || '--'}</h5>
         <div className="flex space-x-5 items-center max-w-[180px] flex-wrap gap-2">
           <p className="mr-2">
             <span className="font-semibold text-grey-900 ">SKU: </span>
