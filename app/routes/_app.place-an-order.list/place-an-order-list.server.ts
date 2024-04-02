@@ -1,7 +1,7 @@
 import {useFetch} from '~/hooks/useFetch';
-import {getProductGroup} from '../_app.pending-order/pending-order.server';
-import {BulkOrderColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
+import {BulkOrderColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 
 export async function getProductGroupOptions({

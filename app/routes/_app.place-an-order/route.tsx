@@ -10,15 +10,13 @@ import {
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {Outlet, isRouteErrorResponse, useRouteError} from '@remix-run/react';
 import {getUserDetails} from '~/lib/utils/user-session.server';
-import {useFetch} from '~/hooks/useFetch';
-import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {addProductToList} from './place-an-order.server';
+import {addProductToList} from '~/routes/_app.place-an-order/place-an-order.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Place an Order'}];
