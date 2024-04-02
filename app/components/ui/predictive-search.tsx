@@ -1,16 +1,16 @@
-import {FormEvent, useRef, useState} from 'react';
-import {FaSearch} from 'react-icons/fa';
-import {Form, Link, useFetcher, useSubmit} from '@remix-run/react';
-import {debounce} from '~/lib/helpers/general.helper';
-import {Button} from '~/components/ui/button';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {useOutsideClick} from '~/hooks/useOutsideClick';
+import { FormEvent, useRef, useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
+import { Form, Link, useFetcher, useSubmit } from '@remix-run/react';
+import { debounce } from '~/lib/helpers/general.helper';
+import { Button } from '~/components/ui/button';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { useOutsideClick } from '~/hooks/useOutsideClick';
 import CloseMenu from '~/components/icons/closeMenu';
 import {
   NormalizedPredictiveSearch,
   NormalizedPredictiveSearchResultItem,
 } from '~/routes/_app.predictive-search/route';
-import {CompareSearch} from '../icons/compareSearch';
+import { CompareSearch } from '../icons/compareSearch';
 
 export type SearchVariant =
   | 'normal'
@@ -76,7 +76,7 @@ export function PredictiveSearch({
             type="text"
             name="searchTerm"
             placeholder="Search product or part number"
-            className="w-full outline-none border-none focus:bg-transparent bg-transparent placeholder:text-white text-white"
+            className="w-full text-white bg-transparent border-none outline-none focus:bg-transparent placeholder:text-white"
           />
         ) : (
           <>
@@ -91,11 +91,10 @@ export function PredictiveSearch({
               type="text"
               name="searchTerm"
               placeholder={inputPlaceholder}
-              className={`!pl-6 border-none w-full text-base ${
-                searchVariant === 'compare'
-                  ? 'font-normal'
-                  : 'font-bold placeholder:italic'
-              } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
+              className={`!pl-6 border-none w-full text-base ${searchVariant === 'compare'
+                ? 'font-normal'
+                : 'font-bold placeholder:italic'
+                } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
             />
           </>
         )}
@@ -111,13 +110,11 @@ export function PredictiveSearch({
       </fetcher.Form>
       {searchProduct && (
         <div
-          className={`${
-            searchVariant === 'mobile' ? 'top-[65px]' : 'top-[52px]'
-          } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${
-            searchVariant === 'normal' || searchVariant === 'mobile'
+          className={`${searchVariant === 'mobile' ? 'top-[65px]' : 'top-[52px]'
+            } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${searchVariant === 'normal' || searchVariant === 'mobile'
               ? null
               : 'max-w-[600px] max-h-[350px] overflow-y-auto shadow-lg'
-          }`}
+            }`}
         >
           {fetcher.state === 'loading' ? (
             <p className="text-base font-bold text-center text-grey-400">
@@ -193,15 +190,15 @@ function SearchResultsProductsGrid({
     switch (searchVariant) {
       case 'normal': {
         return (
-          <figure className="flex items-center space-x-4" key={product.id}>
+          <figure className="flex flex-wrap items-center space-x-4" key={product.id}>
             <div className="size-14">
               <img
                 src={productUrl}
-                alt="product-image"
+                alt="product"
                 className="object-cover object-center size-full"
               />
             </div>
-            <figcaption>
+            <figcaption className='w-[calc(100%_-_72px)]'>
               <Link
                 prefetch="intent"
                 to={`/product/${product.handle}`}
@@ -216,16 +213,16 @@ function SearchResultsProductsGrid({
       }
       case 'cart': {
         return (
-          <div className="flex justify-between gap-4 flex-col sm:flex-row">
-            <div className="flex items-center gap-3 sm:w-3/4">
+          <div className="flex flex-col justify-between gap-4 sm:flex-row">
+            <div className="flex flex-wrap items-center gap-3 sm:w-3/4">
               <div className="size-16">
                 <img
                   src={productUrl}
-                  alt="product-image"
+                  alt="product"
                   className="object-contain object-center size-full"
                 />
               </div>
-              <div>
+              <div className='w-[calc(100%_-_76px)]'>
                 <p className="text-sm text-primary-500">
                   SKU: <span>{product.sku}</span>
                 </p>
@@ -252,7 +249,7 @@ function SearchResultsProductsGrid({
             <div className="sm:w-[calc(25%_-1rem)]">
               <div className="flex">
                 <button
-                  className="border border-grey-500 flex justify-center items-center flex-1 sm:w-10 sm:flex-initial"
+                  className="flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial"
                   onClick={decreaseQuantity}
                 >
                   -
@@ -264,7 +261,7 @@ function SearchResultsProductsGrid({
                   onChange={handleInputChange}
                 />
                 <button
-                  className="border border-grey-500  flex justify-center items-center flex-1 sm:w-10 sm:flex-initial"
+                  className="flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial"
                   onClick={increaseQuantity}
                 >
                   +
@@ -274,7 +271,7 @@ function SearchResultsProductsGrid({
                 <>
                   <Button
                     variant="primary"
-                    className="px-8 mt-2 cursor-not-allowed bg-grey-500 w-full"
+                    className="w-full px-8 mt-2 cursor-not-allowed bg-grey-500"
                     disabled
                   >
                     Add to Cart
@@ -303,7 +300,7 @@ function SearchResultsProductsGrid({
                   <input type="hidden" name="selectUOM" value={product?.uom} />
                   <Button
                     variant="primary"
-                    className="px-8 mt-2 whitespace-nowrap w-full"
+                    className="w-full px-8 mt-2 whitespace-nowrap"
                   >
                     Add to Cart
                   </Button>
@@ -315,16 +312,16 @@ function SearchResultsProductsGrid({
       }
       case 'pending_order': {
         return (
-          <div className="flex justify-between gap-4 flex-col sm:flex-row">
-            <div className="flex items-center gap-3 sm:w-3/4">
+          <div className="flex flex-col justify-between gap-4 sm:flex-row">
+            <div className="flex flex-wrap items-center gap-3 sm:w-3/4">
               <div className="size-16">
                 <img
                   src={productUrl}
-                  alt="product-image"
+                  alt="product"
                   className="object-contain object-center size-full"
                 />
               </div>
-              <div>
+              <div className='w-[calc(100%_-_76px)]'>
                 <p className="text-sm text-primary-500">
                   SKU: <span>{product.sku}</span>
                 </p>
@@ -351,7 +348,7 @@ function SearchResultsProductsGrid({
             <div className="sm:w-[calc(25%_-1rem)]">
               <div className="flex">
                 <button
-                  className="border border-grey-500 flex justify-center items-center flex-1 sm:w-10 sm:flex-initial"
+                  className="flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial"
                   onClick={decreaseQuantity}
                 >
                   -
@@ -363,7 +360,7 @@ function SearchResultsProductsGrid({
                   onChange={handleInputChange}
                 />
                 <button
-                  className="border border-grey-500  flex justify-center items-center flex-1 sm:w-10 sm:flex-initial"
+                  className="flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial"
                   onClick={increaseQuantity}
                 >
                   +
@@ -373,7 +370,7 @@ function SearchResultsProductsGrid({
                 <>
                   <Button
                     variant="primary"
-                    className="px-8 mt-2 cursor-not-allowed w-full bg-grey-500"
+                    className="w-full px-8 mt-2 cursor-not-allowed bg-grey-500"
                     disabled
                   >
                     Add to List
@@ -396,7 +393,7 @@ function SearchResultsProductsGrid({
                   <Button
                     type="submit"
                     variant="primary"
-                    className="px-8 mt-2 whitespace-nowrap w-full"
+                    className="w-full px-8 mt-2 whitespace-nowrap"
                     name="_action"
                     value="add_product"
                   >
@@ -410,15 +407,15 @@ function SearchResultsProductsGrid({
       }
       case 'compare': {
         return (
-          <figure className="flex items-center space-x-4" key={product.id}>
+          <figure className="flex flex-wrap items-center space-x-4" key={product.id}>
             <div className="size-14">
               <img
                 src={productUrl}
-                alt="product-image"
+                alt="product"
                 className="object-cover object-center size-full"
               />
             </div>
-            <figcaption>
+            <figcaption className='w-[calc(100%_-_72px)]'>
               <Link
                 prefetch="intent"
                 to={product.id}
@@ -436,18 +433,17 @@ function SearchResultsProductsGrid({
         function handleUOM(selectedUOM: string) {
           setUOM(selectedUOM);
         }
-
         return (
-          <div className="flex justify-between gap-4 flex-col sm:flex-row">
-            <div className="flex items-center gap-3 sm:w-1/2">
+          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
+            <div className="flex flex-wrap items-center gap-3 sm:w-1/2">
               <div className="size-16">
                 <img
                   src={productUrl}
-                  alt="product-image"
+                  alt="product"
                   className="object-contain object-center size-full"
                 />
               </div>
-              <div>
+              <div className='w-[calc(100%_-_76px)]'>
                 <p className="text-sm text-primary-500">
                   SKU: <span>{product.sku}</span>
                 </p>
@@ -471,7 +467,7 @@ function SearchResultsProductsGrid({
                 </p>
               </div>
             </div>
-            <div className="grid grid-cols-1 gap-x-4 w-full gap-y-2 sm:grid-cols-2 sm:w-[calc(50%_-1rem)]">
+            <div className="grid grid-cols-1 items-start gap-x-4 w-full gap-y-2 sm:grid-cols-2 sm:w-[calc(50%_-1rem)]">
               <select
                 name="filter_by"
                 className="w-full min-w-[120px] place-order !border-grey-500 filter-select"
@@ -482,7 +478,7 @@ function SearchResultsProductsGrid({
               >
                 {product.unitOfMeasure.length > 0 ? (
                   product.unitOfMeasure?.map(
-                    (uom: {unit: string; code: string}, index: number) => (
+                    (uom: { unit: string; code: string }, index: number) => (
                       <option
                         className="px-4"
                         value={uom.code}
@@ -498,7 +494,7 @@ function SearchResultsProductsGrid({
               </select>
               <div className="flex">
                 <button
-                  className="border border-grey-500 flex justify-center items-center flex-1 sm:w-10 sm:flex-initial"
+                  className="flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial"
                   onClick={decreaseQuantity}
                 >
                   -
@@ -510,7 +506,7 @@ function SearchResultsProductsGrid({
                   onChange={handleInputChange}
                 />
                 <button
-                  className="border border-grey-500  flex justify-center items-center flex-1 sm:w-10 sm:flex-initial"
+                  className="flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial"
                   onClick={increaseQuantity}
                 >
                   +
@@ -526,7 +522,7 @@ function SearchResultsProductsGrid({
                   >
                     Add to List
                   </Button>
-                  <p className="text-xs text-red-500 w-full">
+                  <p className="w-full text-xs text-red-500">
                     Minimum Order Quantity {product?.moq || 1}
                   </p>
                 </>
@@ -545,7 +541,7 @@ function SearchResultsProductsGrid({
                   <Button
                     type="submit"
                     variant="primary"
-                    className="px-8 mt-2 whitespace-nowrap w-full"
+                    className="w-full px-8 mt-2 whitespace-nowrap"
                     name="_action"
                     value="add_product"
                   >
@@ -557,18 +553,17 @@ function SearchResultsProductsGrid({
           </div>
         );
       }
-
       case 'mobile': {
         return (
-          <figure className="flex items-center space-x-4" key={product.id}>
+          <figure className="flex flex-wrap items-center space-x-4" key={product.id}>
             <div className="size-14">
               <img
                 src={productUrl}
-                alt="product-image"
+                alt="product"
                 className="object-cover object-center size-full"
               />
             </div>
-            <figcaption>
+            <figcaption className='w-[calc(100%_-_72px)]'>
               <Link
                 prefetch="intent"
                 to={`/product/${product.handle}`}

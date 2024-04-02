@@ -97,7 +97,6 @@ const CarouselThumb = ({
   } = usePrevNextButtons(emblaThumbsApi)
 
   const matches = useMediaQuery('(min-width: 1024px)');
-
   return (
     <div className="flex flex-col-reverse gap-y-4 gap-x-2.5 overflow-y-hidden lg:flex-row product__detSlider items-start">
       {/* Thumbnail Carousel Begins Here */}
