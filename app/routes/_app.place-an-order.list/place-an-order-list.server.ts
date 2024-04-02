@@ -3,6 +3,7 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
 import {BulkOrderColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import {generateUrlWithParams} from '~/lib/helpers/url.helper';
 
 export async function getProductGroupOptions({
   customerId,
@@ -33,9 +34,17 @@ interface GetPlaceAnOrderListResponse extends DefaultResponse {
   payload: Payload;
 }
 
-export async function getPlaceAnOrderList({customerId}: {customerId: string}) {
+export async function getPlaceAnOrderList({
+  customerId,
+  searchParams,
+}: {
+  customerId: string;
+  searchParams: URLSearchParams;
+}) {
   try {
-    const url = `${ENDPOINT.PLACE_AN_ORDER}/${customerId}`;
+    const baseUrl = `${ENDPOINT.PLACE_AN_ORDER}/${customerId}`;
+
+    const url = generateUrlWithParams({baseUrl, searchParams});
 
     const response = await useFetch<GetPlaceAnOrderListResponse>({url});
 

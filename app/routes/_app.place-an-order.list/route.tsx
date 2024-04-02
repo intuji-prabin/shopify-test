@@ -31,7 +31,7 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
 
-const PAGE_LIMIT = 6;
+const PAGE_LIMIT = 10;
 
 type ActionType = 'add_to_cart';
 
@@ -48,7 +48,12 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 
   const productGroupOptions = await getProductGroupOptions({customerId});
 
-  const placeAnOrderList = await getPlaceAnOrderList({customerId});
+  const {searchParams} = new URL(request.url);
+
+  const placeAnOrderList = await getPlaceAnOrderList({
+    customerId,
+    searchParams,
+  });
 
   if (placeAnOrderList.totalProduct < 1) {
     return redirect(Routes.PLACE_AN_ORDER);
