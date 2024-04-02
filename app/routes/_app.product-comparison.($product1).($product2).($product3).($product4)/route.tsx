@@ -61,7 +61,7 @@ export default function route() {
       <section className="container py-12">
         {Object.keys(productResponse).length > 0 ? (
           <>
-            <ComparisonBreadcrumb title={'compare'} />
+            <ComparisonBreadcrumb title={'compare'} link={`${productResponse.product1.product.handle}`} />
             <ComparisonWrapper productResponse={productResponse} />
           </>
         ) : (

@@ -62,6 +62,7 @@ const formateCartList = async (
       uom: items?.attributes.filter(
         (att: any) => att?.key == 'selectedUOM',
       )?.[0]?.value,
+      handle: merchandise?.product?.handle,
     });
   });
 
