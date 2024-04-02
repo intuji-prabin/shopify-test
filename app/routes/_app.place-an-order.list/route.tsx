@@ -2,9 +2,10 @@ import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   json,
+  redirect,
 } from '@remix-run/server-runtime';
+import {MetaFunction} from '@shopify/remix-oxygen';
 import {getUserDetails} from '~/lib/utils/user-session.server';
-
 import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
 import {
   isRouteErrorResponse,
@@ -14,21 +15,21 @@ import {
 import {
   getPlaceAnOrderList,
   getProductGroupOptions,
-} from './place-an-order-list.server';
+} from '~/routes/_app.place-an-order.list/place-an-order-list.server';
 import {DataTable} from '~/components/ui/data-table';
 import {useMyProductColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
 import {useTable} from '~/hooks/useTable';
 import {renderSubComponent} from '~/routes/_app.cart-list/order-my-products/cart-myproduct';
-import {ActionBar} from './action-bar';
+import {ActionBar} from '~/routes/_app.place-an-order.list/action-bar';
 import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
-import {MetaFunction} from '@shopify/remix-oxygen';
+import {addedBulkCart} from '~/routes/_app.wishlist/bulk.cart.server';
+import {Routes} from '~/lib/constants/routes.constent';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {addedBulkCart} from '../_app.wishlist/bulk.cart.server';
 
 const PAGE_LIMIT = 6;
 
@@ -48,6 +49,10 @@ export async function loader({context, request}: LoaderFunctionArgs) {
   const productGroupOptions = await getProductGroupOptions({customerId});
 
   const placeAnOrderList = await getPlaceAnOrderList({customerId});
+
+  if (placeAnOrderList.totalProduct < 1) {
+    return redirect(Routes.PLACE_AN_ORDER);
+  }
 
   return json({productGroupOptions, placeAnOrderList});
 }

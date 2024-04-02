@@ -59,9 +59,11 @@ export function LogoIcon({logo_url}: {logo_url: string}) {
 export function NotificationNavbar({
   cartCount,
   wishlistCount,
+  pendingOrderCount,
 }: {
   cartCount: number;
   wishlistCount: number;
+  pendingOrderCount: number;
 }) {
   const {isOpen, toggleMenu} = useHamburgerMenu();
 
@@ -78,7 +80,7 @@ export function NotificationNavbar({
       icon: <Note width={'20px'} height={'20px'} />,
       url: Routes.PENDING_ORDER,
       title: 'Pending Order',
-      notification: '3',
+      notification: pendingOrderCount,
     },
     {
       id: 3,
@@ -124,10 +126,12 @@ export default function TopHeader({
   userDetails,
   cartCount,
   wishlistCount,
+  pendingOrderCount,
 }: {
   userDetails: CustomerData;
   cartCount: number;
   wishlistCount: number;
+  pendingOrderCount: number;
 }) {
   const [isClicked, setIsClicked] = useState(false);
 
@@ -154,6 +158,7 @@ export default function TopHeader({
           <NotificationNavbar
             cartCount={cartCount}
             wishlistCount={wishlistCount}
+            pendingOrderCount={pendingOrderCount}
           />
         </div>
 
