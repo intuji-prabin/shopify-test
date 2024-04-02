@@ -39,6 +39,7 @@ import {
 } from '~/lib/utils/user-session.server';
 import {getCustomerByEmail} from '~/routes/_public.login/login.server';
 import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
+import {PageNotFound} from '~/components/ui/page-not-found';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Edit Team Member'}];
@@ -191,14 +192,7 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    return (
-      <div className="flex items-center justify-center">
-        <div className="text-center">
-          <h1>Opps</h1>
-          <p>{error.message}</p>
-        </div>
-      </div>
-    );
+    return <PageNotFound />;
   } else {
     return <h1>Unknown Error</h1>;
   }

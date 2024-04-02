@@ -5,41 +5,48 @@ import {
   useRouteError,
   useSubmit,
 } from '@remix-run/react';
-import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
-import { useEffect } from 'react';
-import { useEventSource } from 'remix-utils/sse/react';
+import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
+import {useEffect} from 'react';
+import {useEventSource} from 'remix-utils/sse/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
-import { HamburgerMenuProvider } from '~/components/ui/layouts/elements/HamburgerMenuContext';
+import {HamburgerMenuProvider} from '~/components/ui/layouts/elements/HamburgerMenuContext';
 import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
 import TopHeader from '~/components/ui/layouts/top-header';
-import { useMediaQuery } from '~/hooks/useMediaQuery';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
-import { Routes } from '~/lib/constants/routes.constent';
-import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import {useMediaQuery} from '~/hooks/useMediaQuery';
+import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
+import {Routes} from '~/lib/constants/routes.constent';
+import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
 } from '~/lib/utils/toast-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { CustomerData } from '../_public.login/login.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {CustomerData} from '~/routes/_public.login/login.server';
 import {
   getCagetoryList,
+  getPendingOrderSession,
   getSessionCart,
-  getSessionData
-} from './app.server';
+  getSessionData,
+} from '~/routes/_app/app.server';
 
-export async function loader({ request, context }: ActionFunctionArgs) {
+export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
-  const { userDetails } = await getUserDetails(request);
-  const sessionData = await getSessionData(userDetails, context)
+  const {userDetails} = await getUserDetails(request);
+  const sessionData = await getSessionData(userDetails, context);
   const categories = await getCagetoryList(context);
   const messageSession = await getMessageSession(request);
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
-  const headers = [] as any
-  const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY)
+
+  const pendingOrderCount = await getPendingOrderSession({
+    context,
+    customerId: userDetails.id,
+  });
+
+  const headers = [] as any;
+  const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY);
   // console.log("werwerew ", wishlistSession);
   if (!sessionCartInfo) {
     sessionCartInfo = await getSessionCart(userDetails?.id, context);
@@ -62,7 +69,13 @@ export async function loader({ request, context }: ActionFunctionArgs) {
     // );
   }
   return json(
-    { categories: categories ? categories : [], userDetails, sessionCartInfo, wishlistSession },
+    {
+      categories: categories ? categories : [],
+      userDetails,
+      sessionCartInfo,
+      wishlistSession,
+      pendingOrderCount,
+    },
     {
       headers,
     },
@@ -70,8 +83,13 @@ export async function loader({ request, context }: ActionFunctionArgs) {
 }
 
 export default function PublicPageLayout() {
-  const { categories, userDetails, sessionCartInfo, wishlistSession } =
-    useLoaderData<typeof loader>();
+  const {
+    categories,
+    userDetails,
+    sessionCartInfo,
+    wishlistSession,
+    pendingOrderCount,
+  } = useLoaderData<typeof loader>();
 
   const submit = useSubmit();
 
@@ -84,7 +102,7 @@ export default function PublicPageLayout() {
 
   useEffect(() => {
     if (userId === userDetails.id) {
-      submit({}, { method: 'POST', action: '/logout' });
+      submit({}, {method: 'POST', action: '/logout'});
     }
   }, [userId]);
   return (
@@ -93,6 +111,7 @@ export default function PublicPageLayout() {
       cartCount={cartCount}
       userDetails={userDetails}
       wishlistCount={wishlistCount}
+      pedingOrderCount={pendingOrderCount}
     >
       <Outlet />
     </Layout>
@@ -104,20 +123,27 @@ const Layout = ({
   categories,
   userDetails,
   cartCount,
-  wishlistCount
+  wishlistCount,
+  pedingOrderCount,
 }: {
   children: React.ReactNode;
   categories: any;
   userDetails: CustomerData;
   cartCount: number;
   wishlistCount: number;
+  pedingOrderCount: number;
 }) => {
   const matches = useMediaQuery('(min-width: 768px)');
   return (
     <HamburgerMenuProvider>
       {matches ? (
         <header>
-          <TopHeader cartCount={cartCount} userDetails={userDetails} wishlistCount={wishlistCount} />
+          <TopHeader
+            cartCount={cartCount}
+            userDetails={userDetails}
+            wishlistCount={wishlistCount}
+            pendingOrderCount={pedingOrderCount}
+          />
           <BottomHeader categories={categories} />
         </header>
       ) : (

@@ -243,6 +243,7 @@ export async function action({request, context, params}: ActionFunctionArgs) {
           groupId,
           productId: formData.get('productId'),
           quantity: formData.get('quantity'),
+          uom: formData.get('uom'),
         });
 
         const productResponse = await addProductToGroup({

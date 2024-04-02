@@ -1,8 +1,11 @@
+import {AppLoadContext} from '@shopify/remix-oxygen';
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getAccessToken} from '~/lib/utils/auth-session.server';
+import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
+import {PENDING_ORDERS_SESSION_KEY} from '~/lib/constants/pending-orders.constant';
 
 export interface CategoriesType {
   status: boolean;
@@ -257,3 +260,17 @@ const UPDATE_CART_ACCESS_TOCKEN =
     }
   }
 }` as const;
+
+export async function getPendingOrderSession({
+  context,
+  customerId,
+}: {
+  context: AppLoadContext;
+  customerId: string;
+}) {
+  const productGroup = await getProductGroup({customerId});
+
+  context.session.set(PENDING_ORDERS_SESSION_KEY, productGroup?.length);
+
+  return context.session.get(PENDING_ORDERS_SESSION_KEY) as number;
+}
