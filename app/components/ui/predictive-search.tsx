@@ -1,16 +1,16 @@
-import { FormEvent, useRef, useState } from 'react';
-import { FaSearch } from 'react-icons/fa';
-import { Form, Link, useFetcher, useSubmit } from '@remix-run/react';
-import { debounce } from '~/lib/helpers/general.helper';
-import { Button } from '~/components/ui/button';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { useOutsideClick } from '~/hooks/useOutsideClick';
+import {FormEvent, useRef, useState} from 'react';
+import {FaSearch} from 'react-icons/fa';
+import {Form, Link, useFetcher, useSubmit} from '@remix-run/react';
+import {debounce} from '~/lib/helpers/general.helper';
+import {Button} from '~/components/ui/button';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {useOutsideClick} from '~/hooks/useOutsideClick';
 import CloseMenu from '~/components/icons/closeMenu';
 import {
   NormalizedPredictiveSearch,
   NormalizedPredictiveSearchResultItem,
 } from '~/routes/_app.predictive-search/route';
-import { CompareSearch } from '../icons/compareSearch';
+import {CompareSearch} from '../icons/compareSearch';
 
 export type SearchVariant =
   | 'normal'
@@ -91,10 +91,11 @@ export function PredictiveSearch({
               type="text"
               name="searchTerm"
               placeholder={inputPlaceholder}
-              className={`!pl-6 border-none w-full text-base ${searchVariant === 'compare'
-                ? 'font-normal'
-                : 'font-bold placeholder:italic'
-                } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
+              className={`!pl-6 border-none w-full text-base ${
+                searchVariant === 'compare'
+                  ? 'font-normal'
+                  : 'font-bold placeholder:italic'
+              } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
             />
           </>
         )}
@@ -110,11 +111,13 @@ export function PredictiveSearch({
       </fetcher.Form>
       {searchProduct && (
         <div
-          className={`${searchVariant === 'mobile' ? 'top-[65px]' : 'top-[52px]'
-            } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${searchVariant === 'normal' || searchVariant === 'mobile'
+          className={`${
+            searchVariant === 'mobile' ? 'top-[65px]' : 'top-[52px]'
+          } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${
+            searchVariant === 'normal' || searchVariant === 'mobile'
               ? null
               : 'max-w-[600px] max-h-[350px] overflow-y-auto shadow-lg'
-            }`}
+          }`}
         >
           {fetcher.state === 'loading' ? (
             <p className="text-base font-bold text-center text-grey-400">
@@ -190,7 +193,10 @@ function SearchResultsProductsGrid({
     switch (searchVariant) {
       case 'normal': {
         return (
-          <figure className="flex flex-wrap items-center space-x-4" key={product.id}>
+          <figure
+            className="flex flex-wrap items-center space-x-4"
+            key={product.id}
+          >
             <div className="size-14">
               <img
                 src={productUrl}
@@ -198,7 +204,7 @@ function SearchResultsProductsGrid({
                 className="object-cover object-center size-full"
               />
             </div>
-            <figcaption className='w-[calc(100%_-_72px)]'>
+            <figcaption className="w-[calc(100%_-_72px)]">
               <Link
                 prefetch="intent"
                 to={`/product/${product.handle}`}
@@ -222,7 +228,7 @@ function SearchResultsProductsGrid({
                   className="object-contain object-center size-full"
                 />
               </div>
-              <div className='w-[calc(100%_-_76px)]'>
+              <div className="w-[calc(100%_-_76px)]">
                 <p className="text-sm text-primary-500">
                   SKU: <span>{product.sku}</span>
                 </p>
@@ -321,7 +327,7 @@ function SearchResultsProductsGrid({
                   className="object-contain object-center size-full"
                 />
               </div>
-              <div className='w-[calc(100%_-_76px)]'>
+              <div className="w-[calc(100%_-_76px)]">
                 <p className="text-sm text-primary-500">
                   SKU: <span>{product.sku}</span>
                 </p>
@@ -390,6 +396,7 @@ function SearchResultsProductsGrid({
                 >
                   <input type="hidden" name="productId" value={product.id} />
                   <input type="hidden" name="quantity" value={quantity} />
+                  <input type="hidden" name="uom" value={product.uom} />
                   <Button
                     type="submit"
                     variant="primary"
@@ -407,7 +414,10 @@ function SearchResultsProductsGrid({
       }
       case 'compare': {
         return (
-          <figure className="flex flex-wrap items-center space-x-4" key={product.id}>
+          <figure
+            className="flex flex-wrap items-center space-x-4"
+            key={product.id}
+          >
             <div className="size-14">
               <img
                 src={productUrl}
@@ -415,7 +425,7 @@ function SearchResultsProductsGrid({
                 className="object-cover object-center size-full"
               />
             </div>
-            <figcaption className='w-[calc(100%_-_72px)]'>
+            <figcaption className="w-[calc(100%_-_72px)]">
               <Link
                 prefetch="intent"
                 to={product.id}
@@ -443,7 +453,7 @@ function SearchResultsProductsGrid({
                   className="object-contain object-center size-full"
                 />
               </div>
-              <div className='w-[calc(100%_-_76px)]'>
+              <div className="w-[calc(100%_-_76px)]">
                 <p className="text-sm text-primary-500">
                   SKU: <span>{product.sku}</span>
                 </p>
@@ -478,7 +488,7 @@ function SearchResultsProductsGrid({
               >
                 {product.unitOfMeasure.length > 0 ? (
                   product.unitOfMeasure?.map(
-                    (uom: { unit: string; code: string }, index: number) => (
+                    (uom: {unit: string; code: string}, index: number) => (
                       <option
                         className="px-4"
                         value={uom.code}
@@ -555,7 +565,10 @@ function SearchResultsProductsGrid({
       }
       case 'mobile': {
         return (
-          <figure className="flex flex-wrap items-center space-x-4" key={product.id}>
+          <figure
+            className="flex flex-wrap items-center space-x-4"
+            key={product.id}
+          >
             <div className="size-14">
               <img
                 src={productUrl}
@@ -563,7 +576,7 @@ function SearchResultsProductsGrid({
                 className="object-cover object-center size-full"
               />
             </div>
-            <figcaption className='w-[calc(100%_-_72px)]'>
+            <figcaption className="w-[calc(100%_-_72px)]">
               <Link
                 prefetch="intent"
                 to={`/product/${product.handle}`}
