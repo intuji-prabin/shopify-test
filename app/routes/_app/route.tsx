@@ -5,43 +5,42 @@ import {
   useRouteError,
   useSubmit,
 } from '@remix-run/react';
+import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
+import { useEffect } from 'react';
+import { useEventSource } from 'remix-utils/sse/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
+import { HamburgerMenuProvider } from '~/components/ui/layouts/elements/HamburgerMenuContext';
+import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
 import TopHeader from '~/components/ui/layouts/top-header';
-import {
-  Payload,
-  getCagetoryList,
-  getCategories,
-  getSessionCart,
-} from './app.server';
-import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
+import { useMediaQuery } from '~/hooks/useMediaQuery';
+import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { Routes } from '~/lib/constants/routes.constent';
+import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
 } from '~/lib/utils/toast-session.server';
-import { useMediaQuery } from '~/hooks/useMediaQuery';
-import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
-import { getCategoryList } from '../_app.categories/route';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { CustomerData } from '../_public.login/login.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
-import { HamburgerMenuProvider } from '~/components/ui/layouts/elements/HamburgerMenuContext';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
-import { useEventSource } from 'remix-utils/sse/react';
-import { Routes } from '~/lib/constants/routes.constent';
-import { useEffect } from 'react';
-import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
+import { CustomerData } from '../_public.login/login.server';
+import {
+  getCagetoryList,
+  getSessionCart,
+  getSessionData
+} from './app.server';
 
 export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
   const { userDetails } = await getUserDetails(request);
+  const sessionData = await getSessionData(userDetails, context)
   const categories = await getCagetoryList(context);
   const messageSession = await getMessageSession(request);
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
   const headers = [] as any
   const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY)
-
+  // console.log("werwerew ", wishlistSession);
   if (!sessionCartInfo) {
     sessionCartInfo = await getSessionCart(userDetails?.id, context);
     if (sessionCartInfo) {
@@ -77,7 +76,7 @@ export default function PublicPageLayout() {
   const submit = useSubmit();
 
   const cartCount = sessionCartInfo?.lineItems ?? 0;
-  const wishlistCount = wishlistSession?.totalWishList ?? 0;
+  const wishlistCount = wishlistSession ?? 0;
 
   const userId = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
     event: 'logout-event',

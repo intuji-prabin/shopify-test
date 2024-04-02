@@ -1,5 +1,4 @@
 import { Form, Link, useSubmit } from '@remix-run/react';
-import { useState } from 'react';
 import {
   ProductLoveRed,
   ProductLoveWhite,
@@ -10,7 +9,7 @@ import { Button } from '~/components/ui/button';
 export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
 
 export function ProductCard({
-  isBuyQtyAvailable,
+  volumePrice,
   title,
   companyPrice,
   defaultPrice,
@@ -20,19 +19,15 @@ export function ProductCard({
   handle,
   id,
   uom,
-  wishListItems,
-  currency
+  currency,
+  liked
 }: ProductCardProps) {
-  function checkProductIdExists(productId: number) {
-    return wishListItems?.some((item: any) => item?.productId === productId);
-  }
-
   return (
     <div className="bg-white single-product-card">
       <div className="relative h-full">
         <ProductCardImage
-          isBuyQtyAvailable={isBuyQtyAvailable}
-          isFavorited={checkProductIdExists(id)}
+          volumePrice={volumePrice}
+          liked={liked}
           featuredImageUrl={featuredImageUrl}
           imageBackgroundColor={imageBackgroundColor}
           productId={id}
@@ -62,8 +57,8 @@ type ProductCardInfoProps = {
   handle: string;
   id: number;
   uom: string;
-  wishListItems?: any;
   currency: string;
+  volumePrice?: boolean;
 };
 
 type VariantType = {
@@ -73,11 +68,11 @@ type VariantType = {
 };
 
 type ProductCardImageProps = {
-  isBuyQtyAvailable: boolean;
-  isFavorited: boolean;
+  liked: boolean;
   imageBackgroundColor: string;
   featuredImageUrl: string;
   productId: number;
+  volumePrice: boolean;
 };
 
 export function ProductCardInfo({
@@ -102,7 +97,7 @@ export function ProductCardInfo({
             SKU:&nbsp;{(sku && sku) || 'N/A'}
           </p>
           <h5 className="text-lg italic font-bold leading-6 whitespace-normal max-h-12 text-grey-900 line-clamp-2 text-ellipsis">
-            <Link to={handle}>{productName}</Link>
+            <Link to={`/product/${handle}`}>{productName}</Link>
           </h5>
           <p className="text-sm text-grey-300">Minimum Order Quantity: {moq}</p>
         </div>
@@ -127,7 +122,7 @@ export function ProductCardInfo({
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
               <span className="text-lg font-medium">{currency} </span>
-              {(companyPrice && companyPrice) || 'N/A'}
+              {(companyPrice && companyPrice?.toFixed(2)) || 'N/A'}
             </h3>
             <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
           </div>
@@ -150,7 +145,7 @@ export function ProductCardInfo({
               </div>
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-              <span className="text-lg font-medium">{currency} </span>{(defaultPrice && defaultPrice) || 'N/A'}
+              <span className="text-lg font-medium">{currency} </span>{(defaultPrice && defaultPrice?.toFixed(2)) || 'N/A'}
             </h3>
             <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
           </div>
@@ -171,37 +166,30 @@ export function ProductCardInfo({
 
 function ProductCardImage({
   featuredImageUrl,
-  isBuyQtyAvailable,
-  isFavorited,
+  volumePrice,
+  liked,
   imageBackgroundColor,
   productId,
 }: ProductCardImageProps) {
-  const [heartFill, setHeartFill] = useState(isFavorited);
-  const [isBuyQtyAvailableState, setIsBuyQtyAvailable] =
-    useState(isBuyQtyAvailable);
-
-  const handleHeartClick = () => {
-    setHeartFill(!heartFill);
-  };
 
   return (
     <div
       className={`relative px-11 py-[39px] flex justify-center border-grey-25 border-b-2 border-x-0 border-top-0 ${imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
         }`}
     >
-      {isBuyQtyAvailableState && (
+      {volumePrice && (
         <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px]">
           QTY Buy Available
         </div>
       )}
-      <Form method={isFavorited ? 'DELETE' : 'POST'} className="flex">
+      <Form method={liked ? 'DELETE' : 'POST'} className="flex">
         <input type="hidden" name="productId" value={productId} />
         <button
           className="absolute top-2 right-2"
-          value={isFavorited ? 'removeFromWishList' : 'addToWishList'}
+          value={liked ? 'removeFromWishList' : 'addToWishList'}
           name="action"
         >
-          {isFavorited ? <ProductLoveRed /> : <ProductLoveWhite />}
+          {liked ? <ProductLoveRed /> : <ProductLoveWhite />}
         </button>
       </Form>
       <figure className="mt-3">

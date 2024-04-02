@@ -13,7 +13,10 @@ import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import ShippingAddressHeader from '~/routes/_app.shipping-address/shipping-address-breadcrumb';
 import ShippingAddressCards from '~/routes/_app.shipping-address/shipping-address-card';
-import {getAllCompanyShippingAddresses} from '~/routes/_app.shipping-address/shipping-address.server';
+import {
+  ShippingAddress,
+  getAllCompanyShippingAddresses,
+} from '~/routes/_app.shipping-address/shipping-address.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Shipping Address'}];
@@ -50,7 +53,9 @@ export default function ShippingAddressMgmt() {
           </Link>
         </AlertDescription>
       </Alert>
-      <ShippingAddressCards shippingAddresses={shippingAddresses} />
+      <ShippingAddressCards
+        shippingAddresses={shippingAddresses as ShippingAddress}
+      />
     </div>
   );
 }

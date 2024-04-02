@@ -1,13 +1,12 @@
 import { Form, Link, useSubmit } from '@remix-run/react';
 import { useState } from 'react';
+import Info from '~/components/icons/info';
 import {
   CircleInformationMajor,
   Compare,
-  Pdf,
-  PickupLocation,
   ProductLoveRed,
   ProductLoveWhite,
-  TooltipInfo,
+  TooltipInfo
 } from '~/components/icons/orderStatus';
 import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -15,15 +14,11 @@ import { useMediaQuery } from '../../hooks/useMediaQuery';
 import CarouselThumb from './carouselThumb';
 import { getProductPriceByQty } from './product-detail';
 import { ProductInfoTable } from './productInfoTable';
-import { WarehouseInformation } from './view-warehouse-information';
-import Info from '~/components/icons/info';
 
-export default function ProductInformation({ product, wishListItems }: any) {
+export default function ProductInformation({ product }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
-  function checkProductIdExists(productId: number) {
-    return wishListItems?.some((item: any) => item?.productId === productId);
-  }
-  // console.log("product", product);
+  const volumePrice = product?.priceRange?.length > 0 ? true : false;
+
   return (
     <section className="bg-white">
       <div className="flex flex-col flex-wrap items-start gap-6 px-6 lg:gap-14 lg:flex-row">
@@ -33,6 +28,7 @@ export default function ProductInformation({ product, wishListItems }: any) {
               images={product?.imageUrl}
               thumbNailCarouseloptions={{ axis: matches ? 'y' : 'x' }}
               mainCarouseloptions={{}}
+              volumePrice={volumePrice}
             />
           </div>
         )}
@@ -42,7 +38,7 @@ export default function ProductInformation({ product, wishListItems }: any) {
           productName={product?.title}
           productId={product?.id}
           productVariantId={product?.variantId}
-          isFavorited={checkProductIdExists(product?.id)}
+          isFavorited={product?.liked}
           sku={'Sku'}
           skuUnits={product?.supplierSku}
           unitOfMeasurement={'Unit Of Measurement:'}
@@ -112,8 +108,17 @@ const ProductDetailsSection = ({
   currency
 }: any) => {
   const [quantity, setQuantity] = useState(parseFloat(moq) || 1);
-  const [productPrice, setProductPrice] = useState(companyDefaultPrice);
   const [UOM, setUOM] = useState(uomCode);
+  const firstPrice = getProductPriceByQty(
+    quantity,
+    unitOfMeasure,
+    UOM,
+    box,
+    priceRange,
+    companyDefaultPrice,
+  );
+  const [productPrice, setProductPrice] = useState(firstPrice);
+
   const submit = useSubmit();
 
   function decreaseQuantity() {
@@ -178,8 +183,7 @@ const ProductDetailsSection = ({
         </figure>
         <ul className="flex gap-[7px]">
           <li className="w-[36px] h-[36px] flex justify-center items-center border-grey-50 border-[1px]">
-            <Link to="">
-              {' '}
+            <Link to={`/product-comparison/${productId}`}>
               <Compare />
             </Link>
           </li>
@@ -198,7 +202,7 @@ const ProductDetailsSection = ({
         <div className="flex flex-wrap gap-x-5 gap-y-2">
           <div className="flex items-center gap-1 text-base">
             <p className="font-semibold leading-6 ">{sku}: </p>
-            <p className="font-normal text-Grey-500">{skuUnits}</p>
+            <p className="font-normal text-Grey-500">{skuUnits || "N/A"}</p>
           </div>
           <div className="flex items-center gap-2">
             <p className="text-base font-semibold leading-6 text-grey-600">
@@ -270,7 +274,7 @@ const ProductDetailsSection = ({
           </div>
           <p className='text-sm text-grey-700 pt-2.5 flex gap-x-1'>
             <Info />
-            Minimum Order Quantity {moq}
+            Minimum Order Quantity {moq || 1}
           </p>
         </div>
         <div className="flex flex-col">
@@ -306,7 +310,7 @@ const ProductDetailsSection = ({
           />
           <input type="hidden" name="quantity" value={quantity} />
           <input type="hidden" name="selectUOM" value={UOM} />
-          {quantity < moq ?
+          {quantity < moq || quantity < 1 ?
             <>
               <button
                 className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-not-allowed text-grey-400 bg-grey-200 min-h-14"
@@ -314,7 +318,7 @@ const ProductDetailsSection = ({
               >
                 {addToCart}
               </button>
-              <p className='text-red-500'>Minimum order quantity is {moq}</p>
+              <p className='text-red-500'>Minimum order quantity is {moq || 1}</p>
             </>
             : <Button
               className="flex-grow w-full uppercase min-h-14"
@@ -392,7 +396,7 @@ export function ProductCardInfo({
               </div>
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727] price">
-              <span className='text-lg font-medium'>{currency ? currency : '$'}</span>&nbsp;{buyPrice}
+              <span className='text-lg font-medium'>{currency ? currency : '$'}</span>&nbsp;{buyPrice?.toFixed(2)}
             </h3>
             <p className="text-[14px] font-normal leading-4 pt-1">({exclGst})</p>
           </div>
@@ -414,7 +418,7 @@ export function ProductCardInfo({
               </div>
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300 price">
-              <span className='text-lg font-medium'>{currency ? currency : '$'}</span>&nbsp;{rppPrice}
+              <span className='text-lg font-medium'>{currency ? currency : '$'}</span>&nbsp;{rppPrice?.toFixed(2)}
             </h3>
             <p className="text-[14px] font-normal leading-4 pt-1">({incGst})</p>
           </div>

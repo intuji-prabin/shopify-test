@@ -25,7 +25,7 @@ export function DeleteProductModal({table}: {table: Table<Product>}) {
         formData.append('productIds', product.original.productId),
       );
 
-    formData.append('_action', 'delete');
+    formData.append('_action', 'delete_product');
 
     submit(formData, {
       method: 'POST',

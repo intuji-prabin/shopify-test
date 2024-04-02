@@ -15,8 +15,8 @@ export default function ShippingAddressCards({
   const addressList = shippingAddresses.addresses;
   const defaultAddress = shippingAddresses.defaultAddress;
 
-  const defaultAddress1 = defaultAddress.address1 ?? "";
-  const defaultAddress2 = defaultAddress.address2 ?? "";
+  const defaultAddress1 = defaultAddress.address1 ?? '';
+  const defaultAddress2 = defaultAddress.address2 ?? '';
 
   const defaultAddresses = concatDefaultAddress(
     defaultAddress1,

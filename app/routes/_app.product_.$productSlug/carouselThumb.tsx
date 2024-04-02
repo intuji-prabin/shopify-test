@@ -15,12 +15,14 @@ type PropType = {
   thumbNailCarouseloptions: EmblaOptionsType;
   mainCarouseloptions: EmblaOptionsType;
   images: ImageType[];
+  volumePrice: boolean;
 };
 
 const CarouselThumb = ({
   thumbNailCarouseloptions,
   mainCarouseloptions,
   images,
+  volumePrice
 }: PropType) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [emblaMainRef, emblaMainApi] = useEmblaCarousel(mainCarouseloptions, [AutoHeight()]);
@@ -154,23 +156,30 @@ const CarouselThumb = ({
       {/* Thumbnail Carousel Ends Here */}
 
       {/* Main Product Image Carousel Begins Here */}
-      <div className="overflow-hidden embla lg:h-[532px] w-full lg:w-[calc(100%_-_95px)]">
-        <div className="flex items-center h-full embla__viewport bg-grey-25" ref={emblaMainRef}>
-          <div className="flex h-full embla__container">
-            {images.map((image: any, index: any) => (
-              <div
-                key={index}
-                className="h-full min-w-0 embla__slide flex-full"
-              >
-                <div className='flex items-center justify-center h-full'>
-                  <img
-                    src={image?.url}
-                    alt={image.alt}
-                    className="object-contain"
-                  />
+      <div className='w-full lg:max-w-[calc(100%_-_95px)] lg:w-[unset] relative'>
+        {volumePrice && (
+          <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px] z-10">
+            QTY Buy Available
+          </div>
+        )}
+        <div className="embla lg:h-[532px] overflow-hidden">
+          <div className="flex items-center h-full embla__viewport" ref={emblaMainRef}>
+            <div className="flex h-full embla__container">
+              {images.map((image: any, index: any) => (
+                <div
+                  key={index}
+                  className="h-full min-w-0 embla__slide flex-full"
+                >
+                  <div className='flex items-center justify-center h-full'>
+                    <img
+                      src={image?.url}
+                      alt={image.alt}
+                      className="object-contain"
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>

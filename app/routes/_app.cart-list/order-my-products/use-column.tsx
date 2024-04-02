@@ -107,6 +107,8 @@ export function useMyProductColumn(currency?: string) {
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
+          console.log('product', product);
+
           return (
             <ProductMeasurement
               uom={product.uom}
@@ -170,7 +172,7 @@ export function ItemsColumn({title, sku, featuredImage, moq}: ItemsColumnType) {
         />
       </figure>
       <figcaption className="flex flex-col gap-y-1">
-        <h5 className="">{(title && title) || '--'}</h5>
+        <h5 className="text-wrap">{(title && title) || '--'}</h5>
         <div className="flex space-x-5 items-center max-w-[180px] flex-wrap gap-2">
           <p className="mr-2">
             <span className="font-semibold text-grey-900 ">SKU: </span>
@@ -393,7 +395,7 @@ export function ProductTotal({
         </div>
         <p className="text-grey-900 text-lg leading-5.5 italic">
           {currency}
-          {prices || 'N/A'}
+          &nbsp;{prices?.toFixed(2) || 'N/A'}
         </p>
         <p className="text-sm italic font-bold leading-normal text-grey-500">
           (Excl. GST)

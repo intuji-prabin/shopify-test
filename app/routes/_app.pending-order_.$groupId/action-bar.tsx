@@ -1,11 +1,11 @@
 import {useState} from 'react';
-import {Form, Link} from '@remix-run/react';
+import {Form, Link, useSubmit} from '@remix-run/react';
 import {Table} from '@tanstack/react-table';
 import {Done} from '~/components/icons/done';
 import {Button} from '~/components/ui/button';
-import {Routes} from '~/lib/constants/routes.constent';
 import {BackButton} from '~/components/ui/back-button';
 import {Alert, AlertDescription} from '~/components/ui/alert';
+import {DeleteGroupModal} from '~/routes/_app.pending-order_.$groupId/delete-group-modal';
 import {Product} from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
 import {DeleteProductModal} from '~/routes/_app.pending-order_.$groupId/delete-product-modal';
 import {
@@ -23,6 +23,38 @@ export function ActionBar({
 }) {
   const [isEditing, setIsEditing] = useState(false);
 
+  const submit = useSubmit();
+
+  const handleAddToCart = () => {
+    const formData = new FormData();
+
+    table.getSelectedRowModel().flatRows.map((item) => {
+      formData.append(
+        `${item.original.productId}_productId`,
+        item.original.productId,
+      );
+
+      formData.append(
+        `${item.original.productId}_variantId`,
+        item.original.variantId,
+      );
+
+      formData.append(
+        `${item.original.productId}_quantity`,
+        item.original.quantity.toString(),
+      );
+
+      formData.append(`${item.original.productId}_uom`, item.original.uom);
+
+      formData.append('bulkCart', 'true');
+
+      formData.append('_action', 'add_to_cart');
+
+      submit(formData, {method: 'POST'});
+
+      table.resetRowSelection();
+    });
+  };
   return (
     <div className="flex justify-between md:items-center my-[30px] flex-col gap-4 md:flex-row md:gap-0 items-baseline ">
       <div className="flex items-baseline gap-4  flex-col sm:flex-row sm:items-center">
@@ -49,7 +81,7 @@ export function ActionBar({
                   defaultValue={groupName}
                   className="border-none hover:bg-primary-25 bg-primary-25 text-grey-900 font-bold leading-[36px] text-[30px] italic max-w-[204px] focus:bg-primary-25 !p-0"
                 />
-                <button type="submit" name="_action" value="update">
+                <button type="submit" name="_action" value="update_group">
                   <Done />
                 </button>
                 <button
@@ -65,6 +97,7 @@ export function ActionBar({
                 <button onClick={() => setIsEditing(true)}>
                   <EditItems />
                 </button>
+                <DeleteGroupModal groupName={groupName} />
               </div>
             )}
           </div>
@@ -97,10 +130,9 @@ export function ActionBar({
                 : 'primary'
             }
             className="min-w-[111px] min-h-10 p-0"
+            onClick={handleAddToCart}
           >
-            <Link to={Routes.CART_LIST} className="w-full">
-              Add to cart
-            </Link>
+            Add to cart
           </Button>
           <DeleteProductModal table={table} />
         </div>

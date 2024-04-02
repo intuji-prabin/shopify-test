@@ -4,7 +4,7 @@ import { Toaster } from '~/components/ui/toaster';
 import { useNonce } from '@shopify/hydrogen';
 import tailwindStyles from '~/styles/tailwind.css';
 import type { CustomerAccessToken } from '@shopify/hydrogen/storefront-api-types';
-import favicon from '../public/favicon.svg';
+import favicon from '../public/logo_main.svg';
 import { Layout } from '~/components/Layout';
 import nProgressStyles from 'nprogress/nprogress.css';
 import {

@@ -10,6 +10,11 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
+import {MetaFunction} from '@shopify/remix-oxygen';
+
+export const meta: MetaFunction = () => {
+  return [{title: 'Contact Us'}];
+};
 
 export async function loader({context}: LoaderFunctionArgs) {
   try {

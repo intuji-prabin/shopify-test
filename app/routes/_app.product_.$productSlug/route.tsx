@@ -21,7 +21,6 @@ import ProductInformation from './productInformation';
 import ProductTab from './productTabs';
 import ProductsRelatedProduct from './productsRelatedProduct';
 import { addToWishlist, removeFromWishlist } from './wishlist.server';
-import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
 
 export type SimilarProduct = {
   name: string;
@@ -63,7 +62,6 @@ export const loader = async ({
   try {
     const { productSlug } = params;
     const sessionCartInfo = await context.session.get(CART_SESSION_KEY);
-    const sessionWishListInfo = await context.session.get(WISHLIST_SESSION_KEY);
     if (sessionCartInfo) {
       const cartLists = await context.storefront.query(GET_CART_LIST, {
         variables: { cartId: sessionCartInfo?.cartId },
@@ -79,8 +77,7 @@ export const loader = async ({
 
     return json({
       product,
-      productPage,
-      sessionWishListInfo
+      productPage
     });
   } catch (error) {
     console.log('first', error);
@@ -89,21 +86,22 @@ export const loader = async ({
 };
 
 export default function route() {
-  const { product, productPage, sessionWishListInfo } = useLoaderData<typeof loader>();
+  const { product, productPage } = useLoaderData<typeof loader>();
+  // console.log("dfsdfdsf ", product)
   return (
     <ProductDetailPageWrapper>
       <div className="flex items-center pt-6 pb-4 ">
         <BackButton title="" />
         <Breadcrumb>
           <BreadcrumbItem href="/categories" className="capitalize">
-            Product
+            Products
           </BreadcrumbItem>
           <BreadcrumbItem className="capitalize text-grey-800">
             {productPage?.split('-').join(' ')}
           </BreadcrumbItem>
         </Breadcrumb>
       </div>
-      <ProductInformation product={product} wishListItems={sessionWishListInfo?.wishItems} />
+      <ProductInformation product={product} />
       <ProductTab description={product?.description} />
       <ProductsRelatedProduct />
     </ProductDetailPageWrapper>

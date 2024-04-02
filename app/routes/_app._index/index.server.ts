@@ -1,3 +1,5 @@
+import {LoaderFunctionArgs} from '@remix-run/server-runtime';
+
 export interface SliderType {
   node: Node;
 }
@@ -6,6 +8,15 @@ export interface Node {
   type: string;
   slider_title: SliderTitle;
   slider_image: SliderImage;
+  productHandle: SliderHandle;
+}
+
+export interface SliderHandle {
+  reference: ReferenceHandle;
+}
+
+export interface ReferenceHandle {
+  handle: string;
 }
 
 export interface SliderImage {
@@ -45,6 +56,7 @@ const formattedResponse = (response: SliderType[]) => {
   const data = response.map((item) => ({
     src: item?.node?.slider_image?.reference?.previewImage?.url,
     alt: item.node.slider_title.value,
+    productHandle: item?.node?.productHandle?.reference?.handle,
   }));
   return data;
 };
@@ -55,6 +67,13 @@ const SLIDER_DATA_QUERY = `query getHomepageSlider {
         node {
             type
             slider_title: field(key: "title") { value }
+            productHandle : field( key: "product" ) { 
+              reference {
+                ... on Product {
+                  handle
+                }
+              }
+            }
             slider_image: field(key: "image_url") { 
                 reference {
                     ... on MediaImage {

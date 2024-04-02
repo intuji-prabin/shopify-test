@@ -1,19 +1,29 @@
-import { NavLink, useLoaderData } from '@remix-run/react';
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from '@remix-run/server-runtime';
-import { getProductList } from '../_app.$mainCategory.$categoryId_.$subCategoryId/route';
-import { getCategoryList } from '../_app.categories/route';
+import {
+  NavLink,
+  isRouteErrorResponse,
+  useLoaderData,
+  useRouteError,
+} from '@remix-run/react';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  json,
+} from '@remix-run/server-runtime';
 import useEmblaCarousel, { EmblaCarouselType } from 'embla-carousel-react';
-import { useCallback, useEffect, useState } from 'react';
-import { FilterForm, SortByFilterForm } from '../_app.$mainCategory.$categoryId_.$subCategoryId/filter-form';
-import { Separator } from '@radix-ui/react-separator';
-import { LeftArrow } from '~/components/icons/left';
 import { BackButton } from '~/components/ui/back-button';
 import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
-import { Routes } from '~/lib/constants/routes.constent';
-import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
-import { ProductCard } from '~/components/ui/product-card';
 import PaginationSimple from '~/components/ui/pagination-simple';
-import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
+import { ProductCard } from '~/components/ui/product-card';
+import { Separator } from '~/components/ui/separator';
+import { Routes } from '~/lib/constants/routes.constent';
+import { getCategoryList } from '../_app.categories/route';
+import { FilterForm, SortByFilterForm } from './filter-form';
+import { getProductFilterList } from './product-filter.server';
+import { getProducts } from './product-list.server';
+import { useCallback, useEffect, useState } from 'react';
+import { LeftArrow } from '~/components/icons/left';
+import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -21,6 +31,8 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
 import { addProductToCart } from '../_app.product_.$productSlug/product.server';
+import { getFilterProduct } from './filter.server';
+import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
 import { addToWishlist, removeFromWishlist } from '../_app.product_.$productSlug/wishlist.server';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
@@ -29,9 +41,17 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   const categories = await getCategoryList(context);
   const sessionWishListInfo = await context.session.get(WISHLIST_SESSION_KEY);
 
+  const categoryId = params.categoryId;
+  const subCategoryId = params.subCategoryId;
   const mainCategory = params.mainCategory;
-  const categoryId = params.subCategoryId;
-  return { mainCategory, categoryId, productList, categories, sessionWishListInfo };
+  return json({
+    categories,
+    productList,
+    categoryId,
+    subCategoryId,
+    mainCategory,
+    sessionWishListInfo,
+  }, { headers: [['Set-Cookie', await context.session.commit({})]] });
 }
 
 export const action = async ({
@@ -185,18 +205,22 @@ export const action = async ({
   }
 };
 
+
 const linkStyles =
   'text-center basis-full border-b-2 inline-block duration-300 border-b-grey-50 cursor-pointer bg-grey-50 uppercase text-lg italic font-bold leading-6 text-grey-500 py-3 px-5 hover:bg-none';
 
-const SubCat = () => {
-  const { mainCategory, categoryId, categories, productList, sessionWishListInfo } = useLoaderData<any>();
-  const { productFilter } = productList;
+const PAGE_LIMIT = 9;
+
+export default function SubCategoryPage() {
+  const { categories, productList, categoryId, subCategoryId, mainCategory, sessionWishListInfo } =
+    useLoaderData<typeof loader>();
+  console.log("rdfffsfd ", productList)
   const { page } = productList;
   const paginationInfo = productList?.results?.pageInfo;
-
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
+  const { productFilter } = productList;
 
   const matchingCategory = categories
     .map((category) => {
@@ -248,14 +272,17 @@ const SubCat = () => {
       <div className="pt-6">
         <BackButton
           className="capitalize"
-          title={categoryId?.split('-').join(' ') ?? 'Back'}
+          title={subCategoryId?.split('-').join(' ') ?? 'Back'}
         />
         <Breadcrumb>
           <BreadcrumbItem href={Routes.CATEGORIES} className="capitalize">
             {mainCategory?.split('-').join(' ')}
           </BreadcrumbItem>
-          <BreadcrumbItem className="capitalize text-grey-800">
+          <BreadcrumbItem href={Routes.CATEGORIES} className="capitalize">
             {categoryId?.split('-').join(' ')}
+          </BreadcrumbItem>
+          <BreadcrumbItem className="capitalize text-grey-800">
+            {subCategoryId?.split('-').join(' ')}
           </BreadcrumbItem>
         </Breadcrumb>
         <Separator className="my-2" />
@@ -264,26 +291,28 @@ const SubCat = () => {
         <div className="embla">
           <div className="overflow-x-hidden embla__viewport" ref={emblaRef}>
             <div className="flex gap-3 py-4 embla__container">
-              {matchingCategory?.child_categories.filter((subCategory: any) => subCategory.child_categories.length === 0).map((subCategory: any, index: number) => (
-                <div
-                  className="max-w-full min-w-0 flex-autoCustom embla__slide"
-                  key={subCategory.id}
-                >
-                  <NavLink
-                    to={`/${matchingCategory.identifier}/${subCategory?.identifier}`}
-                    data-index={index}
-                    className={({ isActive, isPending }) =>
-                      isPending
-                        ? `active__tab ${linkStyles}`
-                        : isActive
-                          ? `active__tab ${linkStyles}`
-                          : linkStyles
-                    }
+              {matchingCategory?.subCategory.map((subCategory) =>
+                subCategory.child_categories.map((childCategory, index) => (
+                  <div
+                    className="max-w-full min-w-0 flex-autoCustom embla__slide"
+                    key={childCategory.id}
                   >
-                    {subCategory.title}
-                  </NavLink>
-                </div>
-              ))}
+                    <NavLink
+                      to={`/category/${matchingCategory.identifier}/${subCategory?.identifier}/${childCategory?.identifier}`}
+                      data-index={index}
+                      className={({ isActive, isPending }) =>
+                        isPending
+                          ? `active__tab ${linkStyles}`
+                          : isActive
+                            ? `active__tab ${linkStyles}`
+                            : linkStyles
+                      }
+                    >
+                      {childCategory.title}
+                    </NavLink>
+                  </div>
+                )),
+              )}
             </div>
           </div>
           <button
@@ -304,7 +333,8 @@ const SubCat = () => {
           </button>
         </div>
       </div>
-      <div className='grid grid-cols-1 gap-6 xl:grid-cols-4'>
+
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-4">
         <div className="xl:col-span-1">
           <div className="sticky top-[100px] bg-neutral-white">
             <FilterForm filterdata={productFilter} />
@@ -325,17 +355,18 @@ const SubCat = () => {
               <div className="grid gap-6 my-6 sm:grid-cols-2 lg:grid-cols-3">
                 {productList?.results?.formattedData.productList?.map(
                   (product: any, index: any) => (
-                    <ProductCard key={index} {...product} wishListItems={sessionWishListInfo?.wishItems} />
+                    <ProductCard key={index} {...product} />
                   ),
                 )}
               </div>
               <div className="flex flex-col justify-start w-full gap-3 px-6 py-4 border-t sm:items-center sm:justify-between sm:flex-row bg-neutral-white">
                 <PaginationSimple
-                  totalProductLength={
+                  totalLength={
                     productList?.results?.formattedData?.productList?.length
                   }
                   paginationInfo={paginationInfo}
                   page={page}
+                  pageSize={PAGE_LIMIT}
                 />
               </div>
             </>
@@ -344,6 +375,84 @@ const SubCat = () => {
       </div>
     </section>
   );
+}
+
+export const getProductList = async (
+  params: any,
+  context: any,
+  request: Request,
+) => {
+  try {
+    const { searchParams } = new URL(request.url);
+    const searchParam = Object.fromEntries(searchParams);
+    const pageInfo = searchParams.get('pageNo');
+    const { userDetails } = await getUserDetails(request);
+
+    let page = 1;
+    if (pageInfo) {
+      page = parseInt(pageInfo);
+    }
+
+    const searchKey = Object.keys(searchParam);
+    let searchList: any = [];
+
+    searchKey.map((value) => {
+      searchList.push({ key: value, value: searchParams.getAll(value) });
+      return { [value]: searchParams.getAll(value) };
+    });
+
+    let results;
+    if (searchList.length > 0) {
+      results = await getFilterProduct(
+        context,
+        params,
+        searchList,
+        userDetails?.id,
+      );
+    } else {
+      results = await getProducts(
+        context,
+        params,
+        searchList,
+        userDetails?.id,
+        [],
+        true,
+      );
+    }
+
+    const productFilter = await getProductFilterList(context);
+    return { productFilter, results, page };
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log('err', error);
+      return {};
+    }
+    return {};
+  }
 };
 
-export default SubCat;
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div>
+        <h1>
+          {error.status} {error.statusText}
+        </h1>
+        <p>{error.data}</p>
+      </div>
+    );
+  } else if (error instanceof Error) {
+    return (
+      <div className="flex items-center justify-center">
+        <div className="text-center">
+          <h1>Opps</h1>
+          <p>Something went wrong</p>
+        </div>
+      </div>
+    );
+  } else {
+    return <h1>Unknown Error</h1>;
+  }
+}

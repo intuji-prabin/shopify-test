@@ -11,31 +11,31 @@ export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, frei
         <li className="flex justify-between">
           <p className="capitalize">subtotal</p>
           <span className="text-lg font-medium">
-            <span className="text-base">{currency ? currency : '$'}</span>{cartSubTotalPrice}
+            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{cartSubTotalPrice?.toFixed(2)}
           </span>
         </li>
         <li className="flex justify-between">
           <p className="capitalize before:content-['*'] before:text-red-500">freight</p>
           <span className="text-lg font-medium">
-            <span className="text-base">{currency ? currency : '$'}</span>{freight}
+            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{freight}
           </span>
         </li>
         <li className="flex justify-between">
           <p className="capitalize before:content-['*'] before:text-red-500">surcharges</p>
           <span className="text-lg font-medium">
-            <span className="text-base">{currency ? currency : '$'}</span>{surcharges}
+            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{surcharges}
           </span>
         </li>
         <li className="flex justify-between">
           <p className="capitalize">Total Excl. GST</p>
           <span className="text-lg font-medium">
-            <span className="text-base">{currency ? currency : '$'}</span>{gst}
+            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{gst}
           </span>
         </li>
       </ul>
       <div className="flex justify-between [&>p]:font-medium [&>p]:text-2xl [&>p]:text-grey-900">
         <p>Estimated Total</p>
-        <p className="total_amout"><span className="text-base">{currency ? currency : '$'}</span>{cartTotalPrice}</p>
+        <p className="total_amout"><span className="text-base">{currency ? currency : '$'}</span>&nbsp;{cartTotalPrice?.toFixed(2)}</p>
       </div>
       <div className="flex gap-3 py-2 pl-2 pr-4 border-l-4 border-r-0 bg-semantic-danger-100 border-semantic-danger-500 border-y-0">
         <span className="flex items-center text-semantic-danger-500">*</span>

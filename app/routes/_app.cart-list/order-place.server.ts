@@ -23,7 +23,10 @@ export const placeOrder = async (request: Request, context: any) => {
       userDetails?.id,
       allData,
     );
-    console.log('orderPlaceResponse', orderPlaceResponse);
+    if (orderPlaceResponse?.status === false) {
+      throw new Error('Order not placed due to server error');
+    }
+    const shopifyOrderId = orderPlaceResponse?.ShopifyID;
 
     const lineItems = [] as any;
     cartList.map((items: any) => {
@@ -42,7 +45,7 @@ export const placeOrder = async (request: Request, context: any) => {
       });
     }
     context.session.set(CART_SESSION_KEY, cartSession);
-    return {cartSession};
+    return {cartSession, shopifyOrderId};
   } catch (error) {
     if (error instanceof Error) {
       console.log('err', error?.message);
@@ -62,7 +65,6 @@ const orderCreate = async (cartList: any, customerId: string, data: any) => {
   if (!orderPlaceResponse?.status) {
     throw new Error(orderPlaceResponse?.message);
   }
-  console.log('orderPlaceResponse', orderPlaceResponse);
 
   return orderPlaceResponse?.payload;
 };
