@@ -850,8 +850,8 @@ div[data-state='open'].fixed.inset-0 {
 .product_det__table tfoot td {
   @apply py-1.5;
 }
-.cart-order input[type='number']::-webkit-inner-spin-button,
-.cart-order input[type='number']::-webkit-outer-spin-button {
+.cart__list--quantity input[type='number']::-webkit-inner-spin-button,
+.cart__list--quantity input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
