@@ -72,7 +72,7 @@ label {
 input,
 textarea,
 select {
-  @apply !border-grey-300 border !px-3 !py-2 !leading-5 font-normal text-base text-grey-700;
+  @apply !border-grey-300 border !px-3 !py-2 !leading-5 font-normal text-base text-grey-700 bg-neutral-white;
 }
 input:active,
 textarea:active,
@@ -82,7 +82,7 @@ select:active {
 input:focus,
 textarea:focus,
 select:focus {
-  @apply !border !border-primary-500 !outline-none !ring-0 bg-primary-50;
+  @apply !border !border-primary-500 !outline-none !ring-0 bg-neutral-white;
 }
 input::placeholder,
 textarea::placeholder,

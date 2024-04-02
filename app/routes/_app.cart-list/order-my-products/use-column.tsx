@@ -111,6 +111,8 @@ export function useMyProductColumn(currency?: string, setUpdateCart?: React.Disp
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
+          console.log('product', product);
+
           return (
             <ProductMeasurement
               uom={product.uom}

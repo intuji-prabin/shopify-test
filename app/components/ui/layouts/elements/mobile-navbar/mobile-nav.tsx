@@ -1,23 +1,24 @@
-import { SetStateAction, useRef, useState } from 'react';
+import {SetStateAction, useRef, useState} from 'react';
 import CloseMenu from '~/components/icons/closeMenu';
 import HamburgerIcon from '~/components/icons/hamburgerIcon';
-import { Button } from '../../../button';
+import {Button} from '../../../button';
 import SearchIcon from '~/components/icons/search';
-import { LogoIcon, NotificationNavbar } from '../../top-header';
-import { useOutsideClick } from '~/hooks/useOutsideClick';
+import {LogoIcon, NotificationNavbar} from '../../top-header';
+import {useOutsideClick} from '~/hooks/useOutsideClick';
 import UserProfle from './user-profle';
 import NavMenu from './nav-menu';
 import OrderTrackMobile from './order-track';
 import LogoutForm from './logout-form';
 import UserProfile from './user-profle';
-import { mobileMenuItemsData } from '../bottom-header-menu-items';
-import { Link } from '@remix-run/react';
-import { useHamburgerMenu } from '../HamburgerMenuContext';
+import {mobileMenuItemsData} from '../bottom-header-menu-items';
+import {Link} from '@remix-run/react';
+import {useHamburgerMenu} from '../HamburgerMenuContext';
+import {PredictiveSearch} from '~/components/ui/predictive-search';
 
 export default function MobileNav() {
   // const [isOpen, setisOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const { isOpen, toggleMenu } = useHamburgerMenu();
+  const {isOpen, toggleMenu} = useHamburgerMenu();
   const mobileNavSectionRef = useRef<HTMLDivElement>(null);
   useOutsideClick(mobileNavSectionRef, () => toggleMenu(false));
 
@@ -75,13 +76,9 @@ export default function MobileNav() {
       {/* search bar starts here  */}
       {isSearchOpen ? (
         <div className="bg-grey-900 p-4 absolute top-0 w-full ">
-          <div className="flex bg-grey-900 border-primary-400 border-2 items-center p-2 ">
+          <div className="flex bg-grey-900 border-primary-400 border-2 items-center p-2 relative">
             <SearchIcon width={'24px'} height={'24px'} fillColor="#fff" />
-            <input
-              type="text"
-              placeholder="Search product or part number"
-              className="w-full outline-none border-none focus:bg-transparent bg-transparent placeholder:text-white text-white"
-            />
+            <PredictiveSearch searchVariant="mobile" />
             <Button
               className="bg-semantic-danger-500 p-2 hover:bg-semantic-danger-500"
               onClick={() => {

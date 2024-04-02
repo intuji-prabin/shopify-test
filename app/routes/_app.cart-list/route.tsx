@@ -46,11 +46,12 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   }
   const cartList = await getCartList(context, request, sessionCartInfo);
   const shippingAddresses = await getAllCompanyShippingAddresses(customerId);
-  return json({ cartList, shippingAddresses }, {
-    headers: [
-      ['Set-Cookie', await context.session.commit({})]
-    ],
-  });
+  return json(
+    { cartList, shippingAddresses },
+    {
+      headers: [['Set-Cookie', await context.session.commit({})]],
+    },
+  );
 };
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -201,7 +202,7 @@ export default function CartList() {
   return (
     <>
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
-      <UploadSearchbar />
+      <UploadSearchbar searchVariant="cart" />
       <div className="container flex flex-col items-start justify-between gap-6 my-6 lg:flex-row">
         <MyProducts
           products={cartList?.productList}
