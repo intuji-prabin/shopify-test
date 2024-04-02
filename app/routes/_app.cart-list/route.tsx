@@ -198,6 +198,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 export default function CartList() {
   const { cartList, shippingAddresses }: any = useLoaderData<typeof loader>();
   const [updateCart, setUpdateCart] = useState(false);
+  const [placeOrder, setPlaceOrder] = useState(true);
 
   return (
     <>
@@ -209,6 +210,7 @@ export default function CartList() {
           currency={cartList?.currency}
           updateCart={updateCart}
           setUpdateCart={setUpdateCart}
+          setPlaceOrder={setPlaceOrder}
         />
         <OrderSummary
           cartSubTotalPrice={cartList?.cartSubTotalPrice}
@@ -219,6 +221,7 @@ export default function CartList() {
           currency={cartList?.currency}
           shippingAddresses={shippingAddresses}
           updateCart={updateCart}
+          placeOrder={placeOrder}
         />
       </div>
     </>

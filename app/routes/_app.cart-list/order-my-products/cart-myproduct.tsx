@@ -17,9 +17,9 @@ import { useTable } from '~/hooks/useTable';
 import { BulkTable } from './bulk-table';
 import { useMyProductColumn } from './use-column';
 
-export default function MyProducts({ products, currency, setUpdateCart, updateCart }: any) {
+export default function MyProducts({ products, currency, setUpdateCart, updateCart, setPlaceOrder }: any) {
 
-  const { columns } = useMyProductColumn(currency, setUpdateCart);
+  const { columns } = useMyProductColumn(currency, setUpdateCart, setPlaceOrder);
   const { table } = useTable(columns, products);
 
   const fetcher = useFetcher();

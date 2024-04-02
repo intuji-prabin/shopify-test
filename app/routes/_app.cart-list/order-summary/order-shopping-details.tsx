@@ -253,7 +253,7 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: a
         />
       </div>
       {/* place order starts here */}
-      {!updateCart ?
+      {!updateCart && placeOrder ?
         <Button className="text-lg min-h-14" variant="primary" type="submit">
           Place order
         </Button>
@@ -264,7 +264,7 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: a
           >
             Place order
           </button>
-          <p className='italic font-normal'>Please <span className='text-red-500'>update your cart</span> to "PLACE ORDER"</p>
+          <p className='italic font-normal'>Please <span className='text-red-500'>update your cart</span> or <span className='text-red-500'>update your quantity to be greater than Minimum Order Quantity(MOQ)</span> to "PLACE ORDER"</p>
         </div>}
       <p className="text-lg font-normal leading-[22px] text-grey-700">
         <span className="underline text-primary-500">
