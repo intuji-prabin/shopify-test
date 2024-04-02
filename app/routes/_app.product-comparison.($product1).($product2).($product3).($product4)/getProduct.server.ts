@@ -20,6 +20,18 @@ export async function getSingleProduct(
   }
 }
 
+type Variant = {
+  edges: {
+    node: {
+      id: string;
+      sku: string;
+      moq: {
+        value: number;
+      };
+    };
+  }[];
+};
+
 export type ProductResponse = {
   id: string;
   handle: string;
@@ -38,17 +50,24 @@ export type ProductResponse = {
 
 const formatProduct = (product: ProductResponse, prices: any) => {
   const productId = product?.id.replace('gid://shopify/Product/', '');
+  const finalProductInfoArray = [
+    {key: 'warranty', value: product?.warranty?.value || 'N/A'},
+    {key: 'material', value: product?.material?.value || 'N/A'},
+    {key: 'product weight', value: product?.product_weight?.value || 'N/A'},
+    {key: 'supplier', value: product?.supplier?.value || 'N/A'},
+    {key: 'vendor', value: product?.vendor || 'N/A'},
+    {
+      key: 'minimum order quantity',
+      value: product?.variants?.edges[0]?.node?.moq?.value || 1,
+    },
+    {key: 'SKU', value: product?.variants?.edges[0]?.node?.sku || 'N/A'},
+  ];
   return {
     id: productId,
     handle: product?.handle,
     title: product?.title,
-    vendor: product?.vendor,
-    warranty: product?.warranty,
-    material: product?.material,
-    product_weight: product?.product_weight,
-    supplier: product?.supplier,
     featuredImage: product?.featuredImage,
-    variants: productVariantDataFormat(product?.variants),
+    finalProductInfoArray: finalProductInfoArray,
     companyPrice: prices?.[productId]
       ? prices?.[productId]?.company_price
       : 'N/A',
@@ -57,27 +76,6 @@ const formatProduct = (product: ProductResponse, prices: any) => {
       ? prices?.[productId]?.default_price
       : 'N/A',
   };
-};
-
-type Variant = {
-  edges: {
-    node: {
-      id: string;
-      sku: string;
-      moq: {
-        value: number;
-      };
-    };
-  }[];
-};
-
-const productVariantDataFormat = (variant: Variant) => {
-  const finalVariantData = {
-    id: variant?.edges[0]?.node?.id,
-    sku: variant?.edges[0]?.node?.sku,
-    moq: variant?.edges[0]?.node?.moq?.value || 1,
-  };
-  return finalVariantData;
 };
 
 const STOREFRONT_SINGLE_PRODUCT_GET_QUERY = (productID: string) => {

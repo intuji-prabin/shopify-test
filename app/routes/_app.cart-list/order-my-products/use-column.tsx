@@ -240,7 +240,7 @@ export function QuantityColumn({
       <div className="flex flex-col gap-[11.5px] mt-[2.4rem] cart-list">
         <div className="flex items-center">
           <button
-            className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
+            className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${quantity - 1 < moq && "cursor-not-allowed"}`}
             type='button'
             onClick={handleDecreaseQuantity}
             disabled={quantity - 1 < moq}
