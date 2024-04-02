@@ -1,33 +1,33 @@
-import {SetStateAction, useRef, useState} from 'react';
+import { SetStateAction, useRef, useState } from 'react';
 import CloseMenu from '~/components/icons/closeMenu';
 import HamburgerIcon from '~/components/icons/hamburgerIcon';
-import {Button} from '../../../button';
+import { Button } from '../../../button';
 import SearchIcon from '~/components/icons/search';
-import {LogoIcon, NotificationNavbar} from '../../top-header';
-import {useOutsideClick} from '~/hooks/useOutsideClick';
+import { LogoIcon, NotificationNavbar } from '../../top-header';
+import { useOutsideClick } from '~/hooks/useOutsideClick';
 import UserProfle from './user-profle';
 import NavMenu from './nav-menu';
 import OrderTrackMobile from './order-track';
 import LogoutForm from './logout-form';
 import UserProfile from './user-profle';
-import {mobileMenuItemsData} from '../bottom-header-menu-items';
-import {Link} from '@remix-run/react';
-import {useHamburgerMenu} from '../HamburgerMenuContext';
-import {PredictiveSearch} from '~/components/ui/predictive-search';
+import { mobileMenuItemsData } from '../bottom-header-menu-items';
+import { Link } from '@remix-run/react';
+import { useHamburgerMenu } from '../HamburgerMenuContext';
+import { PredictiveSearch } from '~/components/ui/predictive-search';
 
 export default function MobileNav() {
   // const [isOpen, setisOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const {isOpen, toggleMenu} = useHamburgerMenu();
+  const { isOpen, toggleMenu } = useHamburgerMenu();
   const mobileNavSectionRef = useRef<HTMLDivElement>(null);
   useOutsideClick(mobileNavSectionRef, () => toggleMenu(false));
 
   return (
     <>
       <div ref={mobileNavSectionRef}>
-        <div className="bg-grey-900 px-4 py-6 flex justify-between items-center relative">
+        <div className="relative flex items-center justify-between px-4 py-6 bg-grey-900">
           <LogoIcon logo_url={'/Logo.png'} />
-          <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2">
             <Button
               className="border border-[#313535] p-2 bg-transparent max-w-10 max-h-10 hover:bg-transparent"
               onClick={() => {
@@ -53,8 +53,8 @@ export default function MobileNav() {
           className={`bg-primary-500 p-4 flex flex-col gap-16 transition-opacity ease-in-out delay-75 duration-150 mobile-nav z-[1000] absolute w-full
         ${isOpen ? 'block' : 'hidden'}  `}
         >
-          <div className="user-menu flex gap-4 flex-col">
-            <div className="flex justify-between flex-col-reverse gap-4">
+          <div className="flex flex-col gap-4 user-menu">
+            <div className="flex flex-col-reverse justify-between gap-4">
               {' '}
               {/* user profile starts here */}
               <UserProfile user_name={'Niel De Grass'} />
@@ -75,12 +75,12 @@ export default function MobileNav() {
 
       {/* search bar starts here  */}
       {isSearchOpen ? (
-        <div className="bg-grey-900 p-4 absolute top-0 w-full ">
-          <div className="flex bg-grey-900 border-primary-400 border-2 items-center p-2 relative">
+        <div className="absolute top-0 w-full p-4 bg-grey-900 ">
+          <div className="relative flex items-center p-2 border-2 bg-grey-900 border-primary-400">
             <SearchIcon width={'24px'} height={'24px'} fillColor="#fff" />
             <PredictiveSearch searchVariant="mobile" />
             <Button
-              className="bg-semantic-danger-500 p-2 hover:bg-semantic-danger-500"
+              className="p-2 bg-semantic-danger-500 hover:bg-semantic-danger-500"
               onClick={() => {
                 setIsSearchOpen(!isSearchOpen);
               }}

@@ -92,8 +92,8 @@ export function PredictiveSearch({
               name="searchTerm"
               placeholder={inputPlaceholder}
               className={`!pl-6 border-none w-full text-base ${searchVariant === 'compare'
-                  ? 'font-normal'
-                  : 'font-bold placeholder:italic'
+                ? 'font-normal'
+                : 'font-bold placeholder:italic'
                 } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
             />
           </>
@@ -190,15 +190,15 @@ function SearchResultsProductsGrid({
     switch (searchVariant) {
       case 'normal': {
         return (
-          <figure className="flex items-center space-x-4" key={product.id}>
+          <figure className="flex flex-wrap items-center space-x-4" key={product.id}>
             <div className="size-14">
               <img
                 src={productUrl}
-                alt="product-image"
+                alt="product"
                 className="object-cover object-center size-full"
               />
             </div>
-            <figcaption>
+            <figcaption className='w-[calc(100%_-_72px)]'>
               <Link
                 prefetch="intent"
                 to={`/product/${product.handle}`}
@@ -214,15 +214,15 @@ function SearchResultsProductsGrid({
       case 'cart': {
         return (
           <div className="flex flex-col justify-between gap-4 sm:flex-row">
-            <div className="flex items-center gap-3 sm:w-3/4">
+            <div className="flex flex-wrap items-center gap-3 sm:w-3/4">
               <div className="size-16">
                 <img
                   src={productUrl}
-                  alt="product-image"
+                  alt="product"
                   className="object-contain object-center size-full"
                 />
               </div>
-              <div>
+              <div className='w-[calc(100%_-_76px)]'>
                 <p className="text-sm text-primary-500">
                   SKU: <span>{product.sku}</span>
                 </p>
@@ -313,15 +313,15 @@ function SearchResultsProductsGrid({
       case 'pending_order': {
         return (
           <div className="flex flex-col justify-between gap-4 sm:flex-row">
-            <div className="flex items-center gap-3 sm:w-3/4">
+            <div className="flex flex-wrap items-center gap-3 sm:w-3/4">
               <div className="size-16">
                 <img
                   src={productUrl}
-                  alt="product-image"
+                  alt="product"
                   className="object-contain object-center size-full"
                 />
               </div>
-              <div>
+              <div className='w-[calc(100%_-_76px)]'>
                 <p className="text-sm text-primary-500">
                   SKU: <span>{product.sku}</span>
                 </p>
@@ -407,15 +407,15 @@ function SearchResultsProductsGrid({
       }
       case 'compare': {
         return (
-          <figure className="flex items-center space-x-4" key={product.id}>
+          <figure className="flex flex-wrap items-center space-x-4" key={product.id}>
             <div className="size-14">
               <img
                 src={productUrl}
-                alt="product-image"
+                alt="product"
                 className="object-cover object-center size-full"
               />
             </div>
-            <figcaption>
+            <figcaption className='w-[calc(100%_-_72px)]'>
               <Link
                 prefetch="intent"
                 to={product.id}
@@ -433,18 +433,17 @@ function SearchResultsProductsGrid({
         function handleUOM(selectedUOM: string) {
           setUOM(selectedUOM);
         }
-
         return (
-          <div className="flex flex-col justify-between gap-4 sm:flex-row">
-            <div className="flex items-center gap-3 sm:w-1/2">
+          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
+            <div className="flex flex-wrap items-center gap-3 sm:w-1/2">
               <div className="size-16">
                 <img
                   src={productUrl}
-                  alt="product-image"
+                  alt="product"
                   className="object-contain object-center size-full"
                 />
               </div>
-              <div>
+              <div className='w-[calc(100%_-_76px)]'>
                 <p className="text-sm text-primary-500">
                   SKU: <span>{product.sku}</span>
                 </p>
@@ -468,7 +467,7 @@ function SearchResultsProductsGrid({
                 </p>
               </div>
             </div>
-            <div className="grid grid-cols-1 gap-x-4 w-full gap-y-2 sm:grid-cols-2 sm:w-[calc(50%_-1rem)]">
+            <div className="grid grid-cols-1 items-start gap-x-4 w-full gap-y-2 sm:grid-cols-2 sm:w-[calc(50%_-1rem)]">
               <select
                 name="filter_by"
                 className="w-full min-w-[120px] place-order !border-grey-500 filter-select"
@@ -554,18 +553,17 @@ function SearchResultsProductsGrid({
           </div>
         );
       }
-
       case 'mobile': {
         return (
-          <figure className="flex items-center space-x-4" key={product.id}>
+          <figure className="flex flex-wrap items-center space-x-4" key={product.id}>
             <div className="size-14">
               <img
                 src={productUrl}
-                alt="product-image"
+                alt="product"
                 className="object-cover object-center size-full"
               />
             </div>
-            <figcaption>
+            <figcaption className='w-[calc(100%_-_72px)]'>
               <Link
                 prefetch="intent"
                 to={`/product/${product.handle}`}
