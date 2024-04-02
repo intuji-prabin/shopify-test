@@ -18,6 +18,7 @@ import { ProductInfoTable } from './productInfoTable';
 export default function ProductInformation({ product }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
   const volumePrice = product?.priceRange?.length > 0 ? true : false;
+  console.log("product?.imageUrl", product?.imageUrl)
 
   return (
     <section className="bg-white">

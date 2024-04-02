@@ -50,6 +50,7 @@ export function useMyWishListColumn() {
               sku={product.sku}
               featuredImage={product.featuredImage}
               moq={product.moq}
+              handle={product?.handle}
             />
           );
         },
