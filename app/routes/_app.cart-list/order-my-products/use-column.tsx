@@ -169,15 +169,15 @@ type ItemsColumnType = Pick<
 
 export function ItemsColumn({ title, sku, featuredImage, moq, handle }: ItemsColumnType) {
   return (
-    <div className="flex space-x-2">
-      <figure className="bg-grey-25 p-3 !w-20 ">
+    <div className="flex flex-wrap items-center space-x-2">
+      <figure className="w-20 p-3 bg-grey-25">
         <img
           src={featuredImage ?? DEFAULT_IMAGE.IMAGE}
           alt="featured"
           className="object-contain object-center h-full"
         />
       </figure>
-      <figcaption className="flex flex-col gap-y-1">
+      <figcaption className="flex flex-col gap-y-1 w-[calc(100%_-_88px)]">
         <h5 className='text-wrap'>
           {handle ? <Link to={`/product/${handle}`}>{(title && title) || '--'}</Link> : (title && title) || '--'}
         </h5>

@@ -1,7 +1,7 @@
 import {
   isRouteErrorResponse,
   useLoaderData,
-  useRouteError,
+  useRouteError
 } from '@remix-run/react';
 import {
   ActionFunctionArgs,
@@ -9,9 +9,12 @@ import {
   json,
   redirect,
 } from '@remix-run/server-runtime';
+import { useState } from 'react';
+import EmptyList from '~/components/ui/empty-list';
 import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { Routes } from '~/lib/constants/routes.constent';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
@@ -27,8 +30,6 @@ import { getCartList } from './cart.server';
 import MyProducts from './order-my-products/cart-myproduct';
 import { placeOrder } from './order-place.server';
 import OrderSummary from './order-summary/cart-order-summary';
-import { useState } from 'react';
-import { Routes } from '~/lib/constants/routes.constent';
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
@@ -44,8 +45,11 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   if (!sessionCartInfo) {
     throw new Error('Cart not found');
   }
-  const cartList = await getCartList(context, request, sessionCartInfo);
   const shippingAddresses = await getAllCompanyShippingAddresses(customerId);
+  const cartList = await getCartList(context, request, sessionCartInfo);
+  if (cartList?.productList?.length === 0) {
+    await getCartList(context, request, sessionCartInfo)
+  }
   return json(
     { cartList, shippingAddresses },
     {
@@ -204,26 +208,29 @@ export default function CartList() {
     <>
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
       <UploadSearchbar searchVariant="cart" />
-      <div className="container flex flex-col items-start justify-between gap-6 my-6 lg:flex-row">
-        <MyProducts
-          products={cartList?.productList}
-          currency={cartList?.currency}
-          updateCart={updateCart}
-          setUpdateCart={setUpdateCart}
-          setPlaceOrder={setPlaceOrder}
-        />
-        <OrderSummary
-          cartSubTotalPrice={cartList?.cartSubTotalPrice}
-          cartTotalPrice={cartList?.cartTotalPrice}
-          freight={cartList?.freight}
-          surcharges={cartList?.surcharges}
-          gst={cartList?.gst}
-          currency={cartList?.currency}
-          shippingAddresses={shippingAddresses}
-          updateCart={updateCart}
-          placeOrder={placeOrder}
-        />
-      </div>
+      {cartList?.productList?.length === 0 ?
+        <EmptyList /> :
+        <div className="container flex flex-col items-start justify-between gap-6 my-6 lg:flex-row">
+          <MyProducts
+            products={cartList?.productList}
+            currency={cartList?.currency}
+            updateCart={updateCart}
+            setUpdateCart={setUpdateCart}
+            setPlaceOrder={setPlaceOrder}
+          />
+          <OrderSummary
+            cartSubTotalPrice={cartList?.cartSubTotalPrice}
+            cartTotalPrice={cartList?.cartTotalPrice}
+            freight={cartList?.freight}
+            surcharges={cartList?.surcharges}
+            gst={cartList?.gst}
+            currency={cartList?.currency}
+            shippingAddresses={shippingAddresses}
+            updateCart={updateCart}
+            placeOrder={placeOrder}
+          />
+        </div>
+      }
     </>
   );
 }
@@ -243,7 +250,7 @@ export function ErrorBoundary() {
   } else if (error instanceof Error) {
     return (
       <div className="container pt-6">
-        <div className="min-h-[400px] flex justify-center items-center ">
+        <div className="min-h-[400px] flex justify-center items-center">
           <div className="flex flex-col items-center gap-2">
             <h3>Error has occured</h3>
             <p className="leading-[22px] text-lg text-grey uppercase font-medium text-red-500">

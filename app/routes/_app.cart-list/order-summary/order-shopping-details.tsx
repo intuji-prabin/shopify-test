@@ -264,13 +264,13 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: a
           >
             Place order
           </button>
-          <p className='italic font-normal'>Please <span className='text-red-500'>update your cart</span> or <span className='text-red-500'>update your quantity to be greater than Minimum Order Quantity(MOQ)</span> to "PLACE ORDER"</p>
+          <p className='italic font-normal'>Please <span className='text-red-500'>press UPDATE CART button</span> or <span className='text-red-500'>update your quantity to be greater than Minimum Order Quantity(MOQ)</span> to "PLACE ORDER"</p>
         </div>}
       <p className="text-lg font-normal leading-[22px] text-grey-700">
         <span className="underline text-primary-500">
           Availability, shipping, tax & promotions
         </span>
-        are not final until you complete your order.
+        &nbsp;are not final until you complete your order.
       </p>
     </div>
   );
