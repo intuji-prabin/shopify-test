@@ -4,6 +4,8 @@ import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server'
 import {BulkOrderColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {generateUrlWithParams} from '~/lib/helpers/url.helper';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 
 export async function getProductGroupOptions({
   customerId,
@@ -52,6 +54,33 @@ export async function getPlaceAnOrderList({
       throw new Error(response.message);
     }
     return response.payload;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+
+    throw new Response(DEFAULT_ERRROR_MESSAGE, {
+      status: 500,
+    });
+  }
+}
+
+export async function deletePlaceAnOrderList({request}: {request: Request}) {
+  try {
+    const {userDetails} = await getUserDetails(request);
+
+    const customerId = userDetails.id.split('/').pop() as string;
+
+    const response = await useFetch<DefaultResponse>({
+      url: `${ENDPOINT.PLACE_AN_ORDER}/${customerId}`,
+      method: AllowedHTTPMethods.DELETE,
+    });
+
+    if (!response.status) {
+      throw new Error(response.message);
+    }
+
+    return response;
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(error.message);
