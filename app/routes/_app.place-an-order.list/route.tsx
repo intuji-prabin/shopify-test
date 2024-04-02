@@ -64,65 +64,72 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 
 export async function action({context, request}: ActionFunctionArgs) {
   await isAuthenticate(context);
+  let type = request.headers.get('Content-Type');
 
+  if (type === 'application/json') {
+    let json = await request.json();
+    console.log('payload data', json);
+    return null;
+  }
   const messageSession = await getMessageSession(request);
 
   const formData = await request.formData();
 
   const action = formData.get('_action') as ActionType;
 
-  switch (action) {
-    case 'add_to_cart': {
-      try {
-        const cartInfo = Object.fromEntries(formData);
+  // switch (action) {
+  //   case 'add_to_cart': {
+  //     try {
+  //       const cartInfo = Object.fromEntries(formData);
 
-        const accessTocken = (await getAccessToken(context)) as string;
+  //       const accessTocken = (await getAccessToken(context)) as string;
 
-        await addedBulkCart(cartInfo, context, accessTocken, request);
+  //       await addedBulkCart(cartInfo, context, accessTocken, request);
 
-        setSuccessMessage(messageSession, 'Item added to cart successfully');
+  //       setSuccessMessage(messageSession, 'Item added to cart successfully');
 
-        return json(
-          {},
-          {
-            headers: [
-              ['Set-Cookie', await context.session.commit({})],
-              ['Set-Cookie', await messageCommitSession(messageSession)],
-            ],
-          },
-        );
-      } catch (error) {
-        if (error instanceof Error) {
-          setErrorMessage(messageSession, error?.message);
-          return json(
-            {},
-            {
-              headers: [
-                ['Set-Cookie', await context.session.commit({})],
-                ['Set-Cookie', await messageCommitSession(messageSession)],
-              ],
-            },
-          );
-        }
-        setErrorMessage(
-          messageSession,
-          'Item not added to cart. Please try again later.',
-        );
-        return json(
-          {},
-          {
-            headers: [
-              ['Set-Cookie', await context.session.commit({})],
-              ['Set-Cookie', await messageCommitSession(messageSession)],
-            ],
-          },
-        );
-      }
-    }
+  //       return json(
+  //         {},
+  //         {
+  //           headers: [
+  //             ['Set-Cookie', await context.session.commit({})],
+  //             ['Set-Cookie', await messageCommitSession(messageSession)],
+  //           ],
+  //         },
+  //       );
+  //     } catch (error) {
+  //       if (error instanceof Error) {
+  //         setErrorMessage(messageSession, error?.message);
+  //         return json(
+  //           {},
+  //           {
+  //             headers: [
+  //               ['Set-Cookie', await context.session.commit({})],
+  //               ['Set-Cookie', await messageCommitSession(messageSession)],
+  //             ],
+  //           },
+  //         );
+  //       }
+  //       setErrorMessage(
+  //         messageSession,
+  //         'Item not added to cart. Please try again later.',
+  //       );
+  //       return json(
+  //         {},
+  //         {
+  //           headers: [
+  //             ['Set-Cookie', await context.session.commit({})],
+  //             ['Set-Cookie', await messageCommitSession(messageSession)],
+  //           ],
+  //         },
+  //       );
+  //     }
+  //   }
 
-    default:
-      throw new Error('Unexpected action');
-  }
+  //   default:
+  //     throw new Error('Unexpected action');
+  // }
+  return null;
 }
 
 export default function PlaceAnOrderListPage() {

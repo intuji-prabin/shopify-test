@@ -1,6 +1,9 @@
+import {useSubmit} from '@remix-run/react';
+import {Table} from '@tanstack/react-table';
 import React from 'react';
 import {Button} from '~/components/ui/button';
 import {ComboboxDemo} from '~/components/ui/createable-select';
+import {Product} from '~/routes/_app.place-an-order.list/place-an-order-list.server';
 import {
   Dialog,
   DialogContent,
@@ -9,17 +12,43 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/ui/dialog';
+import {number, string} from 'zod';
+
+interface GroupItem {
+  productId: string;
+  quantity: number;
+  uom: string;
+}
 
 export default function CreateGroup({
-  isDisabled,
+  table,
   productGroupOptions,
 }: {
-  isDisabled: boolean;
+  table: Table<Product>;
   productGroupOptions: {value: string; label: string}[];
 }) {
   const [selectedValue, setSelectedValue] = React.useState<string | null>(null);
+
+  const isDisabled = table.getSelectedRowModel().rows.length === 0;
   console.log('selectedValue', selectedValue);
 
+  const groupItemList: GroupItem[] = [];
+
+  table.getSelectedRowModel().flatRows.map((item) => {
+    groupItemList.push({
+      productId: item.original.productId,
+      quantity: item.original.quantity,
+      uom: item.original.uom,
+    });
+  });
+  console.log('selected value', groupItemList);
+
+  const submit = useSubmit();
+
+  const handleSaveForLater = () => {
+    //@ts-ignore
+    submit(groupItemList, {method: 'POST', encType: 'application/json'});
+  };
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -53,6 +82,7 @@ export default function CreateGroup({
           <Button
             type="submit"
             className="w-full italic font-bold uppercase leading6 text-sm "
+            onClick={handleSaveForLater}
           >
             Save for later
           </Button>
