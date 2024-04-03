@@ -1,7 +1,7 @@
 import Enquire from '~/components/icons/enquire';
 import Phone from '~/components/icons/phone';
-import {Link} from '@remix-run/react';
-import {Routes} from '~/lib/constants/routes.constent';
+import { Link } from '@remix-run/react';
+import { Routes } from '~/lib/constants/routes.constent';
 
 export default function DesktopFooter() {
   const footerNavs = [
@@ -79,10 +79,10 @@ export default function DesktopFooter() {
   return (
     <div className="bg-grey-900 ">
       <div className="container">
-        <div className=" flex justify-between py-20 flex-col md:flex-row gap-10 ">
+        <div className="flex flex-col justify-between gap-10 py-20 md:flex-row">
           <div className="flex flex-col gap-10">
-            <figure>
-              <img src="/footerlogo.png" alt="" />
+            <figure className='max-w-48'>
+              <img src="/myCigweldWhite.svg" alt="" />
             </figure>
             <div className="flex flex-col gap-[23px]">
               <div className="flex">
@@ -100,9 +100,9 @@ export default function DesktopFooter() {
             </div>
           </div>
 
-          <div className="grid gap-8 grid-cols-2 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             <div className="">
-              <ul className="flex gap-8 flex-col">
+              <ul className="flex flex-col gap-8">
                 {footerNavs.map((nav) => (
                   <Link to={nav.link} key={nav.id}>
                     <li className="text-2xl font-bold italic leading-[29px] text-white uppercase">
@@ -117,7 +117,7 @@ export default function DesktopFooter() {
                 Products
               </h4>
 
-              <ul className="flex flex-col space-y-2 text-white submenu-nav z-10">
+              <ul className="z-10 flex flex-col space-y-2 text-white submenu-nav">
                 {products?.map((prod) => (
                   <li key={prod.id}>{prod.title}</li>
                 ))}
@@ -151,8 +151,8 @@ export default function DesktopFooter() {
             </div>
           </div>
         </div>
-        <div className="flex border border-t-2 border-grey-700 border-x-0 border-b-0 pt-4 md:justify-between py-4 flex-col-reverse md:flex-row gap-6 justify-center items-center md:items-baseline ">
-          <p className="text-base text-white font-normal">
+        <div className="flex flex-col-reverse items-center justify-center gap-6 py-4 pt-4 border border-t-2 border-b-0 border-grey-700 border-x-0 md:justify-between md:flex-row md:items-baseline ">
+          <p className="text-base font-normal text-white">
             Cigweld © 2024 All Rights Reserved
           </p>
           <div className="text-base font-normal [&>*]:text-white flex gap-6 ">

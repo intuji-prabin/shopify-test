@@ -105,7 +105,7 @@ export default function MyProducts({ products, currency, setUpdateCart, updateCa
         </div>
       </div>
 
-      <div className="border-t border-grey-50 cart-order">
+      <div className="border-t border-grey-50 cart-order data__table">
         {isLoading ? (
           <div className="absolute inset-0 z-[9999] bg-white/95">
             <div className='flex items-center justify-center h-full gap-x-4 gap-y-2'>

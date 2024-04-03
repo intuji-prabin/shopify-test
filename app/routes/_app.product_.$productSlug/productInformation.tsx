@@ -54,7 +54,7 @@ export default function ProductInformation({ product }: any) {
           priceRange={product?.priceRange}
           companyDefaultPrice={product?.companyDefaultPrice}
           originalPrice={product?.originalPrice}
-          moq={product?.moq}
+          moq={product?.moq || 1}
           uomCode={product?.uomCode}
           currency={product?.currency}
         />
@@ -114,7 +114,7 @@ const ProductDetailsSection = ({
     quantity,
     unitOfMeasure,
     UOM,
-    box,
+    uomCode,
     priceRange,
     companyDefaultPrice,
   );
