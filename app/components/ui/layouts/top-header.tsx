@@ -25,17 +25,14 @@ export function PlaceOrder() {
   const {isOpen, toggleMenu} = useHamburgerMenu();
 
   return (
-    <Button
-      className="h-full px-6 place-order bg-secondary-500 hover:bg-secondary-500 min-h-12"
-      onClick={() => toggleMenu(!isOpen)}
-    >
-      <Link
-        to={Routes.PLACE_AN_ORDER}
-        className="uppercase  text-[14px] italic font-bold flex items-center text-grey-900 h-full"
+    <Link to={Routes.PLACE_AN_ORDER} prefetch="intent">
+      <Button
+        className="h-full px-6 place-order bg-secondary-500 hover:bg-secondary-500 min-h-12 text-grey-900"
+        onClick={() => toggleMenu(!isOpen)}
       >
         Place an order
-      </Link>
-    </Button>
+      </Button>
+    </Link>
   );
 }
 export function OrderTrack() {

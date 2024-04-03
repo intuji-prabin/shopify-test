@@ -13,6 +13,7 @@ import {
   useRouteError,
 } from '@remix-run/react';
 import {
+  addProductToGroup,
   getPlaceAnOrderList,
   getProductGroupOptions,
 } from '~/routes/_app.place-an-order.list/place-an-order-list.server';
@@ -30,6 +31,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
+import {SubmitPayload} from './save-later-dialogbox';
 
 const PAGE_LIMIT = 10;
 
@@ -67,6 +69,50 @@ export async function action({context, request}: ActionFunctionArgs) {
 
   const messageSession = await getMessageSession(request);
 
+  const contentType = request.headers.get('Content-Type');
+
+  if (contentType === 'application/json') {
+    const jsonPayload = (await request.json()) as SubmitPayload;
+    try {
+      const response = await addProductToGroup({
+        request,
+        sumbitPayload: jsonPayload,
+      });
+
+      setSuccessMessage(messageSession, response?.message);
+
+      return redirect(Routes.PENDING_ORDER, {
+        headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(messageSession, error?.message);
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      }
+      setErrorMessage(
+        messageSession,
+        'Item not added to cart. Please try again later.',
+      );
+      return json(
+        {},
+        {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        },
+      );
+    }
+  }
+
   const formData = await request.formData();
 
   const action = formData.get('_action') as ActionType;
@@ -82,15 +128,12 @@ export async function action({context, request}: ActionFunctionArgs) {
 
         setSuccessMessage(messageSession, 'Item added to cart successfully');
 
-        return json(
-          {},
-          {
-            headers: [
-              ['Set-Cookie', await context.session.commit({})],
-              ['Set-Cookie', await messageCommitSession(messageSession)],
-            ],
-          },
-        );
+        return redirect(Routes.CART_LIST, {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        });
       } catch (error) {
         if (error instanceof Error) {
           setErrorMessage(messageSession, error?.message);
