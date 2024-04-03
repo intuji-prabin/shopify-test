@@ -6,6 +6,7 @@ import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.cons
 import {generateUrlWithParams} from '~/lib/helpers/url.helper';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {SubmitPayload} from './save-later-dialogbox';
 
 export async function getProductGroupOptions({
   customerId,
@@ -28,6 +29,13 @@ interface DefaultResponse {
   message: string;
 }
 
+interface GroupCreateResponse extends DefaultResponse {
+  payload: {
+    groupId: number;
+    companyId: string;
+    groupName: string;
+  };
+}
 interface Payload {
   products: Product[];
   totalProduct: number;
@@ -90,4 +98,57 @@ export async function deletePlaceAnOrderList({request}: {request: Request}) {
       status: 500,
     });
   }
+}
+
+export async function addProductToGroup({
+  sumbitPayload,
+  request,
+}: {
+  sumbitPayload: SubmitPayload;
+  request: Request;
+}) {
+  const {userDetails} = await getUserDetails(request);
+
+  const customerId = userDetails.id.split('/').pop() as string;
+
+  const createGroupUrl = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
+
+  const updateGroupUrl = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
+
+  let groupId = sumbitPayload.group;
+
+  if (sumbitPayload.submitType === 'create') {
+    const body = JSON.stringify({
+      groupName: sumbitPayload.group,
+    });
+
+    const response = await useFetch<GroupCreateResponse>({
+      method: AllowedHTTPMethods.POST,
+      body,
+      url: createGroupUrl,
+    });
+
+    if (!response.status) {
+      throw new Error(response.message);
+    }
+
+    groupId = String(response.payload.groupId);
+  }
+
+  const body = JSON.stringify({
+    groupItemList: sumbitPayload.groupItemList,
+    groupId,
+  });
+
+  const response = await useFetch<DefaultResponse>({
+    method: AllowedHTTPMethods.POST,
+    body,
+    url: updateGroupUrl,
+  });
+
+  if (!response.status) {
+    throw new Error(response.message);
+  }
+
+  return response;
 }
