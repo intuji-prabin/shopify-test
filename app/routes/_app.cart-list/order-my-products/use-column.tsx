@@ -42,7 +42,7 @@ export type BulkOrderColumn = {
   totalPrice: number;
 };
 
-export function useMyProductColumn(currency?: string, setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>) {
+export function useMyProductColumn(currency?: string, setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>, setPlaceOrder?: React.Dispatch<React.SetStateAction<boolean>>) {
   const columns = useMemo<ColumnDef<BulkOrderColumn>[]>(
     () => [
       {
@@ -101,6 +101,7 @@ export function useMyProductColumn(currency?: string, setUpdateCart?: React.Disp
               moq={product.moq || 1}
               lineItemId={product.id}
               setUpdateCart={setUpdateCart}
+              setPlaceOrder={setPlaceOrder}
             />
           );
         },
@@ -168,16 +169,16 @@ type ItemsColumnType = Pick<
 
 export function ItemsColumn({ title, sku, featuredImage, moq, handle }: ItemsColumnType) {
   return (
-    <div className="flex space-x-2">
-      <figure className="bg-grey-25 p-3 !w-20 ">
+    <div className="flex flex-wrap items-center space-x-2">
+      <figure className="w-20 p-3 bg-grey-25">
         <img
           src={featuredImage ?? DEFAULT_IMAGE.IMAGE}
           alt="featured"
           className="object-contain object-center h-full"
         />
       </figure>
-      <figcaption className="flex flex-col gap-y-1">
-        <h5>
+      <figcaption className="flex flex-col gap-y-1 w-[calc(100%_-_88px)]">
+        <h5 className='text-wrap'>
           {handle ? <Link to={`/product/${handle}`}>{(title && title) || '--'}</Link> : (title && title) || '--'}
         </h5>
         <div className="flex space-x-5 items-center max-w-[180px] flex-wrap gap-2">
@@ -203,7 +204,7 @@ export function ItemsColumn({ title, sku, featuredImage, moq, handle }: ItemsCol
 type QuantityColumnType = Pick<
   BulkOrderColumn,
   'quantity' | 'productId' | 'variantId' | 'moq'
-> & { info: any; lineItemId?: string; setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>; };
+> & { info: any; lineItemId?: string; setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>; setPlaceOrder?: React.Dispatch<React.SetStateAction<boolean>> };
 export function QuantityColumn({
   quantity,
   info,
@@ -212,6 +213,7 @@ export function QuantityColumn({
   moq,
   lineItemId,
   setUpdateCart,
+  setPlaceOrder
 }: QuantityColumnType) {
   const meta = info.table.options.meta;
 
@@ -232,12 +234,14 @@ export function QuantityColumn({
     meta?.updateData(info.row.index, info.column.id, isNaN(inputQuantity) ? 1 : inputQuantity);
     const updateCart = inputQuantity >= moq;
     setUpdateCart && setUpdateCart(updateCart);
+    const shouldPlaceOrder = inputQuantity >= moq;
+    setPlaceOrder && setPlaceOrder(shouldPlaceOrder);
   }
 
 
   return (
     <>
-      <div className="flex flex-col gap-[11.5px] mt-[2.4rem] cart-list">
+      <div className="flex flex-col gap-[11.5px] mt-[2.4rem] cart__list--quantity">
         <div className="flex items-center">
           <button
             className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${quantity - 1 < moq && "cursor-not-allowed"}`}

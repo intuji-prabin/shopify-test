@@ -164,12 +164,10 @@ export default function route() {
             <Button
               variant='primary'
               onClick={() => {
-                console.log("errewrwrwe ")
                 const formData = new FormData();
                 table
                   .getSelectedRowModel()
-                  .flatRows.map((item, index) => {
-                    console.log('"rererwer "', item)
+                  .flatRows.map((item) => {
                     formData.append(
                       `${item.original.productId}_productId`,
                       item.original.productId,
