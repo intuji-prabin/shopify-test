@@ -265,7 +265,7 @@ export default function route() {
             <div className='text-center'>
               <h3 className='mb-2'>Your wishlist is empty</h3>
               <p className='mb-10 text-lg'>Create your first wishlist</p>
-              <Link className='inline-block px-6 py-2 text-sm font-bold leading-6 uppercase text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50' to={Routes.CATEGORIES}>Add items</Link>
+              <Link className='inline-block px-6 py-2 text-sm font-bold leading-6 italic uppercase text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50' to={Routes.CATEGORIES}>Add items</Link>
             </div>
           </div>
         </div>

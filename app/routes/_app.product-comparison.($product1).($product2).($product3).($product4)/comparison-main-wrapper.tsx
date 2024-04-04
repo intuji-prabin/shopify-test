@@ -3,6 +3,7 @@ import CloseMenu from '~/components/icons/closeMenu';
 import { TooltipInfo } from '~/components/icons/orderStatus';
 import { Button } from '~/components/ui/button';
 import { PredictiveSearch } from '~/components/ui/predictive-search';
+import { Price } from '~/components/ui/price';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 
 export type finalProductResponse = {
@@ -20,9 +21,9 @@ export type ProductFinalResponse = {
   title: string;
   finalProductInfoArray: { key: string, value: string }[];
   featuredImage: { url: string };
-  companyPrice: string;
+  companyPrice: number;
   currency: string;
-  defaultPrice: string;
+  defaultPrice: number;
   vendor: string;
 };
 
@@ -69,53 +70,10 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
               </Link>
             </p>
           </div>
-          <div className="flex gap-2 pb-6 mt-2 mb-6 border-b border-solid md:gap-6 border-grey-25">
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1">
-                <p className="text-semantic-success-500 text-sm md:text-base font-bold uppercase leading-[21px]">
-                  BUY PRICE
-                </p>
-                <div className="info-block">
-                  <p className="flex items-center justify-center w-5 h-5 ">
-                    <div className='cursor-pointer' data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts">
-                      <span>
-                        <TooltipInfo />
-                      </span>
-                    </div>
-                  </p>
-                </div>
-              </div>
-              <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-[#252727]">
-                <span className='text-lg font-medium'>{product1?.currency}</span>{product1?.companyPrice}
-              </h3>
-              <p className="text-[14px] font-normal leading-4">
-                (Excl. GST)
-              </p>
-            </div>
-            <div className="flex flex-col pl-1 md:pl-6">
-              <div className="flex items-center ">
-                <p className="text-grey-300 not-italic text-base font-bold uppercase leading-[21px]">
-                  rrp
-                </p>
-                <div className="info-block">
-                  <p className="flex items-center justify-center w-5 h-5 ">
-                    <div className='cursor-pointer'
-                      data-tooltip="Recommended retail price"
-                    >
-                      <span>
-                        <TooltipInfo />
-                      </span>
-                    </div>
-                  </p>
-                </div>
-              </div>
-              <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-grey-300">
-                <span className='text-lg font-medium'>{product1?.currency}</span>{product1?.defaultPrice}
-              </h3>
-              <p className="text-[14px] font-normal leading-4 text-grey-300">
-                (inc. GST)
-              </p>
-            </div>
+          <div className="pt-2 pb-6">
+            <Price currency={product1?.currency} price={product1?.companyPrice} />
+            <div className="border-b border-solid border-grey-50 pt-3 mb-3"></div>
+            <Price currency={product1?.currency} price={product1?.defaultPrice} variant="rrp" />
           </div>
           <ProductDetailInfo productInfo={product1?.finalProductInfoArray} />
         </div>
@@ -166,54 +124,10 @@ export function ProductDetailDiv({ productDetails, clearSelectedProduct }: { pro
               </Link>
             </p>
           </div>
-          <div className="flex gap-2 pb-6 mt-2 mb-6 border-b border-solid md:gap-6 border-grey-25">
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1">
-                <p className="text-semantic-success-500 text-sm md:text-base font-bold uppercase leading-[21px]">
-                  BUY PRICE
-                </p>
-                <div className="info-block">
-                  <p className="flex items-center justify-center w-5 h-5 ">
-                    <Link to="" data-tooltip="Recommended retail price">
-                      <span>
-                        <TooltipInfo />
-                      </span>
-                    </Link>
-                  </p>
-                </div>
-              </div>
-              <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-[#252727]">
-                <span className='text-lg font-medium'>{productDetails?.currency}</span>{productDetails?.companyPrice}
-              </h3>
-              <p className="text-[14px] font-normal leading-4">
-                (Excl. GST)
-              </p>
-            </div>
-            <div className="flex flex-col pl-1 md:pl-6">
-              <div className="flex items-center ">
-                <p className="text-grey-300 not-italic text-base font-bold uppercase leading-[21px]">
-                  rrp
-                </p>
-                <div className="info-block">
-                  <p className="flex items-center justify-center w-5 h-5 ">
-                    <Link
-                      to=""
-                      data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts"
-                    >
-                      <span>
-                        <TooltipInfo />
-                      </span>
-                    </Link>
-                  </p>
-                </div>
-              </div>
-              <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-grey-300">
-                <span className='text-lg font-medium'>{productDetails?.currency}</span>{productDetails?.defaultPrice}
-              </h3>
-              <p className="text-[14px] font-normal leading-4 text-grey-300">
-                (inc. GST)
-              </p>
-            </div>
+          <div className="pt-2 pb-6">
+            <Price currency={productDetails?.currency} price={productDetails?.companyPrice} />
+            <div className="border-b border-solid border-grey-50 pt-3 mb-3"></div>
+            <Price currency={productDetails?.currency} price={productDetails?.defaultPrice} variant="rrp" />
           </div>
           <ProductDetailInfo productInfo={productDetails?.finalProductInfoArray} />
         </> :

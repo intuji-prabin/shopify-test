@@ -112,7 +112,6 @@ export function useMyProductColumn(currency?: string, setUpdateCart?: React.Disp
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
-          console.log('product', product);
 
           return (
             <ProductMeasurement
@@ -319,7 +318,7 @@ export function ProductMeasurement({
   productId,
   setUpdateCart,
 }: MeasurementColumnType) {
-  const [UOM, setUom] = useState(uom);
+  const [finalUOM, setUom] = useState(uom);
   const meta = info.table.options.meta;
 
   const handleUOMChange = (selectedUOM: string) => {
@@ -327,6 +326,9 @@ export function ProductMeasurement({
     setUom(selectedUOM);
     meta?.updateData(info.row.index, info.column.id, selectedUOM);
   };
+  useEffect(() => {
+    setUom(uom)
+  }, [uom])
 
   return (
     <>
@@ -334,7 +336,7 @@ export function ProductMeasurement({
         name="uomSelector"
         className="w-full min-w-[92px] place-order h-full border-grey-100"
         onChange={(e: any) => handleUOMChange(e.target.value)}
-        value={UOM}
+        value={finalUOM}
       >
         {unitOfMeasure.length > 0 ? (
           unitOfMeasure?.map((uom: any, index: number) => (
@@ -343,10 +345,10 @@ export function ProductMeasurement({
             </option>
           ))
         ) : (
-          <option value={UOM}>{selectedUOMName}</option>
+          <option value={finalUOM}>{selectedUOMName}</option>
         )}
       </select>
-      <input type="hidden" name={`${productId}_uom`} value={UOM} />
+      <input type="hidden" name={`${productId}_uom`} value={finalUOM} />
     </>
   );
 }

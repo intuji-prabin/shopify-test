@@ -92,8 +92,8 @@ export function PredictiveSearch({
               name="searchTerm"
               placeholder={inputPlaceholder}
               className={`!pl-6 border-none w-full text-base ${searchVariant === 'compare'
-                  ? 'font-normal'
-                  : 'font-bold placeholder:italic'
+                ? 'font-normal'
+                : 'font-bold placeholder:italic'
                 } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
             />
           </>
@@ -110,7 +110,7 @@ export function PredictiveSearch({
       </fetcher.Form>
       {searchProduct && (
         <div
-          className={`${searchVariant === 'mobile' ? 'top-[65px]' : 'top-[52px]'
+          className={`${searchVariant === 'mobile' ? 'top-[65px]' : 'top-[calc(100%_+_4px)]'
             } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${searchVariant === 'normal' || searchVariant === 'mobile'
               ? null
               : 'max-w-[600px] max-h-[350px] overflow-y-auto shadow-lg'

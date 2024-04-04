@@ -1,11 +1,11 @@
-import {Form, Link, useSubmit} from '@remix-run/react';
+import { Form, Link, useSubmit } from '@remix-run/react';
 import {
   ProductLoveRed,
   ProductLoveWhite,
   TooltipInfo,
 } from '~/components/icons/orderStatus';
-import {Button} from '~/components/ui/button';
-import {Price} from './price';
+import { Button } from '~/components/ui/button';
+import { Price } from './price';
 
 export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
 
@@ -88,74 +88,20 @@ export function ProductCardInfo({
   moq,
   currency,
 }: // buyPrice,
-// rppPrice,
-any) {
+  // rppPrice,
+  any) {
   return (
     <div className="p-4">
-      <div className="sm:pb-[66px]">
+      <div className="sm:pb-14">
         <div>
           <p className="text-base font-medium text-primary-500 sku">
             SKU:&nbsp;{(sku && sku) || 'N/A'}
           </p>
-          <h5 className="text-lg italic font-bold leading-6 whitespace-normal max-h-12 text-grey-900 line-clamp-2 text-ellipsis">
-            <Link to={`/product/${handle}`}>{productName}</Link>
+          <h5 className="text-lg italic font-bold leading-6 whitespace-normal h-12 text-grey-900 line-clamp-2 text-ellipsis">
+            <Link to={`/product/${handle}`} title={productName}>{productName}</Link>
           </h5>
           <p className="text-sm text-grey-300">Minimum Order Quantity: {moq}</p>
         </div>
-        {/* <div className="flex flex-wrap gap-6 mt-3">
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1">
-              <p className="text-semantic-success-500 text-base font-bold uppercase leading-[21px]">
-                BUY PRICE
-              </p>
-              <div className="info-block">
-                <p className="flex items-center justify-center w-5 h-5 ">
-                  <div
-                    className="cursor-pointer"
-                    data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts"
-                  >
-                    <span>
-                      <TooltipInfo />
-                    </span>
-                  </div>
-                </p>
-              </div>
-            </div>
-            <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
-              <span className="text-lg font-medium">
-                {currency ? currency : '$'}{' '}
-              </span>
-              {(companyPrice && companyPrice?.toFixed(2)) || 'N/A'}
-            </h3>
-            <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
-          </div>
-          <div className="flex flex-col pl-6 border-l-2 border-r-0 border-grey-50 border-y-0">
-            <div className="flex items-center gap-1">
-              <p className="text-grey-300 not-italic text-base font-bold uppercase leading-[21px]">
-                rrp
-              </p>
-              <div className="info-block">
-                <p className="flex items-center justify-center w-5 h-5 ">
-                  <div
-                    className="cursor-pointer"
-                    data-tooltip="Recommended retail price"
-                  >
-                    <span>
-                      <TooltipInfo />
-                    </span>
-                  </div>
-                </p>
-              </div>
-            </div>
-            <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-              <span className="text-lg font-medium">
-                {currency ? currency : '$'}{' '}
-              </span>
-              {(defaultPrice && defaultPrice?.toFixed(2)) || 'N/A'}
-            </h3>
-            <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
-          </div>
-        </div> */}
         <div className="pt-2">
           <Price currency={currency} price={companyPrice} />
           <div className="border-b border-solid border-grey-50 pt-3 mb-3"></div>
@@ -184,9 +130,8 @@ function ProductCardImage({
 }: ProductCardImageProps) {
   return (
     <div
-      className={`relative px-11 py-[39px] flex justify-center border-grey-25 border-b-2 border-x-0 border-top-0 ${
-        imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
-      }`}
+      className={`relative px-11 py-[39px] flex justify-center border-grey-25 border-b-2 border-x-0 border-top-0 ${imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
+        }`}
     >
       {volumePrice && (
         <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px]">
@@ -231,7 +176,7 @@ function ProductCardButtons({
   const productVariantOnlyId = productVariantId.split('/').pop();
 
   return (
-    <div className="flex flex-col items-center justify-center gap-2 mt-6 xs:flex-row product-button">
+    <div className="flex flex-col items-center justify-center gap-2 mt-4 sm:flex-row product-button">
       <Link
         to={`/product/${handle}`}
         className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600"
