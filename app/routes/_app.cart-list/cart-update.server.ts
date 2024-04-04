@@ -1,6 +1,6 @@
 import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
-import { CONSTANT } from '~/lib/constants/product.session';
-import { getCartList } from './cart.server';
+import {CONSTANT} from '~/lib/constants/product.session';
+import {getCartList} from './cart.server';
 
 export const cartUpdate = async (context: any, request: any) => {
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
@@ -32,38 +32,42 @@ export const cartUpdate = async (context: any, request: any) => {
         },
       ],
       id: allFormData[`${id}_lineItemId`],
-      merchandiseId: `${CONSTANT?.variantId}${allFormData[`${id}_productVariant`]}`,
+      merchandiseId: `${CONSTANT?.variantId}${
+        allFormData[`${id}_productVariant`]
+      }`,
       quantity: parseInt(allFormData[`${id}_quantity`]),
     };
   });
 
-  const cartUpdateResponse = await context.storefront.mutate(UPDATE_CART, { variables : {
-    cartId : sessionCartInfo?.cartId,
-    lines : itemData
-  }})
+  const cartUpdateResponse = await context.storefront.mutate(UPDATE_CART, {
+    variables: {
+      cartId: sessionCartInfo?.cartId,
+      lines: itemData,
+    },
+  });
   // await getCartList(context, request, cartSession);
-  const cartLinesUpdate = cartUpdateResponse?.cartLinesUpdate
+  const cartLinesUpdate = cartUpdateResponse?.cartLinesUpdate;
 
-  if( cartLinesUpdate?.userErrors.length > 0 ) {
-    throw new Error("Somthing went wrong during update cart.")
+  if (cartLinesUpdate?.userErrors.length > 0) {
+    throw new Error('Somthing went wrong during update cart.');
   }
 
-  const cart = cartLinesUpdate?.cart
+  const cart = cartLinesUpdate?.cart;
 
-  if( !cart ) {
-    throw new Error("Cart not found during update.")
+  if (!cart) {
+    throw new Error('Cart not found during update.');
   }
 
-  const lines = cart?.lines?.nodes
-  if( lines.length < 1 ) {
-    throw new Error("Cart item not found during update cart")
+  const lines = cart?.lines?.nodes;
+  if (lines.length < 1) {
+    throw new Error('Cart item not found during update cart');
   }
   await getCartList(context, request, sessionCartInfo);
   return true;
 };
 
-
-const UPDATE_CART = `mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!){
+const UPDATE_CART =
+  `mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!){
   cartLinesUpdate(cartId: $cartId, lines: $lines) {
       cart {
           id
@@ -104,4 +108,4 @@ const UPDATE_CART = `mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpd
           message
       }
   }
-}` as const
+}` as const;

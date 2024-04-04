@@ -240,7 +240,7 @@ export function QuantityColumn({
 
   return (
     <>
-      <div className="flex flex-col gap-[11.5px] mt-[2.4rem] cart__list--quantity">
+      <div className="flex flex-col gap-[11.5px] mt-[2.2rem] cart__list--quantity">
         <div className="flex items-center">
           <button
             className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${quantity - 1 < moq && "cursor-not-allowed"}`}
@@ -424,6 +424,7 @@ export function ProductTotal({
       {priceRange.length > 0 && (
         <Button
           onClick={setIsBulkDetailsVisible}
+          type="button"
           className={`${isRowChecked ? 'bg-white' : 'bg-primary-200'
             }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
         >
