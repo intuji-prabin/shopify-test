@@ -72,7 +72,10 @@ export function useColumn() {
       {
         accessorKey: 'orderBy',
         header: 'Order By',
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const orderBy = info.getValue() as string;
+          return <span className="capitalize">{orderBy}</span>;
+        },
       },
       {
         accessorKey: 'actions',
