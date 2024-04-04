@@ -65,7 +65,7 @@ export function useColumn({
         cell: (info) => {
           const invoiceId = info.row.original.invoiceId;
           const invoiceLink = `${Routes.INVOICE}/${invoiceId}`;
-          return (
+          return invoiceId !== '-' ? (
             <Link
               to={invoiceLink}
               prefetch="intent"
@@ -73,6 +73,8 @@ export function useColumn({
             >
               {invoiceId}
             </Link>
+          ) : (
+            'N/A'
           );
         },
       },

@@ -10,15 +10,23 @@ import {statusVariants} from '~/components/ui/status';
 export function OrderStatusChip({status}: {status: OrderStatus}) {
   switch (status) {
     case 'received':
-      return 'Received';
+      return (
+        <div className={statusVariants({variant: 'received'})}>Received</div>
+      );
     case 'processing':
       return (
         <div className={statusVariants({variant: 'awaiting'})}>Processing</div>
       );
     case 'order_picked':
-      return 'Order Picked';
+      return (
+        <div className={statusVariants({variant: 'awaiting'})}>
+          Order Picked
+        </div>
+      );
     case 'dispatched':
-      return 'Dispatched';
+      return (
+        <div className={statusVariants({variant: 'shipped'})}>Dispatched</div>
+      );
     case 'in_transit':
       return (
         <div className={statusVariants({variant: 'partially_shipped'})}>
