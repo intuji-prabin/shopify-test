@@ -3,22 +3,20 @@ import {cva, type VariantProps} from 'class-variance-authority';
 import {cn} from '~/lib/utils/utils';
 
 const statusVariants = cva(
-  'inline-flex items-center justify-center p-2 min-w-[96px] text-sm font-medium capitalize leading-4 w-full',
+  'inline-flex items-center justify-center p-2 min-w-[96px] text-sm font-medium capitalize leading-4 w-full border border-solid border-current',
   {
     variants: {
       variant: {
-        awaiting: 'border border-solid border-current text-status-awaiting',
-        invoice: 'border border-solid border-current text-status-invoice',
-        partially_pick:
-          'border border-solid border-current text-status-partially_pick',
-        shipped: 'border border-solid border-current text-status-shipped',
-        partially_shipped:
-          'border border-solid border-current text-status-partially_shipped',
-        partially_invoice:
-          'border border-solid border-current text-status-partially_invoice',
-        fully_pick: 'border border-solid border-current text-status-fully_pick',
-        pending: 'border border-solid border-current text-status-pending',
-        closed: 'border border-solid border-current text-status-closed',
+        awaiting: 'text-status-awaiting',
+        invoice: 'text-status-invoice',
+        partially_pick: 'text-status-partially_pick',
+        shipped: 'text-status-shipped',
+        partially_shipped: 'text-status-partially_shipped',
+        partially_invoice: 'text-status-partially_invoice',
+        fully_pick: 'text-status-fully_pick',
+        pending: 'text-status-pending',
+        closed: 'text-status-closed',
+        received: 'text-status-recieved',
       },
     },
     defaultVariants: {

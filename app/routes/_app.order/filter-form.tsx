@@ -10,15 +10,16 @@ import {SheetClose, SheetFooter} from '~/components/ui/sheet';
 import {DatePickerWithRange} from '~/components/ui/date-range-picker';
 import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
 
-// Dummy Order Status Options
 const orderStatusOptions: SelectInputOptions[] = [
-  {title: 'Closed', value: 'closed'},
-  {title: 'Pending', value: 'pending'},
-  {title: 'In Progress', value: 'in_progress'},
+  {title: 'Received', value: 'received'},
+  {title: 'Processing', value: 'processing'},
+  {title: 'Order Picked', value: 'order_picked'},
+  {title: 'Dispatch', value: 'dispatched'},
+  {title: 'In Transit', value: 'in_transit'},
+  {title: 'Delivered', value: 'delivered'},
 ];
 
 const OrderFilterFormSchema = z.object({
-  poNumber: z.string().trim().optional(),
   orderStatus: z.string().trim().optional(),
   orderDateRange: z
     .object({
@@ -46,7 +47,7 @@ export default function OrderFilterForm() {
 
   const defaultValues: OrderFilterFormType = {};
 
-  const keys: OrderFilterFormFieldNameType[] = ['poNumber', 'orderStatus'];
+  const keys: OrderFilterFormFieldNameType[] = ['orderStatus'];
 
   keys.forEach((key) => {
     defaultValues[key] = searchParams.get(key) || undefined;
@@ -116,15 +117,6 @@ export default function OrderFilterForm() {
             label="Order Status"
             options={orderStatusOptions}
             data-cy="orderStatus"
-          />
-        </div>
-        <Separator />
-        <div className="p-6">
-          <h5 className="pb-2">Purchase Order Number</h5>
-          <Input
-            name="poNumber"
-            placeholder="Purchase Order Number"
-            data-cy="poNumber"
           />
         </div>
       </div>
