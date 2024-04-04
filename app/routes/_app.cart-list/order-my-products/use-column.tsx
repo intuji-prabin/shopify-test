@@ -320,7 +320,6 @@ export function ProductMeasurement({
   setUpdateCart,
 }: MeasurementColumnType) {
   const [UOM, setUom] = useState(uom);
-  console.log("first", UOM)
   const meta = info.table.options.meta;
 
   const handleUOMChange = (selectedUOM: string) => {
