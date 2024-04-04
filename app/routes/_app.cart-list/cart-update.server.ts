@@ -24,7 +24,7 @@ export const cartUpdate = async (context: any, request: any) => {
   });
 
   const itemData = productId.map((id: any) => {
-    return {
+    const data = {
       attributes: [
         {
           key: 'selectedUOM',
@@ -37,8 +37,12 @@ export const cartUpdate = async (context: any, request: any) => {
       }`,
       quantity: parseInt(allFormData[`${id}_quantity`]),
     };
-  });
 
+    console.log('data', data);
+    return data;
+  });
+  console.log('firstitemData', itemData);
+  return;
   const cartUpdateResponse = await context.storefront.mutate(UPDATE_CART, {
     variables: {
       cartId: sessionCartInfo?.cartId,
