@@ -283,7 +283,7 @@ const ProductDetailsSection = ({
             name="filter_by"
             className="w-full min-w-[120px] min-h-14 place-order h-full !border-grey-500 filter-select"
             onChange={(e: any) => handleUOM(e.target.value)}
-            defaultValue={UOM}
+            value={UOM}
           >
             {unitOfMeasure.length > 0 ? (
               unitOfMeasure?.map((uom: any, index: number) => (
