@@ -205,6 +205,7 @@ function ProductCardButtons({
           type="submit"
           value="addToCart"
           name="action"
+          className="w-full"
         >
           Add to cart
         </Button>
