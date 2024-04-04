@@ -1,41 +1,38 @@
-import {FaSearch} from 'react-icons/fa';
-import {Form, Link} from '@remix-run/react';
-import {Heart, Logout, UserProfile} from '~/components/icons/orderStatus';
-import {useState} from 'react';
-import {Button} from '~/components/ui/button';
+import { FaSearch } from 'react-icons/fa';
+import { Form, Link } from '@remix-run/react';
+import { Heart, Logout, UserProfile } from '~/components/icons/orderStatus';
+import { useState } from 'react';
+import { Button } from '~/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuLabel,
 } from '~/components/ui/dropdown-menu';
-import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
-import {Routes} from '~/lib/constants/routes.constent';
-import {CartIcon} from '~/components/icons/cartIcon';
-import {TrackAnOrderButton} from './elements/track-an-order-dialog';
-import {Note} from '~/components/icons/note';
-import {NotificationIcon} from '~/components/icons/notification';
-import {CustomerData} from '~/routes/_public.login/login.server';
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import { Routes } from '~/lib/constants/routes.constent';
+import { CartIcon } from '~/components/icons/cartIcon';
+import { TrackAnOrderButton } from './elements/track-an-order-dialog';
+import { Note } from '~/components/icons/note';
+import { NotificationIcon } from '~/components/icons/notification';
+import { CustomerData } from '~/routes/_public.login/login.server';
 import TabletNavmenu from './tablet-navbar/tablet-navmenu';
-import {useHamburgerMenu} from './elements/HamburgerMenuContext';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {PredictiveSearch} from '~/components/ui/predictive-search';
+import { useHamburgerMenu } from './elements/HamburgerMenuContext';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { PredictiveSearch } from '~/components/ui/predictive-search';
 
 export function PlaceOrder() {
-  const {isOpen, toggleMenu} = useHamburgerMenu();
+  const { isOpen, toggleMenu } = useHamburgerMenu();
 
   return (
-    <Button
-      className="h-full px-6 place-order bg-secondary-500 hover:bg-secondary-500 min-h-12"
-      onClick={() => toggleMenu(!isOpen)}
-    >
-      <Link
-        to={Routes.PLACE_AN_ORDER}
-        className="uppercase  text-[14px] italic font-bold flex items-center text-grey-900 h-full"
+    <Link to={Routes.PLACE_AN_ORDER} prefetch="intent">
+      <Button
+        className="h-full px-6 place-order bg-secondary-500 hover:bg-secondary-500 min-h-12 text-grey-900"
+        onClick={() => toggleMenu(!isOpen)}
       >
         Place an order
-      </Link>
-    </Button>
+      </Button>
+    </Link>
   );
 }
 export function OrderTrack() {
@@ -46,10 +43,10 @@ export function OrderTrack() {
     </div>
   );
 }
-export function LogoIcon({logo_url}: {logo_url: string}) {
+export function LogoIcon({ logo_url }: { logo_url: string }) {
   return (
     <Link to={Routes.HOME}>
-      <figure>
+      <figure className='w-40 '>
         <img src={logo_url} alt="My cigweld logo" />
       </figure>
     </Link>
@@ -65,7 +62,7 @@ export function NotificationNavbar({
   wishlistCount: number;
   pendingOrderCount: number;
 }) {
-  const {isOpen, toggleMenu} = useHamburgerMenu();
+  const { isOpen, toggleMenu } = useHamburgerMenu();
 
   const navIcons = [
     {
@@ -145,7 +142,7 @@ export default function TopHeader({
         <div className="flex items-center gap-4">
           <TabletNavmenu />
           {/* home logo begins here */}
-          <LogoIcon logo_url={'/Logo.png'} />
+          <LogoIcon logo_url={'/myCigweldWhite.svg'} />
         </div>
         {/* Search and notification bar begins here  */}
         <div className="flex gap-[22px] w-full xl:w-[unset]">

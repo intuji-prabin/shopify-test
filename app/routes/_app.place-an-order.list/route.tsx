@@ -4,51 +4,53 @@ import {
   json,
   redirect,
 } from '@remix-run/server-runtime';
-import {MetaFunction} from '@shopify/remix-oxygen';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
+import { MetaFunction } from '@shopify/remix-oxygen';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   isRouteErrorResponse,
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
 import {
+  addProductToGroup,
   getPlaceAnOrderList,
   getProductGroupOptions,
 } from '~/routes/_app.place-an-order.list/place-an-order-list.server';
-import {DataTable} from '~/components/ui/data-table';
-import {useMyProductColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
-import {useTable} from '~/hooks/useTable';
-import {renderSubComponent} from '~/routes/_app.cart-list/order-my-products/cart-myproduct';
-import {ActionBar} from '~/routes/_app.place-an-order.list/action-bar';
-import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
-import {addedBulkCart} from '~/routes/_app.wishlist/bulk.cart.server';
-import {Routes} from '~/lib/constants/routes.constent';
+import { DataTable } from '~/components/ui/data-table';
+import { useMyProductColumn } from '~/routes/_app.cart-list/order-my-products/use-column';
+import { useTable } from '~/hooks/useTable';
+import { renderSubComponent } from '~/routes/_app.cart-list/order-my-products/cart-myproduct';
+import { ActionBar } from '~/routes/_app.place-an-order.list/action-bar';
+import { PaginationWrapper } from '~/components/ui/pagination-wrapper';
+import { addedBulkCart } from '~/routes/_app.wishlist/bulk.cart.server';
+import { Routes } from '~/lib/constants/routes.constent';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
+import {SubmitPayload} from './save-later-dialogbox';
 
 const PAGE_LIMIT = 10;
 
 type ActionType = 'add_to_cart';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Place an Order List'}];
+  return [{ title: 'Place an Order List' }];
 };
 
-export async function loader({context, request}: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   const customerId = userDetails.id.split('/').pop() as string;
 
-  const productGroupOptions = await getProductGroupOptions({customerId});
+  const productGroupOptions = await getProductGroupOptions({ customerId });
 
-  const {searchParams} = new URL(request.url);
+  const { searchParams } = new URL(request.url);
 
   const placeAnOrderList = await getPlaceAnOrderList({
     customerId,
@@ -59,13 +61,57 @@ export async function loader({context, request}: LoaderFunctionArgs) {
     return redirect(Routes.PLACE_AN_ORDER);
   }
 
-  return json({productGroupOptions, placeAnOrderList});
+  return json({ productGroupOptions, placeAnOrderList });
 }
 
-export async function action({context, request}: ActionFunctionArgs) {
+export async function action({ context, request }: ActionFunctionArgs) {
   await isAuthenticate(context);
 
   const messageSession = await getMessageSession(request);
+
+  const contentType = request.headers.get('Content-Type');
+
+  if (contentType === 'application/json') {
+    const jsonPayload = (await request.json()) as SubmitPayload;
+    try {
+      const response = await addProductToGroup({
+        request,
+        sumbitPayload: jsonPayload,
+      });
+
+      setSuccessMessage(messageSession, response?.message);
+
+      return redirect(Routes.PENDING_ORDER, {
+        headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(messageSession, error?.message);
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      }
+      setErrorMessage(
+        messageSession,
+        'Item not added to cart. Please try again later.',
+      );
+      return json(
+        {},
+        {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        },
+      );
+    }
+  }
 
   const formData = await request.formData();
 
@@ -82,15 +128,12 @@ export async function action({context, request}: ActionFunctionArgs) {
 
         setSuccessMessage(messageSession, 'Item added to cart successfully');
 
-        return json(
-          {},
-          {
-            headers: [
-              ['Set-Cookie', await context.session.commit({})],
-              ['Set-Cookie', await messageCommitSession(messageSession)],
-            ],
-          },
-        );
+        return redirect(Routes.CART_LIST, {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        });
       } catch (error) {
         if (error instanceof Error) {
           setErrorMessage(messageSession, error?.message);
@@ -126,14 +169,14 @@ export async function action({context, request}: ActionFunctionArgs) {
 }
 
 export default function PlaceAnOrderListPage() {
-  const {productGroupOptions, placeAnOrderList} =
+  const { productGroupOptions, placeAnOrderList } =
     useLoaderData<typeof loader>();
 
-  const {columns} = useMyProductColumn();
+  const { columns } = useMyProductColumn();
 
-  const {table} = useTable(columns, placeAnOrderList.products);
+  const { table } = useTable(columns, placeAnOrderList.products);
   return (
-    <section className="container">
+    <section className="container data__table">
       <ActionBar productGroupOptions={productGroupOptions} table={table} />
       <DataTable
         table={table}

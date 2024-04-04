@@ -13,9 +13,13 @@ import {
 
 export function ComboboxDemo({
   options,
+  isError,
+  setIsError,
   selectedValue,
   setSelectedValue,
 }: {
+  isError: boolean;
+  setIsError: React.Dispatch<React.SetStateAction<boolean>>;
   selectedValue: string | null;
   setSelectedValue: React.Dispatch<React.SetStateAction<string | null>>;
   options: {value: string; label: string}[];
@@ -32,6 +36,9 @@ export function ComboboxDemo({
       setSearch('');
     }
   }, [open]);
+
+  console.log('isError', isError);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -39,7 +46,9 @@ export function ComboboxDemo({
           variant="input"
           role="combobox"
           aria-expanded={open}
-          className="justify-between px-3 font-medium normal-case"
+          className={`${isError ? '!border-semantic-danger-500' : ''}
+          justify-between px-3 font-medium normal-case
+          `}
         >
           {placeHolderValue ?? 'Select a Group'}
 
@@ -51,7 +60,10 @@ export function ComboboxDemo({
           <CommandInput
             className="w-full px-0 border-0 border-grey-100 active:!border-grey-100 focus:!border-grey-100 hover:!border-grey-100 focu:bg-white active:bg-white hover:bg-white !bg-white placeholder:text-grey-500"
             value={search}
-            onValueChange={setSearch}
+            onValueChange={(search) => {
+              setSearch(search);
+              setIsError(false);
+            }}
             placeholder="Search group..."
           />
           <CommandEmpty className="p-3">
@@ -75,6 +87,7 @@ export function ComboboxDemo({
                   onSelect={(currentValue) => {
                     setSelectedValue(currentValue);
                     setOpen(false);
+                    setIsError(false);
                   }}
                 >
                   {option.label}

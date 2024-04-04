@@ -56,8 +56,8 @@ export function ActionBar({
         <div className="flex gap-2">
           <div className="remove-dialogue">
             <CreateGroup
+              table={table}
               productGroupOptions={productGroupOptions}
-              isDisabled={table.getSelectedRowModel().rows.length === 0}
             />
           </div>
           <Button

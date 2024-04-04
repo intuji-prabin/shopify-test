@@ -26,7 +26,7 @@ export default function MobileNav() {
     <>
       <div ref={mobileNavSectionRef}>
         <div className="relative flex items-center justify-between px-4 py-6 bg-grey-900">
-          <LogoIcon logo_url={'/Logo.png'} />
+          <LogoIcon logo_url={'/myCigweldWhite.svg'} />
           <div className="flex items-center gap-2">
             <Button
               className="border border-[#313535] p-2 bg-transparent max-w-10 max-h-10 hover:bg-transparent"

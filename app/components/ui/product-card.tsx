@@ -1,10 +1,11 @@
-import { Form, Link, useSubmit } from '@remix-run/react';
+import {Form, Link, useSubmit} from '@remix-run/react';
 import {
   ProductLoveRed,
   ProductLoveWhite,
   TooltipInfo,
 } from '~/components/icons/orderStatus';
-import { Button } from '~/components/ui/button';
+import {Button} from '~/components/ui/button';
+import {Price} from './price';
 
 export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
 
@@ -20,7 +21,7 @@ export function ProductCard({
   id,
   uom,
   currency,
-  liked
+  liked,
 }: ProductCardProps) {
   return (
     <div className="bg-white single-product-card">
@@ -87,8 +88,8 @@ export function ProductCardInfo({
   moq,
   currency,
 }: // buyPrice,
-  // rppPrice,
-  any) {
+// rppPrice,
+any) {
   return (
     <div className="p-4">
       <div className="sm:pb-[66px]">
@@ -101,7 +102,7 @@ export function ProductCardInfo({
           </h5>
           <p className="text-sm text-grey-300">Minimum Order Quantity: {moq}</p>
         </div>
-        <div className="flex flex-wrap gap-6 mt-3">
+        {/* <div className="flex flex-wrap gap-6 mt-3">
           <div className="flex flex-col">
             <div className="flex items-center gap-1">
               <p className="text-semantic-success-500 text-base font-bold uppercase leading-[21px]">
@@ -121,7 +122,9 @@ export function ProductCardInfo({
               </div>
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727]">
-              <span className="text-lg font-medium">{currency ? currency : '$'} </span>
+              <span className="text-lg font-medium">
+                {currency ? currency : '$'}{' '}
+              </span>
               {(companyPrice && companyPrice?.toFixed(2)) || 'N/A'}
             </h3>
             <p className="text-[14px] font-normal leading-4">(Excl. GST)</p>
@@ -145,10 +148,18 @@ export function ProductCardInfo({
               </div>
             </div>
             <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300">
-              <span className="text-lg font-medium">{currency ? currency : '$'} </span>{(defaultPrice && defaultPrice?.toFixed(2)) || 'N/A'}
+              <span className="text-lg font-medium">
+                {currency ? currency : '$'}{' '}
+              </span>
+              {(defaultPrice && defaultPrice?.toFixed(2)) || 'N/A'}
             </h3>
             <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
           </div>
+        </div> */}
+        <div className="pt-2">
+          <Price currency={currency} price={companyPrice} />
+          <div className="border-b border-solid border-grey-50 pt-3 mb-3"></div>
+          <Price currency={currency} price={defaultPrice} variant="rrp" />
         </div>
         <div className="sm:absolute bottom-4 inset-x-4">
           <ProductCardButtons
@@ -171,11 +182,11 @@ function ProductCardImage({
   imageBackgroundColor,
   productId,
 }: ProductCardImageProps) {
-
   return (
     <div
-      className={`relative px-11 py-[39px] flex justify-center border-grey-25 border-b-2 border-x-0 border-top-0 ${imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
-        }`}
+      className={`relative px-11 py-[39px] flex justify-center border-grey-25 border-b-2 border-x-0 border-top-0 ${
+        imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
+      }`}
     >
       {volumePrice && (
         <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px]">
