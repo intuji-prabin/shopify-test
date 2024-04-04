@@ -177,12 +177,12 @@ export function ItemsColumn({ title, sku, featuredImage, moq, handle }: ItemsCol
           className="object-contain object-center h-full"
         />
       </figure>
-      <figcaption className="flex flex-col gap-y-1 w-[calc(100%_-_88px)]">
-        <h5 className='text-wrap'>
+      <figcaption className="flex flex-col gap-y-1 w-[calc(100%_-_88px)] text-wrap">
+        <h5>
           {handle ? <Link to={`/product/${handle}`}>{(title && title) || '--'}</Link> : (title && title) || '--'}
         </h5>
-        <div className="flex space-x-5 items-center max-w-[180px] flex-wrap gap-2">
-          <p className="mr-2">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <p>
             <span className="font-semibold text-grey-900 ">SKU: </span>
             {(sku && sku) || 'N/A'}
           </p>
@@ -296,6 +296,7 @@ export function QuantityColumn({
         name={`${productId}_lineItemId`}
         value={lineItemId}
       />
+      <input type="hidden" name={`${productId}_moq`} value={moq} />
       <input type="hidden" name={`${productId}_quantity`} value={quantity} />
     </>
   );
@@ -400,7 +401,7 @@ export function ProductTotal({
               <p className="flex items-center justify-center w-5 h-5 text-xs">
                 <div
                   className="cursor-pointer price-tooltip"
-                  data-tooltip="Recommended retail price"
+                  data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts"
                 >
                   <span>
                     <TooltipInfo />

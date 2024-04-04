@@ -855,3 +855,6 @@ div[data-state='open'].fixed.inset-0 {
   -webkit-appearance: none;
   margin: 0;
 }
+.data__table table thead tr th:nth-child(2) {
+  @apply min-w-[500px];
+}

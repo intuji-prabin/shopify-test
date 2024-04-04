@@ -1,16 +1,16 @@
-import {FormEvent, useRef, useState} from 'react';
-import {FaSearch} from 'react-icons/fa';
-import {Form, Link, useFetcher, useSubmit} from '@remix-run/react';
-import {debounce} from '~/lib/helpers/general.helper';
-import {Button} from '~/components/ui/button';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {useOutsideClick} from '~/hooks/useOutsideClick';
+import { FormEvent, useRef, useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
+import { Form, Link, useFetcher, useSubmit } from '@remix-run/react';
+import { debounce } from '~/lib/helpers/general.helper';
+import { Button } from '~/components/ui/button';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { useOutsideClick } from '~/hooks/useOutsideClick';
 import CloseMenu from '~/components/icons/closeMenu';
 import {
   NormalizedPredictiveSearch,
   NormalizedPredictiveSearchResultItem,
 } from '~/routes/_app.predictive-search/route';
-import {CompareSearch} from '../icons/compareSearch';
+import { CompareSearch } from '../icons/compareSearch';
 
 export type SearchVariant =
   | 'normal'
@@ -91,11 +91,10 @@ export function PredictiveSearch({
               type="text"
               name="searchTerm"
               placeholder={inputPlaceholder}
-              className={`!pl-6 border-none w-full text-base ${
-                searchVariant === 'compare'
+              className={`!pl-6 border-none w-full text-base ${searchVariant === 'compare'
                   ? 'font-normal'
                   : 'font-bold placeholder:italic'
-              } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
+                } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
             />
           </>
         )}
@@ -111,13 +110,11 @@ export function PredictiveSearch({
       </fetcher.Form>
       {searchProduct && (
         <div
-          className={`${
-            searchVariant === 'mobile' ? 'top-[65px]' : 'top-[52px]'
-          } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${
-            searchVariant === 'normal' || searchVariant === 'mobile'
+          className={`${searchVariant === 'mobile' ? 'top-[65px]' : 'top-[52px]'
+            } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${searchVariant === 'normal' || searchVariant === 'mobile'
               ? null
               : 'max-w-[600px] max-h-[350px] overflow-y-auto shadow-lg'
-          }`}
+            }`}
         >
           {fetcher.state === 'loading' ? (
             <p className="text-base font-bold text-center text-grey-400">
@@ -277,7 +274,7 @@ function SearchResultsProductsGrid({
                 <>
                   <Button
                     variant="primary"
-                    className="w-full px-8 mt-2 cursor-not-allowed bg-grey-500"
+                    className="w-full mt-2 cursor-not-allowed bg-grey-500"
                     disabled
                   >
                     Add to Cart
@@ -376,7 +373,7 @@ function SearchResultsProductsGrid({
                 <>
                   <Button
                     variant="primary"
-                    className="w-full px-8 mt-2 cursor-not-allowed bg-grey-500"
+                    className="w-full mt-2 cursor-not-allowed bg-grey-500"
                     disabled
                   >
                     Add to List
@@ -488,7 +485,7 @@ function SearchResultsProductsGrid({
               >
                 {product.unitOfMeasure.length > 0 ? (
                   product.unitOfMeasure?.map(
-                    (uom: {unit: string; code: string}, index: number) => (
+                    (uom: { unit: string; code: string }, index: number) => (
                       <option
                         className="px-4"
                         value={uom.code}

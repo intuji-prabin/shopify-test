@@ -46,10 +46,10 @@ export function useMyWishListColumn() {
           const product = info.row.original;
           return (
             <ItemsColumn
-              title={product.title}
-              sku={product.sku}
-              featuredImage={product.featuredImage}
-              moq={product.moq}
+              title={product?.title}
+              sku={product?.sku}
+              featuredImage={product?.featuredImage}
+              moq={product?.moq || 1}
               handle={product?.productHandle}
             />
           );
@@ -60,18 +60,18 @@ export function useMyWishListColumn() {
         header: 'Price',
         enableSorting: false,
         cell: (info) => {
-          const productTotal = info.row.original.companyPrice;
-          const priceRange = info.row.original.priceRange;
+          const productTotal = info?.row?.original?.companyPrice;
+          const priceRange = info?.row?.original?.priceRange;
           const quantity = info.row.original.quantity || info.row.original.moq || 1;
-          const product = info.row.original;
-          const UOM = info.row.original.uom;
+          const product = info?.row?.original;
+          const UOM = info?.row?.original?.uom;
           return (
             <ProductTotal
               totalPrice={productTotal}
               quantity={quantity}
               UOM={UOM}
-              unitOfMeasure={product.unitOfMeasure}
-              defaultUOM={product.uomCode}
+              unitOfMeasure={product?.unitOfMeasure}
+              defaultUOM={product?.uom}
               priceRange={priceRange}
               isBulkDetailVisible={info?.row?.getIsExpanded()}
               setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
@@ -86,14 +86,14 @@ export function useMyWishListColumn() {
         header: 'Quantity',
         enableSorting: false,
         cell: (info) => {
-          const product = info.row.original;
+          const product = info?.row?.original;
           return (
             <QuantityColumn
-              quantity={product.quantity || product.moq || 1}
+              quantity={product?.quantity || product?.moq || 1}
               info={info}
-              productId={product.productId}
-              variantId={product.variantId}
-              moq={product.moq}
+              productId={product?.productId}
+              variantId={product?.variantId}
+              moq={product?.moq || 1}
             />
           );
         },
@@ -103,13 +103,13 @@ export function useMyWishListColumn() {
         header: 'UOM',
         enableSorting: false,
         cell: (info) => {
-          const product = info.row.original;
+          const product = info?.row?.original;
           return (
             <ProductMeasurement
-              uom={product.uom}
-              unitOfMeasure={product.unitOfMeasure}
+              uom={product?.uom}
+              unitOfMeasure={product?.unitOfMeasure}
               info={info}
-              selectedUOMName={product.uomName}
+              selectedUOMName={product?.uomName}
             />
           );
         },
@@ -119,16 +119,19 @@ export function useMyWishListColumn() {
         header: 'Action',
         enableSorting: false,
         cell: (info) => {
-          const product = info.row.original;
+          const product = info?.row?.original;
           return (
             <>
-              {product.quantity < product.moq ?
-                <button
-                  className="uppercase flex justify-center items-center text-xs max-h-[unset] lg:max-h-[28px] min-w-[86px] cursor-not-allowed bg-grey-200 text-grey-400 px-6 py-2"
-                  disabled
-                >
-                  Add to cart
-                </button> :
+              {product?.quantity < product?.moq ?
+                <>
+                  <button
+                    className="uppercase flex justify-center items-center text-xs max-h-[unset] lg:max-h-[28px] min-w-[86px] cursor-not-allowed bg-grey-200 text-grey-400 px-6 py-2"
+                    disabled
+                  >
+                    Add to cart
+                  </button>
+                  <p className='text-[13px] text-red-500'>Minimum Order Quantity<br />MOQ: {product?.moq || 1}</p>
+                </> :
                 <Form method="POST"
                   onSubmit={(event) => {
                     submit(event.currentTarget);
