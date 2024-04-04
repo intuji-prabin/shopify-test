@@ -334,7 +334,7 @@ export function ProductMeasurement({
         name="uomSelector"
         className="w-full min-w-[92px] place-order h-full border-grey-100"
         onChange={(e: any) => handleUOMChange(e.target.value)}
-        defaultValue={UOM}
+        value={UOM}
       >
         {unitOfMeasure.length > 0 ? (
           unitOfMeasure?.map((uom: any, index: number) => (
