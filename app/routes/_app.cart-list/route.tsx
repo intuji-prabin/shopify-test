@@ -30,6 +30,7 @@ import { getCartList } from './cart.server';
 import MyProducts from './order-my-products/cart-myproduct';
 import { placeOrder } from './order-place.server';
 import OrderSummary from './order-summary/cart-order-summary';
+import useSort from '~/hooks/useSort';
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
@@ -203,16 +204,17 @@ export default function CartList() {
   const { cartList, shippingAddresses }: any = useLoaderData<typeof loader>();
   const [updateCart, setUpdateCart] = useState(false);
   const [placeOrder, setPlaceOrder] = useState(true);
+  const finalProductList = useSort({ items: cartList?.productList });
 
   return (
     <>
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
       <UploadSearchbar searchVariant="cart" />
-      {cartList?.productList?.length === 0 ?
+      {finalProductList?.length === 0 ?
         <EmptyList /> :
         <div className="container flex flex-col items-start justify-between gap-6 my-6 lg:flex-row">
           <MyProducts
-            products={cartList?.productList}
+            products={finalProductList}
             currency={cartList?.currency}
             updateCart={updateCart}
             setUpdateCart={setUpdateCart}

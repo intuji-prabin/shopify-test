@@ -835,11 +835,11 @@ div[data-state='open'].fixed.inset-0 {
 .embla-thumbs .embla__button:disabled {
   @apply opacity-30 hidden lg:flex;
 }
-.product_det__pricing {
-  @apply p-0;
-}
 .product_det__pricing .price {
   @apply text-[40px];
+}
+.product_det__pricing > div:not(:first-child) {
+  @apply before:bg-grey-50 before:absolute before:w-px before:h-full before:-left-6;
 }
 .product_det__table th {
   @apply h-[33px];
