@@ -215,11 +215,11 @@ export default function route() {
                           `bulkCart`,
                           "true",
                         )
-                        const quantityVal = formData.get(`${item.original.productId}_quantity`);
-                        const moqVal = formData.get(`${item.original.productId}_moq`);
-                        if (quantityVal && moqVal && quantityVal < moqVal) {
+                        const quantityVal = Number(formData.get(`${item.original.productId}_quantity`));
+                        const moqVal = Number(formData.get(`${item.original.productId}_moq`));
+                        if (quantityVal && moqVal && quantityVal < moqVal || quantityVal && quantityVal > 1000000) {
                           canSubmit = false;
-                          displayToast({ message: "Please select quantity to be greater than MOQ", type: "error" });
+                          displayToast({ message: "Please select quantity to be greater than MOQ or less than 1000000", type: "error" });
                         }
                       },
                       );
@@ -265,7 +265,7 @@ export default function route() {
             <div className='text-center'>
               <h3 className='mb-2'>Your wishlist is empty</h3>
               <p className='mb-10 text-lg'>Create your first wishlist</p>
-              <Link className='inline-block px-6 py-2 text-sm font-bold leading-6 italic uppercase text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50' to={Routes.CATEGORIES}>Add items</Link>
+              <Link className='inline-block px-6 py-2 text-sm italic font-bold leading-6 uppercase text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50' to={Routes.CATEGORIES}>Add items</Link>
             </div>
           </div>
         </div>
