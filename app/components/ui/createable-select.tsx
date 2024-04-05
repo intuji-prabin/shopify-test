@@ -37,8 +37,6 @@ export function ComboboxDemo({
     }
   }, [open]);
 
-  console.log('isError', isError);
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -70,8 +68,9 @@ export function ComboboxDemo({
             <Button
               variant="primary"
               className="w-full"
+              disabled={!search || search.trim().length === 0}
               onClick={() => {
-                setSelectedValue(search);
+                setSelectedValue(search.trim());
                 setOpen(false);
               }}
             >
