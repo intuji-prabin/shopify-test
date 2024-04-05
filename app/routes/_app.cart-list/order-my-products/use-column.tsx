@@ -215,7 +215,6 @@ export function QuantityColumn({
   setPlaceOrder
 }: QuantityColumnType) {
   const meta = info.table.options.meta;
-  const counter = info.row.index;
   const handleIncreaseQuantity = () => {
     meta?.updateData(info.row.index, info.column.id, quantity + 1 < 1 ? 1 : quantity + 1);
     const updateCart = quantity + 1 >= moq;
@@ -348,7 +347,7 @@ export function ProductMeasurement({
           <option value={finalUOM}>{selectedUOMName}</option>
         )}
       </select>
-      <input type="hidden" name={`${productId}_uom`} value={finalUOM} />
+      <input type="hidden" name={`${productId + info.row.index}_uom`} value={finalUOM} />
     </>
   );
 }

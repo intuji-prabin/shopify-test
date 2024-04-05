@@ -24,10 +24,10 @@ export const cartUpdate = async (context: any, request: any) => {
   });
 
   const itemData = productId.map((id: any) => {
-    const data = {
+    return {
       attributes: [
         {
-          key: 'selectedUOM',
+          // key: 'selectedUOM',
           value: allFormData[`${id}_uom`],
         },
       ],
@@ -37,12 +37,8 @@ export const cartUpdate = async (context: any, request: any) => {
       }`,
       quantity: parseInt(allFormData[`${id}_quantity`]),
     };
-
-    console.log('data', data);
-    return data;
   });
-  console.log('firstitemData', itemData);
-  return;
+
   const cartUpdateResponse = await context.storefront.mutate(UPDATE_CART, {
     variables: {
       cartId: sessionCartInfo?.cartId,
@@ -53,7 +49,7 @@ export const cartUpdate = async (context: any, request: any) => {
   const cartLinesUpdate = cartUpdateResponse?.cartLinesUpdate;
 
   if (cartLinesUpdate?.userErrors.length > 0) {
-    throw new Error('Somthing went wrong during update cart.');
+    throw new Error('Something went wrong during update cart.');
   }
 
   const cart = cartLinesUpdate?.cart;
