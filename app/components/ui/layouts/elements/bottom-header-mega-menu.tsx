@@ -1,16 +1,16 @@
-import { Link } from '@remix-run/react';
-import { useLayoutEffect, useState } from 'react';
+import {Link} from '@remix-run/react';
+import {useLayoutEffect, useState} from 'react';
 import ArrowForward from '~/components/icons/arrowForward';
-import { Payload } from '~/routes/_app/app.server';
+import {Payload} from '~/routes/_app/app.server';
 
-export const MegaMenu = ({ categories }: { categories: Payload[] }) => {
+export const MegaMenu = ({categories}: {categories: Payload[]}) => {
   //State to store the selected/active menu and submenu IDs
   const [activeMenu, setActiveMenu] = useState<{
     menu: Payload;
     subMenu: Payload;
   }>({
-    menu: { id: 1, title: '', identifier: '', child_categories: [] },
-    subMenu: { id: 1, title: '', identifier: '', child_categories: [] },
+    menu: {id: 1, title: '', identifier: '', child_categories: []},
+    subMenu: {id: 1, title: '', identifier: '', child_categories: []},
   });
   useLayoutEffect(() => {
     if (!categories) return;
@@ -46,15 +46,16 @@ export const MegaMenu = ({ categories }: { categories: Payload[] }) => {
           className={`transition-opacity megamenu-content p-3  text-black shadow-xl absolute bg-white top-8 -left-8  flex flex-row z-50`}
         >
           {/* Level 1 Menus Begin Here */}
-          <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10 pr-2 max-h-[330px]">
+          <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10 pr-2 max-h-[330px] overflow-y-auto">
             {categories?.map((menu: Payload) => (
               <li
                 key={'list' + menu.id}
                 className={`relative  flex menu-hov justify-between 
-              ${activeMenu.menu?.id === menu.id
-                    ? 'bg-primary-100 text-primary-500'
-                    : ''
-                  }
+              ${
+                activeMenu.menu?.id === menu.id
+                  ? 'bg-primary-100 text-primary-500'
+                  : ''
+              }
             `}
                 onMouseOver={() =>
                   setActiveMenu((prevMenu) => ({
@@ -96,17 +97,18 @@ export const MegaMenu = ({ categories }: { categories: Payload[] }) => {
                   <li
                     key={subMenu.id}
                     className={`relative text-grey-900 flex menu-hov font-medium not-italic text-lg items-center
-               ${activeMenu?.subMenu?.id === subMenu.id
-                        ? 'bg-primary-100 text-primary-500'
-                        : ''
-                      }
+               ${
+                 activeMenu?.subMenu?.id === subMenu.id
+                   ? 'bg-primary-100 text-primary-500'
+                   : ''
+               }
               `}
                     onMouseOver={() =>
-                      setActiveMenu((prevMenu) => ({ ...prevMenu, subMenu }))
+                      setActiveMenu((prevMenu) => ({...prevMenu, subMenu}))
                     }
                   >
                     {subMenu.child_categories &&
-                      subMenu.child_categories.length > 0 ? (
+                    subMenu.child_categories.length > 0 ? (
                       <Link to="/categories" className="w-full">
                         <p className="flex items-center justify-between px-2 py-1 rounded menu-hov between">
                           <span className="w-[calc(100%_-_24px)] text-lg font-medium text-grey-900">
