@@ -11,6 +11,7 @@ export const ENDPOINT = {
     REGISTER: '/auth/register',
     FORGOT_PASSWORD: '/auth/forgot-password',
     RESET_PASSWORD: '/auth/reset-password',
+    SESSION: `${BASE_URL}/session`,
   },
   ROLE: {
     GET: `${BASE_URL}/customer-roles`,
@@ -62,6 +63,7 @@ export const ENDPOINT = {
   },
   PENDING_ORDERS: {
     PRODUCT_GROUP: `${BASE_URL}/product/group`,
-    PRODUCT_GROUP_ITEM: `${BASE_URL}/product-group/add-items`,
+    PRODUCT_GROUP_ITEM: `${BASE_URL}/product-group/items`,
   },
+  PLACE_AN_ORDER: `${BASE_URL}/place-an-order`,
 };

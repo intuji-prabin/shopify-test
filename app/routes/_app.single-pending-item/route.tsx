@@ -6,7 +6,7 @@ export default function route() {
   return (
     <>
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'Gloves'} />
-      <UploadSearchbar />
+      <UploadSearchbar searchVariant="pending_order" />
       <SingleItem />
     </>
   );

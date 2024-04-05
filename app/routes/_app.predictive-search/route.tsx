@@ -21,25 +21,30 @@ import {
 import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 import { getCartList } from '../_app.cart-list/cart.server';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
-import { getPrices } from '../_app.$mainCategory.$categoryId_.$subCategoryId/product-list.server';
+import { getPrices } from '../_app.category_.$mainCategory.$categoryId_.$subCategoryId/product-list.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 
 type PredicticeSearchResultItemImage =
   | PredictiveCollectionFragment['image']
   | PredictiveProductFragment['variants']['nodes'][0]['image'];
 
-type PredictiveSearchResultItemPrice =
-  | PredictiveProductFragment['variants']['nodes'][0]['price'];
-
 export type NormalizedPredictiveSearchResultItem = {
   __typename: string | undefined;
   handle: string;
   id: string;
   image?: PredicticeSearchResultItemImage;
-  price?: PredictiveSearchResultItemPrice;
   styledTitle?: string;
   title: string;
   url: string;
+  moq: string;
+  sku: string;
+  price: string;
+  currency: string;
+  uom: string;
+  uomCode: string;
+  variantId: string;
+  unitOfMeasure: { unit: string; code: string; conversionFactor: number }[];
+  defaultUomValue: string;
 };
 
 type NormalizedPredictiveSearchResults = Array<
@@ -63,7 +68,7 @@ const NO_PREDICTIVE_SEARCH_RESULTS: NormalizedPredictiveSearchResults = [
  */
 async function normalizePredictiveSearchResults(
   predictiveSearch: PredictiveSearchQuery['predictiveSearch'],
-  customerId: any
+  customerId: string,
 ): Promise<NormalizedPredictiveSearch> {
   const results: NormalizedPredictiveSearchResults = [];
 
@@ -73,31 +78,22 @@ async function normalizePredictiveSearchResults(
     };
   }
 
-  if (predictiveSearch.queries.length) {
-    results.push({
-      type: 'queries',
-      items: predictiveSearch.queries.map((query: PredictiveQueryFragment) => {
-        return {
-          __typename: query.__typename,
-          handle: '',
-          id: query.text,
-          image: undefined,
-          title: query.text,
-          styledTitle: query.styledText,
-          url: '',
-        };
-      }),
-    });
-  }
-
   if (predictiveSearch.products.length) {
-    const prices = await formattedProductPrice(predictiveSearch.products, customerId)
+    const prices = await formattedProductPrice(
+      predictiveSearch.products,
+      customerId,
+    );
+
     results.push({
       type: 'products',
       items: predictiveSearch.products.map(
         (product: PredictiveProductFragment) => {
           const productId = product?.id.replace('gid://shopify/Product/', '');
-          const variantId = product?.variants?.nodes[0]?.id.replace('gid://shopify/ProductVariant/', '');
+          const variantId = product?.variants?.nodes[0]?.id.replace(
+            'gid://shopify/ProductVariant/',
+            '',
+          );
+
           return {
             __typename: product.__typename,
             handle: product.handle,
@@ -105,16 +101,20 @@ async function normalizePredictiveSearchResults(
             image: product.variants?.nodes?.[0]?.image,
             variantId: variantId,
             title: product.title,
+            //@ts-ignore
             uom: product?.uom?.value,
             url: '',
-            currency: prices?.[productId]
-              ? prices?.[productId]?.currency
-              : '$',
+            currency: prices?.[productId] ? prices?.[productId]?.currency : '$',
             price: prices?.[productId]
               ? prices?.[productId]?.company_price
               : null,
+            //@ts-ignore
             sku: product.variants.nodes[0]?.sku,
+            //@ts-ignore
             moq: product.variants.nodes[0]?.moq?.value,
+            unitOfMeasure: prices?.[productId]?.unitOfMeasure,
+            uomCode: prices?.[productId]?.uomCode,
+            defaultUomValue: prices?.[productId]?.uom,
           };
         },
       ),
@@ -124,9 +124,12 @@ async function normalizePredictiveSearchResults(
   return { results };
 }
 
-const formattedProductPrice = async (predictiveSearchData: any, customerId: string) => {
+const formattedProductPrice = async (
+  predictiveSearchData: PredictiveProductFragment[],
+  customerId: string,
+) => {
   let productIds = '';
-  predictiveSearchData.map((items: any) => {
+  predictiveSearchData.map((items: PredictiveProductFragment) => {
     const productId = items?.id.replace('gid://shopify/Product/', '');
     if (!productIds) {
       productIds = productId;
@@ -134,24 +137,24 @@ const formattedProductPrice = async (predictiveSearchData: any, customerId: stri
       productIds += `,${productId}`;
     }
     return true;
-  })
+  });
 
   const priceList = await getPrices(productIds, customerId);
-  return priceList
-}
+
+  return priceList;
+};
 
 async function getSearchProduct({
   limit = 6,
   context,
   searchTerm,
-  customerId
+  customerId,
 }: {
   searchTerm: string;
   context: AppLoadContext;
   limit?: number;
-  customerId: string
+  customerId: string;
 }) {
-
   const searchData: PredictiveSearchQuery = await context.storefront.query(
     PREDICTIVE_SEARCH_QUERY,
     {
@@ -170,7 +173,7 @@ async function getSearchProduct({
 
   const { results } = await normalizePredictiveSearchResults(
     searchData.predictiveSearch,
-    customerId
+    customerId,
   );
 
   return results;
@@ -183,7 +186,11 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   const { userDetails } = await getUserDetails(request);
   const searchTerm = searchParams.get('searchTerm');
   if (searchTerm) {
-    const results = await getSearchProduct({ searchTerm, context, customerId: userDetails?.id });
+    const results = await getSearchProduct({
+      searchTerm,
+      context,
+      customerId: userDetails?.id,
+    });
 
     return json({ results });
   }
@@ -205,42 +212,34 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
     );
     await getCartList(context, request, sessionCartInfo);
     setSuccessMessage(messageSession, 'Item added to cart successfully');
-    return redirect('/cart-list',
-      {
-        headers: [
-          ['Set-Cookie', await context.session.commit({})],
-          ['Set-Cookie', await messageCommitSession(messageSession)],
-        ],
-      },
-    );
+    return redirect('/cart-list', {
+      headers: [
+        ['Set-Cookie', await context.session.commit({})],
+        ['Set-Cookie', await messageCommitSession(messageSession)],
+      ],
+    });
   } catch (error) {
     if (error instanceof Error) {
       console.log('this is err', error?.message);
       setErrorMessage(messageSession, error?.message);
-      return redirect(
-        '/cart-list',
-        {
-          headers: [
-            ['Set-Cookie', await context.session.commit({})],
-            ['Set-Cookie', await messageCommitSession(messageSession)],
-          ],
-        },
-      );
+      return redirect('/cart-list', {
+        headers: [
+          ['Set-Cookie', await context.session.commit({})],
+          ['Set-Cookie', await messageCommitSession(messageSession)],
+        ],
+      });
     }
     console.log('this is err');
     setErrorMessage(
       messageSession,
       'Item not added to cart. Please try again later.',
     );
-    return redirect(
-      '/cart-list',
-      {
-        headers: [
-          ['Set-Cookie', await context.session.commit({})],
-          ['Set-Cookie', await messageCommitSession(messageSession)],
-        ],
-      },
-    );
+    return redirect('/cart-list', {
+      headers: [
+        ['Set-Cookie', await context.session.commit({})],
+        ['Set-Cookie', await messageCommitSession(messageSession)],
+      ],
+    });
   }
 };
 

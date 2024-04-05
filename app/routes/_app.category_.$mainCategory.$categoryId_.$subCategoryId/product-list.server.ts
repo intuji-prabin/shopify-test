@@ -123,7 +123,7 @@ const formattedResponse = async (response: any, customerId: string) => {
     return true;
   });
   const priceList = await getPrices(productIds, customerId);
-  console.log('firstPriceList', priceList);
+  // console.log('firstPriceList', priceList);
 
   const finalProductList: any = {
     categorytitle: productList?.title,
@@ -151,6 +151,8 @@ const formattedResponse = async (response: any, customerId: string) => {
         defaultPrice: priceList?.[productId]
           ? priceList?.[productId]?.default_price
           : null,
+        liked :  priceList?.[productId]
+        ? priceList?.[productId]?.liked : false
       };
     }),
   };

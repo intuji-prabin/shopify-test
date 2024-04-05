@@ -25,17 +25,14 @@ export function PlaceOrder() {
   const { isOpen, toggleMenu } = useHamburgerMenu();
 
   return (
-    <Button
-      className="h-full px-6 place-order bg-secondary-500 hover:bg-secondary-500 min-h-12"
-      onClick={() => toggleMenu(!isOpen)}
-    >
-      <Link
-        to={Routes.PLACE_AN_ORDER}
-        className="uppercase  text-[14px] italic font-bold flex items-center text-grey-900 h-full"
+    <Link to={Routes.PLACE_AN_ORDER} prefetch="intent">
+      <Button
+        className="h-full px-6 place-order bg-secondary-500 hover:bg-secondary-500 min-h-12 text-grey-900"
+        onClick={() => toggleMenu(!isOpen)}
       >
         Place an order
-      </Link>
-    </Button>
+      </Button>
+    </Link>
   );
 }
 export function OrderTrack() {
@@ -49,14 +46,22 @@ export function OrderTrack() {
 export function LogoIcon({ logo_url }: { logo_url: string }) {
   return (
     <Link to={Routes.HOME}>
-      <figure>
+      <figure className='w-40 '>
         <img src={logo_url} alt="My cigweld logo" />
       </figure>
     </Link>
   );
 }
 
-export function NotificationNavbar({ cartCount, wishlistCount }: { cartCount: number, wishlistCount: number }) {
+export function NotificationNavbar({
+  cartCount,
+  wishlistCount,
+  pendingOrderCount,
+}: {
+  cartCount: number;
+  wishlistCount: number;
+  pendingOrderCount: number;
+}) {
   const { isOpen, toggleMenu } = useHamburgerMenu();
 
   const navIcons = [
@@ -72,7 +77,7 @@ export function NotificationNavbar({ cartCount, wishlistCount }: { cartCount: nu
       icon: <Note width={'20px'} height={'20px'} />,
       url: Routes.PENDING_ORDER,
       title: 'Pending Order',
-      notification: '3',
+      notification: pendingOrderCount,
     },
     {
       id: 3,
@@ -117,11 +122,13 @@ export function NotificationNavbar({ cartCount, wishlistCount }: { cartCount: nu
 export default function TopHeader({
   userDetails,
   cartCount,
-  wishlistCount
+  wishlistCount,
+  pendingOrderCount,
 }: {
   userDetails: CustomerData;
   cartCount: number;
   wishlistCount: number;
+  pendingOrderCount: number;
 }) {
   const [isClicked, setIsClicked] = useState(false);
 
@@ -135,17 +142,21 @@ export default function TopHeader({
         <div className="flex items-center gap-4">
           <TabletNavmenu />
           {/* home logo begins here */}
-          <LogoIcon logo_url={'/Logo.png'} />
+          <LogoIcon logo_url={'/myCigweldWhite.svg'} />
         </div>
         {/* Search and notification bar begins here  */}
         <div className="flex gap-[22px] w-full xl:w-[unset]">
           {/* search bar begins here */}
           <div className="search-bar flex bg-white items-center min-w-[unset] w-full max-h-12 px-4 py-3 xl:min-w-[453px] relative">
-            <PredictiveSearch />
+            <PredictiveSearch searchVariant="normal" />
           </div>
 
           {/* notification menu starts here */}
-          <NotificationNavbar cartCount={cartCount} wishlistCount={wishlistCount} />
+          <NotificationNavbar
+            cartCount={cartCount}
+            wishlistCount={wishlistCount}
+            pendingOrderCount={pendingOrderCount}
+          />
         </div>
 
         {/* order track begins here  */}
@@ -171,6 +182,7 @@ export default function TopHeader({
               <DropdownMenuLabel className="flex items-center p-0 user-login-dropdown ">
                 <Form method="post" action="/logout" className="w-full">
                   <Link
+                    onClick={() => setIsClicked(false)}
                     to={Routes.PROFILE}
                     className="flex items-center justify-start w-full gap-2 p-2 transition duration-500 ease-in-out delay-75 bg-white hover:bg-primary-100 my-profile"
                   >

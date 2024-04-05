@@ -1,13 +1,12 @@
 import { Form, Link, useSubmit } from '@remix-run/react';
 import { useState } from 'react';
+import Info from '~/components/icons/info';
 import {
   CircleInformationMajor,
   Compare,
-  Pdf,
-  PickupLocation,
   ProductLoveRed,
   ProductLoveWhite,
-  TooltipInfo,
+  TooltipInfo
 } from '~/components/icons/orderStatus';
 import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -15,14 +14,10 @@ import { useMediaQuery } from '../../hooks/useMediaQuery';
 import CarouselThumb from './carouselThumb';
 import { getProductPriceByQty } from './product-detail';
 import { ProductInfoTable } from './productInfoTable';
-import { WarehouseInformation } from './view-warehouse-information';
-import Info from '~/components/icons/info';
+import { Price } from '~/components/ui/price';
 
-export default function ProductInformation({ product, wishListItems }: any) {
+export default function ProductInformation({ product }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
-  function checkProductIdExists(productId: number) {
-    return wishListItems?.some((item: any) => item?.productId === productId);
-  }
   const volumePrice = product?.priceRange?.length > 0 ? true : false;
 
   return (
@@ -44,7 +39,7 @@ export default function ProductInformation({ product, wishListItems }: any) {
           productName={product?.title}
           productId={product?.id}
           productVariantId={product?.variantId}
-          isFavorited={checkProductIdExists(product?.id)}
+          isFavorited={product?.liked}
           sku={'Sku'}
           skuUnits={product?.supplierSku}
           unitOfMeasurement={'Unit Of Measurement:'}
@@ -59,7 +54,7 @@ export default function ProductInformation({ product, wishListItems }: any) {
           priceRange={product?.priceRange}
           companyDefaultPrice={product?.companyDefaultPrice}
           originalPrice={product?.originalPrice}
-          moq={product?.moq}
+          moq={product?.moq || 1}
           uomCode={product?.uomCode}
           currency={product?.currency}
         />
@@ -119,7 +114,7 @@ const ProductDetailsSection = ({
     quantity,
     unitOfMeasure,
     UOM,
-    box,
+    uomCode,
     priceRange,
     companyDefaultPrice,
   );
@@ -189,8 +184,7 @@ const ProductDetailsSection = ({
         </figure>
         <ul className="flex gap-[7px]">
           <li className="w-[36px] h-[36px] flex justify-center items-center border-grey-50 border-[1px]">
-            <Link to="">
-              {' '}
+            <Link to={`/product-comparison/${productId}`}>
               <Compare />
             </Link>
           </li>
@@ -226,21 +220,13 @@ const ProductDetailsSection = ({
           IN STOCK
         </div>
       </div>
-      <ProductCardInfo
-        className="mt-6 product_det__pricing"
-        productName={
-          'ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition'
-        }
-        buyPrice={productPrice}
-        rppPrice={originalPrice}
-        buyPriceTitle={'BUY PRICE'}
-        exclGst={'Excl. GST'}
-        rppTitle={'RRP'}
-        incGst={'Inc. GST'}
-        minimumOrder={'Minimum Order'}
-        minimumPieces={moq}
-        currency={currency}
-      />
+      <div className='flex flex-wrap gap-12 product_det__pricing pt-6'>
+        <Price currency={currency} price={productPrice} className='relative' />
+        <Price currency={currency} price={originalPrice} variant='rrp' className='relative' />
+      </div>
+      <p className="text-lg font-normal leading-[22px] pt-6">
+        Minimum Order ({moq})
+      </p>
       {priceRange && priceRange.length > 0 && (
         <div className="w-full pt-4">
           <ProductInfoTable
@@ -289,7 +275,7 @@ const ProductDetailsSection = ({
             name="filter_by"
             className="w-full min-w-[120px] min-h-14 place-order h-full !border-grey-500 filter-select"
             onChange={(e: any) => handleUOM(e.target.value)}
-            defaultValue={UOM}
+            value={UOM}
           >
             {unitOfMeasure.length > 0 ? (
               unitOfMeasure?.map((uom: any, index: number) => (
@@ -339,101 +325,6 @@ const ProductDetailsSection = ({
           }
         </Form>
       </div>
-      {/* <div className="flex max-w-[483px] gap-2 pt-6">
-        <PickupLocation />
-        <div>
-          <p>
-            {pickupStatus}{' '}
-            <span className="italic uppercase bold">{pickupAddress}</span>
-          </p>
-          <p className="pb-2">{arrivalTime}</p>
-          <WarehouseInformation
-            warehouseLink={'View WAREHOUSE information'}
-            pickupTitle={'Pick Availability'}
-          />
-        </div>
-      </div> */}
     </div>
   );
 };
-
-type ProductCardInfoProps = {
-  buyPriceTitle: string;
-  productName: string;
-  buyPrice: number;
-  rppPrice: number;
-  exclGst: string;
-  rppTitle: string;
-  incGst: string;
-  minimumOrder: string;
-  minimumPieces: string;
-  className?: string;
-  currency?: string;
-};
-export function ProductCardInfo({
-  productName,
-  buyPrice,
-  rppPrice,
-  rppTitle,
-  buyPriceTitle,
-  exclGst,
-  incGst,
-  minimumOrder,
-  minimumPieces,
-  className,
-  currency
-}: ProductCardInfoProps) {
-  return (
-    <div className={`flex flex-col gap-6 p-4 ${className}`}>
-      <div className="tag flex flex-col gap-[11px]">
-        <div className="flex flex-wrap gap-6">
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1">
-              <p className="text-semantic-success-500 text-base font-medium uppercase leading-[21px]">
-                {buyPriceTitle}
-              </p>
-              <div className="info-block">
-                <p className="flex items-center justify-center w-5 h-5 ">
-                  <div className='cursor-pointer' data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts">
-                    <span>
-                      <TooltipInfo />
-                    </span>
-                  </div>
-                </p>
-              </div>
-            </div>
-            <h3 className="italic leading-[36px] text-[30px] font-bold text-[#252727] price">
-              <span className='text-lg font-medium'>{currency ? currency : '$'}</span>&nbsp;{buyPrice?.toFixed(2)}
-            </h3>
-            <p className="text-[14px] font-normal leading-4 pt-1">({exclGst})</p>
-          </div>
-          <div className="flex flex-col pl-6 border-l-2 border-r-0 border-grey-50 border-y-0">
-            <div className="flex items-center gap-1">
-              <p className="text-grey-300 not-italic text-base font-medium uppercase leading-[21px]">
-                {rppTitle}
-              </p>
-              <div className="info-block">
-                <p className="flex items-center justify-center w-5 h-5 ">
-                  <div className='cursor-pointer'
-                    data-tooltip="Recommended retail price"
-                  >
-                    <span>
-                      <TooltipInfo />
-                    </span>
-                  </div>
-                </p>
-              </div>
-            </div>
-            <h3 className="italic leading-[36px] text-[30px] font-bold text-grey-300 price">
-              <span className='text-lg font-medium'>{currency ? currency : '$'}</span>&nbsp;{rppPrice?.toFixed(2)}
-            </h3>
-            <p className="text-[14px] font-normal leading-4 pt-1">({incGst})</p>
-          </div>
-        </div>
-      </div>
-      <p className="text-lg font-normal leading-[22px]">
-        {minimumOrder} ({minimumPieces})
-      </p>
-    </div>
-  );
-}

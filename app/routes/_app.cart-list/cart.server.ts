@@ -35,10 +35,10 @@ const formateCartList = async (
   // context: any,
 ) => {
   const cartLine = cartResponse?.cart?.lines?.nodes;
-  if (cartLine.length < 1) {
-    throw new Error('Cart List is empty');
-  }
   let productList = [] as any;
+  if (cartLine.length < 1) {
+    return {productList: []};
+  }
   // sessionCartInfo.lineItems = cartLine.length;
   // await context.session.set(CART_SESSION_KEY, sessionCartInfo);
   cartLine.map((items: any) => {
@@ -62,6 +62,7 @@ const formateCartList = async (
       uom: items?.attributes.filter(
         (att: any) => att?.key == 'selectedUOM',
       )?.[0]?.value,
+      handle: merchandise?.product?.handle,
     });
   });
 

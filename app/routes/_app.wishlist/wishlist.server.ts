@@ -21,7 +21,7 @@ export async function getWishlist(request: any) {
   const payload = results.payload;
 
   if (payload.length < 1) {
-    throw new Error('WishList Not Found');
+    return [];
   }
   return payload;
 }

@@ -46,7 +46,7 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
           className={`transition-opacity megamenu-content p-3  text-black shadow-xl absolute bg-white top-8 -left-8  flex flex-row z-50`}
         >
           {/* Level 1 Menus Begin Here */}
-          <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10 pr-2 max-h-[330px]">
+          <ul className="flex flex-col space-y-2 text-white submenu-nav min-w-[217px] z-10 pr-2 max-h-[330px] overflow-y-auto">
             {categories?.map((menu: Payload) => (
               <li
                 key={'list' + menu.id}
@@ -121,7 +121,7 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                       </Link>
                     ) : (
                       <Link
-                        to={`/${activeMenu?.menu?.identifier}/${subMenu?.identifier}`}
+                        to={`/category/${activeMenu?.menu?.identifier}/${subMenu?.identifier}`}
                         className="w-full"
                       >
                         <p className="flex items-center justify-between px-2 py-1 rounded menu-hov between">
@@ -155,7 +155,7 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                         className="relative flex items-center text-lg not-italic font-medium text-grey-900 menu-hov"
                       >
                         <Link
-                          to={`/${activeMenu?.menu?.identifier}/${activeMenu?.subMenu?.identifier}/${subMenu?.identifier}`}
+                          to={`/category/${activeMenu?.menu?.identifier}/${activeMenu?.subMenu?.identifier}/${subMenu?.identifier}`}
                           className="w-full"
                         >
                           <p className="flex items-center px-2 py-1 rounded menu-hov justify- ">

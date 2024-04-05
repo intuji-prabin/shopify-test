@@ -1,6 +1,6 @@
-import {Fragment} from 'react';
-import {useSearchParams} from '@remix-run/react';
-import {ColumnDef, Row, Table, flexRender} from '@tanstack/react-table';
+import { Fragment } from 'react';
+import { useSearchParams } from '@remix-run/react';
+import { ColumnDef, Row, Table, flexRender } from '@tanstack/react-table';
 import {
   TableBody,
   TableCell,
@@ -18,7 +18,7 @@ import {
 export type DataTableProps<T> = {
   table: Table<T>;
   columns?: ColumnDef<T>[];
-  renderSubComponent?: (props: {row: Row<T>}) => React.ReactElement;
+  renderSubComponent?: (props: { row: Row<T> }) => React.ReactElement;
   getRowCanExpand?: (row: Row<T>) => boolean;
   className?: string;
 };
@@ -132,9 +132,8 @@ export function DataTable<T>({
                 </TableRow>
                 {row.getIsExpanded() && (
                   <TableRow
-                    className={` ${
-                      row.getIsSelected() ? 'bg-primary-200 ' : ''
-                    } hover:bg-primary-200`}
+                    className={` ${row.getIsSelected() ? 'bg-primary-200 ' : ''
+                      } hover:bg-primary-200`}
                   >
                     <TableCell
                       valign="bottom"
@@ -152,7 +151,7 @@ export function DataTable<T>({
                     </TableCell>
                     <TableCell colSpan={3}>
                       {/* <BulkTable quantity={'Quantity'} price={'Price'} /> */}
-                      {renderSubComponent && renderSubComponent({row})}
+                      {renderSubComponent && renderSubComponent({ row })}
                     </TableCell>
                   </TableRow>
                 )}

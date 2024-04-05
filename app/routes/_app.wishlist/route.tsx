@@ -1,4 +1,5 @@
 import {
+  Link,
   isRouteErrorResponse,
   useLoaderData,
   useRouteError,
@@ -12,22 +13,41 @@ import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server'
 import { getMessageSession, messageCommitSession, setErrorMessage, setSuccessMessage } from '~/lib/utils/toast-session.server';
 import { BulkTable } from '../_app.cart-list/order-my-products/bulk-table';
 import { addProductToCart } from '../_app.product_.$productSlug/product.server';
+import { addedBulkCart } from './bulk.cart.server';
 import { useMyWishListColumn } from './wishlist';
 import { getWishlist, removeBulkFromWishlist } from './wishlist.server';
+import useSort from '~/hooks/useSort';
+import { displayToast } from '~/components/ui/toast';
+import { Routes } from '~/lib/constants/routes.constent';
 
-export type WishListProductType = {
-  productImageUrl: string;
-  productName: string;
+export interface WishListResponse {
+  productId: string;
+  productHandle: string;
+  variantId: string;
+  title: string;
   sku: string;
-  inStock: boolean;
-};
-export type WishListItem = {
-  id: string;
-  product: WishListProductType;
-  buyPrice: number;
-  quantity: number;
-  action: string;
-};
+  stockCode: string;
+  moq: number | null;
+  quantity: number | null;
+  uom: string;
+  uomName: string;
+  unitOfMeasure: UnitOfMeasure[];
+  defaultPrice: number;
+  companyPrice: number;
+  currency: string;
+  priceRange: PriceRange[];
+  featuredImage?: string;
+}
+export interface PriceRange {
+  minQty: number;
+  maxQty: number | null;
+  price: number;
+}
+export interface UnitOfMeasure {
+  unit: string;
+  code: string;
+  conversionFactor: number;
+}
 
 export const loader = async ({ request, context }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
@@ -44,12 +64,17 @@ export const action = async ({ request, context }: LoaderFunctionArgs) => {
         try {
           const cartInfo = Object.fromEntries(formData);
           const accessTocken = (await getAccessToken(context)) as string;
-          const addToCart = await addProductToCart(
-            cartInfo,
-            accessTocken,
-            context,
-            request,
-          );
+          if (cartInfo?.bulkCart && cartInfo?.bulkCart == "true") {
+            const bulkCart = await addedBulkCart(cartInfo, context, accessTocken, request)
+          } else {
+            const addToCart = await addProductToCart(
+              cartInfo,
+              accessTocken,
+              context,
+              request,
+            );
+          }
+          // return true
           setSuccessMessage(messageSession, 'Item added to cart successfully');
           return json(
             {},
@@ -74,7 +99,6 @@ export const action = async ({ request, context }: LoaderFunctionArgs) => {
               },
             );
           }
-          console.log('this is err');
           setErrorMessage(
             messageSession,
             'Item not added to cart. Please try again later.',
@@ -146,51 +170,106 @@ export const action = async ({ request, context }: LoaderFunctionArgs) => {
 export default function route() {
   const { columns } = useMyWishListColumn();
   const { items } = useLoaderData<typeof loader>();
-  const { table } = useTable(columns, items);
-  const tableKey = new Date().getTime();
+  const finalWishList = useSort({ items });
+  const { table } = useTable(columns, finalWishList);
   const submit = useSubmit();
+  let canSubmit = true;
 
   return (
-    <div className="container pt-6">
-      <div className='flex justify-between'>
-        <h3>Wishlist</h3>
-        {table.getSelectedRowModel().rows.length > 0 &&
-          <div className='flex items-center gap-2'>
-            <p className='text-lg italic font-bold'>{table.getSelectedRowModel().rows.length} item selected</p>
-            <Button
-              variant='primary'
-            >
-              Add all to cart
-            </Button>
-            <Button
-              variant='danger_dark'
-              onClick={() => {
-                const formData = new FormData();
-                table
-                  .getSelectedRowModel()
-                  .flatRows.map((item, index) => {
-                    console.log('"rererwer "', item)
-                    formData.append(
-                      `wishList-${index}`,
-                      item.original.productId,
-                    )},
-                  );
-                submit(formData, { method: 'DELETE' });
-                table.resetRowSelection();
-              }}
-            >
-              Remove
-            </Button>
+    <div className="container">
+      {finalWishList.length > 0 ?
+        <div className='pt-6'>
+          <div className='flex justify-between'>
+            <h3>Wishlist</h3>
+            {table.getSelectedRowModel().rows.length > 0 &&
+              <div className='flex items-center gap-2'>
+                <p className='text-lg italic font-bold'>{table.getSelectedRowModel().rows.length} item selected</p>
+                <Button
+                  variant='primary'
+                  onClick={() => {
+                    const formData = new FormData();
+                    table
+                      .getSelectedRowModel()
+                      .flatRows.map((item) => {
+                        formData.append(
+                          `${item.original.productId}_productId`,
+                          item.original.productId,
+                        )
+                        formData.append(
+                          `${item.original.productId}_variantId`,
+                          item.original.variantId,
+                        )
+                        formData.append(
+                          `${item.original.productId}_quantity`,
+                          item.original.quantity,
+                        )
+                        formData.append(
+                          `${item.original.productId}_moq`,
+                          item.original.moq,
+                        )
+                        formData.append(
+                          `${item.original.productId}_uom`,
+                          item.original.uom,
+                        )
+                        formData.append(
+                          `bulkCart`,
+                          "true",
+                        )
+                        const quantityVal = Number(formData.get(`${item.original.productId}_quantity`));
+                        const moqVal = Number(formData.get(`${item.original.productId}_moq`));
+                        if (quantityVal && moqVal && quantityVal < moqVal || quantityVal && quantityVal > 1000000) {
+                          canSubmit = false;
+                          displayToast({ message: "Please select quantity to be greater than MOQ or less than 1000000", type: "error" });
+                        }
+                      },
+                      );
+                    { canSubmit ? submit(formData, { method: 'POST' }) : null }
+                    table.resetRowSelection();
+                  }}
+                >
+                  Add all to cart
+                </Button>
+                <Button
+                  variant='danger_dark'
+                  onClick={() => {
+                    const formData = new FormData();
+                    table
+                      .getSelectedRowModel()
+                      .flatRows.map((item, index) => {
+                        console.log('"rererwer "', item)
+                        formData.append(
+                          `wishList-${index}`,
+                          item.original.productId,
+                        )
+                      },
+                      );
+                    submit(formData, { method: 'DELETE' });
+                    table.resetRowSelection();
+                  }}
+                >
+                  Remove
+                </Button>
+              </div>
+            }
           </div>
-        }
-      </div>
-      <section>
-        <DataTable
-          table={table}
-          renderSubComponent={renderSubComponent}
-          key={tableKey}
-        />
-      </section>
+          <section className='data__table'>
+            <DataTable
+              table={table}
+              renderSubComponent={renderSubComponent}
+            />
+          </section>
+        </div>
+        :
+        <div className='py-80'>
+          <div className='flex justify-center'>
+            <div className='text-center'>
+              <h3 className='mb-2'>Your wishlist is empty</h3>
+              <p className='mb-10 text-lg'>Create your first wishlist</p>
+              <Link className='inline-block px-6 py-2 text-sm italic font-bold leading-6 uppercase text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50' to={Routes.CATEGORIES}>Add items</Link>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   );
 }

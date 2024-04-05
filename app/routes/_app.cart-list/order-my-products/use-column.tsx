@@ -1,11 +1,12 @@
 import { Link } from '@remix-run/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { TooltipInfo } from '~/components/icons/orderStatus';
 import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { debounce } from '~/lib/helpers/general.helper';
 import { getProductPriceByQty } from '~/routes/_app.product_.$productSlug/product-detail';
 
 export type BulkOrderColumn = {
@@ -24,6 +25,7 @@ export type BulkOrderColumn = {
   id: string;
   moq: number;
   uomName: string;
+  handle: string;
   unitOfMeasure: [
     {
       unit: string;
@@ -40,7 +42,7 @@ export type BulkOrderColumn = {
   totalPrice: number;
 };
 
-export function useMyProductColumn(currency?: string) {
+export function useMyProductColumn(currency?: string, setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>, setPlaceOrder?: React.Dispatch<React.SetStateAction<boolean>>) {
   const columns = useMemo<ColumnDef<BulkOrderColumn>[]>(
     () => [
       {
@@ -78,7 +80,8 @@ export function useMyProductColumn(currency?: string) {
               title={product.title}
               sku={product.sku}
               featuredImage={product.featuredImage}
-              moq={product.moq}
+              moq={product.moq || 1}
+              handle={product?.handle}
             />
           );
         },
@@ -95,8 +98,10 @@ export function useMyProductColumn(currency?: string) {
               info={info}
               productId={product.productId}
               variantId={product.variantId}
-              moq={product.moq}
+              moq={product.moq || 1}
               lineItemId={product.id}
+              setUpdateCart={setUpdateCart}
+              setPlaceOrder={setPlaceOrder}
             />
           );
         },
@@ -107,6 +112,7 @@ export function useMyProductColumn(currency?: string) {
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
+
           return (
             <ProductMeasurement
               uom={product.uom}
@@ -114,6 +120,7 @@ export function useMyProductColumn(currency?: string) {
               info={info}
               selectedUOMName={product.uomName}
               productId={product.productId}
+              setUpdateCart={setUpdateCart}
             />
           );
         },
@@ -157,22 +164,24 @@ export function useMyProductColumn(currency?: string) {
 type ItemsColumnType = Pick<
   BulkOrderColumn,
   'title' | 'sku' | 'featuredImage' | 'moq'
->;
+> & { handle?: string };
 
-export function ItemsColumn({ title, sku, featuredImage, moq }: ItemsColumnType) {
+export function ItemsColumn({ title, sku, featuredImage, moq, handle }: ItemsColumnType) {
   return (
-    <div className="flex space-x-2">
-      <figure className="bg-grey-25 p-3 !w-20 ">
+    <div className="flex flex-wrap items-center space-x-2">
+      <figure className="w-20 p-3 bg-grey-25">
         <img
           src={featuredImage ?? DEFAULT_IMAGE.IMAGE}
           alt="featured"
           className="object-contain object-center h-full"
         />
       </figure>
-      <figcaption className="flex flex-col gap-y-1">
-        <h5 className="">{(title && title) || '--'}</h5>
-        <div className="flex space-x-5 items-center max-w-[180px] flex-wrap gap-2">
-          <p className="mr-2">
+      <figcaption className="flex flex-col gap-y-1 w-[calc(100%_-_88px)] text-wrap">
+        <h5>
+          {handle ? <Link to={`/product/${handle}`}>{(title && title) || '--'}</Link> : (title && title) || '--'}
+        </h5>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <p>
             <span className="font-semibold text-grey-900 ">SKU: </span>
             {(sku && sku) || 'N/A'}
           </p>
@@ -194,7 +203,7 @@ export function ItemsColumn({ title, sku, featuredImage, moq }: ItemsColumnType)
 type QuantityColumnType = Pick<
   BulkOrderColumn,
   'quantity' | 'productId' | 'variantId' | 'moq'
-> & { info: any; lineItemId?: string };
+> & { info: any; lineItemId?: string; setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>; setPlaceOrder?: React.Dispatch<React.SetStateAction<boolean>> };
 export function QuantityColumn({
   quantity,
   info,
@@ -202,51 +211,57 @@ export function QuantityColumn({
   variantId,
   moq,
   lineItemId,
+  setUpdateCart,
+  setPlaceOrder
 }: QuantityColumnType) {
   const meta = info.table.options.meta;
-
   const handleIncreaseQuantity = () => {
-    meta?.updateData(info.row.index, info.column.id, quantity + 1);
-  };
+    meta?.updateData(info.row.index, info.column.id, quantity + 1 < 1 ? 1 : quantity + 1);
+    const updateCart = quantity + 1 >= moq;
+    setUpdateCart && setUpdateCart(updateCart);
+  }
 
   const handleDecreaseQuantity = () => {
-    meta?.updateData(
-      info.row.index,
-      info.column.id,
-      quantity > 0 ? quantity - 1 : 0,
-    );
-  };
-
-  function handleInputChange(event?: any) {
-    const inputQuantity = parseInt(event.target.value);
-    meta?.updateData(
-      info.row.index,
-      info.column.id,
-      isNaN(inputQuantity) ? 0 : inputQuantity,
-    );
+    meta?.updateData(info.row.index, info.column.id, quantity - 1 < 1 ? 1 : quantity - 1);
+    const updateCart = quantity - 1 >= moq;
+    setUpdateCart && setUpdateCart(updateCart);
   }
+
+  const handleInputChange = (event?: any) => {
+    const inputQuantity = parseInt(event.target.value);
+    meta?.updateData(info.row.index, info.column.id, isNaN(inputQuantity) ? 1 : inputQuantity);
+    const updateCart = inputQuantity >= moq;
+    setUpdateCart && setUpdateCart(updateCart);
+    const shouldPlaceOrder = inputQuantity >= moq;
+    setPlaceOrder && setPlaceOrder(shouldPlaceOrder);
+  }
+
 
   return (
     <>
-      <div className="flex flex-col gap-[11.5px] mt-[2.4rem] cart-list">
+      <div className="flex flex-col gap-[11.5px] mt-[2.2rem] cart__list--quantity">
         <div className="flex items-center">
           <button
-            className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
+            className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${quantity - 1 < moq && "cursor-not-allowed"}`}
+            type='button'
             onClick={handleDecreaseQuantity}
+            disabled={quantity - 1 < moq}
           >
             -
           </button>
           <input
-            type="text"
-            className="flex items-center justify-center w-10 text-center border-solid border-x-0 border-grey-200 min-h-10"
-            min="1"
+            type="number"
+            className={`flex items-center justify-center w-20 text-center border-solid appearance-none border-x-0 border-grey-200 min-h-10 test${info.row.index}`}
             value={quantity}
             name="quantity"
             onChange={handleInputChange}
+            max="1000000"
           />
           <button
             className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
+            type='button'
             onClick={handleIncreaseQuantity}
+            disabled={quantity + 1 < moq}
           >
             +
           </button>
@@ -254,33 +269,34 @@ export function QuantityColumn({
         <div className="flex items-center gap-1">
           <div className="info-block">
             <p className="flex items-center justify-center h-5 min-w-5 ">
-              <Link
-                to=""
-                data-tooltip="The minimum order quantity is 500. Orders below this quantity will incur additional surcharges."
+              <div
+                data-tooltip={`The minimum order quantity is ${moq}. Orders below this quantity will incur additional surcharges.`}
+                className='cursor-pointer'
               >
                 <span>
                   <TooltipInfo fillColor="#0092CF" />
                 </span>
-              </Link>
+              </div>
             </p>
           </div>
-          <p className="text-grey-700 text-[14px] font-normal capitalize  leading-[16px]">
+          <p className={`text-[14px] font-normal capitalize  leading-[16px] text-grey-700`}>
             Minimum Order Quantity {moq}
           </p>
         </div>
       </div>
-      <input type="hidden" name={`${productId}_productId`} value={productId} />
+      <input type="hidden" name={`${productId + info.row.index}_productId`} value={productId} />
       <input
         type="hidden"
-        name={`${productId}_productVariant`}
+        name={`${productId + info.row.index}_productVariant`}
         value={variantId}
       />
       <input
         type="hidden"
-        name={`${productId}_lineItemId`}
+        name={`${productId + info.row.index}_lineItemId`}
         value={lineItemId}
       />
-      <input type="hidden" name={`${productId}_quantity`} value={quantity} />
+      <input type="hidden" name={`${productId + info.row.index}_moq`} value={moq} />
+      <input type="hidden" name={`${productId + info.row.index}_quantity`} value={quantity} />
     </>
   );
 }
@@ -291,6 +307,7 @@ type MeasurementColumnType = Pick<BulkOrderColumn, 'uom' | 'unitOfMeasure'> & {
   info: any;
   selectedUOMName: any;
   productId?: string;
+  setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export function ProductMeasurement({
@@ -299,14 +316,19 @@ export function ProductMeasurement({
   info,
   selectedUOMName,
   productId,
+  setUpdateCart,
 }: MeasurementColumnType) {
-  const [UOM, setUom] = useState(uom);
+  const [finalUOM, setUom] = useState(uom);
   const meta = info.table.options.meta;
 
   const handleUOMChange = (selectedUOM: string) => {
+    setUpdateCart && setUpdateCart(true);
     setUom(selectedUOM);
     meta?.updateData(info.row.index, info.column.id, selectedUOM);
   };
+  useEffect(() => {
+    setUom(uom)
+  }, [uom])
 
   return (
     <>
@@ -314,7 +336,7 @@ export function ProductMeasurement({
         name="uomSelector"
         className="w-full min-w-[92px] place-order h-full border-grey-100"
         onChange={(e: any) => handleUOMChange(e.target.value)}
-        defaultValue={UOM}
+        value={finalUOM}
       >
         {unitOfMeasure.length > 0 ? (
           unitOfMeasure?.map((uom: any, index: number) => (
@@ -323,10 +345,10 @@ export function ProductMeasurement({
             </option>
           ))
         ) : (
-          <option value={UOM}>{selectedUOMName}</option>
+          <option value={finalUOM}>{selectedUOMName}</option>
         )}
       </select>
-      <input type="hidden" name={`${productId}_uom`} value={UOM} />
+      <input type="hidden" name={`${productId + info.row.index}_uom`} value={finalUOM} />
     </>
   );
 }
@@ -381,7 +403,7 @@ export function ProductTotal({
               <p className="flex items-center justify-center w-5 h-5 text-xs">
                 <div
                   className="cursor-pointer price-tooltip"
-                  data-tooltip="Recommended retail price"
+                  data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts"
                 >
                   <span>
                     <TooltipInfo />
@@ -402,6 +424,7 @@ export function ProductTotal({
       {priceRange.length > 0 && (
         <Button
           onClick={setIsBulkDetailsVisible}
+          type="button"
           className={`${isRowChecked ? 'bg-white' : 'bg-primary-200'
             }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
         >

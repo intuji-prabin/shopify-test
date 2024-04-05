@@ -9,7 +9,9 @@ export default function OrderSummary({
   surcharges,
   gst,
   shippingAddresses,
-  currency
+  currency,
+  updateCart,
+  placeOrder
 }: any) {
   return (
     <div className="bg-white max-w-[unset] w-full lg:max-w-[411px] ">
@@ -20,7 +22,7 @@ export default function OrderSummary({
         gst={gst} currency={currency} />
       {shippingAddresses ?
         <Form method="POST">
-          <ShoppingDetails shippingAddresses={shippingAddresses} />
+          <ShoppingDetails shippingAddresses={shippingAddresses} updateCart={updateCart} placeOrder={placeOrder} />
         </Form>
         : <p className='p-6 font-medium text-red-500'>You do not have any shipping address added. Please add one to place order.</p>}
     </div>
