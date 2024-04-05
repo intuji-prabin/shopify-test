@@ -14,6 +14,24 @@ html {
   scroll-behavior: smooth;
 }
 
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  border-radius: 100vh;
+  --tw-text-opacity: 1;
+  background: rgb(249 249 249 / var(--tw-text-opacity));
+}
+
+*::-webkit-scrollbar-thumb {
+  --tw-text-opacity: 1;
+  background: rgb(219 234 254 / var(--tw-text-opacity));
+  border-radius: 100vh;
+  border: 3px solid #f6f7ed;
+}
+
 body {
   font-family: 'Barlow Condensed';
   min-height: 100vh;
