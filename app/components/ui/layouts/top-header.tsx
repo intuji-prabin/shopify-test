@@ -182,6 +182,7 @@ export default function TopHeader({
               <DropdownMenuLabel className="flex items-center p-0 user-login-dropdown ">
                 <Form method="post" action="/logout" className="w-full">
                   <Link
+                    onClick={() => setIsClicked(false)}
                     to={Routes.PROFILE}
                     className="flex items-center justify-start w-full gap-2 p-2 transition duration-500 ease-in-out delay-75 bg-white hover:bg-primary-100 my-profile"
                   >
