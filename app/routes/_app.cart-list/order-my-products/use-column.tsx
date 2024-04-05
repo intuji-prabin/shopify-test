@@ -255,6 +255,7 @@ export function QuantityColumn({
             value={quantity}
             name="quantity"
             onChange={handleInputChange}
+            min={moq || 1}
             max="1000000"
           />
           <button
