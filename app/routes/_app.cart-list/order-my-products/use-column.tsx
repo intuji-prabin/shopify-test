@@ -255,6 +255,7 @@ export function QuantityColumn({
             value={quantity}
             name="quantity"
             onChange={handleInputChange}
+            max="1000000"
           />
           <button
             className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
