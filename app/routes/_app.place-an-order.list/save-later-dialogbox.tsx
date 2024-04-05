@@ -21,6 +21,23 @@ interface GroupItem {
 }
 type Submit = 'create' | 'update';
 
+/**
+ * @description Merge group item with same UOM
+ */
+function mergeGroupItemWithSameUOM(groupItemList: GroupItem[]) {
+  const mergedItem = groupItemList.reduce((accumulator, item) => {
+    const key = `${item.productId}-${item.uom}`;
+    if (!accumulator[key]) {
+      accumulator[key] = {...item};
+    } else {
+      accumulator[key].quantity += item.quantity;
+    }
+
+    return accumulator;
+  }, {} as Record<string, GroupItem>);
+  return Object.values(mergedItem);
+}
+
 export interface SubmitPayload {
   groupItemList: GroupItem[];
   submitType: Submit;
@@ -60,8 +77,10 @@ export default function CreateGroup({
 
     const isCreateGroup = Number.isNaN(Number(selectedValue));
 
+    const mergeGroupList = mergeGroupItemWithSameUOM(groupItemList);
+
     const submitPayload: SubmitPayload = {
-      groupItemList,
+      groupItemList: mergeGroupList,
       submitType: isCreateGroup ? 'create' : 'update',
       group: selectedValue,
     };
