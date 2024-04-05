@@ -28,23 +28,26 @@ export function ActionBar({
   const handleAddToCart = () => {
     const formData = new FormData();
 
-    table.getSelectedRowModel().flatRows.map((item) => {
+    table.getSelectedRowModel().flatRows.map((item, index) => {
       formData.append(
-        `${item.original.productId}_productId`,
+        `${item.original.productId + index}_productId`,
         item.original.productId,
       );
 
       formData.append(
-        `${item.original.productId}_variantId`,
+        `${item.original.productId + index}_variantId`,
         item.original.variantId,
       );
 
       formData.append(
-        `${item.original.productId}_quantity`,
+        `${item.original.productId + index}_quantity`,
         item.original.quantity.toString(),
       );
 
-      formData.append(`${item.original.productId}_uom`, item.original.uom);
+      formData.append(
+        `${item.original.productId + index}_uom`,
+        item.original.uom,
+      );
 
       formData.append('bulkCart', 'true');
 
