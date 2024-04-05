@@ -215,7 +215,6 @@ export function QuantityColumn({
   setPlaceOrder
 }: QuantityColumnType) {
   const meta = info.table.options.meta;
-
   const handleIncreaseQuantity = () => {
     meta?.updateData(info.row.index, info.column.id, quantity + 1 < 1 ? 1 : quantity + 1);
     const updateCart = quantity + 1 >= moq;
@@ -284,19 +283,19 @@ export function QuantityColumn({
           </p>
         </div>
       </div>
-      <input type="hidden" name={`${productId}_productId`} value={productId} />
+      <input type="hidden" name={`${productId + info.row.index}_productId`} value={productId} />
       <input
         type="hidden"
-        name={`${productId}_productVariant`}
+        name={`${productId + info.row.index}_productVariant`}
         value={variantId}
       />
       <input
         type="hidden"
-        name={`${productId}_lineItemId`}
+        name={`${productId + info.row.index}_lineItemId`}
         value={lineItemId}
       />
-      <input type="hidden" name={`${productId}_moq`} value={moq} />
-      <input type="hidden" name={`${productId}_quantity`} value={quantity} />
+      <input type="hidden" name={`${productId + info.row.index}_moq`} value={moq} />
+      <input type="hidden" name={`${productId + info.row.index}_quantity`} value={quantity} />
     </>
   );
 }
@@ -348,7 +347,7 @@ export function ProductMeasurement({
           <option value={finalUOM}>{selectedUOMName}</option>
         )}
       </select>
-      <input type="hidden" name={`${productId}_uom`} value={finalUOM} />
+      <input type="hidden" name={`${productId + info.row.index}_uom`} value={finalUOM} />
     </>
   );
 }
