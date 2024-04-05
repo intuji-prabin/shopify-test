@@ -122,7 +122,7 @@ export function useMyWishListColumn() {
           const product = info?.row?.original;
           return (
             <>
-              {product?.quantity < product?.moq ?
+              {product?.quantity < product?.moq || product?.quantity > 1000000 ?
                 <>
                   <button
                     className="uppercase flex justify-center items-center text-xs max-h-[unset] lg:max-h-[28px] min-w-[86px] cursor-not-allowed bg-grey-200 text-grey-400 px-6 py-2"
@@ -130,7 +130,8 @@ export function useMyWishListColumn() {
                   >
                     Add to cart
                   </button>
-                  <p className='text-[13px] text-red-500'>Minimum Order Quantity<br />MOQ: {product?.moq || 1}</p>
+                  {product?.quantity < product?.moq && <p className='text-[13px] text-red-500'>Minimum Order Quantity<br />MOQ: {product?.moq || 1}</p>}
+                  {product?.quantity > 1000000 && <p className='text-[13px] text-red-500'>Quantity cannot be<br />greater than 1000000</p>}
                 </> :
                 <Form method="POST"
                   onSubmit={(event) => {
@@ -143,8 +144,9 @@ export function useMyWishListColumn() {
                     name="productVariantId"
                     value={product.variantId}
                   />
-                  <input type="hidden" name="quantity" value={product.quantity || product.moq || 1} />
+                  <input type="number" className='hidden' name="quantity" value={product.quantity || product.moq || 1} />
                   <input type="hidden" name="selectUOM" value={product.uom} />
+
                   <Button
                     className="uppercase flex-grow max-h-[unset] text-xs lg:max-h-[28px] min-w-[86px]"
                     variant="primary"
