@@ -45,13 +45,12 @@ export const cartUpdate = async (context: any, request: any) => {
       lines: itemData,
     },
   });
-  // await getCartList(context, request, cartSession);
+
   const cartLinesUpdate = cartUpdateResponse?.cartLinesUpdate;
 
   if (cartLinesUpdate?.userErrors.length > 0) {
-    throw new Error('Somthing went wrong during update cart.');
+    throw new Error('Something went wrong during update cart.');
   }
-
   const cart = cartLinesUpdate?.cart;
 
   if (!cart) {
@@ -62,8 +61,15 @@ export const cartUpdate = async (context: any, request: any) => {
   if (lines.length < 1) {
     throw new Error('Cart item not found during update cart');
   }
-  await getCartList(context, request, sessionCartInfo);
-  return true;
+
+  const cartSession = {
+    ...sessionCartInfo,
+    cartItems: [],
+    lineItems: lines.length,
+  };
+  context.session.set(CART_SESSION_KEY, cartSession);
+  await getCartList(context, request, cartSession);
+  return {cartSession};
 };
 
 const UPDATE_CART =
