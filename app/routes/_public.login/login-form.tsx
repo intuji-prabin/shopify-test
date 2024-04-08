@@ -7,7 +7,7 @@ import CheckboxInput from '~/components/ui/checkbox-input';
 import {Input} from '~/components/ui/input';
 import ValidatedFormPassword from '~/components/ui/validated-form-password';
 
-const LoginFormFieldSchema = z.object({
+export const LoginFormFieldSchema = z.object({
   email: z
     .string()
     .trim()
