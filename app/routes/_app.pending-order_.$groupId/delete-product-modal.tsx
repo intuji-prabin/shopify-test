@@ -22,7 +22,7 @@ export function DeleteProductModal({table}: {table: Table<Product>}) {
     table
       .getSelectedRowModel()
       .flatRows.map((product) =>
-        formData.append('productIds', product.original.productId),
+        formData.append('placeId', String(product.original.placeId)),
       );
 
     formData.append('_action', 'delete_product');

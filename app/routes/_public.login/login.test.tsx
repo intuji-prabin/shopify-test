@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {loader} from '~/routes/_public.login/route';
+import {loader, action} from '~/routes/_public.login/route';
 import {HydrogenCart, Storefront} from '@shopify/hydrogen';
 import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
 import {LoginFormFieldSchema} from '~/routes/_public.login/login-form';
@@ -8,6 +8,7 @@ import {
   Session,
   SessionStorage,
   createCookieSessionStorage,
+  redirect,
 } from '@shopify/remix-oxygen';
 
 class HydrogenSession {
@@ -137,5 +138,51 @@ describe('Login Loader', async () => {
     expect(session.get('accessToken')).toBe('hello');
 
     expect(response.headers.get('Location')).toBe('/');
+  });
+});
+
+describe('Login Action', async () => {
+  const request = new Request('http://localhost:4000/login');
+
+  const session = await HydrogenSession.init(request, [
+    'cYusSF3mXY2gSKyHicay5jdrvZzWgPPHlGD3M2fo3zE=',
+  ]);
+
+  const context: AppLoadContext = {
+    session: session as any,
+    env: {} as Env,
+    cart: {} as HydrogenCart,
+    storefront: {} as Storefront<I18nLocale>,
+    waitUntil: () => {},
+  };
+
+  it('validates the login form fields', async () => {
+    const formData = new FormData();
+    formData.append('email', 'tes444t@gmail.com');
+    formData.append('password', 'password');
+    formData.append('rememberMe', 'on');
+
+    const request = new Request('http://localhost:4000/login', {
+      method: 'POST',
+      body: formData,
+    });
+    const response = await action({request, context, params: {}});
+
+    expect(response.status).toBe(200);
+  });
+
+  it('redirects to / if login success', async () => {
+    const formData = new FormData();
+    formData.append('email', 'pawaghgja3315@flexvio.com');
+    formData.append('password', 'Salna123@');
+    formData.append('rememberMe', 'on');
+
+    const request = new Request('http://localhost:4000/login', {
+      method: 'POST',
+      body: formData,
+    });
+    const response = await action({request, context, params: {}});
+
+    expect(response.headers.get('Set-Cookie')).exist;
   });
 });

@@ -1,8 +1,8 @@
-import { Form, useFetcher, useSubmit } from '@remix-run/react';
-import { useState } from 'react';
+import {Form, useFetcher, useSubmit} from '@remix-run/react';
+import {useState} from 'react';
 import RemoveItem from '~/components/icons/removeItem';
-import { Button } from '~/components/ui/button';
-import { DataTable } from '~/components/ui/data-table';
+import {Button} from '~/components/ui/button';
+import {DataTable} from '~/components/ui/data-table';
 import {
   Dialog,
   DialogClose,
@@ -13,14 +13,23 @@ import {
   DialogTrigger,
 } from '~/components/ui/dialog';
 import Loader from '~/components/ui/loader';
-import { useTable } from '~/hooks/useTable';
-import { BulkTable } from './bulk-table';
-import { useMyProductColumn } from './use-column';
+import {useTable} from '~/hooks/useTable';
+import {BulkTable} from './bulk-table';
+import {useMyProductColumn} from './use-column';
 
-export default function MyProducts({ products, currency, setUpdateCart, updateCart, setPlaceOrder }: any) {
-
-  const { columns } = useMyProductColumn(currency, setUpdateCart, setPlaceOrder);
-  const { table } = useTable(columns, products);
+export default function MyProducts({
+  products,
+  currency,
+  setUpdateCart,
+  updateCart,
+  setPlaceOrder,
+}: any) {
+  const {columns} = useMyProductColumn({
+    currency,
+    setUpdateCart,
+    setPlaceOrder,
+  });
+  const {table} = useTable(columns, products);
 
   const fetcher = useFetcher();
 
@@ -90,7 +99,7 @@ export default function MyProducts({ products, currency, setUpdateCart, updateCa
                               item.original.id,
                             ),
                           );
-                        fetcher.submit(formData, { method: 'DELETE' });
+                        fetcher.submit(formData, {method: 'DELETE'});
                         table.resetRowSelection();
                         setOpen(false);
                       }}
@@ -108,23 +117,21 @@ export default function MyProducts({ products, currency, setUpdateCart, updateCa
       <div className="border-t border-grey-50 cart-order data__table">
         {isLoading ? (
           <div className="absolute inset-0 z-[9999] bg-white/95">
-            <div className='flex items-center justify-center h-full gap-x-4 gap-y-2'>
-              <p className="text-lg">
-                Loading....
-              </p>
+            <div className="flex items-center justify-center h-full gap-x-4 gap-y-2">
+              <p className="text-lg">Loading....</p>
               <Loader width="w-8" height="h-8" />
             </div>
           </div>
         ) : (
-          <Form method="PUT" onSubmit={(event) => {
-            submit(event.currentTarget);
-            setUpdateCart(false);
-          }}>
-            <DataTable
-              table={table}
-              renderSubComponent={renderSubComponent}
-            />
-            {updateCart &&
+          <Form
+            method="PUT"
+            onSubmit={(event) => {
+              submit(event.currentTarget);
+              setUpdateCart(false);
+            }}
+          >
+            <DataTable table={table} renderSubComponent={renderSubComponent} />
+            {updateCart && (
               <Button
                 className="absolute top-[31px] right-40"
                 variant="primary"
@@ -132,7 +139,7 @@ export default function MyProducts({ products, currency, setUpdateCart, updateCa
               >
                 Update cart
               </Button>
-            }
+            )}
           </Form>
         )}
       </div>
@@ -140,7 +147,7 @@ export default function MyProducts({ products, currency, setUpdateCart, updateCa
   );
 }
 
-export const renderSubComponent = ({ row }: any) => {
+export const renderSubComponent = ({row}: any) => {
   return (
     <BulkTable
       product={row.original.priceRange}
