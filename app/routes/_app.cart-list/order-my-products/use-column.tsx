@@ -250,15 +250,27 @@ export function QuantityColumn({
     setPlaceOrder && setPlaceOrder(shouldPlaceOrder);
   }
   const handleIncreaseQuantity = () => {
+    if (isNaN(quantity + 1)) {
+      updateQuantity(moq);
+      return;
+    }
     updateQuantity(quantity + 1);
   }
   const handleDecreaseQuantity = () => {
+    if (isNaN(quantity + 1)) {
+      updateQuantity(moq);
+      return;
+    }
     updateQuantity(quantity - 1);
   }
   const handleInputChange = (event: any) => {
     const inputQuantity = parseInt(event.target.value);
     updateQuantity(inputQuantity);
   }
+
+  useEffect(() => {
+    setQuantityError(quantity >= moq);
+  }, [quantity])
 
   return (
     <>
@@ -279,7 +291,7 @@ export function QuantityColumn({
             name="quantity"
             onChange={handleInputChange}
             min={moq || 1}
-            max="1000000"
+            max="999999"
             required
           />
           <button
