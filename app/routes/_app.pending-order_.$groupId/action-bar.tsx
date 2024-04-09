@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Form, Link, useSubmit} from '@remix-run/react';
+import {Form, Link, useFetcher, useSubmit} from '@remix-run/react';
 import {Table} from '@tanstack/react-table';
 import {Done} from '~/components/icons/done';
 import {Button} from '~/components/ui/button';
@@ -14,16 +14,27 @@ import {
   EditItems,
 } from '~/components/icons/orderStatus';
 
+export interface GroupItem {
+  placeId: number;
+  productId: string;
+  quantity: number;
+  uom: number;
+}
+
 export function ActionBar({
   table,
+  isProductUpdate,
   groupName,
 }: {
   groupName: string;
   table: Table<Product>;
+  isProductUpdate: boolean;
 }) {
   const [isEditing, setIsEditing] = useState(false);
 
   const submit = useSubmit();
+
+  const fetcher = useFetcher();
 
   const handleAddToCart = () => {
     const formData = new FormData();
@@ -58,6 +69,26 @@ export function ActionBar({
       table.resetRowSelection();
     });
   };
+
+  const handleUpdate = () => {
+    const groupItemList: GroupItem[] = [];
+
+    table.getRowModel().flatRows.map((item) => {
+      groupItemList.push({
+        productId: item.original.productId,
+        quantity: item.original.quantity,
+        uom: Number(item.original.uom),
+        placeId: item.original.placeId,
+      });
+    });
+
+    fetcher.submit(
+      //@ts-ignore
+      groupItemList,
+      {method: 'POST', encType: 'application/json'},
+    );
+  };
+
   return (
     <div className="flex justify-between md:items-center my-[30px] flex-col gap-4 md:flex-row md:gap-0 items-baseline ">
       <div className="flex items-baseline gap-4  flex-col sm:flex-row sm:items-center">
@@ -126,6 +157,13 @@ export function ActionBar({
             table.getSelectedRowModel().rows.length === 0 ? 'w-full' : ''
           }`}
         >
+          <Button
+            disabled={fetcher.state === 'submitting'}
+            variant={!isProductUpdate ? 'disabled' : 'primary'}
+            onClick={handleUpdate}
+          >
+            update
+          </Button>
           <Button
             variant={
               table.getSelectedRowModel().rows.length === 0

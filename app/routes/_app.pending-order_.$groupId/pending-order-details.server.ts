@@ -161,3 +161,25 @@ export async function deleteGroupProduct({
 
   return response;
 }
+
+export async function updateGroupProduct({
+  body,
+  customerId,
+}: {
+  body: string;
+  customerId: string;
+}) {
+  const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
+
+  const response = await useFetch<DefaultResponse>({
+    method: AllowedHTTPMethods.PUT,
+    url,
+    body,
+  });
+
+  if (!response.status) {
+    throw new Error(response.message);
+  }
+
+  return response;
+}

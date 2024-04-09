@@ -217,9 +217,9 @@ export default function route() {
                         )
                         const quantityVal = Number(formData.get(`${item.original.productId}_quantity`));
                         const moqVal = Number(formData.get(`${item.original.productId}_moq`));
-                        if (quantityVal && moqVal && quantityVal < moqVal || quantityVal && quantityVal > 1000000) {
+                        if (quantityVal && moqVal && quantityVal < moqVal || quantityVal && quantityVal > 999999) {
                           canSubmit = false;
-                          displayToast({ message: "Please select quantity to be greater than MOQ or less than 1000000", type: "error" });
+                          displayToast({ message: "Please select quantity to be greater than MOQ or less than 999999", type: "error" });
                         }
                       },
                       );

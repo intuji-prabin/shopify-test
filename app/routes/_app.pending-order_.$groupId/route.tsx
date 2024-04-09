@@ -1,15 +1,18 @@
-import { useTable } from '~/hooks/useTable';
-import { DataTable } from '~/components/ui/data-table';
+import {useTable} from '~/hooks/useTable';
+import {DataTable} from '~/components/ui/data-table';
 import HeroBanner from '~/components/ui/hero-section';
-import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { ActionBar } from '~/routes/_app.pending-order_.$groupId/action-bar';
-import { Routes } from '~/lib/constants/routes.constent';
-import { PredictiveSearch } from '~/components/ui/predictive-search';
-import { PaginationWrapper } from '~/components/ui/pagination-wrapper';
-import { addedBulkCart } from '~/routes/_app.wishlist/bulk.cart.server';
-import { useMyProductColumn } from '~/routes/_app.cart-list/order-my-products/use-column';
-import { renderSubComponent } from '~/routes/_app.cart-list/order-my-products/cart-myproduct';
+import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {
+  ActionBar,
+  GroupItem,
+} from '~/routes/_app.pending-order_.$groupId/action-bar';
+import {Routes} from '~/lib/constants/routes.constent';
+import {PredictiveSearch} from '~/components/ui/predictive-search';
+import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
+import {addedBulkCart} from '~/routes/_app.wishlist/bulk.cart.server';
+import {useMyProductColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
+import {renderSubComponent} from '~/routes/_app.cart-list/order-my-products/cart-myproduct';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -28,6 +31,7 @@ import {
   deleteGroupProduct,
   getGroupDetails,
   updateGroup,
+  updateGroupProduct,
 } from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
 import {
   getMessageSession,
@@ -35,9 +39,10 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
+import {useState} from 'react';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Pending Order Details' }];
+  return [{title: 'Pending Order Details'}];
 };
 
 type ActionType =
@@ -49,16 +54,16 @@ type ActionType =
 
 const PAGE_LIMIT = 10;
 
-export async function loader({ context, request, params }: LoaderFunctionArgs) {
+export async function loader({context, request, params}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
 
   const customerId = userDetails.id.split('/').pop() as string;
 
   const groupId = params.groupId as string;
 
-  const { searchParams } = new URL(request.url);
+  const {searchParams} = new URL(request.url);
 
   const groupDetails = await getGroupDetails({
     customerId,
@@ -66,23 +71,72 @@ export async function loader({ context, request, params }: LoaderFunctionArgs) {
     searchParams,
   });
 
-  return json({ groupDetails });
+  return json({groupDetails});
 }
 
-export async function action({ request, context, params }: ActionFunctionArgs) {
+export async function action({request, context, params}: ActionFunctionArgs) {
   await isAuthenticate(context);
 
   const messageSession = await getMessageSession(request);
 
+  const groupId = Number(params.groupId);
+
+  const {userDetails} = await getUserDetails(request);
+
+  const customerId = userDetails.id.split('/').pop() as string;
+
+  const contentType = request.headers.get('Content-Type');
+
+  if (contentType === 'application/json') {
+    const jsonPayload = (await request.json()) as GroupItem[];
+
+    const body = JSON.stringify({
+      groupId,
+      groupItemList: jsonPayload,
+    });
+    try {
+      const response = await updateGroupProduct({
+        customerId,
+        body,
+      });
+
+      setSuccessMessage(messageSession, response?.message);
+
+      return redirect(Routes.PENDING_ORDER, {
+        headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(messageSession, error?.message);
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      }
+      setErrorMessage(
+        messageSession,
+        'Could not update. Please try again later.',
+      );
+      return json(
+        {},
+        {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        },
+      );
+    }
+  }
+
   const formData = await request.formData();
 
   const action = formData.get('_action') as ActionType;
-
-  const groupId = Number(params.groupId);
-
-  const { userDetails } = await getUserDetails(request);
-
-  const customerId = userDetails.id.split('/').pop() as string;
 
   switch (action) {
     case 'update_group': {
@@ -109,7 +163,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
         if (error instanceof Error) {
           setErrorMessage(messageSession, error.message);
           return json(
-            { error },
+            {error},
             {
               headers: {
                 'Set-Cookie': await messageCommitSession(messageSession),
@@ -117,7 +171,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
             },
           );
         }
-        return json({ error }, { status: 500 });
+        return json({error}, {status: 500});
       }
     }
 
@@ -139,7 +193,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
         if (error instanceof Error) {
           setErrorMessage(messageSession, error.message);
           return json(
-            { error },
+            {error},
             {
               headers: {
                 'Set-Cookie': await messageCommitSession(messageSession),
@@ -147,15 +201,19 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
             },
           );
         }
-        return json({ error }, { status: 500 });
+        return json({error}, {status: 500});
       }
     }
 
     case 'delete_product': {
       try {
+        const placeIds = formData
+          .getAll('placeId')
+          .map((placeId) => Number(placeId));
+
         const body = JSON.stringify({
           groupId,
-          productIds: formData.getAll('productIds'),
+          placeIds,
         });
 
         const deletedProduct = await deleteGroupProduct({
@@ -177,7 +235,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
         if (error instanceof Error) {
           setErrorMessage(messageSession, error.message);
           return json(
-            { error },
+            {error},
             {
               headers: {
                 'Set-Cookie': await messageCommitSession(messageSession),
@@ -185,7 +243,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
             },
           );
         }
-        return json({ error }, { status: 500 });
+        return json({error}, {status: 500});
       }
     }
 
@@ -265,7 +323,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
         if (error instanceof Error) {
           setErrorMessage(messageSession, error.message);
           return json(
-            { error },
+            {error},
             {
               headers: {
                 'Set-Cookie': await messageCommitSession(messageSession),
@@ -273,7 +331,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
             },
           );
         }
-        return json({ error }, { status: 500 });
+        return json({error}, {status: 500});
       }
     }
 
@@ -284,11 +342,13 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 }
 
 export default function PendingOrderDetailsPage() {
-  const { groupDetails } = useLoaderData<typeof loader>();
+  const {groupDetails} = useLoaderData<typeof loader>();
 
-  const { columns } = useMyProductColumn();
+  const [isProductUpdate, setIsProductUpdate] = useState(false);
 
-  const { table } = useTable(columns, groupDetails.products);
+  const {columns} = useMyProductColumn({setUpdateCart: setIsProductUpdate});
+
+  const {table} = useTable(columns, groupDetails.products);
 
   return (
     <>
@@ -307,7 +367,11 @@ export default function PendingOrderDetailsPage() {
         </div>
       </div>
       <section className="container data__table">
-        <ActionBar groupName={groupDetails.groupName} table={table} />
+        <ActionBar
+          isProductUpdate={isProductUpdate}
+          groupName={groupDetails.groupName}
+          table={table}
+        />
         <DataTable
           table={table}
           columns={columns}

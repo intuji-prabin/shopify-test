@@ -54,13 +54,13 @@ export const cartUpdate = async (context: any, request: any) => {
 
     const mergedItemList = Object.values(mergedItems);
 
-    // Check if any merged item's quantity exceeds 1000000
+    // Check if any merged item's quantity exceeds 999999
     const hasExceededLimit = mergedItemList.some(
-      (item: any) => item.quantity > 1000000,
+      (item: any) => item.quantity > 999999,
     );
 
     if (hasExceededLimit) {
-      throw new Error('The quantity exceeds 1000000 while updating the cart');
+      throw new Error('The quantity exceeds 999999 while updating the cart');
     }
 
     return mergedItemList;
