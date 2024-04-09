@@ -274,7 +274,7 @@ export function QuantityColumn({
           </button>
           <input
             type="number"
-            className={`flex items-center justify-center w-20 text-center border-solid appearance-none border-x-0 border-grey-200 min-h-10 test${info.row.index}`}
+            className="flex items-center justify-center w-20 text-center border-solid appearance-none border-x-0 border-grey-200 min-h-10"
             value={quantity}
             name="quantity"
             onChange={handleInputChange}
