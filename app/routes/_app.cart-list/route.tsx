@@ -9,7 +9,7 @@ import {
   json,
   redirect,
 } from '@remix-run/server-runtime';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import EmptyList from '~/components/ui/empty-list';
 import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
@@ -202,7 +202,6 @@ export async function action({ request, context }: ActionFunctionArgs) {
 export default function CartList() {
   const { cartList, shippingAddresses }: any = useLoaderData<typeof loader>();
   const finalProductList = useSort({ items: cartList?.productList });
-  console.log("finalProductList", finalProductList);
   const checkQuantityAgainstMOQ = (finalProductList: any) => {
     for (let item of finalProductList) {
       if (item.quantity < item.moq) {
@@ -211,8 +210,13 @@ export default function CartList() {
     }
     return true;
   }
-  const result = checkQuantityAgainstMOQ(finalProductList);
-  console.log(result);
+  let result = checkQuantityAgainstMOQ(finalProductList);
+
+  useEffect(() => {
+    result = checkQuantityAgainstMOQ(finalProductList);
+    setPlaceOrder(result);
+  }, [finalProductList])
+
   const [updateCart, setUpdateCart] = useState(false);
   const [placeOrder, setPlaceOrder] = useState(result);
 
