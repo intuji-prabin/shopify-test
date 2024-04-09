@@ -39,10 +39,37 @@ export const cartUpdate = async (context: any, request: any) => {
     };
   });
 
+  const mergeDuplicateItems = (itemData: any) => {
+    const mergedItems: any = {};
+
+    itemData.forEach((item: any) => {
+      const key = item.merchandiseId + '-' + item.attributes[0].value;
+
+      if (!mergedItems[key]) {
+        mergedItems[key] = {...item};
+      } else {
+        mergedItems[key].quantity += item.quantity;
+      }
+    });
+
+    const mergedItemList = Object.values(mergedItems);
+
+    // Check if any merged item's quantity exceeds 1000000
+    const hasExceededLimit = mergedItemList.some(
+      (item: any) => item.quantity > 1000000,
+    );
+
+    if (hasExceededLimit) {
+      throw new Error('The quantity exceeds 1000000 while updating the cart');
+    }
+
+    return mergedItemList;
+  };
+
   const cartUpdateResponse = await context.storefront.mutate(UPDATE_CART, {
     variables: {
       cartId: sessionCartInfo?.cartId,
-      lines: itemData,
+      lines: mergeDuplicateItems(itemData),
     },
   });
 
