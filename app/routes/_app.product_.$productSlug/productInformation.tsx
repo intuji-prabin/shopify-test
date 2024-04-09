@@ -132,6 +132,10 @@ const ProductDetailsSection = ({
       companyDefaultPrice,
     );
     setProductPrice(prices);
+    if (isNaN(quantity - 1)) {
+      setQuantity(moq);
+      return;
+    }
     setQuantity(quantity > 0 ? quantity - 1 : 0);
   }
   function increaseQuantity() {
@@ -144,12 +148,16 @@ const ProductDetailsSection = ({
       companyDefaultPrice,
     );
     setProductPrice(prices);
+    if (isNaN(quantity + 1)) {
+      setQuantity(moq);
+      return;
+    }
     setQuantity(quantity + 1);
   }
   function handleInputChange(event?: any) {
     const inputQuantity = parseInt(event.target.value);
     const prices = getProductPriceByQty(
-      isNaN(inputQuantity) ? 0 : inputQuantity,
+      inputQuantity,
       unitOfMeasure,
       UOM,
       box,
@@ -157,7 +165,7 @@ const ProductDetailsSection = ({
       companyDefaultPrice,
     );
     setProductPrice(prices);
-    setQuantity(isNaN(inputQuantity) ? 0 : inputQuantity);
+    setQuantity(inputQuantity);
   }
 
   function handleUOM(selectedUOM: any) {
@@ -220,7 +228,7 @@ const ProductDetailsSection = ({
           IN STOCK
         </div>
       </div>
-      <div className='flex flex-wrap gap-12 product_det__pricing pt-6'>
+      <div className='flex flex-wrap gap-12 pt-6 product_det__pricing'>
         <Price currency={currency} price={productPrice} className='relative' />
         <Price currency={currency} price={originalPrice} variant='rrp' className='relative' />
       </div>
@@ -245,18 +253,22 @@ const ProductDetailsSection = ({
       </div>
       <div className="flex flex-col items-start gap-4 pt-6 sm:flex-row">
         <div>
-          <div className="flex">
+          <div className="flex cart__list--quantity">
             <button
               className="border-[1px] border-grey-500 flex justify-center items-center w-14 aspect-square"
               onClick={decreaseQuantity}
+              disabled={quantity - 1 < moq}
             >
               -
             </button>
             <input
-              type="text"
-              className="max-w-[61px] min-h-14 h-full text-center border-x-0 !border-grey-500"
+              type="number"
+              className="w-20 min-h-14 h-full text-center border-x-0 !border-grey-500"
               value={quantity}
               onChange={handleInputChange}
+              min={moq || 1}
+              max="999999"
+              required
             />
             <button
               className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-14"
@@ -303,7 +315,7 @@ const ProductDetailsSection = ({
           />
           <input type="hidden" name="quantity" value={quantity} />
           <input type="hidden" name="selectUOM" value={UOM} />
-          {quantity < moq || quantity < 1 ?
+          {quantity < moq || quantity < 1 || quantity > 999999 || isNaN(quantity) ?
             <>
               <button
                 className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-not-allowed text-grey-400 bg-grey-200 min-h-14"
@@ -311,7 +323,7 @@ const ProductDetailsSection = ({
               >
                 {addToCart}
               </button>
-              <p className='text-red-500'>Minimum order quantity is {moq || 1}</p>
+              <p className='text-red-500'>Minimum order quantity is {moq || 1} and maximum quantity is 999999</p>
             </>
             : <Button
               className="flex-grow w-full uppercase min-h-14"
