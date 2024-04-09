@@ -215,27 +215,50 @@ export function QuantityColumn({
   setPlaceOrder
 }: QuantityColumnType) {
   const meta = info.table.options.meta;
-  const handleIncreaseQuantity = () => {
-    meta?.updateData(info.row.index, info.column.id, quantity + 1 < 1 ? 1 : quantity + 1);
-    const updateCart = quantity + 1 >= moq;
-    setUpdateCart && setUpdateCart(updateCart);
-  }
+  const [quantityError, setQuantityError] = useState(true);
+  // const handleIncreaseQuantity = () => {
+  //   meta?.updateData(info.row.index, info.column.id, quantity + 1 < 1 ? 1 : quantity + 1);
+  //   const updateCart = quantity + 1 >= moq;
+  //   setQuantityError(updateCart);
+  //   setUpdateCart && setUpdateCart(updateCart);
+  // }
 
-  const handleDecreaseQuantity = () => {
-    meta?.updateData(info.row.index, info.column.id, quantity - 1 < 1 ? 1 : quantity - 1);
-    const updateCart = quantity - 1 >= moq;
-    setUpdateCart && setUpdateCart(updateCart);
-  }
+  // const handleDecreaseQuantity = () => {
+  //   meta?.updateData(info.row.index, info.column.id, quantity - 1 < 1 ? 1 : quantity - 1);
+  //   const updateCart = quantity - 1 >= moq;
+  //   setQuantityError(updateCart);
+  //   setUpdateCart && setUpdateCart(updateCart);
+  // }
 
-  const handleInputChange = (event?: any) => {
-    const inputQuantity = parseInt(event.target.value);
-    meta?.updateData(info.row.index, info.column.id, isNaN(inputQuantity) ? 1 : inputQuantity);
-    const updateCart = inputQuantity >= moq;
+  // const handleInputChange = (event?: any) => {
+  //   const inputQuantity = parseInt(event.target.value);
+  //   meta?.updateData(info.row.index, info.column.id, inputQuantity);
+  //   const updateCart = inputQuantity >= moq;
+  //   setUpdateCart && setUpdateCart(updateCart);
+  //   const shouldPlaceOrder = inputQuantity >= moq;
+  //   setQuantityError(shouldPlaceOrder);
+  //   setPlaceOrder && setPlaceOrder(shouldPlaceOrder);
+  // }
+
+
+  const updateQuantity = (newQuantity: any) => {
+    meta?.updateData(info.row.index, info.column.id, Math.max(newQuantity, 1));
+    const updateCart = newQuantity >= moq;
     setUpdateCart && setUpdateCart(updateCart);
-    const shouldPlaceOrder = inputQuantity >= moq;
+    const shouldPlaceOrder = newQuantity >= moq;
+    setQuantityError(shouldPlaceOrder);
     setPlaceOrder && setPlaceOrder(shouldPlaceOrder);
   }
-
+  const handleIncreaseQuantity = () => {
+    updateQuantity(quantity + 1);
+  }
+  const handleDecreaseQuantity = () => {
+    updateQuantity(quantity - 1);
+  }
+  const handleInputChange = (event: any) => {
+    const inputQuantity = parseInt(event.target.value);
+    updateQuantity(inputQuantity);
+  }
 
   return (
     <>
@@ -257,16 +280,18 @@ export function QuantityColumn({
             onChange={handleInputChange}
             min={moq || 1}
             max="1000000"
+            required
           />
           <button
             className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
             type='button'
             onClick={handleIncreaseQuantity}
-            disabled={quantity + 1 < moq}
+          // disabled={quantity + 1 < moq}
           >
             +
           </button>
         </div>
+        {!quantityError && <p className='text-sm text-red-500 max-w-40 text-wrap'>Quantity cannot be less than MOQ i.e {moq} or empty</p>}
         <div className="flex items-center gap-1">
           <div className="info-block">
             <p className="flex items-center justify-center h-5 min-w-5 ">
@@ -280,7 +305,7 @@ export function QuantityColumn({
               </div>
             </p>
           </div>
-          <p className={`text-[14px] font-normal capitalize  leading-[16px] text-grey-700`}>
+          <p className='text-sm font-normal capitalize  leading-[16px] text-grey-700'>
             Minimum Order Quantity {moq}
           </p>
         </div>
