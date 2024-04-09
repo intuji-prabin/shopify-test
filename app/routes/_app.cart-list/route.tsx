@@ -201,9 +201,20 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 export default function CartList() {
   const { cartList, shippingAddresses }: any = useLoaderData<typeof loader>();
-  const [updateCart, setUpdateCart] = useState(false);
-  const [placeOrder, setPlaceOrder] = useState(true);
   const finalProductList = useSort({ items: cartList?.productList });
+  console.log("finalProductList", finalProductList);
+  const checkQuantityAgainstMOQ = (finalProductList: any) => {
+    for (let item of finalProductList) {
+      if (item.quantity < item.moq) {
+        return false;
+      }
+    }
+    return true;
+  }
+  const result = checkQuantityAgainstMOQ(finalProductList);
+  console.log(result);
+  const [updateCart, setUpdateCart] = useState(false);
+  const [placeOrder, setPlaceOrder] = useState(result);
 
   return (
     <>
