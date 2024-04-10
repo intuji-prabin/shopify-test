@@ -17,7 +17,7 @@ import {
 interface GroupItem {
   productId: string;
   quantity: number;
-  uom: number;
+  uom: string;
 }
 type Submit = 'create' | 'update';
 
@@ -65,13 +65,12 @@ export default function CreateGroup({
     groupItemList.push({
       productId: item.original.productId,
       quantity: item.original.quantity,
-      uom: Number(item.original.uom),
+      uom: item.original.uom,
     });
   });
 
   const handleSaveForLater = () => {
-    if (selectedValue === null) {
-      setIsError(true);
+    if (selectedValue === null || selectedValue.length > 30) {
       return;
     }
 
