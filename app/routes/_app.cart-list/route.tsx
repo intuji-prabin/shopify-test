@@ -204,7 +204,7 @@ export default function CartList() {
   const finalProductList = useSort({ items: cartList?.productList });
   const checkQuantityAgainstMOQ = (finalProductList: any) => {
     for (let item of finalProductList) {
-      if (item.quantity < item.moq) {
+      if (item.quantity < item.moq || item.quantity > 999999) {
         return false;
       }
     }
