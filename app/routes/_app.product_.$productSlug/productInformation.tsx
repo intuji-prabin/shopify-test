@@ -133,7 +133,7 @@ const ProductDetailsSection = ({
     );
     setProductPrice(prices);
     if (isNaN(quantity - 1)) {
-      setQuantity(moq);
+      setQuantity(parseFloat(moq));
       return;
     }
     setQuantity(quantity > 0 ? quantity - 1 : 0);
@@ -149,7 +149,7 @@ const ProductDetailsSection = ({
     );
     setProductPrice(prices);
     if (isNaN(quantity + 1)) {
-      setQuantity(moq);
+      setQuantity(parseFloat(moq));
       return;
     }
     setQuantity(quantity + 1);
