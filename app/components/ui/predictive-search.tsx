@@ -176,14 +176,22 @@ function SearchResultsProductsGrid({
 
     const [quantity, setQuantity] = useState(parseFloat(product.moq) || 1);
     function decreaseQuantity() {
-      setQuantity(quantity > 0 ? quantity - 1 : 0);
+      if (isNaN(quantity - 1)) {
+        setQuantity(parseFloat(product.moq) || 1);
+        return;
+      }
+      setQuantity(quantity - 1);
     }
     function increaseQuantity() {
+      if (isNaN(quantity + 1)) {
+        setQuantity(parseFloat(product.moq) || 1);
+        return;
+      }
       setQuantity(quantity + 1);
     }
     function handleInputChange(event?: any) {
       const inputQuantity = parseInt(event.target.value);
-      setQuantity(isNaN(inputQuantity) ? 0 : inputQuantity);
+      setQuantity(inputQuantity);
     }
     const submit = useSubmit();
 
@@ -217,7 +225,7 @@ function SearchResultsProductsGrid({
       case 'cart': {
         return (
           <div className="flex flex-col justify-between gap-4 sm:flex-row">
-            <div className="flex flex-wrap items-center gap-3 sm:w-3/4">
+            <div className="flex flex-wrap items-center gap-3 sm:w-4/6">
               <div className="size-16">
                 <img
                   src={productUrl}
@@ -249,17 +257,18 @@ function SearchResultsProductsGrid({
                 </p>
               </div>
             </div>
-            <div className="sm:w-[calc(25%_-1rem)]">
-              <div className="flex">
+            <div className="sm:w-[calc(33.33%_-_1rem)]">
+              <div className="flex cart__list--quantity">
                 <button
-                  className="flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial"
+                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < Number(product.moq) || quantity - 1 < 1 ? "cursor-not-allowed" : ""}`}
                   onClick={decreaseQuantity}
+                  disabled={quantity - 1 < Number(product.moq) || quantity - 1 < 1}
                 >
                   -
                 </button>
                 <input
-                  type="text"
-                  className="flex-1 text-center border-x-0 !border-grey-500 sm:min-w-12"
+                  type="number"
+                  className="flex-1 text-center border-x-0 !border-grey-500 sm:min-w-20"
                   value={quantity}
                   onChange={handleInputChange}
                 />
@@ -270,7 +279,7 @@ function SearchResultsProductsGrid({
                   +
                 </button>
               </div>
-              {quantity < Number(product.moq) || quantity < 1 ? (
+              {quantity < Number(product.moq) || quantity < 1 || quantity > 999999 || isNaN(quantity) ? (
                 <>
                   <Button
                     variant="primary"
@@ -280,7 +289,8 @@ function SearchResultsProductsGrid({
                     Add to Cart
                   </Button>
                   <p className="text-xs text-red-500">
-                    Minimum Order Quantity {product?.moq || 1}
+                    Minimum Order Quantity {product?.moq || 1}<br />
+                    Maximum Quantity 999999
                   </p>
                 </>
               ) : (
@@ -316,7 +326,7 @@ function SearchResultsProductsGrid({
       case 'pending_order': {
         return (
           <div className="flex flex-col justify-between gap-4 sm:flex-row">
-            <div className="flex flex-wrap items-center gap-3 sm:w-3/4">
+            <div className="flex flex-wrap items-center gap-3 sm:w-4/6">
               <div className="size-16">
                 <img
                   src={productUrl}
@@ -348,17 +358,18 @@ function SearchResultsProductsGrid({
                 </p>
               </div>
             </div>
-            <div className="sm:w-[calc(25%_-1rem)]">
-              <div className="flex">
+            <div className="sm:w-[calc(33.33%_-_1rem)]">
+              <div className="flex cart__list--quantity">
                 <button
-                  className="flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial"
+                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < Number(product.moq) || quantity - 1 < 1 ? "cursor-not-allowed" : ""}`}
                   onClick={decreaseQuantity}
+                  disabled={quantity - 1 < Number(product.moq) || quantity - 1 < 1}
                 >
                   -
                 </button>
                 <input
-                  type="text"
-                  className="flex-1 text-center border-x-0 !border-grey-500 sm:min-w-12"
+                  type="number"
+                  className="flex-1 text-center border-x-0 !border-grey-500 sm:min-w-20"
                   value={quantity}
                   onChange={handleInputChange}
                 />
@@ -369,7 +380,7 @@ function SearchResultsProductsGrid({
                   +
                 </button>
               </div>
-              {quantity < Number(product.moq) || quantity < 1 ? (
+              {quantity < Number(product.moq) || quantity < 1 || quantity > 999999 || isNaN(quantity) ? (
                 <>
                   <Button
                     variant="primary"
@@ -379,7 +390,8 @@ function SearchResultsProductsGrid({
                     Add to List
                   </Button>
                   <p className="text-xs text-red-500">
-                    Minimum Order Quantity {product?.moq || 1}
+                    Minimum Order Quantity {product?.moq || 1}<br />
+                    Maximum Quantity 999999
                   </p>
                 </>
               ) : (
@@ -442,7 +454,7 @@ function SearchResultsProductsGrid({
         }
         return (
           <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
-            <div className="flex flex-wrap items-center gap-3 sm:w-1/2">
+            <div className="flex flex-wrap items-center gap-3 sm:w-2/5">
               <div className="size-16">
                 <img
                   src={productUrl}
@@ -474,7 +486,7 @@ function SearchResultsProductsGrid({
                 </p>
               </div>
             </div>
-            <div className="grid grid-cols-1 items-start gap-x-4 w-full gap-y-2 sm:grid-cols-2 sm:w-[calc(50%_-1rem)]">
+            <div className="grid grid-cols-1 items-start gap-x-4 w-full gap-y-2 sm:grid-cols-2 sm:w-[calc(60%_-_1rem)]">
               <select
                 name="filter_by"
                 className="w-full min-w-[120px] place-order !border-grey-500 filter-select"
@@ -499,16 +511,17 @@ function SearchResultsProductsGrid({
                   <option value={UOM}>{product.defaultUomValue}</option>
                 )}
               </select>
-              <div className="flex">
+              <div className="flex cart__list--quantity">
                 <button
-                  className="flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial"
+                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < Number(product.moq) || quantity - 1 < 1 ? "cursor-not-allowed" : ""}`}
                   onClick={decreaseQuantity}
+                  disabled={quantity - 1 < Number(product.moq) || quantity - 1 < 1}
                 >
                   -
                 </button>
                 <input
-                  type="text"
-                  className="flex-1 text-center border-x-0 !border-grey-500 sm:min-w-12"
+                  type="number"
+                  className="flex-1 text-center border-x-0 !border-grey-500 sm:min-w-20"
                   value={quantity}
                   onChange={handleInputChange}
                 />
@@ -520,7 +533,7 @@ function SearchResultsProductsGrid({
                 </button>
               </div>
               <div className="hidden sm:block"></div>
-              {quantity < Number(product.moq) || quantity < 1 ? (
+              {quantity < Number(product.moq) || quantity < 1 || quantity > 999999 || isNaN(quantity) ? (
                 <>
                   <Button
                     variant="primary"
@@ -529,8 +542,10 @@ function SearchResultsProductsGrid({
                   >
                     Add to List
                   </Button>
+                  <div className="hidden sm:block"></div>
                   <p className="w-full text-xs text-red-500">
-                    Minimum Order Quantity {product?.moq || 1}
+                    Minimum Order Quantity {product?.moq || 1}<br />
+                    Maximum Quantity 999999
                   </p>
                 </>
               ) : (
