@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Form, Link, useFetcher, useSubmit} from '@remix-run/react';
+import {Form, useFetcher, useSubmit} from '@remix-run/react';
 import {Table} from '@tanstack/react-table';
 import {Done} from '~/components/icons/done';
 import {Button} from '~/components/ui/button';
@@ -13,12 +13,14 @@ import {
   CircleInformationMajor,
   EditItems,
 } from '~/components/icons/orderStatus';
+import {displayToast} from '~/components/ui/toast';
+import {CreateGroupSchema} from '~/components/ui/createable-select';
 
 export interface GroupItem {
   placeId: number;
   productId: string;
   quantity: number;
-  uom: number;
+  uom: string;
 }
 
 export function ActionBar({
@@ -70,14 +72,14 @@ export function ActionBar({
     });
   };
 
-  const handleUpdate = () => {
+  const handleProductUpdate = () => {
     const groupItemList: GroupItem[] = [];
 
     table.getRowModel().flatRows.map((item) => {
       groupItemList.push({
         productId: item.original.productId,
         quantity: item.original.quantity,
-        uom: Number(item.original.uom),
+        uom: item.original.uom,
         placeId: item.original.placeId,
       });
     });
@@ -89,6 +91,27 @@ export function ActionBar({
     );
   };
 
+  const handleGroupUpdate = (event: React.FormEvent<HTMLFormElement>) => {
+    const formData = new FormData(event.currentTarget);
+
+    const groupName = formData.get('groupName') as string;
+
+    const result = CreateGroupSchema.safeParse({
+      group: groupName,
+    });
+
+    if (!result.success) {
+      event.preventDefault();
+      displayToast({
+        message: result.error.errors[0].message,
+        type: 'error',
+      });
+      return;
+    }
+    submit(event.currentTarget);
+
+    setIsEditing(false);
+  };
   return (
     <div className="flex justify-between md:items-center my-[30px] flex-col gap-4 md:flex-row md:gap-0 items-baseline ">
       <div className="flex items-baseline gap-4  flex-col sm:flex-row sm:items-center">
@@ -105,9 +128,7 @@ export function ActionBar({
               <Form
                 method="POST"
                 className="flex items-center p-2"
-                onSubmit={() => {
-                  setIsEditing(false);
-                }}
+                onSubmit={handleGroupUpdate}
               >
                 <input
                   type="text"
@@ -157,13 +178,15 @@ export function ActionBar({
             table.getSelectedRowModel().rows.length === 0 ? 'w-full' : ''
           }`}
         >
-          <Button
-            disabled={fetcher.state === 'submitting'}
-            variant={!isProductUpdate ? 'disabled' : 'primary'}
-            onClick={handleUpdate}
-          >
-            update
-          </Button>
+          {isProductUpdate && (
+            <Button
+              disabled={fetcher.state === 'submitting'}
+              variant={!isProductUpdate ? 'disabled' : 'primary'}
+              onClick={handleProductUpdate}
+            >
+              update
+            </Button>
+          )}
           <Button
             variant={
               table.getSelectedRowModel().rows.length === 0

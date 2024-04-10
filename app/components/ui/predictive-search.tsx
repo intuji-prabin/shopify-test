@@ -1,16 +1,16 @@
-import { FormEvent, useRef, useState } from 'react';
-import { FaSearch } from 'react-icons/fa';
-import { Form, Link, useFetcher, useSubmit } from '@remix-run/react';
-import { debounce } from '~/lib/helpers/general.helper';
-import { Button } from '~/components/ui/button';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { useOutsideClick } from '~/hooks/useOutsideClick';
+import {FormEvent, useRef, useState} from 'react';
+import {FaSearch} from 'react-icons/fa';
+import {Form, Link, useFetcher, useSubmit} from '@remix-run/react';
+import {debounce} from '~/lib/helpers/general.helper';
+import {Button} from '~/components/ui/button';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {useOutsideClick} from '~/hooks/useOutsideClick';
 import CloseMenu from '~/components/icons/closeMenu';
 import {
   NormalizedPredictiveSearch,
   NormalizedPredictiveSearchResultItem,
 } from '~/routes/_app.predictive-search/route';
-import { CompareSearch } from '../icons/compareSearch';
+import {CompareSearch} from '../icons/compareSearch';
 
 export type SearchVariant =
   | 'normal'
@@ -91,10 +91,11 @@ export function PredictiveSearch({
               type="text"
               name="searchTerm"
               placeholder={inputPlaceholder}
-              className={`!pl-6 border-none w-full text-base ${searchVariant === 'compare'
-                ? 'font-normal'
-                : 'font-bold placeholder:italic'
-                } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
+              className={`!pl-6 border-none w-full text-base ${
+                searchVariant === 'compare'
+                  ? 'font-normal'
+                  : 'font-bold placeholder:italic'
+              } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
             />
           </>
         )}
@@ -110,11 +111,13 @@ export function PredictiveSearch({
       </fetcher.Form>
       {searchProduct && (
         <div
-          className={`${searchVariant === 'mobile' ? 'top-[65px]' : 'top-[calc(100%_+_4px)]'
-            } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${searchVariant === 'normal' || searchVariant === 'mobile'
+          className={`${
+            searchVariant === 'mobile' ? 'top-[65px]' : 'top-[calc(100%_+_4px)]'
+          } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${
+            searchVariant === 'normal' || searchVariant === 'mobile'
               ? null
               : 'max-w-[600px] max-h-[350px] overflow-y-auto shadow-lg'
-            }`}
+          }`}
         >
           {fetcher.state === 'loading' ? (
             <p className="text-base font-bold text-center text-grey-400">
@@ -126,6 +129,7 @@ export function PredictiveSearch({
                 case 'products':
                   return (
                     <SearchResultsProductsGrid
+                      searchFormRef={searchFormRef}
                       key={result.type}
                       products={result.items}
                       setSearchProduct={setSearchProduct}
@@ -160,10 +164,12 @@ function SearchResultsProductsGrid({
   products,
   setSearchProduct,
   searchVariant,
+  searchFormRef,
 }: {
   products: Array<NormalizedPredictiveSearchResultItem>;
   setSearchProduct: React.Dispatch<React.SetStateAction<boolean>>;
   searchVariant: SearchVariant;
+  searchFormRef: React.RefObject<HTMLFormElement>;
 }) {
   /**
    * @param product
@@ -205,7 +211,10 @@ function SearchResultsProductsGrid({
               <Link
                 prefetch="intent"
                 to={`/product/${product.handle}`}
-                onClick={() => setSearchProduct(false)}
+                onClick={() => {
+                  setSearchProduct(false);
+                  searchFormRef.current?.reset();
+                }}
                 className="text-base font-bold text-grey-900"
               >
                 {product.title}
@@ -485,7 +494,7 @@ function SearchResultsProductsGrid({
               >
                 {product.unitOfMeasure.length > 0 ? (
                   product.unitOfMeasure?.map(
-                    (uom: { unit: string; code: string }, index: number) => (
+                    (uom: {unit: string; code: string}, index: number) => (
                       <option
                         className="px-4"
                         value={uom.code}
