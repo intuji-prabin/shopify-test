@@ -255,7 +255,7 @@ const ProductDetailsSection = ({
         <div>
           <div className="flex cart__list--quantity">
             <button
-              className="border-[1px] border-grey-500 flex justify-center items-center w-14 aspect-square"
+              className={`border-[1px] border-grey-500 flex justify-center items-center w-14 aspect-square ${quantity - 1 < moq && 'cursor-not-allowed'}`}
               onClick={decreaseQuantity}
               disabled={quantity - 1 < moq}
             >
