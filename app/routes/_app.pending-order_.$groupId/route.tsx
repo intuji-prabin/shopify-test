@@ -95,7 +95,6 @@ export async function action({request, context, params}: ActionFunctionArgs) {
       groupItemList: jsonPayload,
     });
 
-    console.log('body', body);
     try {
       const response = await updateGroupProduct({
         customerId,
