@@ -15,6 +15,10 @@ import {
 } from '~/components/icons/orderStatus';
 import {displayToast} from '~/components/ui/toast';
 import {CreateGroupSchema} from '~/components/ui/createable-select';
+import {
+  CART_QUANTITY_ERROR,
+  CART_QUANTITY_MAX,
+} from '~/lib/constants/cartInfo.constant';
 
 export interface GroupItem {
   placeId: number;
@@ -39,6 +43,18 @@ export function ActionBar({
   const fetcher = useFetcher();
 
   const handleAddToCart = () => {
+    const isSelectedRowQuanityValid = table
+      .getSelectedRowModel()
+      .flatRows.some((item) => item.original.quantity > CART_QUANTITY_MAX);
+
+    if (isSelectedRowQuanityValid) {
+      displayToast({
+        message: CART_QUANTITY_ERROR,
+        type: 'error',
+      });
+      return;
+    }
+
     const formData = new FormData();
 
     table.getSelectedRowModel().flatRows.map((item, index) => {
@@ -73,6 +89,18 @@ export function ActionBar({
   };
 
   const handleProductUpdate = () => {
+    const isRowQuanityValid = table
+      .getRowModel()
+      .flatRows.some((item) => item.original.quantity > CART_QUANTITY_MAX);
+
+    if (isRowQuanityValid) {
+      displayToast({
+        message: CART_QUANTITY_ERROR,
+        type: 'error',
+      });
+      return;
+    }
+
     const groupItemList: GroupItem[] = [];
 
     table.getRowModel().flatRows.map((item) => {
@@ -108,10 +136,12 @@ export function ActionBar({
       });
       return;
     }
+
     submit(event.currentTarget);
 
     setIsEditing(false);
   };
+
   return (
     <div className="flex justify-between md:items-center my-[30px] flex-col gap-4 md:flex-row md:gap-0 items-baseline ">
       <div className="flex items-baseline gap-4  flex-col sm:flex-row sm:items-center">
