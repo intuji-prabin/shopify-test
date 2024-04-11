@@ -14,11 +14,11 @@ import {
   EditItems,
 } from '~/components/icons/orderStatus';
 import {displayToast} from '~/components/ui/toast';
-import {CreateGroupSchema} from '~/components/ui/createable-select';
 import {
   CART_QUANTITY_ERROR,
   CART_QUANTITY_MAX,
 } from '~/lib/constants/cartInfo.constant';
+import {z} from 'zod';
 
 export interface GroupItem {
   placeId: number;
@@ -26,6 +26,14 @@ export interface GroupItem {
   quantity: number;
   uom: string;
 }
+
+const UpdateGroupSchema = z.object({
+  group: z
+    .string()
+    .trim()
+    .min(1, {message: 'Group Name is required'})
+    .max(50, {message: 'Group Name is too long'}),
+});
 
 export function ActionBar({
   table,
@@ -124,9 +132,11 @@ export function ActionBar({
 
     const groupName = formData.get('groupName') as string;
 
-    const result = CreateGroupSchema.safeParse({
+    const result = UpdateGroupSchema.safeParse({
       group: groupName,
     });
+
+    console.log('result', result);
 
     if (!result.success) {
       event.preventDefault();

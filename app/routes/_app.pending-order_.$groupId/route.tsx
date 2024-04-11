@@ -103,9 +103,12 @@ export async function action({request, context, params}: ActionFunctionArgs) {
 
       setSuccessMessage(messageSession, response?.message);
 
-      return redirect(Routes.PENDING_ORDER, {
-        headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
-      });
+      return json(
+        {},
+        {
+          headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+        },
+      );
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(messageSession, error?.message);
