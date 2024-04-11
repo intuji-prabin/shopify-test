@@ -12,7 +12,7 @@ import {
 } from '~/components/ui/command';
 import {z} from 'zod';
 
-export const CreateGroupSchema = z.object({
+const CreateGroupSchema = z.object({
   group: z.string().trim().max(50, {message: 'Group Name is too long'}),
 });
 
