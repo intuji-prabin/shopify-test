@@ -5,7 +5,6 @@ import { getCategoryList } from '../_app.categories/route';
 import useEmblaCarousel, { EmblaCarouselType } from 'embla-carousel-react';
 import { useCallback, useEffect, useState } from 'react';
 import { FilterForm, SortByFilterForm } from '../_app.category_.$mainCategory.$categoryId_.$subCategoryId/filter-form';
-import { Separator } from '@radix-ui/react-separator';
 import { LeftArrow } from '~/components/icons/left';
 import { BackButton } from '~/components/ui/back-button';
 import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
@@ -22,6 +21,8 @@ import {
 } from '~/lib/utils/toast-session.server';
 import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 import { addToWishlist, removeFromWishlist } from '../_app.product_.$productSlug/wishlist.server';
+import { Button } from '~/components/ui/button';
+import { Separator } from '~/components/ui/separator';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -245,21 +246,29 @@ const SubCat = () => {
 
   return (
     <section className="container">
-      <div className="pt-6">
-        <BackButton
-          className="capitalize"
-          title={categoryId?.split('-').join(' ') ?? 'Back'}
-        />
-        <Breadcrumb>
-          <BreadcrumbItem href={Routes.CATEGORIES} className="capitalize">
-            {mainCategory?.split('-').join(' ')}
-          </BreadcrumbItem>
-          <BreadcrumbItem className="capitalize text-grey-800">
-            {categoryId?.split('-').join(' ')}
-          </BreadcrumbItem>
-        </Breadcrumb>
-        <Separator className="my-2" />
+      <div className="flex flex-wrap justify-between pt-6">
+        <div>
+          <BackButton
+            className="capitalize"
+            title={categoryId?.split('-').join(' ') ?? 'Back'}
+          />
+          <Breadcrumb>
+            <BreadcrumbItem href={Routes.CATEGORIES} className="capitalize">
+              {mainCategory?.split('-').join(' ')}
+            </BreadcrumbItem>
+            <BreadcrumbItem href={Routes.CATEGORIES} className="capitalize">
+              {categoryId?.split('-').join(' ')}
+            </BreadcrumbItem>
+            <BreadcrumbItem className="capitalize text-grey-800">
+              {categoryId?.split('-').join(' ')}
+            </BreadcrumbItem>
+          </Breadcrumb>
+        </div>
+        <div>
+          <Button>upload order</Button>
+        </div>
       </div>
+      <Separator className="my-2" />
       <div className="sticky top-0 z-10 bg-primary-25">
         <div className="embla">
           <div className="overflow-x-hidden embla__viewport" ref={emblaRef}>

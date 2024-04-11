@@ -270,9 +270,8 @@ export function QuantityColumn({
     meta?.updateData(info.row.index, info.column.id, Math.max(newQuantity, 1));
     const updateCart = newQuantity >= moq;
     setUpdateCart && setUpdateCart(updateCart);
-    const shouldPlaceOrder = newQuantity >= moq;
-    setQuantityError(shouldPlaceOrder);
-    setPlaceOrder && setPlaceOrder(shouldPlaceOrder);
+    setQuantityError(updateCart);
+    setPlaceOrder && setPlaceOrder(updateCart);
   }
   const handleIncreaseQuantity = () => {
     if (isNaN(quantity + 1)) {
@@ -329,7 +328,7 @@ export function QuantityColumn({
             +
           </button>
         </div>
-        {!quantityError && <p className='text-sm text-red-500 max-w-40 text-wrap'>Quantity cannot be less than MOQ i.e {moq} or empty</p>}
+        {!quantityError || quantity > CART_QUANTITY_MAX && <p className='text-sm text-red-500 max-w-40 text-wrap'>Quantity cannot be less than MOQ i.e {moq} or greater than {CART_QUANTITY_MAX} or empty</p>}
         <div className="flex items-center gap-1">
           <div className="info-block">
             <p className="flex items-center justify-center h-5 min-w-5 ">
