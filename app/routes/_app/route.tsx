@@ -30,7 +30,7 @@ import {
   getSessionCart,
   getSessionData,
 } from '~/routes/_app/app.server';
-import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
+import { getProductGroup } from '~/routes/_app.pending-order/pending-order.server';
 
 export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
@@ -40,7 +40,7 @@ export async function loader({ request, context }: ActionFunctionArgs) {
   const messageSession = await getMessageSession(request);
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
 
-  const productGroup = await getProductGroup({customerId: userDetails.id});
+  const productGroup = await getProductGroup({ customerId: userDetails.id });
 
   const headers = [] as any;
   const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY);
@@ -48,7 +48,11 @@ export async function loader({ request, context }: ActionFunctionArgs) {
   if (!sessionCartInfo) {
     sessionCartInfo = await getSessionCart(userDetails?.id, context);
     if (sessionCartInfo) {
-      context.session.set(CART_SESSION_KEY, sessionCartInfo);
+      const finalCartSession = {
+        cartId: sessionCartInfo?.cartId,
+        lineItems: sessionCartInfo?.lineItems,
+      }
+      context.session.set(CART_SESSION_KEY, finalCartSession);
       headers.push(['Set-Cookie', await context.session.commit({})]);
     }
   }

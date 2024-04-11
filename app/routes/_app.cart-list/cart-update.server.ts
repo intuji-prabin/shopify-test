@@ -4,6 +4,7 @@ import {
 } from '~/lib/constants/cartInfo.constant';
 import {CONSTANT} from '~/lib/constants/product.session';
 import {getCartList} from './cart.server';
+import {useFormatCart} from '~/hooks/useFormatCart';
 
 export const cartUpdate = async (context: any, request: any) => {
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
@@ -99,7 +100,8 @@ export const cartUpdate = async (context: any, request: any) => {
     cartItems: [],
     lineItems: lines.length,
   };
-  context.session.set(CART_SESSION_KEY, cartSession);
+  const finalCartSession = useFormatCart(cartSession);
+  context.session.set(CART_SESSION_KEY, finalCartSession);
   await getCartList(context, request, cartSession);
   return {cartSession};
 };

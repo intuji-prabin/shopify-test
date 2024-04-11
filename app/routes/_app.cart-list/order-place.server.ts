@@ -4,6 +4,7 @@ import {GET_CART_LIST, getCartList} from './cart.server';
 import {useFetch} from '~/hooks/useFetch';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {useFormatCart} from '~/hooks/useFormatCart';
 
 export const placeOrder = async (request: Request, context: any) => {
   const {userDetails} = await getUserDetails(request);
@@ -44,7 +45,8 @@ export const placeOrder = async (request: Request, context: any) => {
         variables: {cartId: cartSession?.cartId},
       });
     }
-    context.session.set(CART_SESSION_KEY, cartSession);
+    const finalCartSession = useFormatCart(cartSession);
+    context.session.set(CART_SESSION_KEY, finalCartSession);
     return {cartSession, shopifyOrderId};
   } catch (error) {
     if (error instanceof Error) {

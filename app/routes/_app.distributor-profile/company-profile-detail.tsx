@@ -5,8 +5,8 @@ import {
   PhoneMajor,
   PrintMinor,
 } from '~/components/icons/orderStatus';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {CompanyProfile} from '~/routes/_app.company-profile/company-profile.server';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { CompanyProfile } from './company-profile.server';
 
 export default function CompanyProfileDetail({
   companyProfileDetails,
@@ -28,21 +28,21 @@ export default function CompanyProfileDetail({
             <h3>{companyProfileDetails?.companyName || '-'}</h3>
           </div>
 
-          <ul className="flex gap-4  font-medium  text-grey-700 flex-wrap">
-            <li className="  settings-card-detail">
+          <ul className="flex flex-wrap gap-4 font-medium text-grey-700">
+            <li className=" settings-card-detail">
               <Email />
               <p className=" comapny-setting-text">
                 {companyProfileDetails?.companyEmail || '-'}
               </p>
             </li>
-            <li className=" settings-card-detail ">
+            <li className=" settings-card-detail">
               <PrintMinor />
               <p className="comapny-setting-text">
                 {companyProfileDetails?.companyFax || '-'}
               </p>
             </li>
           </ul>
-          <ul className="flex gap-4  font-medium  text-grey-700 flex-wrap">
+          <ul className="flex flex-wrap gap-4 font-medium text-grey-700">
             {' '}
             <li className=" settings-card-detail">
               <PhoneMajor />
