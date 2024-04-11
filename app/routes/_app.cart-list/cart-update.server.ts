@@ -1,4 +1,7 @@
-import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
+import {
+  CART_QUANTITY_MAX,
+  CART_SESSION_KEY,
+} from '~/lib/constants/cartInfo.constant';
 import {CONSTANT} from '~/lib/constants/product.session';
 import {getCartList} from './cart.server';
 
@@ -54,13 +57,15 @@ export const cartUpdate = async (context: any, request: any) => {
 
     const mergedItemList = Object.values(mergedItems);
 
-    // Check if any merged item's quantity exceeds 999999
+    // Check if any merged item's quantity exceeds 999999 i.e CART_QUANTITY_MAX
     const hasExceededLimit = mergedItemList.some(
-      (item: any) => item.quantity > 999999,
+      (item: any) => item.quantity > CART_QUANTITY_MAX,
     );
 
     if (hasExceededLimit) {
-      throw new Error('The quantity exceeds 999999 while updating the cart');
+      throw new Error(
+        `The quantity exceeds ${CART_QUANTITY_MAX} while updating the cart`,
+      );
     }
 
     return mergedItemList;

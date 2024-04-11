@@ -15,6 +15,7 @@ import CarouselThumb from './carouselThumb';
 import { getProductPriceByQty } from './product-detail';
 import { ProductInfoTable } from './productInfoTable';
 import { Price } from '~/components/ui/price';
+import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
 
 export default function ProductInformation({ product }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
@@ -267,7 +268,7 @@ const ProductDetailsSection = ({
               value={quantity}
               onChange={handleInputChange}
               min={moq || 1}
-              max="999999"
+              max={CART_QUANTITY_MAX}
               required
             />
             <button
@@ -315,7 +316,7 @@ const ProductDetailsSection = ({
           />
           <input type="hidden" name="quantity" value={quantity} />
           <input type="hidden" name="selectUOM" value={UOM} />
-          {quantity < moq || quantity < 1 || quantity > 999999 || isNaN(quantity) ?
+          {quantity < moq || quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity) ?
             <>
               <button
                 className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-not-allowed text-grey-400 bg-grey-200 min-h-14"
@@ -323,7 +324,7 @@ const ProductDetailsSection = ({
               >
                 {addToCart}
               </button>
-              <p className='text-red-500'>Minimum order quantity is {moq || 1} and maximum quantity is 999999</p>
+              <p className='text-red-500'>Minimum order quantity is {moq || 1} and maximum quantity is {CART_QUANTITY_MAX}</p>
             </>
             : <Button
               className="flex-grow w-full uppercase min-h-14"

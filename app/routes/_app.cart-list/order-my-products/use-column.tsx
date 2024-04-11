@@ -5,6 +5,7 @@ import { TooltipInfo } from '~/components/icons/orderStatus';
 import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
+import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 import { debounce } from '~/lib/helpers/general.helper';
 import { getProductPriceByQty } from '~/routes/_app.product_.$productSlug/product-detail';
@@ -316,7 +317,7 @@ export function QuantityColumn({
             name="quantity"
             onChange={handleInputChange}
             min={moq || 1}
-            max="999999"
+            max={CART_QUANTITY_MAX}
             required
           />
           <button
