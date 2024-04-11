@@ -7,8 +7,8 @@ export default function ShippingAddressHeader({ title }: { title: string }) {
     <div className="mb-4 flex flex-col gap-[6px]">
       <BackButton title="Shipping Address " />
       <Breadcrumb>
-        <BreadcrumbItem href={Routes.COMPANY_INFORMATION}>
-          Company Information
+        <BreadcrumbItem href={Routes.DISTRIBUTOR_INFO}>
+          Distributor Information
         </BreadcrumbItem>
         <BreadcrumbItem
           href={Routes.SHIPPING_ADDRESS}

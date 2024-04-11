@@ -37,4 +37,6 @@ export const Routes = {
   PROFILE: '/profile',
   LOGOUT_SUBSCRIBE: '/logout/subscribe',
   INVOICE: '/invoice',
+  DISTRIBUTOR_INFO: '/distributor-information',
+  DISTRIBUTOR_PROFILE: '/distributor-profile',
 };
