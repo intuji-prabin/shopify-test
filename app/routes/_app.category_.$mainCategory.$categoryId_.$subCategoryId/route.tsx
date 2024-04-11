@@ -34,6 +34,7 @@ import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 import { getFilterProduct } from './filter.server';
 import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
 import { addToWishlist, removeFromWishlist } from '../_app.product_.$productSlug/wishlist.server';
+import { Button } from '~/components/ui/button';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -270,24 +271,29 @@ export default function SubCategoryPage() {
   console.log("productList?.results?.formattedData.productList", productList?.results?.formattedData.productList)
   return (
     <section className="container">
-      <div className="pt-6">
-        <BackButton
-          className="capitalize"
-          title={subCategoryId?.split('-').join(' ') ?? 'Back'}
-        />
-        <Breadcrumb>
-          <BreadcrumbItem href={Routes.CATEGORIES} className="capitalize">
-            {mainCategory?.split('-').join(' ')}
-          </BreadcrumbItem>
-          <BreadcrumbItem href={Routes.CATEGORIES} className="capitalize">
-            {categoryId?.split('-').join(' ')}
-          </BreadcrumbItem>
-          <BreadcrumbItem className="capitalize text-grey-800">
-            {subCategoryId?.split('-').join(' ')}
-          </BreadcrumbItem>
-        </Breadcrumb>
-        <Separator className="my-2" />
+      <div className="flex flex-wrap justify-between pt-6">
+        <div>
+          <BackButton
+            className="capitalize"
+            title={subCategoryId?.split('-').join(' ') ?? 'Back'}
+          />
+          <Breadcrumb>
+            <BreadcrumbItem href={Routes.CATEGORIES} className="capitalize">
+              {mainCategory?.split('-').join(' ')}
+            </BreadcrumbItem>
+            <BreadcrumbItem href={Routes.CATEGORIES} className="capitalize">
+              {categoryId?.split('-').join(' ')}
+            </BreadcrumbItem>
+            <BreadcrumbItem className="capitalize text-grey-800">
+              {subCategoryId?.split('-').join(' ')}
+            </BreadcrumbItem>
+          </Breadcrumb>
+        </div>
+        <div>
+          <Button>upload order</Button>
+        </div>
       </div>
+      <Separator className="my-2" />
       <div className="sticky top-0 z-10 bg-primary-25">
         <div className="embla">
           <div className="overflow-x-hidden embla__viewport" ref={emblaRef}>

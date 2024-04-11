@@ -188,14 +188,14 @@ export function SortByFilterForm() {
       }}
       className="flex items-center space-x-2"
     >
-      <label htmlFor="sort-by" className="text-base font-medium text-grey-400">
+      <label htmlFor="sort-by" className="pb-0 text-base text-grey-800">
         Sort by :{' '}
       </label>
       <select
         name="sort-by"
         value={queryParams.get('sort-by') as string}
         onChange={() => { }}
-        className="!p-2 !border-grey-50 text-base font-medium bg-transparent text-grey-900"
+        className="!p-2 !border-grey-500 text-base bg-transparent text-grey-800"
       >
         <option value="">Sort By</option>
         <option value="quantity-buy-available">Quantity Buy Available</option>
