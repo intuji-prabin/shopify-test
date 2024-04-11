@@ -1,13 +1,14 @@
-import {Link} from '@remix-run/react';
-import {ColumnDef} from '@tanstack/react-table';
-import {useEffect, useMemo, useRef, useState} from 'react';
-import {TooltipInfo} from '~/components/icons/orderStatus';
-import {badgeVariants} from '~/components/ui/badge';
-import {Button} from '~/components/ui/button';
-import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {debounce} from '~/lib/helpers/general.helper';
-import {getProductPriceByQty} from '~/routes/_app.product_.$productSlug/product-detail';
+import { Link } from '@remix-run/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { TooltipInfo } from '~/components/icons/orderStatus';
+import { badgeVariants } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
+import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { debounce } from '~/lib/helpers/general.helper';
+import { getProductPriceByQty } from '~/routes/_app.product_.$productSlug/product-detail';
 
 export type BulkOrderColumn = {
   productId: string;
@@ -56,7 +57,7 @@ export function useMyProductColumn({
     () => [
       {
         id: 'select',
-        header: ({table}) => (
+        header: ({ table }) => (
           <IndeterminateCheckbox
             {...{
               checked: table.getIsAllRowsSelected(),
@@ -65,7 +66,7 @@ export function useMyProductColumn({
             }}
           />
         ),
-        cell: ({row}) => (
+        cell: ({ row }) => (
           <div className="px-1">
             <IndeterminateCheckbox
               {...{
@@ -164,7 +165,7 @@ export function useMyProductColumn({
     [],
   );
 
-  return {columns};
+  return { columns };
 }
 
 /**
@@ -173,7 +174,7 @@ export function useMyProductColumn({
 type ItemsColumnType = Pick<
   BulkOrderColumn,
   'title' | 'sku' | 'featuredImage' | 'moq'
-> & {handle?: string};
+> & { handle?: string };
 
 export function ItemsColumn({
   title,
@@ -204,7 +205,7 @@ export function ItemsColumn({
             <span className="font-semibold text-grey-900 ">SKU: </span>
             {(sku && sku) || 'N/A'}
           </p>
-          <div className={`${badgeVariants({variant: 'inStock'})} !m-0 `}>
+          <div className={`${badgeVariants({ variant: 'inStock' })} !m-0 `}>
             <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>IN
             STOCK
           </div>
@@ -301,9 +302,8 @@ export function QuantityColumn({
       <div className="flex flex-col gap-[11.5px] mt-[2.2rem] cart__list--quantity">
         <div className="flex items-center">
           <button
-            className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${
-              quantity - 1 < moq && 'cursor-not-allowed'
-            }`}
+            className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${quantity - 1 < moq && 'cursor-not-allowed'
+              }`}
             type="button"
             onClick={handleDecreaseQuantity}
             disabled={quantity - 1 < moq}
@@ -317,7 +317,7 @@ export function QuantityColumn({
             name="quantity"
             onChange={handleInputChange}
             min={moq || 1}
-            max="999999"
+            max={CART_QUANTITY_MAX}
             required
           />
           <button
@@ -505,9 +505,8 @@ export function ProductTotal({
         <Button
           onClick={setIsBulkDetailsVisible}
           type="button"
-          className={`${
-            isRowChecked ? 'bg-white' : 'bg-primary-200'
-          }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
+          className={`${isRowChecked ? 'bg-white' : 'bg-primary-200'
+            }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
         >
           {isBulkDetailVisible ? 'Hide' : 'View'} BULK PRICE
         </Button>

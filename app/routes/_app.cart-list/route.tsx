@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import EmptyList from '~/components/ui/empty-list';
 import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { CART_QUANTITY_MAX, CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 import { Routes } from '~/lib/constants/routes.constent';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
@@ -204,7 +204,7 @@ export default function CartList() {
   const finalProductList = useSort({ items: cartList?.productList });
   const checkQuantityAgainstMOQ = (finalProductList: any) => {
     for (let item of finalProductList) {
-      if (item.quantity < item.moq || item.quantity > 999999) {
+      if (item.quantity < item.moq || item.quantity > CART_QUANTITY_MAX) {
         return false;
       }
     }

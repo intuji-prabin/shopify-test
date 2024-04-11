@@ -1,15 +1,32 @@
-export const getCategory = async (context: any) => {
+import {AppLoadContext} from '@shopify/remix-oxygen';
+
+export interface response {
+  collections: {
+    nodes: nodes[];
+  };
+}
+export interface nodes {
+  id: string;
+  handle: string;
+  title: string;
+  description: string;
+  parent_handle: {value: string} | {value: null};
+  category_id: {value: string};
+  image: {value: string};
+}
+
+export const getCategory = async (context: AppLoadContext) => {
   const {storefront} = context;
   const catList = await storefront.query(GET_CATEGORY_QUERY);
   const formattedCategories = await formatCategory(catList);
   return formattedCategories;
 };
 
-const formatCategory = (categoryresponse: any) => {
+const formatCategory = async (categoryresponse: response) => {
   const items = categoryresponse?.collections?.nodes;
   const finalCategories = items
-    .filter((categories: any) => categories?.parent_handle?.value == 'null')
-    .map((parentList: any) => ({
+    .filter((categories) => categories?.parent_handle?.value == 'null')
+    .map((parentList) => ({
       id: parentList?.id,
       title: parentList?.title,
       identifier: parentList?.handle,
@@ -17,14 +34,14 @@ const formatCategory = (categoryresponse: any) => {
       category_id: parentList?.category_id?.value,
       imageUrl: parentList?.image?.value,
       child_categories: items.some(
-        (category: any) => parentList?.handle == category?.parent_handle?.value,
+        (category) => parentList?.handle == category?.parent_handle?.value,
       )
         ? items
             .filter(
-              (category: any) =>
+              (category) =>
                 parentList?.handle === category?.parent_handle?.value,
             )
-            .map((childCategory: any) => ({
+            .map((childCategory) => ({
               id: childCategory?.id,
               title: childCategory?.title,
               identifier: childCategory?.handle,
@@ -32,16 +49,16 @@ const formatCategory = (categoryresponse: any) => {
               category_id: childCategory?.category_id?.value,
               imageUrl: childCategory?.image?.value,
               child_categories: items.some(
-                (category: any) =>
+                (category) =>
                   childCategory?.handle == category?.parent_handle?.value,
               )
                 ? items
                     .filter(
-                      (category: any) =>
+                      (category) =>
                         childCategory?.handle ===
                         category?.parent_handle?.value,
                     )
-                    .map((child: any) => ({
+                    .map((child) => ({
                       id: child?.id,
                       title: child?.title,
                       identifier: child?.handle,

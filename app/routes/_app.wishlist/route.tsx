@@ -19,6 +19,7 @@ import { getWishlist, removeBulkFromWishlist } from './wishlist.server';
 import useSort from '~/hooks/useSort';
 import { displayToast } from '~/components/ui/toast';
 import { Routes } from '~/lib/constants/routes.constent';
+import { CART_QUANTITY_ERROR, CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
 
 export interface WishListResponse {
   productId: string;
@@ -217,9 +218,9 @@ export default function route() {
                         )
                         const quantityVal = Number(formData.get(`${item.original.productId}_quantity`));
                         const moqVal = Number(formData.get(`${item.original.productId}_moq`));
-                        if (quantityVal && moqVal && quantityVal < moqVal || quantityVal && quantityVal > 999999) {
+                        if (quantityVal && moqVal && quantityVal < moqVal || quantityVal && quantityVal > CART_QUANTITY_MAX) {
                           canSubmit = false;
-                          displayToast({ message: "Please select quantity to be greater than MOQ or less than 999999", type: "error" });
+                          displayToast({ message: CART_QUANTITY_ERROR, type: "error" });
                         }
                       },
                       );
