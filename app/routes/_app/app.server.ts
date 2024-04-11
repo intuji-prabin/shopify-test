@@ -260,17 +260,3 @@ const UPDATE_CART_ACCESS_TOCKEN =
     }
   }
 }` as const;
-
-export async function getPendingOrderSession({
-  context,
-  customerId,
-}: {
-  context: AppLoadContext;
-  customerId: string;
-}) {
-  const productGroup = await getProductGroup({customerId});
-
-  context.session.set(PENDING_ORDERS_SESSION_KEY, productGroup?.length);
-
-  return context.session.get(PENDING_ORDERS_SESSION_KEY) as number;
-}
