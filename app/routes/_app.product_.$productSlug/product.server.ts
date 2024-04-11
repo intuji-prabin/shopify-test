@@ -5,6 +5,7 @@ import {CONSTANT} from '~/lib/constants/product.session';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import {GET_CART_LIST} from '../_app.cart-list/cart.server';
+import {useFormatCart} from '~/hooks/useFormatCart';
 
 export async function getProductDetails(customerId: string, handle: string) {
   try {
@@ -64,7 +65,9 @@ export const addProductToCart = async (
       cartInfo,
       cartItems,
     );
-    session.set(CART_SESSION_KEY, cartSetInfo);
+    console.log('cartSetInfo', cartSetInfo);
+    const finalCartSet = useFormatCart(cartSetInfo);
+    session.set(CART_SESSION_KEY, finalCartSet);
     const storeCartId = await storeCartIdOnBackend(
       request,
       cartSetInfo?.cartId,
@@ -78,9 +81,9 @@ export const addProductToCart = async (
     sessionCartInfo,
     cartItems,
   );
-  // console.log('cartLineAddResponseHello', cartLineAddResponse);
+  const finalCartLine = useFormatCart(cartLineAddResponse);
   //  session.unset( CART_SESSION_KEY)
-  session.set(CART_SESSION_KEY, cartLineAddResponse);
+  session.set(CART_SESSION_KEY, finalCartLine);
   const cartLists = await context.storefront.query(GET_CART_LIST, {
     variables: {cartId: sessionCartInfo?.cartId},
   });
