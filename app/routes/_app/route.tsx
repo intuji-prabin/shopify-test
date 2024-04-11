@@ -27,10 +27,10 @@ import {getUserDetails} from '~/lib/utils/user-session.server';
 import {CustomerData} from '~/routes/_public.login/login.server';
 import {
   getCagetoryList,
-  getPendingOrderSession,
   getSessionCart,
   getSessionData,
 } from '~/routes/_app/app.server';
+import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
 
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
@@ -40,10 +40,7 @@ export async function loader({request, context}: ActionFunctionArgs) {
   const messageSession = await getMessageSession(request);
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
 
-  const pendingOrderCount = await getPendingOrderSession({
-    context,
-    customerId: userDetails.id,
-  });
+  const productGroup = await getProductGroup({customerId: userDetails.id});
 
   const headers = [] as any;
   const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY);
@@ -74,7 +71,7 @@ export async function loader({request, context}: ActionFunctionArgs) {
       userDetails,
       sessionCartInfo,
       wishlistSession,
-      pendingOrderCount,
+      pendingOrderCount: productGroup?.length ?? 0,
     },
     {
       headers,
