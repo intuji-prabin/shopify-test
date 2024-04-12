@@ -120,7 +120,7 @@ const UPDATE_CART =
                   firstName
               }
           }
-          lines(first : 10 ) {
+          lines(first : 250 ) {
               nodes {
                   id
                   quantity
