@@ -101,6 +101,7 @@ export function DateDelivery() {
             selected={date}
             initialFocus={true}
             onDayClick={handleDateChange}
+            fromDate={new Date()}
           />
         </PopoverContent>
       </Popover>
@@ -124,6 +125,8 @@ export function PurchaseOrder() {
         placeholder="Order Number"
         className="active:!border-grey-100 focus:!border-grey-100 hover:!border-grey-100 focus:bg-white active:bg-white hover:bg-white !bg-white"
         required
+        pattern="[^' ']+"
+        title="Purchase Order Number Or Order Number cannot have space."
       />
     </div>
   );
