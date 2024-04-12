@@ -188,7 +188,7 @@ export function ActionBar({
               </Form>
             ) : (
               <div className="flex items-center gap-4">
-                <h3 className="whitespace-nowrap">{groupName}</h3>
+                <h3 className="whitespace-nowrap capitalize">{groupName}</h3>
                 <button onClick={() => setIsEditing(true)}>
                   <EditItems />
                 </button>

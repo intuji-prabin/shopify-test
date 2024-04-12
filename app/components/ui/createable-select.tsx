@@ -44,7 +44,11 @@ export function CreateableSelectInput({
 
   const isFound = options.find((option) => option.value === selectedValue);
 
-  const placeHolderValue = isFound?.label || selectedValue;
+  const buttonLabel =
+    isFound?.label ||
+    (selectedValue && selectedValue.trim().length > 0
+      ? selectedValue
+      : 'Select a Group');
 
   const handleInputChange = (search: string) => {
     const result = CreateGroupSchema.safeParse({
@@ -76,10 +80,10 @@ export function CreateableSelectInput({
           role="combobox"
           aria-expanded={open}
           className={`${error.isError ? '!border-semantic-danger-500' : ''}
-          justify-between px-3 font-medium normal-case w-full focus:outline-none
+          justify-between px-3 font-medium w-full focus:outline-none capitalize
           `}
         >
-          {placeHolderValue ?? 'Select a Group'}
+          {buttonLabel}
 
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -110,6 +114,7 @@ export function CreateableSelectInput({
               {options.map((option) => (
                 <CommandItem
                   key={option.value}
+                  className="capitalize"
                   value={option.value}
                   onSelect={(currentValue) => {
                     setOpen(false);

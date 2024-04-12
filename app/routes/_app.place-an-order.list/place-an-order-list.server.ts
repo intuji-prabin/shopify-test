@@ -119,7 +119,7 @@ export async function addProductToGroup({
 
   if (sumbitPayload.submitType === 'create') {
     const body = JSON.stringify({
-      groupName: sumbitPayload.group,
+      groupName: sumbitPayload.group.toLowerCase(),
     });
 
     const response = await useFetch<GroupCreateResponse>({
