@@ -352,7 +352,17 @@ export default function PendingOrderDetailsPage() {
 
   const {columns} = useMyProductColumn({setUpdateCart: setIsProductUpdate});
 
-  const {table} = useTable(columns, groupDetails.products);
+  const {table} = useTable(columns, groupDetails.products, 'productId');
+
+  if (table.options.meta) {
+    table.options.meta.getSelectedRow();
+  }
+
+  console.log(' row selected', Object.keys(table.getState().rowSelection));
+  console.log(
+    'total row selected',
+    Object.keys(table.getState().rowSelection).length,
+  );
 
   return (
     <>
