@@ -14,7 +14,6 @@ import {
   ContentDropdownMobile,
   ResourcesDropdownMobile,
 } from './mobile-navbar/mobile-drop';
-import { SetStateAction } from 'react';
 
 export const menuItemsData = [
   {
@@ -137,7 +136,7 @@ export const mobileMenuItemsData = [
   },
   {
     id: 1,
-    title: <AccountDropDownMobile />,
+    icon: <AccountDropDownMobile />,
   },
   {
     id: 2,
@@ -167,8 +166,8 @@ export const mobileMenuItemsData = [
   },
   {
     id: 7,
-    title: 'Settings',
-    url: Routes.SETTINGS,
+    title: 'Distributor Information',
+    url: Routes.DISTRIBUTOR_INFO,
     icon: <Settings />,
   },
 ];

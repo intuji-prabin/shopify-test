@@ -1,26 +1,39 @@
-import {SetStateAction, useRef, useState} from 'react';
+import { useRef, useState } from 'react';
 import CloseMenu from '~/components/icons/closeMenu';
 import HamburgerIcon from '~/components/icons/hamburgerIcon';
-import {Button} from '../../../button';
 import SearchIcon from '~/components/icons/search';
-import {LogoIcon, NotificationNavbar} from '../../top-header';
-import {useOutsideClick} from '~/hooks/useOutsideClick';
-import UserProfle from './user-profle';
+import { PredictiveSearch } from '~/components/ui/predictive-search';
+import { useOutsideClick } from '~/hooks/useOutsideClick';
+import { CustomerData } from '~/routes/_public.login/login.server';
+import { Button } from '../../../button';
+import { LogoIcon, NotificationNavbar } from '../../top-header';
+import { useHamburgerMenu } from '../HamburgerMenuContext';
+import LogoutForm from './logout-form';
 import NavMenu from './nav-menu';
 import OrderTrackMobile from './order-track';
-import LogoutForm from './logout-form';
 import UserProfile from './user-profle';
-import {mobileMenuItemsData} from '../bottom-header-menu-items';
-import {Link} from '@remix-run/react';
-import {useHamburgerMenu} from '../HamburgerMenuContext';
-import {PredictiveSearch} from '~/components/ui/predictive-search';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 
-export default function MobileNav() {
+export default function MobileNav({
+  userDetails,
+  cartCount,
+  wishlistCount,
+  pendingOrderCount,
+}: {
+  userDetails: CustomerData;
+  cartCount: number;
+  wishlistCount: number;
+  pendingOrderCount: number;
+}) {
   // const [isOpen, setisOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const {isOpen, toggleMenu} = useHamburgerMenu();
+  const { isOpen, toggleMenu } = useHamburgerMenu();
   const mobileNavSectionRef = useRef<HTMLDivElement>(null);
   useOutsideClick(mobileNavSectionRef, () => toggleMenu(false));
+
+  const imageUrl = userDetails.meta?.image_url?.value
+    ? userDetails.meta.image_url.value
+    : DEFAULT_IMAGE.DEFAULT;
 
   return (
     <>
@@ -57,9 +70,13 @@ export default function MobileNav() {
             <div className="flex flex-col-reverse justify-between gap-4">
               {' '}
               {/* user profile starts here */}
-              <UserProfile user_name={'Niel De Grass'} />
+              <UserProfile user_name={userDetails?.firstName} image_url={imageUrl ?? '/niel.png'} />
               {/* notification menu bar starts */}
-              <NotificationNavbar />
+              <NotificationNavbar
+                cartCount={cartCount}
+                wishlistCount={wishlistCount}
+                pendingOrderCount={pendingOrderCount}
+              />
             </div>
             {/* menu navigation starts here */}
             <NavMenu />
