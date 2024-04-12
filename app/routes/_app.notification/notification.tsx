@@ -1,9 +1,10 @@
 import * as Tabs from '@radix-ui/react-tabs';
 import NewsForYou from './sections/news-for-you';
-import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
-import {TicketsData} from './tickets-data';
+import { PaginationWrapper } from '~/components/ui/pagination-wrapper';
+import { TicketsData } from './tickets-data';
 import PreviousNotification from './sections/previous-notification';
 import ClearAllDialouge from './sections/clear-all-dialouge-box';
+import { BackButton } from '~/components/ui/back-button';
 
 export default function NotificationPage({
   news,
@@ -23,9 +24,9 @@ export default function NotificationPage({
   return (
     <section className="tab-wrapper ">
       <div className="container">
-        <div className="flex  justify-between items-center">
-          <h3>Notifications</h3>
-          <div className="flex gap-2 items-center">
+        <div className="flex items-center justify-between">
+          <BackButton title='Notifications' />
+          <div className="flex items-center gap-2">
             <p className="text-lg font-bold leading-[22px] text-grey-900 italic">
               {/* 6 item */}
               {news?.length === 1 ? '1 item ' : `${news.length} items `}
@@ -42,7 +43,7 @@ export default function NotificationPage({
           {/* Tab list header starts here */}
           <div className="relative">
             <Tabs.List
-              className="shrink-0 flex tab-header border-b-grey-50 border-x-0 border-t-0 border-2  flex-col flex-wrap lg:flex-row"
+              className="flex flex-col flex-wrap border-2 border-t-0 shrink-0 tab-header border-b-grey-50 border-x-0 lg:flex-row"
               aria-label="Manage your account"
             >
               {['New For You', 'Previous Notifications'].map(
@@ -68,13 +69,13 @@ export default function NotificationPage({
           </div>
 
           <Tabs.Content
-            className="grow py-8 bg-white rounded-b-md outline-none "
+            className="py-8 bg-white outline-none grow rounded-b-md "
             value="tab1"
           >
             <NewsForYou />
           </Tabs.Content>
           <Tabs.Content
-            className="grow py-8 bg-white rounded-b-md outline-none  focus:none"
+            className="py-8 bg-white outline-none grow rounded-b-md focus:none"
             value="tab2"
           >
             <PreviousNotification />
