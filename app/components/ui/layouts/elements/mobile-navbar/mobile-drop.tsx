@@ -1,20 +1,20 @@
-import {Link} from '@remix-run/react';
-import {Invoice, Order, Statements} from '~/components/icons/orderStatus';
+import { Link } from '@remix-run/react';
+import { Content } from '~/components/icons/content';
+import { Invoice, Order, Statements } from '~/components/icons/orderStatus';
 import Promotions from '~/components/icons/promotions';
-import {Settings} from '~/components/icons/setting';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '~/components/ui/accordion';
-import {Content} from '~/components/icons/content';
 
-import {Routes} from '~/lib/constants/routes.constent';
+import { Account } from '~/components/icons/account';
 import Resources from '~/components/icons/resources';
-import {useHamburgerMenu} from '../HamburgerMenuContext';
+import { Routes } from '~/lib/constants/routes.constent';
+import { useHamburgerMenu } from '../HamburgerMenuContext';
 export function AccountDropDownMobile() {
-  const {isOpen, toggleMenu} = useHamburgerMenu();
+  const { isOpen, toggleMenu } = useHamburgerMenu();
 
   const accounts = [
     {
@@ -43,7 +43,7 @@ export function AccountDropDownMobile() {
       >
         <AccordionItem value="item-1">
           <AccordionTrigger className="flex items-start gap-2">
-            <Settings />
+            <Account />
             Account
           </AccordionTrigger>
           <AccordionContent>
@@ -57,8 +57,7 @@ export function AccountDropDownMobile() {
                   >
                     <Link
                       to={account.url}
-                      className="relative flex items-center gap-1 menu-links 
-                    "
+                      className="relative flex items-center gap-1 menu-links "
                       onClick={() => toggleMenu(!isOpen)}
                     >
                       {account.title}
@@ -76,7 +75,7 @@ export function AccountDropDownMobile() {
 }
 
 export function ContentDropdownMobile() {
-  const {isOpen, toggleMenu} = useHamburgerMenu();
+  const { isOpen, toggleMenu } = useHamburgerMenu();
   const contentManagement = [
     {
       id: 1,
@@ -123,7 +122,7 @@ export function ContentDropdownMobile() {
 }
 
 export function ResourcesDropdownMobile() {
-  const {isOpen, toggleMenu} = useHamburgerMenu();
+  const { isOpen, toggleMenu } = useHamburgerMenu();
 
   const resources = [
     {

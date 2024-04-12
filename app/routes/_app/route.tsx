@@ -148,7 +148,10 @@ const Layout = ({
           <BottomHeader categories={categories} />
         </header>
       ) : (
-        <MobileNav />
+        <MobileNav cartCount={cartCount}
+          userDetails={userDetails}
+          wishlistCount={wishlistCount}
+          pendingOrderCount={pedingOrderCount} />
       )}
       <div className="mb-12">{children}</div>
 
