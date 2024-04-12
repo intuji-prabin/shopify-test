@@ -204,7 +204,7 @@ export default function CartList() {
   const finalProductList = useSort({ items: cartList?.productList });
   const checkQuantityAgainstMOQ = (finalProductList: any) => {
     for (let item of finalProductList) {
-      if (item.quantity < item.moq || item.quantity > CART_QUANTITY_MAX) {
+      if (item.quantity < item.moq || item.quantity > CART_QUANTITY_MAX || item.quantity <= 0) {
         return false;
       }
     }
@@ -226,25 +226,27 @@ export default function CartList() {
       <UploadSearchbar searchVariant="cart" />
       {finalProductList?.length === 0 ?
         <EmptyList /> :
-        <div className="container flex flex-col items-start justify-between gap-6 my-6 lg:flex-row">
-          <MyProducts
-            products={finalProductList}
-            currency={cartList?.currency}
-            updateCart={updateCart}
-            setUpdateCart={setUpdateCart}
-            setPlaceOrder={setPlaceOrder}
-          />
-          <OrderSummary
-            cartSubTotalPrice={cartList?.cartSubTotalPrice}
-            cartTotalPrice={cartList?.cartTotalPrice}
-            freight={cartList?.freight}
-            surcharges={cartList?.surcharges}
-            gst={cartList?.gst}
-            currency={cartList?.currency}
-            shippingAddresses={shippingAddresses}
-            updateCart={updateCart}
-            placeOrder={placeOrder}
-          />
+        <div className='container'>
+          <div className="flex flex-col flex-wrap items-start gap-6 my-6 xl:flex-row cart__list">
+            <MyProducts
+              products={finalProductList}
+              currency={cartList?.currency}
+              updateCart={updateCart}
+              setUpdateCart={setUpdateCart}
+              setPlaceOrder={setPlaceOrder}
+            />
+            <OrderSummary
+              cartSubTotalPrice={cartList?.cartSubTotalPrice}
+              cartTotalPrice={cartList?.cartTotalPrice}
+              freight={cartList?.freight}
+              surcharges={cartList?.surcharges}
+              gst={cartList?.gst}
+              currency={cartList?.currency}
+              shippingAddresses={shippingAddresses}
+              updateCart={updateCart}
+              placeOrder={placeOrder}
+            />
+          </div>
         </div>
       }
     </>

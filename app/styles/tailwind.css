@@ -876,3 +876,6 @@ div[data-state='open'].fixed.inset-0 {
 .data__table table thead tr th:nth-child(2) {
   @apply min-w-[500px];
 }
+.cart__list .data__table table thead tr th:nth-child(2) {
+  @apply min-w-[329px];
+}

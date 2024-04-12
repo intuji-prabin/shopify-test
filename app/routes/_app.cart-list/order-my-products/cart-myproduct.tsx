@@ -1,8 +1,8 @@
-import {Form, useFetcher, useSubmit} from '@remix-run/react';
-import {useState} from 'react';
+import { Form, useFetcher, useSubmit } from '@remix-run/react';
+import { useState } from 'react';
 import RemoveItem from '~/components/icons/removeItem';
-import {Button} from '~/components/ui/button';
-import {DataTable} from '~/components/ui/data-table';
+import { Button } from '~/components/ui/button';
+import { DataTable } from '~/components/ui/data-table';
 import {
   Dialog,
   DialogClose,
@@ -13,9 +13,9 @@ import {
   DialogTrigger,
 } from '~/components/ui/dialog';
 import Loader from '~/components/ui/loader';
-import {useTable} from '~/hooks/useTable';
-import {BulkTable} from './bulk-table';
-import {useMyProductColumn} from './use-column';
+import { useTable } from '~/hooks/useTable';
+import { BulkTable } from './bulk-table';
+import { useMyProductColumn } from './use-column';
 
 export default function MyProducts({
   products,
@@ -24,12 +24,12 @@ export default function MyProducts({
   updateCart,
   setPlaceOrder,
 }: any) {
-  const {columns} = useMyProductColumn({
+  const { columns } = useMyProductColumn({
     currency,
     setUpdateCart,
     setPlaceOrder,
   });
-  const {table} = useTable(columns, products);
+  const { table } = useTable(columns, products);
 
   const fetcher = useFetcher();
 
@@ -40,10 +40,10 @@ export default function MyProducts({
   const submit = useSubmit();
 
   return (
-    <div className="relative flex flex-col w-full bg-white my-product-wrapper">
-      <div className="flex justify-between md:items-center my-[30px] flex-col gap-4 md:flex-row md:gap-0 items-baseline uppercase mx-6">
+    <div className="relative flex flex-col w-full bg-white xl:w-[calc(100%_-_435px)]">
+      <div className="flex justify-between sm:items-center my-[30px] flex-col gap-4 sm:flex-row sm:gap-0 items-baseline uppercase mx-6">
         <h3>My products</h3>
-        <div className="flex gap-2 items-center w-full justify-between md:justify-[unset] md:w-[unset]">
+        <div className="flex gap-2 items-center w-full justify-between sm:justify-[unset] sm:w-[unset]">
           <div className="flex gap-2">
             <div className="product-remove">
               <Dialog open={open} onOpenChange={setOpen}>
@@ -99,7 +99,7 @@ export default function MyProducts({
                               item.original.id,
                             ),
                           );
-                        fetcher.submit(formData, {method: 'DELETE'});
+                        fetcher.submit(formData, { method: 'DELETE' });
                         table.resetRowSelection();
                         setOpen(false);
                       }}
@@ -133,7 +133,7 @@ export default function MyProducts({
             <DataTable table={table} renderSubComponent={renderSubComponent} />
             {updateCart && (
               <Button
-                className="absolute top-[31px] right-40"
+                className="absolute top-[22px] sm:top-[31px] right-6 sm:right-40"
                 variant="primary"
                 type="submit"
               >
@@ -147,7 +147,7 @@ export default function MyProducts({
   );
 }
 
-export const renderSubComponent = ({row}: any) => {
+export const renderSubComponent = ({ row }: any) => {
   return (
     <BulkTable
       product={row.original.priceRange}
