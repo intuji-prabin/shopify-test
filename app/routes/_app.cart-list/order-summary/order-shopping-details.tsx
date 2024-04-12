@@ -151,39 +151,37 @@ export function PromoCode() {
     setActivatePromo(!activatePromo);
   }
   return (
-    <>
-      <div className="flex flex-col gap-1">
-        <p className="text-base text-normal leading-[21px] text-grey-800">
-          Enter promo code here
-        </p>
-        <div className="flex flex-col w-full gap-2 sm:flex-row">
-          <input
-            type=" text"
-            className={` ${activatePromo ? 'bg-semantic-success-100 border-none' : 'bg-white'
-              } grow`}
-            placeholder="Enter promo code here"
-          />
-
-          <Button
-            variant="secondary"
-            className="min-w-[99px]"
-            onClick={handleActivatePromoCode}
-          >
-            {activatePromo ? 'Remove' : 'Apply'}
-          </Button>
-        </div>
-        {activatePromo ? (
-          <div className="flex">
-            <Tick width="20px" height="20px" fillColor="#3BBA53" />
-
-            <p className="text-semantic-success-500 font-normal leading-5 text-[14px] items-center">
-              {' '}
-              Promo code activated
-            </p>
-          </div>
-        ) : undefined}
+    <div className="flex flex-col gap-1">
+      <p className="text-base text-normal leading-[21px] text-grey-800">
+        Enter promo code here
+      </p>
+      <div className="flex flex-col w-full gap-2 sm:flex-row">
+        <input
+          type=" text"
+          className={` ${activatePromo ? 'bg-semantic-success-100 border-none' : 'bg-white'
+            } grow`}
+          placeholder="Enter promo code here"
+        />
+        <Button
+          variant="secondary"
+          className="min-w-[99px]"
+          onClick={handleActivatePromoCode}
+          type='button'
+        >
+          {activatePromo ? 'Remove' : 'Apply'}
+        </Button>
       </div>
-    </>
+      {activatePromo ? (
+        <div className="flex">
+          <Tick width="20px" height="20px" fillColor="#3BBA53" />
+
+          <p className="text-semantic-success-500 font-normal leading-5 text-[14px] items-center">
+            {' '}
+            Promo code activated
+          </p>
+        </div>
+      ) : undefined}
+    </div>
   );
 }
 type ShippingAddressProps = {

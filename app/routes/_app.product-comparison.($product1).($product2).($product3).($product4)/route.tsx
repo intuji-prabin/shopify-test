@@ -1,4 +1,4 @@
-import {LoaderFunctionArgs} from '@remix-run/server-runtime';
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from '@remix-run/server-runtime';
 import ComparisonBreadcrumb from './comparison-breadcrumb';
 import ComparisonWrapper from './comparison-main-wrapper';
 import {
@@ -8,11 +8,19 @@ import {
   useNavigation,
   useRouteError,
 } from '@remix-run/react';
-import {getSingleProduct} from './getProduct.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {Button} from '~/components/ui/button';
-import {Routes} from '~/lib/constants/routes.constent';
+import { getSingleProduct } from './getProduct.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { Button } from '~/components/ui/button';
+import { Routes } from '~/lib/constants/routes.constent';
 import FullPageLoading from '~/components/ui/fullPageLoading';
+import {
+  getMessageSession,
+  messageCommitSession,
+  setErrorMessage,
+  setSuccessMessage,
+} from '~/lib/utils/toast-session.server';
+import { getAccessToken } from '~/lib/utils/auth-session.server';
+import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 
 export const loader = async ({
   params,
@@ -20,7 +28,7 @@ export const loader = async ({
   request,
 }: LoaderFunctionArgs) => {
   const productResponse = {} as any;
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
   if (params?.product1) {
     productResponse.product1 = await getSingleProduct(
       context,
@@ -49,11 +57,64 @@ export const loader = async ({
       userDetails?.id,
     );
   }
-  return {productResponse};
+  return { productResponse };
 };
 
+export const action = async ({ request, context }: ActionFunctionArgs) => {
+  const messageSession = await getMessageSession(request);
+  const fromData = await request.formData();
+  try {
+    const cartInfo = Object.fromEntries(fromData);
+    const accessTocken = (await getAccessToken(context)) as string;
+    const addToCart = await addProductToCart(
+      cartInfo,
+      accessTocken,
+      context,
+      request,
+    );
+    setSuccessMessage(messageSession, 'Item added to cart successfully');
+    return json(
+      {},
+      {
+        headers: [
+          ['Set-Cookie', await context.session.commit({})],
+          ['Set-Cookie', await messageCommitSession(messageSession)],
+        ],
+      },
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log('this is err', error?.message);
+      setErrorMessage(messageSession, error?.message);
+      return json(
+        {},
+        {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        },
+      );
+    }
+    console.log('this is err');
+    setErrorMessage(
+      messageSession,
+      'Item not added to cart. Please try again later.',
+    );
+    return json(
+      {},
+      {
+        headers: [
+          ['Set-Cookie', await context.session.commit({})],
+          ['Set-Cookie', await messageCommitSession(messageSession)],
+        ],
+      },
+    );
+  }
+}
+
 export default function route() {
-  const {productResponse} = useLoaderData<typeof loader>();
+  const { productResponse } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
   return (
     <>
