@@ -7,6 +7,7 @@ import { CategoryCard } from '~/routes/_app.categories/category-card';
 import { getCategory } from './categories.server';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import { AppLoadContext } from '@shopify/remix-oxygen';
+import { BackButton } from '~/components/ui/back-button';
 
 export async function loader({ context }: ActionFunctionArgs) {
   await isAuthenticate(context);
@@ -85,7 +86,10 @@ export default function CategoriesPage() {
     <>
       <section className="mt-10">
         <div className="container flex flex-wrap items-center justify-between gap-x-5 gap-y-2">
-          <h3>Categories</h3>
+          <BackButton
+            className="capitalize"
+            title="Categories"
+          />
           <Button>upload order</Button>
         </div>
       </section>

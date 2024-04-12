@@ -3,6 +3,7 @@ import { settingCards } from './settingCards';
 import { LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import { MetaFunction } from '@shopify/remix-oxygen';
+import { BackButton } from '~/components/ui/back-button';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Company Information' }];
@@ -15,7 +16,12 @@ export async function loader({ context }: LoaderFunctionArgs) {
 export default function CompanySettings() {
   return (
     <div className="container pt-6 bg-primary-25 ">
-      <h3 className="mb-6 text-grey-900">Distributor Information</h3>
+      <div className='mb-6'>
+        <BackButton
+          className="capitalize text-grey-900"
+          title="Distributor Information"
+        />
+      </div>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         {settingCards.map((settingCard) => (
           <div
