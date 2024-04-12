@@ -17,9 +17,18 @@ import { useTable } from '~/hooks/useTable';
 import { BulkTable } from './bulk-table';
 import { useMyProductColumn } from './use-column';
 
-export default function MyProducts({ products, currency, setUpdateCart, updateCart, setPlaceOrder }: any) {
-
-  const { columns } = useMyProductColumn(currency, setUpdateCart, setPlaceOrder);
+export default function MyProducts({
+  products,
+  currency,
+  setUpdateCart,
+  updateCart,
+  setPlaceOrder,
+}: any) {
+  const { columns } = useMyProductColumn({
+    currency,
+    setUpdateCart,
+    setPlaceOrder,
+  });
   const { table } = useTable(columns, products);
 
   const fetcher = useFetcher();
@@ -31,10 +40,10 @@ export default function MyProducts({ products, currency, setUpdateCart, updateCa
   const submit = useSubmit();
 
   return (
-    <div className="relative flex flex-col w-full bg-white my-product-wrapper">
-      <div className="flex justify-between md:items-center my-[30px] flex-col gap-4 md:flex-row md:gap-0 items-baseline uppercase mx-6">
+    <div className="relative flex flex-col w-full bg-white xl:w-[calc(100%_-_435px)]">
+      <div className="flex justify-between sm:items-center my-[30px] flex-col gap-4 sm:flex-row sm:gap-0 items-baseline uppercase mx-6">
         <h3>My products</h3>
-        <div className="flex gap-2 items-center w-full justify-between md:justify-[unset] md:w-[unset]">
+        <div className="flex gap-2 items-center w-full justify-between sm:justify-[unset] sm:w-[unset]">
           <div className="flex gap-2">
             <div className="product-remove">
               <Dialog open={open} onOpenChange={setOpen}>
@@ -108,31 +117,29 @@ export default function MyProducts({ products, currency, setUpdateCart, updateCa
       <div className="border-t border-grey-50 cart-order data__table">
         {isLoading ? (
           <div className="absolute inset-0 z-[9999] bg-white/95">
-            <div className='flex items-center justify-center h-full gap-x-4 gap-y-2'>
-              <p className="text-lg">
-                Loading....
-              </p>
+            <div className="flex items-center justify-center h-full gap-x-4 gap-y-2">
+              <p className="text-lg">Loading....</p>
               <Loader width="w-8" height="h-8" />
             </div>
           </div>
         ) : (
-          <Form method="PUT" onSubmit={(event) => {
-            submit(event.currentTarget);
-            setUpdateCart(false);
-          }}>
-            <DataTable
-              table={table}
-              renderSubComponent={renderSubComponent}
-            />
-            {updateCart &&
+          <Form
+            method="PUT"
+            onSubmit={(event) => {
+              submit(event.currentTarget);
+              setUpdateCart(false);
+            }}
+          >
+            <DataTable table={table} renderSubComponent={renderSubComponent} />
+            {updateCart && (
               <Button
-                className="absolute top-[31px] right-40"
+                className="absolute top-[22px] sm:top-[31px] right-6 sm:right-40"
                 variant="primary"
                 type="submit"
               >
                 Update cart
               </Button>
-            }
+            )}
           </Form>
         )}
       </div>

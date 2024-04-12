@@ -2,8 +2,8 @@ import {useState} from 'react';
 import {useFetcher} from '@remix-run/react';
 import {Table} from '@tanstack/react-table';
 import {Button} from '~/components/ui/button';
-import {DangerAlert} from '~/components/icons/alert';
-import {ComboboxDemo} from '~/components/ui/createable-select';
+import {DangerAlert, InfoAlert} from '~/components/icons/alert';
+import {CreateableSelectInput} from '~/components/ui/createable-select';
 import {Product} from '~/routes/_app.place-an-order.list/place-an-order-list.server';
 import {
   Dialog,
@@ -17,9 +17,16 @@ import {
 interface GroupItem {
   productId: string;
   quantity: number;
-  uom: number;
+  uom: string;
 }
+
 type Submit = 'create' | 'update';
+
+export interface SubmitPayload {
+  groupItemList: GroupItem[];
+  submitType: Submit;
+  group: string;
+}
 
 /**
  * @description Merge group item with same UOM
@@ -38,12 +45,6 @@ function mergeGroupItemWithSameUOM(groupItemList: GroupItem[]) {
   return Object.values(mergedItem);
 }
 
-export interface SubmitPayload {
-  groupItemList: GroupItem[];
-  submitType: Submit;
-  group: string;
-}
-
 export default function CreateGroup({
   table,
   productGroupOptions,
@@ -53,7 +54,7 @@ export default function CreateGroup({
 }) {
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
 
-  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState({isError: false, message: ''});
 
   const fetcher = useFetcher();
 
@@ -65,13 +66,13 @@ export default function CreateGroup({
     groupItemList.push({
       productId: item.original.productId,
       quantity: item.original.quantity,
-      uom: Number(item.original.uom),
+      uom: item.original.uom,
     });
   });
 
   const handleSaveForLater = () => {
-    if (selectedValue === null) {
-      setIsError(true);
+    if (selectedValue === null || selectedValue.trim().length === 0) {
+      setError({isError: true, message: 'Group Name is required'});
       return;
     }
 
@@ -117,18 +118,25 @@ export default function CreateGroup({
             Group Name
           </label>
 
-          <ComboboxDemo
-            isError={isError}
-            setIsError={setIsError}
+          <CreateableSelectInput
+            error={error}
+            setError={setError}
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
             options={productGroupOptions}
           />
 
-          {isError && (
+          {error.isError ? (
             <p className="pt-1 error-msg">
               <DangerAlert />
-              <span className="pl-2">Group Name is required</span>
+              <span className="pl-2">{error.message}</span>
+            </p>
+          ) : (
+            <p className="pt-1 error-msg !text-grey-500">
+              <InfoAlert />
+              <span className="pl-2">
+                Create or Select a New Group, Name Must Be Under 50 Characters
+              </span>
             </p>
           )}
         </div>
@@ -136,7 +144,11 @@ export default function CreateGroup({
           <Button
             type="submit"
             variant={
-              isError || fetcher.state === 'submitting' ? 'disabled' : 'primary'
+              error.isError ||
+              fetcher.state === 'submitting' ||
+              fetcher.state !== 'idle'
+                ? 'disabled'
+                : 'primary'
             }
             className="w-full italic font-bold uppercase leading6 text-sm "
             onClick={handleSaveForLater}

@@ -9,6 +9,7 @@ import {
   QuantityColumn,
 } from '../_app.cart-list/order-my-products/use-column';
 import { Form, useSubmit } from '@remix-run/react';
+import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
 
 export function useMyWishListColumn() {
   const submit = useSubmit();
@@ -89,7 +90,7 @@ export function useMyWishListColumn() {
           const product = info?.row?.original;
           return (
             <QuantityColumn
-              quantity={product?.quantity || product?.moq || 1}
+              quantity={product?.quantity}
               info={info}
               productId={product?.productId}
               variantId={product?.variantId}
@@ -122,7 +123,7 @@ export function useMyWishListColumn() {
           const product = info?.row?.original;
           return (
             <>
-              {product?.quantity < product?.moq || product?.quantity > 1000000 ?
+              {product?.quantity < product?.moq || product?.quantity > CART_QUANTITY_MAX || isNaN(product?.quantity) ?
                 <>
                   <button
                     className="uppercase flex justify-center items-center text-xs max-h-[unset] lg:max-h-[28px] min-w-[86px] cursor-not-allowed bg-grey-200 text-grey-400 px-6 py-2"
@@ -131,7 +132,8 @@ export function useMyWishListColumn() {
                     Add to cart
                   </button>
                   {product?.quantity < product?.moq && <p className='text-[13px] text-red-500'>Minimum Order Quantity<br />MOQ: {product?.moq || 1}</p>}
-                  {product?.quantity > 1000000 && <p className='text-[13px] text-red-500'>Quantity cannot be<br />greater than 1000000</p>}
+                  {product?.quantity > CART_QUANTITY_MAX && <p className='text-[13px] text-red-500'>Quantity cannot be<br />greater than {CART_QUANTITY_MAX}</p>}
+                  {isNaN(product?.quantity) && <p className='text-[13px] text-red-500'>Quantity cannot be empty</p>}
                 </> :
                 <Form method="POST"
                   onSubmit={(event) => {

@@ -1,10 +1,11 @@
 import {useFetch} from '~/hooks/useFetch';
 import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {CONSTANT} from '~/lib/constants/product.session';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import {GET_CART_LIST} from '../_app.cart-list/cart.server';
-import {CONSTANT} from '~/lib/constants/product.session';
+import {useFormatCart} from '~/hooks/useFormatCart';
 
 export async function getProductDetails(customerId: string, handle: string) {
   try {
@@ -35,10 +36,10 @@ export const addProductToCart = async (
   accessTocken: string,
   context: any,
   request: any,
-  cartItems = []
+  cartItems = [],
 ) => {
   // console.log('cartInfo', cartInfo);
-  if( cartItems.length < 0 ) {
+  if (cartItems.length < 0) {
     if (!cartInfo.productId) {
       throw new Error(
         'Product Id is not present so, this product cannot be added to the cart.',
@@ -58,8 +59,15 @@ export const addProductToCart = async (
   const {session} = context;
   const sessionCartInfo = session.get(CART_SESSION_KEY);
   if (!sessionCartInfo) {
-    const cartSetInfo = await setNewCart(context, accessTocken, cartInfo, cartItems);
-    session.set(CART_SESSION_KEY, cartSetInfo);
+    const cartSetInfo = await setNewCart(
+      context,
+      accessTocken,
+      cartInfo,
+      cartItems,
+    );
+    console.log('cartSetInfo', cartSetInfo);
+    const finalCartSet = useFormatCart(cartSetInfo);
+    session.set(CART_SESSION_KEY, finalCartSet);
     const storeCartId = await storeCartIdOnBackend(
       request,
       cartSetInfo?.cartId,
@@ -71,11 +79,11 @@ export const addProductToCart = async (
     context,
     cartInfo,
     sessionCartInfo,
-    cartItems
+    cartItems,
   );
-  // console.log('cartLineAddResponseHello', cartLineAddResponse);
+  const finalCartLine = useFormatCart(cartLineAddResponse);
   //  session.unset( CART_SESSION_KEY)
-  session.set(CART_SESSION_KEY, cartLineAddResponse);
+  session.set(CART_SESSION_KEY, finalCartLine);
   const cartLists = await context.storefront.query(GET_CART_LIST, {
     variables: {cartId: sessionCartInfo?.cartId},
   });
@@ -88,7 +96,7 @@ const setNewCart = async (
   context: any,
   accessTocken: string,
   cartInfo: any,
-  cartItems = []
+  cartItems = [],
 ) => {
   const {storefront} = context;
   const responses = await storefront.mutate(SET_NEW_CART, {
@@ -148,7 +156,7 @@ const cartLineAdd = async (
   context: any,
   cartInfo: any,
   sessionCartInfo: any,
-  cartItems = []
+  cartItems = [],
 ) => {
   const {storefront} = context;
   const addItemInCartresponses = await storefront.mutate(ADD_ITEMS_IN_CART, {
@@ -247,7 +255,11 @@ const cartResponseFormate = (cartResponse: any, accessTocken: string) => {
   return cartListed;
 };
 
-const cartFormateVariable = (cartInfo: any, accessTocken: string, cartItems = []) => {
+const cartFormateVariable = (
+  cartInfo: any,
+  accessTocken: string,
+  cartItems = [],
+) => {
   const variantId = `${CONSTANT?.variantId}${cartInfo?.productVariantId}`;
   return {
     input: {
@@ -260,18 +272,21 @@ const cartFormateVariable = (cartInfo: any, accessTocken: string, cartItems = []
       buyerIdentity: {
         customerAccessToken: accessTocken,
       },
-      lines: cartItems.length > 0 ? cartItems : [
-        {
-          attributes: [
-            {
-              key: 'selectedUOM',
-              value: cartInfo?.selectUOM,
-            },
-          ],
-          merchandiseId: variantId,
-          quantity: parseInt(cartInfo?.quantity),
-        },
-      ],
+      lines:
+        cartItems.length > 0
+          ? cartItems
+          : [
+              {
+                attributes: [
+                  {
+                    key: 'selectedUOM',
+                    value: cartInfo?.selectUOM,
+                  },
+                ],
+                merchandiseId: variantId,
+                quantity: parseInt(cartInfo?.quantity),
+              },
+            ],
       metafields: [
         {
           key: 'cart',
@@ -305,22 +320,29 @@ const cartUpdateFormateVariable = (sessionCartInfo: any, cartInfo: any) => {
   };
 };
 
-const cartAddLineFormateVariable = (cartInfo: any, sessionCartInfo: any, cartItems = []) => {
+const cartAddLineFormateVariable = (
+  cartInfo: any,
+  sessionCartInfo: any,
+  cartItems = [],
+) => {
   const variantId = `${CONSTANT?.variantId}${cartInfo?.productVariantId}`;
   return {
     cartId: sessionCartInfo?.cartId,
-    lines: cartItems.length > 0 ? cartItems : [
-      {
-        attributes: [
-          {
-            key: 'selectedUOM',
-            value: cartInfo?.selectUOM,
-          },
-        ],
-        merchandiseId: variantId,
-        quantity: parseInt(cartInfo?.quantity),
-      },
-    ],
+    lines:
+      cartItems.length > 0
+        ? cartItems
+        : [
+            {
+              attributes: [
+                {
+                  key: 'selectedUOM',
+                  value: cartInfo?.selectUOM,
+                },
+              ],
+              merchandiseId: variantId,
+              quantity: parseInt(cartInfo?.quantity),
+            },
+          ],
   };
 };
 

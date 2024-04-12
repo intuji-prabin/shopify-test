@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Form, Link, useSubmit} from '@remix-run/react';
+import {Form, useFetcher, useSubmit} from '@remix-run/react';
 import {Table} from '@tanstack/react-table';
 import {Done} from '~/components/icons/done';
 import {Button} from '~/components/ui/button';
@@ -13,19 +13,56 @@ import {
   CircleInformationMajor,
   EditItems,
 } from '~/components/icons/orderStatus';
+import {displayToast} from '~/components/ui/toast';
+import {
+  CART_QUANTITY_ERROR,
+  CART_QUANTITY_MAX,
+} from '~/lib/constants/cartInfo.constant';
+import {z} from 'zod';
+
+export interface GroupItem {
+  placeId: number;
+  productId: string;
+  quantity: number;
+  uom: string;
+}
+
+const UpdateGroupSchema = z.object({
+  group: z
+    .string()
+    .trim()
+    .min(1, {message: 'Group Name is required'})
+    .max(50, {message: 'Group Name is too long'}),
+});
 
 export function ActionBar({
   table,
+  isProductUpdate,
   groupName,
 }: {
   groupName: string;
   table: Table<Product>;
+  isProductUpdate: boolean;
 }) {
   const [isEditing, setIsEditing] = useState(false);
 
   const submit = useSubmit();
 
+  const fetcher = useFetcher();
+
   const handleAddToCart = () => {
+    const isSelectedRowQuanityValid = table
+      .getSelectedRowModel()
+      .flatRows.some((item) => item.original.quantity > CART_QUANTITY_MAX);
+
+    if (isSelectedRowQuanityValid) {
+      displayToast({
+        message: CART_QUANTITY_ERROR,
+        type: 'error',
+      });
+      return;
+    }
+
     const formData = new FormData();
 
     table.getSelectedRowModel().flatRows.map((item, index) => {
@@ -58,6 +95,63 @@ export function ActionBar({
       table.resetRowSelection();
     });
   };
+
+  const handleProductUpdate = () => {
+    const isRowQuanityValid = table
+      .getRowModel()
+      .flatRows.some((item) => item.original.quantity > CART_QUANTITY_MAX);
+
+    if (isRowQuanityValid) {
+      displayToast({
+        message: CART_QUANTITY_ERROR,
+        type: 'error',
+      });
+      return;
+    }
+
+    const groupItemList: GroupItem[] = [];
+
+    table.getRowModel().flatRows.map((item) => {
+      groupItemList.push({
+        productId: item.original.productId,
+        quantity: item.original.quantity,
+        uom: item.original.uom,
+        placeId: item.original.placeId,
+      });
+    });
+
+    fetcher.submit(
+      //@ts-ignore
+      groupItemList,
+      {method: 'POST', encType: 'application/json'},
+    );
+  };
+
+  const handleGroupUpdate = (event: React.FormEvent<HTMLFormElement>) => {
+    const formData = new FormData(event.currentTarget);
+
+    const groupName = formData.get('groupName') as string;
+
+    const result = UpdateGroupSchema.safeParse({
+      group: groupName,
+    });
+
+    console.log('result', result);
+
+    if (!result.success) {
+      event.preventDefault();
+      displayToast({
+        message: result.error.errors[0].message,
+        type: 'error',
+      });
+      return;
+    }
+
+    submit(event.currentTarget);
+
+    setIsEditing(false);
+  };
+
   return (
     <div className="flex justify-between md:items-center my-[30px] flex-col gap-4 md:flex-row md:gap-0 items-baseline ">
       <div className="flex items-baseline gap-4  flex-col sm:flex-row sm:items-center">
@@ -74,9 +168,7 @@ export function ActionBar({
               <Form
                 method="POST"
                 className="flex items-center p-2"
-                onSubmit={() => {
-                  setIsEditing(false);
-                }}
+                onSubmit={handleGroupUpdate}
               >
                 <input
                   type="text"
@@ -96,7 +188,7 @@ export function ActionBar({
               </Form>
             ) : (
               <div className="flex items-center gap-4">
-                <h3 className="whitespace-nowrap">{groupName}</h3>
+                <h3 className="whitespace-nowrap capitalize">{groupName}</h3>
                 <button onClick={() => setIsEditing(true)}>
                   <EditItems />
                 </button>
@@ -126,6 +218,15 @@ export function ActionBar({
             table.getSelectedRowModel().rows.length === 0 ? 'w-full' : ''
           }`}
         >
+          {isProductUpdate && (
+            <Button
+              disabled={fetcher.state === 'submitting'}
+              variant={!isProductUpdate ? 'disabled' : 'primary'}
+              onClick={handleProductUpdate}
+            >
+              update
+            </Button>
+          )}
           <Button
             variant={
               table.getSelectedRowModel().rows.length === 0

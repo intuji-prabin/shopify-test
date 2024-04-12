@@ -1,29 +1,35 @@
-import {Link} from '@remix-run/react';
-import {settingCards} from './settingCards';
-import {LoaderFunctionArgs} from '@remix-run/server-runtime';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {MetaFunction} from '@shopify/remix-oxygen';
+import { Link } from '@remix-run/react';
+import { settingCards } from './settingCards';
+import { LoaderFunctionArgs } from '@remix-run/server-runtime';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { MetaFunction } from '@shopify/remix-oxygen';
+import { BackButton } from '~/components/ui/back-button';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Company Information'}];
+  return [{ title: 'Company Information' }];
 };
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({ context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   return {};
 }
 
 export default function CompanySettings() {
   return (
-    <div className="bg-primary-25 container pt-6 ">
-      <h3 className="mb-6 text-grey-900">Company Information</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <div className="container pt-6 bg-primary-25 ">
+      <div className='mb-6'>
+        <BackButton
+          className="capitalize text-grey-900"
+          title="Distributor Information"
+        />
+      </div>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         {settingCards.map((settingCard) => (
           <div
             key={settingCard.id}
             className="p-6 bg-white max-w-[627px] flex gap-[35px] flex-col"
           >
             <div className="flex flex-col gap-[35px]" key={settingCard.id}>
-              <div className="flex  gap-2 flex-col ">
+              <div className="flex flex-col gap-2 ">
                 <h4>{settingCard.title}</h4>
                 <p>{settingCard.description}</p>
               </div>

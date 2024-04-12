@@ -33,7 +33,7 @@ export async function updateGroup({
 }) {
   const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
 
-  const body = JSON.stringify({groupId, groupName});
+  const body = JSON.stringify({groupId, groupName: groupName.toLowerCase()});
 
   const response = await useFetch<DefaultResponse>({
     url,
@@ -151,6 +151,28 @@ export async function deleteGroupProduct({
 
   const response = await useFetch<DefaultResponse>({
     method: AllowedHTTPMethods.DELETE,
+    url,
+    body,
+  });
+
+  if (!response.status) {
+    throw new Error(response.message);
+  }
+
+  return response;
+}
+
+export async function updateGroupProduct({
+  body,
+  customerId,
+}: {
+  body: string;
+  customerId: string;
+}) {
+  const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
+
+  const response = await useFetch<DefaultResponse>({
+    method: AllowedHTTPMethods.PUT,
     url,
     body,
   });

@@ -117,6 +117,8 @@ export const UploadCsv = ({
     }
   }, [acceptedFiles]);
 
+  console.log('csv array', csvArray);
+
   return (
     <>
       <Button
@@ -231,6 +233,7 @@ export const UploadCsv = ({
                   ...previousState,
                   isUploadCSVDialogOpen: false,
                 }));
+
                 setCsvToArray(csvArray);
               }}
             >

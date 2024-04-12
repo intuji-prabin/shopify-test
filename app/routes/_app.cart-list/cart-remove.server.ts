@@ -1,6 +1,7 @@
 import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
 import {removeCart} from './order-place.server';
 import {getCartList} from './cart.server';
+import {useFormatCart} from '~/hooks/useFormatCart';
 
 export const removeItemFromCart = async (context: any, request: Request) => {
   const formData = await request.formData();
@@ -29,8 +30,8 @@ export const removeItemFromCart = async (context: any, request: Request) => {
     cartItems: [],
     lineItems: cartRemoveResponse,
   };
-
-  context.session.set(CART_SESSION_KEY, cartSession);
+  const finalCartSession = useFormatCart(cartSession);
+  context.session.set(CART_SESSION_KEY, finalCartSession);
   await getCartList(context, request, cartSession);
   return {cartSession};
 };

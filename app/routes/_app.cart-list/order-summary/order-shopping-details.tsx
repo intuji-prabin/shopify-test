@@ -5,6 +5,7 @@ import Tick from '~/components/icons/tick';
 import { Button } from '~/components/ui/button';
 import { Calendar } from '~/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
+import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
 
 function concatDefaultAddress(address1: string, address2: string) {
   return address1.concat(' ', address2).trim();
@@ -100,6 +101,7 @@ export function DateDelivery() {
             selected={date}
             initialFocus={true}
             onDayClick={handleDateChange}
+            fromDate={new Date()}
           />
         </PopoverContent>
       </Popover>
@@ -123,6 +125,8 @@ export function PurchaseOrder() {
         placeholder="Order Number"
         className="active:!border-grey-100 focus:!border-grey-100 hover:!border-grey-100 focus:bg-white active:bg-white hover:bg-white !bg-white"
         required
+        pattern="[^' ']+"
+        title="Purchase Order Number Or Order Number cannot have space."
       />
     </div>
   );
@@ -147,39 +151,37 @@ export function PromoCode() {
     setActivatePromo(!activatePromo);
   }
   return (
-    <>
-      <div className="flex flex-col gap-1">
-        <p className="text-base text-normal leading-[21px] text-grey-800">
-          Enter promo code here
-        </p>
-        <div className="flex flex-col w-full gap-2 sm:flex-row">
-          <input
-            type=" text"
-            className={` ${activatePromo ? 'bg-semantic-success-100 border-none' : 'bg-white'
-              } grow`}
-            placeholder="Enter promo code here"
-          />
-
-          <Button
-            variant="secondary"
-            className="min-w-[99px]"
-            onClick={handleActivatePromoCode}
-          >
-            {activatePromo ? 'Remove' : 'Apply'}
-          </Button>
-        </div>
-        {activatePromo ? (
-          <div className="flex">
-            <Tick width="20px" height="20px" fillColor="#3BBA53" />
-
-            <p className="text-semantic-success-500 font-normal leading-5 text-[14px] items-center">
-              {' '}
-              Promo code activated
-            </p>
-          </div>
-        ) : undefined}
+    <div className="flex flex-col gap-1">
+      <p className="text-base text-normal leading-[21px] text-grey-800">
+        Enter promo code here
+      </p>
+      <div className="flex flex-col w-full gap-2 sm:flex-row">
+        <input
+          type=" text"
+          className={` ${activatePromo ? 'bg-semantic-success-100 border-none' : 'bg-white'
+            } grow`}
+          placeholder="Enter promo code here"
+        />
+        <Button
+          variant="secondary"
+          className="min-w-[99px]"
+          onClick={handleActivatePromoCode}
+          type='button'
+        >
+          {activatePromo ? 'Remove' : 'Apply'}
+        </Button>
       </div>
-    </>
+      {activatePromo ? (
+        <div className="flex">
+          <Tick width="20px" height="20px" fillColor="#3BBA53" />
+
+          <p className="text-semantic-success-500 font-normal leading-5 text-[14px] items-center">
+            {' '}
+            Promo code activated
+          </p>
+        </div>
+      ) : undefined}
+    </div>
   );
 }
 type ShippingAddressProps = {
@@ -264,7 +266,12 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: a
           >
             Place order
           </button>
-          <p className='italic font-normal'>Please <span className='text-red-500'>press UPDATE CART button</span> or <span className='text-red-500'>update your quantity to be greater than Minimum Order Quantity(MOQ)</span> to "PLACE ORDER"</p>
+          <p className='pt-1 text-lg italic text-red-500'>TO "PLACE ORDER":</p>
+          <ul className='pl-5 list-disc'>
+            <li>Press UPDATE CART button.</li>
+            <li>Update quantity to be greater than Minimum Order Quantity (MOQ) or zero.</li>
+            <li>Update quantity to be less than {CART_QUANTITY_MAX}.</li>
+          </ul>
         </div>}
       <p className="text-lg font-normal leading-[22px] text-grey-700">
         <span className="underline text-primary-500">

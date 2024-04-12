@@ -1,6 +1,9 @@
 import { Link } from '@remix-run/react';
+import { CategoryType } from './route';
 
-export function CategoryCard({ category }: { category: any }) {
+export function CategoryCard({ category }: {
+  category: CategoryType
+}) {
   const {
     category_id,
     title,

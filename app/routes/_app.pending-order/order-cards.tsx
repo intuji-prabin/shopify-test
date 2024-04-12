@@ -26,9 +26,9 @@ export function ProductGroupCardGrid({
 
 function ProductGroupCard({groupId, groupName, totalItems}: ProductGroup) {
   return (
-    <div className="bg-white  max-[unset] md:max-w-[302px] p-4 space-y-12 min-h-[149px]">
-      <ul className="flex justify-between">
-        <li className="font-bold text-2xl  italic leading-[29px] text-grey-900">
+    <div className="bg-white  max-[unset] md:max-w-[302px] p-4 space-y-12 min-h-[149px] flex flex-col justify-between">
+      <ul className="flex justify-between items-start">
+        <li className="font-bold text-2xl  italic leading-[29px] text-grey-900 capitalize">
           {groupName}
         </li>
         <li className="text-primary-500 font-medium text-lg leading-[22px]">

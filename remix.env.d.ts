@@ -17,10 +17,13 @@ declare global {
   /**
    * A global `process` object is only available during build to access NODE_ENV.
    */
-  const process: {env: {
-    API_URL: string;
-    NODE_ENV: 'production' | 'development'
-}};
+  const process: {
+    env: {
+      SESSION_SECRET: string;
+      API_URL: string;
+      NODE_ENV: 'production' | 'development';
+    };
+  };
 
   /**
    * Declare expected Env parameter in fetch handler.

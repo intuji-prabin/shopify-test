@@ -1,4 +1,5 @@
 import {LoaderFunctionArgs} from '@remix-run/server-runtime';
+import { AppLoadContext } from '@shopify/remix-oxygen';
 
 export interface SliderType {
   node: Node;
@@ -35,7 +36,11 @@ export interface SliderTitle {
   value: string;
 }
 
-export async function getSlides({context}: any) {
+export async function getSlides({context}: {context: AppLoadContext}): Promise<{
+  src: string;
+  alt: string;
+  productHandle: string;
+}[]> {
   const {storefront} = context;
   try {
     const response = await storefront.query(SLIDER_DATA_QUERY);

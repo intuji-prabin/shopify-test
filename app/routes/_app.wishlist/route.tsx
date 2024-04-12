@@ -19,6 +19,8 @@ import { getWishlist, removeBulkFromWishlist } from './wishlist.server';
 import useSort from '~/hooks/useSort';
 import { displayToast } from '~/components/ui/toast';
 import { Routes } from '~/lib/constants/routes.constent';
+import { CART_QUANTITY_ERROR, CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
+import { BackButton } from '~/components/ui/back-button';
 
 export interface WishListResponse {
   productId: string;
@@ -180,7 +182,10 @@ export default function route() {
       {finalWishList.length > 0 ?
         <div className='pt-6'>
           <div className='flex justify-between'>
-            <h3>Wishlist</h3>
+            <BackButton
+              className="capitalize"
+              title="Wishlist"
+            />
             {table.getSelectedRowModel().rows.length > 0 &&
               <div className='flex items-center gap-2'>
                 <p className='text-lg italic font-bold'>{table.getSelectedRowModel().rows.length} item selected</p>
@@ -217,9 +222,9 @@ export default function route() {
                         )
                         const quantityVal = Number(formData.get(`${item.original.productId}_quantity`));
                         const moqVal = Number(formData.get(`${item.original.productId}_moq`));
-                        if (quantityVal && moqVal && quantityVal < moqVal || quantityVal && quantityVal > 1000000) {
+                        if (quantityVal && moqVal && quantityVal < moqVal || quantityVal && quantityVal > CART_QUANTITY_MAX) {
                           canSubmit = false;
-                          displayToast({ message: "Please select quantity to be greater than MOQ or less than 1000000", type: "error" });
+                          displayToast({ message: CART_QUANTITY_ERROR, type: "error" });
                         }
                       },
                       );

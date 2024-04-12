@@ -9,11 +9,11 @@ import {
   json,
   redirect,
 } from '@remix-run/server-runtime';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import EmptyList from '~/components/ui/empty-list';
 import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { CART_QUANTITY_MAX, CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 import { Routes } from '~/lib/constants/routes.constent';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
@@ -201,9 +201,24 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 export default function CartList() {
   const { cartList, shippingAddresses }: any = useLoaderData<typeof loader>();
-  const [updateCart, setUpdateCart] = useState(false);
-  const [placeOrder, setPlaceOrder] = useState(true);
   const finalProductList = useSort({ items: cartList?.productList });
+  const checkQuantityAgainstMOQ = (finalProductList: any) => {
+    for (let item of finalProductList) {
+      if (item.quantity < item.moq || item.quantity > CART_QUANTITY_MAX || item.quantity <= 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+  let result = checkQuantityAgainstMOQ(finalProductList);
+
+  useEffect(() => {
+    result = checkQuantityAgainstMOQ(finalProductList);
+    setPlaceOrder(result);
+  }, [finalProductList])
+
+  const [updateCart, setUpdateCart] = useState(false);
+  const [placeOrder, setPlaceOrder] = useState(result);
 
   return (
     <>
@@ -211,25 +226,27 @@ export default function CartList() {
       <UploadSearchbar searchVariant="cart" />
       {finalProductList?.length === 0 ?
         <EmptyList /> :
-        <div className="container flex flex-col items-start justify-between gap-6 my-6 lg:flex-row">
-          <MyProducts
-            products={finalProductList}
-            currency={cartList?.currency}
-            updateCart={updateCart}
-            setUpdateCart={setUpdateCart}
-            setPlaceOrder={setPlaceOrder}
-          />
-          <OrderSummary
-            cartSubTotalPrice={cartList?.cartSubTotalPrice}
-            cartTotalPrice={cartList?.cartTotalPrice}
-            freight={cartList?.freight}
-            surcharges={cartList?.surcharges}
-            gst={cartList?.gst}
-            currency={cartList?.currency}
-            shippingAddresses={shippingAddresses}
-            updateCart={updateCart}
-            placeOrder={placeOrder}
-          />
+        <div className='container'>
+          <div className="flex flex-col flex-wrap items-start gap-6 my-6 xl:flex-row cart__list">
+            <MyProducts
+              products={finalProductList}
+              currency={cartList?.currency}
+              updateCart={updateCart}
+              setUpdateCart={setUpdateCart}
+              setPlaceOrder={setPlaceOrder}
+            />
+            <OrderSummary
+              cartSubTotalPrice={cartList?.cartSubTotalPrice}
+              cartTotalPrice={cartList?.cartTotalPrice}
+              freight={cartList?.freight}
+              surcharges={cartList?.surcharges}
+              gst={cartList?.gst}
+              currency={cartList?.currency}
+              shippingAddresses={shippingAddresses}
+              updateCart={updateCart}
+              placeOrder={placeOrder}
+            />
+          </div>
         </div>
       }
     </>

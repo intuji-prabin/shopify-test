@@ -220,6 +220,7 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
     });
   } catch (error) {
     if (error instanceof Error) {
+      await getCartList(context, request, sessionCartInfo);
       console.log('this is err', error?.message);
       setErrorMessage(messageSession, error?.message);
       return redirect('/cart-list', {
