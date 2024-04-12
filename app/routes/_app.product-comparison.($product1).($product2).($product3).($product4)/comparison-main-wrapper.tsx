@@ -1,6 +1,5 @@
-import { Link, useLocation, useNavigate } from '@remix-run/react';
+import { Form, Link, useLocation, useNavigate } from '@remix-run/react';
 import CloseMenu from '~/components/icons/closeMenu';
-import { TooltipInfo } from '~/components/icons/orderStatus';
 import { Button } from '~/components/ui/button';
 import { PredictiveSearch } from '~/components/ui/predictive-search';
 import { Price } from '~/components/ui/price';
@@ -25,6 +24,9 @@ export type ProductFinalResponse = {
   currency: string;
   defaultPrice: number;
   vendor: string;
+  productVariantId: string;
+  quantity: number;
+  selectedUOM: number;
 };
 
 type productResponse = {
@@ -37,6 +39,7 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
   const product2 = finalResponse?.product2?.product;
   const product3 = finalResponse?.product3?.product;
   const product4 = finalResponse?.product4?.product;
+  console.log(finalResponse);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -72,8 +75,15 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
           </div>
           <div className="pt-2 pb-6">
             <Price currency={product1?.currency} price={product1?.companyPrice} />
-            <div className="border-b border-solid border-grey-50 pt-3 mb-3"></div>
+            <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
             <Price currency={product1?.currency} price={product1?.defaultPrice} variant="rrp" />
+            <Form method="post">
+              <input type="hidden" name="productId" value={product1?.id} />
+              <input type="hidden" name="productVariantId" value={product1?.productVariantId} />
+              <input type="hidden" name="quantity" value={product1?.quantity} />
+              <input type="hidden" name="selectUOM" value={product1?.selectedUOM} />
+              <Button className="w-full mt-3" variant="primary">Add to cart</Button>
+            </Form>
           </div>
           <ProductDetailInfo productInfo={product1?.finalProductInfoArray} />
         </div>
@@ -126,8 +136,15 @@ export function ProductDetailDiv({ productDetails, clearSelectedProduct }: { pro
           </div>
           <div className="pt-2 pb-6">
             <Price currency={productDetails?.currency} price={productDetails?.companyPrice} />
-            <div className="border-b border-solid border-grey-50 pt-3 mb-3"></div>
+            <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
             <Price currency={productDetails?.currency} price={productDetails?.defaultPrice} variant="rrp" />
+            <Form method="post">
+              <input type="hidden" name="productId" value={productDetails?.id} />
+              <input type="hidden" name="productVariantId" value={productDetails?.productVariantId} />
+              <input type="hidden" name="quantity" value={productDetails?.quantity} />
+              <input type="hidden" name="selectUOM" value={productDetails?.selectedUOM} />
+              <Button className="w-full mt-3" variant="primary">Add to cart</Button>
+            </Form>
           </div>
           <ProductDetailInfo productInfo={productDetails?.finalProductInfoArray} />
         </> :

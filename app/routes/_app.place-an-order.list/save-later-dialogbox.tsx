@@ -71,7 +71,7 @@ export default function CreateGroup({
   });
 
   const handleSaveForLater = () => {
-    if (selectedValue === null) {
+    if (selectedValue === null || selectedValue.trim().length === 0) {
       setError({isError: true, message: 'Group Name is required'});
       return;
     }
@@ -144,7 +144,9 @@ export default function CreateGroup({
           <Button
             type="submit"
             variant={
-              error.isError || fetcher.state === 'submitting'
+              error.isError ||
+              fetcher.state === 'submitting' ||
+              fetcher.state !== 'idle'
                 ? 'disabled'
                 : 'primary'
             }

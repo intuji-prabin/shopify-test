@@ -1,3 +1,4 @@
+import {CONSTANT} from '~/lib/constants/product.session';
 import {getPrices} from '../_app.category_.$mainCategory.$categoryId_.$subCategoryId/product-list.server';
 
 export async function getSingleProduct(
@@ -75,6 +76,12 @@ const formatProduct = (product: ProductResponse, prices: any) => {
     defaultPrice: prices?.[productId]
       ? prices?.[productId]?.default_price
       : 'N/A',
+    quantity: product?.variants?.edges[0]?.node?.moq?.value || 1,
+    selectedUOM: prices?.[productId]?.uomCode,
+    productVariantId: product?.variants?.edges[0]?.node?.id.replace(
+      CONSTANT.variantId,
+      '',
+    ),
   };
 };
 
