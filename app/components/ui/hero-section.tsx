@@ -12,7 +12,7 @@ export default function HeroBanner({imageUrl, sectionName}: HeroImage) {
           className="max-h-[220px] w-full object-cover object-center"
         />
       </figure>
-      <p className="absolute top-1/2 left-1/2 font-bold italic text-white text-2xl md:text-[40px] leading-11 -translate-x-1/2">
+      <p className="absolute top-1/2 left-1/2 font-bold italic text-white text-2xl md:text-[40px] leading-11 -translate-x-1/2 capitalize">
         {sectionName}
       </p>
     </div>

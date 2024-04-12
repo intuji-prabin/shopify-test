@@ -33,7 +33,7 @@ export async function updateGroup({
 }) {
   const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
 
-  const body = JSON.stringify({groupId, groupName});
+  const body = JSON.stringify({groupId, groupName: groupName.toLowerCase()});
 
   const response = await useFetch<DefaultResponse>({
     url,
