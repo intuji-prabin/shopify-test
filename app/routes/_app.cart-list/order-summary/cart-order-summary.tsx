@@ -14,7 +14,7 @@ export default function OrderSummary({
   placeOrder
 }: any) {
   return (
-    <div className="bg-white max-w-[unset] w-full lg:max-w-[411px] ">
+    <div className="bg-white w-full xl:w-[411px]">
       <EstimatedTotal cartSubTotalPrice={cartSubTotalPrice}
         cartTotalPrice={cartTotalPrice}
         freight={freight}
