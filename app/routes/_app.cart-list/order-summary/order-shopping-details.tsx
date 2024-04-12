@@ -264,7 +264,12 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: a
           >
             Place order
           </button>
-          <p className='italic font-normal'>Please <span className='text-red-500'>press UPDATE CART button</span> or <span className='text-red-500'>update your quantity to be greater than Minimum Order Quantity(MOQ) and less than 1000000</span> to "PLACE ORDER"</p>
+          <p className='pt-1 text-lg italic text-red-500'>TO "PLACE ORDER":</p>
+          <ul className='pl-5 list-disc'>
+            <li>Press UPDATE CART button.</li>
+            <li>Update quantity to be greater than Minimum Order Quantity (MOQ) or zero.</li>
+            <li>Update quantity to be less than 1000000.</li>
+          </ul>
         </div>}
       <p className="text-lg font-normal leading-[22px] text-grey-700">
         <span className="underline text-primary-500">

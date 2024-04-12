@@ -118,7 +118,7 @@ export function useMyProductColumn({
       },
       {
         accessorKey: 'uom',
-        header: 'Unit Of Measurement',
+        header: 'UOM',
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
