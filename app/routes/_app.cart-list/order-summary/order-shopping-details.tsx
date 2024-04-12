@@ -5,6 +5,7 @@ import Tick from '~/components/icons/tick';
 import { Button } from '~/components/ui/button';
 import { Calendar } from '~/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
+import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
 
 function concatDefaultAddress(address1: string, address2: string) {
   return address1.concat(' ', address2).trim();
@@ -268,7 +269,7 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: a
           <ul className='pl-5 list-disc'>
             <li>Press UPDATE CART button.</li>
             <li>Update quantity to be greater than Minimum Order Quantity (MOQ) or zero.</li>
-            <li>Update quantity to be less than 1000000.</li>
+            <li>Update quantity to be less than {CART_QUANTITY_MAX}.</li>
           </ul>
         </div>}
       <p className="text-lg font-normal leading-[22px] text-grey-700">
