@@ -39,7 +39,8 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
+import {SelectProductContext} from './select-product-context';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Pending Order Details'}];
@@ -354,15 +355,33 @@ export default function PendingOrderDetailsPage() {
 
   const {table} = useTable(columns, groupDetails.products, 'productId');
 
-  if (table.options.meta) {
-    table.options.meta.getSelectedRow();
-  }
-
   console.log(' row selected', Object.keys(table.getState().rowSelection));
   console.log(
     'total row selected',
     Object.keys(table.getState().rowSelection).length,
   );
+
+  const {selectedProduct, setSelectedProduct} =
+    useContext(SelectProductContext);
+
+  useEffect(() => {
+    const selectedRowKeys = Object.keys(table.getState().rowSelection);
+    const selectedRow = groupDetails.products.filter((row) =>
+      selectedRowKeys.includes(row['productId']),
+    );
+    setSelectedProduct((prev) => {
+      const combined = [...prev, ...selectedRow];
+      return combined.filter(
+        (item, index, self) =>
+          index === self.findIndex((t) => t.productId === item.productId),
+      );
+    });
+  }, [table.getState().rowSelection]);
+
+  useEffect(() => {
+    setSelectedProduct([]);
+  }, []);
+  console.log('selectedProductdata', selectedProduct);
 
   return (
     <>

@@ -5,42 +5,43 @@ import {
   useRouteError,
   useSubmit,
 } from '@remix-run/react';
-import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
-import { useEffect } from 'react';
-import { useEventSource } from 'remix-utils/sse/react';
+import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
+import {useEffect} from 'react';
+import {useEventSource} from 'remix-utils/sse/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
-import { HamburgerMenuProvider } from '~/components/ui/layouts/elements/HamburgerMenuContext';
+import {HamburgerMenuProvider} from '~/components/ui/layouts/elements/HamburgerMenuContext';
 import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
 import TopHeader from '~/components/ui/layouts/top-header';
-import { useMediaQuery } from '~/hooks/useMediaQuery';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
-import { Routes } from '~/lib/constants/routes.constent';
-import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import {useMediaQuery} from '~/hooks/useMediaQuery';
+import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
+import {Routes} from '~/lib/constants/routes.constent';
+import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
 } from '~/lib/utils/toast-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { CustomerData } from '~/routes/_public.login/login.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {CustomerData} from '~/routes/_public.login/login.server';
 import {
   getCagetoryList,
   getSessionCart,
   getSessionData,
 } from '~/routes/_app/app.server';
-import { getProductGroup } from '~/routes/_app.pending-order/pending-order.server';
+import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
+import {SelectProductProvider} from '../_app.pending-order_.$groupId/select-product-context';
 
-export async function loader({ request, context }: ActionFunctionArgs) {
+export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
   const sessionData = await getSessionData(userDetails, context);
   const categories = await getCagetoryList(context);
   const messageSession = await getMessageSession(request);
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
 
-  const productGroup = await getProductGroup({ customerId: userDetails.id });
+  const productGroup = await getProductGroup({customerId: userDetails.id});
 
   const headers = [] as any;
   const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY);
@@ -51,7 +52,7 @@ export async function loader({ request, context }: ActionFunctionArgs) {
       const finalCartSession = {
         cartId: sessionCartInfo?.cartId,
         lineItems: sessionCartInfo?.lineItems,
-      }
+      };
       context.session.set(CART_SESSION_KEY, finalCartSession);
       headers.push(['Set-Cookie', await context.session.commit({})]);
     }
@@ -103,7 +104,7 @@ export default function PublicPageLayout() {
 
   useEffect(() => {
     if (userId === userDetails.id) {
-      submit({}, { method: 'POST', action: '/logout' });
+      submit({}, {method: 'POST', action: '/logout'});
     }
   }, [userId]);
   return (
@@ -114,7 +115,9 @@ export default function PublicPageLayout() {
       wishlistCount={wishlistCount}
       pedingOrderCount={pendingOrderCount}
     >
-      <Outlet />
+      <SelectProductProvider>
+        <Outlet />
+      </SelectProductProvider>
     </Layout>
   );
 }

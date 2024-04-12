@@ -40,15 +40,6 @@ export function useTable<T>(
           }),
         );
       },
-      getSelectedRow: () => {
-        const selectedRowKeys = Object.keys(table.getState().rowSelection);
-        const selectedRow = data.filter((row) =>
-          selectedRowKeys.includes(row[rowId!] as string),
-        );
-        console.log('selecterow table', selectedRow);
-
-        return;
-      },
     },
   });
 
