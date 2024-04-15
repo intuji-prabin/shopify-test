@@ -1,12 +1,10 @@
+import {useState} from 'react';
 import {useTable} from '~/hooks/useTable';
 import {DataTable} from '~/components/ui/data-table';
 import HeroBanner from '~/components/ui/hero-section';
 import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
-import {
-  ActionBar,
-  GroupItem,
-} from '~/routes/_app.pending-order_.$groupId/action-bar';
+import {ActionBar} from '~/routes/_app.pending-order_.$groupId/action-bar';
 import {Routes} from '~/lib/constants/routes.constent';
 import {PredictiveSearch} from '~/components/ui/predictive-search';
 import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
@@ -39,7 +37,10 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {useState} from 'react';
+import {
+  GroupItem,
+  SelectProductProvider,
+} from '~/routes/_app.pending-order_.$groupId/select-product-context';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Pending Order Details'}];
@@ -227,14 +228,11 @@ export async function action({request, context, params}: ActionFunctionArgs) {
 
         setSuccessMessage(messageSession, deletedProduct.message);
 
-        return json(
-          {},
-          {
-            headers: {
-              'Set-Cookie': await messageCommitSession(messageSession),
-            },
+        return redirect(`${Routes.PENDING_ORDER}/${groupId}`, {
+          headers: {
+            'Set-Cookie': await messageCommitSession(messageSession),
           },
-        );
+        });
       } catch (error) {
         if (error instanceof Error) {
           setErrorMessage(messageSession, error.message);
@@ -352,7 +350,7 @@ export default function PendingOrderDetailsPage() {
 
   const {columns} = useMyProductColumn({setUpdateCart: setIsProductUpdate});
 
-  const {table} = useTable(columns, groupDetails.products);
+  const {table} = useTable(columns, groupDetails.products, 'productId');
 
   return (
     <>
@@ -371,11 +369,13 @@ export default function PendingOrderDetailsPage() {
         </div>
       </div>
       <section className="container data__table">
-        <ActionBar
-          isProductUpdate={isProductUpdate}
-          groupName={groupDetails.groupName}
-          table={table}
-        />
+        <SelectProductProvider>
+          <ActionBar
+            isProductUpdate={isProductUpdate}
+            table={table}
+            group={groupDetails}
+          />
+        </SelectProductProvider>
         <DataTable
           table={table}
           columns={columns}
