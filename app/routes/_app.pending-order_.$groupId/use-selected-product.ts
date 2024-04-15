@@ -218,10 +218,12 @@ export function useSelectedProduct({
   useEffect(() => {
     const selectedRowKeys = Object.keys(table.getState().rowSelection);
 
-    // have to make this product to table's data
-    const selectedRow = products.filter((row) =>
-      selectedRowKeys.includes(row['productId']),
-    );
+    const selectedRow = table
+      .getRowModel()
+      .flatRows.filter((item) =>
+        selectedRowKeys.includes(item.original.productId),
+      )
+      .map((item) => item.original);
 
     setSelectedProduct((prev) => {
       return [...prev, ...selectedRow]
