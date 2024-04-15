@@ -37,7 +37,8 @@ const route = () => {
                 : null;
         })
         .filter((category) => category !== null)[0];
-    console.log("matchingCategory", matchingCategory)
+    console.log("matchingCategory", matchingCategory);
+    const finalCategory = subCategorySlug ? matchingCategory?.subCategory : matchingCategory?.child_categories;
 
     // For carousel at the top
     const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
@@ -102,7 +103,7 @@ const route = () => {
                 <div className="embla">
                     <div className="overflow-x-hidden embla__viewport" ref={emblaRef}>
                         <div className="flex gap-3 py-4 embla__container">
-                            {matchingCategory?.child_categories.map((subCategory) =>
+                            {finalCategory.map((subCategory) =>
                                 subCategory.child_categories.map((childCategory, index) => (
                                     <div
                                         className="max-w-full min-w-0 flex-autoCustom embla__slide"
