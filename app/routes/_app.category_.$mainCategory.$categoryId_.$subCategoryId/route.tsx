@@ -40,7 +40,6 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   const productList = await getProductList(params, context, request);
   const categories = await getCategoryList(context);
-  const sessionWishListInfo = await context.session.get(WISHLIST_SESSION_KEY);
 
   const categoryId = params.categoryId;
   const subCategoryId = params.subCategoryId;
@@ -51,7 +50,6 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     categoryId,
     subCategoryId,
     mainCategory,
-    sessionWishListInfo,
   }, { headers: [['Set-Cookie', await context.session.commit({})]] });
 }
 
@@ -213,9 +211,8 @@ const linkStyles =
 const PAGE_LIMIT = 9;
 
 export default function SubCategoryPage() {
-  const { categories, productList, categoryId, subCategoryId, mainCategory, sessionWishListInfo } =
+  const { categories, productList, categoryId, subCategoryId, mainCategory } =
     useLoaderData<typeof loader>();
-  console.log("rdfffsfd ", productList)
   const { page } = productList;
   const paginationInfo = productList?.results?.pageInfo;
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
