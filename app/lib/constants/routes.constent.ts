@@ -39,4 +39,6 @@ export const Routes = {
   INVOICE: '/invoice',
   DISTRIBUTOR_INFO: '/distributor-information',
   DISTRIBUTOR_PROFILE: '/distributor-profile',
+  TRACK_AN_ORDER: '/trackAnOrder',
+  ORDER_ERROR: '/order-error',
 };

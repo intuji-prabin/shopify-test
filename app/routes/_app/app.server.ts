@@ -1,11 +1,9 @@
-import {AppLoadContext} from '@shopify/remix-oxygen';
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {TRACK_AN_ORDERID} from '~/lib/constants/general.constant';
 import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getAccessToken} from '~/lib/utils/auth-session.server';
-import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
-import {PENDING_ORDERS_SESSION_KEY} from '~/lib/constants/pending-orders.constant';
 
 export interface CategoriesType {
   status: boolean;
@@ -37,6 +35,24 @@ export async function getCategories() {
     return [];
   }
 }
+
+export const getOrderId = async (orderNumber: string, customerId: string) => {
+  const customerID = customerId;
+  const results = await useFetch<any>({
+    method: AllowedHTTPMethods.GET,
+    url: `${ENDPOINT.ORDERS.GET}/${customerID}?${TRACK_AN_ORDERID}=${orderNumber}`,
+  });
+
+  if (results?.errors) {
+    throw new Error(`Some error has occured, ${results?.errors}`);
+  }
+
+  if (!results?.status) {
+    throw new Error(`Order Id not found due to ${results?.message}`);
+  }
+
+  return results?.payload;
+};
 
 const formattedResponse = (response: CategoriesType) => {
   if (!response.payload || response.payload.length < 1) {
@@ -77,11 +93,7 @@ export const getSessionData = async (userDetails: any, context: any) => {
   if (!cartResults?.status) {
     return false;
   }
-  // console.log('dfd ', cartResults?.payload);
-  // const sessions = {
-  //   totalWishList: cartResults?.payload?.wishlist,
-  //   wishItems: [ { id: 8, productId: '9077965127966' } ]
-  // }
+
   await context.session.set(
     WISHLIST_SESSION_KEY,
     cartResults?.payload?.wishlist,
