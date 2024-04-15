@@ -1,8 +1,5 @@
-import {useSubmit} from '@remix-run/react';
-import {Table} from '@tanstack/react-table';
 import {Button} from '~/components/ui/button';
 import RemoveItem from '~/components/icons/removeItem';
-import {Product} from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
 import {
   DialogHeader,
   DialogFooter,
@@ -13,34 +10,18 @@ import {
   DialogClose,
 } from '~/components/ui/dialog';
 
-export function DeleteProductModal({table}: {table: Table<Product>}) {
-  const submit = useSubmit();
-
-  const handleDelete = () => {
-    const formData = new FormData();
-
-    table
-      .getSelectedRowModel()
-      .flatRows.map((product) =>
-        formData.append('placeId', String(product.original.placeId)),
-      );
-
-    formData.append('_action', 'delete_product');
-
-    submit(formData, {
-      method: 'POST',
-    });
-  };
-
+export function DeleteProductModal({
+  handleDelete,
+  numberOfSelectedRows,
+}: {
+  handleDelete: () => void;
+  numberOfSelectedRows: number;
+}) {
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button
-          variant={
-            table.getSelectedRowModel().rows.length === 0
-              ? 'disabled'
-              : 'destructive'
-          }
+          variant={numberOfSelectedRows === 0 ? 'disabled' : 'destructive'}
           className="min-w-[111px] min-h-10"
         >
           Remove

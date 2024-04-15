@@ -11,7 +11,7 @@ interface DefaultResponse {
   message: string;
 }
 
-type Group = {
+export type Group = {
   groupName: string;
   groupId: number;
   totalProduct: number;
