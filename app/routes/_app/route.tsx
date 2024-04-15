@@ -27,6 +27,7 @@ import { getUserDetails } from '~/lib/utils/user-session.server';
 import { CustomerData } from '~/routes/_public.login/login.server';
 import {
   getCagetoryList,
+  getOrderId,
   getSessionCart,
   getSessionData,
 } from '~/routes/_app/app.server';
@@ -44,7 +45,7 @@ export async function loader({ request, context }: ActionFunctionArgs) {
 
   const headers = [] as any;
   const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY);
-  // console.log("werwerew ", wishlistSession);
+
   if (!sessionCartInfo) {
     sessionCartInfo = await getSessionCart(userDetails?.id, context);
     if (sessionCartInfo) {
@@ -60,14 +61,6 @@ export async function loader({ request, context }: ActionFunctionArgs) {
   if (!categories) {
     setErrorMessage(messageSession, 'Category not found');
     headers.push(['Set-Cookie', await messageCommitSession(messageSession)]);
-    // return json(
-    //   { categories: [], userDetails, sessionCartInfo },
-    //   {
-    //     headers: [
-    //      ['Set-Cookie', await messageCommitSession(messageSession)]
-    //     ],
-    //   },
-    // );
   }
   return json(
     {
@@ -166,9 +159,27 @@ export function ErrorBoundary() {
   const error = useRouteError();
   if (isRouteErrorResponse(error)) {
     return (
-      <section className="container">
-        <h1 className="text-center uppercase">No data found</h1>
-      </section>
+      <div>
+        <h1>
+          {error.status} {error.statusText}
+        </h1>
+        <p>{error.data}</p>
+      </div>
     );
+  } else if (error instanceof Error) {
+    return (
+      <div className="container pt-6">
+        <div className="min-h-[400px] flex justify-center items-center ">
+          <div className="flex flex-col items-center gap-2">
+            <h3>Error has occured</h3>
+            <p className="leading-[22px] text-lg text-grey uppercase font-medium text-red-500">
+              {error?.message}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  } else {
+    return <h1>Unknown Error</h1>;
   }
 }
