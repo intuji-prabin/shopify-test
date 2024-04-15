@@ -1,12 +1,19 @@
 import React, {createContext, useState} from 'react';
+export interface GroupItem {
+  placeId: number;
+  productId: string;
+  quantity: number;
+  uom: string;
+  variantId?: string;
+}
 
 export const SelectProductContext = createContext<{
-  selectedProduct: never[];
-  setSelectedProduct: React.Dispatch<React.SetStateAction<never[]>>;
+  selectedProduct: GroupItem[];
+  setSelectedProduct: React.Dispatch<React.SetStateAction<GroupItem[]>>;
 }>({selectedProduct: [], setSelectedProduct: () => {}});
 
 export function SelectProductProvider({children}: {children: React.ReactNode}) {
-  const [selectedProduct, setSelectedProduct] = useState<never[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<GroupItem[]>([]);
   return (
     <SelectProductContext.Provider
       value={{selectedProduct, setSelectedProduct}}

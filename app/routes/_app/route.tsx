@@ -31,7 +31,6 @@ import {
   getSessionData,
 } from '~/routes/_app/app.server';
 import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
-import {SelectProductProvider} from '../_app.pending-order_.$groupId/select-product-context';
 
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
@@ -115,9 +114,7 @@ export default function PublicPageLayout() {
       wishlistCount={wishlistCount}
       pedingOrderCount={pendingOrderCount}
     >
-      <SelectProductProvider>
-        <Outlet />
-      </SelectProductProvider>
+      <Outlet />
     </Layout>
   );
 }
