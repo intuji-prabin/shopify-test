@@ -24,3 +24,5 @@ export const PAGINATION = Object.freeze({
   PAGE: 1,
   LIMIT: 9,
 });
+
+export const TRACK_AN_ORDERID = 'trackAnOrderId';
