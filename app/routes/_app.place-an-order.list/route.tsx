@@ -32,6 +32,7 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
 import {SubmitPayload} from './save-later-dialogbox';
+import {SelectProductProvider} from '../_app.pending-order_.$groupId/select-product-context';
 
 const PAGE_LIMIT = 10;
 
@@ -174,10 +175,16 @@ export default function PlaceAnOrderListPage() {
 
   const {columns} = useMyProductColumn({});
 
-  const {table} = useTable(columns, placeAnOrderList.products);
+  const {table} = useTable(columns, placeAnOrderList.products, 'productId');
   return (
     <section className="container data__table">
-      <ActionBar productGroupOptions={productGroupOptions} table={table} />
+      <SelectProductProvider>
+        <ActionBar
+          table={table}
+          products={placeAnOrderList.products}
+          productGroupOptions={productGroupOptions}
+        />
+      </SelectProductProvider>
       <DataTable
         table={table}
         columns={columns}

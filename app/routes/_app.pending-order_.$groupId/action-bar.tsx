@@ -37,8 +37,8 @@ export function ActionBar({
     handleGroupUpdate,
     handleProductUpdate,
   } = useSelectedProduct({
-    group,
     table,
+    products: group.products,
   });
 
   return (
