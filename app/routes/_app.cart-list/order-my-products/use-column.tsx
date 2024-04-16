@@ -312,7 +312,7 @@ export function QuantityColumn({
           <input
             type="number"
             className="flex items-center justify-center w-20 text-center border-solid appearance-none border-x-0 border-grey-200 min-h-10"
-            value={quantity || moq || 1}
+            value={quantity}
             name="quantity"
             onChange={handleInputChange}
             min={moq || 1}
