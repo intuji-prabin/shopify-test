@@ -1,15 +1,16 @@
 import { useLoaderData } from '@remix-run/react';
-import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
-import { useEffect } from 'react';
-import { Button } from '~/components/ui/button';
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from '@remix-run/server-runtime';
+import { AppLoadContext } from '@shopify/remix-oxygen';
+import { useEffect, useState } from 'react';
+import { BackButton } from '~/components/ui/back-button';
 import { useScroll } from '~/hooks/useScroll';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import { CategoryCard } from '~/routes/_app.categories/category-card';
 import { getCategory } from './categories.server';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { AppLoadContext } from '@shopify/remix-oxygen';
-import { BackButton } from '~/components/ui/back-button';
+import { CSVFileType, UploadCsvFile } from './uploadCSV';
+import { getProductList } from './bulkOrder.server';
 
-export async function loader({ context }: ActionFunctionArgs) {
+export async function loader({ context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   const categoriesDetail = await getCategoryList(context);
   if (categoriesDetail && categoriesDetail.length > 0) {
@@ -42,9 +43,18 @@ export interface CategoryType {
   identifier: string;
 }
 
+export const action = async ({ request, context }: ActionFunctionArgs) => {
+  const formData = await request.formData();
+  console.log("Action called", formData);
+  await getProductList(context);
+  return json({ message: 'This is a message from the action' });
+}
+
 export default function CategoriesPage() {
   const { handleScroll } = useScroll('categories-menu');
   const { categoriesDetail } = useLoaderData<typeof loader>();
+  const [csvToArray, setCsvToArray] = useState<CSVFileType[]>([]);
+  console.log("firstCSV", csvToArray);
 
   useEffect(() => {
     const handleScroll: EventListener = () => {
@@ -90,7 +100,7 @@ export default function CategoriesPage() {
             className="capitalize"
             title="Categories"
           />
-          <Button>upload order</Button>
+          <UploadCsvFile setCsvToArray={setCsvToArray} />
         </div>
       </section>
       <section
