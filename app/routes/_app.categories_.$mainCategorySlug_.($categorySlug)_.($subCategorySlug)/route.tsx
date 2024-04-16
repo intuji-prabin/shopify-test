@@ -1,5 +1,5 @@
-import { NavLink, json, useLoaderData } from '@remix-run/react';
-import { LoaderFunctionArgs } from '@remix-run/server-runtime';
+import { NavLink, isRouteErrorResponse, json, useLoaderData, useRouteError } from '@remix-run/react';
+import { AppLoadContext, LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { useCallback, useEffect, useState } from 'react';
 import { BackButton } from '~/components/ui/back-button';
 import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
@@ -10,23 +10,28 @@ import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import useEmblaCarousel, { EmblaCarouselType } from 'embla-carousel-react';
 import { getCategoryList } from '../_app.categories/route';
 import { LeftArrow } from '~/components/icons/left';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { getProductFilterList } from './productFilter.server';
+import { FilterForm } from './filterForm';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
     await isAuthenticate(context);
     const categories = await getCategoryList(context);
+    const productList = await getProductList(params, context, request);
 
     const mainCategorySlug = params?.mainCategorySlug;
     const categorySlug = params?.categorySlug;
     const subCategorySlug = params?.subCategorySlug;
-    return json({ mainCategorySlug, categorySlug, subCategorySlug, categories });
+    return json({ productList, mainCategorySlug, categorySlug, subCategorySlug, categories });
 }
 
 const linkStyles =
     'text-center basis-full border-b-2 inline-block duration-300 border-b-grey-50 cursor-pointer bg-grey-50 uppercase text-lg italic font-bold leading-6 text-grey-500 py-3 px-5 hover:bg-none';
 
 const route = () => {
-    const { mainCategorySlug, categorySlug, subCategorySlug, categories } =
+    const { mainCategorySlug, categorySlug, subCategorySlug, categories, productList } =
         useLoaderData<typeof loader>();
+
     const backTitle = subCategorySlug
         ? subCategorySlug?.split('-').join(' ')
         : categorySlug?.split('-').join(' ');
@@ -41,7 +46,6 @@ const route = () => {
                 : null;
         })
         .filter((category) => category !== null)[0];
-    console.log('matchingCategory', matchingCategory);
 
     // For carousel at the top
     const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
@@ -181,7 +185,7 @@ const route = () => {
             <div className="grid grid-cols-1 gap-6 xl:grid-cols-4">
                 <div className="xl:col-span-1">
                     <div className="sticky top-[100px] bg-neutral-white">
-                        hello filter
+                        <FilterForm filterList={productList} />
                     </div>
                 </div>
                 <div className="xl:col-start-2 xl:col-end-5">hello right</div>
@@ -191,3 +195,87 @@ const route = () => {
 };
 
 export default route;
+
+export const getProductList = async (
+    params: any,
+    context: AppLoadContext,
+    request: Request,
+) => {
+    try {
+        const { searchParams } = new URL(request.url);
+        const searchParam = Object.fromEntries(searchParams);
+        const pageInfo = searchParams.get('pageNo');
+        const { userDetails } = await getUserDetails(request);
+
+        let page = 1;
+        if (pageInfo) {
+            page = parseInt(pageInfo);
+        }
+
+        const searchKey = Object.keys(searchParam);
+        let searchList: {
+            key: string;
+            value: string[];
+        }[] = [];
+
+        searchKey.map((value) => {
+            searchList.push({ key: value, value: searchParams.getAll(value) });
+            return { [value]: searchParams.getAll(value) };
+        });
+
+        // let results;
+        // if (searchList.length > 0) {
+        //     results = await getFilterProduct(
+        //         context,
+        //         params,
+        //         searchList,
+        //         userDetails?.id,
+        //     );
+        // } else {
+        //     results = await getProducts(
+        //         context,
+        //         params,
+        //         searchList,
+        //         userDetails?.id,
+        //         [],
+        //         true,
+        //     );
+        // }
+
+        const productFilter = await getProductFilterList(context);
+        return { productFilter, page };
+    } catch (error) {
+        if (error instanceof Error) {
+            console.log('err', error);
+            return {};
+        }
+        return {};
+    }
+};
+
+
+// export function ErrorBoundary() {
+//     const error = useRouteError();
+
+//     if (isRouteErrorResponse(error)) {
+//         return (
+//             <div>
+//                 <h1>
+//                     {error.status} {error.statusText}
+//                 </h1>
+//                 <p>{error.data}</p>
+//             </div>
+//         );
+//     } else if (error instanceof Error) {
+//         return (
+//             <div className="flex items-center justify-center">
+//                 <div className="text-center">
+//                     <h1>Opps</h1>
+//                     <p>Something went wrong</p>
+//                 </div>
+//             </div>
+//         );
+//     } else {
+//         return <h1>Unknown Error</h1>;
+//     }
+// }

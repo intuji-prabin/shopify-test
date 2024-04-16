@@ -3,10 +3,10 @@ import { ReactNode } from 'react';
 
 type AccordionType = {
   accordionTitle: string;
-  accordianLabel: "company-information" | "text-color" | "background"
+  accordianLabel: "company-information" | "text-color" | "background" | any
   children: ReactNode;
   isOpen?: boolean;
-  setOpenAccordian: React.Dispatch<React.SetStateAction<"company-information" | "text-color" | "background" | "">>
+  setOpenAccordian: React.Dispatch<React.SetStateAction<"company-information" | "text-color" | "background" | "" | any>>
 };
 
 const AccordionCustom = ({ accordionTitle, children, isOpen = false, setOpenAccordian, accordianLabel }: AccordionType) => {
