@@ -32,11 +32,11 @@ export type TrackAnOrderFormFieldNameType = keyof TrackAnOrderFormType;
 
 export function TrackAnOrderButton() {
   const { toggleMenu } = useHamburgerMenu();
-  const [validationError, setValidationError] = useState(false);
+  const [validationError, setValidationError] = useState({ isError: false, message: '' });
   const [open, setOpen] = useState(false);
 
   const handleTrackOrder = () => {
-    if (validationError) {
+    if (validationError.isError) {
       return;
     }
     setOpen(false);
@@ -57,7 +57,7 @@ export function TrackAnOrderButton() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[366px] track-an-order p-0 block">
         <DialogHeader>
-          <DialogTitle className="flex p-4 text-lg italic font-bold leading-6 text-grey-900">
+          <DialogTitle className="flex p-4 text-lg italic font-bold leading-6 capitalize text-grey-900">
             Track an order
           </DialogTitle>
         </DialogHeader>
@@ -66,7 +66,7 @@ export function TrackAnOrderButton() {
             <Input
               required
               label='Purchase Order Number Or Order Number'
-              type="number"
+              type="text"
               id="orderNumber"
               name={TRACK_AN_ORDERID}
               placeholder="Order Number"
