@@ -18,7 +18,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '~/components/ui/dialog';
-import { useSubmit } from '@remix-run/react';
+import { useFetcher, useSubmit } from '@remix-run/react';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -122,7 +122,7 @@ export const UploadCsvFile = ({
         }
     }, [acceptedFiles]);
 
-    const submit = useSubmit();
+    const fetcher = useFetcher();
 
     return (
         <>
@@ -239,13 +239,51 @@ export const UploadCsvFile = ({
                                     isUploadCSVDialogOpen: false,
                                 }));
                                 setCsvToArray(csvArray);
-                                const formData = new FormData();
+                                console.log("csvArray", csvArray);
+                                // if (csvArray.length > 20) {
+                                //     displayToast({ message: "The CSV uploaded is too large", type: "error" });
+                                //     return;
+                                // }
+                                // csvArray.forEach(item => {
+                                //     if (item.stockCode === "") {
+                                //         displayToast({ message: "StockCode is empty. Please check the CSV before uploading.", type: "error" });
+                                //         return;
+                                //     }
+                                // });
+
+
+                                if (csvArray.length > 20) {
+                                    displayToast({ message: "The CSV uploaded is too large", type: "error" });
+                                    return;
+                                }
+
+                                let hasEmptyStockCode = false;
                                 csvArray.forEach(item => {
-                                    formData.append("stockCode", item.stockCode);
-                                    formData.append("uom", item.uom);
-                                    formData.append("quantity", item.quantity);
+                                    if (item.stockCode === "") {
+                                        hasEmptyStockCode = true;
+                                    }
                                 });
-                                submit(formData, { method: 'POST' });
+
+                                if (hasEmptyStockCode) {
+                                    displayToast({ message: "StockCode is empty. Please check the CSV before uploading.", type: "error" });
+                                    return;
+                                }
+                                else {
+                                    console.log("firstcsvArray", csvArray);
+                                    fetcher.submit(
+                                        //@ts-ignore
+                                        csvArray,
+                                        { method: 'POST', encType: 'application/json' }
+                                    );
+                                }
+
+                                // const formData = new FormData();
+                                // csvArray.forEach(item => {
+                                //     formData.append("stockCode", item.stockCode);
+                                //     formData.append("uom", item.uom);
+                                //     formData.append("quantity", item.quantity);
+                                // });
+                                // submit(formData, { method: 'POST' });
                             }}
                         >
                             Import

@@ -50,7 +50,9 @@ export const ENDPOINT = {
     ORDER: `${BASE_URL}/order`,
     FILTER: `${BASE_URL}/product/filter`,
   },
-
+  BULK: {
+    GET_PRODUCT: `${BASE_URL}/bulk/product-id`,
+  },
   WISHLIST: {
     ADD: `${BASE_URL}/wishlist`,
   },
