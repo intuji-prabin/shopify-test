@@ -51,7 +51,6 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
   const contentType = request.headers.get('Content-Type');
   if (contentType === 'application/json') {
     const jsonPayload = (await request.json()) as { stockCode: string; quantity: number; uom: string }[];
-    console.log("jsonPayload", jsonPayload)
     try {
       await productBulkCart(jsonPayload, context, accessTocken, request);
       setSuccessMessage(messageSession, 'Item added to cart successfully');

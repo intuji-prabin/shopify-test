@@ -24,5 +24,7 @@ export const PAGINATION = Object.freeze({
   PAGE: 1,
   LIMIT: 9,
 });
+// CSV FILE NUMBER OF ROW LIMIT
+export const CSV_LIMIT = 200;
 
 export const TRACK_AN_ORDERID = 'trackAnOrderId';

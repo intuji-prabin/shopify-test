@@ -10,7 +10,6 @@ export interface ProductResponse {
   message: string;
   payload: {[key: string]: Payload};
 }
-
 export interface Payload {
   productId: string;
   variantId: string;
@@ -89,6 +88,7 @@ export async function getProductList(
   formData: {stockCode: string; quantity: number; uom: string}[],
 ) {
   const url = `${ENDPOINT.BULK.GET_PRODUCT}`;
+  console.log('finalData', formData);
   const transformedArray = formData.map((item) => {
     return {stockCode: item.stockCode};
   });
@@ -104,6 +104,7 @@ export async function getProductList(
   if (!productResponse?.status) {
     throw new Error(productResponse?.message);
   }
+  console.log('productResponse?.payload', productResponse?.payload);
   return productResponse?.payload;
 }
 
