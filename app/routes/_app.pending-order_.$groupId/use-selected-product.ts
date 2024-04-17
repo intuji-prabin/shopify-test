@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {useContext, useEffect} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {Table} from '@tanstack/react-table';
 import {useFetcher, useSubmit} from '@remix-run/react';
 import {displayToast} from '~/components/ui/toast';
@@ -7,10 +7,7 @@ import {
   GroupItem,
   SelectProductContext,
 } from '~/routes/_app.pending-order_.$groupId/select-product-context';
-import {
-  Group,
-  Product,
-} from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
+import {Product} from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
 import {
   CART_QUANTITY_ERROR,
   CART_QUANTITY_MAX,
@@ -24,16 +21,37 @@ export const UpdateGroupSchema = z.object({
     .max(50, {message: 'Group Name is too long'}),
 });
 
+/**
+ * @description Merge group item with same UOM
+ */
+function mergeGroupItemWithSameUOM(groupItemList: GroupItem[]) {
+  const mergedItem = groupItemList.reduce((accumulator, item) => {
+    const key = `${item.productId}-${item.uom}`;
+    if (!accumulator[key]) {
+      accumulator[key] = {...item};
+    } else {
+      accumulator[key].quantity += item.quantity;
+    }
+
+    return accumulator;
+  }, {} as Record<string, GroupItem>);
+  return Object.values(mergedItem);
+}
+
 export function useSelectedProduct({
   table,
-  group,
+  products,
 }: {
   table: Table<Product>;
-  group: Group;
+  products: Product[];
 }) {
   const submit = useSubmit();
 
   const fetcher = useFetcher();
+
+  const [selectedValue, setSelectedValue] = useState<string | null>(null);
+
+  const [error, setError] = useState({isError: false, message: ''});
 
   const {selectedProduct, setSelectedProduct} =
     useContext(SelectProductContext);
@@ -42,16 +60,25 @@ export function useSelectedProduct({
     table.getState().rowSelection,
   ).length;
 
-  const handleAddToCart = () => {
-    const isSelectedRowQuanityValid = selectedProduct.some(
-      (item) => item.quantity > CART_QUANTITY_MAX,
-    );
+  const displayQuantityMaxError = () => {
+    const isSelectedRowQuanityValid = table
+      .getSelectedRowModel()
+      .flatRows.some((item) => item.original.quantity > CART_QUANTITY_MAX);
 
     if (isSelectedRowQuanityValid) {
       displayToast({
         message: CART_QUANTITY_ERROR,
         type: 'error',
       });
+      return true;
+    }
+    return false;
+  };
+
+  const handleAddToCart = () => {
+    const isQuanityMaxError = displayQuantityMaxError();
+
+    if (isQuanityMaxError) {
       return;
     }
 
@@ -150,29 +177,75 @@ export function useSelectedProduct({
     setSelectedProduct([]);
   };
 
+  const handleSaveForLater = () => {
+    if (selectedValue === null || selectedValue.trim().length === 0) {
+      setError({isError: true, message: 'Group Name is required'});
+      return;
+    }
+    const isQuanityMaxError = displayQuantityMaxError();
+
+    if (isQuanityMaxError) {
+      return;
+    }
+
+    const groupItemList: GroupItem[] = [];
+
+    selectedProduct.map((item) => {
+      groupItemList.push({
+        productId: item.productId,
+        quantity: item.quantity,
+        uom: item.uom,
+      });
+    });
+
+    const isCreateGroup = Number.isNaN(Number(selectedValue));
+
+    const mergeGroupList = mergeGroupItemWithSameUOM(groupItemList);
+
+    const submitPayload = {
+      groupItemList: mergeGroupList,
+      submitType: isCreateGroup ? 'create' : 'update',
+      group: selectedValue,
+    };
+
+    fetcher.submit(
+      //@ts-ignore
+      submitPayload,
+      {method: 'POST', encType: 'application/json'},
+    );
+  };
+
   useEffect(() => {
     const selectedRowKeys = Object.keys(table.getState().rowSelection);
 
-    const selectedRow = group.products.filter((row) =>
-      selectedRowKeys.includes(row['productId']),
-    );
+    const selectedRow = table
+      .getRowModel()
+      .flatRows.filter((item) =>
+        selectedRowKeys.includes(String(item.original.placeId)),
+      )
+      .map((item) => item.original);
 
     setSelectedProduct((prev) => {
       return [...prev, ...selectedRow]
         .filter(
           (item, index, self) =>
-            index === self.findIndex((t) => t.productId === item.productId),
+            index === self.findIndex((t) => t.placeId === item.placeId),
         )
-        .filter((item) => selectedRowKeys.includes(item.productId));
+        .filter((item) => selectedRowKeys.includes(String(item.placeId)));
     });
   }, [table.getState().rowSelection]);
 
   return {
     fetcher,
     numberOfSelectedRows,
+    selectedValue,
+    setSelectedValue,
+    error,
+    setError,
     handleAddToCart,
     handleDelete,
     handleGroupUpdate,
     handleProductUpdate,
+    handleSaveForLater,
   };
 }
