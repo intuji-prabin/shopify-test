@@ -516,7 +516,7 @@ function renderProductItem(
               }
               defaultValue={UOM}
             >
-              {product.unitOfMeasure.length > 0 ? (
+              {product.unitOfMeasure?.length > 0 ? (
                 product.unitOfMeasure?.map(
                   (uom: {unit: string; code: string}, index: number) => (
                     <option
