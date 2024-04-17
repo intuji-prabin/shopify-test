@@ -221,7 +221,7 @@ export function useSelectedProduct({
     const selectedRow = table
       .getRowModel()
       .flatRows.filter((item) =>
-        selectedRowKeys.includes(item.original.productId),
+        selectedRowKeys.includes(String(item.original.placeId)),
       )
       .map((item) => item.original);
 
@@ -229,9 +229,9 @@ export function useSelectedProduct({
       return [...prev, ...selectedRow]
         .filter(
           (item, index, self) =>
-            index === self.findIndex((t) => t.productId === item.productId),
+            index === self.findIndex((t) => t.placeId === item.placeId),
         )
-        .filter((item) => selectedRowKeys.includes(item.productId));
+        .filter((item) => selectedRowKeys.includes(String(item.placeId)));
     });
   }, [table.getState().rowSelection]);
 

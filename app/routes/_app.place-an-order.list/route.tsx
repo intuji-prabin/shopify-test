@@ -175,7 +175,7 @@ export default function PlaceAnOrderListPage() {
 
   const {columns} = useMyProductColumn({});
 
-  const {table} = useTable(columns, placeAnOrderList.products, 'productId');
+  const {table} = useTable(columns, placeAnOrderList.products, 'placeId');
   return (
     <section className="container data__table">
       <SelectProductProvider>

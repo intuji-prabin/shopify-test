@@ -101,7 +101,7 @@ export function ActionBar({
       </div>
 
       <div className="flex gap-2 items-center w-full justify-between md:justify-[unset] md:w-[unset]">
-        <p className="text-lg font-bold leading-[22px] text-grey-900 italic max-w-[281px] md:max-w-[unset]">
+        <p className="text-lg text-nowrap font-bold leading-[22px] text-grey-900 italic max-w-[281px] md:max-w-[unset]">
           {numberOfSelectedRows === 0
             ? ' '
             : `${numberOfSelectedRows} items selected `}
