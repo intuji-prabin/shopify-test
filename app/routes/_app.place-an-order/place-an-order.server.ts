@@ -21,6 +21,7 @@ export async function addProductToList({
   const uom = formData.get('uom');
 
   const body = JSON.stringify({productId, quantity, uom});
+  console.log('firstBody', body);
 
   const response = await useFetch<DefaultResponse>({
     url,

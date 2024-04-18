@@ -151,8 +151,7 @@ const formattedResponse = async (response: any, customerId: string) => {
         defaultPrice: priceList?.[productId]
           ? priceList?.[productId]?.default_price
           : null,
-        liked :  priceList?.[productId]
-        ? priceList?.[productId]?.liked : false
+        liked: priceList?.[productId] ? priceList?.[productId]?.liked : false,
       };
     }),
   };

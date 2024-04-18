@@ -14,6 +14,7 @@ export const addedBulkCart = async (
 ) => {
   const {storefront, session} = context;
   const sessionCartInfo = session.get(CART_SESSION_KEY);
+  console.log('cartInfo', cartInfo);
   const keyList = Object.keys(cartInfo);
   const productData = [] as any;
   const formateData = keyList.map((key: any) => {
@@ -37,6 +38,7 @@ export const addedBulkCart = async (
       quantity: parseInt(cartInfo[`${id}_quantity`]),
     };
   });
+  console.log('first', itemData);
   const data = await addProductToCart(
     {},
     accessTocken,
