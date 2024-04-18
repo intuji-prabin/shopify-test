@@ -1,9 +1,9 @@
 import React, {createContext, useState} from 'react';
 export interface GroupItem {
-  placeId: number;
   productId: string;
   quantity: number;
   uom: string;
+  placeId?: number;
   variantId?: string;
 }
 
