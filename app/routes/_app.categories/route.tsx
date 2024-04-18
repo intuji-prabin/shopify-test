@@ -1,15 +1,17 @@
 import { useLoaderData } from '@remix-run/react';
-import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
-import { useEffect } from 'react';
-import { Button } from '~/components/ui/button';
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from '@remix-run/server-runtime';
+import { AppLoadContext } from '@shopify/remix-oxygen';
+import { useEffect, useState } from 'react';
+import { BackButton } from '~/components/ui/back-button';
 import { useScroll } from '~/hooks/useScroll';
+import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import { CategoryCard } from '~/routes/_app.categories/category-card';
 import { getCategory } from './categories.server';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { AppLoadContext } from '@shopify/remix-oxygen';
-import { BackButton } from '~/components/ui/back-button';
+import { CSVFileType, UploadCsvFile } from './uploadCSV';
+import { getProductList, productBulkCart } from './bulkOrder.server';
+import { getMessageSession, messageCommitSession, setErrorMessage, setSuccessMessage } from '~/lib/utils/toast-session.server';
 
-export async function loader({ context }: ActionFunctionArgs) {
+export async function loader({ context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   const categoriesDetail = await getCategoryList(context);
   if (categoriesDetail && categoriesDetail.length > 0) {
@@ -40,6 +42,55 @@ export interface CategoryType {
     }[];
   }[];
   identifier: string;
+}
+
+export const action = async ({ request, context }: ActionFunctionArgs) => {
+  const accessTocken = (await getAccessToken(context)) as string;
+  const messageSession = await getMessageSession(request);
+  const contentType = request.headers.get('Content-Type');
+  if (contentType === 'application/json') {
+    const jsonPayload = (await request.json()) as { stockCode: string; quantity: number; uom: string }[];
+    try {
+      await productBulkCart(jsonPayload, context, accessTocken, request);
+      setSuccessMessage(messageSession, 'Item added to cart successfully');
+      return json(
+        {},
+        {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        },
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log('this is err', error?.message);
+        setErrorMessage(messageSession, error?.message);
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      }
+      setErrorMessage(
+        messageSession,
+        'Item not added to cart. Please try again later.',
+      );
+      return json(
+        {},
+        {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        },
+      );
+    }
+  }
 }
 
 export default function CategoriesPage() {
@@ -90,7 +141,7 @@ export default function CategoriesPage() {
             className="capitalize"
             title="Categories"
           />
-          <Button>upload order</Button>
+          <UploadCsvFile />
         </div>
       </section>
       <section

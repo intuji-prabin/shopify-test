@@ -15,7 +15,7 @@ import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
 import { CART_QUANTITY_MAX, CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 import { Routes } from '~/lib/constants/routes.constent';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -31,6 +31,7 @@ import MyProducts from './order-my-products/cart-myproduct';
 import { placeOrder } from './order-place.server';
 import OrderSummary from './order-summary/cart-order-summary';
 import useSort from '~/hooks/useSort';
+import { productBulkCart } from '../_app.categories/bulkOrder.server';
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
@@ -60,7 +61,52 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
 
 export async function action({ request, context }: ActionFunctionArgs) {
   const messageSession = await getMessageSession(request);
+  const accessTocken = (await getAccessToken(context)) as string;
   let res;
+  const contentType = request.headers.get('Content-Type');
+  if (contentType === 'application/json') {
+    const jsonPayload = (await request.json()) as { stockCode: string; quantity: number; uom: string }[];
+    try {
+      await productBulkCart(jsonPayload, context, accessTocken, request);
+      setSuccessMessage(messageSession, 'Item added to cart successfully');
+      return json(
+        {},
+        {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        },
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log('this is err', error?.message);
+        setErrorMessage(messageSession, error?.message);
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      }
+      setErrorMessage(
+        messageSession,
+        'Item not added to cart. Please try again later.',
+      );
+      return json(
+        {},
+        {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        },
+      );
+    }
+  }
   switch (request.method) {
     case 'POST':
       try {
