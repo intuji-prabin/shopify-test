@@ -29,20 +29,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const {
         trackAnOrderId,
     } = finalFormData.data;
-
-
-
     const { userDetails } = await getUserDetails(request);
     const trackAnOrderResponse = await getOrderId(trackAnOrderId, userDetails?.id);
 
     if (trackAnOrderResponse?.orderList.length < 1) {
         setErrorMessage(messageSession, "Order not found. Please try using correct Purchase Order Number or Order Number.");
         return json({ error: "Order not found" });
-        // return redirect(Routes.ORDER_ERROR, {
-        //     headers: {
-        //         'Set-Cookie': await messageCommitSession(messageSession),
-        //     },
-        // })
     }
     else {
         const orderId = trackAnOrderResponse?.orderList[0]?.id;
@@ -58,23 +50,21 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 const route = () => {
     const data = useActionData<ActionResponse>();
-    const error = data?.error || null;
+    const error = data?.error ?? null;
     return (
-        <>
+        <div className="container order-error min-h-[calc(100vh_-_140px)] flex justify-center items-center">
             {error ? (
-                <div className="container pt-12 order-error">
-                    <div className="space-y-3 text-center">
-                        <h1>Oops</h1>
-                        <p className="text-red-500">Order not found please try again with correct Purchase Order Number or Order Number.</p>
+                <div className="space-y-2 text-center">
+                    <h3>Order number not found</h3>
+                    <div className="space-y-10">
+                        <p className="text-lg text-grey-800">Your order number was not found.</p>
                         <TrackAnOrderButton />
                     </div>
                 </div>
             ) : (
-                <div className="container pt-12 text-center">
-                    <h1>Nothing found</h1>
-                </div>
+                <h1>Nothing found</h1>
             )}
-        </>
+        </div>
     );
 }
 

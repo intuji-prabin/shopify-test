@@ -20,7 +20,7 @@ import { useHamburgerMenu } from './HamburgerMenuContext';
 const TrackAnOrderFormValidator = z.object({
   trackAnOrderId:
     z
-      .string()
+      .string().trim()
       .min(1, { message: "Purchase Order Number or Order Number is required" })
 });
 
@@ -62,7 +62,7 @@ export function TrackAnOrderButton() {
           </DialogTitle>
         </DialogHeader>
         <ValidatedForm id="track-an-order" validator={TrackAnOrderSchemaValidator} method='POST' action={Routes.TRACK_AN_ORDER}>
-          <div className="flex flex-col gap-1 px-4 pt-4 border-[1px] border-t-grey-100 border-b-0 border-x-0 ">
+          <div className="flex flex-col gap-1 px-4 pt-4 pb-2 border-[1px] border-t-grey-100 border-b-0 border-x-0 ">
             <Input
               required
               label='Purchase Order Number Or Order Number'
