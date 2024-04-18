@@ -1,18 +1,20 @@
-import { NavLink, isRouteErrorResponse, json, useLoaderData, useRouteError } from '@remix-run/react';
+import { Link, NavLink, Params, isRouteErrorResponse, json, useLoaderData, useRouteError } from '@remix-run/react';
 import { AppLoadContext, LoaderFunctionArgs } from '@remix-run/server-runtime';
+import useEmblaCarousel, { EmblaCarouselType } from 'embla-carousel-react';
 import { useCallback, useEffect, useState } from 'react';
+import { LeftArrow } from '~/components/icons/left';
 import { BackButton } from '~/components/ui/back-button';
 import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
 import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
 import { Routes } from '~/lib/constants/routes.constent';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import useEmblaCarousel, { EmblaCarouselType } from 'embla-carousel-react';
-import { getCategoryList } from '../_app.categories/route';
-import { LeftArrow } from '~/components/icons/left';
 import { getUserDetails } from '~/lib/utils/user-session.server';
-import { getProductFilterList } from './productFilter.server';
+import { getCategoryList } from '../_app.categories/route';
+import { getFilterProduct } from './filter.server';
 import { FilterForm } from './filterForm';
+import { getProductFilterList } from './productFilter.server';
+import { getProducts } from './productList.server';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
     await isAuthenticate(context);
@@ -31,6 +33,7 @@ const linkStyles =
 const route = () => {
     const { mainCategorySlug, categorySlug, subCategorySlug, categories, productList } =
         useLoaderData<typeof loader>();
+    console.log("first", productList)
 
     const backTitle = subCategorySlug
         ? subCategorySlug?.split('-').join(' ')
@@ -185,7 +188,7 @@ const route = () => {
             <div className="grid grid-cols-1 gap-6 xl:grid-cols-4">
                 <div className="xl:col-span-1">
                     <div className="sticky top-[100px] bg-neutral-white">
-                        <FilterForm filterList={productList} />
+                        <FilterForm filterList={productList?.productFilter} />
                     </div>
                 </div>
                 <div className="xl:col-start-2 xl:col-end-5">hello right</div>
@@ -197,10 +200,18 @@ const route = () => {
 export default route;
 
 export const getProductList = async (
-    params: any,
+    params: Params<string>,
     context: AppLoadContext,
     request: Request,
-) => {
+): Promise<{
+    productFilter: {
+        filterLabel: string;
+        filterKey: string;
+        filterValue: string[];
+    }[];
+    results: any;
+    page: number;
+}> => {
     try {
         const { searchParams } = new URL(request.url);
         const searchParam = Object.fromEntries(searchParams);
@@ -223,59 +234,60 @@ export const getProductList = async (
             return { [value]: searchParams.getAll(value) };
         });
 
-        // let results;
-        // if (searchList.length > 0) {
-        //     results = await getFilterProduct(
-        //         context,
-        //         params,
-        //         searchList,
-        //         userDetails?.id,
-        //     );
-        // } else {
-        //     results = await getProducts(
-        //         context,
-        //         params,
-        //         searchList,
-        //         userDetails?.id,
-        //         [],
-        //         true,
-        //     );
-        // }
-
+        let results;
+        if (searchList.length > 0) {
+            results = await getFilterProduct(
+                context,
+                params,
+                searchList,
+                userDetails?.id,
+            );
+        } else {
+            results = await getProducts(
+                context,
+                params,
+                searchList,
+                userDetails?.id,
+                [],
+                true,
+            );
+        }
         const productFilter = await getProductFilterList(context);
-        return { productFilter, page };
+        return { productFilter, results, page };
     } catch (error) {
         if (error instanceof Error) {
             console.log('err', error);
-            return {};
+            throw new Error(error.message);
         }
-        return {};
+        throw new Error('Something went wrong');
     }
 };
 
-
-// export function ErrorBoundary() {
-//     const error = useRouteError();
-
-//     if (isRouteErrorResponse(error)) {
-//         return (
-//             <div>
-//                 <h1>
-//                     {error.status} {error.statusText}
-//                 </h1>
-//                 <p>{error.data}</p>
-//             </div>
-//         );
-//     } else if (error instanceof Error) {
-//         return (
-//             <div className="flex items-center justify-center">
-//                 <div className="text-center">
-//                     <h1>Opps</h1>
-//                     <p>Something went wrong</p>
-//                 </div>
-//             </div>
-//         );
-//     } else {
-//         return <h1>Unknown Error</h1>;
-//     }
-// }
+export function ErrorBoundary() {
+    const error = useRouteError();
+    if (isRouteErrorResponse(error)) {
+        return (
+            <div className="min-h-[calc(100vh_-_140px)] flex justify-center items-center">
+                <div className='text-center'>
+                    <h1>
+                        {error.status} {error.statusText}
+                    </h1>
+                    <p>{error.data}</p>
+                    <Link to={Routes.CATEGORIES} className="mt-3 underline text-primary-500">Go to categories</Link>
+                </div>
+            </div>
+        );
+    } else if (error instanceof Error) {
+        return (
+            <div className="min-h-[calc(100vh_-_140px)] flex justify-center items-center">
+                <div className='text-center'>
+                    <h1>Opps</h1>
+                    <p>{error.message}</p>
+                    <Link to={Routes.CATEGORIES} className="mt-3 underline text-primary-500">Go to categories</Link>
+                </div>
+            </div>
+        );
+    } else {
+        return <div className="min-h-[calc(100vh_-_140px)] flex justify-center items-center"><h1>Unknown Error</h1></div>;
+    }
+}

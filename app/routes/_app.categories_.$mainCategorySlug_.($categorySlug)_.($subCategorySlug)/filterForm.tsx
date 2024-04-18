@@ -5,18 +5,15 @@ import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
 import { Slider } from '~/components/ui/slider';
 
-interface FilterType {
-    productFilter: productData[];
-    page: number;
-}
-interface productData {
-    filterLabel: string;
-    filterKey: string;
-    filterValue: string[];
-}
-
-export function FilterForm({ filterList }: { filterList: FilterType | { productFilter?: undefined; page?: null; } }) {
-    const filterdata = filterList?.productFilter;
+export function FilterForm({ filterList }: {
+    filterList: {
+        filterLabel: string;
+        filterKey: string;
+        filterValue: string[];
+    }[]
+}) {
+    console.log("first", filterList)
+    const filterdata = filterList;
 
     const [searchParams] = useSearchParams();
     const searchParam = Object.fromEntries(searchParams);
