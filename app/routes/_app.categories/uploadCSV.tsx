@@ -1,13 +1,12 @@
+import { useFetcher } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Button } from '~/components/ui/button';
-import { Separator } from '~/components/ui/separator';
-import { Alert, AlertDescription } from '~/components/ui/alert';
 import { InfoAlert } from '~/components/icons/alert';
-import { CircularProgressBar } from '~/components/ui/circular-progress-bar';
-import { displayToast } from '~/components/ui/toast';
-import { Delete } from '~/components/icons/delete';
 import { CSVIcon, CSVIconSmall } from '~/components/icons/csv-icon';
+import { Delete } from '~/components/icons/delete';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { Button } from '~/components/ui/button';
+import { CircularProgressBar } from '~/components/ui/circular-progress-bar';
 import { ConfirmDeleteModal } from '~/components/ui/confirm-delete-modal';
 import {
     Dialog,
@@ -18,8 +17,10 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '~/components/ui/dialog';
-import { useFetcher, useSubmit } from '@remix-run/react';
-import { CSV_LIMIT } from '~/lib/constants/general.constant';
+import FullPageLoading from '~/components/ui/fullPageLoading';
+import { Separator } from '~/components/ui/separator';
+import { displayToast } from '~/components/ui/toast';
+import { CSV_LIMIT, CSV_ROWS } from '~/lib/constants/general.constant';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -39,7 +40,7 @@ export const UploadCsvFile = ({
     setCsvToArray,
     btnSecondary
 }: {
-    setCsvToArray: React.Dispatch<React.SetStateAction<CSVFileType[]>>;
+    setCsvToArray?: React.Dispatch<React.SetStateAction<CSVFileType[]>>;
     btnSecondary?: boolean;
 }) => {
     const [isProgressBarShow, setIsProgressBarShow] = useState(false);
@@ -126,6 +127,9 @@ export const UploadCsvFile = ({
 
     return (
         <>
+            {fetcher.state != "idle" && (
+                <FullPageLoading description='The CSV uploaded is being added to cart. Please wait for few moments....' />
+            )}
             <Button
                 variant="primary"
                 className={`${btnSecondary && "bg-secondary-500 py-4 px-8 font-bold italic leading-6 text-lg text-grey-800 md:min-w-[193px] max-h-14 hover:bg-grey-800 hover:text-white"}`}
@@ -234,24 +238,20 @@ export const UploadCsvFile = ({
                             type="submit"
                             disabled={isProgressBarShow}
                             onClick={() => {
-                                setDialogState((previousState) => ({
-                                    ...previousState,
-                                    isUploadCSVDialogOpen: false,
-                                }));
-                                setCsvToArray(csvArray);
+                                setCsvToArray && setCsvToArray(csvArray);
                                 if (csvArray.length > CSV_LIMIT) {
-                                    displayToast({ message: "The CSV uploaded is too large", type: "error" });
+                                    displayToast({ message: "The CSV uploaded is too large", type: "error", messageCase: "normal" });
                                     return;
                                 }
-
-                                const requiredKeys = ['stockCode', 'uom', 'quantity'];
+                                const requiredKeys = [CSV_ROWS.STOCKCODE, CSV_ROWS.UOM, CSV_ROWS.QUANTITY];
                                 const missingKeys = requiredKeys.filter(key => {
-                                    const lowerCaseKey = key.toLowerCase();
-                                    return !csvArray.some(obj => Object.keys(obj).some(objKey => objKey.toLowerCase() === lowerCaseKey));
+                                    // const finalKey = key.toLowerCase().trim();
+                                    // return !csvArray.some(obj => Object.keys(obj).some(objKey => objKey.toLowerCase().trim() === finalKey));
+                                    return !csvArray.some(obj => Object.keys(obj).some(objKey => objKey === key));
                                 });
                                 if (missingKeys.length > 0) {
                                     console.log("Error: Missing keys - " + missingKeys.join(', '));
-                                    displayToast({ message: `CSV error missing: ${missingKeys.join(', ')}`, type: "error" });
+                                    displayToast({ message: `CSV format issue, missing: ${missingKeys.join(', ')}`, type: "error", messageCase: "normal" });
                                     return;
                                 } else {
                                     console.log("All required keys are present.");
@@ -262,7 +262,7 @@ export const UploadCsvFile = ({
                                         }
                                     });
                                     if (hasEmptyStockCode) {
-                                        displayToast({ message: "StockCode is empty. Please check the CSV before uploading.", type: "error" });
+                                        displayToast({ message: "StockCode is empty in some row. Please check the CSV before uploading.", type: "error", messageCase: "normal" });
                                         return;
                                     }
                                     else {
@@ -272,9 +272,12 @@ export const UploadCsvFile = ({
                                             csvArray,
                                             { method: 'POST', encType: 'application/json' }
                                         );
+                                        setDialogState((previousState) => ({
+                                            ...previousState,
+                                            isUploadCSVDialogOpen: false,
+                                        }));
                                     }
                                 }
-
                             }}
                         >
                             Import

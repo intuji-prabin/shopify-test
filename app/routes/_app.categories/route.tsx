@@ -46,7 +46,6 @@ export interface CategoryType {
 
 export const action = async ({ request, context }: ActionFunctionArgs) => {
   const accessTocken = (await getAccessToken(context)) as string;
-  console.log("Action called");
   const messageSession = await getMessageSession(request);
   const contentType = request.headers.get('Content-Type');
   if (contentType === 'application/json') {
@@ -97,7 +96,6 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
 export default function CategoriesPage() {
   const { handleScroll } = useScroll('categories-menu');
   const { categoriesDetail } = useLoaderData<typeof loader>();
-  const [csvToArray, setCsvToArray] = useState<CSVFileType[]>([]);
 
   useEffect(() => {
     const handleScroll: EventListener = () => {
@@ -143,7 +141,7 @@ export default function CategoriesPage() {
             className="capitalize"
             title="Categories"
           />
-          <UploadCsvFile setCsvToArray={setCsvToArray} />
+          <UploadCsvFile />
         </div>
       </section>
       <section
