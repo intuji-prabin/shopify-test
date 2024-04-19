@@ -1,5 +1,6 @@
+import { useSubmit } from '@remix-run/react';
 import { withZod } from '@remix-validated-form/with-zod';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ValidatedForm, useIsValid } from 'remix-validated-form';
 import { z } from 'zod';
 import { Ordertrack } from '~/components/icons/orderStatus';
@@ -16,7 +17,7 @@ import { TRACK_AN_ORDERID } from '~/lib/constants/general.constant';
 import { Routes } from '~/lib/constants/routes.constent';
 import { ConfirmationInput } from '~/routes/_app.team/confirmation-form';
 import { useHamburgerMenu } from './HamburgerMenuContext';
-import { useSubmit } from '@remix-run/react';
+import { Label } from '~/components/ui/label';
 
 const TrackAnOrderFormValidator = z.object({
   trackAnOrderId:
@@ -67,6 +68,9 @@ export function TrackAnOrderButton() {
           }}
           method='POST' action={Routes.TRACK_AN_ORDER}>
           <div className="flex flex-col gap-1 px-4 pt-4 pb-2 border-[1px] border-t-grey-100 border-b-0 border-x-0 ">
+            <Label className="capitalize">
+              Purchase order number or order number
+            </Label>
             <ConfirmationInput name={TRACK_AN_ORDERID} placeholder="Order Number" />
           </div>
           <DialogFooter className="block p-4">
