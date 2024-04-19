@@ -16,7 +16,6 @@ export async function getProductDetails(customerId: string, handle: string) {
       },
     );
     const response = await results.json();
-    // console.log('response', response);
     if (response?.errors) {
       throw new Error('Something went wrong');
     }
