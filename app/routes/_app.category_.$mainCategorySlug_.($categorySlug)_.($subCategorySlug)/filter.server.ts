@@ -7,12 +7,14 @@ import {
   TOTAL,
 } from '~/lib/constants/product.session';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
-import {getProducts} from './product-list.server';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {getProducts} from './productList.server';
+import {AppLoadContext} from '@remix-run/server-runtime';
+import {Params} from '@remix-run/react';
 
 export const getFilterProduct = async (
-  context: any,
-  params: any,
+  context: AppLoadContext,
+  params: Params<string>,
   filterList: any,
   customerId: string,
 ) => {

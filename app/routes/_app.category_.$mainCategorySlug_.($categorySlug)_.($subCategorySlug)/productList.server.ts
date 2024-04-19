@@ -8,12 +8,13 @@ import {
   PRODUCT_STOCK_CODE_INFO,
 } from '~/lib/constants/product.session';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {PageInfo} from './route';
 
 type FilterItem = {
   key: string;
   value: string[];
 };
-type FilterType = FilterItem[];
+export type FilterType = FilterItem[];
 
 export async function getProducts(
   context: AppLoadContext,
@@ -50,14 +51,17 @@ export async function getProducts(
   }
 }
 
-const filterBuilder = (filterList: FilterType, stockCode: any) => {
+const filterBuilder = (
+  filterList: FilterType,
+  stockCode: {stockCode: string}[],
+) => {
   let filterData = `{}`;
   let cursor = null;
   let after = false;
   let before = false;
   let pageinfo = '';
   if (filterList.length > 0) {
-    filterList.map((item: any) => {
+    filterList.map((item) => {
       if (
         item?.key != 'page' &&
         item.key != 'after' &&
@@ -67,11 +71,11 @@ const filterBuilder = (filterList: FilterType, stockCode: any) => {
         item.key != 'pageNo'
       ) {
         if (item?.key == 'brand') {
-          item?.value.map((filterValue: any) => {
+          item?.value.map((filterValue) => {
             filterData = filterData + ` { productVendor: "${filterValue}"}`;
           });
         } else {
-          item?.value.map((filterValue: any) => {
+          item?.value.map((filterValue) => {
             filterData =
               filterData +
               ` { productMetafield: { namespace: "${item?.key}" key: "${item?.key}" value: "${filterValue}"}  }`;
@@ -88,7 +92,7 @@ const filterBuilder = (filterList: FilterType, stockCode: any) => {
   }
 
   if (stockCode.length > 0) {
-    stockCode.map((stList: any) => {
+    stockCode.map((stList) => {
       filterData =
         filterData +
         ` { productMetafield: { namespace: "stock_code" key: "stock_code" value: "${stList?.stockCode}"}  }`;
@@ -106,7 +110,48 @@ const filterBuilder = (filterList: FilterType, stockCode: any) => {
   return `filters: [${filterData}] ${pageinfo}`;
 };
 
-const formattedResponse = async (response: any, customerId: string) => {
+interface ProductResponse {
+  collection: {
+    id: string;
+    title: string;
+    handle: string;
+    products: {
+      pageInfo: PageInfo;
+      edges: {
+        node: {
+          handle: string;
+          id: string;
+          title: string;
+          stockCode: {
+            value: string;
+          };
+          uom: {
+            value: string;
+          };
+          featuredImage: {
+            url: string;
+          };
+          variants: {
+            edges: {
+              node: {
+                id: string;
+                sku: string;
+                moq: {
+                  value: number;
+                };
+              };
+            }[];
+          };
+        };
+      }[];
+    };
+  };
+}
+
+const formattedResponse = async (
+  response: ProductResponse,
+  customerId: string,
+) => {
   const productList = response?.collection;
 
   if (productList?.products?.edges.length < 1) {
@@ -118,7 +163,7 @@ const formattedResponse = async (response: any, customerId: string) => {
 
   let productIds = '';
 
-  productList?.products?.edges.map((items: any) => {
+  productList?.products?.edges.map((items) => {
     const productId = items?.node?.id.replace('gid://shopify/Product/', '');
     if (!productIds) {
       productIds = productId;
@@ -128,11 +173,10 @@ const formattedResponse = async (response: any, customerId: string) => {
     return true;
   });
   const priceList = await getPrices(productIds, customerId);
-  // console.log('firstPriceList', priceList);
 
-  const finalProductList: any = {
+  const finalProductList = {
     categorytitle: productList?.title,
-    productList: productList?.products?.edges.map((item: any) => {
+    productList: productList?.products?.edges.map((item) => {
       const productId = item?.node?.id.replace('gid://shopify/Product/', '');
       return {
         id: productId,
@@ -163,7 +207,19 @@ const formattedResponse = async (response: any, customerId: string) => {
   return finalProductList;
 };
 
-const productVariantDataFormat = (variant: any) => {
+interface ProductVariant {
+  edges: {
+    node: {
+      id: string;
+      sku: string;
+      moq: {
+        value: number;
+      };
+    };
+  }[];
+}
+
+const productVariantDataFormat = (variant: ProductVariant) => {
   const finalVariantData = {
     id: variant?.edges[0]?.node?.id,
     sku: variant?.edges[0]?.node?.sku,
@@ -172,11 +228,39 @@ const productVariantDataFormat = (variant: any) => {
   return finalVariantData;
 };
 
-export const getPrices = async (produdctId: string, customerId: string) => {
+interface PriceList {
+  status: boolean;
+  message: string;
+  errors: string;
+  payload: {
+    [key: string]: {
+      default_price: number;
+      compareAtPrice: number;
+      company_price: number;
+      currency: string;
+      priceRange: {
+        minQty: number;
+        maxQty: number;
+        price: number;
+      }[];
+      moq: number;
+      uom: string;
+      uomCode: string;
+      unitOfMeasure: {
+        unit: string;
+        code: string;
+        conversionFactor: number;
+      }[];
+      liked: boolean;
+    };
+  };
+}
+
+export const getPrices = async (productId: any, customerId: string) => {
   const customerID = customerId;
   const results = await useFetch<any>({
     method: AllowedHTTPMethods.GET,
-    url: `${ENDPOINT.PRODUCT.GET_PRICE}/${customerID}?productIds=${produdctId}`,
+    url: `${ENDPOINT.PRODUCT.GET_PRICE}/${customerID}?productIds=${productId}`,
   });
 
   if (results?.errors) {

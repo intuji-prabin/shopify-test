@@ -1,5 +1,5 @@
-import { Form, useSearchParams } from '@remix-run/react';
-import { Fragment, useState } from 'react';
+import { Form, useSearchParams, useSubmit } from '@remix-run/react';
+import { FormEvent, Fragment, useState } from 'react';
 import AccordionCustom from '~/components/ui/accordionCustom';
 import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
@@ -12,7 +12,6 @@ export function FilterForm({ filterList }: {
         filterValue: string[];
     }[]
 }) {
-    console.log("first", filterList)
     const filterdata = filterList;
 
     const [searchParams] = useSearchParams();
@@ -79,7 +78,7 @@ export function FilterForm({ filterList }: {
                             </div>
                         </div>
                         <div className="px-4">
-                            {otherFilters?.map((form: productData, index: number) => (
+                            {otherFilters?.map((form, index) => (
                                 <Fragment key={index}>
                                     <AccordionCustom
                                         accordianLabel={form.filterLabel}
@@ -191,32 +190,32 @@ export function FilterForm({ filterList }: {
     );
 }
 
-// export function SortByFilterForm() {
-//     const submit = useSubmit();
-//     const [queryParams] = useSearchParams();
-//     return (
-//         <Form
-//             method="get"
-//             onChange={(event: FormEvent<HTMLFormElement>) => {
-//                 submit(event.currentTarget);
-//             }}
-//             className="flex items-center space-x-2"
-//         >
-//             <label htmlFor="sort-by" className="pb-0 text-base text-grey-800">
-//                 Sort by :{' '}
-//             </label>
-//             <select
-//                 name="sort-by"
-//                 value={queryParams.get('sort-by') as string}
-//                 onChange={() => { }}
-//                 className="!p-2 !border-grey-500 text-base bg-transparent text-grey-800"
-//             >
-//                 <option value="">Sort By</option>
-//                 <option value="quantity-buy-available">Quantity Buy Available</option>
-//                 <option value="quantity-buy-unavailable">
-//                     Quantity Buy UnAvailable
-//                 </option>
-//             </select>
-//         </Form>
-//     );
-// }
+export function SortByFilterForm() {
+    const submit = useSubmit();
+    const [queryParams] = useSearchParams();
+    return (
+        <Form
+            method="get"
+            onChange={(event: FormEvent<HTMLFormElement>) => {
+                submit(event.currentTarget);
+            }}
+            className="flex items-center space-x-2"
+        >
+            <label htmlFor="sort-by" className="pb-0 text-base text-grey-800">
+                Sort by :{' '}
+            </label>
+            <select
+                name="sort-by"
+                value={queryParams.get('sort-by') as string}
+                onChange={() => { }}
+                className="!p-2 !border-grey-500 text-base bg-transparent text-grey-800"
+            >
+                <option value="">Sort By</option>
+                <option value="quantity-buy-available">Quantity Buy Available</option>
+                <option value="quantity-buy-unavailable">
+                    Quantity Buy UnAvailable
+                </option>
+            </select>
+        </Form>
+    );
+}

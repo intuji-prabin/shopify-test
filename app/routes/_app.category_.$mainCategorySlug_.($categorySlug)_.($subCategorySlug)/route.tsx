@@ -1,5 +1,5 @@
 import { Link, NavLink, Params, isRouteErrorResponse, json, useLoaderData, useRouteError } from '@remix-run/react';
-import { AppLoadContext, LoaderFunctionArgs } from '@remix-run/server-runtime';
+import { ActionFunctionArgs, AppLoadContext, LoaderFunctionArgs } from '@remix-run/server-runtime';
 import useEmblaCarousel, { EmblaCarouselType } from 'embla-carousel-react';
 import { useCallback, useEffect, useState } from 'react';
 import { LeftArrow } from '~/components/icons/left';
@@ -8,13 +8,19 @@ import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
 import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
 import { Routes } from '~/lib/constants/routes.constent';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getCategoryList } from '../_app.categories/route';
 import { getFilterProduct } from './filter.server';
-import { FilterForm } from './filterForm';
+import { FilterForm, SortByFilterForm } from './filterForm';
 import { getProductFilterList } from './productFilter.server';
 import { getProducts } from './productList.server';
+import { ProductCard } from '~/components/ui/product-card';
+import PaginationSimple from '~/components/ui/pagination-simple';
+import { PAGE_LIMIT } from '../_app.promotions/promotion-constants';
+import { getMessageSession, messageCommitSession, setErrorMessage, setSuccessMessage } from '~/lib/utils/toast-session.server';
+import { addProductToCart } from '../_app.product_.$productSlug/product.server';
+import { addToWishlist, removeFromWishlist } from '../_app.product_.$productSlug/wishlist.server';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
     await isAuthenticate(context);
@@ -27,13 +33,164 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     return json({ productList, mainCategorySlug, categorySlug, subCategorySlug, categories });
 }
 
+export const action = async ({
+    request,
+    context,
+}: ActionFunctionArgs) => {
+    const messageSession = await getMessageSession(request);
+    const fromData = await request.formData();
+    switch (fromData.get("action")) {
+        case "addToCart": {
+            try {
+                const cartInfo = Object.fromEntries(fromData);
+                const accessTocken = (await getAccessToken(context)) as string;
+                const addToCart = await addProductToCart(
+                    cartInfo,
+                    accessTocken,
+                    context,
+                    request,
+                );
+                setSuccessMessage(messageSession, 'Item added to cart successfully');
+                return json(
+                    {},
+                    {
+                        headers: [
+                            ['Set-Cookie', await context.session.commit({})],
+                            ['Set-Cookie', await messageCommitSession(messageSession)],
+                        ],
+                    },
+                );
+            } catch (error) {
+                if (error instanceof Error) {
+                    console.log('this is err', error?.message);
+                    setErrorMessage(messageSession, error?.message);
+                    return json(
+                        {},
+                        {
+                            headers: [
+                                ['Set-Cookie', await context.session.commit({})],
+                                ['Set-Cookie', await messageCommitSession(messageSession)],
+                            ],
+                        },
+                    );
+                }
+                console.log('this is err');
+                setErrorMessage(
+                    messageSession,
+                    'Item not added to cart. Please try again later.',
+                );
+                return json(
+                    {},
+                    {
+                        headers: [
+                            ['Set-Cookie', await context.session.commit({})],
+                            ['Set-Cookie', await messageCommitSession(messageSession)],
+                        ],
+                    },
+                );
+            }
+        }
+        case "addToWishList": {
+            try {
+                const productInfo = Object.fromEntries(fromData);
+                await addToWishlist(productInfo, context, request);
+                setSuccessMessage(messageSession, 'Item added to wishlist successfully');
+                return json(
+                    {},
+                    {
+                        headers: [
+                            ['Set-Cookie', await context.session.commit({})],
+                            ['Set-Cookie', await messageCommitSession(messageSession)],
+                        ],
+                    },
+                );
+            } catch (error) {
+                if (error instanceof Error) {
+                    console.log('this is err', error?.message);
+                    setErrorMessage(messageSession, error?.message);
+                    return json(
+                        {},
+                        {
+                            headers: [
+                                ['Set-Cookie', await context.session.commit({})],
+                                ['Set-Cookie', await messageCommitSession(messageSession)],
+                            ],
+                        },
+                    );
+                }
+                console.log('this is err');
+                setErrorMessage(
+                    messageSession,
+                    'Item not added to wishlist. Please try again later.',
+                );
+                return json(
+                    {},
+                    {
+                        headers: [
+                            ['Set-Cookie', await context.session.commit({})],
+                            ['Set-Cookie', await messageCommitSession(messageSession)],
+                        ],
+                    },
+                );
+            }
+        }
+        case "removeFromWishList": {
+            try {
+                const productInfo = Object.fromEntries(fromData);
+                await removeFromWishlist(productInfo, context, request);
+                setSuccessMessage(messageSession, 'Item removed from wishlist successfully');
+                return json(
+                    {},
+                    {
+                        headers: [
+                            ['Set-Cookie', await context.session.commit({})],
+                            ['Set-Cookie', await messageCommitSession(messageSession)],
+                        ],
+                    },
+                );
+            } catch (error) {
+                if (error instanceof Error) {
+                    console.log('this is err', error?.message);
+                    setErrorMessage(messageSession, error?.message);
+                    return json(
+                        {},
+                        {
+                            headers: [
+                                ['Set-Cookie', await context.session.commit({})],
+                                ['Set-Cookie', await messageCommitSession(messageSession)],
+                            ],
+                        },
+                    );
+                }
+                console.log('this is err');
+                setErrorMessage(
+                    messageSession,
+                    'Item not removed from the wishlist. Please try again later.',
+                );
+                return json(
+                    {},
+                    {
+                        headers: [
+                            ['Set-Cookie', await context.session.commit({})],
+                            ['Set-Cookie', await messageCommitSession(messageSession)],
+                        ],
+                    },
+                );
+            }
+        }
+        default: {
+            throw new Error("Unknown action");
+        }
+    }
+};
+
 const linkStyles =
     'text-center basis-full border-b-2 inline-block duration-300 border-b-grey-50 cursor-pointer bg-grey-50 uppercase text-lg italic font-bold leading-6 text-grey-500 py-3 px-5 hover:bg-none';
 
 const route = () => {
     const { mainCategorySlug, categorySlug, subCategorySlug, categories, productList } =
         useLoaderData<typeof loader>();
-    console.log("first", productList)
+    const paginationInfo = productList?.results?.pageInfo;
 
     const backTitle = subCategorySlug
         ? subCategorySlug?.split('-').join(' ')
@@ -125,7 +282,7 @@ const route = () => {
                                             key={childCategory.id}
                                         >
                                             <NavLink
-                                                to={`/categories/${matchingCategory.identifier}/${subCategory?.identifier}/${childCategory?.identifier}`}
+                                                to={`/category/${matchingCategory.identifier}/${subCategory?.identifier}/${childCategory?.identifier}`}
                                                 data-index={index}
                                                 className={({ isActive, isPending }) =>
                                                     isPending
@@ -151,7 +308,7 @@ const route = () => {
                                             key={subCategory.id}
                                         >
                                             <NavLink
-                                                to={`/categories/${matchingCategory.identifier}/${subCategory?.identifier}`}
+                                                to={`/category/${matchingCategory.identifier}/${subCategory?.identifier}`}
                                                 data-index={index}
                                                 className={({ isActive, isPending }) =>
                                                     isPending
@@ -191,13 +348,74 @@ const route = () => {
                         <FilterForm filterList={productList?.productFilter} />
                     </div>
                 </div>
-                <div className="xl:col-start-2 xl:col-end-5">hello right</div>
+                <div className="xl:col-start-2 xl:col-end-5">
+                    {(productList?.results?.formattedData?.productList?.length > 0 && (
+                        <>
+                            <div className="flex flex-col justify-between gap-2 sm:items-center sm:flex-row">
+                                <p className="text-lg text-grey-700">
+                                    Products found for{' '}
+                                    <span className="font-medium">
+                                        “ {productList?.results?.formattedData?.categorytitle} ”
+                                    </span>
+                                </p>
+                                <SortByFilterForm />
+                            </div>
+                            <div className="grid gap-6 my-6 sm:grid-cols-2 lg:grid-cols-3">
+                                {productList?.results?.formattedData.productList?.map(
+                                    (product) => (
+                                        <ProductCard key={product.id} {...product} />
+                                    ),
+                                )}
+                            </div>
+                            <div className='flex flex-col justify-start w-full gap-3 px-6 py-4 border-t sm:items-center sm:justify-between sm:flex-row bg-neutral-white'>
+                                <PaginationSimple totalLength={
+                                    productList?.results?.formattedData?.productList?.length
+                                } paginationInfo={paginationInfo} page={productList?.page} pageSize={PAGE_LIMIT} />
+                            </div>
+                        </>
+                    )) || <h1>No products found</h1>}
+                </div>
             </div>
         </section>
     );
 };
 
 export default route;
+
+export interface ProductResult {
+    formattedData: FormattedData;
+    pageInfo: PageInfo;
+}
+export interface FormattedData {
+    categorytitle: string;
+    productList: ProductList[];
+}
+export interface ProductList {
+    id: number;
+    title: string;
+    handle: string;
+    stockCode?: string;
+    uom: string;
+    variants: Variants;
+    featuredImageUrl: string;
+    volumePrice: boolean;
+    companyPrice: number;
+    currency: string;
+    defaultPrice: number;
+    liked: boolean;
+    imageBackgroundColor?: string;
+}
+export interface Variants {
+    id: string;
+    sku: string;
+    moq: number | string;
+}
+export interface PageInfo {
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    startCursor: string;
+    endCursor: string;
+}
 
 export const getProductList = async (
     params: Params<string>,
@@ -209,7 +427,7 @@ export const getProductList = async (
         filterKey: string;
         filterValue: string[];
     }[];
-    results: any;
+    results: ProductResult;
     page: number;
 }> => {
     try {
