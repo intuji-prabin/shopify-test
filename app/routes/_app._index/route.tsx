@@ -2,7 +2,7 @@ import {
   useLoaderData,
   type MetaFunction,
 } from '@remix-run/react';
-import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
+import { json } from '@remix-run/server-runtime';
 import { type LoaderFunctionArgs } from '@shopify/remix-oxygen';
 import Carousel from '~/components/ui/carousel';
 import CtaHome from '~/components/ui/cta-home';
@@ -11,14 +11,13 @@ import ExpenditureCard from '~/components/ui/expenditureCard';
 import Profile from '~/components/ui/profile';
 import SpendCard from '~/components/ui/spend-card';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { getSlides } from '~/routes/_app._index/index.server';
 import {
   areaChartData,
   barChartData,
   doughnutChartData,
   lineChartData,
 } from '~/routes/_app._index/data-sets';
-import { getMessageSession, messageCommitSession, setErrorMessage } from '~/lib/utils/toast-session.server';
+import { getSlides } from '~/routes/_app._index/index.server';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Cigweld | Home' }];

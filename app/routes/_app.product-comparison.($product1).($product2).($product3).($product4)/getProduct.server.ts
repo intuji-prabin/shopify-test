@@ -1,5 +1,5 @@
 import {CONSTANT} from '~/lib/constants/product.session';
-import {getPrices} from '../_app.category_.$mainCategory.$categoryId_.$subCategoryId/product-list.server';
+import {getPrices} from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/productList.server';
 
 export async function getSingleProduct(
   context: any,

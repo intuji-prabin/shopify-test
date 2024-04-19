@@ -1,28 +1,27 @@
 import { Form, Link, useSubmit } from '@remix-run/react';
 import {
   ProductLoveRed,
-  ProductLoveWhite,
-  TooltipInfo,
+  ProductLoveWhite
 } from '~/components/icons/orderStatus';
 import { Button } from '~/components/ui/button';
 import { Price } from './price';
-
-export type ProductCardProps = ProductCardImageProps & ProductCardInfoProps;
+import { ProductList, Variants } from '~/routes/_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/route';
 
 export function ProductCard({
-  volumePrice,
+  id,
   title,
-  companyPrice,
-  defaultPrice,
+  handle,
+  stockCode,
+  uom,
   variants,
   featuredImageUrl,
-  imageBackgroundColor,
-  handle,
-  id,
-  uom,
+  volumePrice,
+  companyPrice,
   currency,
+  defaultPrice,
   liked,
-}: ProductCardProps) {
+  imageBackgroundColor
+}: ProductList) {
   return (
     <div className="bg-white single-product-card">
       <div className="relative h-full">
@@ -30,8 +29,8 @@ export function ProductCard({
           volumePrice={volumePrice}
           liked={liked}
           featuredImageUrl={featuredImageUrl}
-          imageBackgroundColor={imageBackgroundColor}
-          productId={id}
+          imageBackgroundColor={imageBackgroundColor ?? ''}
+          id={id}
         />
         <ProductCardInfo
           sku={variants?.sku}
@@ -50,32 +49,6 @@ export function ProductCard({
   );
 }
 
-type ProductCardInfoProps = {
-  variants: VariantType;
-  title: string;
-  defaultPrice?: string;
-  companyPrice?: string;
-  handle: string;
-  id: number;
-  uom: string;
-  currency: string;
-  volumePrice?: boolean;
-};
-
-type VariantType = {
-  sku: string;
-  id: number;
-  moq: number;
-};
-
-type ProductCardImageProps = {
-  liked: boolean;
-  imageBackgroundColor: string;
-  featuredImageUrl: string;
-  productId: number;
-  volumePrice: boolean;
-};
-
 export function ProductCardInfo({
   sku,
   productName,
@@ -87,9 +60,7 @@ export function ProductCardInfo({
   productVariantId,
   moq,
   currency,
-}: // buyPrice,
-  // rppPrice,
-  any) {
+}: Pick<ProductList, 'defaultPrice' | 'companyPrice' | 'handle' | 'id' | 'uom' | 'currency'> & Pick<Variants, 'moq' | 'sku'> & { productName: string } & { productVariantId: string }) {
   return (
     <div className="p-4">
       <div className="sm:pb-14">
@@ -97,14 +68,14 @@ export function ProductCardInfo({
           <p className="text-base font-medium text-primary-500 sku">
             SKU:&nbsp;{(sku && sku) || 'N/A'}
           </p>
-          <h5 className="text-lg italic font-bold leading-6 whitespace-normal h-12 text-grey-900 line-clamp-2 text-ellipsis">
+          <h5 className="h-12 text-lg italic font-bold leading-6 whitespace-normal text-grey-900 line-clamp-2 text-ellipsis">
             <Link to={`/product/${handle}`} title={productName}>{productName}</Link>
           </h5>
           <p className="text-sm text-grey-300">Minimum Order Quantity: {moq}</p>
         </div>
         <div className="pt-2">
           <Price currency={currency} price={companyPrice} />
-          <div className="border-b border-solid border-grey-50 pt-3 mb-3"></div>
+          <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
           <Price currency={currency} price={defaultPrice} variant="rrp" />
         </div>
         <div className="sm:absolute bottom-4 inset-x-4">
@@ -126,8 +97,8 @@ function ProductCardImage({
   volumePrice,
   liked,
   imageBackgroundColor,
-  productId,
-}: ProductCardImageProps) {
+  id,
+}: Pick<ProductList, 'featuredImageUrl' | 'volumePrice' | 'liked' | 'imageBackgroundColor' | 'id'>) {
   return (
     <div
       className={`relative px-11 py-[39px] flex justify-center border-grey-25 border-b-2 border-x-0 border-top-0 ${imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
@@ -139,7 +110,7 @@ function ProductCardImage({
         </div>
       )}
       <Form method={liked ? 'DELETE' : 'POST'} className="flex">
-        <input type="hidden" name="productId" value={productId} />
+        <input type="hidden" name="productId" value={id} />
         <button
           className="absolute top-2 right-2"
           value={liked ? 'removeFromWishList' : 'addToWishList'}
@@ -165,13 +136,7 @@ function ProductCardButtons({
   uom,
   productVariantId,
   moq,
-}: {
-  handle: string;
-  id: number;
-  uom: string;
-  productVariantId: string;
-  moq: number;
-}) {
+}: Pick<ProductList, 'handle' | 'id' | 'uom'> & Pick<Variants, 'moq'> & { productVariantId: string }) {
   const submit = useSubmit();
   const productVariantOnlyId = productVariantId.split('/').pop();
 
