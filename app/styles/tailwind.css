@@ -687,9 +687,6 @@ div[data-state='open'].fixed.inset-0 {
 .track-an-order .track-order {
   @apply shadow-[unset];
 }
-#track-an-order .error-msg {
-  @apply absolute p-px;
-}
 /* underline for lsubmenu  of reosurces in bottom header */
 .menus li:nth-child(7):hover ul li a h5 {
   text-decoration: underline;
