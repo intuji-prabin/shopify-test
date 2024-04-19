@@ -18,6 +18,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/ui/dialog';
+import {CSV_ROWS} from '~/lib/constants/general.constant';
+import {useFetcher} from '@remix-run/react';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -28,22 +30,23 @@ const ACCEPTED_FILE_TYPE = {
 };
 
 export type CSVFileType = {
-  sku: string;
-  quatity: string;
+  stockCode: string;
+  uom: string;
+  quantity: string;
 };
 
-export const UploadCsv = ({
-  setCsvToArray,
-}: {
-  setCsvToArray: React.Dispatch<React.SetStateAction<CSVFileType[]>>;
-}) => {
+export const UploadCsv = () => {
   const [isProgressBarShow, setIsProgressBarShow] = useState(false);
+
   const [file, setFile] = useState<string | null>(null);
+
   const [csvArray, setCsvArray] = useState<CSVFileType[]>([]);
+
   const [dialogState, setDialogState] = useState({
     isUploadCSVDialogOpen: false,
     isConfirmDialogOpen: false,
   });
+  const fetcher = useFetcher();
 
   const {acceptedFiles, fileRejections, getRootProps, getInputProps} =
     useDropzone({
@@ -99,6 +102,44 @@ export const UploadCsv = ({
     setCsvArray(newArray);
   };
 
+  const handleBulkOrderUpload = () => {
+    const requiredKeys = [CSV_ROWS.STOCKCODE, CSV_ROWS.UOM, CSV_ROWS.QUANTITY];
+
+    const missingKeys = requiredKeys.filter((key) => {
+      return !csvArray.some((obj) =>
+        Object.keys(obj).some((objKey) => objKey === key),
+      );
+    });
+
+    if (missingKeys.length > 0) {
+      displayToast({
+        message: `CSV format issue, missing: ${missingKeys.join(', ')}`,
+        type: 'error',
+        messageCase: 'normal',
+      });
+      return;
+    }
+
+    csvArray.forEach((item) => {
+      if (item.stockCode === '') {
+        displayToast({
+          message:
+            'StockCode is empty in some row. Please check the CSV before uploading.',
+          type: 'error',
+          messageCase: 'normal',
+        });
+        return;
+      }
+    });
+
+    fetcher.submit(csvArray, {method: 'POST', encType: 'application/json'});
+
+    setDialogState((previousState) => ({
+      ...previousState,
+      isUploadCSVDialogOpen: false,
+    }));
+  };
+
   useEffect(() => {
     const fileReader = new FileReader();
 
@@ -116,8 +157,6 @@ export const UploadCsv = ({
       fileReader.readAsText(acceptedFile);
     }
   }, [acceptedFiles]);
-
-  console.log('csv array', csvArray);
 
   return (
     <>
@@ -144,7 +183,6 @@ export const UploadCsv = ({
           }))
         }
       >
-        <DialogTrigger asChild></DialogTrigger>
         <DialogContent className="sm:max-w-[620px]">
           <DialogHeader>
             <DialogTitle>Upload CSV</DialogTitle>
@@ -228,14 +266,7 @@ export const UploadCsv = ({
             <Button
               type="submit"
               disabled={isProgressBarShow}
-              onClick={() => {
-                setDialogState((previousState) => ({
-                  ...previousState,
-                  isUploadCSVDialogOpen: false,
-                }));
-
-                setCsvToArray(csvArray);
-              }}
+              onClick={handleBulkOrderUpload}
             >
               Import
             </Button>
