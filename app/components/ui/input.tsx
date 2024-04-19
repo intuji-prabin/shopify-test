@@ -25,12 +25,6 @@ interface InputType extends React.ComponentPropsWithoutRef<'input'> {
   placeholder?: string;
   required?: boolean;
   icon?: any;
-  setValidationError?: React.Dispatch<
-    React.SetStateAction<{
-      isError: boolean;
-      message: string;
-    }>
-  >;
 }
 
 export const Input = ({
@@ -41,18 +35,9 @@ export const Input = ({
   icon,
   disabled,
   className,
-  setValidationError,
   ...props
 }: InputType) => {
   const { error, getInputProps } = useField(name);
-  useEffect(() => {
-    if (error) {
-      setValidationError && setValidationError({ isError: true, message: error });
-    }
-    else {
-      setValidationError && setValidationError({ isError: false, message: '' });
-    }
-  }, [error])
 
   return (
     <div>

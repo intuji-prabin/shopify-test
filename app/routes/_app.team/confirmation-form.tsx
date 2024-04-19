@@ -1,16 +1,16 @@
-import {useFetcher, useSubmit} from '@remix-run/react';
-import {withZod} from '@remix-validated-form/with-zod';
-import {ValidatedForm, useField, useIsValid} from 'remix-validated-form';
-import {z} from 'zod';
-import {DangerAlert} from '~/components/icons/alert';
-import {Button} from '~/components/ui/button';
-import {DialogClose} from '~/components/ui/dialog';
-import {Label} from '~/components/ui/label';
+import { useFetcher, useSubmit } from '@remix-run/react';
+import { withZod } from '@remix-validated-form/with-zod';
+import { ValidatedForm, useField, useIsValid } from 'remix-validated-form';
+import { z } from 'zod';
+import { DangerAlert } from '~/components/icons/alert';
+import { Button } from '~/components/ui/button';
+import { DialogClose } from '~/components/ui/dialog';
+import { Label } from '~/components/ui/label';
 
 const ConfirmationFormSchema = z.object({
   customerId: z.string().trim(),
   confirmation: z.enum(['Deactivate'], {
-    errorMap: (issue, ctx) => ({message: 'You must type Deactivate'}),
+    errorMap: (issue, ctx) => ({ message: 'You must type Deactivate' }),
   }),
 });
 
@@ -46,7 +46,7 @@ export default function ConfirmationForm({
           To confirm deactivation, type “Deactivate” below
         </Label>
         <ConfirmationInput name="confirmation" placeholder="type Deactivate" />
-        <div className="flex justify-end items-center space-x-2 pt-4">
+        <div className="flex items-center justify-end pt-4 space-x-2">
           <DialogClose asChild>
             <Button type="button" className="uppercase" variant="ghost">
               cancel
@@ -69,14 +69,14 @@ export default function ConfirmationForm({
   );
 }
 
-function ConfirmationInput({
+export function ConfirmationInput({
   name,
   placeholder,
 }: {
   name: string;
   placeholder: string;
 }) {
-  const {error, getInputProps} = useField(name, {
+  const { error, getInputProps } = useField(name, {
     validationBehavior: {
       initial: 'onChange',
       whenTouched: 'onChange',
@@ -87,7 +87,7 @@ function ConfirmationInput({
     <>
       <div className="relative">
         <input
-          {...getInputProps({id: name})}
+          {...getInputProps({ id: name })}
           placeholder={placeholder}
           className={`${error && 'invalid'} w-full`}
         />
