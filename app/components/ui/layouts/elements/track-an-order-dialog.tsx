@@ -1,6 +1,6 @@
 import { withZod } from '@remix-validated-form/with-zod';
-import { useState } from 'react';
-import { ValidatedForm } from 'remix-validated-form';
+import { useEffect, useState } from 'react';
+import { ValidatedForm, useIsValid } from 'remix-validated-form';
 import { z } from 'zod';
 import { Ordertrack } from '~/components/icons/orderStatus';
 import { Button } from '~/components/ui/button';
@@ -14,8 +14,9 @@ import {
 } from '~/components/ui/dialog';
 import { TRACK_AN_ORDERID } from '~/lib/constants/general.constant';
 import { Routes } from '~/lib/constants/routes.constent';
-import { Input } from '../../input';
+import { ConfirmationInput } from '~/routes/_app.team/confirmation-form';
 import { useHamburgerMenu } from './HamburgerMenuContext';
+import { useSubmit } from '@remix-run/react';
 
 const TrackAnOrderFormValidator = z.object({
   trackAnOrderId:
@@ -32,15 +33,13 @@ export type TrackAnOrderFormFieldNameType = keyof TrackAnOrderFormType;
 
 export function TrackAnOrderButton() {
   const { toggleMenu } = useHamburgerMenu();
-  const [validationError, setValidationError] = useState({ isError: false, message: '' });
   const [open, setOpen] = useState(false);
+  const isConfirm = useIsValid('trackOrder-form');
+  const submit = useSubmit();
 
-  const handleTrackOrder = () => {
-    if (validationError.isError) {
-      return;
-    }
+  const handleClick = () => {
     setOpen(false);
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -61,24 +60,20 @@ export function TrackAnOrderButton() {
             Track an order
           </DialogTitle>
         </DialogHeader>
-        <ValidatedForm id="track-an-order" validator={TrackAnOrderSchemaValidator} method='POST' action={Routes.TRACK_AN_ORDER}>
+        <ValidatedForm id="trackOrder-form" validator={TrackAnOrderSchemaValidator}
+          onSubmit={(_, event) => {
+            submit(event.currentTarget);
+            handleClick();
+          }}
+          method='POST' action={Routes.TRACK_AN_ORDER}>
           <div className="flex flex-col gap-1 px-4 pt-4 pb-2 border-[1px] border-t-grey-100 border-b-0 border-x-0 ">
-            <Input
-              required
-              label='Purchase Order Number Or Order Number'
-              type="text"
-              id="orderNumber"
-              name={TRACK_AN_ORDERID}
-              placeholder="Order Number"
-              setValidationError={setValidationError}
-              className="active:!border-grey-100 focus:!border-grey-100 hover:!border-grey-100 focus:bg-white active:bg-white hover:bg-white !bg-white"
-            />
+            <ConfirmationInput name={TRACK_AN_ORDERID} placeholder="Order Number" />
           </div>
           <DialogFooter className="block p-4">
             <Button
               type="submit"
               className="w-full text-sm italic font-bold leading-6 uppercase"
-              onClick={handleTrackOrder}
+              disabled={!isConfirm}
             >
               Track Order
             </Button>

@@ -49,21 +49,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 
 const route = () => {
-    const data = useActionData<ActionResponse>();
-    const error = data?.error ?? null;
     return (
         <div className="container order-error min-h-[calc(100vh_-_140px)] flex justify-center items-center">
-            {error ? (
-                <div className="space-y-2 text-center">
-                    <h3>Order number not found</h3>
-                    <div className="space-y-10">
-                        <p className="text-lg text-grey-800">Your order number was not found.</p>
-                        <TrackAnOrderButton />
-                    </div>
+            <div className="space-y-2 text-center">
+                <h3>Order number not found</h3>
+                <div className="space-y-10">
+                    <p className="text-lg text-grey-800">Your order number was not found.</p>
+                    <TrackAnOrderButton />
                 </div>
-            ) : (
-                <h1>Nothing found</h1>
-            )}
+            </div>
         </div>
     );
 }
