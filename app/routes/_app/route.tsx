@@ -32,6 +32,7 @@ import {
   getSessionData,
 } from '~/routes/_app/app.server';
 import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
+import {EVENTS} from '~/lib/constants/events.contstent';
 
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
@@ -91,7 +92,7 @@ export default function PublicPageLayout() {
   const wishlistCount = wishlistSession ?? 0;
 
   const userId = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
-    event: 'logout-event',
+    event: EVENTS.LOGOUT.NAME,
   });
 
   useEffect(() => {
@@ -141,10 +142,12 @@ const Layout = ({
           <BottomHeader categories={categories} />
         </header>
       ) : (
-        <MobileNav cartCount={cartCount}
+        <MobileNav
+          cartCount={cartCount}
           userDetails={userDetails}
           wishlistCount={wishlistCount}
-          pendingOrderCount={pedingOrderCount} />
+          pendingOrderCount={pedingOrderCount}
+        />
       )}
       <div className="mb-12">{children}</div>
 

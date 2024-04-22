@@ -5,22 +5,23 @@ import { useCallback, useEffect, useState } from 'react';
 import { LeftArrow } from '~/components/icons/left';
 import { BackButton } from '~/components/ui/back-button';
 import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
-import { Button } from '~/components/ui/button';
+import PaginationSimple from '~/components/ui/pagination-simple';
+import { ProductCard } from '~/components/ui/product-card';
 import { Separator } from '~/components/ui/separator';
 import { Routes } from '~/lib/constants/routes.constent';
 import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getMessageSession, messageCommitSession, setErrorMessage, setSuccessMessage } from '~/lib/utils/toast-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
+import { productBulkCart } from '../_app.categories/bulkOrder.server';
 import { getCategoryList } from '../_app.categories/route';
+import { addProductToCart } from '../_app.product_.$productSlug/product.server';
+import { addToWishlist, removeFromWishlist } from '../_app.product_.$productSlug/wishlist.server';
+import { PAGE_LIMIT } from '../_app.promotions/promotion-constants';
 import { getFilterProduct } from './filter.server';
 import { FilterForm, SortByFilterForm } from './filterForm';
 import { getProductFilterList } from './productFilter.server';
 import { getProducts } from './productList.server';
-import { ProductCard } from '~/components/ui/product-card';
-import PaginationSimple from '~/components/ui/pagination-simple';
-import { PAGE_LIMIT } from '../_app.promotions/promotion-constants';
-import { getMessageSession, messageCommitSession, setErrorMessage, setSuccessMessage } from '~/lib/utils/toast-session.server';
-import { addProductToCart } from '../_app.product_.$productSlug/product.server';
-import { addToWishlist, removeFromWishlist } from '../_app.product_.$productSlug/wishlist.server';
+import { BulkCsvUpload } from '~/components/ui/bulk-csv-upload';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
     await isAuthenticate(context);
@@ -37,13 +38,13 @@ export const action = async ({
     request,
     context,
 }: ActionFunctionArgs) => {
+    const accessTocken = (await getAccessToken(context)) as string;
     const messageSession = await getMessageSession(request);
     const fromData = await request.formData();
     switch (fromData.get("action")) {
         case "addToCart": {
             try {
                 const cartInfo = Object.fromEntries(fromData);
-                const accessTocken = (await getAccessToken(context)) as string;
                 const addToCart = await addProductToCart(
                     cartInfo,
                     accessTocken,
@@ -187,7 +188,7 @@ export const action = async ({
 const linkStyles =
     'text-center basis-full border-b-2 inline-block duration-300 border-b-grey-50 cursor-pointer bg-grey-50 uppercase text-lg italic font-bold leading-6 text-grey-500 py-3 px-5 hover:bg-none';
 
-const route = () => {
+const ProductListing = () => {
     const { mainCategorySlug, categorySlug, subCategorySlug, categories, productList } =
         useLoaderData<typeof loader>();
     const paginationInfo = productList?.results?.pageInfo;
@@ -266,7 +267,7 @@ const route = () => {
                     </Breadcrumb>
                 </div>
                 <div>
-                    <Button>upload order</Button>
+                    <BulkCsvUpload action='/bulkCsvUpload' />
                 </div>
             </div>
             <Separator className="my-2" />
@@ -380,7 +381,7 @@ const route = () => {
     );
 };
 
-export default route;
+export default ProductListing;
 
 export interface ProductResult {
     formattedData: FormattedData;

@@ -36,50 +36,70 @@ export async function action({context, request}: ActionFunctionArgs) {
 
   const customerId = userDetails.id.split('/').pop() as string;
 
-  const formData = await request.formData();
+  let body = '';
 
-  const action = formData.get('_action') as 'add_product';
+  try {
+    const contentType = request.headers.get('Content-Type');
 
-  switch (action) {
-    case 'add_product': {
-      try {
-        const response = await addProductToList({formData, customerId});
+    if (contentType === 'application/json') {
+      const jsonPayload = await request.json();
 
-        setSuccessMessage(messageSession, response.message);
+      body = JSON.stringify({products: jsonPayload});
+    } else {
+      const formData = await request.formData();
 
-        return redirect('/place-an-order/list', {
+      const action = formData.get('_action') as 'add_product';
+
+      switch (action) {
+        case 'add_product': {
+          const productId = formData.get('productId');
+          const quantity = formData.get('quantity');
+          const uom = formData.get('uom');
+
+          body = JSON.stringify({productId, quantity, uom});
+          break;
+        }
+        default:
+          break;
+      }
+    }
+
+    const response = await addProductToList({body, customerId});
+
+    setSuccessMessage(messageSession, response.message);
+
+    return redirect('/place-an-order/list', {
+      headers: {
+        'Set-Cookie': await messageCommitSession(messageSession),
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      setErrorMessage(messageSession, error.message);
+      return json(
+        {error},
+        {
           headers: {
             'Set-Cookie': await messageCommitSession(messageSession),
           },
-        });
-      } catch (error) {
-        if (error instanceof Error) {
-          setErrorMessage(messageSession, error.message);
-          return json(
-            {error},
-            {
-              headers: {
-                'Set-Cookie': await messageCommitSession(messageSession),
-              },
-            },
-          );
-        }
-        return json({error}, {status: 500});
-      }
+        },
+      );
     }
-    default:
-      break;
+    return json({error}, {status: 500});
   }
 }
 
-export default function BulkOrderPage({measurement}: {measurement?: string}) {
+export default function PlaceAnOrderPage() {
   return (
     <>
       <HeroBanner
         imageUrl={'/place-order.png'}
         sectionName={'PLACE AN ORDER'}
       />
-      <UploadSearchbar searchVariant="place_an_order" />
+      <UploadSearchbar
+        searchVariant="place_an_order"
+        action="/place-an-order"
+      />
       <Outlet />
     </>
   );
