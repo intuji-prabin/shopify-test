@@ -17,6 +17,7 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
 import {addProductToList} from '~/routes/_app.place-an-order/place-an-order.server';
+import {UploadCsv} from './upload-csv';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Place an Order'}];
@@ -35,6 +36,15 @@ export async function action({context, request}: ActionFunctionArgs) {
   const messageSession = await getMessageSession(request);
 
   const customerId = userDetails.id.split('/').pop() as string;
+
+  const contentType = request.headers.get('Content-Type');
+
+  if (contentType === 'application/json') {
+    const jsonPayload = await request.json();
+    console.log('json payload', jsonPayload);
+
+    return null;
+  }
 
   const formData = await request.formData();
 
@@ -80,6 +90,7 @@ export default function BulkOrderPage({measurement}: {measurement?: string}) {
         sectionName={'PLACE AN ORDER'}
       />
       <UploadSearchbar searchVariant="place_an_order" />
+      <UploadCsv />
       <Outlet />
     </>
   );
