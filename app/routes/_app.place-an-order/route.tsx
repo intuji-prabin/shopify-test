@@ -17,7 +17,6 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
 import {addProductToList} from '~/routes/_app.place-an-order/place-an-order.server';
-import {UploadCsv} from './upload-csv';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Place an Order'}];
@@ -30,6 +29,8 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 
 export async function action({context, request}: ActionFunctionArgs) {
   await isAuthenticate(context);
+
+  console.log('action function called');
 
   const {userDetails} = await getUserDetails(request);
 
@@ -82,15 +83,17 @@ export async function action({context, request}: ActionFunctionArgs) {
   }
 }
 
-export default function BulkOrderPage({measurement}: {measurement?: string}) {
+export default function PlaceAnOrderPage() {
   return (
     <>
       <HeroBanner
         imageUrl={'/place-order.png'}
         sectionName={'PLACE AN ORDER'}
       />
-      <UploadSearchbar searchVariant="place_an_order" />
-      <UploadCsv />
+      <UploadSearchbar
+        searchVariant="place_an_order"
+        action="/place-an-order"
+      />
       <Outlet />
     </>
   );
