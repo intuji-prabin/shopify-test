@@ -3,6 +3,7 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {TeamColumn} from '~/routes/_app.team/use-column';
 import {emitter} from '~/lib/utils/emitter.server';
+import {EVENTS} from '~/lib/constants/events.contstent';
 
 interface MetaField {
   key: string;
@@ -69,5 +70,5 @@ export async function updateStatus({
       status: 404,
     });
   }
-  emitter.emit('logout', customerId);
+  emitter.emit(EVENTS.LOGOUT.KEY, customerId);
 }
