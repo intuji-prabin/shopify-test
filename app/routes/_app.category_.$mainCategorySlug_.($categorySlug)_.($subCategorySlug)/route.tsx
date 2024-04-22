@@ -21,7 +21,7 @@ import { getFilterProduct } from './filter.server';
 import { FilterForm, SortByFilterForm } from './filterForm';
 import { getProductFilterList } from './productFilter.server';
 import { getProducts } from './productList.server';
-import { UploadCsvFile } from '../_app.categories/uploadCSV';
+import { BulkCsvUpload } from '~/components/ui/bulk-csv-upload';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
     await isAuthenticate(context);
@@ -41,52 +41,6 @@ export const action = async ({
     const accessTocken = (await getAccessToken(context)) as string;
     const messageSession = await getMessageSession(request);
     const fromData = await request.formData();
-    console.log("first action called");
-    const contentType = request.headers.get('Content-Type');
-    if (contentType === 'application/json') {
-        const jsonPayload = (await request.json()) as { stockCode: string; quantity: number; uom: string }[];
-        console.log("jsonPayload", jsonPayload)
-        try {
-            await productBulkCart(jsonPayload, context, accessTocken, request);
-            setSuccessMessage(messageSession, 'Item added to cart successfully');
-            return json(
-                {},
-                {
-                    headers: [
-                        ['Set-Cookie', await context.session.commit({})],
-                        ['Set-Cookie', await messageCommitSession(messageSession)],
-                    ],
-                },
-            );
-        } catch (error) {
-            if (error instanceof Error) {
-                console.log('this is err', error?.message);
-                setErrorMessage(messageSession, error?.message);
-                return json(
-                    {},
-                    {
-                        headers: [
-                            ['Set-Cookie', await context.session.commit({})],
-                            ['Set-Cookie', await messageCommitSession(messageSession)],
-                        ],
-                    },
-                );
-            }
-            setErrorMessage(
-                messageSession,
-                'Item not added to cart. Please try again later.',
-            );
-            return json(
-                {},
-                {
-                    headers: [
-                        ['Set-Cookie', await context.session.commit({})],
-                        ['Set-Cookie', await messageCommitSession(messageSession)],
-                    ],
-                },
-            );
-        }
-    }
     switch (fromData.get("action")) {
         case "addToCart": {
             try {
@@ -313,7 +267,7 @@ const ProductListing = () => {
                     </Breadcrumb>
                 </div>
                 <div>
-                    <UploadCsvFile />
+                    <BulkCsvUpload action='/bulkCsvUpload' />
                 </div>
             </div>
             <Separator className="my-2" />
