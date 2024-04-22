@@ -17,7 +17,6 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
 import {addProductToList} from '~/routes/_app.place-an-order/place-an-order.server';
-import {UploadCsv} from './upload-csv';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Place an Order'}];
@@ -37,60 +36,70 @@ export async function action({context, request}: ActionFunctionArgs) {
 
   const customerId = userDetails.id.split('/').pop() as string;
 
-  const contentType = request.headers.get('Content-Type');
+  let body = '';
 
-  if (contentType === 'application/json') {
-    const jsonPayload = await request.json();
-    console.log('json payload', jsonPayload);
+  try {
+    const contentType = request.headers.get('Content-Type');
 
-    return null;
-  }
+    if (contentType === 'application/json') {
+      const jsonPayload = await request.json();
 
-  const formData = await request.formData();
+      body = JSON.stringify({products: jsonPayload});
+    } else {
+      const formData = await request.formData();
 
-  const action = formData.get('_action') as 'add_product';
+      const action = formData.get('_action') as 'add_product';
 
-  switch (action) {
-    case 'add_product': {
-      try {
-        const response = await addProductToList({formData, customerId});
+      switch (action) {
+        case 'add_product': {
+          const productId = formData.get('productId');
+          const quantity = formData.get('quantity');
+          const uom = formData.get('uom');
 
-        setSuccessMessage(messageSession, response.message);
+          body = JSON.stringify({productId, quantity, uom});
+          break;
+        }
+        default:
+          break;
+      }
+    }
 
-        return redirect('/place-an-order/list', {
+    const response = await addProductToList({body, customerId});
+
+    setSuccessMessage(messageSession, response.message);
+
+    return redirect('/place-an-order/list', {
+      headers: {
+        'Set-Cookie': await messageCommitSession(messageSession),
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      setErrorMessage(messageSession, error.message);
+      return json(
+        {error},
+        {
           headers: {
             'Set-Cookie': await messageCommitSession(messageSession),
           },
-        });
-      } catch (error) {
-        if (error instanceof Error) {
-          setErrorMessage(messageSession, error.message);
-          return json(
-            {error},
-            {
-              headers: {
-                'Set-Cookie': await messageCommitSession(messageSession),
-              },
-            },
-          );
-        }
-        return json({error}, {status: 500});
-      }
+        },
+      );
     }
-    default:
-      break;
+    return json({error}, {status: 500});
   }
 }
 
-export default function BulkOrderPage({measurement}: {measurement?: string}) {
+export default function PlaceAnOrderPage() {
   return (
     <>
       <HeroBanner
         imageUrl={'/place-order.png'}
         sectionName={'PLACE AN ORDER'}
       />
-      <UploadSearchbar searchVariant="place_an_order" />
-      <UploadCsv />
+      <UploadSearchbar
+        searchVariant="place_an_order"
+        action="/place-an-order"
+      />
       <Outlet />
     </>
   );

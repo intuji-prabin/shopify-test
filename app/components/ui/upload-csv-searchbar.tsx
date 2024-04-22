@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react';
-import { useOutsideClick } from '~/hooks/useOutsideClick';
-import { PredictiveSearch, SearchVariant } from './predictive-search';
-import { BulkCsvUpload } from './bulk-csv-upload';
+import {useRef, useState} from 'react';
+import {useOutsideClick} from '~/hooks/useOutsideClick';
+import {PredictiveSearch, SearchVariant} from './predictive-search';
+import {BulkCsvUpload} from './bulk-csv-upload';
 
 export function ProductSearchBar({
   searchVariant,
@@ -44,15 +44,16 @@ export function ProductSearchBar({
 
 export default function UploadSearchbar({
   searchVariant,
+  action,
 }: {
   searchVariant: SearchVariant;
+  action: string;
 }) {
-
   return (
     <div className=" bg-primary-500">
       <div className="container flex flex-col items-center gap-6 py-6 sm:flex-row">
         <ProductSearchBar searchVariant={searchVariant} />
-        <BulkCsvUpload btnSecondary={true} action='/bulkCsvUpload' />
+        <BulkCsvUpload btnSecondary={true} action={action} />
       </div>
     </div>
   );
