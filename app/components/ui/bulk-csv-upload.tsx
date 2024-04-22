@@ -1,14 +1,14 @@
-import {useEffect, useState} from 'react';
-import {useDropzone} from 'react-dropzone';
-import {Button} from '~/components/ui/button';
-import {Separator} from '~/components/ui/separator';
-import {Alert, AlertDescription} from '~/components/ui/alert';
-import {InfoAlert} from '~/components/icons/alert';
-import {CircularProgressBar} from '~/components/ui/circular-progress-bar';
-import {displayToast} from '~/components/ui/toast';
-import {Delete} from '~/components/icons/delete';
-import {CSVIcon, CSVIconSmall} from '~/components/icons/csv-icon';
-import {ConfirmDeleteModal} from '~/components/ui/confirm-delete-modal';
+import { useEffect, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { Button } from '~/components/ui/button';
+import { Separator } from '~/components/ui/separator';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { InfoAlert } from '~/components/icons/alert';
+import { CircularProgressBar } from '~/components/ui/circular-progress-bar';
+import { displayToast } from '~/components/ui/toast';
+import { Delete } from '~/components/icons/delete';
+import { CSVIcon, CSVIconSmall } from '~/components/icons/csv-icon';
+import { ConfirmDeleteModal } from '~/components/ui/confirm-delete-modal';
 import {
   Dialog,
   DialogClose,
@@ -17,8 +17,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog';
-import {CSV_ROWS} from '~/lib/constants/general.constant';
-import {useFetcher} from '@remix-run/react';
+import { CSV_LIMIT, CSV_ROWS } from '~/lib/constants/general.constant';
+import { useFetcher } from '@remix-run/react';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -34,7 +34,7 @@ export type CSVFileType = {
   quantity: string;
 };
 
-export const BulkCsvUpload = () => {
+export const BulkCsvUpload = ({ btnSecondary, action }: { btnSecondary?: boolean; action: string; }) => {
   const [isProgressBarShow, setIsProgressBarShow] = useState(false);
 
   const [file, setFile] = useState<string | null>(null);
@@ -47,7 +47,7 @@ export const BulkCsvUpload = () => {
   });
   const fetcher = useFetcher();
 
-  const {acceptedFiles, fileRejections, getRootProps, getInputProps} =
+  const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
     useDropzone({
       accept: {
         ...ACCEPTED_FILE_TYPE,
@@ -57,7 +57,7 @@ export const BulkCsvUpload = () => {
       onDropAccepted: () => setIsProgressBarShow(true),
     });
 
-  const rejectionErrorMessage = fileRejections.map(({errors}) => {
+  const rejectionErrorMessage = fileRejections.map(({ errors }) => {
     return errors.map((error) => error.message)[0];
   })[0];
 
@@ -102,41 +102,54 @@ export const BulkCsvUpload = () => {
   };
 
   const handleBulkOrderUpload = () => {
+    if (csvArray.length > CSV_LIMIT) {
+      displayToast({ message: "The CSV uploaded is too large", type: "error", messageCase: "normal" });
+      return;
+    }
     const requiredKeys = [CSV_ROWS.STOCKCODE, CSV_ROWS.UOM, CSV_ROWS.QUANTITY];
 
+    const normalizedKeys = (key: string) => {
+      return key.replace(/[\s-_]/g, '').toLowerCase().trim();
+    }
+
+    function convertKeys(obj: { [key: string]: string }): { [key: string]: string } {
+      let newObj: { [key: string]: string } = {};
+      for (let key in obj) {
+        newObj[normalizedKeys(key)] = obj[key];
+      }
+      return newObj;
+    }
+
     const missingKeys = requiredKeys.filter((key) => {
-      return !csvArray.some((obj) =>
-        Object.keys(obj).some((objKey) => objKey === key),
-      );
+      const finalKey = normalizedKeys(key);
+      return !csvArray.some(obj => Object.keys(obj).some(objKey => normalizedKeys(objKey) === finalKey));
     });
 
     if (missingKeys.length > 0) {
-      displayToast({
-        message: `CSV format issue, missing: ${missingKeys.join(', ')}`,
-        type: 'error',
-        messageCase: 'normal',
-      });
+      console.log("Error: Missing keys - " + missingKeys.join(', '));
+      displayToast({ message: `CSV format issue, missing: ${missingKeys.join(', ')}`, type: "error", messageCase: "normal" });
       return;
-    }
-
-    csvArray.forEach((item) => {
-      if (item.stockCode === '') {
-        displayToast({
-          message:
-            'StockCode is empty in some row. Please check the CSV before uploading.',
-          type: 'error',
-          messageCase: 'normal',
-        });
+    } else {
+      console.log("All required keys are present.");
+      let hasEmptyStockCode = false;
+      csvArray.forEach(item => {
+        if (item.stockCode === "") {
+          hasEmptyStockCode = true;
+        }
+      });
+      if (hasEmptyStockCode) {
+        displayToast({ message: "StockCode is empty in some row. Please check the CSV before uploading.", type: "error", messageCase: "normal" });
         return;
+      } else {
+        let finalCsvArray = csvArray.map(item => convertKeys(item));
+        console.log("finalCsvArray", finalCsvArray);
+        fetcher.submit(
+          //@ts-ignore
+          finalCsvArray,
+          { method: 'POST', encType: 'application/json', action }
+        );
       }
-    });
-
-    fetcher.submit(csvArray, {method: 'POST', encType: 'application/json'});
-
-    setDialogState((previousState) => ({
-      ...previousState,
-      isUploadCSVDialogOpen: false,
-    }));
+    }
   };
 
   useEffect(() => {
@@ -157,11 +170,23 @@ export const BulkCsvUpload = () => {
     }
   }, [acceptedFiles]);
 
+  useEffect(() => {
+    fetcher.state !== "idle" ?
+      setDialogState((previousState) => ({
+        ...previousState,
+        isUploadCSVDialogOpen: true,
+      })) :
+      setDialogState((previousState) => ({
+        ...previousState,
+        isUploadCSVDialogOpen: false,
+      }))
+      ;
+  }, [fetcher.state])
   return (
     <>
       <Button
         variant="primary"
-        className="bg-secondary-500 w-full sm:w-[unset] py-4 px-8 font-bold italic leading-6 text-lg text-grey-800 md:min-w-[193px] max-h-14 hover:bg-grey-800 hover:text-white"
+        className={`${btnSecondary && "bg-secondary-500 py-4 px-8 font-bold italic leading-6 text-lg text-grey-800 md:min-w-[193px] max-h-14 hover:bg-grey-800 hover:text-white"}`}
         onClick={() =>
           setDialogState((previousState) => ({
             ...previousState,
@@ -233,7 +258,7 @@ export const BulkCsvUpload = () => {
                       <CSVIcon />
                     </span>
                     <p className="text-grey-900 text-lg leading-5.5">
-                      <span className="text-primary-500 font-medium">
+                      <span className="font-medium text-primary-500">
                         Select
                       </span>{' '}
                       a CSV file to upload{' '}
@@ -244,7 +269,7 @@ export const BulkCsvUpload = () => {
                 </div>
               </section>
               {typeof file === 'string' && (
-                <div className="flex items-center justify-between py-3 px-4 bg-primary-25">
+                <div className="flex items-center justify-between px-4 py-3 bg-primary-25">
                   <div className="flex items-center space-x-2">
                     <CSVIconSmall />
                     <p className="text-lg leading-5.5 text-grey-900">{file}</p>
@@ -264,10 +289,10 @@ export const BulkCsvUpload = () => {
             </DialogClose>
             <Button
               type="submit"
-              disabled={isProgressBarShow}
+              disabled={isProgressBarShow || fetcher.state != "idle"}
               onClick={handleBulkOrderUpload}
             >
-              Import
+              {fetcher.state != "idle" ? "Importing..." : "Import"}
             </Button>
           </DialogFooter>
         </DialogContent>
