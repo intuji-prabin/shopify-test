@@ -16,7 +16,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '~/components/ui/dialog';
 import {CSV_ROWS} from '~/lib/constants/general.constant';
 import {useFetcher} from '@remix-run/react';
@@ -35,7 +34,7 @@ export type CSVFileType = {
   quantity: string;
 };
 
-export const UploadCsv = () => {
+export const BulkCsvUpload = () => {
   const [isProgressBarShow, setIsProgressBarShow] = useState(false);
 
   const [file, setFile] = useState<string | null>(null);
