@@ -32,11 +32,18 @@ import {
   getSessionData,
 } from '~/routes/_app/app.server';
 import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
+<<<<<<< HEAD
 import {EVENTS} from '~/lib/constants/events.contstent';
+=======
+import { defineAbilitiesForAdmin, defineAbilitiesForUser } from '~/lib/helpers/roles';
+import { AbilityContext } from '~/lib/helpers/Can';
+
+>>>>>>> b4805ea (feat: added a role.ts to create and return ability; added Can.ts to provide different ability instaces to different part)
 
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
   const {userDetails} = await getUserDetails(request);
+  
   const sessionData = await getSessionData(userDetails, context);
   const categories = await getCagetoryList(context);
   const messageSession = await getMessageSession(request);
@@ -76,6 +83,32 @@ export async function loader({request, context}: ActionFunctionArgs) {
     },
   );
 }
+const roleData = {
+  "title": "Admin",
+  "value": "test",
+  "permissions": [
+      {
+          "id": 1,
+          "value": "view_team",
+          "title": "view team",
+          "key": "read"
+      },
+      {
+          "id": 2,
+          "value": "edit_team",
+          "title": "edit team",
+          "key": "edit"
+
+      },
+      {
+          "id": 3,
+          "value": "create_team",
+          "title": "create team",
+          "key": "create",
+
+      }
+  ]
+};
 
 export default function PublicPageLayout() {
   const {
@@ -90,17 +123,19 @@ export default function PublicPageLayout() {
 
   const cartCount = sessionCartInfo?.lineItems ?? 0;
   const wishlistCount = wishlistSession ?? 0;
-
+  // const ability = userDetails.meta.user_role.value !== 'admin' ? defineAbilitiesForUser(userDetails.meta.user_role.permissions) : defineAbilitiesForAdmin();
+  const ability = roleData.value !== 'admin' ? defineAbilitiesForUser(roleData.permissions) : defineAbilitiesForAdmin();
   const userId = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
     event: EVENTS.LOGOUT.NAME,
   });
-
   useEffect(() => {
     if (userId === userDetails.id) {
       submit({}, {method: 'POST', action: '/logout'});
     }
   }, [userId]);
   return (
+    <AbilityContext.Provider value={ability}>
+
     <Layout
       categories={categories}
       cartCount={cartCount}
@@ -110,6 +145,8 @@ export default function PublicPageLayout() {
     >
       <Outlet />
     </Layout>
+    </AbilityContext.Provider>
+
   );
 }
 
