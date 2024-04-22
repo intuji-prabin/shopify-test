@@ -86,7 +86,8 @@ export const loader = async ({
 };
 
 export default function route() {
-  const { product, productPage } = useLoaderData<typeof loader>();
+  const { product, productPage } = useLoaderData<any>();
+  console.log("first", product);
   // console.log("dfsdfdsf ", product)
   return (
     <ProductDetailPageWrapper>
@@ -102,7 +103,7 @@ export default function route() {
         </Breadcrumb>
       </div>
       <ProductInformation product={product} />
-      <ProductTab description={product?.description} />
+      <ProductTab description={product?.description} features={product?.features} packageContent={product?.packageContent} specification={product?.specification} download={product?.download} video={product?.video} />
       <ProductsRelatedProduct />
     </ProductDetailPageWrapper>
   );
