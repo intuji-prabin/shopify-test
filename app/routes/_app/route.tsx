@@ -32,13 +32,10 @@ import {
   getSessionData,
 } from '~/routes/_app/app.server';
 import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
-<<<<<<< HEAD
 import {EVENTS} from '~/lib/constants/events.contstent';
-=======
 import { defineAbilitiesForAdmin, defineAbilitiesForUser } from '~/lib/helpers/roles';
 import { AbilityContext } from '~/lib/helpers/Can';
 
->>>>>>> b4805ea (feat: added a role.ts to create and return ability; added Can.ts to provide different ability instaces to different part)
 
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
