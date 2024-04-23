@@ -71,6 +71,7 @@ export async function action({request, context}: ActionFunctionArgs) {
         res = await placeOrder(request, context);
         // console.log("orderPlacedResponseFInal", res);
         const shopifyID = res?.shopifyOrderId ? '/' + res?.shopifyOrderId : '';
+
         setSuccessMessage(messageSession, 'Order placed successfully');
         return redirect(Routes.ORDER_SUCCESSFUL + shopifyID, {
           headers: [
