@@ -28,7 +28,7 @@ export function ConfirmDeleteModal({
         }))
       }
     >
-      <DialogContent>
+      <DialogContent className="max-w-[360px]">
         <figure>
           <div className="flex justify-center items-center mb-4">
             <span className="h-10 w-10 bg-semantic-danger-100 flex justify-center items-center rounded-full">
