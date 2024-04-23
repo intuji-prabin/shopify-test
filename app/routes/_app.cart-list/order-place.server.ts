@@ -24,10 +24,11 @@ export const placeOrder = async (request: Request, context: any) => {
       userDetails?.id,
       allData,
     );
+
     if (orderPlaceResponse?.status === false) {
       throw new Error('Order not placed due to server error');
     }
-    const shopifyOrderId = orderPlaceResponse?.ShopifyID;
+    const shopifyOrderId = orderPlaceResponse?.orderId;
 
     const lineItems = [] as any;
     cartList.map((items: any) => {
