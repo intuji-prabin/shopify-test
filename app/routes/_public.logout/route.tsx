@@ -14,11 +14,14 @@ export async function action({context, request}: ActionFunctionArgs) {
         customerAccessToken: accessToken,
       },
     });
+
     return logout({context, request});
   } catch (error) {
     return json({error}, {status: 400});
   }
 }
+
+
 
 export const LOGOUT_MUTATION = `#graphql 
 mutation customerAccessTokenDelete($customerAccessToken: String!) {

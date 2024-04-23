@@ -6,7 +6,7 @@ import {
   useSubmit,
 } from '@remix-run/react';
 import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useEventSource} from 'remix-utils/sse/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
@@ -34,13 +34,15 @@ import {
 import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
 import {EVENTS} from '~/lib/constants/events.contstent';
 import { defineAbilitiesForAdmin, defineAbilitiesForUser } from '~/lib/helpers/roles';
-import { AbilityContext } from '~/lib/helpers/Can';
+import { AbilityContext, DEFAULT_ABILITIES } from '~/lib/helpers/Can';
+import { LOCAL_STORAGE_KEYS } from '~/lib/constants/general.constant';
+import StorageService from '~/services/storage.service';
 
 
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
   const {userDetails} = await getUserDetails(request);
-  
+
   const sessionData = await getSessionData(userDetails, context);
   const categories = await getCagetoryList(context);
   const messageSession = await getMessageSession(request);
@@ -81,31 +83,298 @@ export async function loader({request, context}: ActionFunctionArgs) {
   );
 }
 const roleData = {
-  "title": "Admin",
-  "value": "test",
-  "permissions": [
-      {
-          "id": 1,
-          "value": "view_team",
-          "title": "view team",
-          "key": "read"
-      },
-      {
-          "id": 2,
-          "value": "edit_team",
-          "title": "edit team",
-          "key": "edit"
+  title: 'Admin',
+  value: 'admin',
+  permissions: [
+    {
+      id: 1,
+      value: 'view_team',
+      title: 'view team',
+      key: 'read',
+    },
+    {
+      id: 2,
+      value: 'edit_team',
+      title: 'edit team',
+      key: 'edit',
+    },
+    //     {
+    //         "id": 3,
+    //         "value": "create_team",
+    //         "title": "create team",
+    //         "key": "create",
 
-      },
-      {
-          "id": 3,
-          "value": "create_team",
-          "title": "create team",
-          "key": "create",
-
-      }
-  ]
+    //     }
+  ],
 };
+
+// Function to fetch role data with a 3-second timeout
+const fetchRoleDataWithTimeout = () => {
+  return new Promise<RoleData>((resolve, reject) => {
+    setTimeout(() => {
+      // Simulate role data fetched from an API
+      const roleData: RoleData = {
+        title: 'Admin',
+        value: 'test',
+        permissions: [
+          {
+            id: 1,
+            value: 'customer_login',
+            title: 'Customer Login',
+            key: 'login',
+          },
+          {
+            id: 2,
+            value: 'password_reset',
+            title: 'Password Reset',
+            key: 'reset',
+          },
+          {
+            id: 3,
+            value: 'customer_logout',
+            title: 'Customer Logout',
+            key: 'logout',
+          },
+          {
+            id: 4,
+            value: 'edit_own_profile',
+            title: 'Edit Own Profile',
+            key: 'edit_profile',
+          },
+          {
+            id: 5,
+            value: 'edit_other_profile',
+            title: 'Edit Other Profile',
+            key: 'edit_other_profile',
+          },
+          {
+            id: 6,
+            value: 'change_role',
+            title: 'Change Role',
+            key: 'change_role',
+          },
+          {
+            id: 7,
+            value: 'change_status',
+            title: 'Change Status',
+            key: 'change_status',
+          },
+          {
+            id: 8,
+            value: 'view_team',
+            title: 'View Team',
+            key: 'read',
+          },
+          {
+            id: 9,
+            value: 'search_customers',
+            title: 'Search Customers',
+            key: 'search',
+          },
+          {
+            id: 10,
+            value: 'add_customer',
+            title: 'Add Customer',
+            key: 'add',
+          },
+          {
+            id: 11,
+            value: 'view_categories',
+            title: 'View Categories',
+            key: 'read_categories',
+          },
+          {
+            id: 12,
+            value: 'view_products',
+            title: 'View Products',
+            key: 'read_products',
+          },
+          {
+            id: 13,
+            value: 'view_product_price',
+            title: 'View Product Price',
+            key: 'read_product_price',
+          },
+          {
+            id: 14,
+            value: 'view_product_detail',
+            title: 'View Product Detail',
+            key: 'read_product_detail',
+          },
+          {
+            id: 15,
+            value: 'view_operating_manual',
+            title: 'View Operating Manual',
+            key: 'read_operating_manual',
+          },
+          {
+            id: 16,
+            value: 'view_service_manual',
+            title: 'View Service Manual',
+            key: 'read_service_manual',
+          },
+          {
+            id: 17,
+            value: 'add_to_cart',
+            title: 'Add to Cart',
+            key: 'add_to_cart',
+          },
+          {
+            id: 18,
+            value: 'add_to_cart_bulk',
+            title: 'Add to Cart Bulk',
+            key: 'add_to_cart_bulk',
+          },
+          {
+            id: 19,
+            value: 'add_to_wishlist',
+            title: 'Add to Wishlist',
+            key: 'add_to_wishlist',
+          },
+          {
+            id: 20,
+            value: 'add_wishlist_to_cart',
+            title: 'Add Wishlist to Cart',
+            key: 'add_wishlist_to_cart',
+          },
+          {
+            id: 21,
+            value: 'place_order',
+            title: 'Place Order',
+            key: 'place_order',
+          },
+          {
+            id: 22,
+            value: 'upload_bulk_order',
+            title: 'Upload Bulk Order',
+            key: 'upload_bulk_order',
+          },
+          {
+            id: 23,
+            value: 'search_products',
+            title: 'Search Products',
+            key: 'search_products',
+          },
+          {
+            id: 24,
+            value: 'add_product_list_to_cart',
+            title: 'Add Product List to Cart',
+            key: 'add_product_list_to_cart',
+          },
+          {
+            id: 25,
+            value: 'save_product_list_to_group',
+            title: 'Save Product List to Group',
+            key: 'save_product_list_to_group',
+          },
+          {
+            id: 26,
+            value: 'add_group_to_cart',
+            title: 'Add Group to Cart',
+            key: 'add_group_to_cart',
+          },
+          {
+            id: 27,
+            value: 'view_orders',
+            title: 'View Orders',
+            key: 'read_orders',
+          },
+          {
+            id: 28,
+            value: 'reorder_order',
+            title: 'Reorder Order',
+            key: 'reorder_order',
+          },
+          {
+            id: 29,
+            value: 'view_company_statements',
+            title: 'View Company Statements',
+            key: 'read_company_statements',
+          },
+          {
+            id: 30,
+            value: 'view_company_invoices',
+            title: 'View Company Invoices',
+            key: 'read_company_invoices',
+          },
+          {
+            id: 31,
+            value: 'recieve_user_notifications',
+            title: 'Receive User Notifications',
+            key: 'receive_user_notifications',
+          },
+          {
+            id: 32,
+            value: 'recieve_company_notifications',
+            title: 'Receive Company Notifications',
+            key: 'receive_company_notifications',
+          },
+          {
+            id: 33,
+            value: 'track_order',
+            title: 'Track Order',
+            key: 'track_order',
+          },
+          {
+            id: 34,
+            value: 'view_tracked_order_detail',
+            title: 'View Tracked Order Detail',
+            key: 'read_tracked_order_detail',
+          },
+          {
+            id: 35,
+            value: 'view_tracked_order_price',
+            title: 'View Tracked Order Price',
+            key: 'read_tracked_order_price',
+          },
+          {
+            id: 36,
+            value: 'customize_promotions',
+            title: 'Customize Promotions',
+            key: 'customize_promotions',
+          },
+          {
+            id: 37,
+            value: 'edit_promotions',
+            title: 'Edit Promotions',
+            key: 'edit_promotions',
+          },
+          {
+            id: 38,
+            value: 'export_promotions',
+            title: 'Export Promotions',
+            key: 'export_promotions',
+          },
+          {
+            id: 39,
+            value: 'delete_promotions',
+            title: 'Delete Promotions',
+            key: 'delete_promotions',
+          },
+          {
+            id: 40,
+            value: 'open_ticket',
+            title: 'Open Ticket',
+            key: 'open_ticket',
+          },
+        ],
+      };
+      resolve(roleData);
+    }, 5000); // Simulate 3-second delay
+  });
+};
+
+// Define an interface for role data
+interface RoleData {
+  title: string;
+  value: string;
+  permissions: {
+    id: number;
+    value: string;
+    title: string;
+    key: string;
+  }[];
+}
 
 export default function PublicPageLayout() {
   const {
@@ -120,8 +389,46 @@ export default function PublicPageLayout() {
 
   const cartCount = sessionCartInfo?.lineItems ?? 0;
   const wishlistCount = wishlistSession ?? 0;
-  // const ability = userDetails.meta.user_role.value !== 'admin' ? defineAbilitiesForUser(userDetails.meta.user_role.permissions) : defineAbilitiesForAdmin();
-  const ability = roleData.value !== 'admin' ? defineAbilitiesForUser(roleData.permissions) : defineAbilitiesForAdmin();
+  const [ability, setAbility] = useState(DEFAULT_ABILITIES);
+  const [loading, setLoading] = useState(true);
+
+  function getUserAbilities(roleData: any) {
+    if (roleData.value !== 'admin') {
+      return defineAbilitiesForUser(roleData.permissions);
+    } else {
+      return defineAbilitiesForAdmin();
+    }
+  }
+  
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const storageService = new StorageService(); // Assuming StorageService is a class
+      const permissions = storageService.get(LOCAL_STORAGE_KEYS.PERMISSIONS);
+      if (permissions) {
+        console.log("Here permissions is in local storage");
+        const userAbility = getUserAbilities(permissions);
+        setAbility(userAbility);
+       
+      }
+      else{
+        try {
+          const roleData = await fetchRoleDataWithTimeout(); // Fetch role data with timeout
+          // Define abilities based on fetched role data
+          const userAbility = getUserAbilities(roleData);
+          setAbility(userAbility);
+          storageService.set(LOCAL_STORAGE_KEYS.PERMISSIONS, roleData);
+        } catch (error) {
+          console.error('Error fetching role data:', error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const userId = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
     event: EVENTS.LOGOUT.NAME,
   });
@@ -132,18 +439,16 @@ export default function PublicPageLayout() {
   }, [userId]);
   return (
     <AbilityContext.Provider value={ability}>
-
-    <Layout
-      categories={categories}
-      cartCount={cartCount}
-      userDetails={userDetails}
-      wishlistCount={wishlistCount}
-      pedingOrderCount={pendingOrderCount}
-    >
-      <Outlet />
-    </Layout>
+      <Layout
+        categories={categories}
+        cartCount={cartCount}
+        userDetails={userDetails}
+        wishlistCount={wishlistCount}
+        pedingOrderCount={pendingOrderCount}
+      >
+        <Outlet />
+      </Layout>
     </AbilityContext.Provider>
-
   );
 }
 

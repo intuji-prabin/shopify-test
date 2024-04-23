@@ -30,6 +30,7 @@ import { getCustomerRolePermission } from '~/lib/customer-role/customer-role-per
 import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { BackButton } from '~/components/ui/back-button';
+import { Can } from '~/lib/helpers/Can';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Team List' }];
@@ -159,11 +160,14 @@ export default function TeamPage() {
           className="capitalize"
           title="My Team"
         />
+        {/* <Can I="create" a="create_team"> */}
+
         <Link to={Routes.TEAM_ADD}>
           <Button type="button" variant="primary">
             add a team member
           </Button>
         </Link>
+        {/* </Can> */}
       </div>
       <div className="flex items-center justify-between p-6 bg-neutral-white">
         <div className="w-[451px]">
