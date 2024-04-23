@@ -17,22 +17,40 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog';
-import {CSV_LIMIT, CSV_ROWS} from '~/lib/constants/general.constant';
+
 import {useFetcher} from '@remix-run/react';
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
-
-const ACCEPTED_FILE_TYPE = {
-  'text/csv': [],
-  'application/vnd.ms-excel': [],
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
-};
+import {CSV} from '~/lib/constants/csv.constent';
 
 export type CSVFileType = {
   stockCode: string;
   uom: string;
   quantity: string;
 };
+
+function dispalyErrorToast(message: string) {
+  displayToast({
+    message,
+    type: 'error',
+    messageCase: 'normal',
+  });
+}
+
+function normalizedKeys(key: string) {
+  return key
+    .replace(/[\s-_]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+function convertKeys(obj: {[key: string]: string}): {
+  [key: string]: string;
+} {
+  const newObj: {[key: string]: string} = {};
+  for (let key in obj) {
+    newObj[normalizedKeys(key)] = obj[key];
+  }
+  return newObj;
+}
 
 export const BulkCsvUpload = ({
   btnSecondary,
@@ -51,14 +69,15 @@ export const BulkCsvUpload = ({
     isUploadCSVDialogOpen: false,
     isConfirmDialogOpen: false,
   });
+
   const fetcher = useFetcher();
 
   const {acceptedFiles, fileRejections, getRootProps, getInputProps} =
     useDropzone({
       accept: {
-        ...ACCEPTED_FILE_TYPE,
+        ...CSV.ACCEPTED_FILE_TYPE,
       },
-      maxSize: MAX_FILE_SIZE,
+      maxSize: CSV.MAX_FILE_SIZE,
       multiple: false,
       onDropAccepted: () => setIsProgressBarShow(true),
     });
@@ -81,6 +100,7 @@ export const BulkCsvUpload = ({
       ...previousState,
       isConfirmDialogOpen: true,
     }));
+    setCsvArray([]);
   };
 
   /**
@@ -101,39 +121,16 @@ export const BulkCsvUpload = ({
       }, {} as CSVFileType);
       return obj;
     });
-
-    // Additional validatiion goes here if required
-
     setCsvArray(newArray);
   };
 
   const handleBulkOrderUpload = () => {
-    if (csvArray.length > CSV_LIMIT) {
-      displayToast({
-        message: 'The CSV uploaded is too large',
-        type: 'error',
-        messageCase: 'normal',
-      });
+    if (csvArray.length > CSV.LIMIT) {
+      dispalyErrorToast('The CSV uploaded is too large');
       return;
     }
-    const requiredKeys = [CSV_ROWS.STOCKCODE, CSV_ROWS.UOM, CSV_ROWS.QUANTITY];
 
-    const normalizedKeys = (key: string) => {
-      return key
-        .replace(/[\s-_]/g, '')
-        .toLowerCase()
-        .trim();
-    };
-
-    function convertKeys(obj: {[key: string]: string}): {
-      [key: string]: string;
-    } {
-      let newObj: {[key: string]: string} = {};
-      for (let key in obj) {
-        newObj[normalizedKeys(key)] = obj[key];
-      }
-      return newObj;
-    }
+    const requiredKeys = [CSV.ROWS.STOCKCODE, CSV.ROWS.UOM, CSV.ROWS.QUANTITY];
 
     const missingKeys = requiredKeys.filter((key) => {
       const finalKey = normalizedKeys(key);
@@ -143,39 +140,25 @@ export const BulkCsvUpload = ({
     });
 
     if (missingKeys.length > 0) {
-      console.log('Error: Missing keys - ' + missingKeys.join(', '));
-      displayToast({
-        message: `CSV format issue, missing: ${missingKeys.join(', ')}`,
-        type: 'error',
-        messageCase: 'normal',
-      });
+      dispalyErrorToast(`CSV format issue, missing: ${missingKeys.join(', ')}`);
       return;
-    } else {
-      console.log('All required keys are present.');
-      let hasEmptyStockCode = false;
-      csvArray.forEach((item) => {
-        if (item.stockCode === '') {
-          hasEmptyStockCode = true;
-        }
-      });
-      if (hasEmptyStockCode) {
-        displayToast({
-          message:
-            'StockCode is empty in some row. Please check the CSV before uploading.',
-          type: 'error',
-          messageCase: 'normal',
-        });
-        return;
-      } else {
-        let finalCsvArray = csvArray.map((item) => convertKeys(item));
-        console.log('finalCsvArray', finalCsvArray);
-        fetcher.submit(
-          //@ts-ignore
-          finalCsvArray,
-          {method: 'POST', encType: 'application/json', action},
-        );
-      }
     }
+
+    csvArray.forEach((item) => {
+      if (item.stockCode === '') {
+        dispalyErrorToast(
+          'StockCode is empty in some row. Please check the CSV before uploading.',
+        );
+        return;
+      }
+    });
+
+    const csvArrayPayload = csvArray.map((item) => convertKeys(item));
+    fetcher.submit(
+      //@ts-ignore
+      csvArrayPayload,
+      {method: 'POST', encType: 'application/json', action},
+    );
   };
 
   useEffect(() => {
