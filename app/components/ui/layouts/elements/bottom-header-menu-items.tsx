@@ -1,14 +1,14 @@
-import { Account } from '~/components/icons/account';
-import { Content } from '~/components/icons/content';
-import { Home } from '~/components/icons/home';
-import { MyTeam } from '~/components/icons/myteam';
-import { Invoice, Order, Statements } from '~/components/icons/orderStatus';
-import { Product } from '~/components/icons/product';
+import {Account} from '~/components/icons/account';
+import {Content} from '~/components/icons/content';
+import {Home} from '~/components/icons/home';
+import {MyTeam} from '~/components/icons/myteam';
+import {Invoice, Order, Statements} from '~/components/icons/orderStatus';
+import {Product} from '~/components/icons/product';
 import Promotions from '~/components/icons/promotions';
 import Resources from '~/components/icons/resources';
-import { Settings } from '~/components/icons/setting';
-import { Support } from '~/components/icons/support';
-import { Routes } from '~/lib/constants/routes.constent';
+import {Settings} from '~/components/icons/setting';
+import {Support} from '~/components/icons/support';
+import {Routes} from '~/lib/constants/routes.constent';
 import {
   AccountDropDownMobile,
   ContentDropdownMobile,
@@ -33,7 +33,7 @@ export const menuItemsData = [
         icon: <Order />,
       },
       {
-        title: 'Invoice',
+        title: 'Invoices',
         url: Routes.INVOICES,
         icon: <Invoice />,
       },
