@@ -247,21 +247,29 @@ export const BulkCsvUpload = ({
               </AlertDescription>
             </Alert>
           )}
+
           {isProgressBarShow ? (
-            <div className="flex items-center justify-center px-3 py-10">
-              <div className="">
-                <CircularProgressBar
-                  setIsProgressBarShow={setIsProgressBarShow}
-                />
-                <p className="text-grey-900">Uploading file...</p>
-                <Button type="button" variant="link" onClick={handleCancel}>
-                  cancel
-                </Button>
+            <section className="border border-dashed border-grey-300 min-h-60 bg-primary-50 mt-0 flex justify-center items-center">
+              <div className="px-3 py-10">
+                <div className="flex flex-col items-center">
+                  <CircularProgressBar
+                    setIsProgressBarShow={setIsProgressBarShow}
+                  />
+                  <p className="text-grey-900">Uploading file...</p>
+                  <Button
+                    type="button"
+                    variant="link"
+                    onClick={handleCancel}
+                    className="px-0 pb-0"
+                  >
+                    cancel
+                  </Button>
+                </div>
               </div>
-            </div>
+            </section>
           ) : (
             <>
-              <section className="border border-dashed border-grey-300">
+              <section className="border border-dashed border-grey-300 min-h-60 bg-primary-50 mt-0 flex justify-center items-center">
                 <div {...getRootProps()} className="px-3 py-10">
                   <input {...getInputProps()} accept="" />
                   <div className="text-center">
