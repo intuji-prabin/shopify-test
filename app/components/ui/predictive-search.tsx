@@ -12,6 +12,7 @@ import {
 } from '~/routes/_app.predictive-search/route';
 import {CompareSearch} from '../icons/compareSearch';
 import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
+import {Can} from '~/lib/helpers/Can';
 
 export type SearchVariant =
   | 'normal'
@@ -291,13 +292,15 @@ function renderProductItem(
             quantity > CART_QUANTITY_MAX ||
             isNaN(quantity) ? (
               <>
-                <Button
-                  variant="primary"
-                  className="w-full mt-2 cursor-not-allowed bg-grey-500"
-                  disabled
-                >
-                  Add to Cart
-                </Button>
+                <Can I="view" a="add_to_cart">
+                  <Button
+                    variant="primary"
+                    className="w-full mt-2 cursor-not-allowed bg-grey-500"
+                    disabled
+                  >
+                    Add to Cart
+                  </Button>
+                </Can>
                 <p className="text-xs text-red-500">
                   Minimum Order Quantity {product?.moq || 1}
                   <br />
@@ -305,6 +308,8 @@ function renderProductItem(
                 </p>
               </>
             ) : (
+              <Can I="view" a="add_to_cart">
+
               <Form
                 method="POST"
                 action="/predictive-search"
@@ -329,6 +334,7 @@ function renderProductItem(
                   Add to Cart
                 </Button>
               </Form>
+              </Can>
             )}
           </div>
         </div>

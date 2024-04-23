@@ -7,6 +7,7 @@ import * as Tabs from '@radix-ui/react-tabs';
 import ProductFeatures from './productFeatures';
 import ProductFaq from './productFaq';
 import AlternativeProduct from './ProductAlternateProducts';
+import { Can } from '~/lib/helpers/Can';
 
 type ProductTabType = {
   description: string;
@@ -96,12 +97,15 @@ const ProductTab = ({ description }: ProductTabType) => (
         >
           <h5 className="cursor-pointer">Brochure</h5>
         </Tabs.Trigger>
+        <Can I="view" a="view_operating_manual">
+
         <Tabs.Trigger
           className={`bg-white px-4 py-3 h-[45px] flex items-left justify-start text-[15px] text-grey-500 text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md data-[state=active]:text-primary-500 data-[state=active]:border-b-4 border-primary-500 data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:bottom-border-tabs data-[state=active]:focus:red outline-none cursor-default`}
           value="operating-tab"
         >
           <h5 className="cursor-pointer">Operating Manual</h5>
         </Tabs.Trigger>
+        </Can>
       </Tabs.List>
 
       {description &&
