@@ -8,9 +8,9 @@ import {
 import ProfileForm, {
   ProfileFormSchemaValidator,
 } from '~/routes/_app.profile/profile-form';
-import { isAuthenticate, logout } from '~/lib/utils/auth-session.server';
-import { getCustomerById } from '~/routes/_app.team_.$teamId/edit-team.server';
-import { getCustomerRolePermission } from '~/lib/customer-role/customer-role-permission';
+import {isAuthenticate, logout} from '~/lib/utils/auth-session.server';
+import {getCustomerById} from '~/routes/_app.team_.$teamId/edit-team.server';
+import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
 import {
   isRouteErrorResponse,
   useLoaderData,
@@ -22,11 +22,8 @@ import {
   getUserDetailsSession,
   userDetailsCommitSession,
 } from '~/lib/utils/user-session.server';
-import { validationError } from 'remix-validated-form';
-import {
-  CustomerUpdateInput,
-  MailingAddressInput,
-} from '@shopify/hydrogen/storefront-api-types';
+import {validationError} from 'remix-validated-form';
+import {CustomerUpdateInput} from '@shopify/hydrogen/storefront-api-types';
 import {
   getMessageSession,
   messageCommitSession,
@@ -36,41 +33,41 @@ import {
 import {
   LOGIN_MUTATION,
   getCustomerByEmail,
-} from '../_public.login/login.server';
-import { Routes } from '~/lib/constants/routes.constent';
-import { fileUpload } from '~/lib/utils/file-upload';
-import { LOGOUT_MUTATION } from '../_public.logout/route';
-import { SESSION_MAX_AGE } from '~/lib/constants/auth.constent';
-import { BackButton } from '~/components/ui/back-button';
+} from '~/routes/_public.login/login.server';
+import {Routes} from '~/lib/constants/routes.constent';
+import {fileUpload} from '~/lib/utils/file-upload';
+import {LOGOUT_MUTATION} from '~/routes/_public.logout/route';
+import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
+import {BackButton} from '~/components/ui/back-button';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Profile' }];
+  return [{title: 'Profile'}];
 };
 
-export async function loader({ context, request }: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
 
   const customerId = userDetails.id.split('/').pop() as string;
 
-  const customerDetails = await getCustomerById({ customerId });
+  const customerDetails = await getCustomerById({customerId});
 
   const roles = await getCustomerRolePermission(context);
 
-  return json({ customerDetails, roles, customerId });
+  return json({customerDetails, roles, customerId});
 }
 
-export async function action({ request, context }: ActionFunctionArgs) {
+export async function action({request, context}: ActionFunctionArgs) {
   const accessToken = await isAuthenticate(context);
 
-  const { session, storefront } = context;
+  const {session, storefront} = context;
 
   const messageSession = await getMessageSession(request);
 
   const userDetailsSession = await getUserDetailsSession(request);
 
-  const { userDetails } = (await getUserDetails(request)) as any;
+  const {userDetails} = (await getUserDetails(request)) as any;
 
   try {
     const result = await ProfileFormSchemaValidator.validate(
@@ -94,11 +91,11 @@ export async function action({ request, context }: ActionFunctionArgs) {
     const customer: CustomerUpdateInput = {};
 
     if (typeof oldPassword !== 'undefined' && oldPassword !== '') {
-      const { customerAccessTokenCreate }: any = await storefront.mutate(
+      const {customerAccessTokenCreate}: any = await storefront.mutate(
         LOGIN_MUTATION,
         {
           variables: {
-            input: { email: userDetails?.email, password: oldPassword },
+            input: {email: userDetails?.email, password: oldPassword},
           },
         },
       );
@@ -113,7 +110,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
     }
 
     if (typeof profileImage !== 'undefined' && customerId) {
-      const { status } = await fileUpload({
+      const {status} = await fileUpload({
         customerId,
         file: profileImage,
       });
@@ -215,17 +212,17 @@ export async function action({ request, context }: ActionFunctionArgs) {
       );
     }
 
-    return json({ error }, { status: 400 });
+    return json({error}, {status: 400});
   }
 }
 
 export default function ProfilePage() {
-  const { customerDetails, roles, customerId } = useLoaderData<typeof loader>();
+  const {customerDetails, roles, customerId} = useLoaderData<typeof loader>();
 
   return (
     <section className="container">
-      <div className='py-6'>
-        <BackButton title='My Profile' />
+      <div className="py-6">
+        <BackButton title="My Profile" />
       </div>
       <ProfileForm
         defaultValues={customerDetails}
