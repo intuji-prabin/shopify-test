@@ -1,3 +1,5 @@
+import { PERMISSIONS } from "../helpers/roles";
+
 // API response status
 export const HTTP_STATUS = Object.freeze({
   PENDING: 'pending',
@@ -8,7 +10,10 @@ export const HTTP_STATUS = Object.freeze({
 // Local storage keys
 export const LOCAL_STORAGE_KEYS = Object.freeze({
   ACCESSTOKEN: 'accessToken',
+  PERMISSIONS: 'permissions',
 });
+
+
 
 // Default image placeholder
 export const DEFAULT_IMAGE = Object.freeze({
