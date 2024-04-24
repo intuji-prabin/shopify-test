@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {useDropzone} from 'react-dropzone';
+import {ErrorCode, useDropzone} from 'react-dropzone';
 import {Button} from '~/components/ui/button';
 import {Separator} from '~/components/ui/separator';
 import {Alert, AlertDescription} from '~/components/ui/alert';
@@ -83,8 +83,17 @@ export const BulkCsvUpload = ({
     });
 
   const rejectionErrorMessage = fileRejections.map(({errors}) => {
-    return errors.map((error) => error.message)[0];
-  })[0];
+    switch (errors[0].code) {
+      case ErrorCode.FileInvalidType: {
+        return 'Invalid file type. File type must be text/csv, Excel, or Excel Open XML.';
+      }
+      case ErrorCode.FileTooLarge: {
+        return 'File is too large. Maximum file size is 5MB.';
+      }
+      default:
+        break;
+    }
+  });
 
   const handleCancel = () => {
     setIsProgressBarShow(false);
@@ -125,6 +134,8 @@ export const BulkCsvUpload = ({
   };
 
   const handleBulkOrderUpload = () => {
+    if (rejectionErrorMessage.length > 0) return;
+
     if (csvArray.length > CSV.LIMIT) {
       dispalyErrorToast('The CSV uploaded is too large');
       return;
@@ -190,6 +201,7 @@ export const BulkCsvUpload = ({
           isUploadCSVDialogOpen: false,
         }));
   }, [fetcher.state]);
+
   return (
     <>
       <Button
@@ -236,7 +248,7 @@ export const BulkCsvUpload = ({
                     className="px-0"
                     onClick={() =>
                       displayToast({
-                        message: 'Downloading sample file',
+                        message: 'Sample file downloaded successfully!',
                         type: 'success',
                       })
                     }
@@ -283,7 +295,7 @@ export const BulkCsvUpload = ({
                       a CSV file to upload{' '}
                     </p>
                     <p className="text-grey-500">or drag and drop it here</p>
-                    <p className="text-red-500">{rejectionErrorMessage}</p>
+                    <p className="text-red-500 pt-2">{rejectionErrorMessage}</p>
                   </div>
                 </div>
               </section>
