@@ -18,6 +18,12 @@ export function ConfirmDeleteModal({
   setDialogState,
   setFile,
 }: ConfirmDeleteModalTypes) {
+  const handleModalClose = () => {
+    setDialogState({
+      isUploadCSVDialogOpen: true,
+      isConfirmDialogOpen: false,
+    });
+  };
   return (
     <Dialog
       open={isConfirmDialogOpen}
@@ -49,12 +55,7 @@ export function ConfirmDeleteModal({
           <Button
             className="uppercase"
             variant="ghost"
-            onClick={() =>
-              setDialogState({
-                isUploadCSVDialogOpen: true,
-                isConfirmDialogOpen: false,
-              })
-            }
+            onClick={handleModalClose}
           >
             cancel
           </Button>
@@ -64,6 +65,7 @@ export function ConfirmDeleteModal({
               type="button"
               onClick={() => {
                 setFile && setFile(null);
+                handleModalClose();
               }}
             >
               yes,delete
