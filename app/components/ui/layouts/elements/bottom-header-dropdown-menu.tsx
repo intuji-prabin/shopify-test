@@ -21,8 +21,10 @@ export const NormalMenuList = ({
             a={
               component.title === 'Statements'
                 ? 'view_company_statements'
-                : component.title === 'Invoice'
+                : component.title === 'Invoices'
                 ? 'view_company_invoices'
+                : component.title === 'Certificate Generation'
+                ? 'conformance_certificates'
                 : 'view_orders'
             }
             key={component.title}
