@@ -118,7 +118,7 @@ export function ActionBar({
               update
             </Button>
           )}
-          <Can I="view" a="add_to_cart">
+          <Can I="view" a="add_group_to_cart">
             <Button
               variant={numberOfSelectedRows === 0 ? 'disabled' : 'primary'}
               className="min-w-[111px] min-h-10 p-0"

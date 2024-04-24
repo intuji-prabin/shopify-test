@@ -139,12 +139,28 @@ export default function DesktopFooter() {
                 Accounts
               </h4>
 
-              <ul className="flex flex-col gap-3">
+              <ul className="flex flex-col">
                 {accounts.map((account) => (
                   <Link to={account.url} key={account.id}>
-                    <li className="text-lg font-normal  leading-[29px] text-white">
-                      {account.title}
-                    </li>
+                    {account.title === 'Orders' ||
+                    account.title === 'Invoice' ? (
+                      <Can
+                        I="view"
+                        a={
+                          account.title === 'Orders'
+                            ? 'view_orders'
+                            : 'view_company_invoices'
+                        }
+                      >
+                        <li className="text-lg font-normal leading-[29px] text-white mb-3">
+                          {account.title}
+                        </li>
+                      </Can>
+                    ) : (
+                      <li className="text-lg font-normal leading-[29px] text-white mb-3">
+                        {account.title}
+                      </li>
+                    )}
                   </Link>
                 ))}
               </ul>
