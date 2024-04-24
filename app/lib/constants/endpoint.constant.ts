@@ -1,6 +1,4 @@
-// const BASE_URL = 'https://accept-option-peak-prepare.trycloudflare.com/api'; // Sanchay NGRok
-
-const BASE_URL = 'https://cig-backend.webo.dev/api'; // Live
+const BASE_URL = 'https://cig-backend.webo.dev/api';
 
 export const ENDPOINT = {
   AUTH: {
