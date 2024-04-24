@@ -230,38 +230,40 @@ export const BulkCsvUpload = ({
           }))
         }
       >
-        <DialogContent className="sm:max-w-[620px]">
-          <DialogHeader>
+        <DialogContent className="sm:max-w-[620px] px-0">
+          <DialogHeader className="px-6">
             <DialogTitle>Upload CSV</DialogTitle>
           </DialogHeader>
           <Separator />
           {!isProgressBarShow && (
-            <Alert className='border-0 rounded-none bg-semantic-info-100 before:content-[""] before:bg-semantic-info-500 before:inline-block before:h-full before:absolute before:w-1 before:left-0 before:top-0 py-2.5 [&>svg]:top-1/2 [&>svg]:-translate-y-1/2 [&>svg]:left-3'>
-              <InfoAlert />
-              <AlertDescription className="text-base !translate-y-0 !pl-6 flex justify-between items-center">
-                Ensure submissions match the sample file format.{' '}
-                <a href="/data/example.csv" download>
-                  <Button
-                    type="button"
-                    variant="link"
-                    size="small"
-                    className="px-0"
-                    onClick={() =>
-                      displayToast({
-                        message: 'Sample file downloaded successfully!',
-                        type: 'success',
-                      })
-                    }
-                  >
-                    download a sample file
-                  </Button>
-                </a>
-              </AlertDescription>
-            </Alert>
+            <div className="px-6">
+              <Alert className='border-0 rounded-none bg-semantic-info-100 before:content-[""] before:bg-semantic-info-500 before:inline-block before:h-full before:absolute before:w-1 before:left-0 before:top-0 py-2.5 [&>svg]:top-1/2 [&>svg]:-translate-y-1/2 [&>svg]:left-3'>
+                <InfoAlert />
+                <AlertDescription className="text-base !translate-y-0 !pl-6 flex justify-between items-center">
+                  Ensure submissions match the sample file format.{' '}
+                  <a href="/data/example.csv" download>
+                    <Button
+                      type="button"
+                      variant="link"
+                      size="small"
+                      className="px-0"
+                      onClick={() =>
+                        displayToast({
+                          message: 'Sample file downloaded successfully!',
+                          type: 'success',
+                        })
+                      }
+                    >
+                      download a sample file
+                    </Button>
+                  </a>
+                </AlertDescription>
+              </Alert>
+            </div>
           )}
 
           {isProgressBarShow ? (
-            <section className="border border-dashed border-grey-300 min-h-60 bg-primary-50 mt-0 flex justify-center items-center">
+            <section className="mx-6 border border-dashed border-grey-300 min-h-60 bg-primary-50 mt-0 flex justify-center items-center">
               <div className="px-3 py-10">
                 <div className="flex flex-col items-center">
                   <CircularProgressBar
@@ -281,7 +283,7 @@ export const BulkCsvUpload = ({
             </section>
           ) : (
             <>
-              <section className="border border-dashed border-grey-300 min-h-60 bg-primary-50 mt-0 flex justify-center items-center">
+              <section className="mx-6 border border-dashed border-grey-300 min-h-60 bg-primary-50 mt-0 flex justify-center items-center">
                 <div {...getRootProps()} className="px-3 py-10">
                   <input {...getInputProps()} accept="" />
                   <div className="text-center">
@@ -300,7 +302,7 @@ export const BulkCsvUpload = ({
                 </div>
               </section>
               {typeof file === 'string' && (
-                <div className="flex items-center justify-between px-4 py-3 bg-primary-25">
+                <div className="mx-6 flex items-center justify-between px-4 py-3 bg-primary-25">
                   <div className="flex items-center space-x-2">
                     <CSVIconSmall />
                     <p className="text-lg leading-5.5 text-grey-900">{file}</p>
@@ -312,7 +314,7 @@ export const BulkCsvUpload = ({
               )}
             </>
           )}
-          <DialogFooter>
+          <DialogFooter className="px-6">
             <DialogClose asChild>
               <Button className="uppercase" variant="ghost">
                 discard
