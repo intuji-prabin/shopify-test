@@ -16,9 +16,11 @@ export const placeOrder = async (request: Request, context: any) => {
       throw new Error('Cart not found');
     }
     const formData = await request.formData();
-    const allData = Object.fromEntries(formData);
+    const allData = Object.fromEntries(formData) as any;
     const cartList = await getCartList(context, request, sessionCartInfo, true);
-
+    allData.customerDetails = {
+      parentId: userDetails?.meta?.parent?.value && userDetails?.meta?.parent?.value !== 'null' ? userDetails?.meta?.parent?.value : userDetails?.id,
+    };
     const orderPlaceResponse = await orderCreate(
       cartList,
       userDetails?.id,

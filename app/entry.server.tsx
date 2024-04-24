@@ -28,6 +28,20 @@ export default async function handleRequest(
       'cdn.shopify.com',
       ...localDirectives,
     ],
+    frameSrc: [
+      "'self'",
+      'youtube.com',
+      'https://www.youtube.com/',
+      'pimcoredata.intuji.com',
+      'https://pimcoredata.intuji.com/',
+      ...localDirectives,
+    ],
+    mediaSrc: [
+      "'self'",
+      'pimcoredata.intuji.com',
+      'https://pimcoredata.intuji.com/',
+      ...localDirectives,
+    ],
     imgSrc: [
       "'self'",
       'data:',

@@ -5,17 +5,16 @@ import {
   CircleInformationMajor,
   Compare,
   ProductLoveRed,
-  ProductLoveWhite,
-  TooltipInfo
+  ProductLoveWhite
 } from '~/components/icons/orderStatus';
 import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
+import { Price } from '~/components/ui/price';
+import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import CarouselThumb from './carouselThumb';
 import { getProductPriceByQty } from './product-detail';
 import { ProductInfoTable } from './productInfoTable';
-import { Price } from '~/components/ui/price';
-import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
 
 export default function ProductInformation({ product }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
@@ -24,7 +23,7 @@ export default function ProductInformation({ product }: any) {
   return (
     <section className="bg-white">
       <div className="flex flex-col flex-wrap items-start gap-6 px-6 lg:gap-14 lg:flex-row">
-        {product?.imageUrl?.length > 0 && (
+        {product?.imageUrl && product?.imageUrl?.length > 0 && (
           <div className="w-full lg:w-[calc(50%_-_28px)] pt-6 pb-8">
             <CarouselThumb
               images={product?.imageUrl}
@@ -64,27 +63,6 @@ export default function ProductInformation({ product }: any) {
   );
 }
 
-type ProductDetailsProps = {
-  productName: string;
-  isFavorited: boolean;
-  productBuyPrice: number;
-  productRRP: number;
-  sku: string;
-  skuUnits: string;
-  unitOfMeasurement: string;
-  box: string;
-  isInStock: boolean;
-  defaultButton: string;
-  addToCart: string;
-  pickupStatus: string;
-  pickupAddress: string;
-  arrivalTime: string;
-  unitOfMeasure: {
-    unit: string;
-    conversion_factor: number;
-  };
-  priceRange?: any;
-};
 const ProductDetailsSection = ({
   productName,
   isFavorited,

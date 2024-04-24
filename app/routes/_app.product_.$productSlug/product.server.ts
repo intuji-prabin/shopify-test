@@ -7,6 +7,69 @@ import {getUserDetails} from '~/lib/utils/user-session.server';
 import {GET_CART_LIST} from '../_app.cart-list/cart.server';
 import {useFormatCart} from '~/hooks/useFormatCart';
 
+export interface ProductType {
+  id: string;
+  title: string;
+  tags: string[];
+  description: string;
+  warranty: string;
+  supplier: string;
+  specification: string;
+  packageContent: string;
+  features: string;
+  faq: faqType[];
+  brochure: brochureType[];
+  video: brochureType[];
+  download: brochureType[];
+  thumbnailImage: string;
+  serviceManual: brochureType[];
+  operationManual: brochureType[];
+  uom: string;
+  uomCode: string;
+  unitOfMeasure: uomType[];
+  currency: string;
+  imageUrl: imageType[];
+  brand: string;
+  liked: boolean;
+  variantId: string;
+  supplierSku: string;
+  variantTitle: string;
+  moq: string;
+  compareAtPrice: number;
+  originalPrice: number;
+  companyDefaultPrice: number;
+  priceRange: priceRangeType[];
+  productWeight: string;
+}
+
+type faqType = {
+  question: string;
+  answer: string;
+};
+
+type brochureType = {
+  url: string;
+  title: string;
+  text: string;
+};
+
+type imageType = {
+  url: string;
+  altText: string;
+};
+
+type uomType = {
+  unit: string;
+  code: string;
+  conversionFactor: number;
+};
+
+type priceRangeType = {
+  minQty: number;
+  maxQty: number;
+  price: number;
+};
+
 export async function getProductDetails(customerId: string, handle: string) {
   try {
     const results: any = await fetch(
@@ -16,19 +79,65 @@ export async function getProductDetails(customerId: string, handle: string) {
       },
     );
     const response = await results.json();
+    console.log('resultsresponse', response);
     if (response?.errors) {
       throw new Error('Something went wrong');
     }
     if (!response?.status) {
+      console.log('firststatus');
       throw new Error(response?.message);
     }
-    return response.payload;
+    const finalResponse = await formatResponse(response?.payload);
+    // return response.payload;
+    return finalResponse;
   } catch (error) {
     throw new Error(
       'Oops! Something went wrong. Please hold tight and try again in a little while. Thank you for your understanding.',
     );
   }
 }
+
+const formatResponse = async (response: ProductType) => {
+  const finalResponse = {
+    productInfo: {
+      id: response?.id,
+      title: response?.title,
+      tags: response?.tags,
+      thumbnailImage: response?.thumbnailImage,
+      uom: response?.uom,
+      uomCode: response?.uomCode,
+      unitOfMeasure: response?.unitOfMeasure,
+      imageUrl: response?.imageUrl,
+      liked: response?.liked,
+      variantId: response?.variantId,
+      supplierSku: response?.supplierSku,
+      variantTitle: response?.variantTitle,
+      moq: response?.moq,
+      compareAtPrice: response?.compareAtPrice,
+      originalPrice: response?.originalPrice,
+      companyDefaultPrice: response?.companyDefaultPrice,
+      priceRange: response?.priceRange,
+      currency: response?.currency,
+    },
+    productTab: {
+      description: response?.description,
+      warranty: response?.warranty,
+      productWeight: response?.productWeight,
+      supplier: response?.supplier,
+      specification: response?.specification,
+      packageContent: response?.packageContent,
+      features: response?.features,
+      faq: response?.faq,
+      brochure: response?.brochure,
+      video: response?.video,
+      download: response?.download,
+      serviceManual: response?.serviceManual,
+      operationManual: response?.operationManual,
+      brand: response?.brand,
+    },
+  };
+  return finalResponse;
+};
 
 export const addProductToCart = async (
   cartInfo: any,
