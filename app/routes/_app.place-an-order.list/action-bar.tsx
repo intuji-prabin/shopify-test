@@ -53,7 +53,7 @@ export function ActionBar({
               numberOfSelectedRows={numberOfSelectedRows}
             />
           </div>
-          <Can I="view" a="add_to_cart">
+          <Can I="view" a="add_product_list_to_cart">
             <Button
               variant={
                 table.getSelectedRowModel().rows.length === 0

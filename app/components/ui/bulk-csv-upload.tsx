@@ -20,6 +20,7 @@ import {
 
 import {useFetcher} from '@remix-run/react';
 import {CSV} from '~/lib/constants/csv.constent';
+import {Can} from '~/lib/helpers/Can';
 
 export type CSVFileType = {
   stockCode: string;
@@ -204,22 +205,23 @@ export const BulkCsvUpload = ({
 
   return (
     <>
-      <Button
-        variant="primary"
-        className={`${
-          btnSecondary &&
-          'bg-secondary-500 py-4 px-8 font-bold italic leading-6 text-lg text-grey-800 md:min-w-[193px] max-h-14 hover:bg-grey-800 hover:text-white'
-        } w-full sm:w-[unset]`}
-        onClick={() =>
-          setDialogState((previousState) => ({
-            ...previousState,
-            isUploadCSVDialogOpen: true,
-          }))
-        }
-      >
-        Upload Order
-      </Button>
-
+      <Can I="view" a="upload_bulk_order">
+        <Button
+          variant="primary"
+          className={`${
+            btnSecondary &&
+            'bg-secondary-500 py-4 px-8 font-bold italic leading-6 text-lg text-grey-800 md:min-w-[193px] max-h-14 hover:bg-grey-800 hover:text-white'
+          } w-full sm:w-[unset]`}
+          onClick={() =>
+            setDialogState((previousState) => ({
+              ...previousState,
+              isUploadCSVDialogOpen: true,
+            }))
+          }
+        >
+          Upload Order
+        </Button>
+      </Can>
       {/* Upload CSV Modal */}
       <Dialog
         open={dialogState.isUploadCSVDialogOpen}
