@@ -338,23 +338,60 @@ const fetchRoleDataWithTimeout = () => {
             key: 'view',
           },
           {
-            id: 40,
+            id: 41,
             value: 'view_company_information',
             title: 'View Company Information',
             key: 'view',
           },
           {
-            id: 40,
+            id: 42,
             value: 'view_shipping_addresses',
             title: 'View Shipping Addresses',
             key: 'view',
           },
           {
-            id: 40,
-            value: 'open_ticket',
-            title: 'Open Ticket',
+            id: 43,
+            value: 'view_promotional_banners',
+            title: 'View Promotional Banners',
             key: 'view',
           },
+          {
+            id: 44,
+            value: 'view_monthly_spending',
+            title: 'View Monthly Spending',
+            key: 'view',
+          },
+          {
+            id: 45,
+            value: 'view_total_spending',
+            title: 'View Total Spending',
+            key: 'view',
+          },
+          {
+            id: 46,
+            value: 'view_total_invoicing',
+            title: 'View Total Invoicing',
+            key: 'view',
+          },
+          {
+            id: 47,
+            value: 'view_expenditure',
+            title: 'View Expenditure',
+            key: 'view',
+          },
+          {
+            id: 48,
+            value: 'view_spending_list',
+            title: 'View Spending List',
+            key: 'view',
+          },
+          {
+            id: 49,
+            value: 'view_transaction_history',
+            title: 'View Transaction History',
+            key: 'view',
+          },
+
 
         ],
       };
