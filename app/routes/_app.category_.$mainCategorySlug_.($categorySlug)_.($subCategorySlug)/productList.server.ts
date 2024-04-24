@@ -178,6 +178,7 @@ const formattedResponse = async (
     categorytitle: productList?.title,
     productList: productList?.products?.edges.map((item) => {
       const productId = item?.node?.id.replace('gid://shopify/Product/', '');
+      const productPrices = priceList?.[productId];
       return {
         id: productId,
         title: item?.node?.title,
@@ -185,7 +186,12 @@ const formattedResponse = async (
         stockCode: item?.node?.stockCode?.value,
         uom: item?.node?.uom?.value,
         variants: productVariantDataFormat(item?.node?.variants),
-        featuredImageUrl: item?.node?.featuredImage?.url || DEFAULT_IMAGE.IMAGE,
+        featuredImageUrl:
+          productPrices &&
+          productPrices?.featuredImage &&
+          productPrices?.featuredImage != ''
+            ? productPrices?.featuredImage
+            : DEFAULT_IMAGE.IMAGE,
         volumePrice:
           priceList?.[productId] &&
           priceList?.[productId]?.priceRange.length > 0

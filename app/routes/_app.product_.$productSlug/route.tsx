@@ -1,4 +1,4 @@
-import { json, useLoaderData } from '@remix-run/react';
+import { isRouteErrorResponse, json, useLoaderData, useRouteError } from '@remix-run/react';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -16,43 +16,27 @@ import {
 } from '~/lib/utils/toast-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { GET_CART_LIST } from '../_app.cart-list/cart.server';
-import { addProductToCart, getProductDetails } from './product.server';
+import { ProductType, addProductToCart, getProductDetails } from './product.server';
 import ProductInformation from './productInformation';
-import ProductTab from './productTabs';
 import ProductsRelatedProduct from './productsRelatedProduct';
 import { addToWishlist, removeFromWishlist } from './wishlist.server';
+import ProductTab from './productTabs';
 
-export type SimilarProduct = {
-  name: string;
-  imageUrl: string;
-  isFavorited: boolean;
-  isQtyBuyAvailable: boolean;
-  productBuyPrice: number;
-  productRRP: number;
-  sku: string;
-};
+interface ProductDetailType {
+  productPage: string;
+  product: {
+    productInfo: ProductInfoType;
+    productTab: ProductTabType;
+  };
+}
 
-export type Product = {
-  title: string;
-  isFavorited: boolean;
-  productBuyPrice: number;
-  productRRP: number;
-  supplierSku: string;
-  unitOfMeasurement: string;
-  uom: string;
-  isInStock: boolean;
-  unitOfMeasure: {
-    unit: string;
-    conversion_factor: number;
-  }[];
-  bulkPricings: {
-    quantity: string;
-    price: number;
-  }[];
-  pickUpLocation: string;
-  pickUpReadyTime: string;
-  similarProducts: SimilarProduct[];
-};
+export interface ProductInfoType {
+  productInfo: Pick<ProductType, 'id' | 'title' | 'tags' | 'thumbnailImage' | 'uom' | 'uomCode' | 'unitOfMeasure' | 'imageUrl' | 'liked' | 'variantId' | 'supplierSku' | 'variantTitle' | 'moq' | 'compareAtPrice' | 'originalPrice' | 'companyDefaultPrice' | 'priceRange' | 'currency'>;
+}
+
+export interface ProductTabType {
+  productTab: Pick<ProductType, 'description' | 'warranty' | 'productWeight' | 'supplier' | 'specification' | 'packageContent' | 'features' | 'faq' | 'brochure' | 'video' | 'download' | 'serviceManual' | 'operationManual' | 'brand'>;
+}
 
 export const loader = async ({
   params,
@@ -86,8 +70,8 @@ export const loader = async ({
 };
 
 export default function route() {
-  const { product, productPage } = useLoaderData<any>();
-  console.log("first", product);
+  const { product, productPage } = useLoaderData<ProductDetailType>();
+  console.log("eeee", product);
   // console.log("dfsdfdsf ", product)
   return (
     <ProductDetailPageWrapper>
@@ -102,8 +86,8 @@ export default function route() {
           </BreadcrumbItem>
         </Breadcrumb>
       </div>
-      <ProductInformation product={product} />
-      <ProductTab description={product?.description} features={product?.features} packageContent={product?.packageContent} specification={product?.specification} download={product?.download} video={product?.video} />
+      <ProductInformation product={product?.productInfo} />
+      <ProductTab productTab={product?.productTab} />
       <ProductsRelatedProduct />
     </ProductDetailPageWrapper>
   );
@@ -264,3 +248,29 @@ export const action = async ({
     }
   }
 };
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div className="min-h-[calc(100vh_-_140px)] flex justify-center items-center">
+        <div className='text-center'>
+          <h1>
+            {error.status} {error.statusText}
+          </h1>
+        </div>
+      </div>
+    );
+  } else if (error instanceof Error) {
+    return (
+      <div className="min-h-[calc(100vh_-_140px)] flex justify-center items-center">
+        <div className='text-center'>
+          <h1>Opps</h1>
+          <p>{error.message}</p>
+        </div>
+      </div>
+    );
+  } else {
+    return <div className="min-h-[calc(100vh_-_140px)] flex justify-center items-center"><h1>Unknown Error</h1></div>;
+  }
+}
