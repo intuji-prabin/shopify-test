@@ -1,5 +1,4 @@
-// const BASE_URL = 'https://cig-backend.webo.dev/api';
-const BASE_URL = 'https://reductions-funeral-van-garlic.trycloudflare.com/api';
+const BASE_URL = 'https://cig-backend.webo.dev/api';
 
 export const ENDPOINT = {
   AUTH: {
