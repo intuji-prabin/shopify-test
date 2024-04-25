@@ -371,8 +371,7 @@ const fetchRoleDataWithTimeout = () => {
             title: 'View Shipping Addresses',
             key: 'view',
           },
-          {
-            id: 43,
+          {  id: 43,
             value: 'view_promotional_banners',
             title: 'View Promotional Banners',
             key: 'view',
