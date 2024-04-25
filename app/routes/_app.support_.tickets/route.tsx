@@ -29,6 +29,7 @@ import {
   useRouteError,
   useSearchParams,
 } from '@remix-run/react';
+import {Can} from '~/lib/helpers/Can';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Ticket List'}];
@@ -90,9 +91,11 @@ export default function TicketsPage() {
             </BreadcrumbItem>
           </Breadcrumb>
         </div>
-        <Link to={Routes.SUPPORT_TICKETS_CREATE}>
-          <Button>Open A Ticket</Button>
-        </Link>
+        <Can I="view" a="open_ticket">
+          <Link to={Routes.SUPPORT_TICKETS_CREATE}>
+            <Button>Open A Ticket</Button>
+          </Link>
+        </Can>
       </div>
       <div className="flex gap-2 flex-col bg-neutral-white p-4 border-b sm:flex-row sm:justify-between sm:items-center">
         <div className="sm:w-[451px]">
