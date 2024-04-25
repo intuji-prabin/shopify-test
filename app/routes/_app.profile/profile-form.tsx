@@ -38,7 +38,7 @@ type ProfileFormProps = {
   options: SelectInputOptions[];
 };
 
-const ProfileFormSchema = z
+export const ProfileFormSchema = z
   .object({
     profileImage: zfd.file(
       z

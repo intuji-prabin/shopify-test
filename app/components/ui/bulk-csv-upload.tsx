@@ -52,6 +52,32 @@ function convertKeys(obj: {[key: string]: string}): {
   return newObj;
 }
 
+/**
+ * @description Merge csv item with same stock code
+ */
+function mergeCSVItemWithSameStockCode(csvArray: CSVFileType[]) {
+  const mergedItem = csvArray.reduce((accumulator, item) => {
+    const key = `${item.stockCode}-${item.uom}`;
+
+    if (!accumulator[key]) {
+      accumulator[key] = {...item, quantity: Number(item.quantity)};
+    } else {
+      accumulator[key].quantity += Number(item.quantity);
+    }
+
+    return accumulator;
+  }, {} as Record<string, Omit<CSVFileType, 'quantity'> & {quantity: number}>);
+
+  const mergedArray = Object.values(mergedItem);
+
+  const finalArray = mergedArray.map((item) => ({
+    ...item,
+    quantity: item.quantity.toString(),
+  }));
+
+  return finalArray;
+}
+
 export const BulkCsvUpload = ({
   btnSecondary,
   action,
@@ -118,26 +144,52 @@ export const BulkCsvUpload = ({
    * @description converts the csv file to array of objects
    */
   const csvFileToArray = (csvString: string): void => {
-    const csvHeader = csvString.slice(0, csvString.indexOf('\n')).split(',');
-    const csvRows = csvString.slice(csvString.indexOf('\n') + 1).split('\n');
+    // Remove \r characters from csvString
+    const cleanedCsvString = csvString.replace(/\r/g, '');
 
-    const newArray = csvRows.map((i) => {
+    const csvHeader = cleanedCsvString
+      .slice(0, cleanedCsvString.indexOf('\n'))
+      .split(',');
+
+    const csvRows = cleanedCsvString
+      .slice(cleanedCsvString.indexOf('\n') + 1)
+      .split('\n')
+      .filter((item) => item !== '');
+
+    const rawCsvArray = csvRows.map((i) => {
       const values = i.split(',');
+
       const obj = csvHeader.reduce((object, header, index) => {
         // @ts-ignore
         object[header] = values[index];
         return object;
       }, {} as CSVFileType);
+
       return obj;
     });
-    setCsvArray(newArray);
+
+    rawCsvArray.forEach((item) => {
+      if (item.stockCode === '') {
+        dispalyErrorToast(
+          'StockCode is empty in some row. Please check the CSV before importing.',
+        );
+      }
+    });
+
+    const normalizedCsvArray = rawCsvArray.filter(
+      (item) => item.stockCode !== '',
+    );
+
+    const mergedCsvArray = mergeCSVItemWithSameStockCode(normalizedCsvArray);
+
+    setCsvArray(mergedCsvArray);
   };
 
   const handleBulkOrderUpload = () => {
     if (rejectionErrorMessage.length > 0) return;
 
     if (csvArray.length > CSV.LIMIT) {
-      dispalyErrorToast('The CSV uploaded is too large');
+      dispalyErrorToast('The CSV uploaded has exceeded the limit of 200 rows.');
       return;
     }
 
@@ -155,16 +207,8 @@ export const BulkCsvUpload = ({
       return;
     }
 
-    csvArray.forEach((item) => {
-      if (item.stockCode === '') {
-        dispalyErrorToast(
-          'StockCode is empty in some row. Please check the CSV before uploading.',
-        );
-        return;
-      }
-    });
-
     const csvArrayPayload = csvArray.map((item) => convertKeys(item));
+
     fetcher.submit(
       //@ts-ignore
       csvArrayPayload,
@@ -191,15 +235,19 @@ export const BulkCsvUpload = ({
   }, [acceptedFiles]);
 
   useEffect(() => {
-    fetcher.state !== 'idle'
-      ? setDialogState((previousState) => ({
-          ...previousState,
-          isUploadCSVDialogOpen: true,
-        }))
-      : setDialogState((previousState) => ({
-          ...previousState,
-          isUploadCSVDialogOpen: false,
-        }));
+    if (fetcher.state !== 'idle') {
+      setDialogState((previousState) => ({
+        ...previousState,
+        isUploadCSVDialogOpen: true,
+      }));
+    } else {
+      setDialogState((previousState) => ({
+        ...previousState,
+        isUploadCSVDialogOpen: false,
+      }));
+      setCsvArray([]);
+      setFile(null);
+    }
   }, [fetcher.state]);
 
   return (
