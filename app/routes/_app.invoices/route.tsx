@@ -1,5 +1,6 @@
 import {
   isRouteErrorResponse,
+  json,
   useLoaderData,
   useRouteError,
   useSearchParams,
@@ -27,7 +28,7 @@ import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
 import {useColumn} from './use-column';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
-import {Invoices, dummyInvoicesData} from './invoices.server';
+import {getAllInvoices} from './invoices.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Invoices List'}];
@@ -40,18 +41,24 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 
   const {userDetails} = await getUserDetails(request);
 
-  const customerId = userDetails.id.split('/').pop() as string;
+  const metaParentValue = userDetails.meta.parent.value;
 
-  return {invoiceList: dummyInvoicesData};
+  const customerId =
+    metaParentValue === 'null' ? userDetails.id : metaParentValue;
+
+  const {searchParams} = new URL(request.url);
+
+  const invoices = await getAllInvoices({customerId, searchParams});
+  return json({invoices, totalNumberOfInvoices: 12});
 }
 export default function InvoicesPage() {
-  const {invoiceList} = useLoaderData<typeof loader>();
+  const {invoices, totalNumberOfInvoices} = useLoaderData<typeof loader>();
 
   const {columns} = useColumn();
 
   const [searchParams] = useSearchParams();
 
-  const {table} = useTable(columns, invoiceList);
+  const {table} = useTable(columns, invoices);
 
   let isFilterApplied = false;
 
@@ -101,7 +108,11 @@ export default function InvoicesPage() {
       </div>
 
       <DataTable table={table} columns={columns} />
-      <PaginationWrapper pageSize={PAGE_LIMIT} totalCount={12} />
+
+      <PaginationWrapper
+        pageSize={PAGE_LIMIT}
+        totalCount={totalNumberOfInvoices}
+      />
     </section>
   );
 }

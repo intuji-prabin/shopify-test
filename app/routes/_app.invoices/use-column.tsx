@@ -7,6 +7,7 @@ import {Button} from '~/components/ui/button';
 import {EyeOn} from '~/components/icons/eye';
 import {DownloadIcon} from '~/components/icons/download-icon';
 import {Invoices} from '~/routes/_app.invoices/invoices.server';
+import {formatDateToLocaleDateString} from '~/lib/helpers/dateTime.helper';
 
 export function useColumn() {
   const columns = useMemo<ColumnDef<Invoices>[]>(
@@ -34,51 +35,43 @@ export function useColumn() {
         ),
       },
       {
-        accessorKey: 'invoiceNumber',
-        header: 'Invoice No',
+        accessorKey: 'invoiceId',
+        header: 'Invoice Number',
         enableSorting: false,
         cell: (info) => info.getValue() ?? 'N/A',
       },
       {
-        accessorKey: 'poNumber',
-        header: 'Customer Purchase Order No.',
+        accessorKey: 'salesOrderNo',
+        header: 'Sales Order Number',
         enableSorting: false,
         cell: (info) => info.getValue() ?? 'N/A',
       },
       {
-        accessorKey: 'deliveryNumber',
-        header: 'Delivery No.',
+        accessorKey: 'wareHouseNo',
+        header: 'Ware House Number',
         enableSorting: false,
         cell: (info) => info.getValue() ?? 'N/A',
       },
       {
-        accessorKey: 'dispatchDetails',
-        header: 'Dispatch Details',
-        cell: (info) => info.getValue() ?? 'N/A',
-      },
-      {
-        accessorKey: 'consignmentNumber',
-        header: 'Consignment No.',
-        enableSorting: false,
-        cell: (info) => info.getValue() ?? 'N/A',
-      },
-      {
-        accessorKey: 'date',
+        accessorKey: 'invoiceDate',
         header: 'Date',
-        cell: (info) => info.getValue() ?? 'N/A',
+        cell: (info) =>
+          info.getValue()
+            ? formatDateToLocaleDateString(info.getValue() as string)
+            : 'N/A',
       },
       {
         accessorKey: 'actions',
         header: 'View Invoice',
         enableSorting: false,
         cell: (info) => {
-          const orderId = info.row.original.id;
+          const invoiceId = info.row.original.invoiceId;
 
-          const orderDetailsRoute = `${Routes.ORDERS}/${orderId}`;
+          const invoiceDetailsRoute = `${Routes.INVOICES}/${invoiceId}`;
 
           return (
-            <div className="flex justify-center gap-x-2">
-              <Link to={orderDetailsRoute}>
+            <div className="flex justify-start gap-x-2">
+              <Link to={invoiceDetailsRoute}>
                 <Button size="icon" variant="icon">
                   <EyeOn />
                 </Button>

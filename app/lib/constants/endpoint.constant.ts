@@ -63,4 +63,7 @@ export const ENDPOINT = {
     PRODUCT_GROUP_ITEM: `${BASE_URL}/product-group/items`,
   },
   PLACE_AN_ORDER: `${BASE_URL}/place-an-order`,
+  INVOICE: {
+    GET: `${BASE_URL}/invoices`,
+  },
 };

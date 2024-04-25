@@ -1,30 +1,52 @@
+import {useFetch} from '~/hooks/useFetch';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {generateUrlWithParams} from '~/lib/helpers/url.helper';
+
 export type Invoices = {
   id: string;
-  invoiceNumber: string;
-  poNumber: string;
-  deliveryNumber: string;
-  dispatchDetails: string;
-  consignmentNumber: string;
-  date: string;
+  invoiceId: string;
+  salesOrderNo: string;
+  wareHouseNo: string;
+  invoiceDate: string;
 };
 
-export const dummyInvoicesData: Invoices[] = [
-  {
-    id: '1',
-    invoiceNumber: 'INV-001',
-    poNumber: 'PO123456',
-    deliveryNumber: 'DLV-20230423',
-    dispatchDetails: 'Dispatched via UPS, tracking #1234ABC',
-    consignmentNumber: 'CN-987654321',
-    date: '2024-04-23',
-  },
-  {
-    id: '2',
-    invoiceNumber: 'INV-001',
-    poNumber: 'PO123456',
-    deliveryNumber: 'DLV-20230423',
-    dispatchDetails: 'Dispatched via UPS, tracking #1234ABC',
-    consignmentNumber: 'CN-987654321',
-    date: '2024-04-23',
-  },
-];
+type ResponseData = {
+  status: boolean;
+  message: string;
+  payload: Invoices[];
+};
+
+export async function getAllInvoices({
+  customerId,
+  searchParams,
+}: {
+  customerId: string;
+  searchParams: URLSearchParams;
+}) {
+  try {
+    const baseUrl = `${ENDPOINT.INVOICE.GET}/${customerId}`;
+
+    const url = generateUrlWithParams({baseUrl, searchParams});
+
+    const results = await useFetch<ResponseData>({
+      method: AllowedHTTPMethods.GET,
+      url,
+    });
+
+    if (!results.status) {
+      throw new Error(results.message);
+    }
+
+    return results.payload;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+
+    throw new Response(DEFAULT_ERRROR_MESSAGE, {
+      status: 500,
+    });
+  }
+}
