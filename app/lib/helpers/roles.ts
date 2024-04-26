@@ -31,14 +31,14 @@ export function defineAbilitiesForAdmin() {
  * @param {Array} permissions - An array of permissions.
  * @return {MongoAbility} The created MongoAbility instance.
  */
-export function defineAbilitiesForUser(permissions: any[]) {
+export function defineAbilitiesForUser(permissions: string[]) {
   // Create a new AbilityBuilder with MongoAbility.
   const {can, cannot, rules} = new AbilityBuilder(createMongoAbility);
   
   // Dynamically set 'view' permissions based on the given permissions.
   // For each permission in the permissions array, grant 'view' permission.
   permissions.forEach((permission) => {
-    can('view', permission.value);
+    can('view', permission);
   });
 
   // Create a MongoAbility instance with the defined rules.
