@@ -1,8 +1,8 @@
-import type { EntryContext } from '@shopify/remix-oxygen';
-import { RemixServer } from '@remix-run/react';
+import type {EntryContext} from '@shopify/remix-oxygen';
+import {RemixServer} from '@remix-run/react';
 import isbot from 'isbot';
-import { renderToReadableStream } from 'react-dom/server';
-import { createContentSecurityPolicy } from '@shopify/hydrogen';
+import {renderToReadableStream} from 'react-dom/server';
+import {createContentSecurityPolicy} from '@shopify/hydrogen';
 
 export default async function handleRequest(
   request: Request,
@@ -13,12 +13,13 @@ export default async function handleRequest(
   const localDirectives =
     process.env.NODE_ENV === 'development' ? ['localhost:*'] : [];
 
-  const { nonce, header, NonceProvider } = createContentSecurityPolicy({
+  const {nonce, header, NonceProvider} = createContentSecurityPolicy({
     defaultSrc: [
       "'self'",
       'fonts.gstatic.com',
       'cdn.shopify.com',
       'shopify.com',
+      'http://cdnjs.cloudflare.com',
       ...localDirectives,
     ],
     styleSrc: [
@@ -26,6 +27,7 @@ export default async function handleRequest(
       "'unsafe-inline'",
       'fonts.googleapis.com',
       'cdn.shopify.com',
+
       ...localDirectives,
     ],
     frameSrc: [
@@ -57,6 +59,8 @@ export default async function handleRequest(
       'pimcoredata.intuji.com',
       ...localDirectives,
     ],
+    connectSrc: ['https://www.w3.org', ...localDirectives],
+    workerSrc: ['http://cdnjs.cloudflare.com', ...localDirectives],
   });
 
   const body = await renderToReadableStream(
