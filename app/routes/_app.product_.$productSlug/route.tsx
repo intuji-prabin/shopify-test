@@ -1,25 +1,34 @@
-import { isRouteErrorResponse, json, useLoaderData, useRouteError } from '@remix-run/react';
+import {
+  isRouteErrorResponse,
+  json,
+  useLoaderData,
+  useRouteError,
+} from '@remix-run/react';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
-import { ReactNode } from 'react';
-import { BackButton } from '~/components/ui/back-button';
-import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
-import { getAccessToken } from '~/lib/utils/auth-session.server';
+import {ReactNode} from 'react';
+import {BackButton} from '~/components/ui/back-button';
+import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
+import {getAccessToken} from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { GET_CART_LIST } from '../_app.cart-list/cart.server';
-import { ProductType, addProductToCart, getProductDetails } from './product.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {GET_CART_LIST} from '../_app.cart-list/cart.server';
+import {
+  ProductType,
+  addProductToCart,
+  getProductDetails,
+} from './product.server';
 import ProductInformation from './productInformation';
 import ProductsRelatedProduct from './productsRelatedProduct';
-import { addToWishlist, removeFromWishlist } from './wishlist.server';
+import {addToWishlist, removeFromWishlist} from './wishlist.server';
 import ProductTab from './productTabs';
 
 interface ProductDetailType {
@@ -31,11 +40,47 @@ interface ProductDetailType {
 }
 
 export interface ProductInfoType {
-  productInfo: Pick<ProductType, 'id' | 'title' | 'tags' | 'thumbnailImage' | 'uom' | 'uomCode' | 'unitOfMeasure' | 'imageUrl' | 'liked' | 'variantId' | 'supplierSku' | 'variantTitle' | 'moq' | 'compareAtPrice' | 'originalPrice' | 'companyDefaultPrice' | 'priceRange' | 'currency'>;
+  productInfo: Pick<
+    ProductType,
+    | 'id'
+    | 'title'
+    | 'tags'
+    | 'thumbnailImage'
+    | 'uom'
+    | 'uomCode'
+    | 'unitOfMeasure'
+    | 'imageUrl'
+    | 'liked'
+    | 'variantId'
+    | 'supplierSku'
+    | 'variantTitle'
+    | 'moq'
+    | 'compareAtPrice'
+    | 'originalPrice'
+    | 'companyDefaultPrice'
+    | 'priceRange'
+    | 'currency'
+  >;
 }
 
 export interface ProductTabType {
-  productTab: Pick<ProductType, 'description' | 'warranty' | 'productWeight' | 'supplier' | 'specification' | 'packageContent' | 'features' | 'faq' | 'brochure' | 'video' | 'download' | 'serviceManual' | 'operationManual' | 'brand'>;
+  productTab: Pick<
+    ProductType,
+    | 'description'
+    | 'warranty'
+    | 'productWeight'
+    | 'supplier'
+    | 'specification'
+    | 'packageContent'
+    | 'features'
+    | 'faq'
+    | 'brochure'
+    | 'video'
+    | 'download'
+    | 'serviceManual'
+    | 'operatingManual'
+    | 'brand'
+  >;
 }
 
 export const loader = async ({
@@ -44,14 +89,14 @@ export const loader = async ({
   context,
 }: LoaderFunctionArgs) => {
   try {
-    const { productSlug } = params;
+    const {productSlug} = params;
     const sessionCartInfo = await context.session.get(CART_SESSION_KEY);
     if (sessionCartInfo) {
       const cartLists = await context.storefront.query(GET_CART_LIST, {
-        variables: { cartId: sessionCartInfo?.cartId },
+        variables: {cartId: sessionCartInfo?.cartId},
       });
     }
-    const { userDetails } = await getUserDetails(request);
+    const {userDetails} = await getUserDetails(request);
     const product = await getProductDetails(
       userDetails?.id,
       productSlug as string,
@@ -61,7 +106,7 @@ export const loader = async ({
 
     return json({
       product,
-      productPage
+      productPage,
     });
   } catch (error) {
     console.log('first', error);
@@ -70,8 +115,8 @@ export const loader = async ({
 };
 
 export default function route() {
-  const { product, productPage } = useLoaderData<ProductDetailType>();
-  console.log("eeee", product);
+  const {product, productPage} = useLoaderData<ProductDetailType>();
+  console.log('eeee', product);
   // console.log("dfsdfdsf ", product)
   return (
     <ProductDetailPageWrapper>
@@ -93,18 +138,15 @@ export default function route() {
   );
 }
 
-const ProductDetailPageWrapper = ({ children }: { children: ReactNode }) => {
+const ProductDetailPageWrapper = ({children}: {children: ReactNode}) => {
   return <div className="container">{children}</div>;
 };
 
-export const action = async ({
-  request,
-  context,
-}: ActionFunctionArgs) => {
+export const action = async ({request, context}: ActionFunctionArgs) => {
   const messageSession = await getMessageSession(request);
   const fromData = await request.formData();
-  switch (fromData.get("action")) {
-    case "addToCart": {
+  switch (fromData.get('action')) {
+    case 'addToCart': {
       try {
         const cartInfo = Object.fromEntries(fromData);
         const accessTocken = (await getAccessToken(context)) as string;
@@ -154,12 +196,15 @@ export const action = async ({
         );
       }
     }
-    case "addToWishList": {
+    case 'addToWishList': {
       try {
         const productInfo = Object.fromEntries(fromData);
         // console.log("productInfo", productInfo)
         await addToWishlist(productInfo, context, request);
-        setSuccessMessage(messageSession, 'Item added to wishlist successfully');
+        setSuccessMessage(
+          messageSession,
+          'Item added to wishlist successfully',
+        );
         return json(
           {},
           {
@@ -199,11 +244,14 @@ export const action = async ({
         );
       }
     }
-    case "removeFromWishList": {
+    case 'removeFromWishList': {
       try {
         const productInfo = Object.fromEntries(fromData);
         await removeFromWishlist(productInfo, context, request);
-        setSuccessMessage(messageSession, 'Item removed from wishlist successfully');
+        setSuccessMessage(
+          messageSession,
+          'Item removed from wishlist successfully',
+        );
         return json(
           {},
           {
@@ -244,7 +292,7 @@ export const action = async ({
       }
     }
     default: {
-      throw new Error("Unknown action");
+      throw new Error('Unknown action');
     }
   }
 };
@@ -254,7 +302,7 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return (
       <div className="min-h-[calc(100vh_-_140px)] flex justify-center items-center">
-        <div className='text-center'>
+        <div className="text-center">
           <h1>
             {error.status} {error.statusText}
           </h1>
@@ -264,13 +312,17 @@ export function ErrorBoundary() {
   } else if (error instanceof Error) {
     return (
       <div className="min-h-[calc(100vh_-_140px)] flex justify-center items-center">
-        <div className='text-center'>
+        <div className="text-center">
           <h1>Opps</h1>
           <p>{error.message}</p>
         </div>
       </div>
     );
   } else {
-    return <div className="min-h-[calc(100vh_-_140px)] flex justify-center items-center"><h1>Unknown Error</h1></div>;
+    return (
+      <div className="min-h-[calc(100vh_-_140px)] flex justify-center items-center">
+        <h1>Unknown Error</h1>
+      </div>
+    );
   }
 }
