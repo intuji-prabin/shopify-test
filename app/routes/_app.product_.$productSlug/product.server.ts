@@ -23,7 +23,7 @@ export interface ProductType {
   download: brochureType[];
   thumbnailImage: string;
   serviceManual: brochureType[];
-  operationManual: brochureType[];
+  operatingManual: brochureType[];
   uom: string;
   uomCode: string;
   unitOfMeasure: uomType[];
@@ -87,6 +87,9 @@ export async function getProductDetails(customerId: string, handle: string) {
       console.log('firststatus');
       throw new Error(response?.message);
     }
+
+    console.log('response?.payload', response?.payload);
+
     const finalResponse = await formatResponse(response?.payload);
     // return response.payload;
     return finalResponse;
@@ -132,7 +135,7 @@ const formatResponse = async (response: ProductType) => {
       video: response?.video,
       download: response?.download,
       serviceManual: response?.serviceManual,
-      operationManual: response?.operationManual,
+      operatingManual: response?.operatingManual,
       brand: response?.brand,
     },
   };
