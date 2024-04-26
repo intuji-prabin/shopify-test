@@ -114,9 +114,9 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                           <span className="w-[calc(100%_-_24px)] text-lg font-medium text-grey-900">
                             {subMenu.title}
                           </span>
-                          <div className="w-6">
+                          <span className="w-6">
                             <ArrowForward width={'24px'} height={'24px'} />
-                          </div>
+                          </span>
                         </p>
                       </Link>
                     ) : (

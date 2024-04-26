@@ -225,7 +225,10 @@ function renderProductItem(
     }
     case 'cart': {
       return (
-        <div className="flex flex-col justify-between gap-4 sm:flex-row">
+        <div
+          key={product.id}
+          className="flex flex-col justify-between gap-4 sm:flex-row"
+        >
           <div className="flex flex-wrap items-center gap-3 sm:w-4/6">
             <div className="size-16">
               <img
@@ -336,7 +339,10 @@ function renderProductItem(
     }
     case 'pending_order': {
       return (
-        <div className="flex flex-col justify-between gap-4 sm:flex-row">
+        <div
+          key={product.id}
+          className="flex flex-col justify-between gap-4 sm:flex-row"
+        >
           <div className="flex flex-wrap items-center gap-3 sm:w-4/6">
             <div className="size-16">
               <img
@@ -445,8 +451,8 @@ function renderProductItem(
     case 'compare': {
       return (
         <figure
-          className="flex flex-wrap items-center space-x-4"
           key={product.id}
+          className="flex flex-wrap items-center space-x-4"
         >
           <div className="size-14">
             <img
@@ -474,7 +480,10 @@ function renderProductItem(
         setUOM(selectedUOM);
       }
       return (
-        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
+        <div
+          key={product.id}
+          className="flex flex-col items-start justify-between gap-4 sm:flex-row"
+        >
           <div className="flex flex-wrap items-center gap-3 sm:w-2/5">
             <div className="size-16">
               <img
