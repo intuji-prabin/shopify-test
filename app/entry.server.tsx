@@ -36,6 +36,14 @@ export default async function handleRequest(
       'https://pimcoredata.intuji.com/',
       ...localDirectives,
     ],
+    connectSrc: [
+      "'self'",
+      'https://cdn.shopify.com',
+      'https://shopify.com',
+      'https://pimcoredata.intuji.com',
+      'https://cig-backend.webo.dev',
+      ...localDirectives,
+    ],
     mediaSrc: [
       "'self'",
       'pimcoredata.intuji.com',

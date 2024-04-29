@@ -1,17 +1,17 @@
-import {FormEvent, useEffect, useRef, useState} from 'react';
-import {FaSearch} from 'react-icons/fa';
-import {Form, Link, useFetcher, useSubmit} from '@remix-run/react';
-import {debounce} from '~/lib/helpers/general.helper';
-import {Button} from '~/components/ui/button';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {useOutsideClick} from '~/hooks/useOutsideClick';
+import { FormEvent, useEffect, useRef, useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
+import { Form, Link, useFetcher, useSubmit } from '@remix-run/react';
+import { debounce } from '~/lib/helpers/general.helper';
+import { Button } from '~/components/ui/button';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { useOutsideClick } from '~/hooks/useOutsideClick';
 import CloseMenu from '~/components/icons/closeMenu';
 import {
   NormalizedPredictiveSearch,
   NormalizedPredictiveSearchResultItem,
 } from '~/routes/_app.predictive-search/route';
-import {CompareSearch} from '../icons/compareSearch';
-import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
+import { CompareSearch } from '../icons/compareSearch';
+import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
 
 export type SearchVariant =
   | 'normal'
@@ -97,11 +97,10 @@ export function PredictiveSearch({
               type="text"
               name="searchTerm"
               placeholder={inputPlaceholder}
-              className={`!pl-6 border-none w-full text-base ${
-                searchVariant === 'compare'
-                  ? 'font-normal'
-                  : 'font-bold placeholder:italic'
-              } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
+              className={`!pl-6 border-none w-full text-base ${searchVariant === 'compare'
+                ? 'font-normal'
+                : 'font-bold placeholder:italic'
+                } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
             />
           </>
         )}
@@ -117,13 +116,11 @@ export function PredictiveSearch({
       </fetcher.Form>
       {searchProduct && (
         <div
-          className={`${
-            searchVariant === 'mobile' ? 'top-[65px]' : 'top-[calc(100%_+_4px)]'
-          } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${
-            searchVariant === 'normal' || searchVariant === 'mobile'
+          className={`${searchVariant === 'mobile' ? 'top-[65px]' : 'top-[calc(100%_+_4px)]'
+            } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${searchVariant === 'normal' || searchVariant === 'mobile'
               ? null
               : 'max-w-[600px] max-h-[350px] overflow-y-auto shadow-lg'
-          }`}
+            }`}
         >
           {fetcher.state === 'loading' ? (
             <p className="text-base font-bold text-center text-grey-400">
@@ -167,9 +164,9 @@ function renderProductItem(
   searchVariant: SearchVariant,
   handleClose: () => void,
 ) {
-  const productUrl = product.image?.url
-    ? product.image.url
-    : DEFAULT_IMAGE.IMAGE;
+  // const productUrl = product.image?.url
+  //   ? product.image.url
+  //   : DEFAULT_IMAGE.IMAGE;
 
   const [quantity, setQuantity] = useState(parseFloat(product.moq) || 1);
 
@@ -205,7 +202,7 @@ function renderProductItem(
         >
           <div className="size-14">
             <img
-              src={productUrl}
+              src={product?.featuredPriceImageUrl}
               alt="product"
               className="object-cover object-center size-full"
             />
@@ -232,7 +229,7 @@ function renderProductItem(
           <div className="flex flex-wrap items-center gap-3 sm:w-4/6">
             <div className="size-16">
               <img
-                src={productUrl}
+                src={product?.featuredPriceImageUrl}
                 alt="product"
                 className="object-contain object-center size-full"
               />
@@ -264,11 +261,10 @@ function renderProductItem(
           <div className="sm:w-[calc(33.33%_-_1rem)]">
             <div className="flex cart__list--quantity">
               <button
-                className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${
-                  quantity - 1 < Number(product.moq) || quantity - 1 < 1
-                    ? 'cursor-not-allowed'
-                    : ''
-                }`}
+                className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < Number(product.moq) || quantity - 1 < 1
+                  ? 'cursor-not-allowed'
+                  : ''
+                  }`}
                 onClick={decreaseQuantity}
                 disabled={
                   quantity - 1 < Number(product.moq) || quantity - 1 < 1
@@ -290,9 +286,9 @@ function renderProductItem(
               </button>
             </div>
             {quantity < Number(product.moq) ||
-            quantity < 1 ||
-            quantity > CART_QUANTITY_MAX ||
-            isNaN(quantity) ? (
+              quantity < 1 ||
+              quantity > CART_QUANTITY_MAX ||
+              isNaN(quantity) ? (
               <>
                 <Button
                   variant="primary"
@@ -346,7 +342,7 @@ function renderProductItem(
           <div className="flex flex-wrap items-center gap-3 sm:w-4/6">
             <div className="size-16">
               <img
-                src={productUrl}
+                src={product?.featuredPriceImageUrl}
                 alt="product"
                 className="object-contain object-center size-full"
               />
@@ -378,11 +374,10 @@ function renderProductItem(
           <div className="sm:w-[calc(33.33%_-_1rem)]">
             <div className="flex cart__list--quantity">
               <button
-                className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${
-                  quantity - 1 < Number(product.moq) || quantity - 1 < 1
-                    ? 'cursor-not-allowed'
-                    : ''
-                }`}
+                className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < Number(product.moq) || quantity - 1 < 1
+                  ? 'cursor-not-allowed'
+                  : ''
+                  }`}
                 onClick={decreaseQuantity}
                 disabled={
                   quantity - 1 < Number(product.moq) || quantity - 1 < 1
@@ -404,9 +399,9 @@ function renderProductItem(
               </button>
             </div>
             {quantity < Number(product.moq) ||
-            quantity < 1 ||
-            quantity > CART_QUANTITY_MAX ||
-            isNaN(quantity) ? (
+              quantity < 1 ||
+              quantity > CART_QUANTITY_MAX ||
+              isNaN(quantity) ? (
               <>
                 <Button
                   variant="primary"
@@ -456,7 +451,7 @@ function renderProductItem(
         >
           <div className="size-14">
             <img
-              src={productUrl}
+              src={product?.featuredPriceImageUrl}
               alt="product"
               className="object-cover object-center size-full"
             />
@@ -487,7 +482,7 @@ function renderProductItem(
           <div className="flex flex-wrap items-center gap-3 sm:w-2/5">
             <div className="size-16">
               <img
-                src={productUrl}
+                src={product?.featuredPriceImageUrl}
                 alt="product"
                 className="object-contain object-center size-full"
               />
@@ -527,7 +522,7 @@ function renderProductItem(
             >
               {product.unitOfMeasure?.length > 0 ? (
                 product.unitOfMeasure?.map(
-                  (uom: {unit: string; code: string}, index: number) => (
+                  (uom: { unit: string; code: string }, index: number) => (
                     <option
                       className="px-4"
                       value={uom.code}
@@ -543,11 +538,10 @@ function renderProductItem(
             </select>
             <div className="flex cart__list--quantity">
               <button
-                className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${
-                  quantity - 1 < Number(product.moq) || quantity - 1 < 1
-                    ? 'cursor-not-allowed'
-                    : ''
-                }`}
+                className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < Number(product.moq) || quantity - 1 < 1
+                  ? 'cursor-not-allowed'
+                  : ''
+                  }`}
                 onClick={decreaseQuantity}
                 disabled={
                   quantity - 1 < Number(product.moq) || quantity - 1 < 1
@@ -570,9 +564,9 @@ function renderProductItem(
             </div>
             <div className="hidden sm:block"></div>
             {quantity < Number(product.moq) ||
-            quantity < 1 ||
-            quantity > CART_QUANTITY_MAX ||
-            isNaN(quantity) ? (
+              quantity < 1 ||
+              quantity > CART_QUANTITY_MAX ||
+              isNaN(quantity) ? (
               <>
                 <Button
                   variant="primary"
@@ -623,7 +617,7 @@ function renderProductItem(
         >
           <div className="size-14">
             <img
-              src={productUrl}
+              src={product?.featuredPriceImageUrl}
               alt="product"
               className="object-cover object-center size-full"
             />
