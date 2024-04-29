@@ -19,7 +19,7 @@ export type ProductFinalResponse = {
   handle: string;
   title: string;
   finalProductInfoArray: { key: string, value: string }[];
-  featuredImage: { url: string };
+  featuredImage: string;
   companyPrice: number;
   currency: string;
   defaultPrice: number;
@@ -39,7 +39,7 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
   const product2 = finalResponse?.product2?.product;
   const product3 = finalResponse?.product3?.product;
   const product4 = finalResponse?.product4?.product;
-  console.log(finalResponse);
+  // console.log(finalResponse);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -64,7 +64,7 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
       <div className='flex gap-6 p-6'>
         <div className='min-w-[290px] w-full max-w-[290px]'>
           <figure className='flex items-center justify-center h-48 p-5 bg-grey-25'>
-            <img src={product1?.featuredImage?.url || DEFAULT_IMAGE?.IMAGE} alt="product1" className='object-contain h-full overflow-hidden' />
+            <img src={product1?.featuredImage || DEFAULT_IMAGE?.IMAGE} alt="product1" className='object-contain h-full overflow-hidden' />
           </figure>
           <div className='pt-3'>
             <p className='text-lg font-medium leading-[22px] text-grey-900 overflow-y-hidden h-11 line-clamp-2'>
@@ -119,7 +119,7 @@ export function ProductDetailDiv({ productDetails, clearSelectedProduct }: { pro
       {productDetails ?
         <>
           <figure className='relative flex items-center justify-center h-48 p-5 bg-grey-25'>
-            <img src={productDetails?.featuredImage?.url || DEFAULT_IMAGE?.IMAGE} alt="product2" className='object-contain h-full overflow-hidden' />
+            <img src={productDetails?.featuredImage || DEFAULT_IMAGE?.IMAGE} alt="product2" className='object-contain h-full overflow-hidden' />
             <Button
               className="absolute top-2 right-2 bg-white max-h-5 max-w-5 md:max-h-8 md:max-w-8 p-[3px] md:p-2 hover:bg-white"
               onClick={() => clearSelectedProduct(productDetails?.id)}

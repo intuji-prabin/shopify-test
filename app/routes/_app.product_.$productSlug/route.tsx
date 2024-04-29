@@ -8,19 +8,19 @@ import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
-import {ReactNode} from 'react';
-import {BackButton} from '~/components/ui/back-button';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
-import {getAccessToken} from '~/lib/utils/auth-session.server';
+import { ReactNode } from 'react';
+import { BackButton } from '~/components/ui/back-button';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { getAccessToken } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {GET_CART_LIST} from '../_app.cart-list/cart.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { GET_CART_LIST } from '../_app.cart-list/cart.server';
 import {
   ProductType,
   addProductToCart,
@@ -28,8 +28,9 @@ import {
 } from './product.server';
 import ProductInformation from './productInformation';
 import ProductsRelatedProduct from './productsRelatedProduct';
-import {addToWishlist, removeFromWishlist} from './wishlist.server';
+import { addToWishlist, removeFromWishlist } from './wishlist.server';
 import ProductTab from './productTabs';
+import { getSimilarProduct } from './relatedProduct.server';
 
 interface ProductDetailType {
   productPage: string;
@@ -89,20 +90,25 @@ export const loader = async ({
   context,
 }: LoaderFunctionArgs) => {
   try {
-    const {productSlug} = params;
+    const { productSlug } = params;
     const sessionCartInfo = await context.session.get(CART_SESSION_KEY);
     if (sessionCartInfo) {
       const cartLists = await context.storefront.query(GET_CART_LIST, {
-        variables: {cartId: sessionCartInfo?.cartId},
+        variables: { cartId: sessionCartInfo?.cartId },
       });
     }
-    const {userDetails} = await getUserDetails(request);
+    const { userDetails } = await getUserDetails(request);
     const product = await getProductDetails(
       userDetails?.id,
       productSlug as string,
     );
 
     const productPage = params.productSlug;
+    // if (product?.productInfo?.categoryUrl) {
+    //   const similarProducts = await getSimilarProduct(context, product?.productInfo?.categoryUrl, '9048842633502', userDetails?.id);
+    // }
+
+    // console.log("similarProducts", similarProducts.product)
 
     return json({
       product,
@@ -115,8 +121,7 @@ export const loader = async ({
 };
 
 export default function route() {
-  const {product, productPage} = useLoaderData<ProductDetailType>();
-  console.log('eeee', product);
+  const { product, productPage } = useLoaderData<ProductDetailType>();
   // console.log("dfsdfdsf ", product)
   return (
     <ProductDetailPageWrapper>
@@ -138,11 +143,11 @@ export default function route() {
   );
 }
 
-const ProductDetailPageWrapper = ({children}: {children: ReactNode}) => {
+const ProductDetailPageWrapper = ({ children }: { children: ReactNode }) => {
   return <div className="container">{children}</div>;
 };
 
-export const action = async ({request, context}: ActionFunctionArgs) => {
+export const action = async ({ request, context }: ActionFunctionArgs) => {
   const messageSession = await getMessageSession(request);
   const fromData = await request.formData();
   switch (fromData.get('action')) {
