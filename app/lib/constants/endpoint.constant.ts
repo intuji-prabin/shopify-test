@@ -1,6 +1,4 @@
-// const BASE_URL = 'https://cig-backend.webo.dev/api';
-
-const BASE_URL = 'https://dale-fridge-signal-heath.trycloudflare.com/api';
+const BASE_URL = 'https://cig-backend.webo.dev/api';
 
 export const ENDPOINT = {
   AUTH: {

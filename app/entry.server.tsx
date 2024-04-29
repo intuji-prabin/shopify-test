@@ -44,6 +44,8 @@ export default async function handleRequest(
       'https://shopify.com',
       'https://pimcoredata.intuji.com',
       'https://cig-backend.webo.dev',
+      'https://www.w3.org',
+      'https://cigweld-middleware.intuji.com',
       ...localDirectives,
     ],
     mediaSrc: [
@@ -65,11 +67,6 @@ export default async function handleRequest(
       'relaxing-hawk-ace.ngrok-free.app',
       'cig-backend.webo.dev',
       'pimcoredata.intuji.com',
-      ...localDirectives,
-    ],
-    connectSrc: [
-      'https://www.w3.org',
-      'https://cigweld-middleware.intuji.com',
       ...localDirectives,
     ],
     workerSrc: [

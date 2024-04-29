@@ -48,8 +48,11 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 
   const {searchParams} = new URL(request.url);
 
-  const invoices = await getAllInvoices({customerId, searchParams});
-  return json({invoices, totalNumberOfInvoices: 12});
+  const {invoices, totalNumberOfInvoices} = await getAllInvoices({
+    customerId,
+    searchParams,
+  });
+  return json({invoices, totalNumberOfInvoices});
 }
 export default function InvoicesPage() {
   const {invoices, totalNumberOfInvoices} = useLoaderData<typeof loader>();

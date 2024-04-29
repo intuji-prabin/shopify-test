@@ -15,7 +15,10 @@ export type Invoices = {
 type ResponseData = {
   status: boolean;
   message: string;
-  payload: Invoices[];
+  payload: {
+    invoices: Invoices[];
+    totalNumberOfInvoices: number;
+  };
 };
 
 export async function getAllInvoices({
