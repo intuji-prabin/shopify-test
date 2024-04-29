@@ -60,15 +60,24 @@ export default async function handleRequest(
       'fastly.picsum.photos',
       'swiperjs.com',
       'casual-mink-routinely.ngrok-free.app',
-      'shermacbucket.sgp1.digitaloceanspaces.com', // For default images domain, can be removed
+      'shermacbucket.sgp1.digitaloceanspaces.com', // For default images domain, must be removed
       'casual-mink-routinely.ngrok-free.app',
       'relaxing-hawk-ace.ngrok-free.app',
       'cig-backend.webo.dev',
       'pimcoredata.intuji.com',
       ...localDirectives,
     ],
-    connectSrc: ['https://www.w3.org', ...localDirectives],
-    workerSrc: ['http://cdnjs.cloudflare.com', ...localDirectives],
+    connectSrc: [
+      'https://www.w3.org',
+      'https://cigweld-middleware.intuji.com',
+      ...localDirectives,
+    ],
+    workerSrc: [
+      'blob:',
+      'http://cdnjs.cloudflare.com',
+      'http://localhost:4000',
+      ...localDirectives,
+    ],
   });
 
   const body = await renderToReadableStream(

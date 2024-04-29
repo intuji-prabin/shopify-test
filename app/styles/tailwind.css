@@ -882,3 +882,13 @@ div[data-state='open'].fixed.inset-0 {
 .order-error .track-order {
   @apply mx-auto bg-primary-500 py-3 px-4;
 }
+
+.react-pdf__Page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.react-pdf__Page__canvas {
+  margin-left: 2.5rem !important;
+}
