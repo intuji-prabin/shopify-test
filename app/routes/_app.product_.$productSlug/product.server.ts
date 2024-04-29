@@ -40,6 +40,7 @@ export interface ProductType {
   companyDefaultPrice: number;
   priceRange: priceRangeType[];
   productWeight: string;
+  categoryUrl: string;
 }
 
 type faqType = {
@@ -79,7 +80,7 @@ export async function getProductDetails(customerId: string, handle: string) {
       },
     );
     const response = await results.json();
-    console.log('resultsresponse', response);
+
     if (response?.errors) {
       throw new Error('Something went wrong');
     }
@@ -87,9 +88,6 @@ export async function getProductDetails(customerId: string, handle: string) {
       console.log('firststatus');
       throw new Error(response?.message);
     }
-
-    console.log('response?.payload', response?.payload);
-
     const finalResponse = await formatResponse(response?.payload);
     // return response.payload;
     return finalResponse;
@@ -121,22 +119,26 @@ const formatResponse = async (response: ProductType) => {
       companyDefaultPrice: response?.companyDefaultPrice,
       priceRange: response?.priceRange,
       currency: response?.currency,
+      categoryUrl: response?.categoryUrl,
     },
     productTab: {
-      description: response?.description,
-      warranty: response?.warranty,
-      productWeight: response?.productWeight,
-      supplier: response?.supplier,
-      specification: response?.specification,
-      packageContent: response?.packageContent,
-      features: response?.features,
+      description: response?.description === 'N/A' ? '' : response?.description,
+      warranty: response?.warranty === 'N/A' ? '' : response?.warranty,
+      productWeight:
+        response?.productWeight === 'N/A' ? '' : response?.productWeight,
+      supplier: response?.supplier === 'N/A' ? '' : response?.supplier,
+      specification:
+        response?.specification === 'N/A' ? '' : response?.specification,
+      packageContent:
+        response?.packageContent === 'N/A' ? '' : response?.packageContent,
+      features: response?.features === 'N/A' ? '' : response?.features,
       faq: response?.faq,
       brochure: response?.brochure,
       video: response?.video,
       download: response?.download,
       serviceManual: response?.serviceManual,
       operatingManual: response?.operatingManual,
-      brand: response?.brand,
+      brand: response?.brand === 'N/A' ? '' : response?.brand,
     },
   };
   return finalResponse;

@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Cross } from '~/components/icons/cross';
+import { Plus } from '~/components/icons/plus';
 
 const AccordionItem = ({
   title,
@@ -19,7 +21,7 @@ const AccordionItem = ({
         onClick={() => setIsActive(!isActive)}
       >
         <div>{title}</div>
-        <div>{isActive ? '-' : '+'}</div>
+        <div>{isActive ? <Cross /> : <Plus />}</div>
       </div>
       {isActive && <div className="mt-3 accordion-content">{content}</div>}
     </div>
