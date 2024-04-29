@@ -33,7 +33,8 @@ import {
 } from '~/lib/utils/toast-session.server';
 import {useGlobalLoader} from './hooks/useGlobalLoader';
 import {PageNotFound} from './components/ui/page-not-found';
-
+import pdfAnnotationLayerStyles from 'react-pdf/dist/Page/AnnotationLayer.css';
+import pdfTextLayerStyles from 'react-pdf/dist/Page/TextLayer.css';
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
  */
@@ -67,6 +68,8 @@ export function links() {
       href: 'https://shop.app',
     },
     {rel: 'stylesheet', href: nProgressStyles},
+    {rel: 'stylesheet', href: pdfAnnotationLayerStyles},
+    {rel: 'stylesheet', href: pdfTextLayerStyles},
     {rel: 'icon', type: 'image/svg+xml', href: favicon},
   ];
 }
