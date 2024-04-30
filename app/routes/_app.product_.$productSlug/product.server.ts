@@ -6,6 +6,23 @@ import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import {GET_CART_LIST} from '../_app.cart-list/cart.server';
 import {useFormatCart} from '~/hooks/useFormatCart';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+
+export interface relatedProductsType {
+  productId: string;
+  productHandle: string;
+  variantId: string;
+  title: string;
+  sku: string;
+  stockCode: string;
+  moq: number;
+  quantity: number;
+  uom: string;
+  defaultPrice: number;
+  companyPrice: number;
+  currency: string;
+  featuredImage: string;
+}
 
 export interface ProductType {
   id: string;
@@ -41,6 +58,7 @@ export interface ProductType {
   priceRange: priceRangeType[];
   productWeight: string;
   categoryUrl: string;
+  relatedProducts: relatedProductsType[];
 }
 
 type faqType = {
@@ -89,7 +107,6 @@ export async function getProductDetails(customerId: string, handle: string) {
       throw new Error(response?.message);
     }
     const finalResponse = await formatResponse(response?.payload);
-    // return response.payload;
     return finalResponse;
   } catch (error) {
     throw new Error(
@@ -140,6 +157,25 @@ const formatResponse = async (response: ProductType) => {
       operatingManual: response?.operatingManual,
       brand: response?.brand === 'N/A' ? '' : response?.brand,
     },
+    relatedProducts: response?.relatedProducts.map((item) => ({
+      id: item?.productId,
+      title: item?.title,
+      handle: item?.productHandle,
+      stockCode: item?.stockCode,
+      uom: item?.uom,
+      featuredImageUrl: item?.featuredImage ?? DEFAULT_IMAGE.IMAGE,
+      volumePrice: item?.defaultPrice,
+      companyPrice: item?.companyPrice,
+      currency: item?.currency,
+      defaultPrice: item?.defaultPrice,
+      quantity: item?.quantity,
+      liked: false,
+      variants: {
+        id: item?.variantId,
+        sku: item?.sku,
+        moq: item?.moq,
+      },
+    })),
   };
   return finalResponse;
 };

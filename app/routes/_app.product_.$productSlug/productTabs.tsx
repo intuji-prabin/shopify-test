@@ -1,8 +1,8 @@
 import * as Tabs from '@radix-ui/react-tabs';
-import AlternativeProduct from './ProductAlternateProducts';
+import { ProductCard } from '~/components/ui/product-card';
 import ProductFaq from './productFaq';
 
-const ProductTab = ({ productTab }: any) => {
+const ProductTab = ({ productTab, alternateProduct }: any) => {
   const handleDownload = async (url: string): Promise<void> => {
     // const authTokenFromLocalStorage = localStorage.getItem('authToken');
     try {
@@ -104,12 +104,14 @@ const ProductTab = ({ productTab }: any) => {
               <h5 className="cursor-pointer">FAQ</h5>
             </Tabs.Trigger>
           )}
-          <Tabs.Trigger
-            className={`bg-white px-4 py-3 h-[45px] flex items-left justify-start text-[15px] text-grey-500 text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md data-[state=active]:text-primary-500 data-[state=active]:border-b-4 border-primary-500 data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:bottom-border-tabs data-[state=active]:focus:red outline-none cursor-default`}
-            value="alternate-tab"
-          >
-            <h5 className="cursor-pointer">Alternate Products</h5>
-          </Tabs.Trigger>
+          {alternateProduct && alternateProduct?.length > 0 && (
+            <Tabs.Trigger
+              className={`bg-white px-4 py-3 h-[45px] flex items-left justify-start text-[15px] text-grey-500 text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md data-[state=active]:text-primary-500 data-[state=active]:border-b-4 border-primary-500 data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:bottom-border-tabs data-[state=active]:focus:red outline-none cursor-default`}
+              value="alternate-tab"
+            >
+              <h5 className="cursor-pointer">Alternate Products</h5>
+            </Tabs.Trigger>
+          )}
           {productTab?.brochure && productTab?.brochure.length > 0 && (
             <Tabs.Trigger
               className={`bg-white px-4 py-3 h-[45px] flex items-left justify-start text-[15px] text-grey-500 text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md data-[state=active]:text-primary-500 data-[state=active]:border-b-4 border-primary-500 data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:bottom-border-tabs data-[state=active]:focus:red outline-none cursor-default`}
@@ -251,12 +253,23 @@ const ProductTab = ({ productTab }: any) => {
             />
           </Tabs.Content>
         )}
-        <Tabs.Content
-          className="py-8 bg-white outline-none grow rounded-b-md focus:none"
-          value="alternate-tab"
-        >
-          <AlternativeProduct />
-        </Tabs.Content>
+        {alternateProduct && alternateProduct?.length > 0 && (
+          <Tabs.Content
+            className="py-8 bg-white outline-none grow rounded-b-md focus:none"
+            value="alternate-tab"
+          >
+            <h3 className="text-[36px] italic font-bold leading-[36px] mb-8 uppercase">
+              alternative products
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-[18px] similar__product">
+              {alternateProduct?.slice(0, 3).map(
+                (product: any, index: number) => (
+                  <ProductCard key={index} {...product} />
+                ),
+              )}
+            </div>
+          </Tabs.Content>
+        )}
         {productTab?.brochure && productTab?.brochure.length > 0 && (
           <Tabs.Content
             className="py-8 bg-white outline-none grow rounded-b-md focus:none"
