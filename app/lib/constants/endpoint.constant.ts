@@ -65,5 +65,6 @@ export const ENDPOINT = {
   PLACE_AN_ORDER: `${BASE_URL}/place-an-order`,
   INVOICE: {
     GET: `${BASE_URL}/invoices`,
+    GET_INVOCIE_DETAIL: `${BASE_URL}/invoice`,
   },
 };

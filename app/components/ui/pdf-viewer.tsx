@@ -1,4 +1,3 @@
-import {Link, NavLink} from '@remix-run/react';
 import React, {useMemo} from 'react';
 import {Document, Page} from 'react-pdf';
 import {pdfjs} from 'react-pdf';
@@ -36,9 +35,33 @@ export function PDFViewer({pdfURL}: {pdfURL: string}) {
 
   return (
     <div className="center" ref={pdfWrapperRef}>
-      <Document renderMode="canvas" file={pdfURL} options={options}>
+      <Document
+        renderMode="canvas"
+        loading={<Loading />}
+        error={<Error />}
+        file={pdfURL}
+        options={options}
+      >
         <Page pageNumber={1} width={width || undefined} />
       </Document>
+    </div>
+  );
+}
+
+function Loading() {
+  return (
+    <div className="flex items-center justify-center h-72">
+      <div className="rounded-full w-7 h-7 border-4 border-primary-300 border-solid border-l-primary-500 animate-spin"></div>
+    </div>
+  );
+}
+
+function Error() {
+  return (
+    <div className="flex items-center justify-center h-72">
+      <div className="text-semantic-danger-500 font-semibold text-xl">
+        Opps, Failed to load the PDF
+      </div>
     </div>
   );
 }
