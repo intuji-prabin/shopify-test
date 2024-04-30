@@ -1,4 +1,4 @@
-import {Link, useLoaderData} from '@remix-run/react';
+import {MetaFunction, useLoaderData} from '@remix-run/react';
 import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
 import {UploadIcon} from '~/components/icons/upload';
 import {BackButton} from '~/components/ui/back-button';
@@ -6,12 +6,14 @@ import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
 import {Button} from '~/components/ui/button';
 import {PDFViewer} from '~/components/ui/pdf-viewer';
 import {useDownload} from '~/hooks/useDownload';
-import {useFetch} from '~/hooks/useFetch';
 import {PDF} from '~/lib/constants/pdf.constent';
 import {Routes} from '~/lib/constants/routes.constent';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {getInvoiceDetails} from './invoices-detatils.server';
+import {getInvoiceDetails} from '~/routes/_app.invoices_.$invoiceId/invoices-detatils.server';
+
+export const meta: MetaFunction = () => {
+  return [{title: 'Invoices Detail'}];
+};
 
 export async function loader({context, params, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);

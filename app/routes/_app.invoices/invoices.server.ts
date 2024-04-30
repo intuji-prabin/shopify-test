@@ -42,7 +42,6 @@ export async function getAllInvoices({
     if (!results.status) {
       throw new Error(results.message);
     }
-
     return results.payload;
   } catch (error) {
     if (error instanceof Error) {

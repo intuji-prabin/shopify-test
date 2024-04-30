@@ -2,7 +2,7 @@ import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
-import {Invoices} from '../_app.invoices/invoices.server';
+import {Invoices} from '~/routes/_app.invoices/invoices.server';
 
 interface ResponseData {
   status: boolean;
