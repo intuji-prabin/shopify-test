@@ -10,12 +10,16 @@ export type Invoices = {
   salesOrderNo: string;
   wareHouseNo: string;
   invoiceDate: string;
+  files: string;
 };
 
 type ResponseData = {
   status: boolean;
   message: string;
-  payload: Invoices[];
+  payload: {
+    invoiceList: Invoices[];
+    totalInvoices: number;
+  };
 };
 
 export async function getAllInvoices({

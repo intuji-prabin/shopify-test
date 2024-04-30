@@ -8,6 +8,8 @@ import {EyeOn} from '~/components/icons/eye';
 import {DownloadIcon} from '~/components/icons/download-icon';
 import {Invoices} from '~/routes/_app.invoices/invoices.server';
 import {formatDateToLocaleDateString} from '~/lib/helpers/dateTime.helper';
+import {useDownload} from '~/hooks/useDownload';
+import {PDF} from '~/lib/constants/pdf.constent';
 
 export function useColumn() {
   const columns = useMemo<ColumnDef<Invoices>[]>(
@@ -48,7 +50,7 @@ export function useColumn() {
       },
       {
         accessorKey: 'wareHouseNo',
-        header: 'Ware House Number',
+        header: 'Warehouse Number',
         enableSorting: false,
         cell: (info) => info.getValue() ?? 'N/A',
       },
@@ -66,9 +68,13 @@ export function useColumn() {
         enableSorting: false,
         cell: (info) => {
           const invoiceId = info.row.original.invoiceId;
-
+          const fileURL = info.row.original.files;
           const invoiceDetailsRoute = `${Routes.INVOICES}/${invoiceId}`;
 
+          const {handleDownload} = useDownload({
+            url: fileURL,
+            headers: {'x-api-key': PDF.SECRET_KEY},
+          });
           return (
             <div className="flex justify-start gap-x-2">
               <Link to={invoiceDetailsRoute}>
@@ -76,7 +82,7 @@ export function useColumn() {
                   <EyeOn />
                 </Button>
               </Link>
-              <Button size="icon" variant="icon">
+              <Button size="icon" variant="icon" onClick={handleDownload}>
                 <DownloadIcon />
               </Button>
             </div>

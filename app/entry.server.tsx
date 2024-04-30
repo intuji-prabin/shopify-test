@@ -1,8 +1,8 @@
-import type { EntryContext } from '@shopify/remix-oxygen';
-import { RemixServer } from '@remix-run/react';
+import type {EntryContext} from '@shopify/remix-oxygen';
+import {RemixServer} from '@remix-run/react';
 import isbot from 'isbot';
-import { renderToReadableStream } from 'react-dom/server';
-import { createContentSecurityPolicy } from '@shopify/hydrogen';
+import {renderToReadableStream} from 'react-dom/server';
+import {createContentSecurityPolicy} from '@shopify/hydrogen';
 
 export default async function handleRequest(
   request: Request,
@@ -13,12 +13,14 @@ export default async function handleRequest(
   const localDirectives =
     process.env.NODE_ENV === 'development' ? ['localhost:*'] : [];
 
-  const { nonce, header, NonceProvider } = createContentSecurityPolicy({
+  const {nonce, header, NonceProvider} = createContentSecurityPolicy({
     defaultSrc: [
       "'self'",
       'fonts.gstatic.com',
       'cdn.shopify.com',
       'shopify.com',
+      'http://cdnjs.cloudflare.com',
+      'http://cdnjs.cloudflare.com',
       ...localDirectives,
     ],
     styleSrc: [
@@ -26,6 +28,7 @@ export default async function handleRequest(
       "'unsafe-inline'",
       'fonts.googleapis.com',
       'cdn.shopify.com',
+
       ...localDirectives,
     ],
     frameSrc: [
@@ -42,6 +45,8 @@ export default async function handleRequest(
       'https://shopify.com',
       'https://pimcoredata.intuji.com',
       'https://cig-backend.webo.dev',
+      'https://www.w3.org',
+      'https://cigweld-middleware.intuji.com',
       ...localDirectives,
     ],
     mediaSrc: [
@@ -58,11 +63,18 @@ export default async function handleRequest(
       'fastly.picsum.photos',
       'swiperjs.com',
       'casual-mink-routinely.ngrok-free.app',
-      'shermacbucket.sgp1.digitaloceanspaces.com', // For default images domain, can be removed
+      'shermacbucket.sgp1.digitaloceanspaces.com', // For default images domain, must be removed
+      'shermacbucket.sgp1.digitaloceanspaces.com', // For default images domain, must be removed
       'casual-mink-routinely.ngrok-free.app',
       'relaxing-hawk-ace.ngrok-free.app',
       'cig-backend.webo.dev',
       'pimcoredata.intuji.com',
+      ...localDirectives,
+    ],
+    workerSrc: [
+      'blob:',
+      'http://cdnjs.cloudflare.com',
+      'http://localhost:4000',
       ...localDirectives,
     ],
   });
