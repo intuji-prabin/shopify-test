@@ -27,13 +27,6 @@ const OrderFilterFormSchema = z.object({
       orderDateTo: z.string().trim().optional(),
     })
     .optional(),
-
-  deliveryDateRange: z
-    .object({
-      deliveryDateFrom: z.string().trim().optional(),
-      deliveryDateTo: z.string().trim().optional(),
-    })
-    .optional(),
 });
 
 export const OrderFilterFormSchemaValidator = withZod(OrderFilterFormSchema);
@@ -62,15 +55,6 @@ export default function OrderFilterForm() {
     to: orderDateTo ? new Date(orderDateTo) : undefined,
   };
 
-  const deliveryDateFrom = searchParams.get('deliveryDateFrom');
-
-  const deliveryDateTo = searchParams.get('deliveryDateTo');
-
-  const defaultDeliveryDateRangeValues = {
-    from: deliveryDateFrom ? new Date(deliveryDateFrom) : undefined,
-    to: deliveryDateTo ? new Date(deliveryDateTo) : undefined,
-  };
-
   return (
     <ValidatedForm
       method="GET"
@@ -96,15 +80,6 @@ export default function OrderFilterForm() {
             fromFieldName="orderDateFrom"
             toFieldName="orderDateTo"
             dateRange={defaultOrderDateRangeValues}
-          />
-        </div>
-        <Separator />{' '}
-        <div className="p-6">
-          <h5 className="pb-2">Delivery Date</h5>
-          <DatePickerWithRange
-            fromFieldName="deliveryDateFrom"
-            toFieldName="deliveryDateTo"
-            dateRange={defaultDeliveryDateRangeValues}
           />
         </div>
         <Separator />
