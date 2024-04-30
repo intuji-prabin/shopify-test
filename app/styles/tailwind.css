@@ -892,3 +892,7 @@ div[data-state='open'].fixed.inset-0 {
 .react-pdf__Page__canvas {
   margin-left: 2.5rem !important;
 }
+
+.similar__product .single-product-card {
+  @apply border border-solid border-grey-25;
+}
