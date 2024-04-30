@@ -20,7 +20,6 @@ export default async function handleRequest(
       'cdn.shopify.com',
       'shopify.com',
       'http://cdnjs.cloudflare.com',
-      'http://cdnjs.cloudflare.com',
       ...localDirectives,
     ],
     styleSrc: [
@@ -64,8 +63,6 @@ export default async function handleRequest(
       'swiperjs.com',
       'casual-mink-routinely.ngrok-free.app',
       'shermacbucket.sgp1.digitaloceanspaces.com', // For default images domain, must be removed
-      'shermacbucket.sgp1.digitaloceanspaces.com', // For default images domain, must be removed
-      'casual-mink-routinely.ngrok-free.app',
       'relaxing-hawk-ace.ngrok-free.app',
       'cig-backend.webo.dev',
       'pimcoredata.intuji.com',
