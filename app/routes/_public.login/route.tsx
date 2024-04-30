@@ -25,6 +25,7 @@ import {
 } from '~/lib/utils/toast-session.server';
 import StorageService from '~/services/storage.service';
 import { LOCAL_STORAGE_KEYS } from '~/lib/constants/general.constant';
+import React from 'react';
 
 export const loader = async ({ context }: LoaderFunctionArgs) => {
   const accessToken = await getAccessToken(context);
@@ -84,9 +85,12 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
 };
 
 export default function LoginPage() {
-  const storageService = new StorageService(); // Assuming StorageService is a class
-
-  storageService.remove(LOCAL_STORAGE_KEYS.PERMISSIONS);  //removing permission from the localstorage
-
+  React.useEffect(() => {
+    // Check if localStorage is available (client-side)
+    if (typeof window !== 'undefined') {
+      const storageService = new StorageService(); // Assuming StorageService is a class
+      storageService.remove(LOCAL_STORAGE_KEYS.PERMISSIONS); // Remove permission from localStorage
+    }
+  }, []);
   return <LoginForm />;
 }
