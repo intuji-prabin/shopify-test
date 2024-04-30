@@ -1,10 +1,6 @@
 import type {EntryContext} from '@shopify/remix-oxygen';
 import {RemixServer} from '@remix-run/react';
-import type {EntryContext} from '@shopify/remix-oxygen';
-import {RemixServer} from '@remix-run/react';
 import isbot from 'isbot';
-import {renderToReadableStream} from 'react-dom/server';
-import {createContentSecurityPolicy} from '@shopify/hydrogen';
 import {renderToReadableStream} from 'react-dom/server';
 import {createContentSecurityPolicy} from '@shopify/hydrogen';
 
@@ -17,7 +13,6 @@ export default async function handleRequest(
   const localDirectives =
     process.env.NODE_ENV === 'development' ? ['localhost:*'] : [];
 
-  const {nonce, header, NonceProvider} = createContentSecurityPolicy({
   const {nonce, header, NonceProvider} = createContentSecurityPolicy({
     defaultSrc: [
       "'self'",
@@ -33,7 +28,6 @@ export default async function handleRequest(
       "'unsafe-inline'",
       'fonts.googleapis.com',
       'cdn.shopify.com',
-
 
       ...localDirectives,
     ],

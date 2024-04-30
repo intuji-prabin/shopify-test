@@ -10,14 +10,15 @@ export type Invoices = {
   salesOrderNo: string;
   wareHouseNo: string;
   invoiceDate: string;
+  files: string;
 };
 
 type ResponseData = {
   status: boolean;
   message: string;
   payload: {
-    invoices: Invoices[];
-    totalNumberOfInvoices: number;
+    invoiceList: Invoices[];
+    totalInvoices: number;
   };
 };
 

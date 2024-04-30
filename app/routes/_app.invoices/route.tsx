@@ -48,20 +48,20 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 
   const {searchParams} = new URL(request.url);
 
-  const {invoices, totalNumberOfInvoices} = await getAllInvoices({
+  const {invoiceList, totalInvoices} = await getAllInvoices({
     customerId,
     searchParams,
   });
-  return json({invoices, totalNumberOfInvoices});
+  return json({invoiceList, totalInvoices});
 }
 export default function InvoicesPage() {
-  const {invoices, totalNumberOfInvoices} = useLoaderData<typeof loader>();
+  const {invoiceList, totalInvoices} = useLoaderData<typeof loader>();
 
   const {columns} = useColumn();
 
   const [searchParams] = useSearchParams();
 
-  const {table} = useTable(columns, invoices);
+  const {table} = useTable(columns, invoiceList);
 
   let isFilterApplied = false;
 
@@ -112,10 +112,7 @@ export default function InvoicesPage() {
 
       <DataTable table={table} columns={columns} />
 
-      <PaginationWrapper
-        pageSize={PAGE_LIMIT}
-        totalCount={totalNumberOfInvoices}
-      />
+      <PaginationWrapper pageSize={PAGE_LIMIT} totalCount={totalInvoices} />
     </section>
   );
 }
