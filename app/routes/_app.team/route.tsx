@@ -25,12 +25,21 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
+<<<<<<< HEAD
 import {MetaFunction} from '@shopify/remix-oxygen';
 import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import {BackButton} from '~/components/ui/back-button';
 import {Can} from '~/lib/helpers/Can';
+=======
+import { MetaFunction } from '@shopify/remix-oxygen';
+import { getCustomerRolePermission } from '~/lib/customer-role/customer-role-permission';
+import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { BackButton } from '~/components/ui/back-button';
+import { Can } from '~/lib/helpers/Can';
+>>>>>>> e52b3a7 (feat: fix conflict issue)
 
 export const meta: MetaFunction = () => {
   return [{title: 'Team List'}];
