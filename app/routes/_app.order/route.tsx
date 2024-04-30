@@ -51,11 +51,11 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     searchParams,
   });
 
-  return json({ orderList, orderPageInfo, pageNumber });
+  return json({ orderList, orderPageInfo, pageNumber, userDetails });
 }
 
 export default function OrdersPage() {
-  const { orderList, orderPageInfo, pageNumber } = useLoaderData<typeof loader>();
+  const { orderList, orderPageInfo, pageNumber, userDetails } = useLoaderData<typeof loader>();
 
   const { columns } = useColumn();
 
@@ -70,7 +70,7 @@ export default function OrdersPage() {
       isFilterApplied = true;
     }
   }
-  // console.log('orderList', orderList);
+  console.log('userDetails', userDetails);
 
   return (
     <section className="container">
