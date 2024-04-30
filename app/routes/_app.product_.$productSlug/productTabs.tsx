@@ -1,7 +1,9 @@
 import * as Tabs from '@radix-ui/react-tabs';
 import AlternativeProduct from './ProductAlternateProducts';
 import ProductFaq from './productFaq';
+import {Can} from '~/lib/helpers/Can';
 
+<<<<<<< HEAD
 const ProductTab = ({ productTab }: any) => {
   const handleDownload = async (url: string): Promise<void> => {
     // const authTokenFromLocalStorage = localStorage.getItem('authToken');
@@ -40,6 +42,9 @@ const ProductTab = ({ productTab }: any) => {
     }
   };
 
+=======
+const ProductTab = ({productTab}: any) => {
+>>>>>>> 0c4f4a7 (feat: added most of the permission authorization check)
   return (
     <section className="bg-white tab-wrapper">
       <Tabs.Root className="flex flex-col p-6" defaultValue="description-tab">
@@ -120,6 +125,7 @@ const ProductTab = ({ productTab }: any) => {
           )}
           {productTab?.operatingManual &&
             productTab?.operatingManual.length > 0 && (
+<<<<<<< HEAD
               <Tabs.Trigger
                 className={`bg-white px-4 py-3 h-[45px] flex items-left justify-start text-[15px] text-grey-500 text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md data-[state=active]:text-primary-500 data-[state=active]:border-b-4 border-primary-500 data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:bottom-border-tabs data-[state=active]:focus:red outline-none cursor-default`}
                 value="operating-tab"
@@ -135,6 +141,16 @@ const ProductTab = ({ productTab }: any) => {
               >
                 <h5 className="cursor-pointer">Service Manual</h5>
               </Tabs.Trigger>
+=======
+              <Can I="view" a="view_operating_manual">
+                <Tabs.Trigger
+                  className={`bg-white px-4 py-3 h-[45px] flex items-left justify-start text-[15px] text-grey-500 text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md data-[state=active]:text-primary-500 data-[state=active]:border-b-4 border-primary-500 data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:bottom-border-tabs data-[state=active]:focus:red outline-none cursor-default`}
+                  value="operating-tab"
+                >
+                  <h5 className="cursor-pointer">Operating Manual</h5>
+                </Tabs.Trigger>
+              </Can>
+>>>>>>> 0c4f4a7 (feat: added most of the permission authorization check)
             )}
         </Tabs.List>
 
