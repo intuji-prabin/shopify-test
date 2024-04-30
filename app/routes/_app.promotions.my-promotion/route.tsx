@@ -32,6 +32,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
+import {Can} from '~/lib/helpers/Can';
 
 export const meta: MetaFunction = () => {
   return [{title: 'My Promotion'}];
@@ -178,26 +179,30 @@ export default function MyPromotionsPage() {
                   >
                     {checkedPromotions.length} items selected
                   </p>
-                  <NavLink
-                    to={exportUrl}
-                    reloadDocument
-                    className={({isActive, isPending}) =>
-                      isPending
-                        ? 'bg-red-500'
-                        : isActive
-                        ? 'active'
-                        : 'text-neutral-white font-bold italic uppercase bg-primary-500 disabled:bg-grey-50 px-6 py-2 text-sm leading-6 flex items-center gap-x-1.5'
-                    }
-                  >
-                    <UploadIcon /> Export
-                  </NavLink>
-                  <Button
-                    type="submit"
-                    variant="destructive"
-                    className="basis-full sm:basis-auto"
-                  >
-                    Delete
-                  </Button>
+                  <Can I="view" a="export_promotions">
+                    <NavLink
+                      to={exportUrl}
+                      reloadDocument
+                      className={({isActive, isPending}) =>
+                        isPending
+                          ? 'bg-red-500'
+                          : isActive
+                          ? 'active'
+                          : 'text-neutral-white font-bold italic uppercase bg-primary-500 disabled:bg-grey-50 px-6 py-2 text-sm leading-6 flex items-center gap-x-1.5'
+                      }
+                    >
+                      <UploadIcon /> Export
+                    </NavLink>
+                  </Can>
+                  <Can I="view" a="delete_promotions">
+                    <Button
+                      type="submit"
+                      variant="destructive"
+                      className="basis-full sm:basis-auto"
+                    >
+                      Delete
+                    </Button>
+                  </Can>
                 </div>
               ) : (
                 <p className="font-bold text-lg leading-5.5 italic basis-full sm:basis-auto sm:hidden">

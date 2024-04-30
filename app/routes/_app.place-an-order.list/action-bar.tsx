@@ -4,6 +4,7 @@ import CreateGroup from '~/routes/_app.place-an-order.list/save-later-dialogbox'
 import {Product} from '~/routes/_app.place-an-order.list/place-an-order-list.server';
 import {BackButton} from '~/components/ui/back-button';
 import {useSelectedProduct} from '../_app.pending-order_.$groupId/use-selected-product';
+import {Can} from '~/lib/helpers/Can';
 
 export function ActionBar({
   table,
@@ -52,17 +53,19 @@ export function ActionBar({
               numberOfSelectedRows={numberOfSelectedRows}
             />
           </div>
-          <Button
-            variant={
-              table.getSelectedRowModel().rows.length === 0
-                ? 'disabled'
-                : 'secondary'
-            }
-            className="min-w-[111px] min-h-10 p-0"
-            onClick={handleAddToCart}
-          >
-            Add to cart
-          </Button>
+          <Can I="view" a="add_to_cart">
+            <Button
+              variant={
+                table.getSelectedRowModel().rows.length === 0
+                  ? 'disabled'
+                  : 'secondary'
+              }
+              className="min-w-[111px] min-h-10 p-0"
+              onClick={handleAddToCart}
+            >
+              Add to cart
+            </Button>
+          </Can>
         </div>
       </div>
     </div>

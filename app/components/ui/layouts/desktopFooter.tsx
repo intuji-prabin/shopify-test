@@ -1,7 +1,8 @@
 import Enquire from '~/components/icons/enquire';
 import Phone from '~/components/icons/phone';
-import { Link } from '@remix-run/react';
-import { Routes } from '~/lib/constants/routes.constent';
+import {Link} from '@remix-run/react';
+import {Routes} from '~/lib/constants/routes.constent';
+import {Can} from '~/lib/helpers/Can';
 
 export default function DesktopFooter() {
   const footerNavs = [
@@ -81,7 +82,7 @@ export default function DesktopFooter() {
       <div className="container">
         <div className="flex flex-col justify-between gap-10 py-20 md:flex-row">
           <div className="flex flex-col gap-10">
-            <figure className='max-w-48'>
+            <figure className="max-w-48">
               <img src="/myCigweldWhite.svg" alt="" />
             </figure>
             <div className="flex flex-col gap-[23px]">
@@ -103,13 +104,23 @@ export default function DesktopFooter() {
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             <div className="">
               <ul className="flex flex-col gap-8">
-                {footerNavs.map((nav) => (
-                  <Link to={nav.link} key={nav.id}>
-                    <li className="text-2xl font-bold italic leading-[29px] text-white uppercase">
-                      {nav.title}
-                    </li>
-                  </Link>
-                ))}
+                {footerNavs.map((nav) =>
+                  nav.title === 'my team' ? (
+                    <Can I="view" a="view_team">
+                      <Link to={nav.link} key={nav.id}>
+                        <li className="text-2xl font-bold italic leading-[29px] text-white uppercase">
+                          {nav.title}
+                        </li>
+                      </Link>
+                    </Can>
+                  ) : (
+                    <Link to={nav.link} key={nav.id}>
+                      <li className="text-2xl font-bold italic leading-[29px] text-white uppercase">
+                        {nav.title}
+                      </li>
+                    </Link>
+                  ),
+                )}
               </ul>
             </div>
             <div className="flex flex-col gap-5">
