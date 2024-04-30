@@ -22,6 +22,7 @@ export interface relatedProductsType {
   companyPrice: number;
   currency: string;
   featuredImage: string;
+  liked: boolean;
 }
 
 export interface ProductType {
@@ -169,7 +170,7 @@ const formatResponse = async (response: ProductType) => {
       currency: item?.currency,
       defaultPrice: item?.defaultPrice,
       quantity: item?.quantity,
-      liked: false,
+      liked: item?.liked || false, // make this dynamic
       variants: {
         id: item?.variantId,
         sku: item?.sku,
