@@ -82,381 +82,7 @@ export async function loader({request, context}: ActionFunctionArgs) {
     },
   );
 }
-const roleData = {
-  title: 'Admin',
-  value: 'admin',
-  permissions: [
-    {
-      id: 1,
-      value: 'view_team',
-      title: 'view team',
-      key: 'read',
-    },
-    {
-      id: 2,
-      value: 'edit_team',
-      title: 'edit team',
-      key: 'edit',
-    },
-    //     {
-    //         "id": 3,
-    //         "value": "create_team",
-    //         "title": "create team",
-    //         "key": "create",
 
-    //     }
-  ],
-};
-
-// Function to fetch role data with a 3-second timeout
-const fetchRoleDataWithTimeout = () => {
-  return new Promise<RoleData>((resolve, reject) => {
-    setTimeout(() => {
-      // Simulate role data fetched from an API
-      const roleData: RoleData = {
-        title: 'Admin',
-        value: 'test',
-        permissions: 
-        [
-          {
-            id: 1,
-            value: 'customer_login',
-            title: 'Customer Login',
-            key: 'login',
-          },
-          {
-            id: 2,
-            value: 'password_reset',
-            title: 'Password Reset',
-            key: 'reset',
-          },
-          {
-            id: 3,
-            value: 'customer_logout',
-            title: 'Customer Logout',
-            key: 'logout',
-          },
-          {
-            id: 4,
-            value: 'edit_own_profile',
-            title: 'Edit Own Profile',
-            key: 'edit_profile',
-          },
-          {
-            id: 5,
-            value: 'edit_other_profile',
-            title: 'Edit Other Profile',
-            key: 'edit_other_profile',
-          },
-          {
-            id: 6,
-            value: 'change_role',
-            title: 'Change Role',
-            key: 'view',
-          },
-          {
-            id: 7,
-            value: 'change_status',
-            title: 'Change Status',
-            key: 'view',
-          },
-          {
-            id: 8,
-            value: 'view_team',
-            title: 'View Team',
-            key: 'view',
-          },
-          {
-            id: 9,
-            value: 'search_customers',
-            title: 'Search Customers',
-            key: 'view',
-          },
-          {
-            id: 10,
-            value: 'add_customer',
-            title: 'Add Customer',
-            key: 'view',
-          },
-          {
-            id: 11,
-            value: 'view_categories',
-            title: 'View Categories',
-            key: 'read_categories',
-          },
-          {
-            id: 12,
-            value: 'view_products',
-            title: 'View Products',
-            key: 'read_products',
-          },
-          {
-            id: 13,
-            value: 'view_product_price',
-            title: 'View Product Price',
-            key: 'read_product_price',
-          },
-          {
-            id: 14,
-            value: 'view_product_detail',
-            title: 'View Product Detail',
-            key: 'view',
-          },
-          {
-            id: 15,
-            value: 'view_operating_manual',
-            title: 'View Operating Manual',
-            key: 'view',
-          },
-          {
-            id: 16,
-            value: 'view_service_manual',
-            title: 'View Service Manual',
-            key: 'read_service_manual',
-          },
-          {
-            id: 17,
-            value: 'add_to_cart',
-            title: 'Add to Cart',
-            key: 'view',
-          },
-          {
-            id: 18,
-            value: 'add_to_cart_bulk',
-            title: 'Add to Cart Bulk',
-            key: 'add_to_cart_bulk',
-          },
-          {
-            id: 19,
-            value: 'add_to_wishlist',
-            title: 'Add to Wishlist',
-            key: 'view',
-          },
-          {
-            id: 20,
-            value: 'add_wishlist_to_cart',
-            title: 'Add Wishlist to Cart',
-            key: 'view',
-          },
-          {
-            id: 21,
-            value: 'place_order',
-            title: 'Place Order',
-            key: 'place_order',
-          },
-          {
-            id: 22,
-            value: 'upload_bulk_order',
-            title: 'Upload Bulk Order',
-            key: 'upload_bulk_order',
-          },
-          {
-            id: 23,
-            value: 'search_products',
-            title: 'Search Products',
-            key: 'search_products',
-          },
-          {
-            id: 24,
-            value: 'add_product_list_to_cart',
-            title: 'Add Product List to Cart',
-            key: 'add_product_list_to_cart',
-          },
-          {
-            id: 25,
-            value: 'save_product_list_to_group',
-            title: 'Save Product List to Group',
-            key: 'save_product_list_to_group',
-          },
-          {
-            id: 26,
-            value: 'add_group_to_cart',
-            title: 'Add Group to Cart',
-            key: 'add_group_to_cart',
-          },
-          {
-            id: 27,
-            value: 'view_orders',
-            title: 'View Orders',
-            key: 'view',
-          },
-          {
-            id: 28,
-            value: 'reorder_order',
-            title: 'Reorder Order',
-            key: 'view',
-          },
-          {
-            id: 29,
-            value: 'view_company_statements',
-            title: 'View Company Statements',
-            key: 'view',
-          },
-          {
-            id: 30,
-            value: 'view_company_invoices',
-            title: 'View Company Invoices',
-            key: 'view',
-          },
-          {
-            id: 31,
-            value: 'recieve_user_notifications',
-            title: 'Receive User Notifications',
-            key: 'receive_user_notifications',
-          },
-          {
-            id: 32,
-            value: 'recieve_company_notifications',
-            title: 'Receive Company Notifications',
-            key: 'receive_company_notifications',
-          },
-          {
-            id: 33,
-            value: 'track_order',
-            title: 'Track Order',
-            key: 'view',
-          },
-          {
-            id: 34,
-            value: 'view_tracked_order_detail',
-            title: 'View Tracked Order Detail',
-            key: 'read_tracked_order_detail',
-          },
-          {
-            id: 35,
-            value: 'view_tracked_order_price',
-            title: 'View Tracked Order Price',
-            key: 'read_tracked_order_price',
-          },
-          {
-            id: 36,
-            value: 'customize_promotions',
-            title: 'Customize Promotions',
-            key: 'view',
-          },
-          {
-            id: 37,
-            value: 'edit_promotions',
-            title: 'Edit Promotions',
-            key: 'view',
-          },
-          {
-            id: 38,
-            value: 'export_promotions',
-            title: 'Export Promotions',
-            key: 'view',
-          },
-          {
-            id: 39,
-            value: 'delete_promotions',
-            title: 'Delete Promotions',
-            key: 'view',
-          },
-          {
-            id: 40,
-            value: 'open_ticket',
-            title: 'Open Ticket',
-            key: 'view',
-          },
-          
-          {
-            id: 41,
-            value: 'view_company_information',
-            title: 'View Company Information',
-            key: 'view',
-          },
-          {
-            id: 42,
-            value: 'view_shipping_addresses',
-            title: 'View Shipping Addresses',
-            key: 'view',
-          },
-          {
-            id: 43,
-            value: 'view_promotional_banners',
-            title: 'View Promotional Banners',
-            key: 'view',
-          },
-          {
-            id: 44,
-            value: 'view_monthly_spending',
-            title: 'View Monthly Spending',
-            key: 'view',
-          },
-          {
-            id: 45,
-            value: 'view_total_spending',
-            title: 'View Total Spending',
-            key: 'view',
-          },
-          {
-            id: 46,
-            value: 'view_total_invoicing',
-            title: 'View Total Invoicing',
-            key: 'view',
-          },
-          {
-            id: 47,
-            value: 'view_expenditure',
-            title: 'View Expenditure',
-            key: 'view',
-          },
-          {
-            id: 48,
-            value: 'view_spending_list',
-            title: 'View Spending List',
-            key: 'view',
-          },
-          {
-            id: 49,
-            value: 'view_transaction_history',
-            title: 'View Transaction History',
-            key: 'view',
-          },
-          {
-            id: 50,
-            value: 'ticket_operations',
-            title: 'Ticket Operations',
-            key: 'view',
-          },
-          {
-            id: 51,
-            value: 'view_contact_details',
-            title: 'View Contact Details',
-            key: 'view',
-          },
-          {
-            id: 52,
-            value: 'allow_impersonation',
-            title: 'Allow Impersonation',
-            key: 'view',
-          },
-          {
-            id: 53,
-            value: 'conformance_certificates',
-            title: 'Conformance Certificates',
-            key: 'view',
-          },
-
-
-        ],
-      };
-      resolve(roleData);
-    }, 1000); // Simulate 3-second delay
-  });
-};
-
-// Define an interface for role data
-interface RoleData {
-  title: string;
-  value: string;
-  permissions: {
-    id: number;
-    value: string;
-    title: string;
-    key: string;
-  }[];
-}
 
 export default function PublicPageLayout() {
   const {
@@ -476,7 +102,7 @@ export default function PublicPageLayout() {
 
   function getUserAbilities(roleData: any) {
     if (roleData.value !== 'admin') {
-      return defineAbilitiesForUser(roleData.permissions);
+      return defineAbilitiesForUser(roleData.permission);
     } else {
       return defineAbilitiesForAdmin();
     }
@@ -485,31 +111,30 @@ export default function PublicPageLayout() {
 
   useEffect(() => {
     const fetchData = async () => {
-      // const storageService = new StorageService(); // Assuming StorageService is a class
-      // const permissions = storageService.get(LOCAL_STORAGE_KEYS.PERMISSIONS);
-      // if (permissions) {
-      //   console.log("Here permissions is in local storage");
-      //   const userAbility = getUserAbilities(permissions);
-      //   setAbility(userAbility);
-       
-      // }
-      // else{
-        try {
-          const roleData = await fetchRoleDataWithTimeout(); // Fetch role data with timeout
-          // Define abilities based on fetched role data
+      try {
+        // const storageService = new StorageService(); // Assuming StorageService is a class
+        // const permissions = storageService.get(LOCAL_STORAGE_KEYS.PERMISSIONS);
+        
+        // if (permissions) {
+        //   setAbility(getUserAbilities(permissions));
+        // } else {
+          const roleData = userDetails?.meta?.user_role;
+          if (!roleData) throw new Error('User role data not available.');
+  
           const userAbility = getUserAbilities(roleData);
           setAbility(userAbility);
-          // storageService.set(LOCAL_STORAGE_KEYS.PERMISSIONS, roleData);
-        } catch (error) {
-          console.error('Error fetching role data:', error);
-        } finally {
-          setLoading(false);
-        }
-      // }
+        //   storageService.set(LOCAL_STORAGE_KEYS.PERMISSIONS, roleData);
+        // }
+      } catch (error) {
+        console.error('Error fetching role data:', error);
+      } finally {
+        setLoading(false);
+      }
     };
-
+  
     fetchData();
-  }, []);
+  }, [userDetails]); // Add userDetails to dependencies to re-run effect when it changes
+  
 
   const userId = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
     event: EVENTS.LOGOUT.NAME,
@@ -519,6 +144,30 @@ export default function PublicPageLayout() {
       submit({}, {method: 'POST', action: '/logout'});
     }
   }, [userId]);
+  
+
+  // const permissionsStream = useEventSource(Routes.PERMISSIONS_SUBSCRIBE, {
+  //   event: EVENTS.PERMISSIONS_UPDATED.NAME,
+  // });
+
+  // useEffect(() => {
+  //   console.log('Permissions stream:', permissionsStream);
+  //   if (!permissionsStream) return;
+
+  //   try {
+  //     const permissions = JSON.parse(permissionsStream);
+
+  //     // Update the user's abilities based on the received permissions
+  //     const userAbility = getUserAbilities(permissions);
+  //     console.log('User abilities updated:', userAbility);
+  //     // Update the ability state with the new abilities
+  //     setAbility(userAbility);
+  //   } catch (error) {
+  //     console.error('Error handling permissions update:', error);
+  //   }
+  // }, [permissionsStream])
+  
+
   return (
     <AbilityContext.Provider value={ability}>
       <Layout
