@@ -11,6 +11,7 @@ import {
 import { ReactNode } from 'react';
 import { BackButton } from '~/components/ui/back-button';
 import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { ProductCard } from '~/components/ui/product-card';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 import { getAccessToken } from '~/lib/utils/auth-session.server';
 import {
@@ -21,22 +22,22 @@ import {
 } from '~/lib/utils/toast-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { GET_CART_LIST } from '../_app.cart-list/cart.server';
+import { ProductList } from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/route';
 import {
   ProductType,
   addProductToCart,
-  getProductDetails,
+  getProductDetails
 } from './product.server';
 import ProductInformation from './productInformation';
-import ProductsRelatedProduct from './productsRelatedProduct';
-import { addToWishlist, removeFromWishlist } from './wishlist.server';
 import ProductTab from './productTabs';
-import { getSimilarProduct } from './relatedProduct.server';
+import { addToWishlist, removeFromWishlist } from './wishlist.server';
 
 interface ProductDetailType {
   productPage: string;
   product: {
     productInfo: ProductInfoType;
     productTab: ProductTabType;
+    relatedProducts: ProductList[];
   };
 }
 
@@ -104,11 +105,6 @@ export const loader = async ({
     );
 
     const productPage = params.productSlug;
-    // if (product?.productInfo?.categoryUrl) {
-    //   const similarProducts = await getSimilarProduct(context, product?.productInfo?.categoryUrl, '9048842633502', userDetails?.id);
-    // }
-
-    // console.log("similarProducts", similarProducts.product)
 
     return json({
       product,
@@ -137,8 +133,23 @@ export default function route() {
         </Breadcrumb>
       </div>
       <ProductInformation product={product?.productInfo} />
-      <ProductTab productTab={product?.productTab} />
-      <ProductsRelatedProduct />
+      <ProductTab productTab={product?.productTab} alternateProduct={product.relatedProducts} />
+      {product?.relatedProducts?.length > 0 &&
+        <section className="bg-white mt-0 border-[1px] border-grey-50 py-12">
+          <div className="container">
+            <h3 className="text-[30px] italic font-bold leading-[36px] mb-8 uppercase">
+              Similar Products
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-[18px] similar__product">
+              {product.relatedProducts?.slice(0, 4).map(
+                (product, index) => (
+                  <ProductCard key={index} {...product} />
+                ),
+              )}
+            </div>
+          </div>
+        </section>
+      }
     </ProductDetailPageWrapper>
   );
 }

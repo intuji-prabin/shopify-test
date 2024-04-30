@@ -138,10 +138,10 @@ function ProductCardButtons({
   moq,
 }: Pick<ProductList, 'handle' | 'id' | 'uom'> & Pick<Variants, 'moq'> & { productVariantId: string }) {
   const submit = useSubmit();
-  const productVariantOnlyId = productVariantId.split('/').pop();
+  const productVariantOnlyId = productVariantId?.split('/')?.pop();
 
   return (
-    <div className="flex flex-col items-center justify-center gap-2 mt-4 sm:flex-row product-button">
+    <div className="grid justify-center grid-cols-1 gap-2 mt-4 sm:grid-cols-2 product-button">
       <Link
         to={`/product/${handle}`}
         className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600"
