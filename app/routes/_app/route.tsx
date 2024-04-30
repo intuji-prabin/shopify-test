@@ -138,15 +138,15 @@ export default function PublicPageLayout() {
   });
 
   console.log('Permission updates:', hasPermissionBeenUpdated);
-  // useEffect(() => {
-  //   console.log('TEST', hasPermissionBeenUpdated);
-  //   if (hasPermissionBeenUpdated) {
-  //     const roleData = userDetails?.meta?.user_role;
-  //     if (!roleData) throw new Error('User role data not available.');
-  //     const userAbility = getUserAbilities(roleData);
-  //     setAbility(userAbility);
-  //   }
-  // }, [hasPermissionBeenUpdated]);
+  useEffect(() => {
+    console.log('TEST', hasPermissionBeenUpdated);
+    if (hasPermissionBeenUpdated) {
+      const roleData = userDetails?.meta?.user_role;
+      if (!roleData) throw new Error('User role data not available.');
+      const userAbility = getUserAbilities(roleData);
+      setAbility(userAbility);
+    }
+  }, [hasPermissionBeenUpdated]);
 
   return (
     <AbilityContext.Provider value={ability}>
