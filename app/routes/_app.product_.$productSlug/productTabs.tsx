@@ -1,44 +1,10 @@
 import * as Tabs from '@radix-ui/react-tabs';
 import AlternativeProduct from './ProductAlternateProducts';
 import ProductFaq from './productFaq';
+import {useDownload} from '~/hooks/useDownload';
 
-const ProductTab = ({ productTab }: any) => {
-  const handleDownload = async (url: string): Promise<void> => {
-    // const authTokenFromLocalStorage = localStorage.getItem('authToken');
-    try {
-      const response = await fetch(url, {
-        // headers: {
-        //   Authorization: `Bearer ${authTokenFromLocalStorage}`,
-        // },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch the file. Status: ${response.status}`);
-      }
-
-      const contentDisposition = response.headers.get('Content-Disposition');
-      const matches = contentDisposition?.match(/filename=(.*)/);
-      const suggestedFilename = matches ? matches[1] : 'downloaded-file';
-
-      const blob = await response.blob();
-
-      if (blob) {
-        const _url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = _url;
-        //❗Removing quotes "" from the filename as Chrome also appends
-        //them as &quot; in the filename
-        a.download = suggestedFilename.replace(/['"]+/g, '');
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(_url);
-      }
-    } catch (err) {
-      console.error("HERE is the error", err);
-    }
-  };
+const ProductTab = ({productTab}: any) => {
+  const {handleDownload} = useDownload();
 
   return (
     <section className="bg-white tab-wrapper">
@@ -205,9 +171,9 @@ const ProductTab = ({ productTab }: any) => {
                   </h5>
                 </div>
                 <button
-                  type='button'
+                  type="button"
                   className="flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50"
-                  onClick={() => handleDownload(item?.url)}
+                  onClick={() => handleDownload({url: item?.url})}
                 >
                   Download
                 </button>
@@ -276,7 +242,7 @@ const ProductTab = ({ productTab }: any) => {
                   </h5>
                 </div>
                 <button
-                  type='button'
+                  type="button"
                   className="flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50"
                   onClick={() => handleDownload(item?.url)}
                 >
@@ -306,7 +272,7 @@ const ProductTab = ({ productTab }: any) => {
                     </h5>
                   </div>
                   <button
-                    type='button'
+                    type="button"
                     className="flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50"
                     onClick={() => handleDownload(item?.url)}
                   >
@@ -335,7 +301,7 @@ const ProductTab = ({ productTab }: any) => {
                   </h5>
                 </div>
                 <button
-                  type='button'
+                  type="button"
                   className="flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50"
                   onClick={() => handleDownload(item?.url)}
                 >
@@ -346,7 +312,7 @@ const ProductTab = ({ productTab }: any) => {
           </Tabs.Content>
         )}
       </Tabs.Root>
-    </section >
+    </section>
   );
 };
 
