@@ -10,44 +10,25 @@ import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {getProducts} from './productList.server';
 import {AppLoadContext} from '@remix-run/server-runtime';
-import {Params, json} from '@remix-run/react';
-import {
-  filterDetailsCommitSession,
-  getFilterDetailsSession,
-} from '~/lib/utils/filter-session.server';
-import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
+import {Params} from '@remix-run/react';
 
 export const getFilterProduct = async (
   context: AppLoadContext,
   params: Params<string>,
   filterList: any,
   customerId: string,
-  request: Request,
 ) => {
   const {session, storefront} = context;
   const categoryIdentifier = params.subCategorySlug;
 
-  const filterDetailsSession = await getFilterDetailsSession(request);
-
   const minPrice = filterList.find((item: any) => item?.key == 'minPrice');
   const maxPrice = filterList.find((item: any) => item?.key === 'maxPrice');
   if (!minPrice && !maxPrice) {
-    return await getProducts(
-      context,
-      params,
-      filterList,
-      customerId,
-      [],
-      true,
-      request,
-    );
+    return await getProducts(context, params, filterList, customerId, [], true);
   }
 
-  const sessionUseStockProduct = filterDetailsSession.get(PRODUCT_STOCK_CODE);
-  const sessionStockProductList = filterDetailsSession.get(
-    PRODUCT_STOCK_CODE_INFO,
-  );
-  console.log('first', sessionStockProductList, sessionUseStockProduct);
+  const sessionUseStockProduct = session.get(PRODUCT_STOCK_CODE);
+  const sessionStockProductList = session.get(PRODUCT_STOCK_CODE_INFO);
   const currentPage = filterList.find((item: any) => item?.key === 'pageNo');
   const after = filterList.find((item: any) => item?.key === 'after');
   let sessionProductListLength = sessionUseStockProduct
@@ -84,8 +65,6 @@ export const getFilterProduct = async (
         filterList,
         customerId,
         sessionStockProductList?.stockCodes,
-        false,
-        request,
       );
 
       if (productList?.formattedData?.productList.length === TOTAL) {
@@ -108,26 +87,12 @@ export const getFilterProduct = async (
         }
 
         productList.pageInfo.hasPreviousPage = true;
-        filterDetailsSession.set(PRODUCT_STOCK_CODE, [
+        session.set(PRODUCT_STOCK_CODE, [
           ...sessionUseStockProduct,
           ...useStockCode,
         ]);
-        filterDetailsSession.set(
-          PRODUCT_STOCK_CODE_INFO,
-          sessionStockProductList,
-        );
-        return json(productList, {
-          headers: [
-            ['Set-Cookie', await session.commit({})],
-            [
-              'Set-Cookie',
-              await filterDetailsCommitSession(filterDetailsSession, {
-                maxAge: SESSION_MAX_AGE['30_DAYS'],
-              }),
-            ],
-          ],
-        });
-        // return productList;
+        session.set(PRODUCT_STOCK_CODE_INFO, sessionStockProductList);
+        return productList;
       }
 
       sessionStockProductList.stockCodes = [];
@@ -143,24 +108,13 @@ export const getFilterProduct = async (
         product?.extraProducts?.formattedData?.productList.map(
           (items: any) => ({stockCode: items?.stockCode}),
         );
-      filterDetailsSession.set(PRODUCT_STOCK_CODE, [
+      session.set(PRODUCT_STOCK_CODE, [
         ...sessionUseStockProduct,
         ...useStockCode,
       ]);
-      filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, product?.stockCodes);
+      session.set(PRODUCT_STOCK_CODE_INFO, product?.stockCodes);
       product.extraProducts.pageInfo.hasPreviousPage = true;
-      return json(product?.extraProducts, {
-        headers: [
-          ['Set-Cookie', await session.commit({})],
-          [
-            'Set-Cookie',
-            await filterDetailsCommitSession(filterDetailsSession, {
-              maxAge: SESSION_MAX_AGE['30_DAYS'],
-            }),
-          ],
-        ],
-      });
-      // return product?.extraProducts;
+      return product?.extraProducts;
     }
 
     if (
@@ -182,8 +136,6 @@ export const getFilterProduct = async (
       filterList,
       customerId,
       stockCode?.stockCodes,
-      false,
-      request,
     );
 
     if (!productList?.formattedData) {
@@ -207,25 +159,13 @@ export const getFilterProduct = async (
       ) {
         productList.pageInfo.hasNextPage = true;
       }
-      filterDetailsSession.set(PRODUCT_STOCK_CODE, [
+      session.set(PRODUCT_STOCK_CODE, [
         ...sessionUseStockProduct,
         ...useStockCode,
       ]);
-      filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, stockCode);
+      session.set(PRODUCT_STOCK_CODE_INFO, stockCode);
       productList.pageInfo.hasPreviousPage = true;
-      return json(productList, {
-        headers: [
-          ['Set-Cookie', await session.commit({})],
-          [
-            'Set-Cookie',
-            await filterDetailsCommitSession(filterDetailsSession, {
-              maxAge: SESSION_MAX_AGE['30_DAYS'],
-            }),
-          ],
-        ],
-      });
-
-      // return productList;
+      return productList;
     }
 
     if (productList?.formattedData?.productList.length < TOTAL) {
@@ -242,24 +182,13 @@ export const getFilterProduct = async (
         product?.extraProducts?.formattedData?.productList.map(
           (items: any) => ({stockCode: items?.stockCode}),
         );
-      filterDetailsSession.set(PRODUCT_STOCK_CODE, [
+      session.set(PRODUCT_STOCK_CODE, [
         ...sessionUseStockProduct,
         ...useStockCode,
       ]);
-      filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, product?.stockCodes);
+      session.set(PRODUCT_STOCK_CODE_INFO, product?.stockCodes);
       product.extraProducts.pageInfo.hasPreviousPage = true;
-      return json(product?.extraProducts, {
-        headers: [
-          ['Set-Cookie', await session.commit({})],
-          [
-            'Set-Cookie',
-            await filterDetailsCommitSession(filterDetailsSession, {
-              maxAge: SESSION_MAX_AGE['30_DAYS'],
-            }),
-          ],
-        ],
-      });
-      // return product?.extraProducts;
+      return product?.extraProducts;
     }
 
     const products = productList?.formattedData?.productList;
@@ -283,24 +212,13 @@ export const getFilterProduct = async (
     ) {
       productList.pageInfo.hasNextPage = true;
     }
-    filterDetailsSession.set(PRODUCT_STOCK_CODE, [
+    session.set(PRODUCT_STOCK_CODE, [
       ...sessionUseStockProduct,
       ...useStockCode,
     ]);
-    filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, stockCode);
+    session.set(PRODUCT_STOCK_CODE_INFO, stockCode);
     productList.pageInfo.hasPreviousPage = true;
-    return json(productList, {
-      headers: [
-        ['Set-Cookie', await session.commit({})],
-        [
-          'Set-Cookie',
-          await filterDetailsCommitSession(filterDetailsSession, {
-            maxAge: SESSION_MAX_AGE['30_DAYS'],
-          }),
-        ],
-      ],
-    });
-    // return productList;
+    return productList;
   }
 
   const before = filterList.find((item: any) => item?.key === 'before');
@@ -327,8 +245,6 @@ export const getFilterProduct = async (
         filterList,
         customerId,
         showNumberOfProduct,
-        false,
-        request,
       );
       productList.pageInfo.hasNextPage = true;
       productList.pageInfo.hasPreviousPage = true;
@@ -341,8 +257,6 @@ export const getFilterProduct = async (
         filterList,
         customerId,
         showNumberOfProduct,
-        false,
-        request,
       );
       productList.pageInfo.hasPreviousPage = false;
       return productList;
@@ -360,8 +274,6 @@ export const getFilterProduct = async (
     filterList,
     customerId,
     stockCode?.stockCodes,
-    false,
-    request,
   );
   // return true
   if (!productList?.formattedData) {
@@ -383,8 +295,8 @@ export const getFilterProduct = async (
     ) {
       productList.pageInfo.hasNextPage = true;
     }
-    filterDetailsSession.set(PRODUCT_STOCK_CODE, useStockCode);
-    filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, stockCode);
+    session.set(PRODUCT_STOCK_CODE, useStockCode);
+    session.set(PRODUCT_STOCK_CODE_INFO, stockCode);
     return productList;
   }
   if (productList?.formattedData?.productList.length < TOTAL) {
@@ -400,8 +312,8 @@ export const getFilterProduct = async (
     const useStockCode = product?.extraProducts?.formattedData?.productList.map(
       (items: any) => ({stockCode: items?.stockCode}),
     );
-    filterDetailsSession.set(PRODUCT_STOCK_CODE, useStockCode);
-    filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, product?.stockCodes);
+    session.set(PRODUCT_STOCK_CODE, useStockCode);
+    session.set(PRODUCT_STOCK_CODE_INFO, product?.stockCodes);
     return product?.extraProducts;
   }
 
@@ -426,21 +338,9 @@ export const getFilterProduct = async (
   ) {
     productList.pageInfo.hasNextPage = true;
   }
-  filterDetailsSession.set(PRODUCT_STOCK_CODE, useStockCode);
-  filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, stockCode);
-  return json(productList, {
-    headers: [
-      ['Set-Cookie', await session.commit({})],
-      [
-        'Set-Cookie',
-        await filterDetailsCommitSession(filterDetailsSession, {
-          maxAge: SESSION_MAX_AGE['30_DAYS'],
-        }),
-      ],
-    ],
-  });
-  // return productList;
-
+  session.set(PRODUCT_STOCK_CODE, useStockCode);
+  session.set(PRODUCT_STOCK_CODE_INFO, stockCode);
+  return productList;
   // return { extraProducts : productList, stockCodes : newStockCode }
 
   // }
@@ -481,8 +381,6 @@ const recursiveProduct = async (
     filterList,
     customerId,
     newStockCode?.stockCodes,
-    false,
-    context.request,
   );
 
   if (!productList?.formattedData) {
