@@ -15,6 +15,7 @@ import {
 } from '~/lib/utils/user-session.server';
 
 
+
 export const USER_SESSION_KEY = 'accessToken';
 
 /**
@@ -99,7 +100,7 @@ export async function logout({
   const messageSession = await getMessageSession(request);
 
   const userDetailsSession = await getUserDetailsSession(request);
-  
+
 
   setSuccessMessage(messageSession, logoutMessage);
 

@@ -25,10 +25,7 @@ import {
 } from '~/lib/utils/toast-session.server';
 import StorageService from '~/services/storage.service';
 import { LOCAL_STORAGE_KEYS } from '~/lib/constants/general.constant';
-<<<<<<< HEAD
 import React from 'react';
-=======
->>>>>>> e52b3a7 (feat: fix conflict issue)
 
 export const loader = async ({ context }: LoaderFunctionArgs) => {
   const accessToken = await getAccessToken(context);
