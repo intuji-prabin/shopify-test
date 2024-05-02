@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { ExportUp } from '~/components/icons/export';
 import { Button } from '~/components/ui/button';
 import Loader from '~/components/ui/loader';
+import { Can } from '~/lib/helpers/Can';
 
 const PromotionNavigation = ({ canvasRef, imageName }: { canvasRef: any, imageName: string }) => {
   const [loading, setLoading] = useState(false);
@@ -32,6 +33,8 @@ const PromotionNavigation = ({ canvasRef, imageName }: { canvasRef: any, imageNa
     }
   };
   return (
+    <Can I="view" a="export_promotions">
+
     <Button
       type="button"
       size="small"
@@ -42,6 +45,7 @@ const PromotionNavigation = ({ canvasRef, imageName }: { canvasRef: any, imageNa
     >
       {loading ? <Loader /> : <ExportUp />}Export
     </Button>
+    </Can>
   );
 };
 
