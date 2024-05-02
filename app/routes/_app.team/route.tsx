@@ -32,7 +32,6 @@ import {getUserDetails} from '~/lib/utils/user-session.server';
 import {BackButton} from '~/components/ui/back-button';
 import {Can} from '~/lib/helpers/Can';
 
-
 export const meta: MetaFunction = () => {
   return [{title: 'Team List'}];
 };
