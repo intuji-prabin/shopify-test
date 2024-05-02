@@ -5,7 +5,7 @@ import {
   useRouteError,
   useSubmit,
 } from '@remix-run/react';
-import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
+import {ActionFunctionArgs, json, redirect} from '@remix-run/server-runtime';
 import {useEffect, useState} from 'react';
 import {useEventSource} from 'remix-utils/sse/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
@@ -40,7 +40,8 @@ import {
 import {AbilityContext, DEFAULT_ABILITIES} from '~/lib/helpers/Can';
 import {LOCAL_STORAGE_KEYS} from '~/lib/constants/general.constant';
 import StorageService from '~/services/storage.service';
-import { emitter } from '~/lib/utils/emitter.server';
+import {emitter} from '~/lib/utils/emitter.server';
+import {ro} from 'date-fns/locale';
 
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
@@ -71,6 +72,7 @@ export async function loader({request, context}: ActionFunctionArgs) {
     setErrorMessage(messageSession, 'Category not found');
     headers.push(['Set-Cookie', await messageCommitSession(messageSession)]);
   }
+
   return json(
     {
       categories: categories ? categories : [],
@@ -85,7 +87,6 @@ export async function loader({request, context}: ActionFunctionArgs) {
   );
 }
 
-
 export default function PublicPageLayout() {
   const {
     categories,
@@ -93,15 +94,13 @@ export default function PublicPageLayout() {
     sessionCartInfo,
     wishlistSession,
     pendingOrderCount,
+    
   } = useLoaderData<typeof loader>();
 
   const submit = useSubmit();
-  console.log('userDetails', userDetails);
   const cartCount = sessionCartInfo?.lineItems ?? 0;
   const wishlistCount = wishlistSession ?? 0;
   const [ability, setAbility] = useState(DEFAULT_ABILITIES);
-  const [loading, setLoading] = useState(true);
-
   function getUserAbilities(roleData: any) {
     if (roleData.value === 'admin distributor') {
       return defineAbilitiesForAdmin();
@@ -117,10 +116,8 @@ export default function PublicPageLayout() {
 
     const userAbility = getUserAbilities(roleData);
     setAbility(userAbility);
-    setLoading(false);
   }, [userDetails]);
 
- 
   const userId = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
     event: EVENTS.LOGOUT.NAME,
   });
@@ -130,31 +127,52 @@ export default function PublicPageLayout() {
       submit({}, {method: 'POST', action: '/logout'});
     }
   }, [userId]);
-  const hasPermissionBeenUpdated = useEventSource('/permissions/sync', {
-    event: EVENTS.PERMISSIONS_UPDATED.NAME,
-  });
+  const hasPermissionBeenUpdated = useEventSource(
+    Routes.PERMISSIONS_SUBSCRIBE,
+    {
+      event: EVENTS.PERMISSIONS_UPDATED.NAME,
+    },
+  );
 
-  console.log('Permission updates:', hasPermissionBeenUpdated);
-  // useEffect(() => {
-  //   console.log('TEST', hasPermissionBeenUpdated);
-  //   if (hasPermissionBeenUpdated) {
-  //     const roleData = userDetails?.meta?.user_role;
-  //     if (!roleData) throw new Error('User role data not available.');
-  //     const userAbility = getUserAbilities(roleData);
-  //     setAbility(userAbility);
-  //   }
-  // }, [hasPermissionBeenUpdated]);
+  useEffect(() => {
+    const roleData = userDetails?.meta?.user_role;
+  
+    // Check if hasPermissionBeenUpdated is a string
+    if (typeof hasPermissionBeenUpdated === 'string') {
+      // Parse the string into an object
+      const parsedData = JSON.parse(hasPermissionBeenUpdated) as {
+        data: {value: string; permission: string[]}[];
+      };
+  
+      // Find the item in the parsedData.data array based on the condition
+      const userRolePermissions = parsedData.data.find(
+        (item) => item.value === roleData?.value
+      );
+  
+      // Check if userRolePermissions.permission is an empty array
+    if (userRolePermissions?.permission.length === 0) {
+      // Logout the user if permissions are empty
+      submit({}, {method: 'POST', action: '/logout'});
+    } else {
+      // Create abilities based on permissions
+      const userAbility = getUserAbilities(userRolePermissions);
+      setAbility(userAbility);
+    }
+    }
+  }, [hasPermissionBeenUpdated, userDetails]);
 
   return (
-    <Layout
-      categories={categories}
-      cartCount={cartCount}
-      userDetails={userDetails}
-      wishlistCount={wishlistCount}
-      pedingOrderCount={pendingOrderCount}
-    >
-      <Outlet />
-    </Layout>
+    <AbilityContext.Provider value={ability}>
+      <Layout
+        categories={categories}
+        cartCount={cartCount}
+        userDetails={userDetails}
+        wishlistCount={wishlistCount}
+        pedingOrderCount={pendingOrderCount}
+      >
+        <Outlet />
+      </Layout>
+    </AbilityContext.Provider>
   );
 }
 

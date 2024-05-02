@@ -85,6 +85,16 @@ export async function isAuthenticate(context: AppLoadContext) {
   return accessToken;
 }
 
+export async function isAuthorize(request: Request, permission: string) {
+  const userDetailsSession = await getUserDetailsSession(request);
+  const userDetail = userDetailsSession.get(USER_DETAILS_KEY);
+   // Find the 'add_customer' permission in user's role permissions
+   const hasAddCustomerPermission = userDetail.meta.user_role.permission.includes(permission);
+
+  
+  return hasAddCustomerPermission;
+}
+
 export async function logout({
   context,
   request,

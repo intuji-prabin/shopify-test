@@ -1,12 +1,13 @@
 import {
   isRouteErrorResponse,
   useLoaderData,
+  useNavigate,
   useRouteError,
 } from '@remix-run/react';
 import {validationError} from 'remix-validated-form';
 import {BackButton} from '~/components/ui/back-button';
 import {addTeam} from '~/routes/_app.team_.add/add-team.server';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {isAuthenticate, isAuthorize} from '~/lib/utils/auth-session.server';
 import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
 import {Routes} from '~/lib/constants/routes.constent';
 import {SelectInputOptions} from '~/components/ui/select-input';
@@ -27,19 +28,26 @@ import {
 } from '~/lib/utils/toast-session.server';
 import {MetaFunction} from '@shopify/remix-oxygen';
 import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
+import { AbilityContext } from '~/lib/helpers/Can';
+import { useContext } from 'react';
+import { USER_DETAILS_KEY, getUserDetailsSession } from '~/lib/utils/user-session.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Add Team Member'}];
 };
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({request,context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
+  
+
   const roles = await getCustomerRolePermission(context);
+  
   return json({roles});
 }
 
 export async function action({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
+
   const messageSession = await getMessageSession(request);
 
   try {
@@ -91,6 +99,16 @@ export async function action({request, context}: ActionFunctionArgs) {
 
 export default function AddTeam() {
   const {roles} = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
+  const ability = useContext(AbilityContext);
+
+  if (ability.cannot('view','add_customer')) {
+    // Redirect to the previous route
+    navigate(-1);
+    // You can also specify a specific route to navigate to, such as navigate('/previous-route')
+    // navigate('/previous-route');
+    return null; // You can return null or any other content indicating redirection is in progress
+  }
 
   return (
     <section className="container">
