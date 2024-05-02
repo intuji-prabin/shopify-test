@@ -96,7 +96,8 @@ const fetchRoleDataWithTimeout = () => {
       const roleData: RoleData = {
         title: 'Admin',
         value: 'test',
-        permissions: [
+        permissions: 
+        [
           {
             id: 1,
             value: 'customer_login',
