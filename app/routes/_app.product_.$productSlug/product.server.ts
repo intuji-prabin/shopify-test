@@ -170,7 +170,7 @@ const formatResponse = async (response: ProductType) => {
       currency: item?.currency,
       defaultPrice: item?.defaultPrice,
       quantity: item?.quantity,
-      liked: item?.liked || false, // make this dynamic
+      liked: item?.liked,
       variants: {
         id: item?.variantId,
         sku: item?.sku,
