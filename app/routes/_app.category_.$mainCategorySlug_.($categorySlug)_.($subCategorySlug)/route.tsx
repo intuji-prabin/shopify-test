@@ -22,16 +22,31 @@ import { FilterForm, SortByFilterForm } from './filterForm';
 import { getProductFilterList } from './productFilter.server';
 import { getProducts } from './productList.server';
 import { BulkCsvUpload } from '~/components/ui/bulk-csv-upload';
+import { filterDetailsCommitSession, getFilterDetailsSession } from '~/lib/utils/filter-session.server';
+import { SESSION_MAX_AGE } from '~/lib/constants/auth.constent';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
     await isAuthenticate(context);
+    const { session } = context;
     const categories = await getCategoryList(context);
     const productList = await getProductList(params, context, request);
+
+    const filterDetailsSession = await getFilterDetailsSession(request);
 
     const mainCategorySlug = params?.mainCategorySlug;
     const categorySlug = params?.categorySlug;
     const subCategorySlug = params?.subCategorySlug;
-    return json({ productList, mainCategorySlug, categorySlug, subCategorySlug, categories });
+    return json({ productList, mainCategorySlug, categorySlug, subCategorySlug, categories }, {
+        headers: [
+            ['Set-Cookie', await session.commit({})],
+            [
+                'Set-Cookie',
+                await filterDetailsCommitSession(filterDetailsSession, {
+                    maxAge: SESSION_MAX_AGE['30_DAYS'],
+                }),
+            ],
+        ],
+    });
 }
 
 export const action = async ({
@@ -455,11 +470,13 @@ export const getProductList = async (
 
         let results;
         if (searchList.length > 0) {
+            console.log("searchListInsideFilter", searchList)
             results = await getFilterProduct(
                 context,
                 params,
                 searchList,
                 userDetails?.id,
+                request
             );
         } else {
             results = await getProducts(
@@ -469,6 +486,7 @@ export const getProductList = async (
                 userDetails?.id,
                 [],
                 true,
+                request
             );
         }
         const productFilter = await getProductFilterList(context);
