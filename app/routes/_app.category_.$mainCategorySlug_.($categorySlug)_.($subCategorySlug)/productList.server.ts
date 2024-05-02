@@ -9,7 +9,6 @@ import {
 } from '~/lib/constants/product.session';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {PageInfo} from './route';
-import {getFilterDetailsSession} from '~/lib/utils/filter-session.server';
 
 type FilterItem = {
   key: string;
@@ -24,7 +23,6 @@ export async function getProducts(
   customerId: string,
   stockCode = [],
   toNotFilter = false,
-  request: Request,
 ) {
   const {storefront} = context;
   const categoryIdentifier = params.subCategorySlug
@@ -44,7 +42,6 @@ export async function getProducts(
 
     const pageInfo = products?.collection?.products?.pageInfo;
     const formattedData = await formattedResponse(products, customerId);
-    const filterDetailsSession = await getFilterDetailsSession(request);
 
     if (toNotFilter) {
       context.session.unset(PRODUCT_STOCK_CODE);
