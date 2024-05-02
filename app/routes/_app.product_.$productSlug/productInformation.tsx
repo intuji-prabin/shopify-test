@@ -1,22 +1,23 @@
-import { Form, Link, useSubmit } from '@remix-run/react';
-import { useState } from 'react';
+import {Form, Link, useSubmit} from '@remix-run/react';
+import {useState} from 'react';
 import Info from '~/components/icons/info';
 import {
   CircleInformationMajor,
   Compare,
   ProductLoveRed,
-  ProductLoveWhite
+  ProductLoveWhite,
 } from '~/components/icons/orderStatus';
-import { badgeVariants } from '~/components/ui/badge';
-import { Button } from '~/components/ui/button';
-import { Price } from '~/components/ui/price';
-import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
-import { useMediaQuery } from '../../hooks/useMediaQuery';
+import {badgeVariants} from '~/components/ui/badge';
+import {Button} from '~/components/ui/button';
+import {Price} from '~/components/ui/price';
+import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
+import {useMediaQuery} from '../../hooks/useMediaQuery';
 import CarouselThumb from './carouselThumb';
-import { getProductPriceByQty } from './product-detail';
-import { ProductInfoTable } from './productInfoTable';
+import {getProductPriceByQty} from './product-detail';
+import {ProductInfoTable} from './productInfoTable';
+import {Can} from '~/lib/helpers/Can';
 
-export default function ProductInformation({ product }: any) {
+export default function ProductInformation({product}: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
   const volumePrice = product?.priceRange?.length > 0 ? true : false;
 
@@ -27,7 +28,7 @@ export default function ProductInformation({ product }: any) {
           <div className="w-full lg:w-[calc(50%_-_28px)] pt-6 pb-8">
             <CarouselThumb
               images={product?.imageUrl}
-              thumbNailCarouseloptions={{ axis: matches ? 'y' : 'x' }}
+              thumbNailCarouseloptions={{axis: matches ? 'y' : 'x'}}
               mainCarouseloptions={{}}
               volumePrice={volumePrice}
             />
@@ -85,7 +86,7 @@ const ProductDetailsSection = ({
   productImageLength,
   moq,
   uomCode,
-  currency
+  currency,
 }: any) => {
   const [quantity, setQuantity] = useState(parseFloat(moq) || 1);
   const [UOM, setUOM] = useState(uomCode);
@@ -162,8 +163,9 @@ const ProductDetailsSection = ({
 
   return (
     <div
-      className={`w-full ${productImageLength > 0 && 'lg:w-[calc(50%_-_28px)]'
-        } py-8`}
+      className={`w-full ${
+        productImageLength > 0 && 'lg:w-[calc(50%_-_28px)]'
+      } py-8`}
     >
       <div className="flex justify-between">
         <figure>
@@ -176,9 +178,12 @@ const ProductDetailsSection = ({
             </Link>
           </li>
           <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]">
-            <Form method={isFavorited ? 'DELETE' : 'POST'} className='flex'>
+            <Form method={isFavorited ? 'DELETE' : 'POST'} className="flex">
               <input type="hidden" name="productId" value={productId} />
-              <button value={isFavorited ? "removeFromWishList" : "addToWishList"} name="action">
+              <button
+                value={isFavorited ? 'removeFromWishList' : 'addToWishList'}
+                name="action"
+              >
                 {isFavorited ? <ProductLoveRed /> : <ProductLoveWhite />}
               </button>
             </Form>
@@ -190,40 +195,53 @@ const ProductDetailsSection = ({
         <div className="flex flex-wrap gap-x-5 gap-y-2">
           <div className="flex items-center gap-1 text-base">
             <p className="font-semibold leading-6 ">{sku}: </p>
-            <p className="font-normal text-Grey-500">{skuUnits || "N/A"}</p>
+            <p className="font-normal text-Grey-500">{skuUnits || 'N/A'}</p>
           </div>
           <div className="flex items-center gap-2">
             <p className="text-base font-semibold leading-6 text-grey-600">
               {unitOfMeasurement}
             </p>
             <p className="font-normal text-Grey-500">{box}</p>
-            <div className={`${badgeVariants({ variant: 'primary' })} !m-0`}>
+            <div className={`${badgeVariants({variant: 'primary'})} !m-0`}>
               {defaultButton}
             </div>
           </div>
         </div>
-        <div className={`${badgeVariants({ variant: 'inStock' })} !m-0 w-max`}>
+        <div className={`${badgeVariants({variant: 'inStock'})} !m-0 w-max`}>
           <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>
           IN STOCK
         </div>
       </div>
-      <div className='flex flex-wrap gap-12 pt-6 product_det__pricing'>
-        <Price currency={currency} price={productPrice} className='relative' />
-        <Price currency={currency} price={originalPrice} variant='rrp' className='relative' />
-      </div>
+      <Can I="view" a="view_product_price">
+        <div className="flex flex-wrap gap-12 pt-6 product_det__pricing">
+          <Price
+            currency={currency}
+            price={productPrice}
+            className="relative"
+          />
+          <Price
+            currency={currency}
+            price={originalPrice}
+            variant="rrp"
+            className="relative"
+          />
+        </div>
+      </Can>
       <p className="text-lg font-normal leading-[22px] pt-6">
         Minimum Order ({moq})
       </p>
-      {priceRange && priceRange.length > 0 && (
-        <div className="w-full pt-4">
-          <ProductInfoTable
-            quantity={'Quantity'}
-            price={'Price'}
-            volumePrice={priceRange}
-            className="product_det__table"
-          />
-        </div>
-      )}
+      <Can I="view" a="view_product_price">
+        {priceRange && priceRange.length > 0 && (
+          <div className="w-full pt-4">
+            <ProductInfoTable
+              quantity={'Quantity'}
+              price={'Price'}
+              volumePrice={priceRange}
+              className="product_det__table"
+            />
+          </div>
+        )}
+      </Can>
       <div className="flex gap-2 px-4 py-2 mt-6 border-l-4 border-r-0 bg-semantic-info-100 border-semantic-info-500 border-y-0">
         <CircleInformationMajor />
         <p className="text-base font-normal leading-[21px]">
@@ -234,7 +252,9 @@ const ProductDetailsSection = ({
         <div>
           <div className="flex cart__list--quantity">
             <button
-              className={`border-[1px] border-grey-500 flex justify-center items-center w-14 aspect-square ${quantity - 1 < moq && 'cursor-not-allowed'}`}
+              className={`border-[1px] border-grey-500 flex justify-center items-center w-14 aspect-square ${
+                quantity - 1 < moq && 'cursor-not-allowed'
+              }`}
               onClick={decreaseQuantity}
               disabled={quantity - 1 < moq}
             >
@@ -256,7 +276,7 @@ const ProductDetailsSection = ({
               +
             </button>
           </div>
-          <p className='text-sm text-grey-700 pt-2.5 flex gap-x-1'>
+          <p className="text-sm text-grey-700 pt-2.5 flex gap-x-1">
             <Info />
             Minimum Order Quantity {moq || 1}
           </p>
@@ -294,17 +314,28 @@ const ProductDetailsSection = ({
           />
           <input type="hidden" name="quantity" value={quantity} />
           <input type="hidden" name="selectUOM" value={UOM} />
-          {quantity < moq || quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity) ?
+          {quantity < moq ||
+          quantity < 1 ||
+          quantity > CART_QUANTITY_MAX ||
+          isNaN(quantity) ? (
             <>
-              <button
-                className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-not-allowed text-grey-400 bg-grey-200 min-h-14"
-                disabled
-              >
-                {addToCart}
-              </button>
-              <p className='text-red-500'>Minimum order quantity is {moq || 1} and maximum quantity is {CART_QUANTITY_MAX}</p>
+              <Can I="view" a="add_to_cart">
+                <button
+                  className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-not-allowed text-grey-400 bg-grey-200 min-h-14"
+                  disabled
+                >
+                  {addToCart}
+                </button>
+              </Can>
+              <p className="text-red-500">
+                Minimum order quantity is {moq || 1} and maximum quantity is{' '}
+                {CART_QUANTITY_MAX}
+              </p>
             </>
-            : <Button
+          ) : (
+            <Can I="view" a="add_to_cart">
+
+            <Button
               className="flex-grow w-full uppercase min-h-14"
               variant="primary"
               type="submit"
@@ -313,7 +344,9 @@ const ProductDetailsSection = ({
             >
               {addToCart}
             </Button>
-          }
+            </Can>
+
+          )}
         </Form>
       </div>
     </div>

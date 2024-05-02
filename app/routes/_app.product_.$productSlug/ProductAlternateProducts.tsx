@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { ProductLoveRed, ProductLoveWhite } from '~/components/icons/orderStatus';
-import { Button } from '~/components/ui/button';
+import {useState} from 'react';
+import {ProductLoveRed, ProductLoveWhite} from '~/components/icons/orderStatus';
+import {Button} from '~/components/ui/button';
+import {Can} from '~/lib/helpers/Can';
 
 // Product Card Info Props
 type ProductCardInfoProps = {
@@ -91,13 +92,16 @@ export function ProductCardButtons({
 }: ProductCartButtons) {
   return (
     <div className="flex items-center justify-center gap-2">
-      <Button variant="primary" size="default" className="w-full">
-        {view_details}
-      </Button>
-
-      <Button variant="ghost" size="default" className="w-full">
-        {add_to_cart}
-      </Button>
+      <Can I="view" a="view_product_detail">
+        <Button variant="primary" size="default" className="w-full">
+          {view_details}
+        </Button>
+      </Can>
+      <Can I="view" a="add_to_cart">
+        <Button variant="ghost" size="default" className="w-full">
+          {add_to_cart}
+        </Button>
+      </Can>
     </div>
   );
 }

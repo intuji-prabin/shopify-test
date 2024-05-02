@@ -1,5 +1,6 @@
 import { Link } from '@remix-run/react';
 import { CategoryType } from './route';
+import { Can } from '~/lib/helpers/Can';
 
 export function CategoryCard({ category }: {
   category: CategoryType
@@ -35,14 +36,31 @@ export function CategoryCard({ category }: {
               }
               <ul>
                 {subCategoryItem?.child_categories?.map((childCategoryItem) => (
-                  <li key={childCategoryItem.id}>
-                    <Link
-                      to={`/category/${identifier}/${subCategoryItem.identifier}/${childCategoryItem.identifier}`}
-                      className="text-base font-medium leading-5.5 text-grey-600 duration-150 hover:text-primary-500"
-                    >
-                      {childCategoryItem.title}
-                    </Link>
+                  <Can
+                  // key={subMenu.id}
+                  I="view"
+                  a="view_products"
+                  passThrough
+                >
+                  {(allowed) => (
+                    <li key={childCategoryItem.id}>
+                      {allowed?(
+                        <Link
+                        to={`/category/${identifier}/${subCategoryItem.identifier}/${childCategoryItem.identifier}`}
+                        className="text-base font-medium leading-5.5 text-grey-600 duration-150 hover:text-primary-500"
+                      >
+                        {childCategoryItem.title}
+                      </Link>
+                      ) : (
+                        <span className="text-base font-medium leading-5.5 text-grey-600 duration-150 hover:text-primary-500">{childCategoryItem.title}</span>
+                      )}
+                    
                   </li>
+                    
+                  )}
+                  
+                </Can>
+                  
                 ))}
               </ul>
             </div>

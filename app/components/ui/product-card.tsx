@@ -75,18 +75,34 @@ export function ProductCardInfo({
           <p className="text-base font-medium text-primary-500 sku">
             SKU:&nbsp;{(sku && sku) || 'N/A'}
           </p>
-          <h5 className="h-12 text-lg italic font-bold leading-6 whitespace-normal text-grey-900 line-clamp-2 text-ellipsis">
-            <Link to={`/product/${handle}`} title={productName}>
-              {productName}
-            </Link>
-          </h5>
+          <Can
+            // key={subMenu.id}
+            I="view"
+            a="view_product_detail"
+            passThrough
+          >
+            {(allowed) => (
+              <h5 className="h-12 text-lg italic font-bold leading-6 whitespace-normal text-grey-900 line-clamp-2 text-ellipsis">
+                {allowed ? (
+                  <Link to={`/product/${handle}`} title={productName}>
+                    {productName}
+                  </Link>
+                ) : (
+                  <span>{productName}</span>
+                )}
+              </h5>
+            )}
+          </Can>
+
           <p className="text-sm text-grey-300">Minimum Order Quantity: {moq}</p>
         </div>
-        <div className="pt-2">
-          <Price currency={currency} price={companyPrice} />
-          <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
-          <Price currency={currency} price={defaultPrice} variant="rrp" />
-        </div>
+        <Can I="view" a="view_product_price">
+          <div className="pt-2">
+            <Price currency={currency} price={companyPrice} />
+            <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
+            <Price currency={currency} price={defaultPrice} variant="rrp" />
+          </div>
+        </Can>
         <div className="sm:absolute bottom-4 inset-x-4">
           <ProductCardButtons
             handle={handle}

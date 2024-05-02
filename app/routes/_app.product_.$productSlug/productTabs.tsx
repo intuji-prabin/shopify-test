@@ -1,7 +1,8 @@
 import * as Tabs from '@radix-ui/react-tabs';
-import { ProductCard } from '~/components/ui/product-card';
+import {ProductCard} from '~/components/ui/product-card';
 import ProductFaq from './productFaq';
 import {useDownload} from '~/hooks/useDownload';
+import {Can} from '~/lib/helpers/Can';
 
 const ProductTab = ({productTab, alternateProduct}: any) => {
   const {handleDownload} = useDownload();
@@ -88,21 +89,25 @@ const ProductTab = ({productTab, alternateProduct}: any) => {
           )}
           {productTab?.operatingManual &&
             productTab?.operatingManual.length > 0 && (
-              <Tabs.Trigger
-                className={`bg-white px-4 py-3 h-[45px] flex items-left justify-start text-[15px] text-grey-500 text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md data-[state=active]:text-primary-500 data-[state=active]:border-b-4 border-primary-500 data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:bottom-border-tabs data-[state=active]:focus:red outline-none cursor-default`}
-                value="operating-tab"
-              >
-                <h5 className="cursor-pointer">Operating Manual</h5>
-              </Tabs.Trigger>
+              <Can I="view" a="view_operating_manual">
+                <Tabs.Trigger
+                  className={`bg-white px-4 py-3 h-[45px] flex items-left justify-start text-[15px] text-grey-500 text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md data-[state=active]:text-primary-500 data-[state=active]:border-b-4 border-primary-500 data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:bottom-border-tabs data-[state=active]:focus:red outline-none cursor-default`}
+                  value="operating-tab"
+                >
+                  <h5 className="cursor-pointer">Operating Manual</h5>
+                </Tabs.Trigger>
+              </Can>
             )}
           {productTab?.serviceManual &&
             productTab?.serviceManual.length > 0 && (
-              <Tabs.Trigger
-                className={`bg-white px-4 py-3 h-[45px] flex items-left justify-start text-[15px] text-grey-500 text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md data-[state=active]:text-primary-500 data-[state=active]:border-b-4 border-primary-500 data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:bottom-border-tabs data-[state=active]:focus:red outline-none cursor-default`}
-                value="service-tab"
-              >
-                <h5 className="cursor-pointer">Service Manual</h5>
-              </Tabs.Trigger>
+              <Can I="view" a="view_operating_manual">
+                <Tabs.Trigger
+                  className={`bg-white px-4 py-3 h-[45px] flex items-left justify-start text-[15px] text-grey-500 text-mauve11 select-none first:rounded-tl-md last:rounded-tr-md data-[state=active]:text-primary-500 data-[state=active]:border-b-4 border-primary-500 data-[state=active]:shadow-current data-[state=active]:focus:relative data-[state=active]:focus:bottom-border-tabs data-[state=active]:focus:red outline-none cursor-default`}
+                  value="service-tab"
+                >
+                  <h5 className="cursor-pointer">Service Manual</h5>
+                </Tabs.Trigger>
+              </Can>
             )}
         </Tabs.List>
 
@@ -228,11 +233,11 @@ const ProductTab = ({productTab, alternateProduct}: any) => {
               alternative products
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-[18px] similar__product">
-              {alternateProduct?.slice(0, 3).map(
-                (product: any, index: number) => (
+              {alternateProduct
+                ?.slice(0, 3)
+                .map((product: any, index: number) => (
                   <ProductCard key={index} {...product} />
-                ),
-              )}
+                ))}
             </div>
           </Tabs.Content>
         )}
