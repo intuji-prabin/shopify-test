@@ -1,13 +1,14 @@
-import { useLoaderData } from '@remix-run/react';
+import { useLoaderData, useNavigate } from '@remix-run/react';
 import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
 import { AppLoadContext } from '@shopify/remix-oxygen';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { BackButton } from '~/components/ui/back-button';
 import { BulkCsvUpload } from '~/components/ui/bulk-csv-upload';
 import { useScroll } from '~/hooks/useScroll';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import { CategoryCard } from '~/routes/_app.categories/category-card';
 import { getCategory } from './categories.server';
+import { AbilityContext } from '~/lib/helpers/Can';
 
 export async function loader({ context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -46,6 +47,10 @@ export default function CategoriesPage() {
   const { handleScroll } = useScroll('categories-menu');
   const { categoriesDetail } = useLoaderData<typeof loader>();
 
+  const navigate = useNavigate();
+  const ability = useContext(AbilityContext);
+
+
   useEffect(() => {
     const handleScroll: EventListener = () => {
       const scrollPos: number =
@@ -81,6 +86,14 @@ export default function CategoriesPage() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+  
+  if (ability.cannot('view','view_categories')) {
+    // Redirect to the previous route
+    navigate(-1);
+    // You can also specify a specific route to navigate to, such as navigate('/previous-route')
+    // navigate('/previous-route');
+    return null; // You can return null or any other content indicating redirection is in progress
+  }
 
   return (
     <>

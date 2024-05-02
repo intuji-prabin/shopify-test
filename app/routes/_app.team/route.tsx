@@ -170,7 +170,7 @@ export default function TeamPage() {
   return (
     <section className="container">
       <div className="flex items-center justify-between py-6">
-        <BackButton className="capitalize" title="My Teamss" />
+        <BackButton className="capitalize" title="My Team" />
         <Can I="view" a="add_customer">
 
         <Link to={Routes.TEAM_ADD}>
