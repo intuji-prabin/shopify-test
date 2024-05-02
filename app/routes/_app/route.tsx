@@ -46,6 +46,7 @@ import {ro} from 'date-fns/locale';
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
   const {userDetails} = await getUserDetails(request);
+
   const sessionData = await getSessionData(userDetails, context);
   const categories = await getCagetoryList(context);
   const messageSession = await getMessageSession(request);
@@ -87,6 +88,8 @@ export async function loader({request, context}: ActionFunctionArgs) {
   );
 }
 
+
+
 export default function PublicPageLayout() {
   const {
     categories,
@@ -98,9 +101,12 @@ export default function PublicPageLayout() {
   } = useLoaderData<typeof loader>();
 
   const submit = useSubmit();
+  console.log('userDetails', userDetails);
   const cartCount = sessionCartInfo?.lineItems ?? 0;
   const wishlistCount = wishlistSession ?? 0;
   const [ability, setAbility] = useState(DEFAULT_ABILITIES);
+  const [loading, setLoading] = useState(true);
+
   function getUserAbilities(roleData: any) {
     if (roleData.value === 'admin distributor') {
       return defineAbilitiesForAdmin();
@@ -116,11 +122,14 @@ export default function PublicPageLayout() {
 
     const userAbility = getUserAbilities(roleData);
     setAbility(userAbility);
+    setLoading(false);
   }, [userDetails]);
 
+ 
   const userId = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
     event: EVENTS.LOGOUT.NAME,
   });
+  
 
   useEffect(() => {
     if (userId === userDetails.id) {
