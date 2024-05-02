@@ -2,37 +2,17 @@ import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
-import {generateUrlWithParams} from '~/lib/helpers/url.helper';
+import {Invoices} from '~/routes/_app.invoices/invoices.server';
 
-export type Invoices = {
-  id: string;
-  invoiceId: string;
-  salesOrderNo: string;
-  wareHouseNo: string;
-  invoiceDate: string;
-  files: string;
-};
-
-type ResponseData = {
+interface ResponseData {
   status: boolean;
   message: string;
-  payload: {
-    invoiceList: Invoices[];
-    totalInvoices: number;
-  };
-};
+  payload: Invoices;
+}
 
-export async function getAllInvoices({
-  customerId,
-  searchParams,
-}: {
-  customerId: string;
-  searchParams: URLSearchParams;
-}) {
+export async function getInvoiceDetails({invoiceId}: {invoiceId: string}) {
   try {
-    const baseUrl = `${ENDPOINT.INVOICE.GET}/${customerId}`;
-
-    const url = generateUrlWithParams({baseUrl, searchParams});
+    const url = `${ENDPOINT.INVOICE.GET_INVOCIE_DETAIL}/${invoiceId}`;
 
     const results = await useFetch<ResponseData>({
       method: AllowedHTTPMethods.GET,
@@ -42,6 +22,7 @@ export async function getAllInvoices({
     if (!results.status) {
       throw new Error(results.message);
     }
+
     return results.payload;
   } catch (error) {
     if (error instanceof Error) {

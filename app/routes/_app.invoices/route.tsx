@@ -22,13 +22,13 @@ import {
 } from '~/components/ui/sheet';
 import {HorizontalHamburgerIcon} from '~/components/icons/hamburgerIcon';
 import {Separator} from '~/components/ui/separator';
-import OrderFilterForm from '../_app.order/filter-form';
 import {DataTable} from '~/components/ui/data-table';
 import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
-import {useColumn} from './use-column';
+import {useColumn} from '~/routes/_app.invoices/use-column';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
-import {getAllInvoices} from './invoices.server';
+import {getAllInvoices} from '~/routes/_app.invoices/invoices.server';
+import InvoicesFilterForm from '~/routes/_app.invoices/filter-form';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Invoices List'}];
@@ -52,7 +52,11 @@ export async function loader({request, context}: LoaderFunctionArgs) {
     customerId,
     searchParams,
   });
-  return json({invoiceList, totalInvoices});
+
+  return json({
+    invoiceList,
+    totalInvoices,
+  });
 }
 export default function InvoicesPage() {
   const {invoiceList, totalInvoices} = useLoaderData<typeof loader>();
@@ -105,7 +109,7 @@ export default function InvoicesPage() {
               <SheetTitle className="text-3xl font-bold">Filter</SheetTitle>
             </SheetHeader>
             <Separator className="" />
-            <OrderFilterForm />
+            <InvoicesFilterForm />
           </SheetContent>
         </Sheet>
       </div>

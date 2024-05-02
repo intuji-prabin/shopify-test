@@ -39,19 +39,16 @@ export function useColumn() {
       {
         accessorKey: 'invoiceId',
         header: 'Invoice Number',
-        enableSorting: false,
         cell: (info) => info.getValue() ?? 'N/A',
       },
       {
         accessorKey: 'salesOrderNo',
         header: 'Sales Order Number',
-        enableSorting: false,
         cell: (info) => info.getValue() ?? 'N/A',
       },
       {
         accessorKey: 'wareHouseNo',
         header: 'Warehouse Number',
-        enableSorting: false,
         cell: (info) => info.getValue() ?? 'N/A',
       },
       {
@@ -71,10 +68,8 @@ export function useColumn() {
           const fileURL = info.row.original.files;
           const invoiceDetailsRoute = `${Routes.INVOICES}/${invoiceId}`;
 
-          const {handleDownload} = useDownload({
-            url: fileURL,
-            headers: {'x-api-key': PDF.SECRET_KEY},
-          });
+          const {handleDownload} = useDownload();
+
           return (
             <div className="flex justify-start gap-x-2">
               <Link to={invoiceDetailsRoute}>
@@ -82,7 +77,16 @@ export function useColumn() {
                   <EyeOn />
                 </Button>
               </Link>
-              <Button size="icon" variant="icon" onClick={handleDownload}>
+              <Button
+                size="icon"
+                variant="icon"
+                onClick={() =>
+                  handleDownload({
+                    url: fileURL,
+                    headers: {'x-api-key': PDF.SECRET_KEY},
+                  })
+                }
+              >
                 <DownloadIcon />
               </Button>
             </div>

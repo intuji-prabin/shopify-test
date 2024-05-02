@@ -1,13 +1,13 @@
 import {displayToast} from '~/components/ui/toast';
 
-export function useDownload({
-  url,
-  headers,
-}: {
-  url: string;
-  headers?: HeadersInit;
-}) {
-  const handleDownload = async () => {
+export function useDownload() {
+  const handleDownload = async ({
+    url,
+    headers,
+  }: {
+    url: string;
+    headers?: HeadersInit;
+  }) => {
     try {
       const response = await fetch(url, {headers});
 
