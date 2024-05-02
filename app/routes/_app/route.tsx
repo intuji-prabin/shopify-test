@@ -165,19 +165,19 @@ const fetchRoleDataWithTimeout = () => {
             id: 8,
             value: 'view_team',
             title: 'View Team',
-            key: 'read',
+            key: 'view',
           },
           {
             id: 9,
             value: 'search_customers',
             title: 'Search Customers',
-            key: 'search',
+            key: 'view',
           },
           {
             id: 10,
             value: 'add_customer',
             title: 'Add Customer',
-            key: 'add',
+            key: 'view',
           },
           {
             id: 11,
@@ -201,13 +201,13 @@ const fetchRoleDataWithTimeout = () => {
             id: 14,
             value: 'view_product_detail',
             title: 'View Product Detail',
-            key: 'read_product_detail',
+            key: 'view',
           },
           {
             id: 15,
             value: 'view_operating_manual',
             title: 'View Operating Manual',
-            key: 'read_operating_manual',
+            key: 'view',
           },
           {
             id: 16,
@@ -219,7 +219,7 @@ const fetchRoleDataWithTimeout = () => {
             id: 17,
             value: 'add_to_cart',
             title: 'Add to Cart',
-            key: 'add_to_cart',
+            key: 'view',
           },
           {
             id: 18,
@@ -231,13 +231,13 @@ const fetchRoleDataWithTimeout = () => {
             id: 19,
             value: 'add_to_wishlist',
             title: 'Add to Wishlist',
-            key: 'add_to_wishlist',
+            key: 'view',
           },
           {
             id: 20,
             value: 'add_wishlist_to_cart',
             title: 'Add Wishlist to Cart',
-            key: 'add_wishlist_to_cart',
+            key: 'view',
           },
           {
             id: 21,
@@ -279,25 +279,25 @@ const fetchRoleDataWithTimeout = () => {
             id: 27,
             value: 'view_orders',
             title: 'View Orders',
-            key: 'read_orders',
+            key: 'view',
           },
           {
             id: 28,
             value: 'reorder_order',
             title: 'Reorder Order',
-            key: 'reorder_order',
+            key: 'view',
           },
           {
             id: 29,
             value: 'view_company_statements',
             title: 'View Company Statements',
-            key: 'read_company_statements',
+            key: 'view',
           },
           {
             id: 30,
             value: 'view_company_invoices',
             title: 'View Company Invoices',
-            key: 'read_company_invoices',
+            key: 'view',
           },
           {
             id: 31,
@@ -315,7 +315,7 @@ const fetchRoleDataWithTimeout = () => {
             id: 33,
             value: 'track_order',
             title: 'Track Order',
-            key: 'track_order',
+            key: 'view',
           },
           {
             id: 34,
@@ -333,36 +333,55 @@ const fetchRoleDataWithTimeout = () => {
             id: 36,
             value: 'customize_promotions',
             title: 'Customize Promotions',
-            key: 'customize_promotions',
+            key: 'view',
           },
           {
             id: 37,
             value: 'edit_promotions',
             title: 'Edit Promotions',
-            key: 'edit_promotions',
+            key: 'view',
           },
           {
             id: 38,
             value: 'export_promotions',
             title: 'Export Promotions',
-            key: 'export_promotions',
+            key: 'view',
           },
           {
             id: 39,
             value: 'delete_promotions',
             title: 'Delete Promotions',
-            key: 'delete_promotions',
+            key: 'view',
           },
           {
             id: 40,
             value: 'open_ticket',
             title: 'Open Ticket',
-            key: 'open_ticket',
+            key: 'view',
           },
+          {
+            id: 40,
+            value: 'view_company_information',
+            title: 'View Company Information',
+            key: 'view',
+          },
+          {
+            id: 40,
+            value: 'view_shipping_addresses',
+            title: 'View Shipping Addresses',
+            key: 'view',
+          },
+          {
+            id: 40,
+            value: 'open_ticket',
+            title: 'Open Ticket',
+            key: 'view',
+          },
+
         ],
       };
       resolve(roleData);
-    }, 5000); // Simulate 3-second delay
+    }, 1000); // Simulate 3-second delay
   });
 };
 
