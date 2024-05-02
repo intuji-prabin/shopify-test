@@ -14,6 +14,8 @@ export enum UserRole {
 export const TOAST_MESSAGE_SECRET =
   'kUeIaDWyg3EVwOK2nQQGTjN7APOcyLaEB+skRb4UL1M=';
 
+export const FILTER_SECRET = 'xDp9mIeQz8FrSvT6uBwGvCf3LeJ2WoN1M+kyHd4gU5E=';
+
 export const USER_DETAILS_SESSION_SECRET =
   'iFaXBRJ6HzfoNgOLmtwKudAVHyIfsYrRtNMxFZ7PI4M=';
 
