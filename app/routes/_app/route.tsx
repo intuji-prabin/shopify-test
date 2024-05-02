@@ -131,13 +131,13 @@ const fetchRoleDataWithTimeout = () => {
             id: 6,
             value: 'change_role',
             title: 'Change Role',
-            key: 'change_role',
+            key: 'view',
           },
           {
             id: 7,
             value: 'change_status',
             title: 'Change Status',
-            key: 'change_status',
+            key: 'view',
           },
           {
             id: 8,
@@ -337,6 +337,7 @@ const fetchRoleDataWithTimeout = () => {
             title: 'Open Ticket',
             key: 'view',
           },
+          
           {
             id: 41,
             value: 'view_company_information',
@@ -389,6 +390,30 @@ const fetchRoleDataWithTimeout = () => {
             id: 49,
             value: 'view_transaction_history',
             title: 'View Transaction History',
+            key: 'view',
+          },
+          {
+            id: 50,
+            value: 'ticket_operations',
+            title: 'Ticket Operations',
+            key: 'view',
+          },
+          {
+            id: 51,
+            value: 'view_contact_details',
+            title: 'View Contact Details',
+            key: 'view',
+          },
+          {
+            id: 52,
+            value: 'allow_impersonation',
+            title: 'Allow Impersonation',
+            key: 'view',
+          },
+          {
+            id: 53,
+            value: 'conformance_certificates',
+            title: 'Conformance Certificates',
             key: 'view',
           },
 
