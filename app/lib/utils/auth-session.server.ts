@@ -101,7 +101,6 @@ export async function logout({
   const userDetailsSession = await getUserDetailsSession(request);
   
 
-
   setSuccessMessage(messageSession, logoutMessage);
 
   return redirect(Routes.LOGIN, {
