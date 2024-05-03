@@ -6,6 +6,7 @@ import Receipt from '../icons/receipt';
 import { TrackAnOrderButton } from './layouts/elements/track-an-order-dialog';
 import { Separator } from './separator';
 import {Can} from '~/lib/helpers/Can';
+import Distance from '../icons/distance';
 
 const CtaHome = () => {
   return (
