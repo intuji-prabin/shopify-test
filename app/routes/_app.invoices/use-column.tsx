@@ -83,7 +83,7 @@ export function useColumn() {
                 onClick={() =>
                   handleDownload({
                     url: fileURL,
-                    headers: {'x-api-key': PDF.SECRET_KEY},
+                    headers: {apiKey: PDF.SECRET_KEY},
                   })
                 }
               >
