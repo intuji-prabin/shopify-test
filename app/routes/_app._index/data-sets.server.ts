@@ -391,7 +391,7 @@ const formatBarResponse = async (response: any): Promise<any> => {
     };
   };
 
-  const formatBarChartDataAndOtherFields = (data: any) => {
+  const formatChartDataAndOtherFields = (data: any, chartType: any) => {
     return {
       currency: data?.currency,
       ytdAmount: formatAmount(data?.ytdAmount),
@@ -399,20 +399,19 @@ const formatBarResponse = async (response: any): Promise<any> => {
       fullSpendAmount: formatAmount(data?.fullSpendAmount),
       percentage: data?.percentage,
       increment: data?.increment,
-      barChartData: formatBarChartData(data),
+      [`${chartType}ChartData`]:
+        chartType === 'bar'
+          ? formatBarChartData(data)
+          : formatLineChartData(data),
     };
   };
 
+  const formatBarChartDataAndOtherFields = (data: any) => {
+    return formatChartDataAndOtherFields(data, 'bar');
+  };
+
   const formatLineChartDataAndOtherFields = (data: any) => {
-    return {
-      currency: data?.currency,
-      ytdAmount: formatAmount(data?.ytdAmount),
-      ytdLastYrAmount: formatAmount(data?.ytdLastYrAmount),
-      fullSpendAmount: formatAmount(data?.fullSpendAmount),
-      percentage: data?.percentage,
-      increment: data?.increment,
-      lineChartData: formatLineChartData(data),
-    };
+    return formatChartDataAndOtherFields(data, 'line');
   };
 
   return {
