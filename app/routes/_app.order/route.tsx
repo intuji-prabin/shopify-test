@@ -28,6 +28,7 @@ import {
 } from '~/components/ui/sheet';
 import {HorizontalHamburgerIcon} from '~/components/icons/hamburgerIcon';
 import {Routes} from '~/lib/constants/routes.constent';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Orders List'}];
@@ -70,9 +71,11 @@ export default function OrdersPage() {
       isFilterApplied = true;
     }
   }
+  const shouldRender = useConditionalRender('view_orders');
+
 
   return (
-    <section className="container">
+    shouldRender && (<section className="container">
       <div className="flex items-center justify-between pt-6 pb-4 ">
         <div>
           <BackButton title="Orders" />
@@ -123,7 +126,7 @@ export default function OrdersPage() {
           />
         </div>
       )}
-    </section>
+    </section>)
   );
 }
 

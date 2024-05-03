@@ -11,6 +11,7 @@ import {
   useRouteError,
 } from '@remix-run/react';
 import {MetaFunction} from '@shopify/remix-oxygen';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Contact Us'}];
@@ -28,9 +29,10 @@ export async function loader({context}: LoaderFunctionArgs) {
 
 export default function ContactUsPage() {
   const {contacts} = useLoaderData<typeof loader>();
+  const shouldRender = useConditionalRender('view_contact_details');
 
   return (
-    <section className="container">
+    shouldRender &&(<section className="container">
       <div className=" pt-6 pb-4">
         <BackButton title="Contact Us" />
         <Breadcrumb>
@@ -55,7 +57,7 @@ export default function ContactUsPage() {
           <h3>No contacts found</h3>
         </div>
       )}
-    </section>
+    </section>)
   );
 }
 

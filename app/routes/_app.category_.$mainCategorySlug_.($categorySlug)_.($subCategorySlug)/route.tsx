@@ -22,6 +22,7 @@ import { FilterForm, SortByFilterForm } from './filterForm';
 import { getProductFilterList } from './productFilter.server';
 import { getProducts } from './productList.server';
 import { BulkCsvUpload } from '~/components/ui/bulk-csv-upload';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
     await isAuthenticate(context);
@@ -242,9 +243,11 @@ const ProductListing = () => {
         emblaApi.on('reInit', onSelect);
         emblaApi.on('select', onSelect);
     }, [emblaApi, onInit, onSelect]);
+    const shouldRender = useConditionalRender('view_products');
+
 
     return (
-        <section className="container">
+        shouldRender && (<section className="container">
             <div className="flex flex-wrap justify-between pt-6">
                 <div>
                     <BackButton className="capitalize" title={backTitle ?? 'back'} />
@@ -377,7 +380,7 @@ const ProductListing = () => {
                     )) || <h1>No products found</h1>}
                 </div>
             </div>
-        </section>
+        </section>)
     );
 };
 

@@ -42,6 +42,7 @@ import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
 import {PageNotFound} from '~/components/ui/page-not-found';
 import { useContext } from 'react';
 import { AbilityContext } from '~/lib/helpers/Can';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Edit Team Member'}];
@@ -154,20 +155,12 @@ export async function action({request, context, params}: ActionFunctionArgs) {
 
 export default function TeamDetailsPage() {
   const navigate = useNavigate();
-  const ability = useContext(AbilityContext);
-
-  if (ability.cannot('view','edit_other_profile')) {
-    // Redirect to the previous route
-    navigate(-1);
-    // You can also specify a specific route to navigate to, such as navigate('/previous-route')
-    // navigate('/previous-route');
-    return null; // You can return null or any other content indicating redirection is in progress
-  }
 
   const {customerDetails, roles} = useLoaderData<typeof loader>();
+  const shouldRender = useConditionalRender('edit_other_profile');
 
   return (
-    <section className="container">
+    shouldRender && (<section className="container">
       <div className="flex items-center py-6 space-x-4">
         <Button
           type="button"
@@ -186,7 +179,7 @@ export default function TeamDetailsPage() {
         customerId={customerDetails?.customerId}
         options={roles.data as SelectInputOptions[]}
       />
-    </section>
+    </section>)
   );
 }
 

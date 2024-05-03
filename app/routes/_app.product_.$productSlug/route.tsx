@@ -33,6 +33,7 @@ import ProductInformation from './productInformation';
 import ProductTab from './productTabs';
 import { addToWishlist, removeFromWishlist } from './wishlist.server';
 import { AbilityContext } from '~/lib/helpers/Can';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 
 interface ProductDetailType {
   productPage: string;
@@ -120,19 +121,11 @@ export const loader = async ({
 
 export default function route() {
   const { product, productPage } = useLoaderData<ProductDetailType>();
-  // console.log("dfsdfdsf ", product)
-  const navigate = useNavigate();
-  const ability = useContext(AbilityContext);
   
-  if (ability.cannot('view','view_product_price')) {
-    // Redirect to the previous route
-    navigate(-1);
-    // You can also specify a specific route to navigate to, such as navigate('/previous-route')
-    // navigate('/previous-route');
-    return null; // You can return null or any other content indicating redirection is in progress
-  }
+  const shouldRender = useConditionalRender('view_product_detail');
+
   return (
-    <ProductDetailPageWrapper>
+    shouldRender && (<ProductDetailPageWrapper>
       <div className="flex items-center pt-6 pb-4 ">
         <BackButton title="" />
         <Breadcrumb>
@@ -162,7 +155,7 @@ export default function route() {
           </div>
         </section>
       }
-    </ProductDetailPageWrapper>
+    </ProductDetailPageWrapper>)
   );
 }
 

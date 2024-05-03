@@ -30,6 +30,7 @@ import {
   useSearchParams,
 } from '@remix-run/react';
 import {Can} from '~/lib/helpers/Can';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Ticket List'}];
@@ -78,9 +79,11 @@ export default function TicketsPage() {
       isFilterApplied = true;
     }
   }
+  const shouldRender = useConditionalRender('ticket_operations');
+
 
   return (
-    <section className="container">
+    shouldRender && (<section className="container">
       <div className=" pt-6 pb-4 flex items-center justify-between">
         <div>
           <BackButton title="Tickets History" />
@@ -123,7 +126,7 @@ export default function TicketsPage() {
       <DataTable table={table} columns={columns} />
 
       <PaginationWrapper pageSize={PAGE_LIMIT} totalCount={totalCount} />
-    </section>
+    </section>)
   );
 }
 

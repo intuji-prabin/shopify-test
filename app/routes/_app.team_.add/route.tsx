@@ -31,6 +31,7 @@ import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permi
 import { AbilityContext } from '~/lib/helpers/Can';
 import { useContext } from 'react';
 import { USER_DETAILS_KEY, getUserDetailsSession } from '~/lib/utils/user-session.server';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Add Team Member'}];
@@ -99,19 +100,12 @@ export async function action({request, context}: ActionFunctionArgs) {
 
 export default function AddTeam() {
   const {roles} = useLoaderData<typeof loader>();
-  const navigate = useNavigate();
-  const ability = useContext(AbilityContext);
 
-  if (ability.cannot('view','add_customer')) {
-    // Redirect to the previous route
-    navigate(-1);
-    // You can also specify a specific route to navigate to, such as navigate('/previous-route')
-    // navigate('/previous-route');
-    return null; // You can return null or any other content indicating redirection is in progress
-  }
+  const shouldRender = useConditionalRender('add_customer');
+
 
   return (
-    <section className="container">
+    shouldRender && (<section className="container">
       <div className="py-6">
         <BackButton title="Add Team Memeber" />
         <Breadcrumb>
@@ -122,7 +116,7 @@ export default function AddTeam() {
         </Breadcrumb>
       </div>
       <TeamForm options={roles?.data as SelectInputOptions[]} />
-    </section>
+    </section>)
   );
 }
 

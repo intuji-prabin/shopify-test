@@ -88,8 +88,6 @@ export async function loader({request, context}: ActionFunctionArgs) {
   );
 }
 
-
-
 export default function PublicPageLayout() {
   const {
     categories,
@@ -97,11 +95,9 @@ export default function PublicPageLayout() {
     sessionCartInfo,
     wishlistSession,
     pendingOrderCount,
-    
   } = useLoaderData<typeof loader>();
 
   const submit = useSubmit();
-  console.log('userDetails', userDetails);
   const cartCount = sessionCartInfo?.lineItems ?? 0;
   const wishlistCount = wishlistSession ?? 0;
   const [ability, setAbility] = useState(DEFAULT_ABILITIES);
@@ -125,11 +121,9 @@ export default function PublicPageLayout() {
     setLoading(false);
   }, [userDetails]);
 
- 
   const userId = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
     event: EVENTS.LOGOUT.NAME,
   });
-  
 
   useEffect(() => {
     if (userId === userDetails.id) {
@@ -145,30 +139,35 @@ export default function PublicPageLayout() {
 
   useEffect(() => {
     const roleData = userDetails?.meta?.user_role;
-  
+    const currentUrl = window.location.pathname; // Capture the current URL
+
     // Check if hasPermissionBeenUpdated is a string
     if (typeof hasPermissionBeenUpdated === 'string') {
       // Parse the string into an object
       const parsedData = JSON.parse(hasPermissionBeenUpdated) as {
         data: {value: string; permission: string[]}[];
       };
-  
+
       // Find the item in the parsedData.data array based on the condition
       const userRolePermissions = parsedData.data.find(
-        (item) => item.value === roleData?.value
+        (item) => item.value === roleData?.value,
       );
-  
+      // Prevent default behavior if action is '/update-user-session'
+      // submit({ returnUrl: currentUrl }, { method: 'GET', encType: 'application/json', action: '/update-user-session' });
+
+      submit({ returnUrl: currentUrl }, { method: 'GET', action: '/update-user-session' });
+
       // Check if userRolePermissions.permission is an empty array
-    if (userRolePermissions?.permission.length === 0) {
-      // Logout the user if permissions are empty
-      submit({}, {method: 'POST', action: '/logout'});
-    } else {
-      // Create abilities based on permissions
-      const userAbility = getUserAbilities(userRolePermissions);
-      setAbility(userAbility);
+      if (userRolePermissions?.permission.length === 0) {
+        // Logout the user if permissions are empty
+        submit({}, {method: 'POST', action: '/logout'});
+      } else {
+        // Create abilities based on permissions
+        const userAbility = getUserAbilities(userRolePermissions);
+        setAbility(userAbility);
+      }
     }
-    }
-  }, [hasPermissionBeenUpdated, userDetails]);
+  }, [hasPermissionBeenUpdated]);
 
   return (
     <AbilityContext.Provider value={ability}>

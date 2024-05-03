@@ -9,6 +9,7 @@ import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import { CategoryCard } from '~/routes/_app.categories/category-card';
 import { getCategory } from './categories.server';
 import { AbilityContext } from '~/lib/helpers/Can';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 
 export async function loader({ context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -47,9 +48,6 @@ export default function CategoriesPage() {
   const { handleScroll } = useScroll('categories-menu');
   const { categoriesDetail } = useLoaderData<typeof loader>();
 
-  const navigate = useNavigate();
-  const ability = useContext(AbilityContext);
-
 
   useEffect(() => {
     const handleScroll: EventListener = () => {
@@ -87,16 +85,11 @@ export default function CategoriesPage() {
     };
   }, []);
   
-  if (ability.cannot('view','view_categories')) {
-    // Redirect to the previous route
-    navigate(-1);
-    // You can also specify a specific route to navigate to, such as navigate('/previous-route')
-    // navigate('/previous-route');
-    return null; // You can return null or any other content indicating redirection is in progress
-  }
+  
+  const shouldRender = useConditionalRender('view_categories');
 
   return (
-    <>
+    shouldRender && (<>
       <section className="mt-10">
         <div className="container flex flex-wrap items-center justify-between gap-x-5 gap-y-2">
           <BackButton
@@ -134,7 +127,7 @@ export default function CategoriesPage() {
           <h4>NO DATA FOUND</h4>
         </section>
       )}
-    </>
+    </>)
   );
 }
 

@@ -32,6 +32,7 @@ import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.cons
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import {BackButton} from '~/components/ui/back-button';
 import {AbilityContext, Can} from '~/lib/helpers/Can';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Team List'}];
@@ -145,8 +146,6 @@ export async function action({request, context}: ActionFunctionArgs) {
 }
 
 export default function TeamPage() {
-  const navigate = useNavigate();
-  const ability = useContext(AbilityContext);
 
   const {teams, roles, currentUser} = useLoaderData<typeof loader>();
 
@@ -158,17 +157,10 @@ export default function TeamPage() {
     return teams.filter((team) => team.department === activeDepartmentTab);
   }, [activeDepartmentTab, params]);
 
-  if (ability.cannot('view','view_team')) {
-    // Redirect to the previous route
-    navigate(-1);
-    // You can also specify a specific route to navigate to, such as navigate('/previous-route')
-    // navigate('/previous-route');
-    return null; // You can return null or any other content indicating redirection is in progress
-  }
-
+  const shouldRender = useConditionalRender('view_team');
 
   return (
-    <section className="container">
+    shouldRender && (<section className="container">
       <div className="flex items-center justify-between py-6">
         <BackButton className="capitalize" title="My Team" />
         <Can I="view" a="add_customer">
@@ -209,7 +201,7 @@ export default function TeamPage() {
           </TabsContent>
         ))}
       </Tabs>
-    </section>
+    </section>)
   );
 }
 
