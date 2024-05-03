@@ -1,4 +1,4 @@
-import {useSubmit} from '@remix-run/react';
+import { Link,useSubmit} from '@remix-run/react';
 import {withZod} from '@remix-validated-form/with-zod';
 import {useState} from 'react';
 import {ValidatedForm, useIsValid} from 'remix-validated-form';
@@ -19,6 +19,8 @@ import {ConfirmationInput} from '~/routes/_app.team/confirmation-form';
 import {useHamburgerMenu} from './HamburgerMenuContext';
 import {Label} from '~/components/ui/label';
 import {Can} from '~/lib/helpers/Can';
+import Distance from '~/components/icons/distance';
+import ArrowRight from '~/components/icons/arrowRight';
 
 const TrackAnOrderFormValidator = z.object({
   trackAnOrderId: z
@@ -33,7 +35,7 @@ export type TrackAnOrderFormType = z.infer<typeof TrackAnOrderFormValidator>;
 
 export type TrackAnOrderFormFieldNameType = keyof TrackAnOrderFormType;
 
-export function TrackAnOrderButton() {
+export function TrackAnOrderButton({ trackAnOrderHome }: { trackAnOrderHome?: boolean }) {
   const {toggleMenu} = useHamburgerMenu();
   const [open, setOpen] = useState(false);
   const isConfirm = useIsValid('trackOrder-form');
@@ -47,16 +49,29 @@ export function TrackAnOrderButton() {
     <Dialog open={open} onOpenChange={setOpen}>
       <Can I="view" a="track_order">
         <DialogTrigger asChild>
+          {trackAnOrderHome ?
           <button
-            className="flex items-center gap-1 track-order"
-            onClick={() => toggleMenu(false)}
+            className="cta__btn pr-6 pl-4 py-4 lg:py-6 lg:pl-6 lg:pr-8 text-lg italic font-bold capitalize bg-primary-500 text-white lg:text-xl xl:text-2xl min-h-[88px] flex justify-between items-center"
           >
-            <Ordertrack />
-            <p className="text-base italic font-bold text-white uppercase ">
-              Track an order
-            </p>
-          </button>
-        </DialogTrigger>
+            <span className="flex items-center gap-1">
+              <Distance />
+              Track An Order
+            </span>
+            <span className="arrow__animation">
+              <ArrowRight fillColor="#ffffff" />
+            </span>
+          </button> :
+          <button
+              className="flex items-center gap-1 track-order"
+              onClick={() => toggleMenu(false)}
+            >
+              <Ordertrack />
+              <p className="text-base italic font-bold text-white uppercase ">
+                Track an order
+              </p>
+            </button>
+          }
+      </DialogTrigger>
       </Can>
 
       <DialogContent className="sm:max-w-[366px] track-an-order p-0 block">
