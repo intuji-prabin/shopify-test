@@ -13,11 +13,12 @@ import SpendCard from '~/components/ui/spend-card';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import {
-  areaChartData,
   barChartData,
   doughnutChartData,
+  getAreaChartData,
+  getBarChartData,
   lineChartData,
-} from '~/routes/_app._index/data-sets';
+} from '~/routes/_app._index/data-sets.server';
 import { getSlides } from '~/routes/_app._index/index.server';
 
 export const meta: MetaFunction = () => {
@@ -28,6 +29,8 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   const { userDetails } = await getUserDetails(request);
   const slides = await getSlides({ context });
+  const areaChartData = await getAreaChartData();
+  await getBarChartData();
 
   return json({
     slides,
