@@ -2,9 +2,7 @@ import {LoaderFunctionArgs, MetaFunction, json} from '@shopify/remix-oxygen';
 import {useTable} from '~/hooks/useTable';
 import {Button} from '~/components/ui/button';
 import {Separator} from '~/components/ui/separator';
-import {UploadIcon} from '~/components/icons/upload';
 import {DataTable} from '~/components/ui/data-table';
-import {BackButton} from '~/components/ui/back-button';
 import {SearchInput} from '~/components/ui/search-input';
 import {useColumn} from '~/routes/_app.order/use-column';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
@@ -12,7 +10,6 @@ import {getUserDetails} from '~/lib/utils/user-session.server';
 import OrderFilterForm from '~/routes/_app.order/filter-form';
 import {getAllOrders} from '~/routes/_app.order/order.server';
 import PaginationSimple from '~/components/ui/pagination-simple';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
 import {
   isRouteErrorResponse,
   useLoaderData,
@@ -27,7 +24,7 @@ import {
   SheetTrigger,
 } from '~/components/ui/sheet';
 import {HorizontalHamburgerIcon} from '~/components/icons/hamburgerIcon';
-import {Routes} from '~/lib/constants/routes.constent';
+import {ActionBar} from '~/routes/_app.order/action-bar';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Orders List'}];
@@ -61,7 +58,7 @@ export default function OrdersPage() {
 
   const [searchParams] = useSearchParams();
 
-  const {table} = useTable(columns, orderList);
+  const {table} = useTable(columns, orderList, 'poNumber');
 
   let isFilterApplied = false;
 
@@ -70,24 +67,10 @@ export default function OrdersPage() {
       isFilterApplied = true;
     }
   }
-  // console.log('orderList', orderList);
 
   return (
     <section className="container">
-      <div className="flex items-center justify-between pt-6 pb-4 ">
-        <div>
-          <BackButton title="Orders" />
-          <Breadcrumb>
-            <BreadcrumbItem>Accounts</BreadcrumbItem>
-            <BreadcrumbItem href={Routes.ORDERS} className="text-grey-900">
-              Orders
-            </BreadcrumbItem>
-          </Breadcrumb>
-        </div>
-        <Button>
-          <UploadIcon /> Export
-        </Button>
-      </div>
+      <ActionBar table={table} />
       <div className="flex flex-col gap-2 p-4 border-b bg-neutral-white sm:flex-row sm:justify-between sm:items-center">
         <div className="sm:w-[451px]">
           <SearchInput />

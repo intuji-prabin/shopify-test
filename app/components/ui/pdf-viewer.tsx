@@ -11,7 +11,7 @@ export function PDFViewer({pdfURL}: {pdfURL: string}) {
   const options = useMemo(
     () => ({
       httpHeaders: {
-        'x-api-key': PDF.SECRET_KEY,
+        apiKey: PDF.SECRET_KEY,
       },
     }),
     [],
