@@ -38,13 +38,7 @@ function mergeGroupItemWithSameUOM(groupItemList: GroupItem[]) {
   return Object.values(mergedItem);
 }
 
-export function useSelectedProduct({
-  table,
-  products,
-}: {
-  table: Table<Product>;
-  products: Product[];
-}) {
+export function useSelectedProduct({table}: {table: Table<Product>}) {
   const submit = useSubmit();
 
   const fetcher = useFetcher();

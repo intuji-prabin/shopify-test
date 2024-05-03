@@ -179,11 +179,7 @@ export default function PlaceAnOrderListPage() {
   return (
     <section className="container data__table">
       <SelectProductProvider>
-        <ActionBar
-          table={table}
-          products={placeAnOrderList.products}
-          productGroupOptions={productGroupOptions}
-        />
+        <ActionBar table={table} productGroupOptions={productGroupOptions} />
       </SelectProductProvider>
       <DataTable
         table={table}

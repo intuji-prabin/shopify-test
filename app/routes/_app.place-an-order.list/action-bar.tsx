@@ -3,15 +3,13 @@ import {Button} from '~/components/ui/button';
 import CreateGroup from '~/routes/_app.place-an-order.list/save-later-dialogbox';
 import {Product} from '~/routes/_app.place-an-order.list/place-an-order-list.server';
 import {BackButton} from '~/components/ui/back-button';
-import {useSelectedProduct} from '../_app.pending-order_.$groupId/use-selected-product';
+import {useSelectedProduct} from '~/routes/_app.pending-order_.$groupId/use-selected-product';
 
 export function ActionBar({
   table,
-  products,
   productGroupOptions,
 }: {
   table: Table<Product>;
-  products: Product[];
   productGroupOptions: {value: string; label: string}[];
 }) {
   const {
@@ -25,7 +23,6 @@ export function ActionBar({
     handleSaveForLater,
   } = useSelectedProduct({
     table,
-    products,
   });
 
   return (
