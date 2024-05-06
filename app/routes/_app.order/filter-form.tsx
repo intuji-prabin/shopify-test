@@ -26,6 +26,12 @@ const OrderFilterFormSchema = z.object({
       orderDateTo: z.string().trim().optional(),
     })
     .optional(),
+  estimatedDeliveryDateRange: z
+    .object({
+      estimatedDeliveryDateFrom: z.string().trim().optional(),
+      estimatedDeliveryDateTo: z.string().trim().optional(),
+    })
+    .optional(),
 });
 
 export const OrderFilterFormSchemaValidator = withZod(OrderFilterFormSchema);
@@ -54,6 +60,15 @@ export default function OrderFilterForm() {
     to: orderDateTo ? new Date(orderDateTo) : undefined,
   };
 
+  const estimatedDateFrom = searchParams.get('estimatedDeliveryDateFrom');
+
+  const estimatedDateTo = searchParams.get('estimatedDeliveryDateTo');
+
+  const defaultEstimatedDateRangeValues = {
+    from: estimatedDateFrom ? new Date(estimatedDateFrom) : undefined,
+    to: estimatedDateTo ? new Date(estimatedDateTo) : undefined,
+  };
+
   return (
     <ValidatedForm
       method="GET"
@@ -79,6 +94,15 @@ export default function OrderFilterForm() {
             fromFieldName="orderDateFrom"
             toFieldName="orderDateTo"
             dateRange={defaultOrderDateRangeValues}
+          />
+        </div>
+        <Separator />
+        <div className="p-6">
+          <h5 className="pb-2">Estimated Delivery Date</h5>
+          <DatePickerWithRange
+            fromFieldName="estimatedDeliveryDateFrom"
+            toFieldName="estimatedDeliveryDateTo"
+            dateRange={defaultEstimatedDateRangeValues}
           />
         </div>
         <Separator />

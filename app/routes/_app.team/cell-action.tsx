@@ -2,7 +2,6 @@ import {Separator} from '~/components/ui/separator';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -31,7 +30,7 @@ export default function DeactivateDialog({
             <h5>Deactivate Account</h5>
           </DialogTitle>
           <Separator />
-          <DialogDescription className="py-4">
+          <div className="py-4">
             <p className="text-lg font-medium leading-5.5 !text-grey-700">
               Are you sure you want to deactivate this user?
             </p>
@@ -53,7 +52,7 @@ export default function DeactivateDialog({
                 impossible for them to log in and access the system or platform.
               </li>
             </ul>
-          </DialogDescription>
+          </div>
         </DialogHeader>
         <DialogFooter className="flex !flex-col">
           <ConfirmationForm setIsOpen={setIsOpen} customerId={customerId} />
