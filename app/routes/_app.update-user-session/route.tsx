@@ -16,7 +16,6 @@ export async function loader({request}: LoaderFunctionArgs) {
   const customerDetails = await getCustomerByEmail({
     email: userDetails.email,
   });
-
   userDetailsSession.set(USER_DETAILS_KEY, customerDetails);
   return redirect(`${returnUrl}`, {
     headers: [

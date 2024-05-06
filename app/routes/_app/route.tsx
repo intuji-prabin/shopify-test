@@ -130,6 +130,7 @@ export default function PublicPageLayout() {
       submit({}, {method: 'POST', action: '/logout'});
     }
   }, [userId]);
+  
   const hasPermissionBeenUpdated = useEventSource(
     Routes.PERMISSIONS_SUBSCRIBE,
     {
@@ -140,33 +141,31 @@ export default function PublicPageLayout() {
   useEffect(() => {
     const roleData = userDetails?.meta?.user_role;
     const currentUrl = window.location.pathname; // Capture the current URL
-
-    // Check if hasPermissionBeenUpdated is a string
-    if (typeof hasPermissionBeenUpdated === 'string') {
-      // Parse the string into an object
-      const parsedData = JSON.parse(hasPermissionBeenUpdated) as {
-        data: {value: string; permission: string[]}[];
-      };
-
-      // Find the item in the parsedData.data array based on the condition
-      const userRolePermissions = parsedData.data.find(
-        (item) => item.value === roleData?.value,
-      );
-      // Prevent default behavior if action is '/update-user-session'
-      // submit({ returnUrl: currentUrl }, { method: 'GET', encType: 'application/json', action: '/update-user-session' });
-
-      submit({ returnUrl: currentUrl }, { method: 'GET', action: '/update-user-session' });
-
-      // Check if userRolePermissions.permission is an empty array
-      if (userRolePermissions?.permission.length === 0) {
-        // Logout the user if permissions are empty
-        submit({}, {method: 'POST', action: '/logout'});
+    if (typeof hasPermissionBeenUpdated === 'string' && hasPermissionBeenUpdated !== null) {
+      if (hasPermissionBeenUpdated === 'role update') {
+        // Update user session if the permission update is related to the user's role
+        submit({ returnUrl: currentUrl }, { method: 'GET', action: '/update-user-session' });
       } else {
-        // Create abilities based on permissions
-        const userAbility = getUserAbilities(userRolePermissions);
-        setAbility(userAbility);
+        // Parse the string into an object
+        const parsedData = JSON.parse(hasPermissionBeenUpdated) as { data: { value: string; permission: string[] }[] };
+        // Find the item in the parsedData.data array based on the condition
+        const userRolePermissions = parsedData.data.find((item) => item.value === roleData?.value);
+        if(userRolePermissions){
+        // Prevent default behavior if action is '/update-user-session'
+        submit({ returnUrl: currentUrl }, { method: 'GET', action: '/update-user-session' });
+        // Check if userRolePermissions.permission is an empty array
+        if (userRolePermissions?.permission.length === 0) {
+          // Logout the user if permissions are empty
+          submit({}, { method: 'POST', action: '/logout' });
+        } else {
+          // Create abilities based on permissions
+          const userAbility = getUserAbilities(userRolePermissions);
+          setAbility(userAbility);
+        }
+      }
       }
     }
+    
   }, [hasPermissionBeenUpdated]);
 
   return (
