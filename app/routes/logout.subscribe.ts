@@ -5,11 +5,8 @@ import {emitter} from '~/lib/utils/emitter.server';
 
 export async function loader({request}: LoaderFunctionArgs) {
   return eventStream(request.signal, function setup(send) {
-    function handle(customerId: string, message: string) {
-      send({
-        event: EVENTS.LOGOUT.NAME,
-        data: JSON.stringify({customerId, message}),
-      });
+    function handle(customerId: string) {
+      send({event: EVENTS.LOGOUT.NAME, data: customerId});
     }
 
     emitter.on(EVENTS.LOGOUT.KEY, handle);
