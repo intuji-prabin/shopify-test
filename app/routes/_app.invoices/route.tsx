@@ -7,11 +7,7 @@ import {
 } from '@remix-run/react';
 import {LoaderFunctionArgs, MetaFunction} from '@shopify/remix-oxygen';
 import {useTable} from '~/hooks/useTable';
-import {BackButton} from '~/components/ui/back-button';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {Routes} from '~/lib/constants/routes.constent';
 import {Button} from '~/components/ui/button';
-import {UploadIcon} from '~/components/icons/upload';
 import {SearchInput} from '~/components/ui/search-input';
 import {
   Sheet,
@@ -29,6 +25,7 @@ import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import {getAllInvoices} from '~/routes/_app.invoices/invoices.server';
 import InvoicesFilterForm from '~/routes/_app.invoices/filter-form';
+import {ActionBar} from '~/routes/_app.invoices/action-bar';
 import { useConditionalRender } from '~/hooks/useAuthorization';
 
 export const meta: MetaFunction = () => {
@@ -59,6 +56,7 @@ export async function loader({request, context}: LoaderFunctionArgs) {
     totalInvoices,
   });
 }
+
 export default function InvoicesPage() {
   const {invoiceList, totalInvoices} = useLoaderData<typeof loader>();
 
@@ -66,7 +64,7 @@ export default function InvoicesPage() {
 
   const [searchParams] = useSearchParams();
 
-  const {table} = useTable(columns, invoiceList);
+  const {table} = useTable(columns, invoiceList, 'invoiceId');
 
   let isFilterApplied = false;
 
@@ -79,20 +77,7 @@ export default function InvoicesPage() {
 
   return (
     shouldRender &&(<section className="container">
-      <div className="flex items-center justify-between pt-6 pb-4 ">
-        <div>
-          <BackButton title="Invoices" />
-          <Breadcrumb>
-            <BreadcrumbItem>Accounts</BreadcrumbItem>
-            <BreadcrumbItem href={Routes.INVOICES} className="text-grey-900">
-              Invoices
-            </BreadcrumbItem>
-          </Breadcrumb>
-        </div>
-        <Button>
-          <UploadIcon /> Export
-        </Button>
-      </div>
+      <ActionBar table={table} />
       <div className="flex flex-col gap-2 p-4 border-b bg-neutral-white sm:flex-row sm:justify-between sm:items-center">
         <div className="sm:w-[451px]">
           <SearchInput />

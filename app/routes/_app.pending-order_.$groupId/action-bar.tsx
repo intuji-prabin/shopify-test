@@ -39,7 +39,6 @@ export function ActionBar({
     handleProductUpdate,
   } = useSelectedProduct({
     table,
-    products: group.products,
   });
 
   return (
