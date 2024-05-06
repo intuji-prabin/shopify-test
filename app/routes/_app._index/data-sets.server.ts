@@ -34,6 +34,63 @@ export type ResponseAreaDataType = {
   ytd: Data;
 };
 
+type BarChartDataType = {
+  totalSpend: {[key: string]: Total};
+  totalInvoicing: {[key: string]: Total};
+};
+type Total = {
+  labels: string[];
+  currency: string;
+  ytdAmount: number;
+  ytdLastYrAmount: number;
+  fullSpendAmount: number;
+  percentage: number;
+  increment: boolean;
+  datasets: Dataset[];
+};
+type Dataset = {
+  label: string;
+  data: number[];
+};
+
+type ChartReponseData = {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    borderColor: string;
+    backgroundColor?: string;
+    cubicInterpolationMode?: string;
+    borderWidth?: number;
+    pointBorderWidth?: number;
+    pointRadius?: number;
+    pointBackgroundColor?: string;
+  }[];
+};
+type CommonData = {
+  currency: string;
+  ytdAmount: string;
+  ytdLastYrAmount: string;
+  fullSpendAmount: string;
+  percentage: number;
+  increment: boolean;
+};
+type SpendData = CommonData & {
+  barChartData: ChartReponseData;
+};
+type InvoicingData = CommonData & {
+  lineChartData: ChartReponseData;
+};
+type TotalData = {
+  ytd: SpendData | InvoicingData;
+  qtd: SpendData | InvoicingData;
+  mtd: SpendData | InvoicingData;
+};
+type ResponseBarChartDataType = {
+  totalSpend: TotalData;
+  totalInvoicing: TotalData;
+};
+
 const formatAmount = (amount: number) => {
   return amount > 999 ? amount / 1000 + 'k' : amount;
 };
@@ -153,7 +210,7 @@ export async function getBarChartData() {
     //   url: ENDPOINT,
     // });
 
-    const response: any = {
+    const response: BarChartDataType = {
       totalSpend: {
         ytd: {
           labels: [
@@ -193,19 +250,19 @@ export async function getBarChartData() {
             'July',
           ],
           currency: '$',
-          ytdAmount: 2000,
-          ytdLastYrAmount: 1257,
-          fullSpendAmount: 5000,
-          percentage: 0.5,
-          increment: true,
+          ytdAmount: 12123,
+          ytdLastYrAmount: 67676,
+          fullSpendAmount: 99999,
+          percentage: 3.9,
+          increment: false,
           datasets: [
             {
               label: '2023',
-              data: [100, 200, 400, 700, 900, 1000, 1200],
+              data: [500, 800, 100, 1000, 100, 200, 50],
             },
             {
               label: '2022',
-              data: [1000, 300, 100, 350, 100, 200, 300],
+              data: [100, 90, 1000, 300, 1000, 900, 600],
             },
           ],
         },
@@ -220,19 +277,19 @@ export async function getBarChartData() {
             'July',
           ],
           currency: '$',
-          ytdAmount: 2000,
-          ytdLastYrAmount: 1257,
-          fullSpendAmount: 5000,
-          percentage: 0.5,
+          ytdAmount: 905612,
+          ytdLastYrAmount: 432567,
+          fullSpendAmount: 74231234,
+          percentage: 1.04,
           increment: true,
           datasets: [
             {
               label: '2023',
-              data: [100, 200, 400, 700, 900, 1000, 1200],
+              data: [600, 400, 800, 100, 1800, 1000, 200],
             },
             {
               label: '2022',
-              data: [1000, 300, 100, 350, 100, 200, 300],
+              data: [100, 200, 50, 500, 1000, 100, 600],
             },
           ],
         },
@@ -253,15 +310,15 @@ export async function getBarChartData() {
           ytdLastYrAmount: 1257,
           fullSpendAmount: 5000,
           percentage: 0.5,
-          increment: true,
+          increment: false,
           datasets: [
             {
               label: '2023',
-              data: [100, 200, 400, 700, 900, 1000, 1200],
+              data: [600, 400, 800, 100, 1800, 1000, 200],
             },
             {
               label: '2022',
-              data: [1000, 300, 100, 350, 100, 200, 300],
+              data: [100, 200, 50, 500, 1000, 100, 600],
             },
           ],
         },
@@ -276,19 +333,19 @@ export async function getBarChartData() {
             'July',
           ],
           currency: '$',
-          ytdAmount: 2000,
-          ytdLastYrAmount: 1257,
-          fullSpendAmount: 5000,
-          percentage: 0.5,
+          ytdAmount: 98986,
+          ytdLastYrAmount: 32456,
+          fullSpendAmount: 12345,
+          percentage: 3.5,
           increment: true,
           datasets: [
             {
               label: '2023',
-              data: [100, 200, 400, 700, 900, 1000, 1200],
+              data: [500, 800, 100, 1000, 100, 200, 50],
             },
             {
               label: '2022',
-              data: [1000, 300, 100, 350, 100, 200, 300],
+              data: [100, 90, 1000, 300, 1000, 900, 600],
             },
           ],
         },
@@ -303,11 +360,11 @@ export async function getBarChartData() {
             'July',
           ],
           currency: '$',
-          ytdAmount: 2000,
-          ytdLastYrAmount: 1257,
-          fullSpendAmount: 5000,
-          percentage: 0.5,
-          increment: true,
+          ytdAmount: 1223454,
+          ytdLastYrAmount: 12311,
+          fullSpendAmount: 45000,
+          percentage: 7.7,
+          increment: false,
           datasets: [
             {
               label: '2023',
@@ -329,7 +386,6 @@ export async function getBarChartData() {
     //   throw new Error(response?.message);
     // }
     const finalResponse = await formatBarResponse(response);
-    console.log('firstResponse', finalResponse);
     return finalResponse;
   } catch (error) {
     console.log('error', error);
@@ -339,11 +395,11 @@ export async function getBarChartData() {
   }
 }
 
-const formatBarResponse = async (response: any): Promise<any> => {
+const formatBarResponse = async (response: BarChartDataType): Promise<any> => {
   const FinalTotalSpend = response?.totalSpend;
   const FinalTotalInvoicing = response?.totalInvoicing;
 
-  const formatBarChartData = (data: any) => {
+  const formatBarChartData = (data: ChartReponseData) => {
     return {
       labels: data?.labels,
       datasets: [
@@ -363,7 +419,7 @@ const formatBarResponse = async (response: any): Promise<any> => {
     };
   };
 
-  const formatLineChartData = (data: any) => {
+  const formatLineChartData = (data: ChartReponseData) => {
     return {
       labels: data?.labels,
       datasets: [
@@ -391,7 +447,7 @@ const formatBarResponse = async (response: any): Promise<any> => {
     };
   };
 
-  const formatChartDataAndOtherFields = (data: any, chartType: any) => {
+  const formatChartDataAndOtherFields = (data: any, chartType: string) => {
     return {
       currency: data?.currency,
       ytdAmount: formatAmount(data?.ytdAmount),

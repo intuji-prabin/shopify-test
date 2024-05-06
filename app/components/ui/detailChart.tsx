@@ -10,14 +10,16 @@ import {
     Tooltip,
     scales,
 } from 'chart.js/auto';
+import { useState } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
 import { ClientOnly } from 'remix-utils/client-only';
 import { Dollar } from '../icons/dollar';
-import { ArrowUp } from './arrow';
+import { ArrowDown, ArrowUp } from './arrow';
+import ChartFallback from './chartFallback';
 import Expenditure from './expenditure';
 import ExpenditureTab from './expenditure-tab';
 import { Separator } from './separator';
-import ChartFallback from './chartFallback';
+import { Invoicing } from '../icons/invoicing';
 
 ChartJS.register(
     CategoryScale,
@@ -52,7 +54,7 @@ const options = {
             },
         },
         title: {
-            display: true,
+            display: false,
             text: "Total Spending YTD",
             align: "start" as const,
             font: {
@@ -107,9 +109,10 @@ const options = {
     },
 };
 
-const DetailChart = ({ barChartData, lineChartData }: { barChartData: any, lineChartData: any }) => {
-
-    const dynamicDates = ['Year-To-Date', 'Quarter-To-Date', 'Month-To-Date'];
+const DetailChart = ({ barChartData }: { barChartData: any }) => {
+    const [activeTab, setActiveTab] = useState("ytd");
+    const [activeInvoiceTab, setActiveInvoiceTab] = useState("ytd");
+    const dynamicDates = [{ 'ytd': 'Year-To-Date' }, { 'qtd': 'Quarter-To-Date' }, { 'mtd': 'Month-To-Date' }];
 
     return (
         <section className="container">
@@ -126,24 +129,26 @@ const DetailChart = ({ barChartData, lineChartData }: { barChartData: any, lineC
                         </div>
                         <div className='w-full sm:w-auto sm:min-w-[280px]'>
                             <div className='grid grid-cols-3 gap-1 p-[3px] border border-solid border-grey-50'>
-                                <ExpenditureTab dynamicDates={dynamicDates} />
+                                <ExpenditureTab dynamicDates={dynamicDates} setActiveTab={setActiveTab} activeTab={activeTab} />
                             </div>
                         </div>
                     </div>
                     <div className='flex flex-col items-center gap-x-3 gap-y-6 sm:flex-row'>
                         <div className='w-full sm:grow sm:w-auto'>
-                            <Expenditure />
+                            <Expenditure expenditureData={barChartData?.totalSpend[activeTab]} activeTab={activeTab} />
                         </div>
                         <div className='w-full sm:text-right sm:ml-auto sm:w-auto'>
-                            <p className='flex items-center gap-x-1.5 sm:justify-end text-lg font-medium'><ArrowUp /><span className=" text-semantic-success-500"> 8.5%</span></p>
+                            <p className='flex items-center gap-x-1.5 sm:justify-end text-lg font-medium'>{barChartData?.totalSpend[activeTab]?.increment ? <ArrowUp /> : <ArrowDown />}<span className={
+                                barChartData?.totalSpend[activeTab]?.increment ? "text-semantic-success-500" : "text-semantic-danger-500"}> {barChartData?.totalSpend[activeTab]?.percentage}% </span></p>
                             <p className='text-lg font-medium text-grey-500'>VS LAST MONTH</p>
                         </div>
                     </div>
                     <Separator />
                     <div className='overflow-x-auto'>
                         <div className='min-w-[580px] min-h-[290px]'>
+                            <h4>Total Spending <span className='uppercase'>{activeTab}</span></h4>
                             <ClientOnly fallback={<ChartFallback />}>
-                                {() => <Bar options={options} data={barChartData} />}
+                                {() => <Bar options={options} data={barChartData?.totalSpend[activeTab]?.barChartData} />}
                             </ClientOnly>
                         </div>
                     </div>
@@ -153,31 +158,33 @@ const DetailChart = ({ barChartData, lineChartData }: { barChartData: any, lineC
                         <div className='w-full mxs:grow mxs:w-auto'>
                             <div className="flex items-center gap-x-2 gap-y-1">
                                 <span className='flex items-center justify-center w-12 h-12 bg-primary-200'>
-                                    <Dollar />
+                                    <Invoicing />
                                 </span>
-                                <h4>Total Spend</h4>
+                                <h4>Total Invoicing</h4>
                             </div>
                         </div>
                         <div className='w-full sm:w-auto sm:min-w-[280px]'>
                             <div className='grid grid-cols-3 gap-1 p-[3px] border border-solid border-grey-50'>
-                                <ExpenditureTab dynamicDates={dynamicDates} />
+                                <ExpenditureTab dynamicDates={dynamicDates} setActiveTab={setActiveInvoiceTab} activeTab={activeInvoiceTab} />
                             </div>
                         </div>
                     </div>
                     <div className='flex flex-col items-center gap-x-3 gap-y-6 sm:flex-row'>
                         <div className='w-full sm:grow sm:w-auto'>
-                            <Expenditure />
+                            <Expenditure expenditureData={barChartData?.totalInvoicing[activeInvoiceTab]} activeTab={activeInvoiceTab} />
                         </div>
                         <div className='w-full sm:text-right sm:ml-auto sm:w-auto'>
-                            <p className='flex items-center gap-x-1.5 sm:justify-end text-lg font-medium'><ArrowUp /><span className=" text-semantic-success-500"> 8.5%</span></p>
+                            <p className='flex items-center gap-x-1.5 sm:justify-end text-lg font-medium'>{barChartData?.totalInvoicing[activeInvoiceTab]?.increment ? <ArrowUp /> : <ArrowDown />}<span className={
+                                barChartData?.totalInvoicing[activeInvoiceTab]?.increment ? "text-semantic-success-500" : "text-semantic-danger-500"}> {barChartData?.totalInvoicing[activeInvoiceTab]?.percentage}% </span></p>
                             <p className='text-lg font-medium text-grey-500'>VS LAST MONTH</p>
                         </div>
                     </div>
                     <Separator />
                     <div className='overflow-x-auto'>
                         <div className='min-w-[580px] min-h-[290px]'>
+                            <h4>Total Invoicing <span className='uppercase'>{activeInvoiceTab}</span></h4>
                             <ClientOnly fallback={<ChartFallback />}>
-                                {() => <Line options={options} data={lineChartData} />}
+                                {() => <Line options={options} data={barChartData?.totalInvoicing[activeInvoiceTab]?.lineChartData} />}
                             </ClientOnly>
                         </div>
                     </div>

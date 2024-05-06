@@ -30,12 +30,13 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   const { userDetails } = await getUserDetails(request);
   const slides = await getSlides({ context });
   const areaChartData = await getAreaChartData();
-  await getBarChartData();
+  const barChartDataFinal = await getBarChartData();
 
   return json({
     slides,
     userDetails,
     areaChartData,
+    barChartDataFinal,
     barChartData,
     lineChartData,
     doughnutChartData,
@@ -53,10 +54,9 @@ export default function Homepage() {
       ) : null}
       <Profile sectionClass="mt-10" profileInfo={data?.userDetails} />
       <CtaHome />
-      <SpendCard data={data.areaChartData} />
+      <SpendCard data={data?.areaChartData} />
       <DetailChart
-        barChartData={data.barChartData}
-        lineChartData={data.lineChartData}
+        barChartData={data?.barChartDataFinal}
       />
       <ExpenditureCard doughnutChartData={data.doughnutChartData} />
     </article>
