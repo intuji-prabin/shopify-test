@@ -153,7 +153,7 @@ export default function TeamForm({
               placeholder="address"
             />
             <input type="hidden" name="addressId" value={addressId} />
-            <Input type="hidden" name="customerId" value={customerId} />
+            <input type="hidden" name="customerId" value={customerId} />
           </div>
         </div>
       </div>

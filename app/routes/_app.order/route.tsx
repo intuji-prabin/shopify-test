@@ -1,15 +1,20 @@
-import {LoaderFunctionArgs, MetaFunction, json} from '@shopify/remix-oxygen';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  MetaFunction,
+  json,
+  redirect,
+} from '@shopify/remix-oxygen';
 import {useTable} from '~/hooks/useTable';
 import {Button} from '~/components/ui/button';
 import {Separator} from '~/components/ui/separator';
 import {DataTable} from '~/components/ui/data-table';
 import {SearchInput} from '~/components/ui/search-input';
 import {useColumn} from '~/routes/_app.order/use-column';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import OrderFilterForm from '~/routes/_app.order/filter-form';
-import {getAllOrders} from '~/routes/_app.order/order.server';
-import PaginationSimple from '~/components/ui/pagination-simple';
+import {LineItem, getAllOrders} from '~/routes/_app.order/order.server';
 import {
   isRouteErrorResponse,
   useLoaderData,
@@ -25,6 +30,15 @@ import {
 } from '~/components/ui/sheet';
 import {HorizontalHamburgerIcon} from '~/components/icons/hamburgerIcon';
 import {ActionBar} from '~/routes/_app.order/action-bar';
+import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
+import {addedBulkCart} from '../_app.wishlist/bulk.cart.server';
+import {
+  getMessageSession,
+  messageCommitSession,
+  setErrorMessage,
+  setSuccessMessage,
+} from '~/lib/utils/toast-session.server';
+import {Routes} from '~/lib/constants/routes.constent';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Orders List'}];
@@ -41,18 +55,77 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 
   const {searchParams} = new URL(request.url);
 
-  const pageNumber = searchParams.get('pageNo') || 1;
-
-  const {orderList, orderPageInfo} = await getAllOrders({
+  const {orderList, totalOrder} = await getAllOrders({
     customerId,
     searchParams,
   });
 
-  return json({orderList, orderPageInfo, pageNumber});
+  return json({orderList, totalOrder});
+}
+
+export async function action({request, context}: ActionFunctionArgs) {
+  await isAuthenticate(context);
+
+  const messageSession = await getMessageSession(request);
+
+  const formData = await request.formData();
+
+  const action = formData.get('_action') as 'add_to_cart';
+
+  switch (action) {
+    case 'add_to_cart': {
+      try {
+        const cartInfo = Object.fromEntries(formData);
+
+        const accessTocken = (await getAccessToken(context)) as string;
+
+        await addedBulkCart(cartInfo, context, accessTocken, request);
+
+        setSuccessMessage(messageSession, 'Item has been reorder successfully');
+
+        return redirect(Routes.CART_LIST, {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        });
+      } catch (error) {
+        if (error instanceof Error) {
+          setErrorMessage(messageSession, error?.message);
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        }
+        setErrorMessage(
+          messageSession,
+          'Item could not reorder. Please try again later.',
+        );
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      }
+    }
+
+    default: {
+      throw new Error('Unexpected action');
+    }
+  }
 }
 
 export default function OrdersPage() {
-  const {orderList, orderPageInfo, pageNumber} = useLoaderData<typeof loader>();
+  const {orderList, totalOrder} = useLoaderData<typeof loader>();
 
   const {columns} = useColumn();
 
@@ -97,16 +170,7 @@ export default function OrdersPage() {
 
       <DataTable table={table} columns={columns} />
 
-      {orderList.length > 0 && (
-        <div className="flex flex-col justify-start w-full gap-3 px-6 py-4 border-t sm:items-center sm:justify-between sm:flex-row bg-neutral-white">
-          <PaginationSimple
-            pageSize={PAGE_LIMIT}
-            page={Number(pageNumber)}
-            paginationInfo={orderPageInfo}
-            totalLength={orderList.length}
-          />
-        </div>
-      )}
+      <PaginationWrapper pageSize={PAGE_LIMIT} totalCount={totalOrder} />
     </section>
   );
 }
