@@ -135,10 +135,10 @@ export async function action({request, context, params}: ActionFunctionArgs) {
     }
     // //  else {
     //   console.log("Here it is")
-    //   emitter2.emit(EVENTS.PERMISSIONS_UPDATED.KEY, 'role update')
+      emitter2.emit(EVENTS.PERMISSIONS_UPDATED.KEY)
     // // }
 
-    emitter.emit(EVENTS.LOGOUT.KEY, customerId);
+    // emitter.emit(EVENTS.LOGOUT.KEY, customerId);
 
     setSuccessMessage(messageSession, 'Customer update successful');
 

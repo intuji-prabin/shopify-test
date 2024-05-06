@@ -2,6 +2,7 @@ import {
   Outlet,
   isRouteErrorResponse,
   useLoaderData,
+  useRevalidator,
   useRouteError,
   useSubmit,
 } from '@remix-run/react';
@@ -131,42 +132,59 @@ export default function PublicPageLayout() {
     }
   }, [userId]);
   
-  const hasPermissionBeenUpdated = useEventSource(
-    Routes.PERMISSIONS_SUBSCRIBE,
-    {
-      event: EVENTS.PERMISSIONS_UPDATED.NAME,
-    },
-  );
+  // const hasPermissionBeenUpdated = useEventSource(
+  //   Routes.PERMISSIONS_SUBSCRIBE,
+  //   {
+  //     event: EVENTS.PERMISSIONS_UPDATED.NAME,
+  //   },
+  // );
+  const data = useEventSource( Routes.PERMISSIONS_SUBSCRIBE, {
+        event: EVENTS.PERMISSIONS_UPDATED.NAME,
+      },)
 
-  useEffect(() => {
-    const roleData = userDetails?.meta?.user_role;
-    const currentUrl = window.location.pathname; // Capture the current URL
-    if (typeof hasPermissionBeenUpdated === 'string' && hasPermissionBeenUpdated !== null) {
-      if (hasPermissionBeenUpdated === 'role update') {
-        // Update user session if the permission update is related to the user's role
-        submit({ returnUrl: currentUrl }, { method: 'GET', action: '/update-user-session' });
-      } else {
-        // Parse the string into an object
-        const parsedData = JSON.parse(hasPermissionBeenUpdated) as { data: { value: string; permission: string[] }[] };
-        // Find the item in the parsedData.data array based on the condition
-        const userRolePermissions = parsedData.data.find((item) => item.value === roleData?.value);
-        if(userRolePermissions){
-        // Prevent default behavior if action is '/update-user-session'
-        submit({ returnUrl: currentUrl }, { method: 'GET', action: '/update-user-session' });
-        // Check if userRolePermissions.permission is an empty array
-        if (userRolePermissions?.permission.length === 0) {
-          // Logout the user if permissions are empty
-          submit({}, { method: 'POST', action: '/logout' });
-        } else {
-          // Create abilities based on permissions
-          const userAbility = getUserAbilities(userRolePermissions);
-          setAbility(userAbility);
-        }
-      }
-      }
+  useEffect(()=>{
+    // revalidate()
+    if(data !== null){
+    let currentUrl = window.location.pathname; // Capture the current URL
+    if (currentUrl.startsWith('/team/') && /\d{13}/.test(currentUrl)) {
+        currentUrl = Routes.TEAM
     }
+
+    submit({ returnUrl: currentUrl }, { method: 'GET', action: '/update-user-session' });
+  }
+    // revalidate()
+  },[data])
+
+  // useEffect(() => {
+  //   revalidate();
+  //   const roleData = userDetails?.meta?.user_role;
+  //   const currentUrl = window.location.pathname; // Capture the current URL
+  //   if (typeof hasPermissionBeenUpdated === 'string' && hasPermissionBeenUpdated !== null) {
+  //     if (hasPermissionBeenUpdated === 'role update') {
+  //       // Update user session if the permission update is related to the user's role
+  //       submit({ returnUrl: currentUrl }, { method: 'GET', action: '/update-user-session' });
+  //     } else {
+  //       // Parse the string into an object
+  //       const parsedData = JSON.parse(hasPermissionBeenUpdated) as { data: { value: string; permission: string[] }[] };
+  //       // Find the item in the parsedData.data array based on the condition
+  //       const userRolePermissions = parsedData.data.find((item) => item.value === roleData?.value);
+  //       if(userRolePermissions){
+  //       // Prevent default behavior if action is '/update-user-session'
+  //       submit({ returnUrl: currentUrl }, { method: 'GET', action: '/update-user-session' });
+  //       // Check if userRolePermissions.permission is an empty array
+  //       if (userRolePermissions?.permission.length === 0) {
+  //         // Logout the user if permissions are empty
+  //         submit({}, { method: 'POST', action: '/logout' });
+  //       } else {
+  //         // Create abilities based on permissions
+  //         const userAbility = getUserAbilities(userRolePermissions);
+  //         setAbility(userAbility);
+  //       }
+  //     }
+  //     }
+  //   }
     
-  }, [hasPermissionBeenUpdated]);
+  // }, [hasPermissionBeenUpdated]);
 
   return (
     <AbilityContext.Provider value={ability}>

@@ -1,4 +1,5 @@
 import {ActionFunctionArgs} from '@remix-run/node'; // or cloudflare/deno
+import { LoaderFunctionArgs } from '@remix-run/server-runtime';
 import {EVENTS} from '~/lib/constants/events.contstent';
 import {emitter2} from '~/lib/utils/emitter.server';
 
@@ -12,14 +13,11 @@ import {emitter2} from '~/lib/utils/emitter.server';
  * @param {ActionFunctionArgs} args - The action function arguments.
  * @returns {Promise<boolean>} - A promise that resolves to true.
  */
-export const action = async ({ request }: ActionFunctionArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   try {
-    // Parse the JSON payload from the request
-    const permissionData = await request.json();
-
 
     // Emit the permission data to subscribers
-    emitter2.emit(EVENTS.PERMISSIONS_UPDATED.KEY, permissionData);
+    emitter2.emit(EVENTS.PERMISSIONS_UPDATED.KEY);
 
     // Return true to indicate successful execution
     return true;
