@@ -20,17 +20,19 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return eventStream(request.signal, function setup(send) {
     
     const handle = (email: string)=>{
-      send({event: EVENTS.PERMISSIONS_UPDATED.NAME, data: String(Date.now())})
-    }
+      const eventData = JSON.stringify({ email, date: String(Date.now()) });
+      send({ event: EVENTS.PERMISSIONS_UPDATED.NAME, data: eventData });
+    };
 
     emitter2.addListener(EVENTS.PERMISSIONS_UPDATED.KEY, handle);
 
     // Remove the event listener when the event stream is closed
     return () => {
-      console.log("listener")
+      console.log("listener");
       emitter2.removeListener(EVENTS.PERMISSIONS_UPDATED.KEY, handle);
     };
   });
 }
+
 
 

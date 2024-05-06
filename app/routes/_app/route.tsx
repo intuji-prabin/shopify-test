@@ -44,6 +44,12 @@ import StorageService from '~/services/storage.service';
 import {emitter} from '~/lib/utils/emitter.server';
 import {ro} from 'date-fns/locale';
 
+interface Data {
+  email: string;
+  date: string;
+  // Add other properties if present in your data
+}
+
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
   const {userDetails} = await getUserDetails(request);
@@ -131,29 +137,35 @@ export default function PublicPageLayout() {
       submit({}, {method: 'POST', action: '/logout'});
     }
   }, [userId]);
-  
+
   // const hasPermissionBeenUpdated = useEventSource(
   //   Routes.PERMISSIONS_SUBSCRIBE,
   //   {
   //     event: EVENTS.PERMISSIONS_UPDATED.NAME,
   //   },
   // );
-  const data = useEventSource( Routes.PERMISSIONS_SUBSCRIBE, {
-        event: EVENTS.PERMISSIONS_UPDATED.NAME,
-      },)
+  const data = useEventSource(Routes.PERMISSIONS_SUBSCRIBE, {
+    event: EVENTS.PERMISSIONS_UPDATED.NAME,
+  });
 
-  useEffect(()=>{
+  console.log('data', data);
+  useEffect(() => {
     // revalidate()
-    if(data !== null){
-    let currentUrl = window.location.pathname; // Capture the current URL
-    if (currentUrl.startsWith('/team/') && /\d{13}/.test(currentUrl)) {
-        currentUrl = Routes.TEAM
+    if (data !== null) {
+      let currentUrl = window.location.pathname; // Capture the current URL
+      const dataObject = JSON.parse(data) as Data;
+      console.log(dataObject.email)
+      if (dataObject.email === userDetails.email) {
+        currentUrl = Routes.TEAM;
+      }
+
+      submit(
+        {returnUrl: currentUrl},
+        {method: 'GET', action: '/update-user-session'},
+      );
     }
-
-    submit({ returnUrl: currentUrl }, { method: 'GET', action: '/update-user-session' });
-  }
     // revalidate()
-  },[data])
+  }, [data]);
 
   // useEffect(() => {
   //   revalidate();
@@ -183,7 +195,7 @@ export default function PublicPageLayout() {
   //     }
   //     }
   //   }
-    
+
   // }, [hasPermissionBeenUpdated]);
 
   return (

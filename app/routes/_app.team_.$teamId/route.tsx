@@ -135,7 +135,7 @@ export async function action({request, context, params}: ActionFunctionArgs) {
     }
     // //  else {
     //   console.log("Here it is")
-      emitter2.emit(EVENTS.PERMISSIONS_UPDATED.KEY)
+      emitter2.emit(EVENTS.PERMISSIONS_UPDATED.KEY, userDetails.email)
     // // }
 
     // emitter.emit(EVENTS.LOGOUT.KEY, customerId);
