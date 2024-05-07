@@ -1,6 +1,7 @@
 import { Expenditure } from "../icons/expenditure";
 import ExpenditureChart from "./expenditureChart";
-import { SelectInputType } from "./select-input";
+
+type SelectInputType = { value: string; label: string };
 
 const dateOptions: SelectInputType[] = [
     { label: '2021/04/08 - 2021/04/10', value: '2021/04/08 - 2021/04/10' },

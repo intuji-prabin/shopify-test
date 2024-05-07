@@ -67,29 +67,6 @@ type ChartReponseData = {
     pointBackgroundColor?: string;
   }[];
 };
-type CommonData = {
-  currency: string;
-  ytdAmount: string;
-  ytdLastYrAmount: string;
-  fullSpendAmount: string;
-  percentage: number;
-  increment: boolean;
-};
-type SpendData = CommonData & {
-  barChartData: ChartReponseData;
-};
-type InvoicingData = CommonData & {
-  lineChartData: ChartReponseData;
-};
-type TotalData = {
-  ytd: SpendData | InvoicingData;
-  qtd: SpendData | InvoicingData;
-  mtd: SpendData | InvoicingData;
-};
-type ResponseBarChartDataType = {
-  totalSpend: TotalData;
-  totalInvoicing: TotalData;
-};
 
 const formatAmount = (amount: number) => {
   return amount > 999 ? amount / 1000 + 'k' : amount;
@@ -231,11 +208,11 @@ export async function getBarChartData() {
           datasets: [
             {
               label: '2023',
-              data: [100, 200, 400, 700, 900, 1000, 1200],
+              data: [10000, 200121, 400444, 700233, 90000, 1000111, 120032],
             },
             {
               label: '2022',
-              data: [1000, 300, 100, 350, 100, 200, 300],
+              data: [100022, 30077, 100134, 35067, 100908, 200112, 3002323],
             },
           ],
         },
@@ -258,11 +235,11 @@ export async function getBarChartData() {
           datasets: [
             {
               label: '2023',
-              data: [500, 800, 100, 1000, 100, 200, 50],
+              data: [5002323, 80066, 100899, 1000456, 100123, 202340, 123550],
             },
             {
               label: '2022',
-              data: [100, 90, 1000, 300, 1000, 900, 600],
+              data: [10056, 90666, 1000990, 3008878, 10001212, 900444, 600111],
             },
           ],
         },
@@ -285,11 +262,11 @@ export async function getBarChartData() {
           datasets: [
             {
               label: '2023',
-              data: [600, 400, 800, 100, 1800, 1000, 200],
+              data: [600121, 40012, 80012, 1002, 180021, 100012, 200122],
             },
             {
               label: '2022',
-              data: [100, 200, 50, 500, 1000, 100, 600],
+              data: [100122, 200122, 501245, 500123, 1000123, 10011, 60023],
             },
           ],
         },
@@ -314,11 +291,11 @@ export async function getBarChartData() {
           datasets: [
             {
               label: '2023',
-              data: [600, 400, 800, 100, 1800, 1000, 200],
+              data: [600343, 400112, 8005656, 100232, 1800112, 1000123, 20011],
             },
             {
               label: '2022',
-              data: [100, 200, 50, 500, 1000, 100, 600],
+              data: [10033, 200112, 50000, 500212, 100044, 100666, 600000],
             },
           ],
         },
@@ -341,11 +318,15 @@ export async function getBarChartData() {
           datasets: [
             {
               label: '2023',
-              data: [500, 800, 100, 1000, 100, 200, 50],
+              data: [
+                5001212, 8003434, 1006656, 10001212, 1001212, 200122, 501222,
+              ],
             },
             {
               label: '2022',
-              data: [100, 90, 1000, 300, 1000, 900, 600],
+              data: [
+                1001221, 90122, 1000333, 3001222, 10001212, 9001223, 6001212,
+              ],
             },
           ],
         },
@@ -368,11 +349,11 @@ export async function getBarChartData() {
           datasets: [
             {
               label: '2023',
-              data: [100, 200, 400, 700, 900, 1000, 1200],
+              data: [100121, 20012, 40011, 700333, 900667, 100034, 1200463],
             },
             {
               label: '2022',
-              data: [1000, 300, 100, 350, 100, 200, 300],
+              data: [1000, 300232, 10220, 350443, 100343, 2002233, 300233],
             },
           ],
         },
@@ -405,13 +386,13 @@ const formatBarResponse = async (response: BarChartDataType): Promise<any> => {
       datasets: [
         {
           label: data?.datasets[0]?.label,
-          data: data?.datasets[0]?.data,
+          data: data?.datasets[0]?.data.map((item) => item / 1000),
           borderColor: 'rgb(0, 146, 207)',
           backgroundColor: 'rgb(0, 146, 207)',
         },
         {
           label: data?.datasets[1]?.label,
-          data: data?.datasets[1]?.data,
+          data: data?.datasets[1]?.data.map((item) => item / 1000),
           borderColor: 'rgb(200, 162, 0)',
           backgroundColor: 'rgb(200, 162, 0)',
         },
@@ -425,7 +406,7 @@ const formatBarResponse = async (response: BarChartDataType): Promise<any> => {
       datasets: [
         {
           label: data?.datasets[0]?.label,
-          data: data?.datasets[0]?.data,
+          data: data?.datasets[0]?.data.map((item) => item / 1000),
           cubicInterpolationMode: 'monotone',
           borderColor: 'rgb(0, 146, 207)',
           borderWidth: 2,
@@ -435,7 +416,7 @@ const formatBarResponse = async (response: BarChartDataType): Promise<any> => {
         },
         {
           label: data?.datasets[1]?.label,
-          data: data?.datasets[1]?.data,
+          data: data?.datasets[1]?.data.map((item) => item / 1000),
           cubicInterpolationMode: 'monotone',
           borderColor: 'rgb(200, 162, 0)',
           borderWidth: 2,
@@ -447,7 +428,7 @@ const formatBarResponse = async (response: BarChartDataType): Promise<any> => {
     };
   };
 
-  const formatChartDataAndOtherFields = (data: any, chartType: string) => {
+  const formatChartDataAndOtherFields = (data: Total, chartType: string) => {
     return {
       currency: data?.currency,
       ytdAmount: formatAmount(data?.ytdAmount),
@@ -457,16 +438,16 @@ const formatBarResponse = async (response: BarChartDataType): Promise<any> => {
       increment: data?.increment,
       [`${chartType}ChartData`]:
         chartType === 'bar'
-          ? formatBarChartData(data)
-          : formatLineChartData(data),
+          ? formatBarChartData(data as any)
+          : formatLineChartData(data as any),
     };
   };
 
-  const formatBarChartDataAndOtherFields = (data: any) => {
+  const formatBarChartDataAndOtherFields = (data: Total) => {
     return formatChartDataAndOtherFields(data, 'bar');
   };
 
-  const formatLineChartDataAndOtherFields = (data: any) => {
+  const formatLineChartDataAndOtherFields = (data: Total) => {
     return formatChartDataAndOtherFields(data, 'line');
   };
 
@@ -501,57 +482,57 @@ const formatBarResponse = async (response: BarChartDataType): Promise<any> => {
 //   ],
 // };
 
-export const barLabels = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-];
-export const barChartData = {
-  labels: barLabels,
-  datasets: [
-    {
-      label: '2023',
-      data: [100, 200, 400, 700, 900, 1000, 1200],
-      borderColor: 'rgb(0, 146, 207)',
-      backgroundColor: 'rgb(0, 146, 207)',
-    },
-    {
-      label: '2022',
-      data: [1000, 300, 100, 350, 100, 200, 300],
-      borderColor: 'rgb(200, 162, 0)',
-      backgroundColor: 'rgb(200, 162, 0)',
-    },
-  ],
-};
-export const lineChartData = {
-  labels: barLabels,
-  datasets: [
-    {
-      label: '2023',
-      data: [100, 200, 400, 700, 900, 1000, 1200],
-      cubicInterpolationMode: 'monotone',
-      borderColor: 'rgb(0, 146, 207)',
-      borderWidth: 2,
-      pointBorderWidth: 2,
-      pointRadius: 5,
-      pointBackgroundColor: 'white',
-    },
-    {
-      label: '2022',
-      data: [1000, 300, 100, 350, 100, 200, 300],
-      cubicInterpolationMode: 'monotone',
-      borderColor: 'rgb(200, 162, 0)',
-      borderWidth: 2,
-      pointBorderWidth: 2,
-      pointRadius: 5,
-      pointBackgroundColor: 'white',
-    },
-  ],
-};
+// export const barLabels = [
+//   'January',
+//   'February',
+//   'March',
+//   'April',
+//   'May',
+//   'June',
+//   'July',
+// ];
+// export const barChartData = {
+//   labels: barLabels,
+//   datasets: [
+//     {
+//       label: '2023',
+//       data: [100, 200, 400, 700, 900, 1000, 1200],
+//       borderColor: 'rgb(0, 146, 207)',
+//       backgroundColor: 'rgb(0, 146, 207)',
+//     },
+//     {
+//       label: '2022',
+//       data: [1000, 300, 100, 350, 100, 200, 300],
+//       borderColor: 'rgb(200, 162, 0)',
+//       backgroundColor: 'rgb(200, 162, 0)',
+//     },
+//   ],
+// };
+// export const lineChartData = {
+//   labels: barLabels,
+//   datasets: [
+//     {
+//       label: '2023',
+//       data: [100, 200, 400, 700, 900, 1000, 1200],
+//       cubicInterpolationMode: 'monotone',
+//       borderColor: 'rgb(0, 146, 207)',
+//       borderWidth: 2,
+//       pointBorderWidth: 2,
+//       pointRadius: 5,
+//       pointBackgroundColor: 'white',
+//     },
+//     {
+//       label: '2022',
+//       data: [1000, 300, 100, 350, 100, 200, 300],
+//       cubicInterpolationMode: 'monotone',
+//       borderColor: 'rgb(200, 162, 0)',
+//       borderWidth: 2,
+//       pointBorderWidth: 2,
+//       pointRadius: 5,
+//       pointBackgroundColor: 'white',
+//     },
+//   ],
+// };
 
 export const doughnutLabels = [
   'January',
@@ -560,7 +541,7 @@ export const doughnutLabels = [
   'April',
   'May',
   'June',
-  'Julydd',
+  'July',
 ];
 export const doughnutChartData = {
   labels: doughnutLabels,
