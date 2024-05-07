@@ -61,7 +61,7 @@ export async function loader({context, request}: LoaderFunctionArgs) {
     searchParams,
   });
 
-  return json({orderList, totalOrder});
+  return json({orderList, totalOrder, customerId});
 }
 
 export async function action({request, context}: ActionFunctionArgs) {
@@ -126,13 +126,13 @@ export async function action({request, context}: ActionFunctionArgs) {
 }
 
 export default function OrdersPage() {
-  const {orderList, totalOrder} = useLoaderData<typeof loader>();
+  const {orderList, totalOrder, customerId} = useLoaderData<typeof loader>();
 
   const {columns} = useColumn();
 
   const [searchParams] = useSearchParams();
 
-  const {table} = useTable(columns, orderList, 'poNumber');
+  const {table} = useTable(columns, orderList, 'uniqueId');
 
   let isFilterApplied = false;
 
@@ -146,7 +146,8 @@ export default function OrdersPage() {
 
   return (
     shouldRender && (<section className="container">
-      <ActionBar table={table} />
+
+      <ActionBar table={table} customerId={customerId} />
       <div className="flex flex-col gap-2 p-4 border-b bg-neutral-white sm:flex-row sm:justify-between sm:items-center">
         <div className="sm:w-[451px]">
           <SearchInput />
