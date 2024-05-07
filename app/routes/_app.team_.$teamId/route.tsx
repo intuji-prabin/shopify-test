@@ -40,6 +40,11 @@ import {
 import {getCustomerByEmail} from '~/routes/_public.login/login.server';
 import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
 import {PageNotFound} from '~/components/ui/page-not-found';
+import {useContext} from 'react';
+import {AbilityContext} from '~/lib/helpers/Can';
+import {useConditionalRender} from '~/hooks/useAuthorization';
+import {emitter, emitter2, emitter3} from '~/lib/utils/emitter.server';
+import {EVENTS} from '~/lib/constants/events.contstent';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Edit Team Member'}];
@@ -128,6 +133,8 @@ export async function action({request, context, params}: ActionFunctionArgs) {
         ],
       });
     }
+    // emitter.emit(EVENTS.LOGOUT.KEY, email);
+    emitter.emit(EVENTS.LOGOUT.KEY, { customerId: customerId, message: "User Role Changed Logging Out" });
 
     setSuccessMessage(messageSession, 'Customer update successful');
 
@@ -154,28 +161,31 @@ export default function TeamDetailsPage() {
   const navigate = useNavigate();
 
   const {customerDetails, roles} = useLoaderData<typeof loader>();
+  const shouldRender = useConditionalRender('edit_other_profile');
 
   return (
-    <section className="container">
-      <div className="flex items-center py-6 space-x-4">
-        <Button
-          type="button"
-          size="icon"
-          variant="ghost"
-          className="border-grey-50 hover:bg-inherit"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="text-grey-400" />
-        </Button>
-        <h3>Edit Details</h3>
-      </div>
-      <TeamForm
-        defaultValues={customerDetails}
-        addressId={customerDetails?.addressId}
-        customerId={customerDetails?.customerId}
-        options={roles.data as SelectInputOptions[]}
-      />
-    </section>
+    shouldRender && (
+      <section className="container">
+        <div className="flex items-center py-6 space-x-4">
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            className="border-grey-50 hover:bg-inherit"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="text-grey-400" />
+          </Button>
+          <h3>Edit Details</h3>
+        </div>
+        <TeamForm
+          defaultValues={customerDetails}
+          addressId={customerDetails?.addressId}
+          customerId={customerDetails?.customerId}
+          options={roles.data as SelectInputOptions[]}
+        />
+      </section>
+    )
   );
 }
 

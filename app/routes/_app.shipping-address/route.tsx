@@ -8,6 +8,7 @@ import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
 import {MetaFunction} from '@shopify/remix-oxygen';
 import {CircleInformationMajor} from '~/components/icons/orderStatus';
 import {Alert, AlertDescription} from '~/components/ui/alert';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 import {Routes} from '~/lib/constants/routes.constent';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
@@ -38,9 +39,11 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 
 export default function ShippingAddressMgmt() {
   const {shippingAddresses} = useLoaderData<typeof loader>();
+  const shouldRender = useConditionalRender('view_shipping_addresses');
+
   return (
-    <div className="container pt-6 ">
-      <ShippingAddressHeader title={'Shipping Address '} />
+    shouldRender && (<div className="container pt-6 ">
+      <ShippingAddressHeader title={'Shipping Addresssss '} />
       <Alert className='border-0 rounded-none bg-semantic-info-100 before:content-[""] before:bg-semantic-info-500 before:inline-block before:h-full before:absolute before:w-1 before:left-0 before:top-0 py-2.5 [&>svg]:top-1/2 [&>svg]:-translate-y-1/2 [&>svg]:left-3 mb-6'>
         <CircleInformationMajor />
         <AlertDescription className="text-base !translate-y-0 !pl-6">
@@ -56,7 +59,7 @@ export default function ShippingAddressMgmt() {
       <ShippingAddressCards
         shippingAddresses={shippingAddresses as ShippingAddress}
       />
-    </div>
+    </div>)
   );
 }
 

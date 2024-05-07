@@ -29,6 +29,8 @@ import {
   useRouteError,
   useSearchParams,
 } from '@remix-run/react';
+import {Can} from '~/lib/helpers/Can';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Ticket List'}];
@@ -77,9 +79,11 @@ export default function TicketsPage() {
       isFilterApplied = true;
     }
   }
+  const shouldRender = useConditionalRender('ticket_operations');
+
 
   return (
-    <section className="container">
+    shouldRender && (<section className="container">
       <div className=" pt-6 pb-4 flex items-center justify-between">
         <div>
           <BackButton title="Tickets History" />
@@ -90,9 +94,11 @@ export default function TicketsPage() {
             </BreadcrumbItem>
           </Breadcrumb>
         </div>
-        <Link to={Routes.SUPPORT_TICKETS_CREATE}>
-          <Button>Open A Ticket</Button>
-        </Link>
+        <Can I="view" a="open_ticket">
+          <Link to={Routes.SUPPORT_TICKETS_CREATE}>
+            <Button>Open A Ticket</Button>
+          </Link>
+        </Can>
       </div>
       <div className="flex gap-2 flex-col bg-neutral-white p-4 border-b sm:flex-row sm:justify-between sm:items-center">
         <div className="sm:w-[451px]">
@@ -120,7 +126,7 @@ export default function TicketsPage() {
       <DataTable table={table} columns={columns} />
 
       <PaginationWrapper pageSize={PAGE_LIMIT} totalCount={totalCount} />
-    </section>
+    </section>)
   );
 }
 

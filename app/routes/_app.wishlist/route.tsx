@@ -21,6 +21,7 @@ import { displayToast } from '~/components/ui/toast';
 import { Routes } from '~/lib/constants/routes.constent';
 import { CART_QUANTITY_ERROR, CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
 import { BackButton } from '~/components/ui/back-button';
+import { Can } from '~/lib/helpers/Can';
 
 export interface WishListResponse {
   productId: string;
@@ -189,6 +190,7 @@ export default function route() {
             {table.getSelectedRowModel().rows.length > 0 &&
               <div className='flex items-center gap-2'>
                 <p className='text-lg italic font-bold'>{table.getSelectedRowModel().rows.length} item selected</p>
+                <Can I="view" a="add_wishlist_to_cart">
                 <Button
                   variant='primary'
                   onClick={() => {
@@ -234,6 +236,7 @@ export default function route() {
                 >
                   Add all to cart
                 </Button>
+                </Can>
                 <Button
                   variant='danger_dark'
                   onClick={() => {

@@ -26,6 +26,7 @@ import {getUserDetails} from '~/lib/utils/user-session.server';
 import {getAllInvoices} from '~/routes/_app.invoices/invoices.server';
 import InvoicesFilterForm from '~/routes/_app.invoices/filter-form';
 import {ActionBar} from '~/routes/_app.invoices/action-bar';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Invoices List'}];
@@ -72,8 +73,10 @@ export default function InvoicesPage() {
       isFilterApplied = true;
     }
   }
+  const shouldRender = useConditionalRender('view_company_invoices');
+
   return (
-    <section className="container">
+    shouldRender &&(<section className="container">
       <ActionBar table={table} />
       <div className="flex flex-col gap-2 p-4 border-b bg-neutral-white sm:flex-row sm:justify-between sm:items-center">
         <div className="sm:w-[451px]">
@@ -102,7 +105,7 @@ export default function InvoicesPage() {
       <DataTable table={table} columns={columns} />
 
       <PaginationWrapper pageSize={PAGE_LIMIT} totalCount={totalInvoices} />
-    </section>
+    </section>)
   );
 }
 

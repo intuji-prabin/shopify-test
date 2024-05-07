@@ -34,6 +34,7 @@ import PromotionNavigation from '../_app.customise_.$promotionId/promotion-navig
 import { getMyPromotionById, updatePromotion } from './edit-promotion.server';
 import { NumberPlusOnly } from '~/lib/constants/regex.constant';
 import FullPageLoading from '~/components/ui/fullPageLoading';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -250,9 +251,11 @@ const PromotionEdit = () => {
 
   let imageName = companyInfo?.companyName;
   imageName = imageName && imageName.replace(/ /g, '_');
+  const shouldRender = useConditionalRender('edit_promotions');
+
 
   return (
-    <div className="bg-grey-25">
+    shouldRender &&(<div className="bg-grey-25">
       {isLoading && (
         <FullPageLoading description='The image is being processed. Please wait for few moments....' />
       )}
@@ -470,7 +473,7 @@ const PromotionEdit = () => {
           </div>
         </div>
       </section>
-    </div>
+    </div>)
   );
 };
 

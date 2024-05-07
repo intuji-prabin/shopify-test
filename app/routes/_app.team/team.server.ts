@@ -70,5 +70,6 @@ export async function updateStatus({
       status: 404,
     });
   }
-  emitter.emit(EVENTS.LOGOUT.KEY, customerId);
+  emitter.emit(EVENTS.LOGOUT.KEY, { customerId: customerId, message: "User Deactivated" });
+  // emitter.emit(EVENTS.LOGOUT.KEY, customerId);
 }

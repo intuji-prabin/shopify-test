@@ -3,4 +3,8 @@ export const EVENTS = {
     KEY: 'logout',
     NAME: 'logout-event',
   },
+  PERMISSIONS_UPDATED: {
+    KEY: 'permissions',
+    NAME: 'permissions-event',
+  },
 };

@@ -6,6 +6,7 @@ import { Button } from '~/components/ui/button';
 import { Calendar } from '~/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
+import { Can } from '~/lib/helpers/Can';
 
 function concatDefaultAddress(address1: string, address2: string) {
   return address1.concat(' ', address2).trim();
@@ -255,6 +256,7 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: a
         />
       </div>
       {/* place order starts here */}
+      <Can I='view' a='place_order'>
       {!updateCart && placeOrder ?
         <Button className="text-lg min-h-14" variant="primary" type="submit">
           Place order
@@ -273,6 +275,7 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: a
             <li>Update quantity to be less than {CART_QUANTITY_MAX}.</li>
           </ul>
         </div>}
+        </Can>
       <p className="text-lg font-normal leading-[22px] text-grey-700">
         <span className="underline text-primary-500">
           Availability, shipping, tax & promotions

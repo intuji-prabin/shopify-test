@@ -2,11 +2,12 @@ import {
   Outlet,
   isRouteErrorResponse,
   useLoaderData,
+  useRevalidator,
   useRouteError,
   useSubmit,
 } from '@remix-run/react';
-import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
-import {useEffect} from 'react';
+import {ActionFunctionArgs, json, redirect} from '@remix-run/server-runtime';
+import {useEffect, useState} from 'react';
 import {useEventSource} from 'remix-utils/sse/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
@@ -33,10 +34,26 @@ import {
 } from '~/routes/_app/app.server';
 import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
 import {EVENTS} from '~/lib/constants/events.contstent';
+import {
+  defineAbilitiesForAdmin,
+  defineAbilitiesForUser,
+} from '~/lib/helpers/roles';
+import {AbilityContext, DEFAULT_ABILITIES} from '~/lib/helpers/Can';
+import {LOCAL_STORAGE_KEYS} from '~/lib/constants/general.constant';
+import StorageService from '~/services/storage.service';
+import {emitter} from '~/lib/utils/emitter.server';
+import {ro} from 'date-fns/locale';
+
+interface Data {
+  customerId: string;
+  message: string;
+  // Add other properties if present in your data
+}
 
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
   const {userDetails} = await getUserDetails(request);
+
   const sessionData = await getSessionData(userDetails, context);
   const categories = await getCagetoryList(context);
   const messageSession = await getMessageSession(request);
@@ -63,6 +80,7 @@ export async function loader({request, context}: ActionFunctionArgs) {
     setErrorMessage(messageSession, 'Category not found');
     headers.push(['Set-Cookie', await messageCommitSession(messageSession)]);
   }
+
   return json(
     {
       categories: categories ? categories : [],
@@ -87,29 +105,105 @@ export default function PublicPageLayout() {
   } = useLoaderData<typeof loader>();
 
   const submit = useSubmit();
-
   const cartCount = sessionCartInfo?.lineItems ?? 0;
   const wishlistCount = wishlistSession ?? 0;
+  const [ability, setAbility] = useState(DEFAULT_ABILITIES);
+  const [loading, setLoading] = useState(true);
 
-  const userId = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
+  function getUserAbilities(roleData: any) {
+    if (roleData.value === 'admin distributor') {
+      return defineAbilitiesForAdmin();
+    } else {
+      return defineAbilitiesForUser(roleData.permission);
+    }
+  }
+
+  useEffect(() => {
+    const roleData = userDetails?.meta?.user_role;
+
+    if (!roleData) return;
+
+    const userAbility = getUserAbilities(roleData);
+    setAbility(userAbility);
+    setLoading(false);
+  }, [userDetails]);
+
+  const userData = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
     event: EVENTS.LOGOUT.NAME,
   });
 
   useEffect(() => {
-    if (userId === userDetails.id) {
-      submit({}, {method: 'POST', action: '/logout'});
+    if (userData) {
+      const dataObject = JSON.parse(userData) as Data;
+      if (dataObject.customerId === userDetails.id) {
+        submit(
+          {message: dataObject.message},
+          {method: 'POST', action: '/logout'},
+        );
+      }
     }
-  }, [userId]);
+  }, [userData]);
+
+  const hasPermissionBeenUpdated = useEventSource(
+    Routes.PERMISSIONS_SUBSCRIBE,
+    {
+      event: EVENTS.PERMISSIONS_UPDATED.NAME,
+    },
+  );
+
+  useEffect(() => {
+    if (hasPermissionBeenUpdated !== null) {
+      let currentUrl = window.location.pathname; // Capture the current URL
+
+      submit(
+        {returnUrl: currentUrl},
+        {method: 'GET', action: '/update-user-session'},
+      );
+    }
+  }, [hasPermissionBeenUpdated]);
+
+
+  //this is for real time role changes in the login user
+
+  // const data = useEventSource(Routes.PERMISSIONS_SUBSCRIBE, {
+  //   event: EVENTS.PERMISSIONS_UPDATED.NAME,
+  // });
+
+  // useEffect(() => {
+  //   // revalidate()
+  //   if (data !== null) {
+  //     let currentUrl = window.location.pathname; // Capture the current URL
+  //     const dataObject = JSON.parse(data) as Data;
+  //     console.log("dataObject",dataObject);
+  //     if (dataObject.email === userDetails.email) {
+  //       submit(
+  //         {returnUrl: currentUrl},
+  //         {method: 'GET', action: '/update-user-session'},
+  //       );
+  //     }
+  //     else if(!dataObject.email){
+  //       submit(
+  //         {returnUrl: currentUrl},
+  //         {method: 'GET', action: '/update-user-session'},
+  //       );
+  //     }
+
+  //   }
+  //   // revalidate()
+  // }, [data]);
+
   return (
-    <Layout
-      categories={categories}
-      cartCount={cartCount}
-      userDetails={userDetails}
-      wishlistCount={wishlistCount}
-      pedingOrderCount={pendingOrderCount}
-    >
-      <Outlet />
-    </Layout>
+    <AbilityContext.Provider value={ability}>
+      <Layout
+        categories={categories}
+        cartCount={cartCount}
+        userDetails={userDetails}
+        wishlistCount={wishlistCount}
+        pedingOrderCount={pendingOrderCount}
+      >
+        <Outlet />
+      </Layout>
+    </AbilityContext.Provider>
   );
 }
 
@@ -129,6 +223,7 @@ const Layout = ({
   pedingOrderCount: number;
 }) => {
   const matches = useMediaQuery('(min-width: 768px)');
+  const submit = useSubmit();
   return (
     <HamburgerMenuProvider>
       {matches ? (
@@ -150,7 +245,6 @@ const Layout = ({
         />
       )}
       <div className="mb-12">{children}</div>
-
       <footer>
         <DesktopFooter />
       </footer>

@@ -17,6 +17,7 @@ import {
   CircleInformationMajor,
   EditItems,
 } from '~/components/icons/orderStatus';
+import { Can } from '~/lib/helpers/Can';
 
 export function ActionBar({
   table,
@@ -116,13 +117,15 @@ export function ActionBar({
               update
             </Button>
           )}
-          <Button
-            variant={numberOfSelectedRows === 0 ? 'disabled' : 'primary'}
-            className="min-w-[111px] min-h-10 p-0"
-            onClick={handleAddToCart}
-          >
-            Add to cart
-          </Button>
+          <Can I="view" a="add_group_to_cart">
+            <Button
+              variant={numberOfSelectedRows === 0 ? 'disabled' : 'primary'}
+              className="min-w-[111px] min-h-10 p-0"
+              onClick={handleAddToCart}
+            >
+              Add to cart
+            </Button>
+          </Can>
           <DeleteProductModal
             handleDelete={handleDelete}
             numberOfSelectedRows={numberOfSelectedRows}
