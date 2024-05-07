@@ -14,6 +14,8 @@ import {
   userDetailsCommitSession,
 } from '~/lib/utils/user-session.server';
 
+
+
 export const USER_SESSION_KEY = 'accessToken';
 
 /**
@@ -83,6 +85,16 @@ export async function isAuthenticate(context: AppLoadContext) {
   return accessToken;
 }
 
+export async function isAuthorize(request: Request, permission: string) {
+  const userDetailsSession = await getUserDetailsSession(request);
+  const userDetail = userDetailsSession.get(USER_DETAILS_KEY);
+   // Find the 'add_customer' permission in user's role permissions
+   const hasAddCustomerPermission = userDetail.meta.user_role.permission.includes(permission);
+
+  
+  return hasAddCustomerPermission;
+}
+
 export async function logout({
   context,
   request,
@@ -94,11 +106,13 @@ export async function logout({
 }) {
   const {session} = context;
 
+
   const messageSession = await getMessageSession(request);
-
   const userDetailsSession = await getUserDetailsSession(request);
+  const finalLogoutMessage = logoutMessage || 'Logout Successfully'; // Set the default message if logoutMessage is not provided
 
-  setSuccessMessage(messageSession, logoutMessage);
+
+  setSuccessMessage(messageSession, finalLogoutMessage);
 
   return redirect(Routes.LOGIN, {
     headers: [

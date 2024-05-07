@@ -6,19 +6,29 @@ export async function loader() {
 }
 
 export async function action({context, request}: ActionFunctionArgs) {
+  
   try {
     const {storefront} = context;
     const accessToken = (await getAccessToken(context)) as string;
+    // Access the FormData from the request
+    const formData = await request.formData();
+
+    // Get the value of the 'message' field from the FormData
+    const message = formData.get('message');
+
     await storefront.mutate(LOGOUT_MUTATION, {
       variables: {
         customerAccessToken: accessToken,
       },
     });
-    return logout({context, request});
+    return logout({context, request, logoutMessage: message as string // Ensure message is of type string
+  });
   } catch (error) {
     return json({error}, {status: 400});
   }
 }
+
+
 
 export const LOGOUT_MUTATION = `#graphql 
 mutation customerAccessTokenDelete($customerAccessToken: String!) {

@@ -30,6 +30,7 @@ import {
 } from '~/components/ui/sheet';
 import {HorizontalHamburgerIcon} from '~/components/icons/hamburgerIcon';
 import {ActionBar} from '~/routes/_app.order/action-bar';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
 import {addedBulkCart} from '../_app.wishlist/bulk.cart.server';
 import {
@@ -140,9 +141,12 @@ export default function OrdersPage() {
       isFilterApplied = true;
     }
   }
+  const shouldRender = useConditionalRender('view_orders');
+
 
   return (
-    <section className="container">
+    shouldRender && (<section className="container">
+
       <ActionBar table={table} customerId={customerId} />
       <div className="flex flex-col gap-2 p-4 border-b bg-neutral-white sm:flex-row sm:justify-between sm:items-center">
         <div className="sm:w-[451px]">
@@ -171,7 +175,7 @@ export default function OrdersPage() {
       <DataTable table={table} columns={columns} />
 
       <PaginationWrapper pageSize={PAGE_LIMIT} totalCount={totalOrder} />
-    </section>
+    </section>)
   );
 }
 

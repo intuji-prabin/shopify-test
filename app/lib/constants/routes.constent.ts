@@ -36,6 +36,8 @@ export const Routes = {
   SINGLE_PENDING_ITEM: '/single-pending-item',
   PROFILE: '/profile',
   LOGOUT_SUBSCRIBE: '/logout/subscribe',
+  PERMISSIONS_SUBSCRIBE: '/permissions/subscribe',
+  ROLE_SUBSCRIBE: '/role/subscribe',
   DISTRIBUTOR_INFO: '/distributor-information',
   DISTRIBUTOR_PROFILE: '/distributor-profile',
   TRACK_AN_ORDER: '/trackAnOrder',
