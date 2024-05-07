@@ -6,11 +6,39 @@ import {Button} from '~/components/ui/button';
 import {Routes} from '~/lib/constants/routes.constent';
 import {Order} from '~/routes/_app.order/order.server';
 import {useTableRowSelect} from '~/hooks/useTableRowSelect';
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {useDownload} from '~/hooks/useDownload';
+import {displayToast} from '~/components/ui/toast';
 
-export function ActionBar({table}: {table: Table<Order>}) {
+export function ActionBar({
+  table,
+  customerId,
+}: {
+  table: Table<Order>;
+  customerId: string;
+}) {
   const {selectedItem, numberOfSelectedRows} = useTableRowSelect({table});
 
-  console.log('seelctedItem', selectedItem, numberOfSelectedRows);
+  const {handleDownload} = useDownload();
+
+  const handleExport = () => {
+    if (numberOfSelectedRows === 0) {
+      displayToast({
+        message: 'Please select atleast one order to export.',
+        type: 'error',
+      });
+      return;
+    }
+
+    const downloadCSVLink = `${
+      ENDPOINT.ORDERS.EXPORT
+    }/${customerId}?uniqueIds=${selectedItem.join(',')}`;
+
+    handleDownload({
+      url: downloadCSVLink,
+      // api headers here
+    });
+  };
 
   return (
     <div className="flex items-center justify-between pt-6 pb-4 ">
@@ -23,7 +51,7 @@ export function ActionBar({table}: {table: Table<Order>}) {
           </BreadcrumbItem>
         </Breadcrumb>
       </div>
-      <Button>
+      <Button onClick={handleExport}>
         <UploadIcon /> Export
       </Button>
     </div>

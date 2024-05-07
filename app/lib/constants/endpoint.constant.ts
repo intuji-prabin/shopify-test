@@ -57,6 +57,7 @@ export const ENDPOINT = {
   ORDERS: {
     GET: `${BASE_URL}/order`,
     GET_ORDER_DETAIL: `${BASE_URL}/order-detail`,
+    EXPORT: `${BASE_URL}/download/orders`,
   },
   PENDING_ORDERS: {
     PRODUCT_GROUP: `${BASE_URL}/product/group`,
