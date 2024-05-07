@@ -26,7 +26,7 @@ export default function ShippingAddressCards({
   return (
     <div
       className="grid grid-cols-1 gap-6 sm:grid-cols-2"
-      shippingAddresses-cy="contact-cards"
+      shippingaddresses-cy="contact-cards"
     >
       <div className="p-6 bg-white">
         <ul className="space-y-3">

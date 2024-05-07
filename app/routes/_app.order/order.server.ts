@@ -3,6 +3,7 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {generateUrlWithParams} from '~/lib/helpers/url.helper';
+import {AppLoadContext} from '@shopify/remix-oxygen';
 
 export type OrderStatus =
   | 'received'
@@ -12,27 +13,29 @@ export type OrderStatus =
   | 'in_transit'
   | 'delivered';
 
+export type LineItem = {
+  productId: string;
+  variantId: string;
+  uom: string;
+  quantity: number;
+};
+
 export type Order = {
   id: string;
   orderDate: string;
   poNumber: string;
   estimatedDate: string | null;
   internalOrderNumber: string;
+  uniqueId: string;
   orderStatus: OrderStatus;
   orderBy: string;
   customerId: string;
-};
-
-type OrderPageInfo = {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  endCursor: string;
-  startCursor: string;
+  lineItems: LineItem[];
 };
 
 type Payload = {
   orderList: Order[];
-  orderPageInfo: OrderPageInfo;
+  totalOrder: number;
 };
 
 type ResponseData = {
