@@ -162,7 +162,9 @@ export default function MyPromotionsPage() {
                   className="!absolute top-2 right-2 bg-white !rounded-none"
                   name={promotion.title + index}
                   value={promotion.id}
-                  checked={checkedPromotions.includes(promotion.id.toString())}
+                  defaultChecked={checkedPromotions.includes(
+                    promotion.id.toString(),
+                  )}
                 />
               </div>
             ))}
