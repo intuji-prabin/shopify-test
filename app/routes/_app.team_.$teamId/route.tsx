@@ -133,12 +133,8 @@ export async function action({request, context, params}: ActionFunctionArgs) {
         ],
       });
     }
-    // //  else {
-    //   console.log("Here it is")
-      emitter2.emit(EVENTS.PERMISSIONS_UPDATED.KEY, userDetails.email)
-    // // }
-
-    // emitter.emit(EVENTS.LOGOUT.KEY, customerId);
+    // emitter.emit(EVENTS.LOGOUT.KEY, email);
+    emitter.emit(EVENTS.LOGOUT.KEY, { customerId: customerId, message: "User Role Changed Logging Out" });
 
     setSuccessMessage(messageSession, 'Customer update successful');
 

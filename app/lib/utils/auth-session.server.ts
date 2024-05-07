@@ -108,11 +108,11 @@ export async function logout({
 
 
   const messageSession = await getMessageSession(request);
-
   const userDetailsSession = await getUserDetailsSession(request);
+  const finalLogoutMessage = logoutMessage || 'Logout Successfully'; // Set the default message if logoutMessage is not provided
 
 
-  setSuccessMessage(messageSession, logoutMessage);
+  setSuccessMessage(messageSession, finalLogoutMessage);
 
   return redirect(Routes.LOGIN, {
     headers: [

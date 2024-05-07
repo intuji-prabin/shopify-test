@@ -28,3 +28,21 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
 };
 
+// export const action = async ({ request }: ActionFunctionArgs) => {
+//   try {
+//     // Parse the JSON payload from the request
+//     const permissionData = await request.json();
+
+
+//     // Emit the permission data to subscribers
+//     emitter2.emit(EVENTS.PERMISSIONS_UPDATED.KEY, permissionData);
+
+//     // Return true to indicate successful execution
+//     return true;
+//   } catch (error) {
+//     console.error('Error processing action:', error);
+//     // Return false or throw an error to indicate failure
+//     throw new Error('Failed to process action');
+//   }
+// };
+

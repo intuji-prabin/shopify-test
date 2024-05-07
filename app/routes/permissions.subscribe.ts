@@ -19,20 +19,34 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // to ensure it persists across page loads
   return eventStream(request.signal, function setup(send) {
     
-    const handle = (email: string)=>{
-      const eventData = JSON.stringify({ email, date: String(Date.now()) });
-      send({ event: EVENTS.PERMISSIONS_UPDATED.NAME, data: eventData });
+    const handle = ()=>{
+      // const eventData = JSON.stringify({ email, date: String(Date.now()) });
+      send({ event: EVENTS.PERMISSIONS_UPDATED.NAME, data: String(Date.now()) });
     };
 
     emitter2.addListener(EVENTS.PERMISSIONS_UPDATED.KEY, handle);
 
     // Remove the event listener when the event stream is closed
     return () => {
-      console.log("listener");
       emitter2.removeListener(EVENTS.PERMISSIONS_UPDATED.KEY, handle);
     };
   });
 }
+
+// export async function loader({request}: LoaderFunctionArgs) {
+//   return eventStream(request.signal, function setup(send) {
+//     function handle(permissionData: object) {
+//       const permissionDataString = JSON.stringify(permissionData);
+//       send({event: EVENTS.PERMISSIONS_UPDATED.NAME, data: permissionDataString});
+//     }
+
+//     emitter2.on(EVENTS.PERMISSIONS_UPDATED.KEY, handle);
+
+//     return function clear() {
+//       emitter2.off(EVENTS.PERMISSIONS_UPDATED.KEY, handle);
+//     };
+//   });
+// }
 
 
 
