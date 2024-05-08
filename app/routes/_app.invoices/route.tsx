@@ -49,13 +49,15 @@ export async function loader({request, context}: LoaderFunctionArgs) {
   });
 
   return json({
+    customerId,
     invoiceList,
     totalInvoices,
   });
 }
 
 export default function InvoicesPage() {
-  const {invoiceList, totalInvoices} = useLoaderData<typeof loader>();
+  const {invoiceList, totalInvoices, customerId} =
+    useLoaderData<typeof loader>();
 
   const {columns} = useColumn();
 
@@ -75,7 +77,7 @@ export default function InvoicesPage() {
   return (
     shouldRender && (
       <section className="container">
-        <ActionBar table={table} />
+        <ActionBar table={table} customerId={customerId} />
         <div className="flex flex-col gap-2 p-4 border-b bg-neutral-white sm:flex-row sm:justify-between sm:items-center">
           <div className="sm:w-[451px]">
             <SearchInput />

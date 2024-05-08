@@ -51,9 +51,16 @@ export function ActionBar({
           </BreadcrumbItem>
         </Breadcrumb>
       </div>
-      <Button onClick={handleExport}>
-        <UploadIcon /> Export
-      </Button>
+      <div className="flex gap-2 items-center justify-between">
+        {numberOfSelectedRows > 0 && (
+          <p className="text-lg font-bold leading-[22px] text-grey-900 italic max-w-[281px] lg:max-w-[unset]">
+            {`${numberOfSelectedRows} items `}
+          </p>
+        )}
+        <Button onClick={handleExport}>
+          <UploadIcon /> Export
+        </Button>
+      </div>
     </div>
   );
 }

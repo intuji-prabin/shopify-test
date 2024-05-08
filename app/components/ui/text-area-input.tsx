@@ -1,7 +1,7 @@
 import React from 'react';
 import {useField} from 'remix-validated-form';
-import {ImpersonateFormFieldNameType} from '~/routes/support_.allow-impersonate/allow-impersonate-form';
 import {DangerAlert} from '../icons/alert';
+import {ImpersonateFormFieldNameType} from '~/routes/_app.support_.allow-impersonate/allow-impersonate-form';
 
 type TextAreaInputType = {
   name: ImpersonateFormFieldNameType;
