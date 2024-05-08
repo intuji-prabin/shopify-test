@@ -26,7 +26,7 @@ import {getUserDetails} from '~/lib/utils/user-session.server';
 import {getAllInvoices} from '~/routes/_app.invoices/invoices.server';
 import InvoicesFilterForm from '~/routes/_app.invoices/filter-form';
 import {ActionBar} from '~/routes/_app.invoices/action-bar';
-import { useConditionalRender } from '~/hooks/useAuthorization';
+import {useConditionalRender} from '~/hooks/useAuthorization';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Invoices List'}];
@@ -39,10 +39,7 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 
   const {userDetails} = await getUserDetails(request);
 
-  const metaParentValue = userDetails.meta.parent.value;
-
-  const customerId =
-    metaParentValue === 'null' ? userDetails.id : metaParentValue;
+  const customerId = userDetails.id;
 
   const {searchParams} = new URL(request.url);
 
@@ -76,36 +73,38 @@ export default function InvoicesPage() {
   const shouldRender = useConditionalRender('view_company_invoices');
 
   return (
-    shouldRender &&(<section className="container">
-      <ActionBar table={table} />
-      <div className="flex flex-col gap-2 p-4 border-b bg-neutral-white sm:flex-row sm:justify-between sm:items-center">
-        <div className="sm:w-[451px]">
-          <SearchInput />
+    shouldRender && (
+      <section className="container">
+        <ActionBar table={table} />
+        <div className="flex flex-col gap-2 p-4 border-b bg-neutral-white sm:flex-row sm:justify-between sm:items-center">
+          <div className="sm:w-[451px]">
+            <SearchInput />
+          </div>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" className="relative border-grey-50">
+                <HorizontalHamburgerIcon />
+                Filter
+                {isFilterApplied && (
+                  <div className="bg-primary-500 h-3 w-3 rounded-full absolute top-0.5 right-0.5"></div>
+                )}
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="p-0">
+              <SheetHeader className="px-4 py-6">
+                <SheetTitle className="text-3xl font-bold">Filter</SheetTitle>
+              </SheetHeader>
+              <Separator className="" />
+              <InvoicesFilterForm />
+            </SheetContent>
+          </Sheet>
         </div>
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" className="relative border-grey-50">
-              <HorizontalHamburgerIcon />
-              Filter
-              {isFilterApplied && (
-                <div className="bg-primary-500 h-3 w-3 rounded-full absolute top-0.5 right-0.5"></div>
-              )}
-            </Button>
-          </SheetTrigger>
-          <SheetContent className="p-0">
-            <SheetHeader className="px-4 py-6">
-              <SheetTitle className="text-3xl font-bold">Filter</SheetTitle>
-            </SheetHeader>
-            <Separator className="" />
-            <InvoicesFilterForm />
-          </SheetContent>
-        </Sheet>
-      </div>
 
-      <DataTable table={table} columns={columns} />
+        <DataTable table={table} columns={columns} />
 
-      <PaginationWrapper pageSize={PAGE_LIMIT} totalCount={totalInvoices} />
-    </section>)
+        <PaginationWrapper pageSize={PAGE_LIMIT} totalCount={totalInvoices} />
+      </section>
+    )
   );
 }
 

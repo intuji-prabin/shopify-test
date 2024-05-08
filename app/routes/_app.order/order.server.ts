@@ -3,7 +3,6 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {generateUrlWithParams} from '~/lib/helpers/url.helper';
-import {AppLoadContext} from '@shopify/remix-oxygen';
 
 export type OrderStatus =
   | 'received'
