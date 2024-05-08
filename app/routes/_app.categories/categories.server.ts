@@ -24,6 +24,9 @@ export const getCategory = async (context: AppLoadContext) => {
 
 const formatCategory = async (categoryresponse: response) => {
   const items = categoryresponse?.collections?.nodes;
+  items.sort(
+    (a, b) => parseFloat(a.category_id.value) - parseFloat(b.category_id.value),
+  );
   const finalCategories = items
     .filter((categories) => categories?.parent_handle?.value == 'null')
     .map((parentList) => ({
