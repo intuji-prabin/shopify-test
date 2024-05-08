@@ -106,8 +106,8 @@ export default function DesktopFooter() {
               <ul className="flex flex-col gap-8">
                 {footerNavs.map((nav) =>
                   nav.title === 'my team' ? (
-                    <Can I="view" a="view_team">
-                      <Link to={nav.link} key={nav.id}>
+                    <Can I="view" a="view_team" key={nav.id}>
+                      <Link to={nav.link}>
                         <li className="text-2xl font-bold italic leading-[29px] text-white uppercase">
                           {nav.title}
                         </li>

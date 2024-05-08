@@ -58,8 +58,6 @@ export async function getAllInvoices({
       throw new Error(results.message);
     }
 
-    console.log('results', results.payload);
-
     return results.payload;
   } catch (error) {
     if (error instanceof Error) {
