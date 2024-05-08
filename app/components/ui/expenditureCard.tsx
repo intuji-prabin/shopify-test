@@ -1,5 +1,6 @@
 import { Expenditure } from "../icons/expenditure";
 import ExpenditureChart from "./expenditureChart";
+import { SearchInput } from "./search-input";
 
 type SelectInputType = { value: string; label: string };
 
@@ -96,11 +97,14 @@ const ExpenditureCard = ({ doughnutChartData }: { doughnutChartData: any }) => {
             </section>
             <section className="container">
                 <div className="p-6 space-y-3 bg-white mxs:space-y-6">
-                    <div className="flex items-center gap-x-2 gap-y-1">
-                        <span className='flex items-center justify-center w-12 h-12 bg-primary-200'>
-                            <Expenditure />
-                        </span>
-                        <h4>Spending by products</h4>
+                    <div className="flex justify-between">
+                        <div className="flex items-center gap-x-2 gap-y-1">
+                            <span className='flex items-center justify-center w-12 h-12 bg-primary-200'>
+                                <Expenditure />
+                            </span>
+                            <h4>Spending by products</h4>
+                        </div>
+                        <SearchInput />
                     </div>
                 </div>
             </section>
