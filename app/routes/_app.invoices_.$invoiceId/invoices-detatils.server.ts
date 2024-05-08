@@ -10,9 +10,15 @@ interface ResponseData {
   payload: Invoices;
 }
 
-export async function getInvoiceDetails({invoiceId}: {invoiceId: string}) {
+export async function getInvoiceDetails({
+  invoiceId,
+  customerId,
+}: {
+  invoiceId: string;
+  customerId: string;
+}) {
   try {
-    const url = `${ENDPOINT.INVOICE.GET_INVOCIE_DETAIL}/${invoiceId}`;
+    const url = `${ENDPOINT.INVOICE.GET_INVOCIE_DETAIL}/${customerId}/${invoiceId}`;
 
     const results = await useFetch<ResponseData>({
       method: AllowedHTTPMethods.GET,
