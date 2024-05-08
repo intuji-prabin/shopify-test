@@ -112,10 +112,8 @@ const options = {
 
 const DetailChart = ({
   barChartData,
-  lineChartData,
 }: {
   barChartData: any;
-  lineChartData: any;
 }) => {
   const [activeTab, setActiveTab] = useState("ytd");
   const [activeInvoiceTab, setActiveInvoiceTab] = useState("ytd");

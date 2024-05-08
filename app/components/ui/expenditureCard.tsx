@@ -2,6 +2,9 @@ import { Can } from '~/lib/helpers/Can';
 import { Expenditure } from "../icons/expenditure";
 import ExpenditureChart from "./expenditureChart";
 import { SearchInput } from "./search-input";
+import { DataTable } from './data-table';
+import { useTable } from '~/hooks/useTable';
+import { useSpendingByProductColumn } from '~/routes/_app._index/use-column';
 
 type SelectInputType = { value: string; label: string };
 
@@ -16,6 +19,38 @@ const handleOnchange = (event: React.ChangeEvent<HTMLSelectElement>) => {
 };
 
 const ExpenditureCard = ({ doughnutChartData }: { doughnutChartData: any }) => {
+  const { columns } = useSpendingByProductColumn();
+  const products = [
+    {
+      "id": "gid://shopify/CartLine/53734c2d-ce28-41a9-8872-50d84c1b094a?cart=Z2NwLXVzLWNlbnRyYWwxOjAxSFM3VEROVFlIWjVTNUI1QldHSEU5Njkw",
+      "productId": "9276247933214",
+      "variantId": "48507457503518",
+      "quantity": 1,
+      "title": "Hex. Screw-ISO4017-M8x30-",
+      "sku": "0006100050",
+      "uom": "19",
+      "handle": "hex-screw-iso4017-m8x30",
+      "stockCode": "0006100050",
+      "uomName": "EA",
+      "defaultUOM": "19",
+      "defaultUOMName": "EA",
+      "unitOfMeasure": [
+        {
+          "unit": "EA",
+          "code": "19",
+          "conversionFactor": "1"
+        }
+      ],
+      "defaultPrice": 0,
+      "compareAtPrice": 0,
+      "currency": "SEK",
+      "companyPrice": 0,
+      "priceRange": [],
+      "totalPrice": 0,
+      "moq": 1
+    }
+  ]
+  const { table } = useTable(columns, products);
   return (
     <>
       <Can I="view" a="view_expenditure">
@@ -136,6 +171,7 @@ const ExpenditureCard = ({ doughnutChartData }: { doughnutChartData: any }) => {
               </div>
               <SearchInput />
             </div>
+            <DataTable table={table} />
           </div>
         </Can>
       </section>
