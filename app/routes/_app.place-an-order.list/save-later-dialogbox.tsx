@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/ui/dialog';
+import { Can } from '~/lib/helpers/Can';
 
 interface GroupItem {
   productId: string;
@@ -60,14 +61,16 @@ export default function CreateGroup({
 }: CreateGroupProps) {
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          variant={numberOfSelectedRows === 0 ? 'disabled' : 'primary'}
-          className="min-w-[111px] min-h-10"
-        >
-          Save for later
-        </Button>
-      </DialogTrigger>
+      <Can I="view" a="save_product_list_to_group">
+        <DialogTrigger asChild>
+          <Button
+            variant={numberOfSelectedRows === 0 ? 'disabled' : 'primary'}
+            className="min-w-[111px] min-h-10"
+          >
+            Save for later
+          </Button>
+        </DialogTrigger>
+      </Can>
       <DialogContent className="sm:max-w-[452px] track-an-order p-0 block">
         <DialogHeader>
           <DialogTitle className="leading-6 font-bold italic text-lg text-grey-900 flex p-4 uppercase">

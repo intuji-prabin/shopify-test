@@ -4,6 +4,7 @@ import { Button } from '~/components/ui/button';
 import { PredictiveSearch } from '~/components/ui/predictive-search';
 import { Price } from '~/components/ui/price';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { Can } from '~/lib/helpers/Can';
 
 export type finalProductResponse = {
   productResponse: {
@@ -77,6 +78,8 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
             <Price currency={product1?.currency} price={product1?.companyPrice} />
             <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
             <Price currency={product1?.currency} price={product1?.defaultPrice} variant="rrp" />
+            <Can I="view" a="add_to_cart">
+
             <Form method="post">
               <input type="hidden" name="productId" value={product1?.id} />
               <input type="hidden" name="productVariantId" value={product1?.productVariantId} />
@@ -84,6 +87,7 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
               <input type="hidden" name="selectUOM" value={product1?.selectedUOM} />
               <Button className="w-full mt-3" variant="primary">Add to cart</Button>
             </Form>
+            </Can>
           </div>
           <ProductDetailInfo productInfo={product1?.finalProductInfoArray} />
         </div>
@@ -138,6 +142,8 @@ export function ProductDetailDiv({ productDetails, clearSelectedProduct }: { pro
             <Price currency={productDetails?.currency} price={productDetails?.companyPrice} />
             <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
             <Price currency={productDetails?.currency} price={productDetails?.defaultPrice} variant="rrp" />
+            <Can I="view" a="add_to_cart">
+
             <Form method="post">
               <input type="hidden" name="productId" value={productDetails?.id} />
               <input type="hidden" name="productVariantId" value={productDetails?.productVariantId} />
@@ -145,6 +151,7 @@ export function ProductDetailDiv({ productDetails, clearSelectedProduct }: { pro
               <input type="hidden" name="selectUOM" value={productDetails?.selectedUOM} />
               <Button className="w-full mt-3" variant="primary">Add to cart</Button>
             </Form>
+            </Can>
           </div>
           <ProductDetailInfo productInfo={productDetails?.finalProductInfoArray} />
         </> :

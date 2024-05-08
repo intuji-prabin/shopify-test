@@ -10,6 +10,7 @@ import {Invoices} from '~/routes/_app.invoices/invoices.server';
 import {formatDateToLocaleDateString} from '~/lib/helpers/dateTime.helper';
 import {useDownload} from '~/hooks/useDownload';
 import {PDF} from '~/lib/constants/pdf.constent';
+import {OrderStatusChip} from '~/components/ui/order-status-chip';
 
 export function useColumn() {
   const columns = useMemo<ColumnDef<Invoices>[]>(
@@ -38,17 +39,23 @@ export function useColumn() {
       },
       {
         accessorKey: 'invoiceId',
-        header: 'Invoice Number',
+        header: 'Invoice No.',
         cell: (info) => info.getValue() ?? 'N/A',
       },
       {
         accessorKey: 'salesOrderNo',
-        header: 'Sales Order Number',
+        header: 'Sales Order No.',
+        cell: (info) => info.getValue() ?? 'N/A',
+      },
+      {
+        accessorKey: 'iscalaCompanyId',
+        header: 'Company ID',
+        enableSorting: false,
         cell: (info) => info.getValue() ?? 'N/A',
       },
       {
         accessorKey: 'wareHouseNo',
-        header: 'Warehouse Number',
+        header: 'Warehouse No.',
         cell: (info) => info.getValue() ?? 'N/A',
       },
       {
@@ -58,6 +65,45 @@ export function useColumn() {
           info.getValue()
             ? formatDateToLocaleDateString(info.getValue() as string)
             : 'N/A',
+      },
+      {
+        accessorKey: 'consignmentNo',
+        header: 'Consignment No.',
+        enableSorting: false,
+        cell: (info) => info.getValue() ?? 'N/A',
+      },
+      {
+        accessorKey: 'deliveryNo',
+        header: 'Delivery No.',
+        enableSorting: false,
+        cell: (info) => info.getValue() ?? 'N/A',
+      },
+      {
+        accessorKey: 'dispatchDetails',
+        header: 'Dispatch Details',
+        enableSorting: false,
+        cell: (info) => info.getValue() ?? 'N/A',
+      },
+      {
+        accessorKey: 'invoiceAmount',
+        header: 'Invoice Amount',
+        enableSorting: false,
+        cell: (info) => info.getValue() ?? 'N/A',
+      },
+      {
+        accessorKey: 'invoiceStatus',
+        header: 'Invoice Status',
+        enableSorting: false,
+        cell: (info) => {
+          const status = info.row.original.invoiceStatus;
+          return <OrderStatusChip status={status} />;
+        },
+      },
+      {
+        accessorKey: 'poNo.',
+        header: 'Purchase Order No.',
+        enableSorting: false,
+        cell: (info) => info.getValue() ?? 'N/A',
       },
       {
         accessorKey: 'actions',

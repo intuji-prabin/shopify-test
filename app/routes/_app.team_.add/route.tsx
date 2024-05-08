@@ -1,12 +1,13 @@
 import {
   isRouteErrorResponse,
   useLoaderData,
+  useNavigate,
   useRouteError,
 } from '@remix-run/react';
 import {validationError} from 'remix-validated-form';
 import {BackButton} from '~/components/ui/back-button';
 import {addTeam} from '~/routes/_app.team_.add/add-team.server';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {isAuthenticate, isAuthorize} from '~/lib/utils/auth-session.server';
 import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
 import {Routes} from '~/lib/constants/routes.constent';
 import {SelectInputOptions} from '~/components/ui/select-input';
@@ -27,19 +28,27 @@ import {
 } from '~/lib/utils/toast-session.server';
 import {MetaFunction} from '@shopify/remix-oxygen';
 import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
+import { AbilityContext } from '~/lib/helpers/Can';
+import { useContext } from 'react';
+import { USER_DETAILS_KEY, getUserDetailsSession } from '~/lib/utils/user-session.server';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Add Team Member'}];
 };
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({request,context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
+  
+
   const roles = await getCustomerRolePermission(context);
+  
   return json({roles});
 }
 
 export async function action({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
+
   const messageSession = await getMessageSession(request);
 
   try {
@@ -92,8 +101,11 @@ export async function action({request, context}: ActionFunctionArgs) {
 export default function AddTeam() {
   const {roles} = useLoaderData<typeof loader>();
 
+  const shouldRender = useConditionalRender('add_customer');
+
+
   return (
-    <section className="container">
+    shouldRender && (<section className="container">
       <div className="py-6">
         <BackButton title="Add Team Memeber" />
         <Breadcrumb>
@@ -104,7 +116,7 @@ export default function AddTeam() {
         </Breadcrumb>
       </div>
       <TeamForm options={roles?.data as SelectInputOptions[]} />
-    </section>
+    </section>)
   );
 }
 

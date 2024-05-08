@@ -1,3 +1,5 @@
+import {PERMISSIONS} from '../helpers/roles';
+
 // API response status
 export const HTTP_STATUS = Object.freeze({
   PENDING: 'pending',
@@ -8,6 +10,7 @@ export const HTTP_STATUS = Object.freeze({
 // Local storage keys
 export const LOCAL_STORAGE_KEYS = Object.freeze({
   ACCESSTOKEN: 'accessToken',
+  PERMISSIONS: 'permissions',
 });
 
 // Default image placeholder
@@ -15,8 +18,7 @@ export const DEFAULT_IMAGE = Object.freeze({
   USER: '/images/dummyuser.svg',
   LOGO: '/images/dummylogo.svg',
   IMAGE: '/dummy_image.png',
-  DEFAULT:
-    'https://shermacbucket.sgp1.digitaloceanspaces.com/DefaultImages/IMG_378943359_ic_admin_user_default.svg',
+  DEFAULT: '/default-user.svg',
 });
 
 // Pagination

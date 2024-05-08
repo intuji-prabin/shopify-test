@@ -31,6 +31,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Create Ticket'}];
@@ -125,8 +126,10 @@ export async function action({request, context}: ActionFunctionArgs) {
 
 export default function CreateTicketPage() {
   const {departmentOptions} = useLoaderData<typeof loader>();
+  const shouldRender = useConditionalRender('open_ticket');
+
   return (
-    <section className="container">
+    shouldRender &&(<section className="container">
       <div className=" pt-6 pb-4">
         <BackButton title="Open A Ticket" />
         <Breadcrumb>
@@ -147,7 +150,7 @@ export default function CreateTicketPage() {
         is widely used in today's digital age and offers several advantages.
       </p>
       <CreateTicketForm options={departmentOptions} />
-    </section>
+    </section>)
   );
 }
 

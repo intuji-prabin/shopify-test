@@ -16,6 +16,7 @@ import {OrderBreadcrumb} from '~/routes/_app.order_.$orderId/order-breadcrumb';
 import OrderNumberDetails from '~/routes/_app.order_.$orderId/order-number-details';
 import {getOrdersProductDetails} from '~/routes/_app.order_.$orderId/order-details.server';
 import {Separator} from '~/components/ui/separator';
+import { Can } from '~/lib/helpers/Can';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Order Details'}];
@@ -53,6 +54,7 @@ export default function OrderDetailPage() {
 
               const {columns} = useColumn({prefixWithCurrency});
 
+              orderProductDetails
               return (
                 <>
                   <DeferDataTable
@@ -71,6 +73,8 @@ export default function OrderDetailPage() {
                         Dispatched {'>'} In Transit {'>'} Delivered
                       </p>
                     </article>
+                    <Can I="view" a="view_tracked_order_price">
+
                     <table className="w-48">
                       <tr>
                         <th className="text-left">Subtotal</th>
@@ -107,6 +111,7 @@ export default function OrderDetailPage() {
                         </td>
                       </tr>
                     </table>
+                    </Can>
                   </div>
                 </>
               );
