@@ -9,6 +9,7 @@ import {useDownload} from '~/hooks/useDownload';
 import {PDF} from '~/lib/constants/pdf.constent';
 import {Routes} from '~/lib/constants/routes.constent';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 import {getInvoiceDetails} from '~/routes/_app.invoices_.$invoiceId/invoices-detatils.server';
 
 export const meta: MetaFunction = () => {
@@ -20,7 +21,11 @@ export async function loader({context, params, request}: LoaderFunctionArgs) {
 
   const invoiceId = params.invoiceId as string;
 
-  const invoiceDetails = await getInvoiceDetails({invoiceId});
+  const {userDetails} = await getUserDetails(request);
+
+  const customerId = userDetails.id;
+
+  const invoiceDetails = await getInvoiceDetails({invoiceId, customerId});
 
   return json({invoiceId, invoiceDetails});
 }
