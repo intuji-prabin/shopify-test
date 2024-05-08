@@ -1,5 +1,5 @@
 import {createCookieSessionStorage} from '@shopify/remix-oxygen';
-import {FILTER_SECRET} from '../constants/auth.constent';
+import {FILTER_SECRET} from '~/lib/constants/auth.constent';
 
 export const {
   commitSession: filterDetailsCommitSession,

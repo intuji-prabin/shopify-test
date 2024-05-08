@@ -23,3 +23,5 @@ export const SESSION_MAX_AGE = {
   '30_DAYS': 60 * 60 * 24 * 30,
   '7_DAYS': 60 * 60 * 24 * 7,
 };
+
+export const FILTER_SECRET = 'reueBmScUt29/V9J77k9Qj3gWsG0miX7928+D4s78AI=';
