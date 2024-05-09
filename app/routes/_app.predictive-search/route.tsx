@@ -295,7 +295,7 @@ fragment PredictiveQuery on SearchQuerySuggestion {
   trackingParameters
 }
 
-query predictiveSearch($limit: Int!, $limitScope: PredictiveSearchLimitScope!, $searchTerm: String!, $types: [PredictiveSearchType!]) {
+query predictiveSearch($limit: Int!, $limitScope: PredictiveSearchLimitScope!, $searchTerm: String!, $types: [PredictiveSearchType!], $country: CountryCode, $language: LanguageCode) @inContext(country: $country, language: $language) {
   predictiveSearch(
     limit: $limit
     limitScope: $limitScope
