@@ -20,18 +20,17 @@ export function ShippingLocation({ addressList, mergedAddressList, defaultAddres
   const [phone, setPhone] = useState(defaultPhone);
   const [fax, setFax] = useState(defaultFax);
   const [countryCodeV2, setCountryCodeV2] = useState(defaultCountryCodeV2);
-  console.log("addressList", addressList)
 
   const getAddressDetail = (e: any) => {
     const selectedAddressId = e.target.value;
     const selectedAddress = mergedAddressList.find((address: any) => address.id === selectedAddressId);
-    setCountry(selectedAddress?.country);
-    setAddress1(selectedAddress?.address1);
-    setAddress2(selectedAddress?.address2);
-    setZip(selectedAddress?.zip);
-    setPhone(selectedAddress?.phone);
-    setFax(selectedAddress?.fax);
-    setCountryCodeV2(selectedAddress?.countryCodeV2)
+    setCountry(selectedAddress?.country ? selectedAddress?.country : '');
+    setAddress1(selectedAddress?.address1 ? selectedAddress?.address1 : '');
+    setAddress2(selectedAddress?.address2 ? selectedAddress?.address2 : '');
+    setZip(selectedAddress?.zip ? selectedAddress?.zip : '');
+    setPhone(selectedAddress?.phone ? selectedAddress?.phone : '');
+    setFax(selectedAddress?.fax ? selectedAddress?.fax : '');
+    setCountryCodeV2(selectedAddress?.countryCodeV2 ? selectedAddress?.countryCodeV2 : '')
   };
 
   const defaultAddress = concatDefaultAddress(
