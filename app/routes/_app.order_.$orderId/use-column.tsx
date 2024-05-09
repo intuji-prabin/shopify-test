@@ -1,9 +1,9 @@
-import {useContext, useMemo} from 'react';
-import {Link} from '@remix-run/react';
-import {ColumnDef} from '@tanstack/react-table';
-import {Routes} from '~/lib/constants/routes.constent';
-import {OrderStatusChip} from '~/components/ui/order-status-chip';
-import {Product} from '~/routes/_app.order_.$orderId/order-details.server';
+import { useContext, useMemo } from 'react';
+import { Link } from '@remix-run/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { Routes } from '~/lib/constants/routes.constent';
+import { OrderStatusChip } from '~/components/ui/order-status-chip';
+import { Product } from '~/routes/_app.order_.$orderId/order-details.server';
 import { AbilityContext } from '~/lib/helpers/Can';
 
 export function useColumn({
@@ -68,7 +68,7 @@ export function useColumn({
           enableSorting: false,
           cell: (info) => {
             const invoiceId = info.row.original.invoiceId;
-            const invoiceLink = `${Routes.INVOICE}/${invoiceId}`;
+            const invoiceLink = `${Routes.INVOICES}/${invoiceId}`;
             return invoiceId !== '-' ? (
               <Link
                 to={invoiceLink}
@@ -91,7 +91,7 @@ export function useColumn({
             return <OrderStatusChip status={status} />;
           },
         },
-        
+
       ];
 
       // Conditionally add the "Total" column if the user has the ability
@@ -108,7 +108,7 @@ export function useColumn({
           },
         );
       }
-      
+
 
       return baseColumns;
     },
@@ -203,5 +203,5 @@ export function useColumn({
   //   ],
   //   [],
   // );
-  return {columns};
+  return { columns };
 }

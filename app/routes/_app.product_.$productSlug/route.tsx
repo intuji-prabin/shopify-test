@@ -121,8 +121,9 @@ export const loader = async ({
 
 export default function route() {
   const { product, productPage } = useLoaderData<ProductDetailType>();
-  
+
   const shouldRender = useConditionalRender('view_product_detail');
+  // console.log("firstproduct", product)
 
   return (
     shouldRender && (<ProductDetailPageWrapper>
