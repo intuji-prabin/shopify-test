@@ -9,7 +9,7 @@ import {
   json,
   redirect,
 } from '@remix-run/server-runtime';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import EmptyList from '~/components/ui/empty-list';
 import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
@@ -17,28 +17,28 @@ import {
   CART_QUANTITY_MAX,
   CART_SESSION_KEY,
 } from '~/lib/constants/cartInfo.constant';
-import {Routes} from '~/lib/constants/routes.constent';
-import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
+import { Routes } from '~/lib/constants/routes.constent';
+import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {getAllCompanyShippingAddresses} from '../_app.shipping-address/shipping-address.server';
-import {removeItemFromCart} from './cart-remove.server';
-import {cartUpdate} from './cart-update.server';
-import {getCartList} from './cart.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { getAllCompanyShippingAddresses } from '../_app.shipping-address/shipping-address.server';
+import { removeItemFromCart } from './cart-remove.server';
+import { cartUpdate } from './cart-update.server';
+import { getCartList } from './cart.server';
 import MyProducts from './order-my-products/cart-myproduct';
-import {placeOrder} from './order-place.server';
+import { placeOrder } from './order-place.server';
 import OrderSummary from './order-summary/cart-order-summary';
 import useSort from '~/hooks/useSort';
-import {productBulkCart} from '../_app.categories/bulkOrder.server';
+import { productBulkCart } from '../_app.categories/bulkOrder.server';
 
-export const loader = async ({context, request}: LoaderFunctionArgs) => {
+export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   const metaParentValue = userDetails.meta.parent.value;
 
@@ -50,19 +50,20 @@ export const loader = async ({context, request}: LoaderFunctionArgs) => {
     throw new Error('Cart not found');
   }
   const shippingAddresses = await getAllCompanyShippingAddresses(customerId);
+  console.log("shippingAddresses", shippingAddresses)
   const cartList = await getCartList(context, request, sessionCartInfo);
   if (cartList?.productList?.length === 0) {
     await getCartList(context, request, sessionCartInfo);
   }
   return json(
-    {cartList, shippingAddresses},
+    { cartList, shippingAddresses },
     {
       headers: [['Set-Cookie', await context.session.commit({})]],
     },
   );
 };
 
-export async function action({request, context}: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
   const messageSession = await getMessageSession(request);
   let res;
   switch (request.method) {
@@ -205,8 +206,8 @@ export async function action({request, context}: ActionFunctionArgs) {
 }
 
 export default function CartList() {
-  const {cartList, shippingAddresses}: any = useLoaderData<typeof loader>();
-  const finalProductList = useSort({items: cartList?.productList});
+  const { cartList, shippingAddresses }: any = useLoaderData<typeof loader>();
+  const finalProductList = useSort({ items: cartList?.productList });
   const checkQuantityAgainstMOQ = (finalProductList: any) => {
     for (let item of finalProductList) {
       if (
