@@ -171,7 +171,7 @@ const ExpenditureCard = ({ doughnutChartData }: { doughnutChartData: any }) => {
               </div>
               <SearchInput />
             </div>
-            <DataTable table={table} />
+            {/* <DataTable table={table} /> */}
           </div>
         </Can>
       </section>

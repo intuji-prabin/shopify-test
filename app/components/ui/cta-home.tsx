@@ -1,12 +1,11 @@
 import { Link } from '@remix-run/react';
 import { Routes } from '~/lib/constants/routes.constent';
+import { Can } from '~/lib/helpers/Can';
 import ArrowRight from '../icons/arrowRight';
 import Bell from '../icons/bell';
 import Receipt from '../icons/receipt';
 import { TrackAnOrderButton } from './layouts/elements/track-an-order-dialog';
 import { Separator } from './separator';
-import { Can } from '~/lib/helpers/Can';
-import Distance from '../icons/distance';
 
 const CtaHome = () => {
   return (

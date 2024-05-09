@@ -7,8 +7,8 @@ type SubDataType = {
   data: (number | null)[];
 };
 type AreaChartDataType = {
-  monthly: SubDataType;
-  ytd: SubDataType;
+  monthly_spend: SubDataType;
+  yearly_spend: SubDataType;
 };
 
 type ChartData = {
@@ -79,48 +79,67 @@ export async function getAreaChartData() {
     //   url: ENDPOINT,
     // });
 
+    // const response: AreaChartDataType = {
+    //   monthly: {
+    //     labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+    //     currency: '$',
+    //     amount: 7878755,
+    //     percentage: 0.5,
+    //     increment: false,
+    //     data: [100, 200, 20, null],
+    //   },
+    //   ytd: {
+    //     labels: [
+    //       'Jan',
+    //       'Feb',
+    //       'Mar',
+    //       'Apr',
+    //       'May',
+    //       'Jun',
+    //       'Jul',
+    //       'Aug',
+    //       'Sep',
+    //       'Oct',
+    //       'Nov',
+    //       'Dec',
+    //     ],
+    //     currency: '$',
+    //     amount: 56000,
+    //     percentage: 8.5,
+    //     increment: true,
+    //     data: [
+    //       100,
+    //       200,
+    //       null,
+    //       null,
+    //       null,
+    //       null,
+    //       null,
+    //       null,
+    //       null,
+    //       null,
+    //       null,
+    //       null,
+    //     ],
+    //   },
+    // };
+
     const response: AreaChartDataType = {
-      monthly: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr'],
-        currency: '$',
-        amount: 7878755,
-        percentage: 0.5,
-        increment: false,
-        data: [100, 200, 20, null],
-      },
-      ytd: {
-        labels: [
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sep',
-          'Oct',
-          'Nov',
-          'Dec',
-        ],
-        currency: '$',
-        amount: 56000,
-        percentage: 8.5,
+      monthly_spend: {
+        labels: ['First Week', 'Second Week', 'Third Week', 'Fourth Week'],
+        currency: 'AUD',
+        amount: 51701.24,
+        percentage: 8.62,
         increment: true,
-        data: [
-          100,
-          200,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-        ],
+        data: [18230.34, 3901.07, 14691.88, 14877.95],
+      },
+      yearly_spend: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+        currency: 'AUD',
+        amount: 412063.76,
+        percentage: 1170.82,
+        increment: false,
+        data: [47597.94, 51701.24, 64123.48, 248641.1],
       },
     };
 
@@ -175,8 +194,8 @@ const formatAreaResponse = async (
   };
 
   return {
-    monthly: formatChartDataAndOtherFields(response?.monthly),
-    ytd: formatChartDataAndOtherFields(response?.ytd),
+    monthly: formatChartDataAndOtherFields(response?.monthly_spend),
+    ytd: formatChartDataAndOtherFields(response?.yearly_spend),
   };
 };
 
