@@ -1,12 +1,12 @@
-import {Form, Link, useSubmit} from '@remix-run/react';
-import {ProductLoveRed, ProductLoveWhite} from '~/components/icons/orderStatus';
-import {Button} from '~/components/ui/button';
-import {Price} from './price';
+import { Form, Link, useSubmit } from '@remix-run/react';
+import { ProductLoveRed, ProductLoveWhite } from '~/components/icons/orderStatus';
+import { Button } from '~/components/ui/button';
+import { Price } from './price';
 import {
   ProductList,
   Variants,
 } from '~/routes/_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/route';
-import {Can} from '~/lib/helpers/Can';
+import { Can } from '~/lib/helpers/Can';
 
 export function ProductCard({
   id,
@@ -65,7 +65,7 @@ export function ProductCardInfo({
   ProductList,
   'defaultPrice' | 'companyPrice' | 'handle' | 'id' | 'uom' | 'currency'
 > &
-  Pick<Variants, 'moq' | 'sku'> & {productName: string} & {
+  Pick<Variants, 'moq' | 'sku'> & { productName: string } & {
     productVariantId: string;
   }) {
   return (
@@ -129,9 +129,8 @@ function ProductCardImage({
 >) {
   return (
     <div
-      className={`relative px-11 py-[39px] flex justify-center border-grey-25 border-b-2 border-x-0 border-top-0 ${
-        imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
-      }`}
+      className={`relative px-11 py-[39px] flex justify-center border-grey-25 border-b-2 border-x-0 border-top-0 ${imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
+        }`}
     >
       {volumePrice && (
         <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px]">
@@ -168,12 +167,12 @@ function ProductCardButtons({
   productVariantId,
   moq,
 }: Pick<ProductList, 'handle' | 'id' | 'uom'> &
-  Pick<Variants, 'moq'> & {productVariantId: string}) {
+  Pick<Variants, 'moq'> & { productVariantId: string }) {
   const submit = useSubmit();
   const productVariantOnlyId = productVariantId?.split('/')?.pop();
 
   return (
-    <div className="flex flex-col items-center justify-center gap-2 mt-4 sm:flex-row product-button">
+    <div className="grid justify-center grid-cols-1 gap-2 mt-4 sm:grid-cols-2 product-button">
       <Can I="view" a="view_product_detail">
         <Link
           to={`/product/${handle}`}

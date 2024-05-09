@@ -23,6 +23,7 @@ export interface relatedProductsType {
   currency: string;
   featuredImage: string;
   liked: boolean;
+  priceRange: any;
 }
 
 export interface ProductType {
@@ -165,7 +166,7 @@ const formatResponse = async (response: ProductType) => {
       stockCode: item?.stockCode,
       uom: item?.uom,
       featuredImageUrl: item?.featuredImage ?? DEFAULT_IMAGE.IMAGE,
-      volumePrice: item?.defaultPrice,
+      volumePrice: item?.priceRange?.length > 0 ? true : false,
       companyPrice: item?.companyPrice,
       currency: item?.currency,
       defaultPrice: item?.defaultPrice,
