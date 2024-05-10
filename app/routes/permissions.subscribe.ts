@@ -19,9 +19,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // to ensure it persists across page loads
   return eventStream(request.signal, function setup(send) {
     
-    const handle = ()=>{
-      // const eventData = JSON.stringify({ email, date: String(Date.now()) });
-      send({ event: EVENTS.PERMISSIONS_UPDATED.NAME, data: String(Date.now()) });
+    const handle = (permissionData: object) => {
+      const eventData = JSON.stringify({ permissionData });
+      // send({ event: EVENTS.PERMISSIONS_UPDATED.NAME, data: String(Date.now()) });
+      send({ event: EVENTS.PERMISSIONS_UPDATED.NAME, data: eventData });
+
     };
 
     emitter2.addListener(EVENTS.PERMISSIONS_UPDATED.KEY, handle);
