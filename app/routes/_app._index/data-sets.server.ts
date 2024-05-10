@@ -50,7 +50,7 @@ type Total = {
 };
 type Dataset = {
   label: string;
-  data: number[];
+  data: (number | null)[];
 };
 
 type ChartReponseData = {
@@ -80,51 +80,25 @@ export async function getAreaChartData() {
     // });
 
     // const response: AreaChartDataType = {
-    //   monthly: {
-    //     labels: ['Jan', 'Feb', 'Mar', 'Apr'],
-    //     currency: '$',
-    //     amount: 7878755,
-    //     percentage: 0.5,
-    //     increment: false,
-    //     data: [100, 200, 20, null],
-    //   },
-    //   ytd: {
-    //     labels: [
-    //       'Jan',
-    //       'Feb',
-    //       'Mar',
-    //       'Apr',
-    //       'May',
-    //       'Jun',
-    //       'Jul',
-    //       'Aug',
-    //       'Sep',
-    //       'Oct',
-    //       'Nov',
-    //       'Dec',
-    //     ],
-    //     currency: '$',
-    //     amount: 56000,
-    //     percentage: 8.5,
+    //   monthly_spend: {
+    //     labels: ['First Week', 'Second Week', 'Third Week', 'Fourth Week'],
+    //     currency: 'AUD',
+    //     amount: 51701.24,
+    //     percentage: 8.62,
     //     increment: true,
-    //     data: [
-    //       100,
-    //       200,
-    //       null,
-    //       null,
-    //       null,
-    //       null,
-    //       null,
-    //       null,
-    //       null,
-    //       null,
-    //       null,
-    //       null,
-    //     ],
+    //     data: [18230.34, 3901.07, 14691.88, 14877.95],
+    //   },
+    //   yearly_spend: {
+    //     labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+    //     currency: 'AUD',
+    //     amount: 412063.76,
+    //     percentage: 1170.82,
+    //     increment: false,
+    //     data: [47597.94, 51701.24, 64123.48, 248641.1],
     //   },
     // };
 
-    const response: AreaChartDataType = {
+    const response: any = {
       monthly_spend: {
         labels: ['First Week', 'Second Week', 'Third Week', 'Fourth Week'],
         currency: 'AUD',
@@ -134,12 +108,76 @@ export async function getAreaChartData() {
         data: [18230.34, 3901.07, 14691.88, 14877.95],
       },
       yearly_spend: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+        labels: [
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sept',
+          'Oct',
+          'Nov',
+          'Dec',
+        ],
+        data: [
+          47597.94,
+          51701.24,
+          64123.48,
+          248641.1,
+          NaN,
+          NaN,
+          NaN,
+          NaN,
+          NaN,
+          NaN,
+          NaN,
+          NaN,
+        ],
         currency: 'AUD',
         amount: 412063.76,
         percentage: 1170.82,
-        increment: false,
-        data: [47597.94, 51701.24, 64123.48, 248641.1],
+        increment: true,
+      },
+      totalSpend: {
+        ytd: {
+          labels: ['2023', '2024'],
+          currency: 'AUD',
+          amount: 412063.76,
+          lastAmount: 32424.93,
+          fullSpendAmount: null,
+          percentage: 1170.82,
+          increment: true,
+          data: [[32424.93], [412063.76]],
+        },
+        mtd: {
+          labels: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sept',
+            'Oct',
+            'Nov',
+            'Dec',
+          ],
+          currency: 'AUD',
+          amount: 51701.24,
+          lastAmount: 47597.94,
+          fullSpendAmount: null,
+          percentage: 8.62,
+          increment: true,
+          data: [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7587.51, 24837.42],
+            [47597.94, 51701.24, 64123.48, 248641.1, 0, 0, 0, 0, 0, 0, 0, 0],
+          ],
+        },
       },
     };
 
@@ -151,6 +189,12 @@ export async function getAreaChartData() {
     //   throw new Error(response?.message);
     // }
     const finalResponse = await formatAreaResponse(response);
+
+    const finalBarResponse = await formatBar(response);
+    console.log(
+      'finalBarResponse',
+      finalBarResponse.totalSpend.mtd.barChartData.datasets,
+    );
     return finalResponse;
   } catch (error) {
     console.log('error', error);
@@ -199,6 +243,86 @@ const formatAreaResponse = async (
   };
 };
 
+const formatBar = async (response: any): Promise<any> => {
+  const FinalTotalSpend = response?.totalSpend;
+  const FinalTotalInvoicing = response?.totalInvoicing;
+
+  const formatBarChartData = (data: any) => {
+    return {
+      labels: data?.labels,
+      datasets: [
+        {
+          label: data?.labels[0],
+          data: data?.data[0].map((item: any) => item / 1000),
+          borderColor: 'rgb(0, 146, 207)',
+          backgroundColor: 'rgb(0, 146, 207)',
+        },
+        {
+          label: data?.labels[1],
+          data: data?.data[1].map((item: any) => item / 1000),
+          borderColor: 'rgb(200, 162, 0)',
+          backgroundColor: 'rgb(200, 162, 0)',
+        },
+      ],
+    };
+  };
+
+  const formatLineChartData = (data: ChartReponseData) => {
+    return {
+      // labels: data?.labels,
+      // datasets: [
+      //   {
+      //     label: data?.datasets[0]?.label,
+      //     data: data?.datasets[0]?.data.map((item) => item / 1000),
+      //     cubicInterpolationMode: 'monotone',
+      //     borderColor: 'rgb(0, 146, 207)',
+      //     borderWidth: 2,
+      //     pointBorderWidth: 2,
+      //     pointRadius: 5,
+      //     pointBackgroundColor: 'white',
+      //   },
+      //   {
+      //     label: data?.datasets[1]?.label,
+      //     data: data?.datasets[1]?.data.map((item) => item / 1000),
+      //     cubicInterpolationMode: 'monotone',
+      //     borderColor: 'rgb(200, 162, 0)',
+      //     borderWidth: 2,
+      //     pointBorderWidth: 2,
+      //     pointRadius: 5,
+      //     pointBackgroundColor: 'white',
+      //   },
+      // ],
+    };
+  };
+
+  const formatChartDataAndOtherFields = (data: any, chartType: string) => {
+    return {
+      currency: data?.currency,
+      amount: formatAmount(data?.amount),
+      lastAmount: formatAmount(data?.lastAmount),
+      fullSpendAmount: formatAmount(data?.fullSpendAmount),
+      percentage: data?.percentage,
+      increment: data?.increment,
+      [`${chartType}ChartData`]:
+        chartType === 'bar'
+          ? formatBarChartData(data as any)
+          : formatLineChartData(data as any),
+    };
+  };
+
+  const formatBarChartDataAndOtherFields = (data: Total) => {
+    return formatChartDataAndOtherFields(data, 'bar');
+  };
+
+  return {
+    totalSpend: {
+      ytd: formatBarChartDataAndOtherFields(FinalTotalSpend?.ytd),
+      mtd: formatBarChartDataAndOtherFields(FinalTotalSpend?.mtd),
+      qtd: formatBarChartDataAndOtherFields(FinalTotalSpend?.qtd),
+    },
+  };
+};
+
 export async function getBarChartData() {
   try {
     // const response = await useFetch<any>({
@@ -231,7 +355,7 @@ export async function getBarChartData() {
             },
             {
               label: '2022',
-              data: [100022, 30077, 100134, 35067, 100908, 200112, 3002323],
+              data: [100022, 30077, 100134, 35067, 100908, 200112, null],
             },
           ],
         },
@@ -310,7 +434,7 @@ export async function getBarChartData() {
           datasets: [
             {
               label: '2023',
-              data: [600343, 400112, 8005656, 100232, 1800112, 1000123, 20011],
+              data: [600343, 400112, 8005656, 100232, 1800112, NaN, NaN],
             },
             {
               label: '2022',
@@ -395,7 +519,7 @@ export async function getBarChartData() {
   }
 }
 
-const formatBarResponse = async (response: BarChartDataType): Promise<any> => {
+const formatBarResponse = async (response: any): Promise<any> => {
   const FinalTotalSpend = response?.totalSpend;
   const FinalTotalInvoicing = response?.totalInvoicing;
 
