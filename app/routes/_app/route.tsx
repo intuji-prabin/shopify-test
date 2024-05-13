@@ -111,7 +111,7 @@ export default function PublicPageLayout() {
   const [loading, setLoading] = useState(true);
 
   function getUserAbilities(roleData: any) {
-    if (roleData.value === 'admin distributor') {
+    if (roleData.value === 'admin-service-provider') {
       return defineAbilitiesForAdmin();
     } else {
       return defineAbilitiesForUser(roleData.permission);
@@ -172,12 +172,12 @@ export default function PublicPageLayout() {
         // Parse the string into an object
         const parsedData = JSON.parse(hasPermissionBeenUpdated) as {
             permissionData: {
-                payload: { user_role: string; permission: string[]; handle: string };
+                payload: { user_role: string; permission: string[];};
             };
         };
 
         // Extract role and permissions from parsedData
-        const eventUserRole = parsedData.permissionData.payload.handle;
+        const eventUserRole = parsedData.permissionData.payload.user_role;
         const eventUserRolePermissions = parsedData.permissionData.payload.permission;
 
         // If permissions are empty, logout the user
@@ -187,7 +187,7 @@ export default function PublicPageLayout() {
 
         // Check if the event role matches the user's role
         if (eventUserRole === userRole?.value) {
-            console.log('Permission has been updated');
+            // console.log('Permission has been updated');
             let currentUrl = window.location.pathname; // Capture the current URL
 
             // Update user session with returnUrl
