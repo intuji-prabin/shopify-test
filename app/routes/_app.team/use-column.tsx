@@ -1,13 +1,13 @@
-import { Form, Link, useFetcher } from '@remix-run/react';
-import { ColumnDef } from '@tanstack/react-table';
-import { useContext, useMemo, useState } from 'react';
-import { EditIcon } from '~/components/icons/edit';
+import {Link, useFetcher} from '@remix-run/react';
+import {ColumnDef} from '@tanstack/react-table';
+import {useContext, useMemo, useState} from 'react';
+import {EditIcon} from '~/components/icons/edit';
 import PersonIcon from '~/components/icons/person-icon';
-import { Button } from '~/components/ui/button';
-import { Switch } from '~/components/ui/switch';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { Routes } from '~/lib/constants/routes.constent';
-import { AbilityContext } from '~/lib/helpers/Can';
+import {Button} from '~/components/ui/button';
+import {Switch} from '~/components/ui/switch';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {Routes} from '~/lib/constants/routes.constent';
+import {AbilityContext} from '~/lib/helpers/Can';
 import DeactivateDialog from '~/routes/_app.team/cell-action';
 
 export type TeamColumn = {
@@ -15,135 +15,15 @@ export type TeamColumn = {
   name: string;
   email: string;
   imageUrl: string;
-  department: string;
+  department: {
+    title: string;
+    value: string;
+  };
   contactNumber: string;
   status: 'true' | 'false';
 };
 
-// export function useColumn({currentUser}: {currentUser: string}) {
-
-//   const ability = useContext(AbilityContext);
-
-//   const columns = useMemo<ColumnDef<TeamColumn>[]>(
-//     () =>
-//       [
-//       {
-//         accessorKey: 'name',
-//         header: 'Name',
-//         enableSorting: false,
-//         cell: (info) => {
-//           const {imageUrl, name, id} = info.row.original;
-//           const isCurrentUser = currentUser === id;
-//           const imageSrc =
-//             imageUrl?.length > 0 ? imageUrl : DEFAULT_IMAGE.DEFAULT;
-
-//           return (
-//             <div>
-//               <figure className="relative flex items-center space-x-2">
-//                 <div className="rounded-full min-h-9 min-w-9 w-9 h-9">
-//                   <img
-//                     src={imageSrc}
-//                     alt="profile-image"
-//                     className="object-cover object-center w-full h-full rounded-full"
-//                   />
-//                   {isCurrentUser && (
-//                     <div className="absolute top-3.5 left-1">
-//                       <PersonIcon />
-//                     </div>
-//                   )}
-//                 </div>
-//                 <figcaption className="capitalize">{name}</figcaption>
-//               </figure>
-//             </div>
-//           );
-//         },
-//       },
-//       {
-//         accessorKey: 'email',
-//         header: 'Email',
-//         enableSorting: false,
-//         cell: (info) => info.getValue(),
-//       },
-//       {
-//         accessorKey: 'department',
-//         header: 'Department',
-//         enableSorting: false,
-//         cell: (info) => info.getValue(),
-//       },
-//       {
-//         accessorKey: 'contactNumber',
-//         header: 'Contact Number',
-//         enableSorting: false,
-//         cell: (info) => info.getValue(),
-//       },
-//       {
-//         accessorKey: 'status',
-//         header: 'Status',
-//         enableSorting: false,
-//         cell: (info) => {
-//           const status = info.row.original.status;
-
-//           const customerId = info.row.original.id;
-
-//           const fetcher = useFetcher();
-
-//           const [isChecked, setIsChecked] = useState<boolean>(false);
-//           return (
-//             <>
-//               {status === 'true' ? (
-//                 <Switch
-//                   type="button"
-//                   checked={status === 'true'}
-//                   onCheckedChange={() =>
-//                     setIsChecked((prevState) => !prevState)
-//                   }
-//                 />
-//               ) : (
-//                 <fetcher.Form
-//                   method="POST"
-//                   onChange={(event) => fetcher.submit(event.currentTarget)}
-//                 >
-//                   <input type="hidden" name="customerId" value={customerId} />
-//                   <Switch type="submit" name="_action" value="activate" />
-//                 </fetcher.Form>
-//               )}
-//               <DeactivateDialog
-//                 isOpen={isChecked}
-//                 setIsOpen={setIsChecked}
-//                 customerId={customerId}
-//               />
-//             </>
-//           );
-//         },
-//       },
-//       ability.can('update', 'Team') && {
-//         accessorKey: 'actions',
-//         header: 'Action',
-//         enableSorting: false,
-//         cell: (info) => {
-//           const teamId = info.row.original.id.split('/').pop();
-//           return (
-//             <Link to={`${Routes.TEAM}/${teamId}`}>
-//               <Button
-//                 data-cy="edit"
-//                 type="button"
-//                 size="icon"
-//                 variant="ghost"
-//                 className="border-grey-50 hover:bg-inherit"
-//               >
-//                 <EditIcon />
-//               </Button>
-//             </Link>
-//           );
-//         },
-//       },
-//     ],
-//     [],
-//   );
-//   return {columns};
-// }
-
-export function useColumn({ currentUser }: { currentUser: string }) {
+export function useColumn({currentUser}: {currentUser: string}) {
   const ability = useContext(AbilityContext);
 
   const columns = useMemo<ColumnDef<TeamColumn>[]>(
@@ -154,7 +34,7 @@ export function useColumn({ currentUser }: { currentUser: string }) {
           header: 'Name',
           enableSorting: false,
           cell: (info) => {
-            const { imageUrl, name, id } = info.row.original;
+            const {imageUrl, name, id} = info.row.original;
             const isCurrentUser = currentUser === id;
             const imageSrc =
               imageUrl?.length > 0 ? imageUrl : DEFAULT_IMAGE.DEFAULT;
@@ -191,10 +71,12 @@ export function useColumn({ currentUser }: { currentUser: string }) {
           header: 'Department',
           enableSorting: false,
           cell: (info) => {
-            const department = info.getValue() as string;
+            const department = info.row.original.department;
             return (
-              <p className='capitalize text-grey-900 text-lg leading-5.5'>{department.replace(/-/g, ' ')}</p>
-            )
+              <p className="capitalize text-grey-900 text-lg leading-5.5">
+                {department.title}
+              </p>
+            );
           },
         },
         {
@@ -272,11 +154,10 @@ export function useColumn({ currentUser }: { currentUser: string }) {
         });
       }
 
-
       return baseColumns;
     },
     [currentUser, ability], // Include currentUser and ability in the dependencies array
   );
 
-  return { columns };
+  return {columns};
 }
