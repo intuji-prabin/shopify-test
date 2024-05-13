@@ -35,6 +35,7 @@ import { placeOrder } from './order-place.server';
 import OrderSummary from './order-summary/cart-order-summary';
 import useSort from '~/hooks/useSort';
 import { productBulkCart } from '../_app.categories/bulkOrder.server';
+import { getOrderId } from '../_app/app.server';
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
@@ -50,7 +51,6 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
     throw new Error('Cart not found');
   }
   const shippingAddresses = await getAllCompanyShippingAddresses(customerId);
-  console.log("shippingAddresses", shippingAddresses)
   const cartList = await getCartList(context, request, sessionCartInfo);
   if (cartList?.productList?.length === 0) {
     await getCartList(context, request, sessionCartInfo);
@@ -69,6 +69,23 @@ export async function action({ request, context }: ActionFunctionArgs) {
   switch (request.method) {
     case 'POST':
       try {
+        const formData = await request.formData();
+        const poNumber = formData.get("poNumber") as string;
+        const { userDetails } = await getUserDetails(request);
+        const trackAnOrderResponse = await getOrderId(poNumber, userDetails?.id);
+
+        if (trackAnOrderResponse?.orderList.length > 0) {
+          setErrorMessage(messageSession, "Purchase Order Number or Order Number already taken. Please use another one.");
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        }
         res = await placeOrder(request, context);
         // console.log("orderPlacedResponseFInal", res);
         const shopifyID = res?.shopifyOrderId ? '/' + res?.shopifyOrderId : '';
