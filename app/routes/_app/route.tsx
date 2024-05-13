@@ -111,11 +111,11 @@ export default function PublicPageLayout() {
   const [loading, setLoading] = useState(true);
 
   function getUserAbilities(roleData: any) {
-    if (roleData.value === 'admin-service-provider') {
-      return defineAbilitiesForAdmin();
-    } else {
+    // if (roleData.value === 'admin-service-provider') {
+    //   return defineAbilitiesForAdmin();
+    // } else {
       return defineAbilitiesForUser(roleData.permission);
-    }
+    // }
   }
 
   useEffect(() => {
@@ -189,6 +189,9 @@ export default function PublicPageLayout() {
         if (eventUserRole === userRole?.value) {
             // console.log('Permission has been updated');
             let currentUrl = window.location.pathname; // Capture the current URL
+            if(currentUrl === '/login'){
+                currentUrl = '/';
+            }
 
             // Update user session with returnUrl
             submit(
