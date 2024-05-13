@@ -41,6 +41,7 @@ import {
   GroupItem,
   SelectProductProvider,
 } from '~/routes/_app.pending-order_.$groupId/select-product-context';
+import { Can } from '~/lib/helpers/Can';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Pending Order Details'}];
@@ -358,6 +359,7 @@ export default function PendingOrderDetailsPage() {
         imageUrl={'/place-order.png'}
         sectionName={groupDetails.groupName}
       />
+      <Can I="view" a="search_products">
       <div className=" bg-primary-500">
         <div className="container flex items-center gap-6 py-6">
           <div className="search-bar flex bg-white items-center min-w-[unset] w-full px-4 py-3 xl:min-w-[453px] max-h-14 relative">
@@ -368,6 +370,7 @@ export default function PendingOrderDetailsPage() {
           </div>
         </div>
       </div>
+      </Can>
       <section className="container data__table">
         <SelectProductProvider>
           <ActionBar
