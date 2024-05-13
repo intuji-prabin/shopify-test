@@ -75,7 +75,7 @@ export async function verifyLogin({email, password, context}: LoginParams) {
   } catch (error) {
     if (error instanceof Error) {
       if (error?.message == 'Unidentified customer') {
-        throw new Error('Email and password invalid');
+        throw new Error('Email or password invalid');
       }
     }
     throw new Error(
