@@ -1,13 +1,13 @@
-import {Form, Link, useFetcher} from '@remix-run/react';
-import {ColumnDef} from '@tanstack/react-table';
-import {useContext, useMemo, useState} from 'react';
-import {EditIcon} from '~/components/icons/edit';
+import { Form, Link, useFetcher } from '@remix-run/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { useContext, useMemo, useState } from 'react';
+import { EditIcon } from '~/components/icons/edit';
 import PersonIcon from '~/components/icons/person-icon';
-import {Button} from '~/components/ui/button';
-import {Switch} from '~/components/ui/switch';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {Routes} from '~/lib/constants/routes.constent';
-import {AbilityContext} from '~/lib/helpers/Can';
+import { Button } from '~/components/ui/button';
+import { Switch } from '~/components/ui/switch';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { Routes } from '~/lib/constants/routes.constent';
+import { AbilityContext } from '~/lib/helpers/Can';
 import DeactivateDialog from '~/routes/_app.team/cell-action';
 
 export type TeamColumn = {
@@ -39,12 +39,12 @@ export type TeamColumn = {
 
 //           return (
 //             <div>
-//               <figure className="flex items-center space-x-2 relative">
-//                 <div className="min-h-9 min-w-9 w-9 h-9 rounded-full">
+//               <figure className="relative flex items-center space-x-2">
+//                 <div className="rounded-full min-h-9 min-w-9 w-9 h-9">
 //                   <img
 //                     src={imageSrc}
 //                     alt="profile-image"
-//                     className="w-full h-full rounded-full object-cover object-center"
+//                     className="object-cover object-center w-full h-full rounded-full"
 //                   />
 //                   {isCurrentUser && (
 //                     <div className="absolute top-3.5 left-1">
@@ -143,7 +143,7 @@ export type TeamColumn = {
 //   return {columns};
 // }
 
-export function useColumn({currentUser}: {currentUser: string}) {
+export function useColumn({ currentUser }: { currentUser: string }) {
   const ability = useContext(AbilityContext);
 
   const columns = useMemo<ColumnDef<TeamColumn>[]>(
@@ -154,19 +154,19 @@ export function useColumn({currentUser}: {currentUser: string}) {
           header: 'Name',
           enableSorting: false,
           cell: (info) => {
-            const {imageUrl, name, id} = info.row.original;
+            const { imageUrl, name, id } = info.row.original;
             const isCurrentUser = currentUser === id;
             const imageSrc =
               imageUrl?.length > 0 ? imageUrl : DEFAULT_IMAGE.DEFAULT;
 
             return (
               <div>
-                <figure className="flex items-center space-x-2 relative">
-                  <div className="min-h-9 min-w-9 w-9 h-9 rounded-full">
+                <figure className="relative flex items-center space-x-2">
+                  <div className="rounded-full min-h-9 min-w-9 w-9 h-9">
                     <img
                       src={imageSrc}
                       alt="profile-image"
-                      className="w-full h-full rounded-full object-cover object-center"
+                      className="object-cover object-center w-full h-full rounded-full"
                     />
                     {isCurrentUser && (
                       <div className="absolute top-3.5 left-1">
@@ -190,7 +190,12 @@ export function useColumn({currentUser}: {currentUser: string}) {
           accessorKey: 'department',
           header: 'Department',
           enableSorting: false,
-          cell: (info) => info.getValue(),
+          cell: (info) => {
+            const department = info.getValue() as string;
+            return (
+              <p className='capitalize text-grey-900 text-lg leading-5.5'>{department.replace(/-/g, ' ')}</p>
+            )
+          },
         },
         {
           accessorKey: 'contactNumber',
@@ -266,12 +271,12 @@ export function useColumn({currentUser}: {currentUser: string}) {
           },
         });
       }
-      
+
 
       return baseColumns;
     },
     [currentUser, ability], // Include currentUser and ability in the dependencies array
   );
 
-  return {columns};
+  return { columns };
 }
