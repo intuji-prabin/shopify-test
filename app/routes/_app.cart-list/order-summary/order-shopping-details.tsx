@@ -131,6 +131,7 @@ export function PurchaseOrder() {
         required
         pattern="[^' ']+"
         title="Purchase Order Number Or Order Number cannot have space."
+        maxLength={30}
       />
     </div>
   );

@@ -86,7 +86,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
             },
           );
         }
-        res = await placeOrder(request, context);
+        res = await placeOrder(formData, request, context);
         // console.log("orderPlacedResponseFInal", res);
         const shopifyID = res?.shopifyOrderId ? '/' + res?.shopifyOrderId : '';
 
