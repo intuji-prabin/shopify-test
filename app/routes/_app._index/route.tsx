@@ -14,8 +14,7 @@ import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import {
   doughnutChartData,
-  getAreaChartData,
-  getBarChartData,
+  getChartData,
 } from '~/routes/_app._index/data-sets.server';
 import { getSlides } from '~/routes/_app._index/index.server';
 
@@ -27,14 +26,12 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   const { userDetails } = await getUserDetails(request);
   const slides = await getSlides({ context });
-  const areaChartData = await getAreaChartData();
-  const barChartDataFinal = await getBarChartData();
+  const chartData = await getChartData();
 
   return json({
     slides,
     userDetails,
-    areaChartData,
-    barChartDataFinal,
+    chartData,
     doughnutChartData,
   });
 }
@@ -50,9 +47,9 @@ export default function Homepage() {
       ) : null}
       <Profile sectionClass="mt-10" profileInfo={data?.userDetails} />
       <CtaHome />
-      <SpendCard data={data?.areaChartData} />
+      <SpendCard data={data?.chartData?.finalAreaResponse} />
       <DetailChart
-        barChartData={data?.barChartDataFinal}
+        barChartData={data?.chartData?.finalBarResponse}
       />
       <ExpenditureCard doughnutChartData={data.doughnutChartData} />
     </article>

@@ -139,14 +139,14 @@ const DetailChart = ({
                 </div>
               </div>
             </div>
-            <div className="flex flex-col items-center gap-x-3 gap-y-6 sm:flex-row">
+            <div className="flex flex-col items-center gap-x-3 gap-y-6 sm:flex-row sm:flex-wrap">
               <div className="w-full sm:grow sm:w-auto">
                 <Expenditure expenditureData={barChartData?.totalSpend[activeTab]} activeTab={activeTab} />
               </div>
               <div className="w-full sm:text-right sm:ml-auto sm:w-auto">
                 <p className='flex items-center gap-x-1.5 sm:justify-end text-lg font-medium'>{barChartData?.totalSpend[activeTab]?.increment ? <ArrowUp /> : <ArrowDown />}<span className={
                   barChartData?.totalSpend[activeTab]?.increment ? "text-semantic-success-500" : "text-semantic-danger-500"}> {barChartData?.totalSpend[activeTab]?.percentage}% </span></p>
-                <p className='text-lg font-medium text-grey-500'>VS LAST MONTH</p>
+                <p className='text-lg font-medium uppercase text-grey-500'>VS LAST {activeTab}</p>
               </div>
             </div>
             <Separator />
@@ -177,14 +177,14 @@ const DetailChart = ({
                 </div>
               </div>
             </div>
-            <div className="flex flex-col items-center gap-x-3 gap-y-6 sm:flex-row">
+            <div className="flex flex-col items-center gap-x-3 gap-y-6 sm:flex-row sm:flex-wrap">
               <div className="w-full sm:grow sm:w-auto">
                 <Expenditure expenditureData={barChartData?.totalInvoicing[activeInvoiceTab]} activeTab={activeInvoiceTab} />
               </div>
               <div className="w-full sm:text-right sm:ml-auto sm:w-auto">
                 <p className='flex items-center gap-x-1.5 sm:justify-end text-lg font-medium'>{barChartData?.totalInvoicing[activeInvoiceTab]?.increment ? <ArrowUp /> : <ArrowDown />}<span className={
                   barChartData?.totalInvoicing[activeInvoiceTab]?.increment ? "text-semantic-success-500" : "text-semantic-danger-500"}> {barChartData?.totalInvoicing[activeInvoiceTab]?.percentage}% </span></p>
-                <p className='text-lg font-medium text-grey-500'>VS LAST MONTH</p>
+                <p className='text-lg font-medium uppercase text-grey-500'>VS LAST {activeInvoiceTab}</p>
               </div>
             </div>
             <Separator />

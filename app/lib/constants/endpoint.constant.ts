@@ -1,6 +1,10 @@
 const BASE_URL = 'https://cig-backend.webo.dev/api';
+const MIDDLEWARE_URL = 'https://cigweld-middleware.intuji.com/api';
 
 export const ENDPOINT = {
+  REPORT: {
+    GET: `${MIDDLEWARE_URL}/v1/report`,
+  },
   AUTH: {
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',

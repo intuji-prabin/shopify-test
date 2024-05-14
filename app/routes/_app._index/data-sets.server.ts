@@ -1,3 +1,6 @@
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {PDF} from '~/lib/constants/pdf.constent';
+
 type SubDataType = {
   labels: string[];
   currency: string;
@@ -7,8 +10,8 @@ type SubDataType = {
   data: (number | null)[];
 };
 type AreaChartDataType = {
-  monthly_spend: SubDataType;
-  yearly_spend: SubDataType;
+  monthly: SubDataType;
+  ytd: SubDataType;
 };
 
 type ChartData = {
@@ -41,8 +44,8 @@ type BarChartDataType = {
 type Total = {
   labels: string[];
   currency: string;
-  ytdAmount: number;
-  ytdLastYrAmount: number;
+  amount: number;
+  lastAmount: number;
   fullSpendAmount: number;
   percentage: number;
   increment: boolean;
@@ -72,15 +75,24 @@ const formatAmount = (amount: number) => {
   return amount > 999 ? amount / 1000 + 'k' : amount;
 };
 
-export async function getAreaChartData() {
+export async function getChartData() {
   try {
-    // const response = await useFetch<AreaChartDataType>({
-    //   method: AllowedHTTPMethods.GET,
-    //   url: ENDPOINT,
-    // });
+    const response: any = await fetch(ENDPOINT.REPORT.GET, {
+      headers: {
+        apiKey: PDF.SECRET_KEY,
+      },
+      method: 'GET',
+    });
 
-    // const response: AreaChartDataType = {
-    //   monthly_spend: {
+    if (response?.errors) {
+      throw new Error('Something went wrong');
+    }
+    if (!response?.status) {
+      throw new Error(response?.message);
+    }
+
+    const data = await response.json();
+    //   monthly: {
     //     labels: ['First Week', 'Second Week', 'Third Week', 'Fourth Week'],
     //     currency: 'AUD',
     //     amount: 51701.24,
@@ -88,114 +100,83 @@ export async function getAreaChartData() {
     //     increment: true,
     //     data: [18230.34, 3901.07, 14691.88, 14877.95],
     //   },
-    //   yearly_spend: {
-    //     labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+    //   ytd: {
+    //     labels: [
+    //       'Jan',
+    //       'Feb',
+    //       'Mar',
+    //       'Apr',
+    //       'May',
+    //       'Jun',
+    //       'Jul',
+    //       'Aug',
+    //       'Sept',
+    //       'Oct',
+    //       'Nov',
+    //       'Dec',
+    //     ],
+    //     data: [
+    //       47597.94,
+    //       51701.24,
+    //       64123.48,
+    //       248641.1,
+    //       NaN,
+    //       NaN,
+    //       NaN,
+    //       NaN,
+    //       NaN,
+    //       NaN,
+    //       NaN,
+    //       NaN,
+    //     ],
     //     currency: 'AUD',
     //     amount: 412063.76,
     //     percentage: 1170.82,
-    //     increment: false,
-    //     data: [47597.94, 51701.24, 64123.48, 248641.1],
+    //     increment: true,
+    //   },
+    //   totalSpend: {
+    //     ytd: {
+    //       labels: ['2023', '2024'],
+    //       currency: 'AUD',
+    //       amount: 412063.76,
+    //       lastAmount: 32424.93,
+    //       fullSpendAmount: null,
+    //       percentage: 1170.82,
+    //       increment: true,
+    //       data: [[32424.93], [412063.76]],
+    //     },
+    //     mtd: {
+    //       labels: [
+    //         'Jan',
+    //         'Feb',
+    //         'Mar',
+    //         'Apr',
+    //         'May',
+    //         'Jun',
+    //         'Jul',
+    //         'Aug',
+    //         'Sept',
+    //         'Oct',
+    //         'Nov',
+    //         'Dec',
+    //       ],
+    //       currency: 'AUD',
+    //       amount: 51701.24,
+    //       lastAmount: 47597.94,
+    //       fullSpendAmount: null,
+    //       percentage: 8.62,
+    //       increment: true,
+    //       data: [
+    //         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7587.51, 24837.42],
+    //         [47597.94, 51701.24, 64123.48, 248641.1, 0, 0, 0, 0, 0, 0, 0, 0],
+    //       ],
+    //     },
     //   },
     // };
-
-    const response: any = {
-      monthly_spend: {
-        labels: ['First Week', 'Second Week', 'Third Week', 'Fourth Week'],
-        currency: 'AUD',
-        amount: 51701.24,
-        percentage: 8.62,
-        increment: true,
-        data: [18230.34, 3901.07, 14691.88, 14877.95],
-      },
-      yearly_spend: {
-        labels: [
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sept',
-          'Oct',
-          'Nov',
-          'Dec',
-        ],
-        data: [
-          47597.94,
-          51701.24,
-          64123.48,
-          248641.1,
-          NaN,
-          NaN,
-          NaN,
-          NaN,
-          NaN,
-          NaN,
-          NaN,
-          NaN,
-        ],
-        currency: 'AUD',
-        amount: 412063.76,
-        percentage: 1170.82,
-        increment: true,
-      },
-      totalSpend: {
-        ytd: {
-          labels: ['2023', '2024'],
-          currency: 'AUD',
-          amount: 412063.76,
-          lastAmount: 32424.93,
-          fullSpendAmount: null,
-          percentage: 1170.82,
-          increment: true,
-          data: [[32424.93], [412063.76]],
-        },
-        mtd: {
-          labels: [
-            'Jan',
-            'Feb',
-            'Mar',
-            'Apr',
-            'May',
-            'Jun',
-            'Jul',
-            'Aug',
-            'Sept',
-            'Oct',
-            'Nov',
-            'Dec',
-          ],
-          currency: 'AUD',
-          amount: 51701.24,
-          lastAmount: 47597.94,
-          fullSpendAmount: null,
-          percentage: 8.62,
-          increment: true,
-          data: [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7587.51, 24837.42],
-            [47597.94, 51701.24, 64123.48, 248641.1, 0, 0, 0, 0, 0, 0, 0, 0],
-          ],
-        },
-      },
-    };
-
-    // if (response?.errors) {
-    //   throw new Error('Something went wrong');
-    // }
-    // if (!response?.status) {
-    //   console.log('firststatus');
-    //   throw new Error(response?.message);
-    // }
-    const finalResponse = await formatAreaResponse(response);
-
-    const finalBarResponse = await formatBar(response);
-    console.log(
-      'finalBarResponse',
-      finalBarResponse.totalSpend.mtd.barChartData.datasets,
-    );
-    return finalResponse;
+    // console.log('first', data);
+    const finalAreaResponse = await formatAreaResponse(data);
+    const finalBarResponse = await formatBarResponse(data);
+    return {finalAreaResponse, finalBarResponse};
   } catch (error) {
     console.log('error', error);
     throw new Error(
@@ -238,286 +219,10 @@ const formatAreaResponse = async (
   };
 
   return {
-    monthly: formatChartDataAndOtherFields(response?.monthly_spend),
-    ytd: formatChartDataAndOtherFields(response?.yearly_spend),
+    monthly: formatChartDataAndOtherFields(response?.monthly),
+    ytd: formatChartDataAndOtherFields(response?.ytd),
   };
 };
-
-const formatBar = async (response: any): Promise<any> => {
-  const FinalTotalSpend = response?.totalSpend;
-  const FinalTotalInvoicing = response?.totalInvoicing;
-
-  const formatBarChartData = (data: any) => {
-    return {
-      labels: data?.labels,
-      datasets: [
-        {
-          label: data?.labels[0],
-          data: data?.data[0].map((item: any) => item / 1000),
-          borderColor: 'rgb(0, 146, 207)',
-          backgroundColor: 'rgb(0, 146, 207)',
-        },
-        {
-          label: data?.labels[1],
-          data: data?.data[1].map((item: any) => item / 1000),
-          borderColor: 'rgb(200, 162, 0)',
-          backgroundColor: 'rgb(200, 162, 0)',
-        },
-      ],
-    };
-  };
-
-  const formatLineChartData = (data: ChartReponseData) => {
-    return {
-      // labels: data?.labels,
-      // datasets: [
-      //   {
-      //     label: data?.datasets[0]?.label,
-      //     data: data?.datasets[0]?.data.map((item) => item / 1000),
-      //     cubicInterpolationMode: 'monotone',
-      //     borderColor: 'rgb(0, 146, 207)',
-      //     borderWidth: 2,
-      //     pointBorderWidth: 2,
-      //     pointRadius: 5,
-      //     pointBackgroundColor: 'white',
-      //   },
-      //   {
-      //     label: data?.datasets[1]?.label,
-      //     data: data?.datasets[1]?.data.map((item) => item / 1000),
-      //     cubicInterpolationMode: 'monotone',
-      //     borderColor: 'rgb(200, 162, 0)',
-      //     borderWidth: 2,
-      //     pointBorderWidth: 2,
-      //     pointRadius: 5,
-      //     pointBackgroundColor: 'white',
-      //   },
-      // ],
-    };
-  };
-
-  const formatChartDataAndOtherFields = (data: any, chartType: string) => {
-    return {
-      currency: data?.currency,
-      amount: formatAmount(data?.amount),
-      lastAmount: formatAmount(data?.lastAmount),
-      fullSpendAmount: formatAmount(data?.fullSpendAmount),
-      percentage: data?.percentage,
-      increment: data?.increment,
-      [`${chartType}ChartData`]:
-        chartType === 'bar'
-          ? formatBarChartData(data as any)
-          : formatLineChartData(data as any),
-    };
-  };
-
-  const formatBarChartDataAndOtherFields = (data: Total) => {
-    return formatChartDataAndOtherFields(data, 'bar');
-  };
-
-  return {
-    totalSpend: {
-      ytd: formatBarChartDataAndOtherFields(FinalTotalSpend?.ytd),
-      mtd: formatBarChartDataAndOtherFields(FinalTotalSpend?.mtd),
-      qtd: formatBarChartDataAndOtherFields(FinalTotalSpend?.qtd),
-    },
-  };
-};
-
-export async function getBarChartData() {
-  try {
-    // const response = await useFetch<any>({
-    //   method: AllowedHTTPMethods.GET,
-    //   url: ENDPOINT,
-    // });
-
-    const response: BarChartDataType = {
-      totalSpend: {
-        ytd: {
-          labels: [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-          ],
-          currency: '$',
-          ytdAmount: 2000,
-          ytdLastYrAmount: 1257,
-          fullSpendAmount: 5000,
-          percentage: 0.5,
-          increment: true,
-          datasets: [
-            {
-              label: '2023',
-              data: [10000, 200121, 400444, 700233, 90000, 1000111, 120032],
-            },
-            {
-              label: '2022',
-              data: [100022, 30077, 100134, 35067, 100908, 200112, null],
-            },
-          ],
-        },
-        qtd: {
-          labels: [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-          ],
-          currency: '$',
-          ytdAmount: 12123,
-          ytdLastYrAmount: 67676,
-          fullSpendAmount: 99999,
-          percentage: 3.9,
-          increment: false,
-          datasets: [
-            {
-              label: '2023',
-              data: [5002323, 80066, 100899, 1000456, 100123, 202340, 123550],
-            },
-            {
-              label: '2022',
-              data: [10056, 90666, 1000990, 3008878, 10001212, 900444, 600111],
-            },
-          ],
-        },
-        mtd: {
-          labels: [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-          ],
-          currency: '$',
-          ytdAmount: 905612,
-          ytdLastYrAmount: 432567,
-          fullSpendAmount: 74231234,
-          percentage: 1.04,
-          increment: true,
-          datasets: [
-            {
-              label: '2023',
-              data: [600121, 40012, 80012, 1002, 180021, 100012, 200122],
-            },
-            {
-              label: '2022',
-              data: [100122, 200122, 501245, 500123, 1000123, 10011, 60023],
-            },
-          ],
-        },
-      },
-      totalInvoicing: {
-        ytd: {
-          labels: [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-          ],
-          currency: '$',
-          ytdAmount: 2000,
-          ytdLastYrAmount: 1257,
-          fullSpendAmount: 5000,
-          percentage: 0.5,
-          increment: false,
-          datasets: [
-            {
-              label: '2023',
-              data: [600343, 400112, 8005656, 100232, 1800112, NaN, NaN],
-            },
-            {
-              label: '2022',
-              data: [10033, 200112, 50000, 500212, 100044, 100666, 600000],
-            },
-          ],
-        },
-        qtd: {
-          labels: [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-          ],
-          currency: '$',
-          ytdAmount: 98986,
-          ytdLastYrAmount: 32456,
-          fullSpendAmount: 12345,
-          percentage: 3.5,
-          increment: true,
-          datasets: [
-            {
-              label: '2023',
-              data: [
-                5001212, 8003434, 1006656, 10001212, 1001212, 200122, 501222,
-              ],
-            },
-            {
-              label: '2022',
-              data: [
-                1001221, 90122, 1000333, 3001222, 10001212, 9001223, 6001212,
-              ],
-            },
-          ],
-        },
-        mtd: {
-          labels: [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-          ],
-          currency: '$',
-          ytdAmount: 1223454,
-          ytdLastYrAmount: 12311,
-          fullSpendAmount: 45000,
-          percentage: 7.7,
-          increment: false,
-          datasets: [
-            {
-              label: '2023',
-              data: [100121, 20012, 40011, 700333, 900667, 100034, 1200463],
-            },
-            {
-              label: '2022',
-              data: [1000, 300232, 10220, 350443, 100343, 2002233, 300233],
-            },
-          ],
-        },
-      },
-    };
-    // if (response?.errors) {
-    //   throw new Error('Something went wrong');
-    // }
-    // if (!response?.status) {
-    //   console.log('firststatus');
-    //   throw new Error(response?.message);
-    // }
-    const finalResponse = await formatBarResponse(response);
-    return finalResponse;
-  } catch (error) {
-    console.log('error', error);
-    throw new Error(
-      'Oops! Something went wrong. Please hold tight and try again in a little while. Thank you for your understanding.',
-    );
-  }
-}
 
 const formatBarResponse = async (response: any): Promise<any> => {
   const FinalTotalSpend = response?.totalSpend;
@@ -574,8 +279,8 @@ const formatBarResponse = async (response: any): Promise<any> => {
   const formatChartDataAndOtherFields = (data: Total, chartType: string) => {
     return {
       currency: data?.currency,
-      ytdAmount: formatAmount(data?.ytdAmount),
-      ytdLastYrAmount: formatAmount(data?.ytdLastYrAmount),
+      amount: formatAmount(data?.amount),
+      lastAmount: formatAmount(data?.lastAmount),
       fullSpendAmount: formatAmount(data?.fullSpendAmount),
       percentage: data?.percentage,
       increment: data?.increment,
