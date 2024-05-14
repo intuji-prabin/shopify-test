@@ -1,18 +1,14 @@
-import { json, redirect, useActionData } from "@remix-run/react";
-import { ActionFunctionArgs } from "@remix-run/server-runtime";
+import { json, redirect } from "@remix-run/react";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/server-runtime";
 import { validationError } from "remix-validated-form";
 import { TrackAnOrderButton, TrackAnOrderSchemaValidator } from "~/components/ui/layouts/elements/track-an-order-dialog";
 import { Routes } from "~/lib/constants/routes.constent";
+import { isAuthenticate } from "~/lib/utils/auth-session.server";
 import { getMessageSession, messageCommitSession, setErrorMessage, setSuccessMessage } from "~/lib/utils/toast-session.server";
 import { getUserDetails } from "~/lib/utils/user-session.server";
 import { getOrderId } from "../_app/app.server";
-import { isAuthenticate } from "~/lib/utils/auth-session.server";
 
-type ActionResponse = {
-    error: string | null;
-};
-
-export async function loader({ context }: ActionFunctionArgs) {
+export async function loader({ context }: LoaderFunctionArgs) {
     await isAuthenticate(context);
     return null;
 }

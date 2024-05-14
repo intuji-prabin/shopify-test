@@ -6,7 +6,11 @@ import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {useFormatCart} from '~/hooks/useFormatCart';
 
-export const placeOrder = async (request: Request, context: any) => {
+export const placeOrder = async (
+  formData: any,
+  request: Request,
+  context: any,
+) => {
   const {userDetails} = await getUserDetails(request);
 
   try {
@@ -15,11 +19,14 @@ export const placeOrder = async (request: Request, context: any) => {
     if (!sessionCartInfo) {
       throw new Error('Cart not found');
     }
-    const formData = await request.formData();
     const allData = Object.fromEntries(formData) as any;
     const cartList = await getCartList(context, request, sessionCartInfo, true);
     allData.customerDetails = {
-      parentId: userDetails?.meta?.parent?.value && userDetails?.meta?.parent?.value !== 'null' ? userDetails?.meta?.parent?.value : userDetails?.id,
+      parentId:
+        userDetails?.meta?.parent?.value &&
+        userDetails?.meta?.parent?.value !== 'null'
+          ? userDetails?.meta?.parent?.value
+          : userDetails?.id,
     };
     const orderPlaceResponse = await orderCreate(
       cartList,

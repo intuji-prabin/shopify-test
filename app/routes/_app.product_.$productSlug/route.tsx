@@ -2,17 +2,17 @@ import {
   isRouteErrorResponse,
   json,
   useLoaderData,
-  useNavigate,
-  useRouteError,
+  useRouteError
 } from '@remix-run/react';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
-import { ReactNode, useContext } from 'react';
+import { ReactNode } from 'react';
 import { BackButton } from '~/components/ui/back-button';
 import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
 import { ProductCard } from '~/components/ui/product-card';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 import { getAccessToken } from '~/lib/utils/auth-session.server';
 import {
@@ -32,8 +32,6 @@ import {
 import ProductInformation from './productInformation';
 import ProductTab from './productTabs';
 import { addToWishlist, removeFromWishlist } from './wishlist.server';
-import { AbilityContext } from '~/lib/helpers/Can';
-import { useConditionalRender } from '~/hooks/useAuthorization';
 
 interface ProductDetailType {
   productPage: string;
@@ -41,6 +39,7 @@ interface ProductDetailType {
     productInfo: ProductInfoType;
     productTab: ProductTabType;
     relatedProducts: ProductList[];
+    alternativeProduct: ProductList[];
   };
 }
 
@@ -139,7 +138,7 @@ export default function route() {
         </Breadcrumb>
       </div>
       <ProductInformation product={product?.productInfo} />
-      <ProductTab productTab={product?.productTab} alternateProduct={product.relatedProducts} />
+      <ProductTab productTab={product?.productTab} alternateProduct={product.alternativeProduct} />
       {product?.relatedProducts?.length > 0 &&
         <section className="bg-white mt-0 border-[1px] border-grey-50 py-12">
           <div className="container">

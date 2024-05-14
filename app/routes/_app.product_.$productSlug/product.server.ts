@@ -61,6 +61,7 @@ export interface ProductType {
   productWeight: string;
   categoryUrl: string;
   relatedProducts: relatedProductsType[];
+  alternativeProduct: relatedProductsType[];
 }
 
 type faqType = {
@@ -118,6 +119,25 @@ export async function getProductDetails(customerId: string, handle: string) {
 }
 
 const formatResponse = async (response: ProductType) => {
+  const formatRelatedProduct = (item: relatedProductsType) => ({
+    id: item.productId,
+    title: item.title,
+    handle: item.productHandle,
+    stockCode: item.stockCode,
+    uom: item.uom,
+    featuredImageUrl: item.featuredImage ?? DEFAULT_IMAGE.IMAGE,
+    volumePrice: item.priceRange?.length > 0,
+    companyPrice: item.companyPrice,
+    currency: item.currency,
+    defaultPrice: item.defaultPrice,
+    quantity: item.quantity,
+    liked: item.liked,
+    variants: {
+      id: item.variantId,
+      sku: item.sku,
+      moq: item.moq,
+    },
+  });
   const finalResponse = {
     productInfo: {
       id: response?.id,
@@ -159,25 +179,8 @@ const formatResponse = async (response: ProductType) => {
       operatingManual: response?.operatingManual,
       brand: response?.brand === 'N/A' ? '' : response?.brand,
     },
-    relatedProducts: response?.relatedProducts.map((item) => ({
-      id: item?.productId,
-      title: item?.title,
-      handle: item?.productHandle,
-      stockCode: item?.stockCode,
-      uom: item?.uom,
-      featuredImageUrl: item?.featuredImage ?? DEFAULT_IMAGE.IMAGE,
-      volumePrice: item?.priceRange?.length > 0 ? true : false,
-      companyPrice: item?.companyPrice,
-      currency: item?.currency,
-      defaultPrice: item?.defaultPrice,
-      quantity: item?.quantity,
-      liked: item?.liked,
-      variants: {
-        id: item?.variantId,
-        sku: item?.sku,
-        moq: item?.moq,
-      },
-    })),
+    relatedProducts: response?.relatedProducts.map(formatRelatedProduct),
+    alternativeProduct: response?.alternativeProduct.map(formatRelatedProduct),
   };
   return finalResponse;
 };

@@ -1,3 +1,5 @@
+import { he } from "date-fns/locale";
+
 export const USER_STATUS = Object.freeze({
   ACTIVE: 'active',
   INACTIVE: 'inactive',
@@ -25,3 +27,9 @@ export const SESSION_MAX_AGE = {
 };
 
 export const FILTER_SECRET = 'reueBmScUt29/V9J77k9Qj3gWsG0miX7928+D4s78AI=';
+
+export const Permission_API_Credential = {
+  headerKey: 'X-Shopify-Permission-Token',
+  headerValue: 'iFaXBRJ6HzfoNgOLmtwKudAVHyIfsYrRtNMxFZ7PI4M=',
+  url: 'https://cig-backend.webo.dev',
+};
