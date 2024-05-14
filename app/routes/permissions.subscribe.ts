@@ -20,7 +20,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return eventStream(request.signal, function setup(send) {
     
     const handle = (permissionData: object) => {
-      const eventData = JSON.stringify({ permissionData });
+      const eventData = JSON.stringify({ permissionData, date: Date.now() });
       // send({ event: EVENTS.PERMISSIONS_UPDATED.NAME, data: String(Date.now()) });
       send({ event: EVENTS.PERMISSIONS_UPDATED.NAME, data: eventData });
 

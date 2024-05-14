@@ -114,7 +114,7 @@ export default function PublicPageLayout() {
     // if (roleData.value === 'admin-service-provider') {
     //   return defineAbilitiesForAdmin();
     // } else {
-      return defineAbilitiesForUser(roleData.permission);
+    return defineAbilitiesForUser(roleData.permission);
     // }
   }
 
@@ -169,39 +169,42 @@ export default function PublicPageLayout() {
 
     // Check if hasPermissionBeenUpdated is a string
     if (typeof hasPermissionBeenUpdated === 'string') {
-        // Parse the string into an object
-        const parsedData = JSON.parse(hasPermissionBeenUpdated) as {
-            permissionData: {
-                payload: { user_role: string; permission: string[];};
-            };
+      // Parse the string into an object
+      const parsedData = JSON.parse(hasPermissionBeenUpdated) as {
+        permissionData: {
+          payload: {user_role: string; permission: string[]};
         };
+      };
 
-        // Extract role and permissions from parsedData
-        const eventUserRole = parsedData.permissionData.payload.user_role;
-        const eventUserRolePermissions = parsedData.permissionData.payload.permission;
+      // Extract role and permissions from parsedData
+      const eventUserRole = parsedData.permissionData.payload.user_role;
+      const eventUserRolePermissions = parsedData.permissionData.payload;
 
-        // If permissions are empty, logout the user
-        if (eventUserRolePermissions.length === 0) {
-            submit({}, { method: 'POST', action: '/logout' });
+      // If permissions are empty, logout the user
+      if (eventUserRolePermissions.permission.length === 0) {
+        submit({}, {method: 'POST', action: '/logout'});
+      }
+
+      // Check if the event role matches the user's role
+      if (eventUserRole === userRole?.value) {
+        // console.log('Permission has been updated');
+        let currentUrl = window.location.pathname; // Capture the current URL
+        if (currentUrl === '/login') {
+          currentUrl = '/';
         }
 
-        // Check if the event role matches the user's role
-        if (eventUserRole === userRole?.value) {
-            // console.log('Permission has been updated');
-            let currentUrl = window.location.pathname; // Capture the current URL
-            if(currentUrl === '/login'){
-                currentUrl = '/';
-            }
+        //Here ability is created from the event because to reroute the user if it is already in the page whose permission changes
+        const userAbility = getUserAbilities(eventUserRolePermissions);
+        setAbility(userAbility);
 
-            // Update user session with returnUrl
-            submit(
-                { returnUrl: currentUrl },
-                { method: 'GET', action: '/update-user-session' },
-            );
-        }
+        // Update user session with returnUrl
+        submit(
+          {returnUrl: currentUrl},
+          {method: 'GET', action: '/update-user-session'},
+        );
+      }
     }
-}, [hasPermissionBeenUpdated]);
-
+  }, [hasPermissionBeenUpdated]);
 
   //this is for real time role changes in the login user
 
