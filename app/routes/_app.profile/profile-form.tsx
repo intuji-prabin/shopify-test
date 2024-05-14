@@ -1,4 +1,3 @@
-
 import {z} from 'zod';
 import {useState} from 'react';
 import {zfd} from 'zod-form-data';
@@ -59,13 +58,7 @@ export const ProfileFormSchema = z
         }, 'Max file size is 15MB.'),
     ),
     fullName: z.string().trim().min(1, {message: 'Full Name is required'}),
-    email: z
-      .string()
-      .min(1, {message: 'Email is required'})
-      .email()
-      .trim()
-      .toLowerCase()
-      .optional(),
+    email: z.string().email().trim().toLowerCase().optional(),
     phoneNumber: z
       .string()
       .min(1, {message: 'Phone Number is required'})
@@ -183,7 +176,7 @@ export default function ProfileForm({
               label="Address"
               placeholder="address"
             />
-            <Input type="hidden" name="customerId" value={customerId} />
+            <input type="hidden" name="customerId" value={customerId} />
           </div>
         </div>
       </div>

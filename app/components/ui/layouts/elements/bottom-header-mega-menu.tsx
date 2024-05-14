@@ -152,16 +152,13 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                   ?.child_categories?.map((subMenu: Payload) => {
                     return (
                       <Can
-                        // key={subMenu.id}
+                        key={subMenu.id}
                         I="view"
                         a="view_products"
                         passThrough
                       >
                         {(allowed) => (
-                          <li
-                            key={subMenu.id}
-                            className="relative flex items-center text-lg not-italic font-medium text-grey-900 menu-hov"
-                          >
+                          <li className="relative flex items-center text-lg not-italic font-medium text-grey-900 menu-hov">
                             {allowed ? (
                               <Link
                                 to={`/category/${activeMenu?.menu?.identifier}/${activeMenu?.subMenu?.identifier}/${subMenu?.identifier}`}
@@ -184,7 +181,6 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                             )}
                           </li>
                         )}
-                        
                       </Can>
                     );
                   })}
