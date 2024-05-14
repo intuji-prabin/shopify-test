@@ -12,6 +12,7 @@ export function MainNavigationMenus({categories}: {categories: Payload[]}) {
       {menuItemsData.map((menu, index) => {
         return menu.title === 'Products' || menu.title === 'My Team' ? (
           <Can
+            key={menu.title}
             I="view"
             a={menu.title === 'Products' ? 'view_categories' : 'view_team'}
           >
@@ -25,6 +26,7 @@ export function MainNavigationMenus({categories}: {categories: Payload[]}) {
           </Can>
         ) : (
           <SingleNavItem
+            key={menu.title}
             menu={menu}
             depthLevel={depthLevel}
             activeMenu={activeMenu}
