@@ -15,16 +15,16 @@ export default function OrderSummary({
 }: any) {
   return (
     <div className="bg-white w-full xl:w-[411px]">
-      <EstimatedTotal cartSubTotalPrice={cartSubTotalPrice}
-        cartTotalPrice={cartTotalPrice}
-        freight={freight}
-        surcharges={surcharges}
-        gst={gst} currency={currency} />
-      {shippingAddresses ?
-        <Form method="POST">
+      <Form method="POST">
+        <EstimatedTotal cartSubTotalPrice={cartSubTotalPrice}
+          cartTotalPrice={cartTotalPrice}
+          freight={freight}
+          surcharges={surcharges}
+          gst={gst} currency={currency} />
+        {shippingAddresses ?
           <ShoppingDetails shippingAddresses={shippingAddresses} updateCart={updateCart} placeOrder={placeOrder} />
-        </Form>
-        : <p className='p-6 font-medium text-red-500'>You do not have any shipping address added. Please add one to place order.</p>}
+          : <p className='p-6 font-medium text-red-500'>You do not have any shipping address added. Please add one to place order.</p>}
+      </Form>
     </div>
   );
 }

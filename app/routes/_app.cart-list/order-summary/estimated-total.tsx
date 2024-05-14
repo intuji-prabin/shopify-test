@@ -1,9 +1,12 @@
+import { PromoCode } from "./order-shopping-details";
+
 export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, freight, surcharges, gst, currency }: any) {
 
   // console.log({ cartSubTotalPrice, cartTotalPrice, freight, surcharges, gst });
 
   return (
     <div className="flex flex-col gap-4 p-6 border-b order border-grey-50">
+      <PromoCode />
       <h3 className="font-bold leading-[29px] text-2xl capi">
         YOUR ORDER SUMMARY
       </h3>

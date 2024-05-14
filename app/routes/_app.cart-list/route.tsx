@@ -70,33 +70,40 @@ export async function action({ request, context }: ActionFunctionArgs) {
     case 'POST':
       try {
         const formData = await request.formData();
-        const poNumber = formData.get("poNumber") as string;
-        const { userDetails } = await getUserDetails(request);
-        const trackAnOrderResponse = await getOrderId(poNumber, userDetails?.id);
+        switch (formData.get("action")) {
+          case 'place_order': {
+            const poNumber = formData.get("poNumber") as string;
+            const { userDetails } = await getUserDetails(request);
+            const trackAnOrderResponse = await getOrderId(poNumber, userDetails?.id);
 
-        if (trackAnOrderResponse?.orderList.length > 0) {
-          setErrorMessage(messageSession, "Purchase Order Number or Order Number already taken. Please use another one.");
-          return json(
-            {},
-            {
+            if (trackAnOrderResponse?.orderList.length > 0) {
+              setErrorMessage(messageSession, "Purchase Order Number or Order Number already taken. Please use another one.");
+              return json(
+                {},
+                {
+                  headers: [
+                    ['Set-Cookie', await context.session.commit({})],
+                    ['Set-Cookie', await messageCommitSession(messageSession)],
+                  ],
+                },
+              );
+            }
+            res = await placeOrder(formData, request, context);
+            // console.log("orderPlacedResponseFInal", res);
+            const shopifyID = res?.shopifyOrderId ? '/' + res?.shopifyOrderId : '';
+
+            setSuccessMessage(messageSession, 'Order placed successfully');
+            return redirect(Routes.ORDER_SUCCESSFUL + shopifyID, {
               headers: [
                 ['Set-Cookie', await context.session.commit({})],
                 ['Set-Cookie', await messageCommitSession(messageSession)],
               ],
-            },
-          );
+            });
+          }
+          case 'promo_code': {
+            console.log("inside here")
+          }
         }
-        res = await placeOrder(formData, request, context);
-        // console.log("orderPlacedResponseFInal", res);
-        const shopifyID = res?.shopifyOrderId ? '/' + res?.shopifyOrderId : '';
-
-        setSuccessMessage(messageSession, 'Order placed successfully');
-        return redirect(Routes.ORDER_SUCCESSFUL + shopifyID, {
-          headers: [
-            ['Set-Cookie', await context.session.commit({})],
-            ['Set-Cookie', await messageCommitSession(messageSession)],
-          ],
-        });
       } catch (error) {
         if (error instanceof Error) {
           // console.log('this is err', error?.message);

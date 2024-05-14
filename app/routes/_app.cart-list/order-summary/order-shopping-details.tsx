@@ -1,3 +1,4 @@
+import { Form } from '@remix-run/react';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -161,20 +162,24 @@ export function PromoCode() {
         Enter promo code here
       </p>
       <div className="flex flex-col w-full gap-2 sm:flex-row">
-        <input
-          type=" text"
-          className={` ${activatePromo ? 'bg-semantic-success-100 border-none' : 'bg-white'
-            } grow`}
-          placeholder="Enter promo code here"
-        />
-        <Button
-          variant="secondary"
-          className="min-w-[99px]"
-          onClick={handleActivatePromoCode}
-          type='button'
-        >
-          {activatePromo ? 'Remove' : 'Apply'}
-        </Button>
+        <Form method="POST">
+          <input
+            type=" text"
+            className={` ${activatePromo ? 'bg-semantic-success-100 border-none' : 'bg-white'
+              } grow`}
+            placeholder="Enter promo code here"
+          />
+          <Button
+            variant="secondary"
+            className="min-w-[99px]"
+            onClick={handleActivatePromoCode}
+            type='submit'
+            value="promo_code"
+            name="action"
+          >
+            {activatePromo ? 'Remove' : 'Apply'}
+          </Button>
+        </Form>
       </div>
       {activatePromo ? (
         <div className="flex">
@@ -252,7 +257,6 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: a
       </div>
       {/* shipping location starts here */}
       <div className="flex flex-col gap-4">
-        <PromoCode />
         <ShippingAddress
           default_address={defaultAddresses && defaultAddresses || '-'}
           phone={defaultAddress?.phone && defaultAddress?.phone || '-'}
@@ -262,7 +266,8 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: a
       {/* place order starts here */}
       <Can I='view' a='place_order'>
         {!updateCart && placeOrder ?
-          <Button className="text-lg min-h-14" variant="primary" type="submit">
+          <Button className="text-lg min-h-14" variant="primary" type="submit" value="place_order"
+            name="action">
             Place order
           </Button>
           : <div>
