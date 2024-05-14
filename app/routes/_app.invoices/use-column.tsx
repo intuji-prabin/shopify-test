@@ -100,7 +100,7 @@ export function useColumn() {
         },
       },
       {
-        accessorKey: 'poNo.',
+        accessorKey: 'poNumber',
         header: 'Purchase Order No.',
         enableSorting: false,
         cell: (info) => info.getValue() ?? 'N/A',
