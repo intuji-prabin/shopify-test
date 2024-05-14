@@ -90,6 +90,8 @@ export async function action({request, context}: ActionFunctionArgs) {
 
     const customer: CustomerUpdateInput = {};
 
+    let newAccessToken = accessToken;
+
     if (typeof oldPassword !== 'undefined' && oldPassword !== '') {
       const {customerAccessTokenCreate}: any = await storefront.mutate(
         LOGIN_MUTATION,
@@ -105,6 +107,9 @@ export async function action({request, context}: ActionFunctionArgs) {
           "Old password doesn't match. Please enter correct old password.",
         );
       }
+
+      newAccessToken =
+        customerAccessTokenCreate.customerAccessToken.accessToken;
 
       customer.password = password;
     }
@@ -145,7 +150,7 @@ export async function action({request, context}: ActionFunctionArgs) {
       CUSTOMER_UPDATE_MUTATION,
       {
         variables: {
-          customerAccessToken: accessToken,
+          customerAccessToken: newAccessToken,
           customer,
           customerAddress: {
             address1: address,
@@ -161,10 +166,13 @@ export async function action({request, context}: ActionFunctionArgs) {
       );
     }
 
+    newAccessToken =
+      updateCustomerDetails.customerUpdate?.customerAccessToken?.accessToken;
+
     if (typeof oldPassword !== 'undefined' && oldPassword !== '') {
       await storefront.mutate(LOGOUT_MUTATION, {
         variables: {
-          customerAccessToken: accessToken,
+          customerAccessToken: newAccessToken,
         },
       });
 
@@ -199,8 +207,6 @@ export async function action({request, context}: ActionFunctionArgs) {
     });
   } catch (error) {
     if (error instanceof Error) {
-      console.log('error', error);
-
       setErrorMessage(messageSession, error.message);
       return json(
         {},
@@ -266,6 +272,15 @@ mutation customerUpdate(
   $customerAddress : MailingAddressInput!,
   $addressID : ID!,
 ) {
+   customerAddressUpdate( address: $customerAddress, customerAccessToken: $customerAccessToken, id : $addressID  ) {
+      customerAddress {
+          address1
+      }
+      customerUserErrors {
+          message
+          field
+      }
+  },
   customerUpdate(customerAccessToken: $customerAccessToken, customer: $customer) {
     customer {
       email
@@ -289,14 +304,5 @@ mutation customerUpdate(
       message
     }
   },
-  customerAddressUpdate( address: $customerAddress, customerAccessToken: $customerAccessToken, id : $addressID  ) {
-      customerAddress {
-          address1
-      }
-      customerUserErrors {
-          message
-          field
-      }
-  }
 }
 ` as const;
