@@ -1,5 +1,6 @@
 import {
   isRouteErrorResponse,
+  useActionData,
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
@@ -101,7 +102,15 @@ export async function action({ request, context }: ActionFunctionArgs) {
             });
           }
           case 'promo_code': {
-            console.log("inside here")
+            const promoCode = formData.get("promoCode") as string;
+            console.log("promoCodeFinal", promoCode);
+            setSuccessMessage(messageSession, 'Promocode applied successfully');
+            return json(
+              { status: true },
+              {
+                headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+              },
+            );
           }
         }
       } catch (error) {
@@ -254,6 +263,7 @@ export default function CartList() {
   const [updateCart, setUpdateCart] = useState(false);
   const [placeOrder, setPlaceOrder] = useState(result);
 
+  const data = useActionData<any>();
   return (
     <>
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
@@ -280,6 +290,7 @@ export default function CartList() {
               shippingAddresses={shippingAddresses}
               updateCart={updateCart}
               placeOrder={placeOrder}
+              data={data}
             />
           </div>
         </div>

@@ -20,6 +20,8 @@ export const placeOrder = async (
       throw new Error('Cart not found');
     }
     const allData = Object.fromEntries(formData) as any;
+    console.log('allData', allData);
+    return {};
     const cartList = await getCartList(context, request, sessionCartInfo, true);
     allData.customerDetails = {
       parentId:

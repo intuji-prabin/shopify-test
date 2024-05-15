@@ -1,7 +1,8 @@
-import { Form } from '@remix-run/react';
+import { Form, useSubmit } from '@remix-run/react';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
+import { DangerAlert } from '~/components/icons/alert';
 import Tick from '~/components/icons/tick';
 import { Button } from '~/components/ui/button';
 import { Calendar } from '~/components/ui/calendar';
@@ -151,7 +152,8 @@ export function TextArea() {
     </div>
   );
 }
-export function PromoCode() {
+export function PromoCode({ data, setPromoCode, promoCode }: { data: { status: boolean }, setPromoCode: React.Dispatch<React.SetStateAction<string>>, promoCode: string }) {
+  const submit = useSubmit();
   const [activatePromo, setActivatePromo] = useState(false);
   function handleActivatePromoCode() {
     setActivatePromo(!activatePromo);
@@ -159,38 +161,67 @@ export function PromoCode() {
   return (
     <div className="flex flex-col gap-1">
       <p className="text-base text-normal leading-[21px] text-grey-800">
-        Enter promo code here
+        Do you have any promocode?
       </p>
-      <div className="flex flex-col w-full gap-2 sm:flex-row">
-        <Form method="POST">
+      <Form method="POST" onSubmit={(event) => {
+        submit(event.currentTarget);
+        handleActivatePromoCode();
+      }}>
+        <div className="flex flex-col w-full gap-2 sm:flex-row">
           <input
-            type=" text"
-            className={` ${activatePromo ? 'bg-semantic-success-100 border-none' : 'bg-white'
-              } grow`}
+            type="text"
+            className={`grow`}
             placeholder="Enter promo code here"
+            name='promoCode'
+            value={promoCode}
+            onChange={(e) => setPromoCode(e?.target?.value)}
+            required
           />
-          <Button
-            variant="secondary"
-            className="min-w-[99px]"
-            onClick={handleActivatePromoCode}
-            type='submit'
-            value="promo_code"
-            name="action"
-          >
-            {activatePromo ? 'Remove' : 'Apply'}
-          </Button>
-        </Form>
-      </div>
-      {activatePromo ? (
-        <div className="flex">
-          <Tick width="20px" height="20px" fillColor="#3BBA53" />
-
-          <p className="text-semantic-success-500 font-normal leading-5 text-[14px] items-center">
-            {' '}
-            Promo code activated
-          </p>
+          {activatePromo ? (
+            <Button
+              variant="secondary"
+              className="min-w-[99px]"
+              type='button'
+              onClick={() => {
+                setPromoCode("");
+                handleActivatePromoCode();
+              }}
+            >
+              Remove
+            </Button>
+          ) : (
+            <Button
+              variant="secondary"
+              className="min-w-[99px]"
+              type='submit'
+              value="promo_code"
+              name="action"
+              onClick={() => console.log("I am clicked")}
+            >
+              Apply
+            </Button>)
+          }
         </div>
-      ) : undefined}
+      </Form>
+      {data && (
+        <div className="flex">
+          {activatePromo && data?.status ? (
+            <>
+              <Tick width="20px" height="20px" fillColor="#3BBA53" />
+              <p className="text-semantic-success-500 font-normal leading-5 text-[14px] items-center">
+                Promo code activated
+              </p>
+            </>
+          ) : (
+            <>
+              <DangerAlert />
+              <p className="text-semantic-danger-500 font-normal leading-5 text-[14px] items-center">
+                Promo code incorrect
+              </p>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
