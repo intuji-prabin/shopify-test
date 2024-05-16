@@ -37,6 +37,7 @@ export const Routes = {
   PROFILE: '/profile',
   LOGOUT_SUBSCRIBE: '/logout/subscribe',
   PERMISSIONS_SUBSCRIBE: '/permissions/subscribe',
+  NOTIFICATIONS_SUBSCRIBE: '/notifications/subscribe',
   ROLE_SUBSCRIBE: '/role/subscribe',
   DISTRIBUTOR_INFO: '/distributor-information',
   DISTRIBUTOR_PROFILE: '/distributor-profile',
