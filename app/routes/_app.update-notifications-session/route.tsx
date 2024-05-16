@@ -3,7 +3,7 @@ import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
 import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
 export async function loader({request, context}: ActionFunctionArgs) {
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
-  let sessionWishlistInfo = await context.session.get(WISHLIST_SESSION_KEY);
+  // let sessionWishlistInfo = await context.session.get(WISHLIST_SESSION_KEY);
 
   const headers: HeadersInit = [];
 
@@ -23,10 +23,11 @@ export async function loader({request, context}: ActionFunctionArgs) {
       }
     } else
      if (type === 'wishlist') {
-      if(sessionWishlistInfo){
+      // if(sessionWishlistInfo){
+        console.log("totalNumber", totalNumber);
         await context.session.set(WISHLIST_SESSION_KEY, totalNumber);
         headers.push(['Set-Cookie', await context.session.commit({})]);
-      }
+      // }
       
     }
   
