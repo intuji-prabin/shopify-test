@@ -203,7 +203,7 @@ export function PromoCode({ data, setPromoCode, promoCode }: { data: { status: b
           }
         </div>
       </Form>
-      {data && (
+      {data && promoCode && (
         <div className="flex">
           {activatePromo && data?.status ? (
             <>

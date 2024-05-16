@@ -14,12 +14,13 @@ import { useEffect, useState } from 'react';
 import EmptyList from '~/components/ui/empty-list';
 import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
+import useSort from '~/hooks/useSort';
 import {
   CART_QUANTITY_MAX,
   CART_SESSION_KEY,
 } from '~/lib/constants/cartInfo.constant';
 import { Routes } from '~/lib/constants/routes.constent';
-import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -28,15 +29,14 @@ import {
 } from '~/lib/utils/toast-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getAllCompanyShippingAddresses } from '../_app.shipping-address/shipping-address.server';
+import { getOrderId } from '../_app/app.server';
 import { removeItemFromCart } from './cart-remove.server';
 import { cartUpdate } from './cart-update.server';
 import { getCartList } from './cart.server';
 import MyProducts from './order-my-products/cart-myproduct';
 import { placeOrder } from './order-place.server';
 import OrderSummary from './order-summary/cart-order-summary';
-import useSort from '~/hooks/useSort';
-import { productBulkCart } from '../_app.categories/bulkOrder.server';
-import { getOrderId } from '../_app/app.server';
+import { promoCodeApply } from './promoCode.server';
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
@@ -103,10 +103,11 @@ export async function action({ request, context }: ActionFunctionArgs) {
           }
           case 'promo_code': {
             const promoCode = formData.get("promoCode") as string;
-            console.log("promoCodeFinal", promoCode);
-            setSuccessMessage(messageSession, 'Promocode applied successfully');
+            res = await promoCodeApply(promoCode, context, request);
+            console.log("res", res)
+            setSuccessMessage(messageSession, res?.message);
             return json(
-              { status: true },
+              { status: res?.status },
               {
                 headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
               },
@@ -118,7 +119,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           // console.log('this is err', error?.message);
           setErrorMessage(messageSession, error?.message);
           return json(
-            {},
+            { status: res?.status },
             {
               headers: [
                 ['Set-Cookie', await context.session.commit({})],
@@ -133,7 +134,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           'Order not placed to some issue. Please try again later.',
         );
         return json(
-          {},
+          { status: res?.status },
           {
             headers: [
               ['Set-Cookie', await context.session.commit({})],
@@ -291,6 +292,10 @@ export default function CartList() {
               updateCart={updateCart}
               placeOrder={placeOrder}
               data={data}
+              promoCodeApplied={cartList?.promoCode}
+              discountPrice={cartList?.discountPrice}
+              discountMessage={cartList?.discountMessage}
+              totalPriceWithDiscount={cartList?.totalPriceWithDiscount}
             />
           </div>
         </div>

@@ -70,7 +70,7 @@ const formateCartList = async (
     return productList;
   }
   const productWithPrice = await getPrice(customerId, productList);
-  // console.log('werwerwed ', productWithPrice);
+  console.log('werwerwed ', productWithPrice);
   return productWithPrice;
 };
 

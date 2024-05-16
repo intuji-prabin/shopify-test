@@ -87,7 +87,7 @@ export default function MyProducts({
                     </DialogClose>
                     <Button
                       type="submit"
-                      className="w-full text-sm italic font-bold uppercase leading6 "
+                      className="w-full text-sm italic font-bold uppercase"
                       variant="primary"
                       onClick={() => {
                         const formData = new FormData();

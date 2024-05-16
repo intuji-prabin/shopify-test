@@ -13,9 +13,13 @@ export default function OrderSummary({
   currency,
   updateCart,
   placeOrder,
-  data
+  data,
+  promoCodeApplied,
+  discountPrice,
+  discountMessage,
+  totalPriceWithDiscount,
 }: any) {
-  const [promoCode, setPromoCode] = useState("");
+  const [promoCode, setPromoCode] = useState(promoCodeApplied);
   return (
     <div className="bg-white w-full xl:w-[411px]">
       <EstimatedTotal cartSubTotalPrice={cartSubTotalPrice}
@@ -27,14 +31,13 @@ export default function OrderSummary({
         data={data}
         setPromoCode={setPromoCode}
         promoCode={promoCode}
+        promoCodeApplied={promoCodeApplied}
+        discountPrice={discountPrice}
+        discountMessage={discountMessage}
+        totalPriceWithDiscount={totalPriceWithDiscount}
       />
       {shippingAddresses ?
         <Form method="POST">
-          <input
-            type="text"
-            value={data?.status ? promoCode : ""}
-            name='promoCodeFinal'
-          />
           <ShoppingDetails shippingAddresses={shippingAddresses} updateCart={updateCart} placeOrder={placeOrder} />
         </Form>
         : <p className='p-6 font-medium text-red-500'>You do not have any shipping address added. Please add one to place order.</p>}
