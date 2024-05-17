@@ -61,7 +61,7 @@ export const placeOrder = async (
   } catch (error) {
     if (error instanceof Error) {
       console.log('err', error?.message);
-      return {};
+      throw new Error(error?.message);
     }
     return {};
   }

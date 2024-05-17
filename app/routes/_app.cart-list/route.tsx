@@ -87,16 +87,18 @@ export async function action({ request, context }: ActionFunctionArgs) {
           );
         }
         res = await placeOrder(formData, request, context);
-        // console.log("orderPlacedResponseFInal", res);
-        const shopifyID = res?.shopifyOrderId ? '/' + res?.shopifyOrderId : '';
+        console.log("orderPlacedResponseFInal", res);
+        if (res?.shopifyOrderId) {
+          const shopifyID = res?.shopifyOrderId ? '/' + res?.shopifyOrderId : '';
 
-        setSuccessMessage(messageSession, 'Order placed successfully');
-        return redirect(Routes.ORDER_SUCCESSFUL + shopifyID, {
-          headers: [
-            ['Set-Cookie', await context.session.commit({})],
-            ['Set-Cookie', await messageCommitSession(messageSession)],
-          ],
-        });
+          setSuccessMessage(messageSession, 'Order placed successfully');
+          return redirect(Routes.ORDER_SUCCESSFUL + shopifyID, {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          });
+        }
       } catch (error) {
         if (error instanceof Error) {
           // console.log('this is err', error?.message);
