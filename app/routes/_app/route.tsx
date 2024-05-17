@@ -114,14 +114,18 @@ export default function PublicPageLayout() {
   } = useLoaderData<typeof loader>();
 
   const submit = useSubmit();
-  // let cartCount = sessionCartInfo?.lineItems ?? 0;
-  // const wishlistCount = wishlistSession ?? 0;
+  let cartCount = sessionCartInfo?.lineItems ?? 0;
+  let wishlistCount = wishlistSession ?? 0;
   const [ability, setAbility] = useState(DEFAULT_ABILITIES);
-  const [cartCount, setCartCount] = useState(sessionCartInfo?.lineItems | 0);
-  const [wishlistCount, setWishlistCount] = useState(wishlistSession | 0);
+
   const [pendingOrderCounts, setPendingOrderCounts] = useState(
     pendingOrderCount | 0,
   );
+
+  //Here this is for pending order count when sse hit
+  useEffect(() => {
+    setPendingOrderCounts(pendingOrderCount);
+  }, [pendingOrderCount]);
 
   function getUserAbilities(roleData: any) {
     // if (roleData.value === 'admin-service-provider') {
@@ -174,19 +178,21 @@ export default function PublicPageLayout() {
   useEffect(() => {
     if (typeof hasNotificationBeenUpdated === 'string') {
       const parsedData = JSON.parse(hasNotificationBeenUpdated) as {
-        permissionData: {
+        notificationData: {
           payload: Payload;
         };
       };
+      console.log(parsedData);
 
       const {type, totalNumber, customerId, companyId} =
-        parsedData.permissionData.payload;
+        parsedData.notificationData.payload;
       const currentUrl = window.location.pathname; // Capture the current URL
 
       const handlers: Handlers = {
         cart: () => {
           if (userDetails.id === customerId) {
-            setCartCount(totalNumber);
+            cartCount = totalNumber;
+            // setCartCount(totalNumber);
             submit(
               {returnUrl: currentUrl, type, totalNumber},
               {method: 'GET', action: '/update-notifications-session'},
@@ -195,15 +201,17 @@ export default function PublicPageLayout() {
         },
         wishlist: () => {
           if (userDetails?.meta.company_id.value === companyId) {
-            setWishlistCount(totalNumber);
+            wishlistCount = totalNumber;
+            // setWishlistCount(totalNumber);
             submit(
-              {returnUrl: currentUrl, type ,totalNumber},
+              {returnUrl: currentUrl, type, totalNumber},
               {method: 'GET', action: '/update-notifications-session'},
             );
           }
         },
         pendingOrder: () => {
           if (userDetails?.meta.company_id.value === companyId) {
+            // pendingOrderCounts = totalNumber;
             setPendingOrderCounts(totalNumber);
           }
         },
