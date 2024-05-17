@@ -33,3 +33,9 @@ export const Permission_API_Credential = {
   headerValue: 'iFaXBRJ6HzfoNgOLmtwKudAVHyIfsYrRtNMxFZ7PI4M=',
   url: 'https://cig-backend.webo.dev',
 };
+
+export const Notification_API_Credential = {
+  headerKey: 'X-Shopify-Notification-Token',
+  headerValue: 'iFaXBRJ6HzfoNgOLmtwKudAVHyIfsYrRtNMxFZ7PI4M=',
+  url: 'https://cig-backend.webo.dev',
+};
