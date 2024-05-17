@@ -177,6 +177,7 @@ const ProductDetailsSection = ({
               <Compare />
             </Link>
           </li>
+          <Can I="view" a="add_to_wishlist">
           <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]">
             <Form method={isFavorited ? 'DELETE' : 'POST'} className="flex">
               <input type="hidden" name="productId" value={productId} />
@@ -188,6 +189,7 @@ const ProductDetailsSection = ({
               </button>
             </Form>
           </li>
+          </Can>
         </ul>
       </div>
       <h3 className="pt-4">{productName}</h3>
