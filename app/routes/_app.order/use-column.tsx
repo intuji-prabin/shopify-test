@@ -9,6 +9,7 @@ import {Routes} from '~/lib/constants/routes.constent';
 import {formatDateToLocaleDateString} from '~/lib/helpers/dateTime.helper';
 import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
 import {OrderStatusChip} from '~/components/ui/order-status-chip';
+import {Can} from '~/lib/helpers/Can';
 
 export function useColumn() {
   const columns = useMemo<ColumnDef<Order>[]>(
@@ -123,17 +124,19 @@ export function useColumn() {
                   <EyeOn />
                 </Button>
               </Link>
-              <Button
-                size="icon"
-                variant={
-                  fetcher.state === 'submitting' || fetcher.state !== 'idle'
-                    ? 'disabled'
-                    : 'icon'
-                }
-                onClick={handleReOrder}
-              >
-                <ReOrder />
-              </Button>
+              <Can I="view" a="reorder_order">
+                <Button
+                  size="icon"
+                  variant={
+                    fetcher.state === 'submitting' || fetcher.state !== 'idle'
+                      ? 'disabled'
+                      : 'icon'
+                  }
+                  onClick={handleReOrder}
+                >
+                  <ReOrder />
+                </Button>
+              </Can>
             </div>
           );
         },
