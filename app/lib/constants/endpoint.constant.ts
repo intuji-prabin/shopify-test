@@ -69,4 +69,7 @@ export const ENDPOINT = {
     GET_INVOCIE_DETAIL: `${BASE_URL}/invoice`,
     EXPORT: `${BASE_URL}/download/invoice`,
   },
+  NOTIFICATIONS: {
+    GET: `${BASE_URL}/notifications`,
+  },
 };
