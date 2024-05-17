@@ -25,10 +25,6 @@ export const promoCodeApply = async (
       quantity: item.quantity,
     };
   });
-  console.log('finalCartList', {
-    productList: finalCartList,
-    promoCode: promoCode,
-  });
   const promoCodeResponse = await useFetch<any>({
     method: AllowedHTTPMethods.POST,
     url: `${ENDPOINT.PROMO_CODE.POST}/${customerId}`,

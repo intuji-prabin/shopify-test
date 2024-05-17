@@ -152,18 +152,22 @@ export function TextArea() {
     </div>
   );
 }
-export function PromoCode({ data, setPromoCode, promoCode }: { data: { status: boolean }, setPromoCode: React.Dispatch<React.SetStateAction<string>>, promoCode: string }) {
+export function PromoCode({ data, setPromoCode, promoCode, promoCodeApplied }: { data: { status: boolean, message: string }, setPromoCode: React.Dispatch<React.SetStateAction<string>>, promoCode: string, promoCodeApplied: string }) {
   const submit = useSubmit();
-  const [activatePromo, setActivatePromo] = useState(false);
-  function handleActivatePromoCode() {
-    setActivatePromo(!activatePromo);
-  }
+  // const [activatePromo, setActivatePromo] = useState(false);
+  // function handleActivatePromoCode() {
+  //   setActivatePromo(!activatePromo);
+  // }
+  // console.log("promoCode", promoCode);
+  // console.log("activatePromo", activatePromo);
+  console.log("data", data)
+  console.log("data?.status", !!data?.status);
   return (
     <div className="flex flex-col gap-1">
       <p className="text-base text-normal leading-[21px] text-grey-800">
         Do you have any promocode?
       </p>
-      <Form method="POST" onSubmit={(event) => {
+      {/* <Form method="POST" onSubmit={(event) => {
         submit(event.currentTarget);
         handleActivatePromoCode();
       }}>
@@ -177,14 +181,14 @@ export function PromoCode({ data, setPromoCode, promoCode }: { data: { status: b
             onChange={(e) => setPromoCode(e?.target?.value)}
             required
           />
-          {activatePromo ? (
+          {promoCode || activatePromo ? (
             <Button
               variant="secondary"
               className="min-w-[99px]"
               type='button'
               onClick={() => {
-                setPromoCode("");
                 handleActivatePromoCode();
+                setPromoCode("");
               }}
             >
               Remove
@@ -196,32 +200,83 @@ export function PromoCode({ data, setPromoCode, promoCode }: { data: { status: b
               type='submit'
               value="promo_code"
               name="action"
-              onClick={() => console.log("I am clicked")}
             >
               Apply
             </Button>)
           }
         </div>
-      </Form>
-      {data && promoCode && (
-        <div className="flex">
-          {activatePromo && data?.status ? (
+      </Form> */}
+      {promoCodeApplied || !!data?.status ? (
+        <Form method="DELETE" onSubmit={(event) => {
+          submit(event.currentTarget);
+          setPromoCode("");
+        }}>
+          <div className="flex flex-col w-full gap-2 sm:flex-row">
+            <input
+              type="text"
+              className={`grow`}
+              placeholder="Enter promo code here"
+              name='promoCode'
+              value={promoCode}
+              onChange={(e) => setPromoCode(e?.target?.value)}
+            />
+            <Button
+              variant="secondary"
+              className="min-w-[99px]"
+              type='submit'
+              value="promo_code_delete"
+              name="action"
+            >
+              Remove
+            </Button>
+          </div>
+        </Form>
+      ) : (
+        <Form method="POST" onSubmit={(event) => {
+          submit(event.currentTarget);
+        }}>
+          <div className="flex flex-col w-full gap-2 sm:flex-row">
+            <input
+              type="text"
+              className={`grow`}
+              placeholder="Enter promo code here"
+              name='promoCode'
+              value={promoCode}
+              onChange={(e) => setPromoCode(e?.target?.value)}
+              required
+            />
+            <Button
+              variant="secondary"
+              className="min-w-[99px]"
+              type='submit'
+              value="promo_code"
+              name="action"
+            >
+              Apply
+            </Button>
+          </div>
+        </Form>
+      )}
+      {promoCodeApplied && <p className="bg-semantic-success-100 uppercase text-xs py-1 px-2.5 font-semibold w-max">Discount already applied</p>}
+      {/* {!!data && (
+        <div className='flex'>
+          {data?.status ? (
             <>
               <Tick width="20px" height="20px" fillColor="#3BBA53" />
               <p className="text-semantic-success-500 font-normal leading-5 text-[14px] items-center">
-                Promo code activated
+                {data?.message}
               </p>
             </>
           ) : (
             <>
               <DangerAlert />
               <p className="text-semantic-danger-500 font-normal leading-5 text-[14px] items-center">
-                Promo code incorrect
+                {data?.message}
               </p>
             </>
           )}
         </div>
-      )}
+      )} */}
     </div>
   );
 }

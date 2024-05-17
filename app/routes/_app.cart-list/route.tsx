@@ -37,6 +37,7 @@ import MyProducts from './order-my-products/cart-myproduct';
 import { placeOrder } from './order-place.server';
 import OrderSummary from './order-summary/cart-order-summary';
 import { promoCodeApply } from './promoCode.server';
+import { promoCodeRemove } from './promoCodeRemove.server';
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
@@ -107,7 +108,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
             console.log("res", res)
             setSuccessMessage(messageSession, res?.message);
             return json(
-              { status: res?.status },
+              { status: res?.status, message: res?.message },
               {
                 headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
               },
@@ -116,10 +117,11 @@ export async function action({ request, context }: ActionFunctionArgs) {
         }
       } catch (error) {
         if (error instanceof Error) {
+          console.log("apply error", error)
           // console.log('this is err', error?.message);
           setErrorMessage(messageSession, error?.message);
           return json(
-            { status: res?.status },
+            { status: false, message: error?.message },
             {
               headers: [
                 ['Set-Cookie', await context.session.commit({})],
@@ -134,7 +136,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           'Order not placed to some issue. Please try again later.',
         );
         return json(
-          { status: res?.status },
+          { status: res?.status, message: res?.message },
           {
             headers: [
               ['Set-Cookie', await context.session.commit({})],
@@ -145,23 +147,42 @@ export async function action({ request, context }: ActionFunctionArgs) {
       }
     case 'DELETE':
       try {
-        res = await removeItemFromCart(context, request);
-        setSuccessMessage(messageSession, 'Order deleted successfully');
-        return json(
-          {},
-          {
-            headers: [
-              ['Set-Cookie', await context.session.commit({})],
-              ['Set-Cookie', await messageCommitSession(messageSession)],
-            ],
-          },
-        );
+        const formData = await request.formData();
+        switch (formData.get("action")) {
+          case 'order_delete': {
+            res = await removeItemFromCart(formData, context, request);
+            setSuccessMessage(messageSession, 'Order deleted successfully');
+            return json(
+              {},
+              {
+                headers: [
+                  ['Set-Cookie', await context.session.commit({})],
+                  ['Set-Cookie', await messageCommitSession(messageSession)],
+                ],
+              },
+            );
+          }
+          case 'promo_code_delete': {
+            console.log("first_promo_code_delete");
+            res = await promoCodeRemove(request);
+            setSuccessMessage(messageSession, res?.message);
+            return json(
+              { status: false, message: res?.message },
+              {
+                headers: [
+                  ['Set-Cookie', await context.session.commit({})],
+                  ['Set-Cookie', await messageCommitSession(messageSession)],
+                ],
+              },
+            );
+          }
+        }
       } catch (error) {
         if (error instanceof Error) {
           // console.log('this is err', error?.message);
           setErrorMessage(messageSession, error?.message);
           return json(
-            {},
+            { status: false, message: error?.message },
             {
               headers: [
                 ['Set-Cookie', await context.session.commit({})],
@@ -265,6 +286,7 @@ export default function CartList() {
   const [placeOrder, setPlaceOrder] = useState(result);
 
   const data = useActionData<any>();
+  console.log("data", data)
   return (
     <>
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />

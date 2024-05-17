@@ -1,5 +1,4 @@
-// const BASE_URL = 'https://cig-backend.webo.dev/api';
-const BASE_URL = 'https://stage-missouri-volvo-rose.trycloudflare.com/api';
+const BASE_URL = 'https://cig-backend.webo.dev/api';
 
 export const ENDPOINT = {
   AUTH: {

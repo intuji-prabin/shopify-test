@@ -99,6 +99,7 @@ export default function MyProducts({
                               item.original.id,
                             ),
                           );
+                        formData.append('action', 'order_delete')
                         fetcher.submit(formData, { method: 'DELETE' });
                         table.resetRowSelection();
                         setOpen(false);

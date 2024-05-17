@@ -6,7 +6,7 @@ export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, frei
 
   return (
     <div className="flex flex-col gap-4 p-6 border-b order border-grey-50">
-      <PromoCode data={data} setPromoCode={setPromoCode} promoCode={promoCode} />
+      <PromoCode data={data} setPromoCode={setPromoCode} promoCode={promoCode} promoCodeApplied={promoCodeApplied} />
       <h3 className="font-bold leading-[29px] text-2xl capi">
         YOUR ORDER SUMMARY
       </h3>
