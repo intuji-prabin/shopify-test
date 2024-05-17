@@ -7,6 +7,8 @@ import {getUserDetails} from '~/lib/utils/user-session.server';
 import {GET_CART_LIST} from '../_app.cart-list/cart.server';
 import {useFormatCart} from '~/hooks/useFormatCart';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {emitter3} from '~/lib/utils/emitter.server';
+import {EVENTS} from '~/lib/constants/events.contstent';
 
 export interface relatedProductsType {
   productId: string;
@@ -192,6 +194,8 @@ export const addProductToCart = async (
   request: any,
   cartItems = [],
 ) => {
+  const {userDetails} = await getUserDetails(request);
+
   // console.log('cartInfo', cartInfo);
   if (cartItems.length < 0) {
     if (!cartInfo.productId) {
@@ -219,7 +223,6 @@ export const addProductToCart = async (
       cartInfo,
       cartItems,
     );
-    console.log('cartSetInfo', cartSetInfo);
     const finalCartSet = useFormatCart(cartSetInfo);
     session.set(CART_SESSION_KEY, finalCartSet);
     const storeCartId = await storeCartIdOnBackend(
@@ -241,8 +244,16 @@ export const addProductToCart = async (
   const cartLists = await context.storefront.query(GET_CART_LIST, {
     variables: {cartId: sessionCartInfo?.cartId},
   });
+
   // console.log('asfsfwerewr cartLists ', cartLists);
   // console.log('asfsfwerewr cartListssss nodes ', cartLists?.cart?.lines?.nodes);
+  emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
+    payload: {
+      type: 'cart',
+      totalNumber: finalCartLine.lineItems,
+      customerId: userDetails.id,
+    },
+  });
   return true;
 };
 
