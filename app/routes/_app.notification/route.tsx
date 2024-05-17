@@ -1,13 +1,11 @@
-import {NavLink, Outlet, json, useLoaderData} from '@remix-run/react';
-import NotificationPage from './notifications';
-import {news} from './sections/notification';
+import {NavLink, Outlet, useLocation} from '@remix-run/react';
 import {BackButton} from '~/components/ui/back-button';
-import ClearAllDialouge from './sections/clear-all-dialouge-box';
+import ClearAllDialouge from './clear-all-dialouge-box';
 import {Routes} from '~/lib/constants/routes.constent';
 import {Separator} from '~/components/ui/separator';
 import {Button} from '~/components/ui/button';
-
-//Type Definitions for the Notification Page
+import {LoaderFunctionArgs} from '@remix-run/server-runtime';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 
 export type NotificationListItem = {
   id: string;
@@ -28,27 +26,26 @@ const routes = [
   },
 ];
 
-async function getNotificationItems() {
-  return news;
+export async function loader({context}: LoaderFunctionArgs) {
+  await isAuthenticate(context);
+  return null;
 }
-export const loader = async () => {
-  const items = await getNotificationItems();
-  return json({items});
-};
+
 export default function route() {
-  const {items} = useLoaderData<typeof loader>();
+  const location = useLocation();
+
   return (
     <section className="container">
       <div className="flex items-center justify-between">
         <BackButton title="Notifications" />
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <p className="text-lg font-bold leading-[22px] text-grey-900 italic">
             {news?.length === 1 ? '1 item ' : `${news.length} items `}
           </p>
           <div className="remove-dialogue">
             <ClearAllDialouge handleRemoveAllItems={() => {}} />
           </div>
-        </div>
+        </div> */}
       </div>
       <div className="relative p-6 mt-6 bg-neutral-white">
         <div className="flex justify-between items-center">
@@ -69,13 +66,15 @@ export default function route() {
               </NavLink>
             ))}
           </div>
-          <Button
-            type="button"
-            variant="link"
-            className="before:!bottom-1.5 !px-1"
-          >
-            mark all as read
-          </Button>
+          {location.pathname === Routes.NOTIFICATIONS_NEW && (
+            <Button
+              type="button"
+              variant="link"
+              className="before:!bottom-1.5 !px-1"
+            >
+              mark all as read
+            </Button>
+          )}
         </div>
         <Separator className="mb-6" />
         <Outlet />
