@@ -118,6 +118,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           messageSession,
           'Order not placed to some issue. Please try again later.',
         );
+        
         return json(
           {},
           {
@@ -131,7 +132,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
     case 'DELETE':
       try {
         res = await removeItemFromCart(context, request);
-        setSuccessMessage(messageSession, 'Order deleted successfully');
+        // setSuccessMessage(messageSession, 'Order deleted successfully');
         return json(
           {},
           {

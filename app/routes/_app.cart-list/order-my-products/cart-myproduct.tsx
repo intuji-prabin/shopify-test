@@ -39,6 +39,8 @@ export default function MyProducts({
 
   const submit = useSubmit();
 
+  
+
   return (
     <div className="relative flex flex-col w-full bg-white xl:w-[calc(100%_-_435px)]">
       <div className="flex justify-between sm:items-center my-[30px] flex-col gap-4 sm:flex-row sm:gap-0 items-baseline uppercase mx-6">

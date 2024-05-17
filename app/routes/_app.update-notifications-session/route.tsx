@@ -24,7 +24,6 @@ export async function loader({request, context}: ActionFunctionArgs) {
     } else
      if (type === 'wishlist') {
       // if(sessionWishlistInfo){
-        console.log("totalNumber", totalNumber);
         await context.session.set(WISHLIST_SESSION_KEY, totalNumber);
         headers.push(['Set-Cookie', await context.session.commit({})]);
       // }
