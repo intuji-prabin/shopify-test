@@ -44,6 +44,16 @@ import StorageService from '~/services/storage.service';
 import {emitter} from '~/lib/utils/emitter.server';
 import {ro} from 'date-fns/locale';
 
+interface Payload {
+  type: 'cart' | 'wishlist' | 'pendingOrder' | 'notification';
+  totalNumber: number;
+  companyId: string;
+  customerId: string;
+}
+
+interface Handlers {
+  [key: string]: () => void;
+}
 interface Data {
   customerId: string;
   message: string;
@@ -53,7 +63,6 @@ interface Data {
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
   const {userDetails} = await getUserDetails(request);
-
   const sessionData = await getSessionData(userDetails, context);
   const categories = await getCagetoryList(context);
   const messageSession = await getMessageSession(request);
@@ -105,10 +114,14 @@ export default function PublicPageLayout() {
   } = useLoaderData<typeof loader>();
 
   const submit = useSubmit();
-  const cartCount = sessionCartInfo?.lineItems ?? 0;
-  const wishlistCount = wishlistSession ?? 0;
+  // let cartCount = sessionCartInfo?.lineItems ?? 0;
+  // const wishlistCount = wishlistSession ?? 0;
   const [ability, setAbility] = useState(DEFAULT_ABILITIES);
-  const [loading, setLoading] = useState(true);
+  const [cartCount, setCartCount] = useState(sessionCartInfo?.lineItems | 0);
+  const [wishlistCount, setWishlistCount] = useState(wishlistSession | 0);
+  const [pendingOrderCounts, setPendingOrderCounts] = useState(
+    pendingOrderCount | 0,
+  );
 
   function getUserAbilities(roleData: any) {
     // if (roleData.value === 'admin-service-provider') {
@@ -125,7 +138,7 @@ export default function PublicPageLayout() {
 
     const userAbility = getUserAbilities(roleData);
     setAbility(userAbility);
-    setLoading(false);
+    // setLoading(false);
   }, [userDetails]);
 
   const userData = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
@@ -151,17 +164,62 @@ export default function PublicPageLayout() {
     },
   );
 
-  // useEffect(() => {
-  //   console.log("hasPermissionBeenUpdated",hasPermissionBeenUpdated);
-  //   if (hasPermissionBeenUpdated !== null) {
-  //     let currentUrl = window.location.pathname; // Capture the current URL
+  const hasNotificationBeenUpdated = useEventSource(
+    Routes.NOTIFICATIONS_SUBSCRIBE,
+    {
+      event: EVENTS.NOTIFICATIONS_UPDATED.NAME,
+    },
+  );
 
-  //     submit(
-  //       {returnUrl: currentUrl},
-  //       {method: 'GET', action: '/update-user-session'},
-  //     );
-  //   }
-  // }, [hasPermissionBeenUpdated]);
+  useEffect(() => {
+    if (typeof hasNotificationBeenUpdated === 'string') {
+      const parsedData = JSON.parse(hasNotificationBeenUpdated) as {
+        permissionData: {
+          payload: Payload;
+        };
+      };
+
+      const {type, totalNumber, customerId, companyId} =
+        parsedData.permissionData.payload;
+      const currentUrl = window.location.pathname; // Capture the current URL
+
+      const handlers: Handlers = {
+        cart: () => {
+          if (userDetails.id === customerId) {
+            setCartCount(totalNumber);
+            submit(
+              {returnUrl: currentUrl, type, totalNumber},
+              {method: 'GET', action: '/update-notifications-session'},
+            );
+          }
+        },
+        wishlist: () => {
+          if (userDetails?.meta.company_id.value === companyId) {
+            setWishlistCount(totalNumber);
+            submit(
+              {returnUrl: currentUrl, type ,totalNumber},
+              {method: 'GET', action: '/update-notifications-session'},
+            );
+          }
+        },
+        pendingOrder: () => {
+          if (userDetails?.meta.company_id.value === companyId) {
+            setPendingOrderCounts(totalNumber);
+          }
+        },
+        notification: () => {
+          if (userDetails?.meta.company_id.value === companyId) {
+            // Update notification here
+          }
+        },
+      };
+
+      const handler = handlers[type];
+      if (handler) {
+        handler();
+      }
+    }
+  }, [hasNotificationBeenUpdated]);
 
   useEffect(() => {
     // Extract the user role from userDetails
@@ -206,35 +264,6 @@ export default function PublicPageLayout() {
     }
   }, [hasPermissionBeenUpdated]);
 
-  //this is for real time role changes in the login user
-
-  // const data = useEventSource(Routes.PERMISSIONS_SUBSCRIBE, {
-  //   event: EVENTS.PERMISSIONS_UPDATED.NAME,
-  // });
-
-  // useEffect(() => {
-  //   // revalidate()
-  //   if (data !== null) {
-  //     let currentUrl = window.location.pathname; // Capture the current URL
-  //     const dataObject = JSON.parse(data) as Data;
-  //     console.log("dataObject",dataObject);
-  //     if (dataObject.email === userDetails.email) {
-  //       submit(
-  //         {returnUrl: currentUrl},
-  //         {method: 'GET', action: '/update-user-session'},
-  //       );
-  //     }
-  //     else if(!dataObject.email){
-  //       submit(
-  //         {returnUrl: currentUrl},
-  //         {method: 'GET', action: '/update-user-session'},
-  //       );
-  //     }
-
-  //   }
-  //   // revalidate()
-  // }, [data]);
-
   return (
     <AbilityContext.Provider value={ability}>
       <Layout
@@ -242,7 +271,7 @@ export default function PublicPageLayout() {
         cartCount={cartCount}
         userDetails={userDetails}
         wishlistCount={wishlistCount}
-        pedingOrderCount={pendingOrderCount}
+        pedingOrderCount={pendingOrderCounts}
       >
         <Outlet />
       </Layout>
