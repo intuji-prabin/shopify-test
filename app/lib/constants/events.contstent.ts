@@ -7,4 +7,8 @@ export const EVENTS = {
     KEY: 'permissions',
     NAME: 'permissions-event',
   },
+  NOTIFICATIONS_UPDATED: {
+    KEY: 'notifications',
+    NAME: 'notifications-event',
+  },
 };
