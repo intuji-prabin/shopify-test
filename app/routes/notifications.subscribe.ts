@@ -19,8 +19,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // to ensure it persists across page loads
   return eventStream(request.signal, function setup(send) {
     
-    const handle = (permissionData: object) => {
-      const eventData = JSON.stringify({ permissionData, date: Date.now() });
+    const handle = (notificationData: object) => {
+      const eventData = JSON.stringify({ notificationData, date: Date.now() });
       // send({ event: EVENTS.PERMISSIONS_UPDATED.NAME, data: String(Date.now()) });
       send({ event: EVENTS.NOTIFICATIONS_UPDATED.NAME, data: eventData });
 
