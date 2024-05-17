@@ -1,7 +1,7 @@
 // routes/permissions-subscribe.ts
 
 import { LoaderFunctionArgs, json} from '@remix-run/server-runtime';
-import {  emitter2 } from '~/lib/utils/emitter.server';
+import { emitter3 } from '~/lib/utils/emitter.server';
 import { EVENTS } from '~/lib/constants/events.contstent';
 import { eventStream } from 'remix-utils/sse/server';
 
@@ -19,36 +19,23 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // to ensure it persists across page loads
   return eventStream(request.signal, function setup(send) {
     
-    const handle = (permissionData: object) => {
-      const eventData = JSON.stringify({ permissionData, date: Date.now() });
+    const handle = (notificationData: object) => {
+      const eventData = JSON.stringify({ notificationData, date: Date.now() });
       // send({ event: EVENTS.PERMISSIONS_UPDATED.NAME, data: String(Date.now()) });
-      send({ event: EVENTS.PERMISSIONS_UPDATED.NAME, data: eventData });
+      send({ event: EVENTS.NOTIFICATIONS_UPDATED.NAME, data: eventData });
 
     };
 
-    emitter2.addListener(EVENTS.PERMISSIONS_UPDATED.KEY, handle);
+    emitter3.addListener(EVENTS.NOTIFICATIONS_UPDATED.KEY, handle);
 
     // Remove the event listener when the event stream is closed
     return () => {
-      emitter2.removeListener(EVENTS.PERMISSIONS_UPDATED.KEY, handle);
+      emitter3.removeListener(EVENTS.NOTIFICATIONS_UPDATED.KEY, handle);
     };
   });
 }
 
-// export async function loader({request}: LoaderFunctionArgs) {
-//   return eventStream(request.signal, function setup(send) {
-//     function handle(permissionData: object) {
-//       const permissionDataString = JSON.stringify(permissionData);
-//       send({event: EVENTS.PERMISSIONS_UPDATED.NAME, data: permissionDataString});
-//     }
 
-//     emitter2.on(EVENTS.PERMISSIONS_UPDATED.KEY, handle);
-
-//     return function clear() {
-//       emitter2.off(EVENTS.PERMISSIONS_UPDATED.KEY, handle);
-//     };
-//   });
-// }
 
 
 

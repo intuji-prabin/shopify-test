@@ -34,8 +34,14 @@ type ResponseData = {
   payload: OrderDetails;
 };
 
-export async function getOrdersProductDetails({orderId}: {orderId: string}) {
-  const url = `${ENDPOINT.ORDERS.GET_ORDER_DETAIL}/${orderId}`;
+export async function getOrdersProductDetails({
+  orderId,
+  customerId,
+}: {
+  orderId: string;
+  customerId: string;
+}) {
+  const url = `${ENDPOINT.ORDERS.GET_ORDER_DETAIL}/${customerId}/${orderId}`;
   try {
     const results = await useFetch<ResponseData>({
       method: AllowedHTTPMethods.GET,

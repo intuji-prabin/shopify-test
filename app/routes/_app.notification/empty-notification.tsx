@@ -1,6 +1,6 @@
 import {LargeMailIcon} from '~/components/icons/mail';
 
-export default function NotificationClear() {
+export default function EmptyNotification() {
   return (
     <>
       <div className="flex">

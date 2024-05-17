@@ -16,7 +16,8 @@ import {OrderBreadcrumb} from '~/routes/_app.order_.$orderId/order-breadcrumb';
 import OrderNumberDetails from '~/routes/_app.order_.$orderId/order-number-details';
 import {getOrdersProductDetails} from '~/routes/_app.order_.$orderId/order-details.server';
 import {Separator} from '~/components/ui/separator';
-import { Can } from '~/lib/helpers/Can';
+import {Can} from '~/lib/helpers/Can';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Order Details'}];
@@ -25,9 +26,14 @@ export const meta: MetaFunction = () => {
 export async function loader({context, request, params}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
+  const {userDetails} = await getUserDetails(request);
+  const customerId = userDetails.id;
   const orderId = params.orderId as string;
 
-  const ordersProductDetailsPromise = getOrdersProductDetails({orderId});
+  const ordersProductDetailsPromise = getOrdersProductDetails({
+    orderId,
+    customerId,
+  });
 
   return defer({orderId, ordersProductDetails: ordersProductDetailsPromise});
 }
@@ -54,7 +60,7 @@ export default function OrderDetailPage() {
 
               const {columns} = useColumn({prefixWithCurrency});
 
-              orderProductDetails
+              orderProductDetails;
               return (
                 <>
                   <DeferDataTable
@@ -74,43 +80,44 @@ export default function OrderDetailPage() {
                       </p>
                     </article>
                     <Can I="view" a="view_tracked_order_price">
-
-                    <table className="w-48">
-                      <tr>
-                        <th className="text-left">Subtotal</th>
-                        <td>
-                          {prefixWithCurrency(orderProductDetails.subTotal)}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th className="text-left">Freight</th>
-                        <td>
-                          {prefixWithCurrency(orderProductDetails.freight)}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th className="text-left">Surcharges</th>
-                        <td>
-                          {prefixWithCurrency(orderProductDetails.surCharges)}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th className="text-left"> Total Excl GST</th>
-                        <td>
-                          {prefixWithCurrency(orderProductDetails.totalExclGst)}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th className="text-left">GST</th>
-                        <td>{prefixWithCurrency(orderProductDetails.gst)}</td>
-                      </tr>
-                      <tr className="leading-7.5 text-[22px]">
-                        <th className="text-left">Total</th>
-                        <td className="font-bold text-primary-500">
-                          {prefixWithCurrency(orderProductDetails.totalPrice)}
-                        </td>
-                      </tr>
-                    </table>
+                      <table className="w-48">
+                        <tr>
+                          <th className="text-left">Subtotal</th>
+                          <td>
+                            {prefixWithCurrency(orderProductDetails.subTotal)}
+                          </td>
+                        </tr>
+                        <tr>
+                          <th className="text-left">Freight</th>
+                          <td>
+                            {prefixWithCurrency(orderProductDetails.freight)}
+                          </td>
+                        </tr>
+                        <tr>
+                          <th className="text-left">Surcharges</th>
+                          <td>
+                            {prefixWithCurrency(orderProductDetails.surCharges)}
+                          </td>
+                        </tr>
+                        <tr>
+                          <th className="text-left"> Total Excl GST</th>
+                          <td>
+                            {prefixWithCurrency(
+                              orderProductDetails.totalExclGst,
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <th className="text-left">GST</th>
+                          <td>{prefixWithCurrency(orderProductDetails.gst)}</td>
+                        </tr>
+                        <tr className="leading-7.5 text-[22px]">
+                          <th className="text-left">Total</th>
+                          <td className="font-bold text-primary-500">
+                            {prefixWithCurrency(orderProductDetails.totalPrice)}
+                          </td>
+                        </tr>
+                      </table>
                     </Can>
                   </div>
                 </>

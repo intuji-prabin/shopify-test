@@ -44,6 +44,16 @@ import StorageService from '~/services/storage.service';
 import {emitter} from '~/lib/utils/emitter.server';
 import {ro} from 'date-fns/locale';
 
+interface Payload {
+  type: 'cart' | 'wishlist' | 'pendingOrder' | 'notification';
+  totalNumber: number;
+  companyId: string;
+  customerId: string;
+}
+
+interface Handlers {
+  [key: string]: () => void;
+}
 interface Data {
   customerId: string;
   message: string;
@@ -53,7 +63,6 @@ interface Data {
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
   const {userDetails} = await getUserDetails(request);
-
   const sessionData = await getSessionData(userDetails, context);
   const categories = await getCagetoryList(context);
   const messageSession = await getMessageSession(request);
@@ -105,16 +114,24 @@ export default function PublicPageLayout() {
   } = useLoaderData<typeof loader>();
 
   const submit = useSubmit();
-  const cartCount = sessionCartInfo?.lineItems ?? 0;
-  const wishlistCount = wishlistSession ?? 0;
+  let cartCount = sessionCartInfo?.lineItems ?? 0;
+  let wishlistCount = wishlistSession ?? 0;
   const [ability, setAbility] = useState(DEFAULT_ABILITIES);
-  const [loading, setLoading] = useState(true);
+
+  const [pendingOrderCounts, setPendingOrderCounts] = useState(
+    pendingOrderCount | 0,
+  );
+
+  //Here this is for pending order count when sse hit
+  useEffect(() => {
+    setPendingOrderCounts(pendingOrderCount);
+  }, [pendingOrderCount]);
 
   function getUserAbilities(roleData: any) {
     // if (roleData.value === 'admin-service-provider') {
     //   return defineAbilitiesForAdmin();
     // } else {
-      return defineAbilitiesForUser(roleData.permission);
+    return defineAbilitiesForUser(roleData.permission);
     // }
   }
 
@@ -125,7 +142,7 @@ export default function PublicPageLayout() {
 
     const userAbility = getUserAbilities(roleData);
     setAbility(userAbility);
-    setLoading(false);
+    // setLoading(false);
   }, [userDetails]);
 
   const userData = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
@@ -151,17 +168,66 @@ export default function PublicPageLayout() {
     },
   );
 
-  // useEffect(() => {
-  //   console.log("hasPermissionBeenUpdated",hasPermissionBeenUpdated);
-  //   if (hasPermissionBeenUpdated !== null) {
-  //     let currentUrl = window.location.pathname; // Capture the current URL
+  const hasNotificationBeenUpdated = useEventSource(
+    Routes.NOTIFICATIONS_SUBSCRIBE,
+    {
+      event: EVENTS.NOTIFICATIONS_UPDATED.NAME,
+    },
+  );
 
-  //     submit(
-  //       {returnUrl: currentUrl},
-  //       {method: 'GET', action: '/update-user-session'},
-  //     );
-  //   }
-  // }, [hasPermissionBeenUpdated]);
+  useEffect(() => {
+    if (typeof hasNotificationBeenUpdated === 'string') {
+      const parsedData = JSON.parse(hasNotificationBeenUpdated) as {
+        notificationData: {
+          payload: Payload;
+        };
+      };
+      console.log(parsedData);
+
+      const {type, totalNumber, customerId, companyId} =
+        parsedData.notificationData.payload;
+      const currentUrl = window.location.pathname; // Capture the current URL
+
+      const handlers: Handlers = {
+        cart: () => {
+          if (userDetails.id === customerId) {
+            cartCount = totalNumber;
+            // setCartCount(totalNumber);
+            submit(
+              {returnUrl: currentUrl, type, totalNumber},
+              {method: 'GET', action: '/update-notifications-session'},
+            );
+          }
+        },
+        wishlist: () => {
+          if (userDetails?.meta.company_id.value === companyId) {
+            wishlistCount = totalNumber;
+            // setWishlistCount(totalNumber);
+            submit(
+              {returnUrl: currentUrl, type, totalNumber},
+              {method: 'GET', action: '/update-notifications-session'},
+            );
+          }
+        },
+        pendingOrder: () => {
+          if (userDetails?.meta.company_id.value === companyId) {
+            // pendingOrderCounts = totalNumber;
+            setPendingOrderCounts(totalNumber);
+          }
+        },
+        notification: () => {
+          if (userDetails?.meta.company_id.value === companyId) {
+            // Update notification here
+          }
+        },
+      };
+
+      const handler = handlers[type];
+      if (handler) {
+        handler();
+      }
+    }
+  }, [hasNotificationBeenUpdated]);
 
   useEffect(() => {
     // Extract the user role from userDetails
@@ -169,68 +235,42 @@ export default function PublicPageLayout() {
 
     // Check if hasPermissionBeenUpdated is a string
     if (typeof hasPermissionBeenUpdated === 'string') {
-        // Parse the string into an object
-        const parsedData = JSON.parse(hasPermissionBeenUpdated) as {
-            permissionData: {
-                payload: { user_role: string; permission: string[];};
-            };
+      // Parse the string into an object
+      const parsedData = JSON.parse(hasPermissionBeenUpdated) as {
+        permissionData: {
+          payload: {user_role: string; permission: string[]};
         };
+      };
 
-        // Extract role and permissions from parsedData
-        const eventUserRole = parsedData.permissionData.payload.user_role;
-        const eventUserRolePermissions = parsedData.permissionData.payload.permission;
+      // Extract role and permissions from parsedData
+      const eventUserRole = parsedData.permissionData.payload.user_role;
+      const eventUserRolePermissions = parsedData.permissionData.payload;
 
-        // If permissions are empty, logout the user
-        if (eventUserRolePermissions.length === 0) {
-            submit({}, { method: 'POST', action: '/logout' });
+      // If permissions are empty, logout the user
+      if (eventUserRolePermissions.permission.length === 0) {
+        submit({}, {method: 'POST', action: '/logout'});
+      }
+
+      // Check if the event role matches the user's role
+      if (eventUserRole === userRole?.value) {
+        // console.log('Permission has been updated');
+        let currentUrl = window.location.pathname; // Capture the current URL
+        if (currentUrl === '/login') {
+          currentUrl = '/';
         }
 
-        // Check if the event role matches the user's role
-        if (eventUserRole === userRole?.value) {
-            // console.log('Permission has been updated');
-            let currentUrl = window.location.pathname; // Capture the current URL
-            if(currentUrl === '/login'){
-                currentUrl = '/';
-            }
+        //Here ability is created from the event because to reroute the user if it is already in the page whose permission changes
+        const userAbility = getUserAbilities(eventUserRolePermissions);
+        setAbility(userAbility);
 
-            // Update user session with returnUrl
-            submit(
-                { returnUrl: currentUrl },
-                { method: 'GET', action: '/update-user-session' },
-            );
-        }
+        // Update user session with returnUrl
+        submit(
+          {returnUrl: currentUrl},
+          {method: 'GET', action: '/update-user-session'},
+        );
+      }
     }
-}, [hasPermissionBeenUpdated]);
-
-
-  //this is for real time role changes in the login user
-
-  // const data = useEventSource(Routes.PERMISSIONS_SUBSCRIBE, {
-  //   event: EVENTS.PERMISSIONS_UPDATED.NAME,
-  // });
-
-  // useEffect(() => {
-  //   // revalidate()
-  //   if (data !== null) {
-  //     let currentUrl = window.location.pathname; // Capture the current URL
-  //     const dataObject = JSON.parse(data) as Data;
-  //     console.log("dataObject",dataObject);
-  //     if (dataObject.email === userDetails.email) {
-  //       submit(
-  //         {returnUrl: currentUrl},
-  //         {method: 'GET', action: '/update-user-session'},
-  //       );
-  //     }
-  //     else if(!dataObject.email){
-  //       submit(
-  //         {returnUrl: currentUrl},
-  //         {method: 'GET', action: '/update-user-session'},
-  //       );
-  //     }
-
-  //   }
-  //   // revalidate()
-  // }, [data]);
+  }, [hasPermissionBeenUpdated]);
 
   return (
     <AbilityContext.Provider value={ability}>
@@ -239,7 +279,7 @@ export default function PublicPageLayout() {
         cartCount={cartCount}
         userDetails={userDetails}
         wishlistCount={wishlistCount}
-        pedingOrderCount={pendingOrderCount}
+        pedingOrderCount={pendingOrderCounts}
       >
         <Outlet />
       </Layout>

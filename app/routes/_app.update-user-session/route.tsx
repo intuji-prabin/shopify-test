@@ -17,6 +17,7 @@ export async function loader({request}: LoaderFunctionArgs) {
     email: userDetails.email,
   });
   userDetailsSession.set(USER_DETAILS_KEY, customerDetails);
+  
   return redirect(`${returnUrl}`, {
     headers: [
       [
