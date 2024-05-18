@@ -1,10 +1,10 @@
-import {NavLink, Outlet, useLocation} from '@remix-run/react';
+import {NavLink, Outlet, useFetcher, useLocation} from '@remix-run/react';
 import {BackButton} from '~/components/ui/back-button';
 import ClearAllDialouge from './clear-all-dialouge-box';
 import {Routes} from '~/lib/constants/routes.constent';
 import {Separator} from '~/components/ui/separator';
 import {Button} from '~/components/ui/button';
-import {LoaderFunctionArgs} from '@remix-run/server-runtime';
+import {LoaderFunctionArgs, redirect} from '@remix-run/server-runtime';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
 
 export type NotificationListItem = {
@@ -26,13 +26,21 @@ const routes = [
   },
 ];
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
+
+  const url = new URL(request.url);
+
+  if (url.pathname === '/notification') {
+    return redirect(`${Routes.NOTIFICATIONS_NEW}`);
+  }
+
   return null;
 }
 
 export default function route() {
   const location = useLocation();
+  const fetcher = useFetcher();
 
   return (
     <section className="container">
@@ -67,13 +75,15 @@ export default function route() {
             ))}
           </div>
           {location.pathname === Routes.NOTIFICATIONS_NEW && (
-            <Button
-              type="button"
-              variant="link"
-              className="before:!bottom-1.5 !px-1"
-            >
-              mark all as read
-            </Button>
+            <fetcher.Form method="PUT" action={Routes.NOTIFICATIONS_NEW}>
+              <Button
+                type="submit"
+                variant="link"
+                className="before:!bottom-1.5 !px-1"
+              >
+                mark all as read
+              </Button>
+            </fetcher.Form>
           )}
         </div>
         <Separator className="mb-6" />
