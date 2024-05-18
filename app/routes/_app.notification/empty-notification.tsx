@@ -1,16 +1,39 @@
-import {LargeMailIcon} from '~/components/icons/mail';
+function LargeMailIcon() {
+  return (
+    <svg
+      width="80"
+      height="80"
+      viewBox="0 0 80 80"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M26.269 30.281C25.9118 30.1145 25.5253 30.02 25.1316 30.0028C24.7379 29.9857 24.3446 30.0463 23.9743 30.1811C23.604 30.3159 23.2639 30.5224 22.9733 30.7887C22.6828 31.0549 22.4476 31.3758 22.281 31.733C22.1145 32.0902 22.02 32.4767 22.0028 32.8705C21.9857 33.2642 22.0463 33.6574 22.1811 34.0278C22.4534 34.7757 23.0116 35.3847 23.733 35.721L37.885 42.325C38.5475 42.6345 39.2698 42.7949 40.001 42.7949C40.7322 42.7949 41.4545 42.6345 42.117 42.325L56.269 35.721C56.9904 35.3847 57.5487 34.7757 57.821 34.0278C58.0933 33.2799 58.0573 32.4544 57.721 31.733C57.3847 31.0116 56.7757 30.4534 56.0278 30.1811C55.2799 29.9088 54.4544 29.9447 53.733 30.281L40.001 36.693L26.269 30.281Z"
+        fill="#0092CF"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M27 18C23.0218 18 19.2064 19.5804 16.3934 22.3934C13.5804 25.2064 12 29.0218 12 33V47C12 50.9782 13.5804 54.7936 16.3934 57.6066C19.2064 60.4196 23.0218 62 27 62H53C56.9782 62 60.7936 60.4196 63.6066 57.6066C66.4196 54.7936 68 50.9782 68 47V33C68 29.0218 66.4196 25.2064 63.6066 22.3934C60.7936 19.5804 56.9782 18 53 18H27ZM18 33C18 30.6131 18.9482 28.3239 20.636 26.636C22.3239 24.9482 24.6131 24 27 24H53C55.3869 24 57.6761 24.9482 59.364 26.636C61.0518 28.3239 62 30.6131 62 33V47C62 49.3869 61.0518 51.6761 59.364 53.364C57.6761 55.0518 55.3869 56 53 56H27C24.6131 56 22.3239 55.0518 20.636 53.364C18.9482 51.6761 18 49.3869 18 47V33Z"
+        fill="#0092CF"
+      />
+    </svg>
+  );
+}
 
 export default function EmptyNotification() {
   return (
     <>
-      <div className="flex">
-        <figure>
+      <div className="flex justify-center items-center py-24">
+        <figure className="flex flex-col items-center justify-center">
           <LargeMailIcon />
+          <figcaption className="text-center">
+            <h3>Your inbox is empty</h3>
+            <p className="pt-2">
+              Congratulations! You cleared your important notifications
+            </p>
+          </figcaption>
         </figure>
-        <div>
-          <h3>LargeMailIcon</h3>
-          <p>Congratulations! You cleared your important notifications</p>
-        </div>
       </div>
     </>
   );
