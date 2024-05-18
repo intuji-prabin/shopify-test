@@ -6,9 +6,12 @@ import {generateUrlWithParams} from '~/lib/helpers/url.helper';
 
 export type OrderStatus =
   | 'received'
+  | 'order_cancel'
+  | 'on_hold'
   | 'processing'
   | 'order_picked'
   | 'dispatched'
+  | 'invoice_billing'
   | 'in_transit'
   | 'delivered';
 

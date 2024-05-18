@@ -5,26 +5,49 @@ import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 
 export type Product = {
-  name: string;
-  quantity: number;
-  shippedQuantity: number;
   amount: string;
-  invoiceId: string;
-  total: string;
-  shippingStatus: OrderStatus;
-  backOrderStatus: OrderStatus;
-  selectedUOM: string;
+  backOrderStatus: string;
   defaultUOM: string;
+  invoiceId: string;
+  itemLineNumber: string;
+  name: string;
+  productID: string;
+  productVariantID: string;
+  quantity: number;
+  selectedUOM: string;
+  shippedQuantity: number;
+  shippingStatus: string;
+  total: string;
+  uom: string;
 };
 
-type OrderDetails = {
+export type OrderDetails = {
+  shippingStatus: string | null;
+  carrier: string | null;
+  shipmentMethod: string | null;
+  shipmentDate: string | null;
+  consignmentNumber: string | null;
+  deliveryDate: string | null;
+  shipmentTrackingUrl: string | null;
+  shipmentDocumentUrl: string | null;
+  trackingMethod: string | null;
+  referenceNumber: string | null;
+  carrierType: string | null;
+  serviceLevel: string | null;
+  poNumber: string;
+  shippingAddress1: string;
+  shippingAddress2: string;
+  shippingCountry: string;
+  shippingPostalCode: string;
+  name: string;
+  orderStatus: OrderStatus;
   totalPrice: string;
+  currency: string;
   subTotal: string;
   freight: string;
   surCharges: string;
   totalExclGst: string;
   gst: string;
-  currency: string;
   products: Product[];
 };
 
@@ -47,6 +70,8 @@ export async function getOrdersProductDetails({
       method: AllowedHTTPMethods.GET,
       url,
     });
+
+    console.log('results', results);
 
     if (!results.status) {
       throw new Error(results.message);

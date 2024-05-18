@@ -1,10 +1,11 @@
-import { useContext, useMemo } from 'react';
-import { Link } from '@remix-run/react';
-import { ColumnDef } from '@tanstack/react-table';
-import { Routes } from '~/lib/constants/routes.constent';
-import { OrderStatusChip } from '~/components/ui/order-status-chip';
-import { Product } from '~/routes/_app.order_.$orderId/order-details.server';
-import { AbilityContext } from '~/lib/helpers/Can';
+import {useContext, useMemo} from 'react';
+import {Link} from '@remix-run/react';
+import {ColumnDef} from '@tanstack/react-table';
+import {Routes} from '~/lib/constants/routes.constent';
+import {OrderStatusChip} from '~/components/ui/order-status-chip';
+import {Product} from '~/routes/_app.order_.$orderId/order-details.server';
+import {AbilityContext} from '~/lib/helpers/Can';
+import {OrderStatus} from '../_app.order/order.server';
 
 export function useColumn({
   prefixWithCurrency,
@@ -58,7 +59,7 @@ export function useColumn({
           header: 'Shipping Status',
           enableSorting: false,
           cell: (info) => {
-            const status = info.row.original.shippingStatus;
+            const status = info.row.original.shippingStatus as OrderStatus;
             return <OrderStatusChip status={status} />;
           },
         },
@@ -87,28 +88,24 @@ export function useColumn({
           header: 'Back Order Status',
           enableSorting: false,
           cell: (info) => {
-            const status = info.row.original.backOrderStatus;
+            const status = info.row.original.backOrderStatus as OrderStatus;
             return <OrderStatusChip status={status} />;
           },
         },
-
       ];
 
       // Conditionally add the "Total" column if the user has the ability
       if (ability.can('view', 'view_tracked_order_price')) {
-        baseColumns.push(
-          {
-            accessorKey: 'total',
-            header: 'Total',
-            enableSorting: false,
-            cell: (info) => {
-              const totalAmount = prefixWithCurrency(info.getValue() as string);
-              return totalAmount;
-            },
+        baseColumns.push({
+          accessorKey: 'total',
+          header: 'Total',
+          enableSorting: false,
+          cell: (info) => {
+            const totalAmount = prefixWithCurrency(info.getValue() as string);
+            return totalAmount;
           },
-        );
+        });
       }
-
 
       return baseColumns;
     },
@@ -203,5 +200,5 @@ export function useColumn({
   //   ],
   //   [],
   // );
-  return { columns };
+  return {columns};
 }
