@@ -1,5 +1,8 @@
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {Routes} from '~/lib/constants/routes.constent';
+import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 
 interface DefaultResponse {
   status: boolean;
@@ -23,6 +26,9 @@ type Payload = {
 interface NotificationsResponse extends DefaultResponse {
   payload: Payload;
 }
+interface ViewNotificationResponse extends DefaultResponse {
+  payload: Notification;
+}
 
 export async function getNotifications({url}: {url: string}) {
   try {
@@ -42,4 +48,45 @@ export async function getNotifications({url}: {url: string}) {
       status: 500,
     });
   }
+}
+
+export function urlBuilder(notification: Notification) {
+  switch (notification.type) {
+    case 'PROMOTION':
+      return `/customise/${notification.shopifyId}`;
+
+    case 'ORDER':
+      return `/order/${notification.shopifyId}`;
+
+    case 'INVOICE':
+      return `/invoices/${notification.shopifyId}`;
+
+    default:
+      return Routes.NOTIFICATIONS_NEW;
+  }
+}
+
+export async function viewNotification({
+  customerId,
+  notificationId,
+}: {
+  customerId: string;
+  notificationId: FormDataEntryValue | null;
+}) {
+  const baseUrl = `${ENDPOINT.NOTIFICATIONS.GET}/${customerId}/${
+    notificationId === null ? 'mark-as-read' : notificationId
+  }`;
+
+  const response = await useFetch<ViewNotificationResponse>({
+    url: baseUrl,
+    method: AllowedHTTPMethods.PUT,
+  });
+
+  if (!response.status) {
+    throw new Error(response.message);
+  }
+
+  const redirectLink = urlBuilder(response.payload);
+
+  return {redirectLink};
 }
