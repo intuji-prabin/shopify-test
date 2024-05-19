@@ -7,6 +7,7 @@ const statusVariants = cva(
   {
     variants: {
       variant: {
+        received: 'text-status-recieved',
         awaiting: 'text-status-awaiting',
         invoice: 'text-status-invoice',
         partially_pick: 'text-status-partially_pick',
@@ -16,7 +17,6 @@ const statusVariants = cva(
         fully_pick: 'text-status-fully_pick',
         pending: 'text-status-pending',
         closed: 'text-status-closed',
-        received: 'text-status-recieved',
       },
     },
     defaultVariants: {

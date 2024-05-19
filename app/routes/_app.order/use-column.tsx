@@ -44,7 +44,13 @@ export function useColumn() {
       {
         accessorKey: 'internalOrderNumber',
         header: 'Cigweld Internal Order Number',
-        cell: (info) => info.getValue() ?? 'N/A',
+        cell: (info) => {
+          const rawInternalOrderNumber = info.row.original.internalOrderNumber;
+          const internalOrderNumber =
+            rawInternalOrderNumber.length > 0 ? rawInternalOrderNumber : 'N/A';
+
+          return internalOrderNumber;
+        },
       },
       {
         accessorKey: 'orderDate',
