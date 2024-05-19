@@ -1,6 +1,6 @@
-import {OrderStatusChip} from '~/components/ui/order-status-chip';
-import {OrderStatus} from '../_app.order/order.server';
 import {Link} from '@remix-run/react';
+import {OrderStatusChip} from '~/components/ui/order-status-chip';
+import {OrderStatus} from '~/routes/_app.order/order.server';
 
 export default function OrderNumberDetails({
   orderNumber,
@@ -20,7 +20,7 @@ export default function OrderNumberDetails({
         </div>
         <div>
           <Link
-            to="" // /invoices/${orderNumber}
+            to={`/invoices?search=${orderNumber}`}
             className=" text-gray-900  border-primary-500 border-b-2 border-x-0 border-t-0 p-2 italic font-bold text-[14px] leading-6 uppercase"
           >
             VIEW INVOICES

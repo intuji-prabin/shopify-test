@@ -5,12 +5,15 @@ import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.cons
 import {generateUrlWithParams} from '~/lib/helpers/url.helper';
 
 export type OrderStatus =
-  | 'received'
-  | 'processing'
-  | 'order_picked'
-  | 'dispatched'
-  | 'in_transit'
-  | 'delivered';
+  | 'Received Shopify Order'
+  | 'Order Cancel'
+  | 'On Hold'
+  | 'Processing'
+  | 'Order Picked'
+  | 'Dispatched'
+  | 'Invoice Billing'
+  | 'InTransit'
+  | 'Delivered';
 
 export type LineItem = {
   productId: string;

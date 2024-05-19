@@ -15,6 +15,7 @@ const orderStatusOptions: SelectInputOptions[] = [
   {title: 'Order Picked', value: 'order_picked'},
   {title: 'Dispatch', value: 'dispatched'},
   {title: 'In Transit', value: 'in_transit'},
+  {title: 'Invoice Billing', value: 'invoice_billing'},
   {title: 'Delivered', value: 'delivered'},
 ];
 
