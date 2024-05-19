@@ -2,15 +2,16 @@ import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
 import {removeCart} from './order-place.server';
 import {getCartList} from './cart.server';
 import {useFormatCart} from '~/hooks/useFormatCart';
-import { emitter3 } from '~/lib/utils/emitter.server';
-import { EVENTS } from '~/lib/constants/events.contstent';
-import { getUserDetails } from '~/lib/utils/user-session.server';
+import {emitter3} from '~/lib/utils/emitter.server';
+import {EVENTS} from '~/lib/constants/events.contstent';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 
 export const removeItemFromCart = async (
   formData: any,
   context: any,
   request: Request,
 ) => {
+  const {userDetails} = await getUserDetails(request);
   const itemList = Object.fromEntries(formData);
   const lineItemId = Object.keys(itemList)
     .filter((key) => key !== 'action')
