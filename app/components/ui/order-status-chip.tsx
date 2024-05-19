@@ -9,45 +9,45 @@ import {statusVariants} from '~/components/ui/status';
 
 export function OrderStatusChip({status}: {status: OrderStatus}) {
   switch (status) {
-    case 'received':
+    case 'Received Shopify Order':
       return (
         <div className={statusVariants({variant: 'received'})}>Received</div>
       );
-    case 'order_cancel':
+    case 'Order Cancel':
       return (
         <div className={statusVariants({variant: 'closed'})}>Order Cancel</div>
       );
-    case 'on_hold':
+    case 'On Hold':
       return (
         <div className={statusVariants({variant: 'pending'})}>On Hold</div>
       );
-    case 'processing':
+    case 'Processing':
       return (
         <div className={statusVariants({variant: 'awaiting'})}>Processing</div>
       );
-    case 'order_picked':
+    case 'Order Picked':
       return (
         <div className={statusVariants({variant: 'awaiting'})}>
           Order Picked
         </div>
       );
-    case 'dispatched':
+    case 'Dispatched':
       return (
         <div className={statusVariants({variant: 'shipped'})}>Dispatched</div>
       );
-    case 'invoice_billing':
+    case 'Invoice Billing':
       return (
         <div className={statusVariants({variant: 'invoice'})}>
           Invoice Billing
         </div>
       );
-    case 'in_transit':
+    case 'InTransit':
       return (
         <div className={statusVariants({variant: 'partially_shipped'})}>
           In Transit
         </div>
       );
-    case 'delivered':
+    case 'Delivered':
       return (
         <div className={statusVariants({variant: 'shipped'})}>Delivered</div>
       );

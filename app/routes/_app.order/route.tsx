@@ -127,6 +127,7 @@ export async function action({request, context}: ActionFunctionArgs) {
 
 export default function OrdersPage() {
   const {orderList, totalOrder, customerId} = useLoaderData<typeof loader>();
+  console.log('orderList', orderList);
 
   const {columns} = useColumn();
 
