@@ -146,6 +146,9 @@ label .required {
 .error-msg {
   @apply flex items-center leading-5 text-semantic-danger-500 text-sm;
 }
+.steps li span {
+  @apply z-10 relative;
+}
 .steps li.active span {
   @apply bg-status-back_order;
 }
@@ -160,7 +163,7 @@ label .required {
 }
 .steps__order li:first-of-type,
 .steps li:last-of-type {
-  @apply before:bg-inherit before:w-[calc(50%_-_32px)] before:h-full before:content-[''] before:absolute before:left-0 before:-z-10;
+  @apply before:bg-white before:w-[calc(50%_-_32px)] before:h-full before:content-[''] before:absolute before:left-0 before:z-10;
 }
 .steps li:last-of-type {
   @apply before:left-[unset] before:right-0;

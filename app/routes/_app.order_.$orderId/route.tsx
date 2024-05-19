@@ -111,6 +111,10 @@ export default function OrderDetailPage() {
   const {orderId, ordersProductDetails} = useLoaderData<typeof loader>();
   const {products, ...rest} = ordersProductDetails;
 
+  const displayOrderSteps =
+    ordersProductDetails.orderStatus !== 'Order Cancel' &&
+    ordersProductDetails.orderStatus !== 'On Hold';
+
   return (
     <section className="container">
       <OrderBreadcrumb orderId={orderId} products={products} />
@@ -120,7 +124,12 @@ export default function OrderDetailPage() {
           orderNumber={orderId}
           orderStatus={ordersProductDetails.orderStatus}
         />
-        <OrderSteps />
+        {displayOrderSteps && (
+          <OrderSteps
+            orderStatus={ordersProductDetails.orderStatus}
+            products={products}
+          />
+        )}
         <OrderInformation orderInformation={rest} />
       </div>
 

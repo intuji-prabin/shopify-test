@@ -35,8 +35,8 @@ export default function OrderInformation({
         {/* left order status card */}
         <div className="min-w-[unset] md:min-w-[286px] p-6 bg-grey-25">
           <div className=" flex flex-col gap-6">
-            {orderNumber.map((order) => (
-              <div key={order.value}>
+            {orderNumber.map((order, index) => (
+              <div key={`${order.value}-${index}`}>
                 <p className="order-status-title ">{order.title}</p>{' '}
                 <p className="order-status-info ">{order.value}</p>
               </div>
