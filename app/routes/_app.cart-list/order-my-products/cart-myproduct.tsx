@@ -89,7 +89,7 @@ export default function MyProducts({
                     </DialogClose>
                     <Button
                       type="submit"
-                      className="w-full text-sm italic font-bold uppercase leading6 "
+                      className="w-full text-sm italic font-bold uppercase"
                       variant="primary"
                       onClick={() => {
                         const formData = new FormData();
@@ -101,6 +101,7 @@ export default function MyProducts({
                               item.original.id,
                             ),
                           );
+                        formData.append('action', 'order_delete')
                         fetcher.submit(formData, { method: 'DELETE' });
                         table.resetRowSelection();
                         setOpen(false);
