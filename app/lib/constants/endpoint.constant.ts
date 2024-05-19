@@ -1,6 +1,10 @@
 const BASE_URL = 'https://cig-backend.webo.dev/api';
 
 export const ENDPOINT = {
+  REPORT: {
+    GET: `${BASE_URL}/order/report`,
+    PRODUCT_GET: `${BASE_URL}/product/report`,
+  },
   AUTH: {
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',

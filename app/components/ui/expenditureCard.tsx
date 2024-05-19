@@ -1,22 +1,16 @@
-import {Can} from '~/lib/helpers/Can';
-import {Expenditure} from '../icons/expenditure';
-import ExpenditureChart from './expenditureChart';
-import {SelectInputType} from './select-input';
+import { useTable } from '~/hooks/useTable';
+import { Can } from '~/lib/helpers/Can';
+import { useSpendingByProductColumn } from '~/routes/_app._index/use-column';
+import { Expenditure } from "../icons/expenditure";
+import { DataTable } from './data-table';
 
-const dateOptions: SelectInputType[] = [
-  {label: '2021/04/08 - 2021/04/10', value: '2021/04/08 - 2021/04/10'},
-  {label: '2021/05/08 - 2021/05/10', value: '2021/05/08 - 2021/05/10'},
-];
+const ExpenditureCard = ({ doughnutChartData }: { doughnutChartData: any }) => {
+  const { columns } = useSpendingByProductColumn();
+  const { table } = useTable(columns, doughnutChartData?.spending_by_product);
 
-const handleOnchange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-  const selectedValue = event.target.value;
-  console.log('Selected Date:', selectedValue);
-};
-
-const ExpenditureCard = ({doughnutChartData}: {doughnutChartData: any}) => {
   return (
     <>
-      <Can I="view" a="view_expenditure">
+      {/* <Can I="view" a="view_expenditure">
         <section className="container">
           <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
             <div className="space-y-2">
@@ -26,20 +20,6 @@ const ExpenditureCard = ({doughnutChartData}: {doughnutChartData: any}) => {
                 brands, products, and transaction history for informed financial
                 insights.
               </p>
-            </div>
-            <div className="sm:min-w-[300px] w-full mxs:w-auto">
-              <p>Select Date Range to Filter Data</p>
-              <select
-                name="dateRange"
-                onChange={handleOnchange}
-                className="w-full !border-grey-100 filter-select"
-              >
-                {dateOptions.map((date, index) => (
-                  <option value={date.value} key={index + 'date'}>
-                    {date.label}
-                  </option>
-                ))}
-              </select>
             </div>
           </div>
         </section>
@@ -76,7 +56,7 @@ const ExpenditureCard = ({doughnutChartData}: {doughnutChartData: any}) => {
                               style={{
                                 backgroundColor:
                                   doughnutChartData.datasets[0].backgroundColor[
-                                    index
+                                  index
                                   ],
                               }}
                             ></span>
@@ -109,56 +89,31 @@ const ExpenditureCard = ({doughnutChartData}: {doughnutChartData: any}) => {
                 </div>
                 <div>
                   <ul>
-                    {doughnutChartData.labels.map(
-                      (label: string, index: number) => (
-                        <li
-                          className="flex items-center justify-between pb-2 mb-2 border-b border-solid border-gray-50"
-                          key={'label' + index}
-                        >
-                          <p>
-                            <span
-                              className="inline-block w-3 h-3 mr-2 rounded-full"
-                              style={{
-                                backgroundColor:
-                                  doughnutChartData.datasets[0].backgroundColor[
-                                    index
-                                  ],
-                              }}
-                            ></span>
-                            {label}
-                          </p>
-                          <h5>${doughnutChartData.datasets[0].price[index]}</h5>
-                        </li>
-                      ),
-                    )}
+                    {doughnutChartData.labels.map((label: string, index: number) => (
+                      <li className="flex items-center justify-between pb-2 mb-2 border-b border-solid border-gray-50" key={'label' + index}>
+                        <p><span className="inline-block w-3 h-3 mr-2 rounded-full" style={{ backgroundColor: doughnutChartData.datasets[0].backgroundColor[index] }}></span>{label}</p>
+                        <h5>${doughnutChartData.datasets[0].price[index]}</h5>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>
             </div>
           </div>
         </section>
-      </Can>
+      </Can > */}
       <section className="container">
         <Can I="view" a="view_spending_list">
           <div className="p-6 space-y-3 bg-white mxs:space-y-6">
-            <div className="flex items-center gap-x-2 gap-y-1">
-              <span className="flex items-center justify-center w-12 h-12 bg-primary-200">
-                <Expenditure />
-              </span>
-              <h4>Spending by products</h4>
+            <div className="flex justify-between">
+              <div className="flex items-center gap-x-2 gap-y-1">
+                <span className='flex items-center justify-center w-12 h-12 bg-primary-200'>
+                  <Expenditure />
+                </span>
+                <h4>Spending by products</h4>
+              </div>
             </div>
-          </div>
-        </Can>
-      </section>
-      <section className="container">
-        <Can I="view" a="view_transaction_history">
-          <div className="p-6 space-y-3 bg-white mxs:space-y-6">
-            <div className="flex items-center gap-x-2 gap-y-1">
-              <span className="flex items-center justify-center w-12 h-12 bg-primary-200">
-                <Expenditure />
-              </span>
-              <h4>Transaction History</h4>
-            </div>
+            <DataTable table={table} columns={columns} />
           </div>
         </Can>
       </section>
