@@ -1,9 +1,10 @@
+import { useFetcher } from '@remix-run/react';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
-import Tick from '~/components/icons/tick';
 import { Button } from '~/components/ui/button';
 import { Calendar } from '~/components/ui/calendar';
+import Loader from '~/components/ui/loader';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
 import { Can } from '~/lib/helpers/Can';
@@ -150,42 +151,80 @@ export function TextArea() {
     </div>
   );
 }
-export function PromoCode() {
-  const [activatePromo, setActivatePromo] = useState(false);
-  function handleActivatePromoCode() {
-    setActivatePromo(!activatePromo);
-  }
+export function PromoCode({ data, setPromoCode, promoCode, promoCodeApplied }: { data: { status: boolean, message: string }, setPromoCode: React.Dispatch<React.SetStateAction<string>>, promoCode: string, promoCodeApplied: string }) {
+  const fetcher = useFetcher();
   return (
     <div className="flex flex-col gap-1">
       <p className="text-base text-normal leading-[21px] text-grey-800">
-        Enter promo code here
+        Do you have any promocode?
       </p>
-      <div className="flex flex-col w-full gap-2 sm:flex-row">
-        <input
-          type=" text"
-          className={` ${activatePromo ? 'bg-semantic-success-100 border-none' : 'bg-white'
-            } grow`}
-          placeholder="Enter promo code here"
-        />
-        <Button
-          variant="secondary"
-          className="min-w-[99px]"
-          onClick={handleActivatePromoCode}
-          type='button'
-        >
-          {activatePromo ? 'Remove' : 'Apply'}
-        </Button>
-      </div>
-      {activatePromo ? (
-        <div className="flex">
-          <Tick width="20px" height="20px" fillColor="#3BBA53" />
-
-          <p className="text-semantic-success-500 font-normal leading-5 text-[14px] items-center">
-            {' '}
-            Promo code activated
-          </p>
-        </div>
-      ) : undefined}
+      {promoCodeApplied || !!data?.status ? (
+        <fetcher.Form method="DELETE" onSubmit={(event) => {
+          fetcher.submit(event.currentTarget);
+          setPromoCode("");
+        }}>
+          <div className="flex flex-col w-full gap-2 sm:flex-row">
+            <input
+              type="text"
+              className="grow bg-semantic-success-100 pointer-events-none !border-semantic-success-100"
+              placeholder="Enter promo code here"
+              name='promoCode'
+              value={promoCode}
+              disabled={fetcher.state === "submitting"}
+            />
+            <Button
+              variant="secondary"
+              className="min-w-[99px]"
+              type='submit'
+              value="promo_code_delete"
+              name="action"
+              disabled={fetcher.state === "submitting"}
+            >
+              {fetcher.state === "submitting" ?
+                <div className="flex items-center justify-center h-full gap-2">
+                  <span>Removing</span>
+                  <Loader />
+                </div> :
+                "Remove"
+              }
+            </Button>
+          </div>
+        </fetcher.Form>
+      ) : (
+        <fetcher.Form method="POST" onSubmit={(event) => {
+          fetcher.submit(event.currentTarget);
+        }}>
+          <div className="flex flex-col w-full gap-2 sm:flex-row">
+            <input
+              type="text"
+              className={`grow`}
+              placeholder="Enter promo code here"
+              name='promoCode'
+              value={promoCode}
+              onChange={(e) => setPromoCode(e?.target?.value)}
+              disabled={fetcher.state === "submitting"}
+              required
+            />
+            <Button
+              variant="secondary"
+              className="min-w-[99px]"
+              type='submit'
+              value="promo_code"
+              disabled={fetcher.state === "submitting"}
+              name="action"
+            >
+              {fetcher.state === "submitting" ?
+                <div className="flex items-center justify-center h-full gap-2">
+                  <span>Applying</span>
+                  <Loader />
+                </div>
+                : "Apply"
+              }
+            </Button>
+          </div>
+        </fetcher.Form>
+      )}
+      {promoCodeApplied && <p className="bg-semantic-success-100 uppercase text-xs py-1 px-2.5 font-semibold w-max">Discount HAS BEEN applied</p>}
     </div>
   );
 }
@@ -252,7 +291,6 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: a
       </div>
       {/* shipping location starts here */}
       <div className="flex flex-col gap-4">
-        <PromoCode />
         <ShippingAddress
           default_address={defaultAddresses && defaultAddresses || '-'}
           phone={defaultAddress?.phone && defaultAddress?.phone || '-'}
@@ -262,7 +300,8 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: a
       {/* place order starts here */}
       <Can I='view' a='place_order'>
         {!updateCart && placeOrder ?
-          <Button className="text-lg min-h-14" variant="primary" type="submit">
+          <Button className="text-lg min-h-14" variant="primary" type="submit" value="place_order"
+            name="action">
             Place order
           </Button>
           : <div>

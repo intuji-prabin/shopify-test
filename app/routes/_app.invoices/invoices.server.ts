@@ -3,15 +3,9 @@ import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.cons
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {generateUrlWithParams} from '~/lib/helpers/url.helper';
+import {OrderStatus} from '~/routes/_app.order/order.server';
 
-export type InvoiceStatus =
-  | 'received'
-  | 'processing'
-  | 'order_picked'
-  | 'dispatched'
-  | 'in_transit'
-  | 'delivered';
-
+export type InvoiceStatus = OrderStatus;
 export type Invoices = {
   id: number;
   invoiceId: string;

@@ -2,12 +2,20 @@ import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
 import {removeCart} from './order-place.server';
 import {getCartList} from './cart.server';
 import {useFormatCart} from '~/hooks/useFormatCart';
+import {emitter3} from '~/lib/utils/emitter.server';
+import {EVENTS} from '~/lib/constants/events.contstent';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 
-export const removeItemFromCart = async (context: any, request: Request) => {
-  const formData = await request.formData();
-
+export const removeItemFromCart = async (
+  formData: any,
+  context: any,
+  request: Request,
+) => {
+  const {userDetails} = await getUserDetails(request);
   const itemList = Object.fromEntries(formData);
-  const lineItemId = Object.values(itemList);
+  const lineItemId = Object.keys(itemList)
+    .filter((key) => key !== 'action')
+    .map((key) => itemList[key]) as any;
 
   if (lineItemId?.length < 1) {
     throw new Error('Cart item not provided');
@@ -18,7 +26,6 @@ export const removeItemFromCart = async (context: any, request: Request) => {
   if (!sessionCartInfo) {
     throw new Error('Cart not found');
   }
-
   const cartRemoveResponse = await removeCart(
     lineItemId,
     context,
@@ -33,5 +40,18 @@ export const removeItemFromCart = async (context: any, request: Request) => {
   const finalCartSession = useFormatCart(cartSession);
   context.session.set(CART_SESSION_KEY, finalCartSession);
   await getCartList(context, request, cartSession);
+
+  //this is use to emit notification for the cart on
+  // Emit the notification asynchronously
+  setTimeout(() => {
+    emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
+      payload: {
+        type: 'cart',
+        totalNumber: cartRemoveResponse,
+        customerId: userDetails.id,
+      },
+    });
+  }, 2000);
+
   return {cartSession};
 };

@@ -39,6 +39,8 @@ export default function MyProducts({
 
   const submit = useSubmit();
 
+  
+
   return (
     <div className="relative flex flex-col w-full bg-white xl:w-[calc(100%_-_435px)]">
       <div className="flex justify-between sm:items-center my-[30px] flex-col gap-4 sm:flex-row sm:gap-0 items-baseline uppercase mx-6">
@@ -87,7 +89,7 @@ export default function MyProducts({
                     </DialogClose>
                     <Button
                       type="submit"
-                      className="w-full text-sm italic font-bold uppercase leading6 "
+                      className="w-full text-sm italic font-bold uppercase"
                       variant="primary"
                       onClick={() => {
                         const formData = new FormData();
@@ -99,6 +101,7 @@ export default function MyProducts({
                               item.original.id,
                             ),
                           );
+                        formData.append('action', 'order_delete')
                         fetcher.submit(formData, { method: 'DELETE' });
                         table.resetRowSelection();
                         setOpen(false);

@@ -1,3 +1,6 @@
+import {OrderDetails} from '~/routes/_app.order_.$orderId/order-details.server';
+import {OrderStatusChip} from '~/components/ui/order-status-chip';
+import {Link} from '@remix-run/react';
 import {
   Carrier,
   CopyLink,
@@ -5,49 +8,37 @@ import {
   Orderstats,
   Printblue,
 } from '~/components/icons/orderStatus';
-import {Button} from '~/components/ui/button';
 
-export default function OrderInformation() {
-  const orderStatus = [
+export default function OrderInformation({
+  orderInformation,
+}: {
+  orderInformation: Omit<OrderDetails, 'products'>;
+}) {
+  const orderNumber = [
     {
-      id: 0,
       title: 'WMS Consignment No',
-      info: '00664134',
+      value: orderInformation.consignmentNumber || 'N/A',
     },
     {
-      id: 1,
       title: 'Reference',
-      info: '9058098',
+      value: orderInformation.referenceNumber || 'N/A',
     },
     {
-      id: 2,
       title: 'Purchase Order No',
-      info: '#1001',
+      value: orderInformation.poNumber || 'N/A',
     },
   ];
-  const ordersts = [
-    {
-      id: 0,
 
-      carrier: 'Carrier',
-      carrier_type: 'Carrier Type',
-      service_level: 'Service Level',
-      phoneno: '+61 414 123 456',
-      carrier_typ: 'LCL',
-      service_type: 'Standard',
-    },
-  ];
   return (
     <>
       <div className="flex gap-6">
         {/* left order status card */}
         <div className="min-w-[unset] md:min-w-[286px] p-6 bg-grey-25">
           <div className=" flex flex-col gap-6">
-            {orderStatus.map((order) => (
-              <div key={order.id}>
+            {orderNumber.map((order) => (
+              <div key={order.value}>
                 <p className="order-status-title ">{order.title}</p>{' '}
-                {/* Fix to display the correct title */}
-                <p className="order-status-info ">{order.info}</p>
+                <p className="order-status-info ">{order.value}</p>
               </div>
             ))}
           </div>
@@ -56,71 +47,97 @@ export default function OrderInformation() {
         <div className="flex-grow flex flex-col ">
           <div className="border-gray-100 border-x-0 border-b-2 border-t-0 flex flex-col md:flex-row">
             <div className=" p-5 min-w-[unset] lg:min-w-[300px] 2xl:min-w-[461px] flex flex-col gap-4">
-              <div className="flex gap-[5px]">
+              <div className="flex gap-[5px] items-center">
                 <Orderstats />
                 <h5>Delivery Information</h5>
               </div>
               <p className="max-w-[235px] text-lg font-normal ">
-                Four Square KELBURN fM 1398 97A Upland Road Wellington KELBURN,
-                WELLINGTON 6012
+                {orderInformation.shippingAddress1}{' '}
+                {orderInformation.shippingAddress2},{' '}
+                {orderInformation.shippingCountry}{' '}
+                {orderInformation.shippingPostalCode}
               </p>
             </div>
             <div className="p-5 min-w-[unset] lg:min-w-[300px] 2xl:min-w-[461px] flex flex-col gap-4">
-              <div className="flex gap-[5px]">
+              <div className="flex gap-[5px] items-center">
                 <CurrentStatus />
                 <h5>Current Status</h5>
               </div>
               <div className="max-w-[235px]">
-                <Button variant="status_brown">processing</Button>
+                <OrderStatusChip status={orderInformation.orderStatus} />
               </div>
             </div>
           </div>
           <div className="flex flex-col md:flex-row ">
             <div className="p-5 min-w-[unset] lg:min-w-[300px] 2xl:min-w-[461px] flex flex-col gap-4">
-              <div className="flex gap-[5px]">
+              <div className="flex gap-[5px] items-center">
                 <Carrier />
                 <h5>Carrier Information</h5>
               </div>
               <div className="max-w-[235px]">
                 <ul className="flex gap-2 flex-col">
-                  {ordersts.map((order, index) => (
-                    <>
-                      <li
-                        key={index}
-                        className="flex justify-start gap-[17px] text-grey-900"
-                      >
-                        <p className=" font-medium text-base leading-[22px]">
-                          {order.carrier}
-                        </p>
-                        <p className="font-normal">{order.phoneno}</p>
-                      </li>
-                      <li className="flex justify-start gap-[17px] text-grey-900">
-                        <p className=" font-medium text-base leading-[22px]">
-                          {order.carrier_type}
-                        </p>
-                        <p className="font-normal">{order.carrier_typ}</p>
-                      </li>
-                      <li className="flex justify-start gap-[17px] text-grey-900">
-                        <p className=" font-medium text-base leading-[22px]">
-                          {order.service_level}
-                        </p>
-                        <p className="font-normal">{order.service_type}</p>
-                      </li>
-                    </>
-                  ))}
+                  <li className="flex justify-start gap-[17px] text-grey-900">
+                    <p className=" font-medium text-base leading-[22px]">
+                      Carrier
+                    </p>
+                    <p className="font-normal">
+                      {orderInformation.carrier || 'N/A'}
+                    </p>
+                  </li>
+                  <li className="flex justify-start gap-[17px] text-grey-900">
+                    <p className=" font-medium text-base leading-[22px]">
+                      Carrier Type
+                    </p>
+                    <p className="font-normal">
+                      {orderInformation.carrierType || 'N/A'}
+                    </p>
+                  </li>
+                  <li className="flex justify-start gap-[17px] text-grey-900">
+                    <p className=" font-medium text-base leading-[22px]">
+                      Service Level
+                    </p>
+                    <p className="font-normal">
+                      {orderInformation.serviceLevel || 'N/A'}
+                    </p>
+                  </li>
                 </ul>
               </div>
             </div>
             <div className="p-5 min-w-[unset] lg:min-w-[300px] 2xl:min-w-[461px] flex flex-col gap-4">
-              <div className="flex gap-[5px]">
+              <div className="flex gap-[5px] items-center">
                 <Printblue />
                 <h5>Proof of Delivery</h5>
               </div>
               <div className="flex gap-2 items-center">
-                <button className="bg-primary-500 p-2">
-                  <CopyLink />
-                </button>
-                <p className="font-normal text-base">Link</p>
+                {orderInformation.shipmentDocumentUrl ||
+                orderInformation.shipmentTrackingUrl ? (
+                  <>
+                    {orderInformation.shipmentDocumentUrl && (
+                      <Link
+                        to={orderInformation.shipmentDocumentUrl}
+                        className="bg-primary-500 p-2"
+                      >
+                        <CopyLink />
+                        <p className="font-normal text-base">
+                          Shipment Document
+                        </p>
+                      </Link>
+                    )}
+                    {orderInformation.shipmentTrackingUrl && (
+                      <Link
+                        to={orderInformation.shipmentTrackingUrl}
+                        className="bg-primary-500 p-2"
+                      >
+                        <CopyLink />
+                        <p className="font-normal text-base">
+                          Shipment Tracking
+                        </p>
+                      </Link>
+                    )}
+                  </>
+                ) : (
+                  'N/A'
+                )}
               </div>
             </div>
           </div>

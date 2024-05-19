@@ -9,6 +9,7 @@ import {Routes} from '~/lib/constants/routes.constent';
 import {formatDateToLocaleDateString} from '~/lib/helpers/dateTime.helper';
 import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
 import {OrderStatusChip} from '~/components/ui/order-status-chip';
+import {Can} from '~/lib/helpers/Can';
 
 export function useColumn() {
   const columns = useMemo<ColumnDef<Order>[]>(
@@ -43,7 +44,13 @@ export function useColumn() {
       {
         accessorKey: 'internalOrderNumber',
         header: 'Cigweld Internal Order Number',
-        cell: (info) => info.getValue() ?? 'N/A',
+        cell: (info) => {
+          const rawInternalOrderNumber = info.row.original.internalOrderNumber;
+          const internalOrderNumber =
+            rawInternalOrderNumber.length > 0 ? rawInternalOrderNumber : 'N/A';
+
+          return internalOrderNumber;
+        },
       },
       {
         accessorKey: 'orderDate',
@@ -123,17 +130,19 @@ export function useColumn() {
                   <EyeOn />
                 </Button>
               </Link>
-              <Button
-                size="icon"
-                variant={
-                  fetcher.state === 'submitting' || fetcher.state !== 'idle'
-                    ? 'disabled'
-                    : 'icon'
-                }
-                onClick={handleReOrder}
-              >
-                <ReOrder />
-              </Button>
+              <Can I="view" a="reorder_order">
+                <Button
+                  size="icon"
+                  variant={
+                    fetcher.state === 'submitting' || fetcher.state !== 'idle'
+                      ? 'disabled'
+                      : 'icon'
+                  }
+                  onClick={handleReOrder}
+                >
+                  <ReOrder />
+                </Button>
+              </Can>
             </div>
           );
         },
