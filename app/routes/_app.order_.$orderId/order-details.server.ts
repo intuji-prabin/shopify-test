@@ -1,5 +1,5 @@
 import {useFetch} from '~/hooks/useFetch';
-import {OrderStatus} from '../_app.order/order.server';
+import {OrderStatus} from '~/routes/_app.order/order.server';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
@@ -70,8 +70,6 @@ export async function getOrdersProductDetails({
       method: AllowedHTTPMethods.GET,
       url,
     });
-
-    console.log('results', results);
 
     if (!results.status) {
       throw new Error(results.message);

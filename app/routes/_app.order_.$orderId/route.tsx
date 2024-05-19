@@ -17,14 +17,14 @@ import {OrderBreadcrumb} from '~/routes/_app.order_.$orderId/order-breadcrumb';
 import OrderNumberDetails from '~/routes/_app.order_.$orderId/order-number-details';
 import {getOrdersProductDetails} from '~/routes/_app.order_.$orderId/order-details.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
-import {ProductTable} from './product-table';
+import {ProductTable} from '~/routes/_app.order_.$orderId/product-table';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {addedBulkCart} from '../_app.wishlist/bulk.cart.server';
+import {addedBulkCart} from '~/routes/_app.wishlist/bulk.cart.server';
 import {Routes} from '~/lib/constants/routes.constent';
 
 export const meta: MetaFunction = () => {
@@ -109,7 +109,6 @@ export async function action({request, context}: ActionFunctionArgs) {
 
 export default function OrderDetailPage() {
   const {orderId, ordersProductDetails} = useLoaderData<typeof loader>();
-  console.log('orderproductDetails', ordersProductDetails);
   const {products, ...rest} = ordersProductDetails;
 
   return (

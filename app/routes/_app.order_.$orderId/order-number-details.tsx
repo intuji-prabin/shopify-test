@@ -1,6 +1,6 @@
-import {OrderStatusChip} from '~/components/ui/order-status-chip';
-import {OrderStatus} from '../_app.order/order.server';
 import {Link} from '@remix-run/react';
+import {OrderStatusChip} from '~/components/ui/order-status-chip';
+import {OrderStatus} from '~/routes/_app.order/order.server';
 
 export default function OrderNumberDetails({
   orderNumber,

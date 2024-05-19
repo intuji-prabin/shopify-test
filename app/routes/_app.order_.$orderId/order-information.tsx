@@ -1,3 +1,6 @@
+import {OrderDetails} from '~/routes/_app.order_.$orderId/order-details.server';
+import {OrderStatusChip} from '~/components/ui/order-status-chip';
+import {Link} from '@remix-run/react';
 import {
   Carrier,
   CopyLink,
@@ -5,10 +8,6 @@ import {
   Orderstats,
   Printblue,
 } from '~/components/icons/orderStatus';
-import {Button} from '~/components/ui/button';
-import {OrderDetails} from './order-details.server';
-import {OrderStatusChip} from '~/components/ui/order-status-chip';
-import {Link} from '@remix-run/react';
 
 export default function OrderInformation({
   orderInformation,
@@ -48,7 +47,7 @@ export default function OrderInformation({
         <div className="flex-grow flex flex-col ">
           <div className="border-gray-100 border-x-0 border-b-2 border-t-0 flex flex-col md:flex-row">
             <div className=" p-5 min-w-[unset] lg:min-w-[300px] 2xl:min-w-[461px] flex flex-col gap-4">
-              <div className="flex gap-[5px]">
+              <div className="flex gap-[5px] items-center">
                 <Orderstats />
                 <h5>Delivery Information</h5>
               </div>
@@ -60,7 +59,7 @@ export default function OrderInformation({
               </p>
             </div>
             <div className="p-5 min-w-[unset] lg:min-w-[300px] 2xl:min-w-[461px] flex flex-col gap-4">
-              <div className="flex gap-[5px]">
+              <div className="flex gap-[5px] items-center">
                 <CurrentStatus />
                 <h5>Current Status</h5>
               </div>
@@ -71,7 +70,7 @@ export default function OrderInformation({
           </div>
           <div className="flex flex-col md:flex-row ">
             <div className="p-5 min-w-[unset] lg:min-w-[300px] 2xl:min-w-[461px] flex flex-col gap-4">
-              <div className="flex gap-[5px]">
+              <div className="flex gap-[5px] items-center">
                 <Carrier />
                 <h5>Carrier Information</h5>
               </div>
@@ -105,30 +104,39 @@ export default function OrderInformation({
               </div>
             </div>
             <div className="p-5 min-w-[unset] lg:min-w-[300px] 2xl:min-w-[461px] flex flex-col gap-4">
-              <div className="flex gap-[5px]">
+              <div className="flex gap-[5px] items-center">
                 <Printblue />
                 <h5>Proof of Delivery</h5>
               </div>
               <div className="flex gap-2 items-center">
-                {orderInformation.shipmentDocumentUrl !== null && (
-                  <Link
-                    to={orderInformation.shipmentDocumentUrl}
-                    className="bg-primary-500 p-2"
-                  >
-                    <CopyLink />
-                    <p className="font-normal text-base">Shipment Document</p>
-                  </Link>
-                )}
-              </div>
-              <div className="flex gap-2 items-center">
-                {orderInformation.shipmentTrackingUrl !== null && (
-                  <Link
-                    to={orderInformation.shipmentTrackingUrl}
-                    className="bg-primary-500 p-2"
-                  >
-                    <CopyLink />
-                    <p className="font-normal text-base">Shipment Tracking</p>
-                  </Link>
+                {orderInformation.shipmentDocumentUrl ||
+                orderInformation.shipmentTrackingUrl ? (
+                  <>
+                    {orderInformation.shipmentDocumentUrl && (
+                      <Link
+                        to={orderInformation.shipmentDocumentUrl}
+                        className="bg-primary-500 p-2"
+                      >
+                        <CopyLink />
+                        <p className="font-normal text-base">
+                          Shipment Document
+                        </p>
+                      </Link>
+                    )}
+                    {orderInformation.shipmentTrackingUrl && (
+                      <Link
+                        to={orderInformation.shipmentTrackingUrl}
+                        className="bg-primary-500 p-2"
+                      >
+                        <CopyLink />
+                        <p className="font-normal text-base">
+                          Shipment Tracking
+                        </p>
+                      </Link>
+                    )}
+                  </>
+                ) : (
+                  'N/A'
                 )}
               </div>
             </div>
