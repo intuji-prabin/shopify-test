@@ -14,7 +14,7 @@ import {useColumn} from '~/routes/_app.order/use-column';
 import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import OrderFilterForm from '~/routes/_app.order/filter-form';
-import {LineItem, getAllOrders} from '~/routes/_app.order/order.server';
+import {getAllOrders} from '~/routes/_app.order/order.server';
 import {
   isRouteErrorResponse,
   useLoaderData,
@@ -127,7 +127,6 @@ export async function action({request, context}: ActionFunctionArgs) {
 
 export default function OrdersPage() {
   const {orderList, totalOrder, customerId} = useLoaderData<typeof loader>();
-  console.log('orderList', orderList);
 
   const {columns} = useColumn();
 

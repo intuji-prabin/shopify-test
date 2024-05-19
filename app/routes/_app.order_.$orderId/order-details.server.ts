@@ -6,7 +6,7 @@ import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.cons
 
 export type Product = {
   amount: string;
-  backOrderStatus: string;
+  backOrderStatus: OrderStatus;
   defaultUOM: string;
   invoiceId: string;
   itemLineNumber: string;
@@ -16,7 +16,7 @@ export type Product = {
   quantity: number;
   selectedUOM: string;
   shippedQuantity: number;
-  shippingStatus: string;
+  shippingStatus: OrderStatus;
   total: string;
   uom: string;
 };
@@ -48,6 +48,7 @@ export type OrderDetails = {
   surCharges: string;
   totalExclGst: string;
   gst: string;
+  discount: string;
   products: Product[];
 };
 

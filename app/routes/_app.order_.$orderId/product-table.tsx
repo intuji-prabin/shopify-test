@@ -29,7 +29,7 @@ export function ProductTable({
           </p>
           <p className="text-grey-900 font-medium">
             Received {'>'} Processing {'>'} Order Picked {'>'} Dispatched {'>'}{' '}
-            In Transit {'>'} Delivered
+            Invoice Billing {'>'} In Transit {'>'} Delivered
           </p>
         </article>
         <Can I="view" a="view_tracked_order_price">
@@ -54,6 +54,10 @@ export function ProductTable({
               <tr>
                 <th className="text-left">GST</th>
                 <td>{prefixWithCurrency(orderProductDetails.gst)}</td>
+              </tr>
+              <tr>
+                <th className="text-left">Discount</th>
+                <td>{prefixWithCurrency(orderProductDetails.discount)}</td>
               </tr>
               <tr className="leading-7.5 text-[22px]">
                 <th className="text-left">Total</th>
