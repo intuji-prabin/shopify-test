@@ -1,5 +1,6 @@
+import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
-import {PDF} from '~/lib/constants/pdf.constent';
+import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 
 type SubDataType = {
   labels: string[];
@@ -75,119 +76,40 @@ const formatAmount = (amount: number) => {
   return amount > 999 ? amount / 1000 + 'k' : amount;
 };
 
-export async function getChartData() {
+export async function getChartData(customerID: string) {
   try {
-    const response: any = await fetch(ENDPOINT.REPORT.GET, {
-      headers: {
-        apiKey: PDF.SECRET_KEY,
-      },
-      method: 'GET',
+    const response = await useFetch<any>({
+      method: AllowedHTTPMethods.GET,
+      url: `${ENDPOINT.REPORT.GET}/${customerID}`,
     });
 
     if (response?.errors) {
-      throw new Error('Something went wrong');
+      return {
+        finalAreaResponse: {},
+        finalBarResponse: {},
+      };
     }
     if (!response?.status) {
-      throw new Error(response?.message);
+      return {
+        finalAreaResponse: {},
+        finalBarResponse: {},
+      };
     }
-
-    const data = await response.json();
-    //   monthly: {
-    //     labels: ['First Week', 'Second Week', 'Third Week', 'Fourth Week'],
-    //     currency: 'AUD',
-    //     amount: 51701.24,
-    //     percentage: 8.62,
-    //     increment: true,
-    //     data: [18230.34, 3901.07, 14691.88, 14877.95],
-    //   },
-    //   ytd: {
-    //     labels: [
-    //       'Jan',
-    //       'Feb',
-    //       'Mar',
-    //       'Apr',
-    //       'May',
-    //       'Jun',
-    //       'Jul',
-    //       'Aug',
-    //       'Sept',
-    //       'Oct',
-    //       'Nov',
-    //       'Dec',
-    //     ],
-    //     data: [
-    //       47597.94,
-    //       51701.24,
-    //       64123.48,
-    //       248641.1,
-    //       NaN,
-    //       NaN,
-    //       NaN,
-    //       NaN,
-    //       NaN,
-    //       NaN,
-    //       NaN,
-    //       NaN,
-    //     ],
-    //     currency: 'AUD',
-    //     amount: 412063.76,
-    //     percentage: 1170.82,
-    //     increment: true,
-    //   },
-    //   totalSpend: {
-    //     ytd: {
-    //       labels: ['2023', '2024'],
-    //       currency: 'AUD',
-    //       amount: 412063.76,
-    //       lastAmount: 32424.93,
-    //       fullSpendAmount: null,
-    //       percentage: 1170.82,
-    //       increment: true,
-    //       data: [[32424.93], [412063.76]],
-    //     },
-    //     mtd: {
-    //       labels: [
-    //         'Jan',
-    //         'Feb',
-    //         'Mar',
-    //         'Apr',
-    //         'May',
-    //         'Jun',
-    //         'Jul',
-    //         'Aug',
-    //         'Sept',
-    //         'Oct',
-    //         'Nov',
-    //         'Dec',
-    //       ],
-    //       currency: 'AUD',
-    //       amount: 51701.24,
-    //       lastAmount: 47597.94,
-    //       fullSpendAmount: null,
-    //       percentage: 8.62,
-    //       increment: true,
-    //       data: [
-    //         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7587.51, 24837.42],
-    //         [47597.94, 51701.24, 64123.48, 248641.1, 0, 0, 0, 0, 0, 0, 0, 0],
-    //       ],
-    //     },
-    //   },
-    // };
-    // console.log('first', data);
-    const finalAreaResponse = await formatAreaResponse(data);
-    const finalBarResponse = await formatBarResponse(data);
+    const finalAreaResponse = await formatAreaResponse(response?.payload);
+    const finalBarResponse = await formatBarResponse(response?.payload);
     return {finalAreaResponse, finalBarResponse};
   } catch (error) {
     console.log('error', error);
-    throw new Error(
-      'Oops! Something went wrong. Please hold tight and try again in a little while. Thank you for your understanding.',
-    );
+    return {
+      finalAreaResponse: {},
+      finalBarResponse: {},
+    };
   }
 }
 
 const formatAreaResponse = async (
   response: AreaChartDataType,
-): Promise<ResponseAreaDataType> => {
+): Promise<any> => {
   const formatChartData = (data: SubDataType) => {
     return {
       labels: data?.labels,
@@ -226,7 +148,7 @@ const formatAreaResponse = async (
 
 const formatBarResponse = async (response: any): Promise<any> => {
   const FinalTotalSpend = response?.totalSpend;
-  const FinalTotalInvoicing = response?.totalInvoicing;
+  const FinalTotalInvoicing = response?.totalInvoice;
 
   const formatBarChartData = (data: ChartReponseData) => {
     return {
@@ -312,6 +234,32 @@ const formatBarResponse = async (response: any): Promise<any> => {
     },
   };
 };
+
+export async function getExpenditureData(customerID: string) {
+  try {
+    const response = await useFetch<any>({
+      method: AllowedHTTPMethods.GET,
+      url: `${ENDPOINT.REPORT.PRODUCT_GET}/${customerID}`,
+    });
+
+    if (response?.errors) {
+      return {
+        expenditureData: {},
+      };
+    }
+    if (!response?.status) {
+      return {
+        expenditureData: {},
+      };
+    }
+    return response?.payload;
+  } catch (error) {
+    console.log('error', error);
+    return {
+      expenditureData: {},
+    };
+  }
+}
 
 // Actual values at first
 
