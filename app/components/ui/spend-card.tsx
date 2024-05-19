@@ -10,11 +10,12 @@ import {
   Tooltip,
   scales,
 } from 'chart.js/auto';
-import {Line} from 'react-chartjs-2';
-import {ClientOnly} from 'remix-utils/client-only';
+import { Line } from 'react-chartjs-2';
+import { ClientOnly } from 'remix-utils/client-only';
 import useDate from '~/hooks/useDate';
-import {ArrowDown, ArrowUp} from './arrow';
-import {Can} from '~/lib/helpers/Can';
+import { ArrowDown, ArrowUp } from './arrow';
+import { ResponseAreaDataType } from '~/routes/_app._index/data-sets.server';
+import { Can } from '~/lib/helpers/Can';
 
 ChartJS.register(
   CategoryScale,
@@ -38,7 +39,7 @@ export const options = {
       },
     },
     x: {
-      display: false,
+      display: true,
       grid: {
         display: false,
       },
@@ -54,7 +55,7 @@ export const options = {
   },
 };
 
-const SpendCard = ({data}: {data: any}) => {
+const SpendCard = ({ data }: { data: ResponseAreaDataType }) => {
   const currentDate = useDate();
   return (
     <section className="container">
@@ -67,20 +68,15 @@ const SpendCard = ({data}: {data: any}) => {
                 {currentDate.currentLongMonth}
               </p>
             </div>
-            <div className="grid items-center grid-cols-1 mxs:grid-cols-2 gap-y-1 gap-x-3">
+            <div className="grid items-center grid-cols-1 md:grid-cols-2 gap-y-1 gap-x-3">
               <div className="space-y-2">
-                <h4 className="text-grey-900">
-                  $ <span className="text-5xl italic font-bold">89.57 </span>K
-                </h4>
-                <p className="flex items-center text-lg font-medium gap-1.5">
-                  <ArrowUp />
-                  <span className=" text-semantic-success-500"> 8.5% </span>VS
-                  LAST MONTH
-                </p>
+                <h4 className="text-grey-900">{data?.monthly?.currency} <span className="text-5xl italic font-bold">{data?.monthly?.amount}</span></h4>
+                <p className="flex items-center text-lg font-medium gap-1.5">{data?.monthly?.increment ? <ArrowUp /> : <ArrowDown />}<span className={
+                  data?.monthly?.increment ? "text-semantic-success-500" : "text-semantic-danger-500"}> {data?.monthly?.percentage}% </span>VS LAST MONTH</p>
               </div>
-              <div className="mxs:w-48 mxs:ml-auto">
+              <div className="md:w-72 md:ml-auto">
                 <ClientOnly fallback={<Fallback />}>
-                  {() => <Line options={options} data={data} />}
+                  {() => <Line options={options} data={data?.monthly?.areaChartData} />}
                 </ClientOnly>
               </div>
             </div>
@@ -100,20 +96,15 @@ const SpendCard = ({data}: {data: any}) => {
                 </li>
               </ul>
             </div>
-            <div className="grid items-center grid-cols-1 mxs:grid-cols-2 gap-y-1 gap-x-3">
+            <div className="grid items-center grid-cols-1 md:grid-cols-2 gap-y-1 gap-x-3">
               <div className="space-y-2">
-                <h4 className="text-grey-900">
-                  $ <span className="text-5xl italic font-bold">89.57 </span>K
-                </h4>
-                <p className="flex items-center text-lg font-medium gap-1.5">
-                  <ArrowDown />
-                  <span className=" text-semantic-danger-500"> 8.5% </span>VS
-                  LAST MONTH
-                </p>
+                <h4 className="text-grey-900">{data?.ytd?.currency} <span className="text-5xl italic font-bold">{data?.ytd?.amount}</span></h4>
+                <p className="flex items-center text-lg font-medium gap-1.5">{data?.ytd?.increment ? <ArrowUp /> : <ArrowDown />}<span className={
+                  data?.ytd?.increment ? "text-semantic-success-500" : "text-semantic-danger-500"}> {data?.ytd?.percentage}% </span>VS LAST YEAR</p>
               </div>
-              <div className="mxs:w-48 mxs:ml-auto">
+              <div className="md:w-72 md:ml-auto">
                 <ClientOnly fallback={<Fallback />}>
-                  {() => <Line options={options} data={data} />}
+                  {() => <Line options={options} data={data?.ytd?.areaChartData} />}
                 </ClientOnly>
               </div>
             </div>
