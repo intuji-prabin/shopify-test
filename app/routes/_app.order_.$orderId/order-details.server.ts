@@ -1,30 +1,53 @@
 import {useFetch} from '~/hooks/useFetch';
-import {OrderStatus} from '../_app.order/order.server';
+import {OrderStatus} from '~/routes/_app.order/order.server';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 
 export type Product = {
-  name: string;
-  quantity: number;
-  shippedQuantity: number;
   amount: string;
-  invoiceId: string;
-  total: string;
-  shippingStatus: OrderStatus;
-  backOrderStatus: OrderStatus;
-  selectedUOM: string;
+  backOrderStatus: string;
   defaultUOM: string;
+  invoiceId: string;
+  itemLineNumber: string;
+  name: string;
+  productID: string;
+  productVariantID: string;
+  quantity: number;
+  selectedUOM: string;
+  shippedQuantity: number;
+  shippingStatus: string;
+  total: string;
+  uom: string;
 };
 
-type OrderDetails = {
+export type OrderDetails = {
+  shippingStatus: string | null;
+  carrier: string | null;
+  shipmentMethod: string | null;
+  shipmentDate: string | null;
+  consignmentNumber: string | null;
+  deliveryDate: string | null;
+  shipmentTrackingUrl: string | null;
+  shipmentDocumentUrl: string | null;
+  trackingMethod: string | null;
+  referenceNumber: string | null;
+  carrierType: string | null;
+  serviceLevel: string | null;
+  poNumber: string;
+  shippingAddress1: string;
+  shippingAddress2: string;
+  shippingCountry: string;
+  shippingPostalCode: string;
+  name: string;
+  orderStatus: OrderStatus;
   totalPrice: string;
+  currency: string;
   subTotal: string;
   freight: string;
   surCharges: string;
   totalExclGst: string;
   gst: string;
-  currency: string;
   products: Product[];
 };
 
@@ -34,8 +57,14 @@ type ResponseData = {
   payload: OrderDetails;
 };
 
-export async function getOrdersProductDetails({orderId}: {orderId: string}) {
-  const url = `${ENDPOINT.ORDERS.GET_ORDER_DETAIL}/${orderId}`;
+export async function getOrdersProductDetails({
+  orderId,
+  customerId,
+}: {
+  orderId: string;
+  customerId: string;
+}) {
+  const url = `${ENDPOINT.ORDERS.GET_ORDER_DETAIL}/${customerId}/${orderId}`;
   try {
     const results = await useFetch<ResponseData>({
       method: AllowedHTTPMethods.GET,

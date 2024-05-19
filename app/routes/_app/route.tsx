@@ -45,10 +45,10 @@ import {emitter} from '~/lib/utils/emitter.server';
 import {ro} from 'date-fns/locale';
 
 interface Payload {
-  type: 'cart' | 'wishlist' | 'pendingOrder' | 'notification';
+  type: 'cart' | 'wishlist' | 'productGroup ' | 'notification';
   totalNumber: number;
-  companyId: string;
-  customerId: string;
+  companyId?: string;
+  customerId?: string;
 }
 
 interface Handlers {
@@ -67,9 +67,7 @@ export async function loader({request, context}: ActionFunctionArgs) {
   const categories = await getCagetoryList(context);
   const messageSession = await getMessageSession(request);
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
-
   const productGroup = await getProductGroup({customerId: userDetails.id});
-
   const headers = [] as any;
   const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY);
 
@@ -114,14 +112,18 @@ export default function PublicPageLayout() {
   } = useLoaderData<typeof loader>();
 
   const submit = useSubmit();
-  // let cartCount = sessionCartInfo?.lineItems ?? 0;
-  // const wishlistCount = wishlistSession ?? 0;
+  let cartCount = sessionCartInfo?.lineItems ?? 0;
+  let wishlistCount = wishlistSession ?? 0;
   const [ability, setAbility] = useState(DEFAULT_ABILITIES);
-  const [cartCount, setCartCount] = useState(sessionCartInfo?.lineItems | 0);
-  const [wishlistCount, setWishlistCount] = useState(wishlistSession | 0);
+
   const [pendingOrderCounts, setPendingOrderCounts] = useState(
     pendingOrderCount | 0,
   );
+
+  //Here this is for pending order count when sse hit
+  useEffect(() => {
+    setPendingOrderCounts(pendingOrderCount);
+  }, [pendingOrderCount]);
 
   function getUserAbilities(roleData: any) {
     // if (roleData.value === 'admin-service-provider') {
@@ -171,22 +173,23 @@ export default function PublicPageLayout() {
     },
   );
 
+
   useEffect(() => {
     if (typeof hasNotificationBeenUpdated === 'string') {
       const parsedData = JSON.parse(hasNotificationBeenUpdated) as {
-        permissionData: {
+        notificationData: {
           payload: Payload;
         };
       };
-
       const {type, totalNumber, customerId, companyId} =
-        parsedData.permissionData.payload;
+        parsedData.notificationData.payload;
       const currentUrl = window.location.pathname; // Capture the current URL
 
       const handlers: Handlers = {
         cart: () => {
           if (userDetails.id === customerId) {
-            setCartCount(totalNumber);
+            cartCount = totalNumber;
+            // setCartCount(totalNumber);
             submit(
               {returnUrl: currentUrl, type, totalNumber},
               {method: 'GET', action: '/update-notifications-session'},
@@ -194,21 +197,23 @@ export default function PublicPageLayout() {
           }
         },
         wishlist: () => {
-          if (userDetails?.meta.company_id.value === companyId) {
-            setWishlistCount(totalNumber);
+          if (userDetails?.meta.company_id.companyId === companyId) {
+            wishlistCount = totalNumber;
+            // setWishlistCount(totalNumber);
             submit(
-              {returnUrl: currentUrl, type ,totalNumber},
+              {returnUrl: currentUrl, type, totalNumber},
               {method: 'GET', action: '/update-notifications-session'},
             );
           }
         },
-        pendingOrder: () => {
-          if (userDetails?.meta.company_id.value === companyId) {
+        productGroup: () => {
+          if (userDetails?.meta.company_id.companyId === companyId) {
+            // pendingOrderCounts = totalNumber;
             setPendingOrderCounts(totalNumber);
           }
         },
         notification: () => {
-          if (userDetails?.meta.company_id.value === companyId) {
+          if (userDetails?.meta.company_id.companyId === companyId) {
             // Update notification here
           }
         },
@@ -220,6 +225,7 @@ export default function PublicPageLayout() {
       }
     }
   }, [hasNotificationBeenUpdated]);
+  
 
   useEffect(() => {
     // Extract the user role from userDetails

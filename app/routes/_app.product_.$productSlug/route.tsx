@@ -33,6 +33,7 @@ import ProductInformation from './productInformation';
 import ProductTab from './productTabs';
 import { addToWishlist, removeFromWishlist } from './wishlist.server';
 
+
 interface ProductDetailType {
   productPage: string;
   product: {
@@ -165,6 +166,7 @@ const ProductDetailPageWrapper = ({ children }: { children: ReactNode }) => {
 
 export const action = async ({ request, context }: ActionFunctionArgs) => {
   const messageSession = await getMessageSession(request);
+
   const fromData = await request.formData();
   switch (fromData.get('action')) {
     case 'addToCart': {
@@ -177,7 +179,9 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
           context,
           request,
         );
+        console.log("this is it")
         setSuccessMessage(messageSession, 'Item added to cart successfully');
+        
         return json(
           {},
           {

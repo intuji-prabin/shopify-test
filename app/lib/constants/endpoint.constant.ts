@@ -72,4 +72,7 @@ export const ENDPOINT = {
   PROMO_CODE: {
     POST: `${BASE_URL}/promo-code`,
   },
+  NOTIFICATIONS: {
+    GET: `${BASE_URL}/notifications`,
+  },
 };
