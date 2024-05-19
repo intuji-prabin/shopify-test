@@ -70,10 +70,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
   let res;
   switch (request.method) {
     case 'POST':
-      try {
-        const formData = await request.formData();
-        switch (formData.get("action")) {
-          case 'place_order': {
+      const formData = await request.formData();
+      switch (formData.get("action")) {
+        case 'place_order': {
+          try {
             const poNumber = formData.get("poNumber") as string;
             const { userDetails } = await getUserDetails(request);
             const trackAnOrderResponse = await getOrderId(poNumber, userDetails?.id);
@@ -102,56 +102,25 @@ export async function action({ request, context }: ActionFunctionArgs) {
               ],
             });
           }
-          case 'promo_code': {
-            const promoCode = formData.get("promoCode") as string;
-            res = await promoCodeApply(promoCode, context, request);
-            console.log("res", res)
-            setSuccessMessage(messageSession, res?.message);
-            return json(
-              { status: res?.status, message: res?.message },
-              {
-                headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
-              },
+          catch (error) {
+            if (error instanceof Error) {
+              // console.log('this is err', error?.message);
+              setErrorMessage(messageSession, error?.message);
+              return json(
+                {},
+                {
+                  headers: [
+                    ['Set-Cookie', await context.session.commit({})],
+                    ['Set-Cookie', await messageCommitSession(messageSession)],
+                  ],
+                },
+              );
+            }
+            // console.log('this is err');
+            setErrorMessage(
+              messageSession,
+              'Order not placed to some issue. Please try again later.',
             );
-          }
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          console.log("apply error", error)
-          // console.log('this is err', error?.message);
-          setErrorMessage(messageSession, error?.message);
-          return json(
-            { status: false, message: error?.message },
-            {
-              headers: [
-                ['Set-Cookie', await context.session.commit({})],
-                ['Set-Cookie', await messageCommitSession(messageSession)],
-              ],
-            },
-          );
-        }
-        // console.log('this is err');
-        setErrorMessage(
-          messageSession,
-          'Order not placed to some issue. Please try again later.',
-        );
-        return json(
-          { status: res?.status, message: res?.message },
-          {
-            headers: [
-              ['Set-Cookie', await context.session.commit({})],
-              ['Set-Cookie', await messageCommitSession(messageSession)],
-            ],
-          },
-        );
-      }
-    case 'DELETE':
-      try {
-        const formData = await request.formData();
-        switch (formData.get("action")) {
-          case 'order_delete': {
-            res = await removeItemFromCart(formData, context, request);
-            setSuccessMessage(messageSession, 'Order deleted successfully');
             return json(
               {},
               {
@@ -162,8 +131,98 @@ export async function action({ request, context }: ActionFunctionArgs) {
               },
             );
           }
-          case 'promo_code_delete': {
-            console.log("first_promo_code_delete");
+        }
+        case 'promo_code': {
+          try {
+            const promoCode = formData.get("promoCode") as string;
+            res = await promoCodeApply(promoCode, context, request);
+            setSuccessMessage(messageSession, res?.message);
+            return json(
+              { status: res?.status, message: res?.message },
+              {
+                headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+              },
+            );
+          } catch (error) {
+            if (error instanceof Error) {
+              // console.log('this is err', error?.message);
+              setErrorMessage(messageSession, error?.message);
+              return json(
+                { status: false, message: error?.message },
+                {
+                  headers: [
+                    ['Set-Cookie', await context.session.commit({})],
+                    ['Set-Cookie', await messageCommitSession(messageSession)],
+                  ],
+                },
+              );
+            }
+            // console.log('this is err');
+            setErrorMessage(
+              messageSession,
+              'Some issue has occured while applying promocode. Please try again later.',
+            );
+            return json(
+              { status: res?.status, message: res?.message },
+              {
+                headers: [
+                  ['Set-Cookie', await context.session.commit({})],
+                  ['Set-Cookie', await messageCommitSession(messageSession)],
+                ],
+              },
+            );
+          }
+        }
+      }
+      break;
+    case 'DELETE':
+      const finalData = await request.formData();
+      switch (finalData.get("action")) {
+        case 'order_delete': {
+          try {
+            res = await removeItemFromCart(finalData, context, request);
+            setSuccessMessage(messageSession, 'Order deleted successfully');
+            return json(
+              {},
+              {
+                headers: [
+                  ['Set-Cookie', await context.session.commit({})],
+                  ['Set-Cookie', await messageCommitSession(messageSession)],
+                ],
+              },
+            );
+          } catch (error) {
+            if (error instanceof Error) {
+              // console.log('this is err', error?.message);
+              setErrorMessage(messageSession, error?.message);
+              return json(
+                {},
+                {
+                  headers: [
+                    ['Set-Cookie', await context.session.commit({})],
+                    ['Set-Cookie', await messageCommitSession(messageSession)],
+                  ],
+                },
+              );
+            }
+            // console.log('this is err');
+            setErrorMessage(
+              messageSession,
+              'Order not deleted due to some issue. Please try again later.',
+            );
+            return json(
+              {},
+              {
+                headers: [
+                  ['Set-Cookie', await context.session.commit({})],
+                  ['Set-Cookie', await messageCommitSession(messageSession)],
+                ],
+              },
+            );
+          }
+        }
+        case 'promo_code_delete': {
+          try {
             res = await promoCodeRemove(request);
             setSuccessMessage(messageSession, res?.message);
             return json(
@@ -175,37 +234,38 @@ export async function action({ request, context }: ActionFunctionArgs) {
                 ],
               },
             );
+          } catch (error) {
+            if (error instanceof Error) {
+              // console.log('this is err', error?.message);
+              setErrorMessage(messageSession, error?.message);
+              return json(
+                { status: false, message: error?.message },
+                {
+                  headers: [
+                    ['Set-Cookie', await context.session.commit({})],
+                    ['Set-Cookie', await messageCommitSession(messageSession)],
+                  ],
+                },
+              );
+            }
+            // console.log('this is err');
+            setErrorMessage(
+              messageSession,
+              'Some issue has occured while deleting promocode. Please try again later.',
+            );
+            return json(
+              {},
+              {
+                headers: [
+                  ['Set-Cookie', await context.session.commit({})],
+                  ['Set-Cookie', await messageCommitSession(messageSession)],
+                ],
+              },
+            );
           }
         }
-      } catch (error) {
-        if (error instanceof Error) {
-          // console.log('this is err', error?.message);
-          setErrorMessage(messageSession, error?.message);
-          return json(
-            { status: false, message: error?.message },
-            {
-              headers: [
-                ['Set-Cookie', await context.session.commit({})],
-                ['Set-Cookie', await messageCommitSession(messageSession)],
-              ],
-            },
-          );
-        }
-        // console.log('this is err');
-        setErrorMessage(
-          messageSession,
-          'Order not deleted due to some issue. Please try again later.',
-        );
-        return json(
-          {},
-          {
-            headers: [
-              ['Set-Cookie', await context.session.commit({})],
-              ['Set-Cookie', await messageCommitSession(messageSession)],
-            ],
-          },
-        );
       }
+      break;
     case 'PUT':
       try {
         res = await cartUpdate(context, request);
@@ -258,6 +318,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         404,
       );
   }
+  return null;
 }
 
 export default function CartList() {
@@ -286,7 +347,6 @@ export default function CartList() {
   const [placeOrder, setPlaceOrder] = useState(result);
 
   const data = useActionData<any>();
-  console.log("data", data)
   return (
     <>
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />

@@ -9,11 +9,9 @@ export const removeItemFromCart = async (
   request: Request,
 ) => {
   const itemList = Object.fromEntries(formData);
-  console.log('itemList', itemList);
   const lineItemId = Object.keys(itemList)
     .filter((key) => key !== 'action')
     .map((key) => itemList[key]) as any;
-  console.log('first lineItemId', lineItemId);
 
   if (lineItemId?.length < 1) {
     throw new Error('Cart item not provided');
@@ -24,7 +22,6 @@ export const removeItemFromCart = async (
   if (!sessionCartInfo) {
     throw new Error('Cart not found');
   }
-  console.log('lineItemId', lineItemId);
   const cartRemoveResponse = await removeCart(
     lineItemId,
     context,
