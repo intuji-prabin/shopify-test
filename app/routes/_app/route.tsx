@@ -203,11 +203,10 @@ export default function PublicPageLayout() {
       const {type, totalNumber, customerId, companyId} =
         parsedData.notificationData.payload;
       const currentUrl = window.location.pathname; // Capture the current URL
-
       const handlers: Handlers = {
         cart: () => {
           if (userDetails.id === customerId) {
-            cartCount = totalNumber;
+            cartCount = totalNumber | 0;
             // setCartCount(totalNumber);
             submit(
               {returnUrl: currentUrl, type, totalNumber},
