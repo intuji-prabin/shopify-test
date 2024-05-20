@@ -59,17 +59,16 @@ export const placeOrder = async (
     }
     const finalCartSession = useFormatCart(cartSession);
     context.session.set(CART_SESSION_KEY, finalCartSession);
-
     // Emit the notification asynchronously
     setTimeout(() => {
-      emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
+       emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
         payload: {
           type: 'cart',
           totalNumber: cartRemoveResponse === true ? 0 : cartRemoveResponse,
-          customerId: userDetails.id,
+          customerId: userDetails.id
         },
       });
-    }, 2000);
+    }, 2500);
     return {cartSession, shopifyOrderId};
   } catch (error) {
     if (error instanceof Error) {
