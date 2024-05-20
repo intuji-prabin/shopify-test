@@ -1,14 +1,17 @@
-import { useField } from 'remix-validated-form';
-import { Button } from '~/components/ui/button';
-import { DangerAlert } from '~/components/icons/alert';
+import {useField} from 'remix-validated-form';
+import {Button} from '~/components/ui/button';
+import {DangerAlert} from '~/components/icons/alert';
 import {
   AddTeamFormFieldNameType,
   EditTeamFormFieldNameType,
 } from '~/routes/_app.team_.add/team-form';
-import { EditFormFieldNameType } from '~/routes/_app.edit_.$promotionId/route';
+import {EditFormFieldNameType} from '~/routes/_app.edit_.$promotionId/route';
 
 type ImageUploadInputProps = {
-  name: AddTeamFormFieldNameType | EditTeamFormFieldNameType | EditFormFieldNameType;
+  name:
+    | AddTeamFormFieldNameType
+    | EditTeamFormFieldNameType
+    | EditFormFieldNameType;
   imageUrl: string | undefined;
   className?: string;
   defaultImage?: string;
@@ -24,7 +27,7 @@ export default function ImageUploadInput({
   handleFile,
   unsavedChanges,
 }: ImageUploadInputProps) {
-  const { getInputProps, error, clearError } = useField(name);
+  const {getInputProps, error, clearError} = useField(name);
 
   const handleProfileImageUpload = () => {
     const profileImageUploadInput = document.getElementById(
@@ -48,7 +51,7 @@ export default function ImageUploadInput({
           });
         };
         reader.readAsDataURL(file);
-        handleFile("companyLogo", file);
+        handleFile && handleFile('companyLogo', file);
         unsavedChanges && unsavedChanges();
       }
     });
@@ -66,7 +69,7 @@ export default function ImageUploadInput({
           <input
             type="file"
             accept="image/*"
-            {...getInputProps({ onChange: () => clearError() })}
+            {...getInputProps({onChange: () => clearError()})}
             id="image-upload"
             hidden
           />
