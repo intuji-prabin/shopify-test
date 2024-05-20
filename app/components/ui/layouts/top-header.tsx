@@ -57,10 +57,12 @@ export function NotificationNavbar({
   cartCount,
   wishlistCount,
   pendingOrderCount,
+  notificationCount,
 }: {
   cartCount: number;
   wishlistCount: number;
   pendingOrderCount: number;
+  notificationCount: number;
 }) {
   const {isOpen, toggleMenu} = useHamburgerMenu();
 
@@ -91,7 +93,7 @@ export function NotificationNavbar({
       icon: <NotificationIcon width={'20px'} height={'20px'} />,
       url: Routes.NOTIFICATIONS_NEW,
       title: 'Notifications',
-      notification: '3',
+      notification: notificationCount,
     },
   ];
   return (
@@ -124,11 +126,13 @@ export default function TopHeader({
   cartCount,
   wishlistCount,
   pendingOrderCount,
+  notificationCount,
 }: {
   userDetails: CustomerData;
   cartCount: number;
   wishlistCount: number;
   pendingOrderCount: number;
+  notificationCount: number;
 }) {
   const [isClicked, setIsClicked] = useState(false);
 
@@ -156,6 +160,7 @@ export default function TopHeader({
             cartCount={cartCount}
             wishlistCount={wishlistCount}
             pendingOrderCount={pendingOrderCount}
+            notificationCount={notificationCount}
           />
         </div>
 
