@@ -1,4 +1,4 @@
-import { Link,useSubmit} from '@remix-run/react';
+import {Link, useSubmit} from '@remix-run/react';
 import {withZod} from '@remix-validated-form/with-zod';
 import {useState} from 'react';
 import {ValidatedForm, useIsValid} from 'remix-validated-form';
@@ -35,7 +35,11 @@ export type TrackAnOrderFormType = z.infer<typeof TrackAnOrderFormValidator>;
 
 export type TrackAnOrderFormFieldNameType = keyof TrackAnOrderFormType;
 
-export function TrackAnOrderButton({ trackAnOrderHome }: { trackAnOrderHome?: boolean }) {
+export function TrackAnOrderButton({
+  trackAnOrderHome,
+}: {
+  trackAnOrderHome?: boolean;
+}) {
   const {toggleMenu} = useHamburgerMenu();
   const [open, setOpen] = useState(false);
   const isConfirm = useIsValid('trackOrder-form');
@@ -49,19 +53,18 @@ export function TrackAnOrderButton({ trackAnOrderHome }: { trackAnOrderHome?: bo
     <Dialog open={open} onOpenChange={setOpen}>
       <Can I="view" a="track_order">
         <DialogTrigger asChild>
-          {trackAnOrderHome ?
-          <button
-            className="cta__btn pr-6 pl-4 py-4 lg:py-6 lg:pl-6 lg:pr-8 text-lg italic font-bold capitalize bg-primary-500 text-white lg:text-xl xl:text-2xl min-h-[88px] flex justify-between items-center"
-          >
-            <span className="flex items-center gap-1">
-              <Distance />
-              Track An Order
-            </span>
-            <span className="arrow__animation">
-              <ArrowRight fillColor="#ffffff" />
-            </span>
-          </button> :
-          <button
+          {trackAnOrderHome ? (
+            <button className="cta__btn pr-6 pl-4 py-4 lg:py-6 lg:pl-6 lg:pr-8 text-lg italic font-bold capitalize bg-primary-500 text-white lg:text-xl xl:text-2xl min-h-[88px] flex justify-between items-center">
+              <span className="flex items-center gap-1">
+                <Distance />
+                Track An Order
+              </span>
+              <span className="arrow__animation">
+                <ArrowRight fillColor="#ffffff" />
+              </span>
+            </button>
+          ) : (
+            <button
               className="flex items-center gap-1 track-order"
               onClick={() => toggleMenu(false)}
             >
@@ -70,8 +73,8 @@ export function TrackAnOrderButton({ trackAnOrderHome }: { trackAnOrderHome?: bo
                 Track an order
               </p>
             </button>
-          }
-      </DialogTrigger>
+          )}
+        </DialogTrigger>
       </Can>
 
       <DialogContent className="sm:max-w-[366px] track-an-order p-0 block">
@@ -91,12 +94,10 @@ export function TrackAnOrderButton({ trackAnOrderHome }: { trackAnOrderHome?: bo
           action={Routes.TRACK_AN_ORDER}
         >
           <div className="flex flex-col gap-1 px-4 pt-4 pb-2 border-[1px] border-t-grey-100 border-b-0 border-x-0 ">
-            <Label className="capitalize">
-              Purchase order number or order number
-            </Label>
+            <Label className="capitalize">Purchase order number</Label>
             <ConfirmationInput
               name={TRACK_AN_ORDERID}
-              placeholder="Order Number"
+              placeholder="Purchase Order Number"
             />
           </div>
           <DialogFooter className="block p-4">

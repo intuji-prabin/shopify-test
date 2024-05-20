@@ -87,10 +87,7 @@ export function useColumn({
           accessorKey: 'backOrderStatus',
           header: 'Back Order Status',
           enableSorting: false,
-          cell: (info) => {
-            const status = info.row.original.backOrderStatus as OrderStatus;
-            return <OrderStatusChip status={status} />;
-          },
+          cell: (info) => info.getValue(),
         },
       ];
 

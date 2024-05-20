@@ -6,7 +6,7 @@ import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.cons
 
 export type Product = {
   amount: string;
-  backOrderStatus: OrderStatus;
+  backOrderStatus: string;
   defaultUOM: string;
   invoiceId: string;
   itemLineNumber: string;

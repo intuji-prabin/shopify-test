@@ -26,6 +26,7 @@ import {
 } from '~/lib/utils/toast-session.server';
 import {addedBulkCart} from '~/routes/_app.wishlist/bulk.cart.server';
 import {Routes} from '~/lib/constants/routes.constent';
+import {useMemo} from 'react';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Order Details'}];
@@ -115,6 +116,10 @@ export default function OrderDetailPage() {
     ordersProductDetails.orderStatus !== 'Order Cancel' &&
     ordersProductDetails.orderStatus !== 'On Hold';
 
+  const productWithNoBackOrderStatus = useMemo(() => {
+    return products.filter((product) => product.backOrderStatus !== 'No');
+  }, [products]);
+
   return (
     <section className="container">
       <OrderBreadcrumb orderId={orderId} products={products} />
@@ -127,7 +132,7 @@ export default function OrderDetailPage() {
         {displayOrderSteps && (
           <OrderSteps
             orderStatus={ordersProductDetails.orderStatus}
-            products={products}
+            products={productWithNoBackOrderStatus}
           />
         )}
         <OrderInformation orderInformation={rest} />
