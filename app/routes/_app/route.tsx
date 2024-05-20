@@ -28,6 +28,7 @@ import {getUserDetails} from '~/lib/utils/user-session.server';
 import {CustomerData} from '~/routes/_public.login/login.server';
 import {
   getCagetoryList,
+  getNewNotificationCount,
   getOrderId,
   getSessionCart,
   getSessionData,
@@ -63,12 +64,26 @@ interface Data {
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
   const {userDetails} = await getUserDetails(request);
+
   const sessionData = await getSessionData(userDetails, context);
+
   const categories = await getCagetoryList(context);
+
   const messageSession = await getMessageSession(request);
+
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
+
   const productGroup = await getProductGroup({customerId: userDetails.id});
+
+  const customerId = userDetails.id;
+
+  const {totalNotifications} = await getNewNotificationCount({
+    customerId,
+    request,
+  });
+
   const headers = [] as any;
+
   const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY);
 
   if (!sessionCartInfo) {
@@ -95,6 +110,7 @@ export async function loader({request, context}: ActionFunctionArgs) {
       sessionCartInfo,
       wishlistSession,
       pendingOrderCount: productGroup?.length ?? 0,
+      notificationCount: totalNotifications,
     },
     {
       headers,
@@ -109,6 +125,7 @@ export default function PublicPageLayout() {
     sessionCartInfo,
     wishlistSession,
     pendingOrderCount,
+    notificationCount,
   } = useLoaderData<typeof loader>();
 
   const submit = useSubmit();
@@ -173,7 +190,6 @@ export default function PublicPageLayout() {
     },
   );
 
-
   useEffect(() => {
     if (typeof hasNotificationBeenUpdated === 'string') {
       const parsedData = JSON.parse(hasNotificationBeenUpdated) as {
@@ -225,7 +241,6 @@ export default function PublicPageLayout() {
       }
     }
   }, [hasNotificationBeenUpdated]);
-  
 
   useEffect(() => {
     // Extract the user role from userDetails
@@ -278,6 +293,7 @@ export default function PublicPageLayout() {
         userDetails={userDetails}
         wishlistCount={wishlistCount}
         pedingOrderCount={pendingOrderCounts}
+        notificationCount={notificationCount}
       >
         <Outlet />
       </Layout>
@@ -292,6 +308,7 @@ const Layout = ({
   cartCount,
   wishlistCount,
   pedingOrderCount,
+  notificationCount,
 }: {
   children: React.ReactNode;
   categories: any;
@@ -299,6 +316,7 @@ const Layout = ({
   cartCount: number;
   wishlistCount: number;
   pedingOrderCount: number;
+  notificationCount: number;
 }) => {
   const matches = useMediaQuery('(min-width: 768px)');
   const submit = useSubmit();
@@ -311,6 +329,7 @@ const Layout = ({
             userDetails={userDetails}
             wishlistCount={wishlistCount}
             pendingOrderCount={pedingOrderCount}
+            notificationCount={notificationCount}
           />
           <BottomHeader categories={categories} />
         </header>
