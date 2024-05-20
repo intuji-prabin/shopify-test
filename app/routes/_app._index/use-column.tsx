@@ -62,7 +62,24 @@ export function useSpendingByProductColumn() {
                         <p>${product?.total_spending.toFixed(2)}</p>
                     );
                 },
-            }
+            },
+            {
+                accessorKey: 'action',
+                header: 'Action',
+                enableSorting: false,
+                cell: (info) => {
+                    const productSlug = info.row.original.slug;
+                    return (
+                        <div className="flex justify-start gap-x-2">
+                            <Link to={productSlug ? productSlug : ""}>
+                                <Button size="icon" variant="icon">
+                                    <EyeOn />
+                                </Button>
+                            </Link>
+                        </div>
+                    );
+                },
+            },
         ],
         [],
     );
