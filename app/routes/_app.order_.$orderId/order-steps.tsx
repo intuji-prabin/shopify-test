@@ -32,12 +32,10 @@ export default function OrderSteps({
       label: 'Recieved',
       icon: (
         <Recieved
-          fillColor={`${
-            orderStatus === 'Received Shopify Order' ? '#fff' : '#969C9C'
-          }`}
+          fillColor={`${orderStatus === 'Received' ? '#fff' : '#969C9C'}`}
         />
       ),
-      status: 'Received Shopify Order',
+      status: 'Received',
     },
     {
       label: 'Processing',
@@ -112,7 +110,7 @@ export default function OrderSteps({
           <p className="pt-2 text-lg italic font-bold text-grey-100">
             {step.label}
           </p>
-          {step.status === 'Processing' && (
+          {step.status === 'Processing' && products.length > 0 && (
             <>
               <div className="bg-status-back_order h-5 w-0.5 mx-auto"></div>
               <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-grey-100">

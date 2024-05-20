@@ -9,7 +9,7 @@ import {statusVariants} from '~/components/ui/status';
 
 export function OrderStatusChip({status}: {status: OrderStatus}) {
   switch (status) {
-    case 'Received Shopify Order':
+    case 'Received':
       return (
         <div className={statusVariants({variant: 'received'})}>Received</div>
       );

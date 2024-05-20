@@ -31,8 +31,9 @@ export default function SupportPage() {
       </p>
       <h4 className="mb-6">Available options</h4>
       <div className="grid gap-6 sm:grid-cols-2">
-        {OptionsCardData.map((card, index) => (
+        {OptionsCardData.map((card) => (
           <Can
+            key={card.title}
             I="view"
             a={
               card.title === 'Allow Impersonation'
@@ -42,8 +43,7 @@ export default function SupportPage() {
                 : 'view_contact_details'
             }
           >
-            
-            <OptionsCard key={index} {...card} />
+            <OptionsCard key={card.title} {...card} />
           </Can>
         ))}
       </div>

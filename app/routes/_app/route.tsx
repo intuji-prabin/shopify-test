@@ -136,6 +136,9 @@ export default function PublicPageLayout() {
   const [pendingOrderCounts, setPendingOrderCounts] = useState(
     pendingOrderCount | 0,
   );
+  const [notificationCounts, setNotificationCounts] = useState(
+    notificationCount | 0,
+  );
 
   //Here this is for pending order count when sse hit
   useEffect(() => {
@@ -200,11 +203,10 @@ export default function PublicPageLayout() {
       const {type, totalNumber, customerId, companyId} =
         parsedData.notificationData.payload;
       const currentUrl = window.location.pathname; // Capture the current URL
-
       const handlers: Handlers = {
         cart: () => {
           if (userDetails.id === customerId) {
-            cartCount = totalNumber;
+            cartCount = totalNumber | 0;
             // setCartCount(totalNumber);
             submit(
               {returnUrl: currentUrl, type, totalNumber},
@@ -215,7 +217,6 @@ export default function PublicPageLayout() {
         wishlist: () => {
           if (userDetails?.meta.company_id.companyId === companyId) {
             wishlistCount = totalNumber;
-            // setWishlistCount(totalNumber);
             submit(
               {returnUrl: currentUrl, type, totalNumber},
               {method: 'GET', action: '/update-notifications-session'},
@@ -224,13 +225,14 @@ export default function PublicPageLayout() {
         },
         productGroup: () => {
           if (userDetails?.meta.company_id.companyId === companyId) {
-            // pendingOrderCounts = totalNumber;
             setPendingOrderCounts(totalNumber);
           }
         },
         notification: () => {
           if (userDetails?.meta.company_id.companyId === companyId) {
-            // Update notification here
+            if (userDetails?.meta.company_id.companyId === companyId) {
+              setNotificationCounts(totalNumber);
+            }
           }
         },
       };
@@ -293,7 +295,7 @@ export default function PublicPageLayout() {
         userDetails={userDetails}
         wishlistCount={wishlistCount}
         pedingOrderCount={pendingOrderCounts}
-        notificationCount={notificationCount}
+        notificationCount={notificationCounts}
       >
         <Outlet />
       </Layout>

@@ -5,7 +5,7 @@ import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.cons
 import {generateUrlWithParams} from '~/lib/helpers/url.helper';
 
 export type OrderStatus =
-  | 'Received Shopify Order'
+  | 'Received'
   | 'Order Cancel'
   | 'On Hold'
   | 'Processing'
