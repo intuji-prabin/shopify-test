@@ -229,12 +229,12 @@ export default function PublicPageLayout() {
           }
         },
         notification: () => {
-          if (userDetails?.meta.company_id.companyId === companyId) {
-            if (userDetails?.meta.company_id.companyId === companyId) {
+          const companyMeta = userDetails?.meta.company_id;
+          if (companyMeta?.companyId === companyId || companyMeta?.value === companyId) {
               setNotificationCounts(totalNumber);
-            }
           }
-        },
+      },
+      
       };
 
       const handler = handlers[type];
