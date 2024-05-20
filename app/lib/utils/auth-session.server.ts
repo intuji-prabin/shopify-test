@@ -5,6 +5,7 @@ import {Routes} from '~/lib/constants/routes.constent';
 import {
   getMessageSession,
   messageCommitSession,
+  setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
 import {
@@ -13,8 +14,6 @@ import {
   getUserDetailsSession,
   userDetailsCommitSession,
 } from '~/lib/utils/user-session.server';
-
-
 
 export const USER_SESSION_KEY = 'accessToken';
 
@@ -88,10 +87,10 @@ export async function isAuthenticate(context: AppLoadContext) {
 export async function isAuthorize(request: Request, permission: string) {
   const userDetailsSession = await getUserDetailsSession(request);
   const userDetail = userDetailsSession.get(USER_DETAILS_KEY);
-   // Find the 'add_customer' permission in user's role permissions
-   const hasAddCustomerPermission = userDetail.meta.user_role.permission.includes(permission);
+  // Find the 'add_customer' permission in user's role permissions
+  const hasAddCustomerPermission =
+    userDetail.meta.user_role.permission.includes(permission);
 
-  
   return hasAddCustomerPermission;
 }
 
@@ -99,20 +98,22 @@ export async function logout({
   context,
   request,
   logoutMessage = 'Logout Successfully',
+  type = 'success',
 }: {
   request: Request;
   context: AppLoadContext;
   logoutMessage?: string;
+  type?: 'error' | 'success';
 }) {
   const {session} = context;
-
 
   const messageSession = await getMessageSession(request);
   const userDetailsSession = await getUserDetailsSession(request);
   const finalLogoutMessage = logoutMessage || 'Logout Successfully'; // Set the default message if logoutMessage is not provided
 
-
-  setSuccessMessage(messageSession, finalLogoutMessage);
+  type === 'success'
+    ? setSuccessMessage(messageSession, finalLogoutMessage)
+    : setErrorMessage(messageSession, finalLogoutMessage);
 
   return redirect(Routes.LOGIN, {
     headers: [

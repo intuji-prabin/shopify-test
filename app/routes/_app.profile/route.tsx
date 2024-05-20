@@ -36,9 +36,10 @@ import {
 } from '~/routes/_public.login/login.server';
 import {Routes} from '~/lib/constants/routes.constent';
 import {fileUpload} from '~/lib/utils/file-upload';
-import {LOGOUT_MUTATION} from '~/routes/_public.logout/route';
+// import {LOGOUT_MUTATION} from '~/routes/_public.logout/route';
 import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
 import {BackButton} from '~/components/ui/back-button';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Profile'}];
@@ -170,11 +171,11 @@ export async function action({request, context}: ActionFunctionArgs) {
       updateCustomerDetails.customerUpdate?.customerAccessToken?.accessToken;
 
     if (typeof oldPassword !== 'undefined' && oldPassword !== '') {
-      await storefront.mutate(LOGOUT_MUTATION, {
-        variables: {
-          customerAccessToken: newAccessToken,
-        },
-      });
+      // await storefront.mutate(LOGOUT_MUTATION, {
+      //   variables: {
+      //     customerAccessToken: newAccessToken,
+      //   },
+      // });
 
       return logout({
         context,
@@ -207,6 +208,14 @@ export async function action({request, context}: ActionFunctionArgs) {
     });
   } catch (error) {
     if (error instanceof Error) {
+      if (error.message.split(' ')[1] === 'Access') {
+        return logout({
+          context,
+          request,
+          logoutMessage: 'Oops! Something went wrong. Please Login Again',
+          type: 'error',
+        });
+      }
       setErrorMessage(messageSession, error.message);
       return json(
         {},
@@ -218,7 +227,7 @@ export async function action({request, context}: ActionFunctionArgs) {
       );
     }
 
-    return json({error}, {status: 400});
+    return json({error}, {status: 500});
   }
 }
 
