@@ -5,6 +5,8 @@ import {useFetch} from '~/hooks/useFetch';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {useFormatCart} from '~/hooks/useFormatCart';
+import {emitter3} from '~/lib/utils/emitter.server';
+import {EVENTS} from '~/lib/constants/events.contstent';
 
 export const placeOrder = async (
   formData: any,
@@ -57,6 +59,17 @@ export const placeOrder = async (
     }
     const finalCartSession = useFormatCart(cartSession);
     context.session.set(CART_SESSION_KEY, finalCartSession);
+
+    // Emit the notification asynchronously
+    setTimeout(() => {
+      emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
+        payload: {
+          type: 'cart',
+          totalNumber: cartRemoveResponse === true ? 0 : cartRemoveResponse,
+          customerId: userDetails.id,
+        },
+      });
+    }, 2000);
     return {cartSession, shopifyOrderId};
   } catch (error) {
     if (error instanceof Error) {
