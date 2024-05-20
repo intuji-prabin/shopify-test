@@ -16,7 +16,6 @@ import { Can } from '~/lib/helpers/Can';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import {
-  doughnutChartData,
   getChartData,
   getExpenditureData,
 } from '~/routes/_app._index/data-sets.server';
@@ -52,7 +51,6 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     slides,
     userDetails,
     chartData,
-    doughnutChartData,
     expenditureData,
     invoiceList
   });
@@ -81,24 +79,26 @@ export default function Homepage() {
         barChartData={data?.chartData?.finalBarResponse}
       />}
       {Object.keys(data?.expenditureData).length !== 0 && <ExpenditureCard doughnutChartData={data?.expenditureData} />}
-      <section className="container">
-        <Can I="view" a="view_transaction_history">
-          <div className="p-6 space-y-3 bg-white mxs:space-y-6">
-            <div className='flex gap-3 flex-wrap justify-between'>
-              <div className="flex items-center gap-x-2 gap-y-1">
-                <span className="flex items-center justify-center w-12 h-12 bg-primary-200">
-                  <Expenditure />
-                </span>
-                <h4>Transaction History</h4>
+      {latestFiveInvoices.length > 0 &&
+        <section className="container">
+          <Can I="view" a="view_transaction_history">
+            <div className="p-6 space-y-3 bg-white mxs:space-y-6">
+              <div className='flex flex-wrap justify-between gap-3'>
+                <div className="flex items-center gap-x-2 gap-y-1">
+                  <span className="flex items-center justify-center w-12 h-12 bg-primary-200">
+                    <Expenditure />
+                  </span>
+                  <h4>Transaction History</h4>
+                </div>
+                <Button variant="primary">
+                  <Link to={Routes.INVOICES}>view all</Link>
+                </Button>
               </div>
-              <Button variant="primary">
-                <Link to={Routes.INVOICES}>view all</Link>
-              </Button>
+              <DataTable table={table} columns={columns} />
             </div>
-            <DataTable table={table} columns={columns} />
-          </div>
-        </Can>
-      </section>
+          </Can>
+        </section>
+      }
     </article>
   );
 }

@@ -21,7 +21,12 @@ export function useSpendingByProductColumn() {
                 cell: (info) => {
                     const product = info.row.original;
                     return (
-                        <p>{product?.product_name}</p>
+                        <div className="flex items-center gap-x-3">
+                            <div className="h-12 aspect-square">
+                                <img src="/product.png" alt={product?.product_name} className="object-contain w-full h-full" />
+                            </div>
+                            <p>{product?.product_name}</p>
+                        </div>
                     );
                 },
             },
@@ -54,7 +59,7 @@ export function useSpendingByProductColumn() {
                 cell: (info) => {
                     const product = info.row.original;
                     return (
-                        <p>${product?.total_spending}</p>
+                        <p>${product?.total_spending.toFixed(2)}</p>
                     );
                 },
             }
