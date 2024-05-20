@@ -3,7 +3,9 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {TRACK_AN_ORDERID} from '~/lib/constants/general.constant';
 import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {generateUrlWithParams} from '~/lib/helpers/url.helper';
 import {getAccessToken} from '~/lib/utils/auth-session.server';
+import {getNotifications} from '~/routes/_app.notification/notification.server';
 
 export interface CategoriesType {
   status: boolean;
@@ -216,6 +218,25 @@ const formateCartSessionResponse = (
 
   return cartListed;
 };
+
+export async function getNewNotificationCount({
+  customerId,
+  request,
+}: {
+  customerId: string;
+  request: Request;
+}) {
+  const {searchParams} = new URL(request.url);
+
+  const baseUrl = `${ENDPOINT.NOTIFICATIONS.GET}/${customerId}/new`;
+
+  const url = generateUrlWithParams({baseUrl, searchParams});
+
+  const {totalNotifications} = await getNotifications({
+    url,
+  });
+  return {totalNotifications};
+}
 
 const GET_CATEGORY_QUEYR = `query getCollection {
   collections(first :  250 ) {
