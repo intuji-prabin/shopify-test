@@ -5,13 +5,17 @@ import {TooltipInfo} from '~/components/icons/orderStatus';
 import {badgeVariants} from '~/components/ui/badge';
 import {Button} from '~/components/ui/button';
 import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
+import {StockStatusChip} from '~/components/ui/stock-status-chip';
 import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {Can} from '~/lib/helpers/Can';
 import {getProductPriceByQty} from '~/routes/_app.product_.$productSlug/product-detail';
 
+export type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock';
+
 export type BulkOrderColumn = {
   productId: string;
+  inventory: StockStatus;
   variantId: string;
   quantity: number;
   title: string;
@@ -93,6 +97,7 @@ export function useMyProductColumn({
               featuredImage={product.featuredImage}
               moq={product.moq || 1}
               handle={product?.handle}
+              inventory={product.inventory}
             />
           );
         },
@@ -176,7 +181,7 @@ export function useMyProductColumn({
 type ItemsColumnType = Pick<
   BulkOrderColumn,
   'title' | 'sku' | 'featuredImage' | 'moq'
-> & {handle?: string};
+> & {handle?: string; inventory: StockStatus};
 
 export function ItemsColumn({
   title,
@@ -184,6 +189,7 @@ export function ItemsColumn({
   featuredImage,
   moq,
   handle,
+  inventory,
 }: ItemsColumnType) {
   return (
     <div className="flex flex-wrap items-center space-x-2">
@@ -224,10 +230,7 @@ export function ItemsColumn({
             <span className="font-semibold text-grey-900 ">SKU: </span>
             {(sku && sku) || 'N/A'}
           </p>
-          <div className={`${badgeVariants({variant: 'inStock'})} !m-0 `}>
-            <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>IN
-            STOCK
-          </div>
+          <StockStatusChip status={inventory} />
         </div>
         <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize ">
           minimum order({moq})
@@ -465,7 +468,7 @@ export function ProductTotal({
   quantity: number;
   UOM: any;
   currency: string;
-  discount: string;
+  discount?: string;
 }) {
   const prices = getProductPriceByQty(
     quantity,

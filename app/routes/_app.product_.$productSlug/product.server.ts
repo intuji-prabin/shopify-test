@@ -4,11 +4,12 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {CONSTANT} from '~/lib/constants/product.session';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getUserDetails} from '~/lib/utils/user-session.server';
-import {GET_CART_LIST} from '../_app.cart-list/cart.server';
+import {GET_CART_LIST} from '~/routes/_app.cart-list/cart.server';
 import {useFormatCart} from '~/hooks/useFormatCart';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {emitter3} from '~/lib/utils/emitter.server';
 import {EVENTS} from '~/lib/constants/events.contstent';
+import {StockStatus} from '~/routes/_app.cart-list/order-my-products/use-column';
 
 export interface relatedProductsType {
   productId: string;
@@ -34,6 +35,7 @@ export interface ProductType {
   tags: string[];
   description: string;
   warranty: string;
+  inventory: StockStatus;
   supplier: string;
   specification: string;
   packageContent: string;
@@ -108,9 +110,9 @@ export async function getProductDetails(customerId: string, handle: string) {
       throw new Error('Something went wrong');
     }
     if (!response?.status) {
-      console.log('firststatus');
       throw new Error(response?.message);
     }
+
     const finalResponse = await formatResponse(response?.payload);
     return finalResponse;
   } catch (error) {
@@ -161,6 +163,7 @@ const formatResponse = async (response: ProductType) => {
       priceRange: response?.priceRange,
       currency: response?.currency,
       categoryUrl: response?.categoryUrl,
+      inventory: response.inventory,
     },
     productTab: {
       description: response?.description === 'N/A' ? '' : response?.description,
