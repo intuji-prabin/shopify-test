@@ -65,7 +65,7 @@ interface Data {
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
   const {userDetails} = await getUserDetails(request);
-  const { session } = context;
+  const {session} = context;
 
   const sessionData = await getSessionData(userDetails, context);
 
@@ -89,17 +89,14 @@ export async function loader({request, context}: ActionFunctionArgs) {
   const headers = [] as any;
 
   const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY);
-
-  if (!sessionCartInfo) {
-    sessionCartInfo = await getSessionCart(userDetails?.id, context);
-    if (sessionCartInfo) {
-      const finalCartSession = {
-        cartId: sessionCartInfo?.cartId,
-        lineItems: sessionCartInfo?.lineItems,
-      };
-      context.session.set(CART_SESSION_KEY, finalCartSession);
-      headers.push(['Set-Cookie', await context.session.commit({})]);
-    }
+  sessionCartInfo = await getSessionCart(userDetails?.id, context);
+  if (sessionCartInfo) {
+    const finalCartSession = {
+      cartId: sessionCartInfo?.cartId,
+      lineItems: sessionCartInfo?.lineItems,
+    };
+    context.session.set(CART_SESSION_KEY, finalCartSession);
+    headers.push(['Set-Cookie', await context.session.commit({})]);
   }
 
   if (!categories) {
@@ -210,7 +207,7 @@ export default function PublicPageLayout() {
       const currentUrl = window.location.pathname; // Capture the current URL
       const handlers: Handlers = {
         cart: () => {
-          if (userDetails.id === customerId &&  userSessionId !== sessionId ) {
+          if (userDetails.id === customerId && userSessionId !== sessionId) {
             cartCount = totalNumber | 0;
             submit(
               {returnUrl: currentUrl, type, totalNumber},
@@ -234,11 +231,15 @@ export default function PublicPageLayout() {
         },
         notification: () => {
           const companyMeta = userDetails?.meta.company_id;
-          if ((companyMeta?.companyId === companyId || companyMeta?.value === companyId) && userSessionId !== sessionId) {
-              setNotificationCounts(totalNumber);
+
+          if (
+            (companyMeta?.companyId === companyId ||
+              companyMeta?.value === companyId) &&
+            userSessionId !== sessionId
+          ) {
+            setNotificationCounts(totalNumber);
           }
-      },
-      
+        },
       };
 
       const handler = handlers[type];

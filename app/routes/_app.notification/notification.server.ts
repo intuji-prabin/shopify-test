@@ -76,7 +76,6 @@ export async function viewNotification({
   const baseUrl = `${ENDPOINT.NOTIFICATIONS.GET}/${customerId}/${
     notificationId === null ? 'mark-as-read' : notificationId
   }`;
-
   const response = await useFetch<ViewNotificationResponse>({
     url: baseUrl,
     method: AllowedHTTPMethods.PUT,
