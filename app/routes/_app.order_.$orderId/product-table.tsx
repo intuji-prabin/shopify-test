@@ -1,9 +1,9 @@
-import {useTable} from '~/hooks/useTable';
-import {OrderDetails} from '~/routes/_app.order_.$orderId/order-details.server';
-import {useColumn} from '~/routes/_app.order_.$orderId/use-column';
-import {DataTable} from '~/components/ui/data-table';
-import {Separator} from '~/components/ui/separator';
-import {Can} from '~/lib/helpers/Can';
+import { useTable } from '~/hooks/useTable';
+import { OrderDetails } from '~/routes/_app.order_.$orderId/order-details.server';
+import { useColumn } from '~/routes/_app.order_.$orderId/use-column';
+import { DataTable } from '~/components/ui/data-table';
+import { Separator } from '~/components/ui/separator';
+import { Can } from '~/lib/helpers/Can';
 
 export function ProductTable({
   orderProductDetails,
@@ -11,23 +11,23 @@ export function ProductTable({
   orderProductDetails: OrderDetails;
 }) {
   const prefixWithCurrency = (price: string) =>
-    `${orderProductDetails.currency} ${price}`;
+    `${orderProductDetails.currency} ${parseFloat(price).toFixed(2)}`;
 
-  const {columns} = useColumn({prefixWithCurrency});
+  const { columns } = useColumn({ prefixWithCurrency });
 
-  const {table} = useTable(columns, orderProductDetails.products);
+  const { table } = useTable(columns, orderProductDetails.products);
 
   return (
-    <div className="bg-white p-2 mt-6">
+    <div className="p-2 mt-6 bg-white">
       <DataTable table={table} columns={columns} />
       <Separator />
       <div className="flex justify-between px-4 py-6">
-        <article className="space-y-2 bg-primary-50 p-4 border-grey-50 border">
+        <article className="p-4 space-y-2 border bg-primary-50 border-grey-50">
           <h5>What’s next?</h5>
-          <p className="text-grey-900 font-medium">
+          <p className="font-medium text-grey-900">
             You product will be delivered on following steps.
           </p>
-          <p className="text-grey-900 font-medium">
+          <p className="font-medium text-grey-900">
             Received {'>'} Processing {'>'} Order Picked {'>'} Dispatched {'>'}{' '}
             Invoice Billing {'>'} In Transit {'>'} Delivered
           </p>
