@@ -73,7 +73,7 @@ type ChartReponseData = {
 };
 
 const formatAmount = (amount: number) => {
-  return amount > 999 ? amount / 1000 + 'k' : amount;
+  return amount > 999 ? (amount / 1000).toFixed(2) + 'k' : amount;
 };
 
 export async function getChartData(customerID: string) {
@@ -82,7 +82,6 @@ export async function getChartData(customerID: string) {
       method: AllowedHTTPMethods.GET,
       url: `${ENDPOINT.REPORT.GET}/${customerID}`,
     });
-
     if (response?.errors) {
       return {
         finalAreaResponse: {},
@@ -95,6 +94,7 @@ export async function getChartData(customerID: string) {
         finalBarResponse: {},
       };
     }
+
     const finalAreaResponse = await formatAreaResponse(response?.payload);
     const finalBarResponse = await formatBarResponse(response?.payload);
     return {finalAreaResponse, finalBarResponse};
@@ -252,7 +252,8 @@ export async function getExpenditureData(customerID: string) {
         expenditureData: {},
       };
     }
-    return response?.payload;
+    const finalResponse = await formatExpenditureResponse(response?.payload);
+    return finalResponse;
   } catch (error) {
     console.log('error', error);
     return {
@@ -260,6 +261,37 @@ export async function getExpenditureData(customerID: string) {
     };
   }
 }
+
+const formatExpenditureResponse = async (response: any): Promise<any> => {
+  const formatChartData = (data: any) => {
+    const finalPrice = data?.price.map((num: number) => Number(num.toFixed(2)));
+    return {
+      labels: data?.label,
+      totalSpending: formatAmount(
+        finalPrice.reduce(
+          (accumulator: number, currentValue: number) =>
+            accumulator + currentValue,
+          0,
+        ),
+      ),
+      datasets: [
+        {
+          label: 'Expenditure',
+          backgroundColor: data?.backgroundColor,
+          data: data?.data,
+          cutout: '80%',
+          price: finalPrice,
+        },
+      ],
+    };
+  };
+  return {
+    spending_by_product: response?.spending_by_product,
+    expenditure_brands: formatChartData(response?.expenditure_brands),
+    expenditure_category: formatChartData(response?.expenditure_category),
+    currency: response?.currency || '$',
+  };
+};
 
 // Actual values at first
 
@@ -330,32 +362,32 @@ export async function getExpenditureData(customerID: string) {
 //   ],
 // };
 
-export const doughnutLabels = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-];
-export const doughnutChartData = {
-  labels: doughnutLabels,
-  datasets: [
-    {
-      label: 'Expenditure',
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(255, 206, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        'rgba(153, 102, 255, 0.2)',
-        'rgba(255, 159, 64, 0.2)',
-        'rgba(222, 123, 4, 0.2)',
-      ],
-      data: [10, 10, 10, 10, 10, 10, 40],
-      cutout: '80%',
-      price: [120, 1330, 1550, 1120, 19980, 123230, 4440],
-    },
-  ],
-};
+// export const doughnutLabels = [
+//   'January',
+//   'February',
+//   'March',
+//   'April',
+//   'May',
+//   'June',
+//   'July',
+// ];
+// export const doughnutChartData = {
+//   labels: doughnutLabels,
+//   datasets: [
+//     {
+//       label: 'Expenditure',
+//       backgroundColor: [
+//         'rgba(255, 99, 132, 0.2)',
+//         'rgba(54, 162, 235, 0.2)',
+//         'rgba(255, 206, 86, 0.2)',
+//         'rgba(75, 192, 192, 0.2)',
+//         'rgba(153, 102, 255, 0.2)',
+//         'rgba(255, 159, 64, 0.2)',
+//         'rgba(222, 123, 4, 0.2)',
+//       ],
+//       data: [10, 10, 10, 10, 10, 10, 40],
+//       cutout: '80%',
+//       price: [120, 1330, 1550, 1120, 19980, 123230, 4440],
+//     },
+//   ],
+// };

@@ -26,7 +26,7 @@ const CtaHome = () => {
           <TrackAnOrderButton trackAnOrderHome={true} />
         </Can>
         <Link
-          to={Routes.NOTIFICATION}
+          to={Routes.NOTIFICATIONS_NEW}
           className="cta__btn pr-6 pl-4 py-4 lg:py-6 lg:pl-6 lg:pr-8 text-lg italic font-bold capitalize bg-primary-500 text-white lg:text-xl xl:text-2xl min-h-[88px] flex justify-between items-center"
         >
           <span className="flex items-center gap-1">
