@@ -1,12 +1,12 @@
-import {Form, Link, useSubmit} from '@remix-run/react';
-import {ProductLoveRed, ProductLoveWhite} from '~/components/icons/orderStatus';
-import {Button} from '~/components/ui/button';
-import {Price} from './price';
+import { Form, Link, useSubmit } from '@remix-run/react';
+import { ProductLoveRed, ProductLoveWhite } from '~/components/icons/orderStatus';
+import { Button } from '~/components/ui/button';
+import { Price } from './price';
 import {
   ProductList,
   Variants,
 } from '~/routes/_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/route';
-import {Can} from '~/lib/helpers/Can';
+import { Can } from '~/lib/helpers/Can';
 
 export function ProductCard({
   id,
@@ -32,6 +32,7 @@ export function ProductCard({
           featuredImageUrl={featuredImageUrl}
           imageBackgroundColor={imageBackgroundColor ?? ''}
           id={id}
+          visibility={defaultPrice || companyPrice ? true : false}
         />
         <ProductCardInfo
           sku={variants?.sku}
@@ -65,7 +66,7 @@ export function ProductCardInfo({
   ProductList,
   'defaultPrice' | 'companyPrice' | 'handle' | 'id' | 'uom' | 'currency'
 > &
-  Pick<Variants, 'moq' | 'sku'> & {productName: string} & {
+  Pick<Variants, 'moq' | 'sku'> & { productName: string } & {
     productVariantId: string;
   }) {
   return (
@@ -105,6 +106,7 @@ export function ProductCardInfo({
             uom={uom}
             moq={moq}
             productVariantId={productVariantId}
+            visibility={defaultPrice || companyPrice ? true : false}
           />
         </div>
       </div>
@@ -118,15 +120,15 @@ function ProductCardImage({
   liked,
   imageBackgroundColor,
   id,
+  visibility
 }: Pick<
   ProductList,
   'featuredImageUrl' | 'volumePrice' | 'liked' | 'imageBackgroundColor' | 'id'
->) {
+> & { visibility: boolean }) {
   return (
     <div
-      className={`relative px-11 py-[39px] flex justify-center border-grey-25 border-b-2 border-x-0 border-top-0 ${
-        imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
-      }`}
+      className={`relative px-11 py-[39px] flex justify-center border-grey-25 border-b-2 border-x-0 border-top-0 ${imageBackgroundColor ? `bg-[${imageBackgroundColor}]` : ''
+        }`}
     >
       {volumePrice && (
         <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px]">
@@ -134,16 +136,18 @@ function ProductCardImage({
         </div>
       )}
       <Can I="view" a="add_to_wishlist">
-        <Form method={liked ? 'DELETE' : 'POST'} className="flex">
-          <input type="hidden" name="productId" value={id} />
-          <button
-            className="absolute top-2 right-2"
-            value={liked ? 'removeFromWishList' : 'addToWishList'}
-            name="action"
-          >
-            {liked ? <ProductLoveRed /> : <ProductLoveWhite />}
-          </button>
-        </Form>
+        {visibility &&
+          <Form method={liked ? 'DELETE' : 'POST'} className="flex">
+            <input type="hidden" name="productId" value={id} />
+            <button
+              className="absolute top-2 right-2"
+              value={liked ? 'removeFromWishList' : 'addToWishList'}
+              name="action"
+            >
+              {liked ? <ProductLoveRed /> : <ProductLoveWhite />}
+            </button>
+          </Form>
+        }
       </Can>
       <figure className="mt-3">
         <img
@@ -162,13 +166,14 @@ function ProductCardButtons({
   uom,
   productVariantId,
   moq,
+  visibility
 }: Pick<ProductList, 'handle' | 'id' | 'uom'> &
-  Pick<Variants, 'moq'> & {productVariantId: string}) {
+  Pick<Variants, 'moq'> & { productVariantId: string, visibility: boolean }) {
   const submit = useSubmit();
   const productVariantOnlyId = productVariantId?.split('/')?.pop();
 
   return (
-    <div className="grid justify-center grid-cols-1 gap-2 mt-4 sm:grid-cols-2 product-button">
+    <div className={`grid justify-center grid-cols-1 gap-2 mt-4 ${visibility && "sm:grid-cols-2"} product-button`}>
       <Can I="view" a="view_product_detail">
         <Link
           to={`/product/${handle}`}
@@ -177,35 +182,37 @@ function ProductCardButtons({
           view detail
         </Link>
       </Can>
-      <Can I="view" a="add_to_cart">
-        <Form
-          method="POST"
-          onSubmit={(event) => {
-            submit(event.currentTarget);
-          }}
-          className="w-full"
-        >
-          <input type="hidden" name="productId" value={id} />
-          <input
-            type="hidden"
-            name="productVariantId"
-            value={productVariantOnlyId}
-          />
-          <input type="hidden" name="quantity" value={moq} />
-          <input type="hidden" name="selectUOM" value={uom} />
-
-          <Button
-            variant="ghost"
-            size="default"
-            type="submit"
-            value="addToCart"
-            name="action"
+      {visibility &&
+        <Can I="view" a="add_to_cart">
+          <Form
+            method="POST"
+            onSubmit={(event) => {
+              submit(event.currentTarget);
+            }}
             className="w-full"
           >
-            Add to cart
-          </Button>
-        </Form>
-      </Can>
+            <input type="hidden" name="productId" value={id} />
+            <input
+              type="hidden"
+              name="productVariantId"
+              value={productVariantOnlyId}
+            />
+            <input type="hidden" name="quantity" value={moq} />
+            <input type="hidden" name="selectUOM" value={uom} />
+
+            <Button
+              variant="ghost"
+              size="default"
+              type="submit"
+              value="addToCart"
+              name="action"
+              className="w-full"
+            >
+              Add to cart
+            </Button>
+          </Form>
+        </Can>
+      }
     </div>
   );
 }
