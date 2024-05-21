@@ -16,6 +16,7 @@ import {
 } from '~/lib/utils/user-session.server';
 
 export const USER_SESSION_KEY = 'accessToken';
+export const USER_SESSION_ID = 'sessionId';
 
 /**
  * @description Creates a user session and sets cookies for the session, user details, and messages.
@@ -28,12 +29,14 @@ export async function createUserSession({
   rememberMe,
   context,
   customerData,
+  sessionId
 }: {
   request: Request;
   accessToken: string;
   rememberMe: 'on' | undefined;
   context: AppLoadContext;
   customerData: CustomerData;
+  sessionId?: string;
 }) {
   const {session} = context;
 
@@ -42,6 +45,8 @@ export async function createUserSession({
   const userDetailsSession = await getUserDetailsSession(request);
 
   session.set(USER_SESSION_KEY, accessToken);
+  session.set(USER_SESSION_ID, sessionId); // Store sessionId in session
+
 
   userDetailsSession.set(USER_DETAILS_KEY, customerData);
 

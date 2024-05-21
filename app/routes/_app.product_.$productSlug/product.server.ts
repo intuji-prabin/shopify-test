@@ -10,6 +10,7 @@ import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {emitter3} from '~/lib/utils/emitter.server';
 import {EVENTS} from '~/lib/constants/events.contstent';
 import {StockStatus} from '~/routes/_app.cart-list/order-my-products/use-column';
+import { USER_SESSION_ID } from '~/lib/utils/auth-session.server';
 
 export interface relatedProductsType {
   productId: string;
@@ -242,19 +243,21 @@ export const addProductToCart = async (
     cartItems,
   );
   const finalCartLine = useFormatCart(cartLineAddResponse);
+
   //  session.unset( CART_SESSION_KEY)
   session.set(CART_SESSION_KEY, finalCartLine);
+  const userSessionId = session.get(USER_SESSION_ID);
+
   const cartLists = await context.storefront.query(GET_CART_LIST, {
     variables: {cartId: sessionCartInfo?.cartId},
   });
 
-  // console.log('asfsfwerewr cartLists ', cartLists);
-  // console.log('asfsfwerewr cartListssss nodes ', cartLists?.cart?.lines?.nodes);
   emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
     payload: {
       type: 'cart',
       totalNumber: finalCartLine.lineItems,
       customerId: userDetails.id,
+      session: userSessionId
     },
   });
   return true;
