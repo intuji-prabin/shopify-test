@@ -7,7 +7,7 @@ import {
 import {Notification} from '~/routes/_app.notification/notification';
 import {MetaFunction} from '@shopify/remix-oxygen';
 import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {USER_SESSION_ID, isAuthenticate} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import EmptyNotification from '~/routes/_app.notification/empty-notification';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
@@ -22,6 +22,9 @@ import {
   getNotifications,
   viewNotification,
 } from '~/routes/_app.notification/notification.server';
+import { getNewNotificationCount } from '../_app/app.server';
+import { emitter3 } from '~/lib/utils/emitter.server';
+import { EVENTS } from '~/lib/constants/events.contstent';
 
 export const meta: MetaFunction = () => {
   return [{title: 'New Notifications '}];
@@ -49,16 +52,32 @@ export async function loader({request, context}: LoaderFunctionArgs) {
   return json({notifications: notificationList, totalNotifications});
 }
 export async function action({request, context}: ActionFunctionArgs) {
+  const { session } = context;
+
   await isAuthenticate(context);
 
   const {userDetails} = await getUserDetails(request);
+  const userSessionId = session.get(USER_SESSION_ID);
 
   const customerId = userDetails.id;
 
   const formData = await request.formData();
   const notificationId = formData.get('notificationId');
 
-  const {redirectLink} = await viewNotification({customerId, notificationId});
+  const {redirectLink} = await viewNotification({ customerId, notificationId});
+
+  const {totalNotifications} = await getNewNotificationCount({
+    customerId,
+    request,
+  });
+  emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
+    payload: {
+      type: 'notification',
+      totalNumber: totalNotifications,
+      companyId: userDetails.meta?.company_id.companyId
+      // sessionId: userSessionId
+    },
+  });
 
   return redirect(redirectLink);
 }
