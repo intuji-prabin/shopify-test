@@ -16,6 +16,7 @@ import CarouselThumb from './carouselThumb';
 import {getProductPriceByQty} from './product-detail';
 import {ProductInfoTable} from './productInfoTable';
 import {Can} from '~/lib/helpers/Can';
+import {StockStatusChip} from '~/components/ui/stock-status-chip';
 
 export default function ProductInformation({product}: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
@@ -58,6 +59,7 @@ export default function ProductInformation({product}: any) {
           moq={product?.moq || 1}
           uomCode={product?.uomCode}
           currency={product?.currency}
+          inventory={product?.inventory}
         />
       </div>
     </section>
@@ -87,6 +89,7 @@ const ProductDetailsSection = ({
   moq,
   uomCode,
   currency,
+  inventory,
 }: any) => {
   const [quantity, setQuantity] = useState(parseFloat(moq) || 1);
   const [UOM, setUOM] = useState(uomCode);
@@ -178,17 +181,17 @@ const ProductDetailsSection = ({
             </Link>
           </li>
           <Can I="view" a="add_to_wishlist">
-          <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]">
-            <Form method={isFavorited ? 'DELETE' : 'POST'} className="flex">
-              <input type="hidden" name="productId" value={productId} />
-              <button
-                value={isFavorited ? 'removeFromWishList' : 'addToWishList'}
-                name="action"
-              >
-                {isFavorited ? <ProductLoveRed /> : <ProductLoveWhite />}
-              </button>
-            </Form>
-          </li>
+            <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]">
+              <Form method={isFavorited ? 'DELETE' : 'POST'} className="flex">
+                <input type="hidden" name="productId" value={productId} />
+                <button
+                  value={isFavorited ? 'removeFromWishList' : 'addToWishList'}
+                  name="action"
+                >
+                  {isFavorited ? <ProductLoveRed /> : <ProductLoveWhite />}
+                </button>
+              </Form>
+            </li>
           </Can>
         </ul>
       </div>
@@ -209,10 +212,7 @@ const ProductDetailsSection = ({
             </div>
           </div>
         </div>
-        <div className={`${badgeVariants({variant: 'inStock'})} !m-0 w-max`}>
-          <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>
-          IN STOCK
-        </div>
+        <StockStatusChip status={inventory} />
       </div>
       <Can I="view" a="view_product_price">
         <div className="flex flex-wrap gap-12 pt-6 product_det__pricing">
@@ -336,18 +336,16 @@ const ProductDetailsSection = ({
             </>
           ) : (
             <Can I="view" a="add_to_cart">
-
-            <Button
-              className="flex-grow w-full uppercase min-h-14"
-              variant="primary"
-              type="submit"
-              value="addToCart"
-              name="action"
-            >
-              {addToCart}
-            </Button>
+              <Button
+                className="flex-grow w-full uppercase min-h-14"
+                variant="primary"
+                type="submit"
+                value="addToCart"
+                name="action"
+              >
+                {addToCart}
+              </Button>
             </Can>
-
           )}
         </Form>
       </div>
