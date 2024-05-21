@@ -43,11 +43,14 @@ import {getProductFilterList} from './productFilter.server';
 import {getProducts} from './productList.server';
 import {BulkCsvUpload} from '~/components/ui/bulk-csv-upload';
 import {useConditionalRender} from '~/hooks/useAuthorization';
+import { filterDetailsCommitSession, getFilterDetailsSession } from '~/lib/utils/filter-session.server';
+import { SESSION_MAX_AGE } from '~/lib/constants/auth.constent';
 
 export async function loader({params, context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
   const categories = await getCategoryList(context);
-  const productList = await getProductList(params, context, request);
+  const filterDetailsSession = await getFilterDetailsSession(request);
+  const productList = await getProductList(params, context, request, filterDetailsSession);
 
   const mainCategorySlug = params?.mainCategorySlug;
   const categorySlug = params?.categorySlug;
@@ -58,7 +61,12 @@ export async function loader({params, context, request}: LoaderFunctionArgs) {
     categorySlug,
     subCategorySlug,
     categories,
-  }, { headers : [ ['Set-Cookie', await context.session.commit({})] ]});
+  }, { headers : [ ['Set-Cookie', await context.session.commit({})], [
+    'Set-Cookie',
+    await filterDetailsCommitSession(filterDetailsSession, {
+        maxAge: SESSION_MAX_AGE['30_DAYS'],
+    }),
+], ]});
 }
 
 export const action = async ({request, context}: ActionFunctionArgs) => {
@@ -471,6 +479,7 @@ export const getProductList = async (
   params: Params<string>,
   context: AppLoadContext,
   request: Request,
+  filterDetailsSession : any
 ): Promise<{
   productFilter: {
     filterLabel: string;
@@ -503,12 +512,14 @@ export const getProductList = async (
     });
 
     let results;
+    
     if (searchList.length > 0) {
       results = await getFilterProduct(
         context,
         params,
         searchList,
         userDetails?.id,
+        filterDetailsSession
       );
     } else {
       results = await getProducts(
@@ -516,6 +527,7 @@ export const getProductList = async (
         params,
         searchList,
         userDetails?.id,
+        filterDetailsSession,
         [],
         true,
       );

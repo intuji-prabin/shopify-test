@@ -17,18 +17,21 @@ export const getFilterProduct = async (
   params: Params<string>,
   filterList: any,
   customerId: string,
+  filterDetailsSession : any
 ) => {
   const {session, storefront} = context;
   const categoryIdentifier = params.subCategorySlug;
-
+  // await filterDetailsSession.set("sacnah", "hello")
   const minPrice = filterList.find((item: any) => item?.key == 'minPrice');
   const maxPrice = filterList.find((item: any) => item?.key === 'maxPrice');
   if (!minPrice && !maxPrice) {
-    return await getProducts(context, params, filterList, customerId, [], true);
+    return await getProducts(context, params, filterList, customerId, filterDetailsSession, [], true);
   }
 
-  const sessionUseStockProduct = session.get(PRODUCT_STOCK_CODE);
-  const sessionStockProductList = session.get(PRODUCT_STOCK_CODE_INFO);
+  
+
+  const sessionUseStockProduct = filterDetailsSession.get(PRODUCT_STOCK_CODE);
+  const sessionStockProductList = filterDetailsSession.get(PRODUCT_STOCK_CODE_INFO);
   console.log("sessionUseStockProduct ", sessionUseStockProduct)
   console.log("sessionStockProductList ", sessionStockProductList)
   const currentPage = filterList.find((item: any) => item?.key === 'pageNo');
@@ -44,12 +47,12 @@ export const getFilterProduct = async (
           // let currentPage = 2
           let startProductStockCode   = ( currentPage?.value - 1 ) * TOTAL
           let endProductStockCode     = currentPage?.value * TOTAL
-          console.log("first startProductStockCode ", startProductStockCode)
-          console.log("first endProductStockCode ", endProductStockCode)
+          // console.log("first startProductStockCode ", startProductStockCode)
+          // console.log("first endProductStockCode ", endProductStockCode)
           let showNumberOfProduct     = endProductStockCode < sessionProductListLength ?  sessionUseStockProduct.slice(startProductStockCode, endProductStockCode) : sessionUseStockProduct.slice(startProductStockCode, sessionProductListLength )
-          console.log("first showNumberOfProduct ", showNumberOfProduct)
+          // console.log("first showNumberOfProduct ", showNumberOfProduct)
           // let showProductStockCode    = sessionUseStockProduct.splice(-showNumberOfProduct);
-          const productList           =  await getProducts( context, params, filterList, customerId, showNumberOfProduct)
+          const productList           =  await getProducts( context, params, filterList, customerId, filterDetailsSession, showNumberOfProduct)
           productList.pageInfo.hasNextPage = false
           productList.pageInfo.hasPreviousPage = true
           if( sessionProductListLength > ( currentPage?.value * TOTAL ) || ( sessionStockProductList?.totalStockCode / TOTAL ) > sessionStockProductList?.currentPage ) {
@@ -68,6 +71,7 @@ export const getFilterProduct = async (
         params,
         filterList,
         customerId,
+        filterDetailsSession,
         sessionStockProductList?.stockCodes,
       );
 
@@ -91,11 +95,11 @@ export const getFilterProduct = async (
         }
 
         productList.pageInfo.hasPreviousPage = true;
-        session.set(PRODUCT_STOCK_CODE, [
+        filterDetailsSession.set(PRODUCT_STOCK_CODE, [
           ...sessionUseStockProduct,
           ...useStockCode,
         ]);
-        session.set(PRODUCT_STOCK_CODE_INFO, sessionStockProductList);
+        filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, sessionStockProductList);
         return productList;
       }
 
@@ -105,6 +109,7 @@ export const getFilterProduct = async (
         params,
         filterList,
         customerId,
+        filterDetailsSession,
         productList,
         sessionStockProductList,
       );
@@ -112,11 +117,11 @@ export const getFilterProduct = async (
         product?.extraProducts?.formattedData?.productList.map(
           (items: any) => ({stockCode: items?.stockCode}),
         );
-      session.set(PRODUCT_STOCK_CODE, [
+      filterDetailsSession.set(PRODUCT_STOCK_CODE, [
         ...sessionUseStockProduct,
         ...useStockCode,
       ]);
-      session.set(PRODUCT_STOCK_CODE_INFO, product?.stockCodes);
+      filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, product?.stockCodes);
       product.extraProducts.pageInfo.hasPreviousPage = true;
       return product?.extraProducts;
     }
@@ -139,6 +144,7 @@ export const getFilterProduct = async (
       params,
       filterList,
       customerId,
+      filterDetailsSession,
       stockCode?.stockCodes,
     );
 
@@ -163,11 +169,11 @@ export const getFilterProduct = async (
       ) {
         productList.pageInfo.hasNextPage = true;
       }
-      session.set(PRODUCT_STOCK_CODE, [
+      filterDetailsSession.set(PRODUCT_STOCK_CODE, [
         ...sessionUseStockProduct,
         ...useStockCode,
       ]);
-      session.set(PRODUCT_STOCK_CODE_INFO, stockCode);
+      filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, stockCode);
       productList.pageInfo.hasPreviousPage = true;
       return productList;
     }
@@ -179,6 +185,7 @@ export const getFilterProduct = async (
         params,
         filterList,
         customerId,
+        filterDetailsSession,
         productList,
         stockCode,
       );
@@ -186,11 +193,11 @@ export const getFilterProduct = async (
         product?.extraProducts?.formattedData?.productList.map(
           (items: any) => ({stockCode: items?.stockCode}),
         );
-      session.set(PRODUCT_STOCK_CODE, [
+      filterDetailsSession.set(PRODUCT_STOCK_CODE, [
         ...sessionUseStockProduct,
         ...useStockCode,
       ]);
-      session.set(PRODUCT_STOCK_CODE_INFO, product?.stockCodes);
+      filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, product?.stockCodes);
       product.extraProducts.pageInfo.hasPreviousPage = true;
       return product?.extraProducts;
     }
@@ -216,11 +223,11 @@ export const getFilterProduct = async (
     ) {
       productList.pageInfo.hasNextPage = true;
     }
-    session.set(PRODUCT_STOCK_CODE, [
+    filterDetailsSession.set(PRODUCT_STOCK_CODE, [
       ...sessionUseStockProduct,
       ...useStockCode,
     ]);
-    session.set(PRODUCT_STOCK_CODE_INFO, stockCode);
+    filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, stockCode);
     productList.pageInfo.hasPreviousPage = true;
     return productList;
   }
@@ -248,6 +255,7 @@ export const getFilterProduct = async (
         params,
         filterList,
         customerId,
+        filterDetailsSession,
         showNumberOfProduct,
       );
       productList.pageInfo.hasNextPage = true;
@@ -260,6 +268,7 @@ export const getFilterProduct = async (
         params,
         filterList,
         customerId,
+        filterDetailsSession,
         showNumberOfProduct,
       );
       productList.pageInfo.hasPreviousPage = false;
@@ -277,12 +286,15 @@ export const getFilterProduct = async (
     minPrice?.value,
     maxPrice?.value,
   );
+  console.log("get stock code is ", stockCode)
   const productList = await getProducts(
     context,
     params,
     filterList,
     customerId,
+    filterDetailsSession,
     stockCode?.stockCodes,
+    
   );
   // return true
   if (!productList?.formattedData) {
@@ -298,8 +310,8 @@ export const getFilterProduct = async (
       (item1: any) =>
         !useStockCode.some((item2: any) => item2.stockCode === item1.stockCode),
     );
-    console.log('useStockCode ', useStockCode)
-    console.log('notUseStockCode ', notUseStockCode)
+    console.log('useStockCode s ', useStockCode)
+    console.log('notUseStockCode b ', notUseStockCode)
     stockCode.stockCodes = notUseStockCode;
     if (
       stockCode?.totalStockCode / GET_TOTAL_STOCKCODE >
@@ -307,8 +319,8 @@ export const getFilterProduct = async (
     ) {
       productList.pageInfo.hasNextPage = true;
     }
-    session.set(PRODUCT_STOCK_CODE, useStockCode);
-    session.set(PRODUCT_STOCK_CODE_INFO, stockCode);
+    filterDetailsSession.set(PRODUCT_STOCK_CODE, useStockCode);
+    filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, stockCode);
     return productList;
   }
   if (productList?.formattedData?.productList.length < TOTAL) {
@@ -318,14 +330,15 @@ export const getFilterProduct = async (
       params,
       filterList,
       customerId,
+      filterDetailsSession,
       productList,
       stockCode,
     );
     const useStockCode = product?.extraProducts?.formattedData?.productList.map(
       (items: any) => ({stockCode: items?.stockCode}),
     );
-    session.set(PRODUCT_STOCK_CODE, useStockCode);
-    session.set(PRODUCT_STOCK_CODE_INFO, product?.stockCodes);
+    filterDetailsSession.set(PRODUCT_STOCK_CODE, useStockCode);
+    filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, product?.stockCodes);
     return product?.extraProducts;
   }
 
@@ -352,8 +365,8 @@ export const getFilterProduct = async (
   }
   console.log("useStockCode ", useStockCode)
   console.log("stockCode ", stockCode)
-  session.set(PRODUCT_STOCK_CODE, useStockCode);
-  session.set(PRODUCT_STOCK_CODE_INFO, stockCode);
+  filterDetailsSession.set(PRODUCT_STOCK_CODE, useStockCode);
+  filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, stockCode);
   return productList;
   // return { extraProducts : productList, stockCodes : newStockCode }
 
@@ -365,6 +378,7 @@ const recursiveProduct = async (
   params: any,
   filterList: any,
   customerId: string,
+  filterDetailsSession : any,
   extraProducts: any,
   stockCodes: any,
   recursion = false,
@@ -394,6 +408,7 @@ const recursiveProduct = async (
     params,
     filterList,
     customerId,
+    filterDetailsSession,
     newStockCode?.stockCodes,
   );
 
@@ -451,6 +466,7 @@ const recursiveProduct = async (
     params,
     filterList,
     customerId,
+    filterDetailsSession,
     productList,
     newStockCode,
   );
