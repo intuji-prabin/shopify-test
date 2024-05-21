@@ -27,6 +27,8 @@ import { useColumn } from './use-column';
 import { Button } from '~/components/ui/button';
 import { Routes } from '~/lib/constants/routes.constent';
 import { useMemo } from 'react';
+import ProductTable from './productTable';
+import { Separator } from '~/components/ui/separator';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Cigweld | Home' }];
@@ -78,11 +80,15 @@ export default function Homepage() {
       {Object.keys(data?.chartData?.finalBarResponse).length !== 0 && <DetailChart
         barChartData={data?.chartData?.finalBarResponse}
       />}
-      {Object.keys(data?.expenditureData).length !== 0 && <ExpenditureCard doughnutChartData={data?.expenditureData} />}
+      {Object.keys(data?.expenditureData).length !== 0 && <ExpenditureCard doughnutChartData={data?.expenditureData} currency={data?.expenditureData?.currency} />}
+      {data?.expenditureData?.spending_by_product.length > 0 &&
+        <ProductTable productList={data?.expenditureData?.spending_by_product} currency={data?.expenditureData?.currency} />
+      }
       {latestFiveInvoices.length > 0 &&
         <section className="container">
+          <Separator className="mt-6 " />
           <Can I="view" a="view_transaction_history">
-            <div className="p-6 space-y-3 bg-white mxs:space-y-6">
+            <div className="p-6 mt-6 space-y-3 bg-white mxs:space-y-6">
               <div className='flex flex-wrap justify-between gap-3'>
                 <div className="flex items-center gap-x-2 gap-y-1">
                   <span className="flex items-center justify-center w-12 h-12 bg-primary-200">
@@ -99,6 +105,6 @@ export default function Homepage() {
           </Can>
         </section>
       }
-    </article>
+    </article >
   );
 }
