@@ -7,14 +7,17 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {useFormatCart} from '~/hooks/useFormatCart';
 import {emitter3} from '~/lib/utils/emitter.server';
 import {EVENTS} from '~/lib/constants/events.contstent';
+import { USER_SESSION_ID } from '~/lib/utils/auth-session.server';
 
 export const placeOrder = async (
   formData: any,
   request: Request,
   context: any,
 ) => {
-  const {userDetails} = await getUserDetails(request);
+  const { session } = context;
 
+  const {userDetails} = await getUserDetails(request);
+  const userSessionId = session.get(USER_SESSION_ID);
   try {
     let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
 
@@ -59,16 +62,14 @@ export const placeOrder = async (
     }
     const finalCartSession = useFormatCart(cartSession);
     context.session.set(CART_SESSION_KEY, finalCartSession);
-    // Emit the notification asynchronously
-    setTimeout(() => {
        emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
         payload: {
           type: 'cart',
           totalNumber: cartRemoveResponse === true ? 0 : cartRemoveResponse,
-          customerId: userDetails.id
+          customerId: userDetails.id,
+          sessionId: userSessionId
         },
       });
-    }, 2500);
     return {cartSession, shopifyOrderId};
   } catch (error) {
     if (error instanceof Error) {

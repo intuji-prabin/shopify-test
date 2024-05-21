@@ -18,7 +18,7 @@ import {useMediaQuery} from '~/hooks/useMediaQuery';
 import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
 import {Routes} from '~/lib/constants/routes.constent';
 import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {USER_SESSION_ID, isAuthenticate} from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -50,6 +50,7 @@ interface Payload {
   totalNumber: number;
   companyId?: string;
   customerId?: string;
+  sessionId?: string;
 }
 
 interface Handlers {
@@ -64,8 +65,11 @@ interface Data {
 export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
   const {userDetails} = await getUserDetails(request);
+  const { session } = context;
 
   const sessionData = await getSessionData(userDetails, context);
+
+  const userSessionId = session.get(USER_SESSION_ID);
 
   const categories = await getCagetoryList(context);
 
@@ -111,6 +115,7 @@ export async function loader({request, context}: ActionFunctionArgs) {
       wishlistSession,
       pendingOrderCount: productGroup?.length ?? 0,
       notificationCount: totalNotifications,
+      userSessionId,
     },
     {
       headers,
@@ -126,6 +131,7 @@ export default function PublicPageLayout() {
     wishlistSession,
     pendingOrderCount,
     notificationCount,
+    userSessionId,
   } = useLoaderData<typeof loader>();
 
   const submit = useSubmit();
@@ -160,7 +166,6 @@ export default function PublicPageLayout() {
 
     const userAbility = getUserAbilities(roleData);
     setAbility(userAbility);
-    // setLoading(false);
   }, [userDetails]);
 
   const userData = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
@@ -200,14 +205,13 @@ export default function PublicPageLayout() {
           payload: Payload;
         };
       };
-      const {type, totalNumber, customerId, companyId} =
+      const {type, totalNumber, customerId, companyId, sessionId} =
         parsedData.notificationData.payload;
       const currentUrl = window.location.pathname; // Capture the current URL
       const handlers: Handlers = {
         cart: () => {
-          if (userDetails.id === customerId) {
+          if (userDetails.id === customerId &&  userSessionId !== sessionId ) {
             cartCount = totalNumber | 0;
-            // setCartCount(totalNumber);
             submit(
               {returnUrl: currentUrl, type, totalNumber},
               {method: 'GET', action: '/update-notifications-session'},
@@ -230,7 +234,7 @@ export default function PublicPageLayout() {
         },
         notification: () => {
           const companyMeta = userDetails?.meta.company_id;
-          if (companyMeta?.companyId === companyId || companyMeta?.value === companyId) {
+          if ((companyMeta?.companyId === companyId || companyMeta?.value === companyId) && userSessionId !== sessionId) {
               setNotificationCounts(totalNumber);
           }
       },
@@ -268,7 +272,6 @@ export default function PublicPageLayout() {
 
       // Check if the event role matches the user's role
       if (eventUserRole === userRole?.value) {
-        // console.log('Permission has been updated');
         let currentUrl = window.location.pathname; // Capture the current URL
         if (currentUrl === '/login') {
           currentUrl = '/';
