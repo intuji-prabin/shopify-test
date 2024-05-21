@@ -5,6 +5,7 @@ import {useFormatCart} from '~/hooks/useFormatCart';
 import {emitter3} from '~/lib/utils/emitter.server';
 import {EVENTS} from '~/lib/constants/events.contstent';
 import {getUserDetails} from '~/lib/utils/user-session.server';
+import { USER_SESSION_ID } from '~/lib/utils/auth-session.server';
 
 export const removeItemFromCart = async (
   formData: any,
@@ -12,6 +13,9 @@ export const removeItemFromCart = async (
   request: Request,
 ) => {
   const {userDetails} = await getUserDetails(request);
+  
+  const { session } = context;
+
   const itemList = Object.fromEntries(formData);
   const lineItemId = Object.keys(itemList)
     .filter((key) => key !== 'action')
@@ -22,6 +26,7 @@ export const removeItemFromCart = async (
   }
 
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
+  const userSessionId = session.get(USER_SESSION_ID);
 
   if (!sessionCartInfo) {
     throw new Error('Cart not found');
@@ -42,16 +47,14 @@ export const removeItemFromCart = async (
   await getCartList(context, request, cartSession);
 
   //this is use to emit notification for the cart on
-  // Emit the notification asynchronously
-  setTimeout(() => {
     emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
       payload: {
         type: 'cart',
         totalNumber: cartRemoveResponse,
         customerId: userDetails.id,
+        sessionId: userSessionId
       },
     });
-  }, 2000);
 
   return {cartSession};
 };
