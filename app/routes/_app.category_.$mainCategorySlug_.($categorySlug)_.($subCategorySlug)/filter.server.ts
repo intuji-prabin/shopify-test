@@ -29,31 +29,35 @@ export const getFilterProduct = async (
 
   const sessionUseStockProduct = session.get(PRODUCT_STOCK_CODE);
   const sessionStockProductList = session.get(PRODUCT_STOCK_CODE_INFO);
+  console.log("sessionUseStockProduct ", sessionUseStockProduct)
+  console.log("sessionStockProductList ", sessionStockProductList)
   const currentPage = filterList.find((item: any) => item?.key === 'pageNo');
   const after = filterList.find((item: any) => item?.key === 'after');
   let sessionProductListLength = sessionUseStockProduct
     ? sessionUseStockProduct.length
     : 0;
   // before
-  if (after && after?.value) {
-    // if( sessionProductListLength > ( currentPage?.value * TOTAL )  ) {
-    //     if( currentPage?.value > 1 ) {
-    //         // let currentPage = 2
-    //         let startProductStockCode   = ( currentPage?.value - 1 ) * TOTAL
-    //         let endProductStockCode     = currentPage?.value * TOTAL
-    //         let showNumberOfProduct     = endProductStockCode <= sessionProductListLength ?  sessionUseStockProduct.slice(startProductStockCode, endProductStockCode) : sessionUseStockProduct.slice(startProductStockCode, sessionProductListLength )
-    //         // let showProductStockCode    = sessionUseStockProduct.splice(-showNumberOfProduct);
-    //         const productList           =  await getProducts( context, params, filterList, customerId, showNumberOfProduct)
-    //         productList.pageInfo.hasNextPage = true
-    //         productList.pageInfo.hasPreviousPage = true
-    //         return productList
-    //     } else {
-    //         let showNumberOfProduct = sessionUseStockProduct.slice(0, TOTAL)
-    //         const productList           =  await getProducts( context, params, filterList, customerId, showNumberOfProduct)
-    //         productList.pageInfo.hasPreviousPage = false
-    //         return productList
-    //     }
-    // }
+  if (after && after?.value && currentPage) {
+    if( sessionProductListLength > ( ( currentPage?.value - 1 ) * TOTAL )  ) {
+      console.log("new form ")
+      if( currentPage?.value > 1 ) {
+          // let currentPage = 2
+          let startProductStockCode   = ( currentPage?.value - 1 ) * TOTAL
+          let endProductStockCode     = currentPage?.value * TOTAL
+          console.log("first startProductStockCode ", startProductStockCode)
+          console.log("first endProductStockCode ", endProductStockCode)
+          let showNumberOfProduct     = endProductStockCode < sessionProductListLength ?  sessionUseStockProduct.slice(startProductStockCode, endProductStockCode) : sessionUseStockProduct.slice(startProductStockCode, sessionProductListLength )
+          console.log("first showNumberOfProduct ", showNumberOfProduct)
+          // let showProductStockCode    = sessionUseStockProduct.splice(-showNumberOfProduct);
+          const productList           =  await getProducts( context, params, filterList, customerId, showNumberOfProduct)
+          productList.pageInfo.hasNextPage = false
+          productList.pageInfo.hasPreviousPage = true
+          if( sessionProductListLength > ( currentPage?.value * TOTAL ) || ( sessionStockProductList?.totalStockCode / TOTAL ) > sessionStockProductList?.currentPage ) {
+            productList.pageInfo.hasNextPage = true
+          }
+          return productList
+      }
+    }
 
     if (
       sessionStockProductList &&
@@ -259,6 +263,11 @@ export const getFilterProduct = async (
         showNumberOfProduct,
       );
       productList.pageInfo.hasPreviousPage = false;
+      if( sessionProductListLength > TOTAL ) {
+        productList.pageInfo.hasNextPage = true;
+      } else {
+        productList.pageInfo.hasNextPage = false;
+      }
       return productList;
     }
   }
@@ -279,6 +288,7 @@ export const getFilterProduct = async (
   if (!productList?.formattedData) {
     throw new Error('Product not founds');
   }
+  // console.log("totall is ", productList?.formattedData?.productList.length)
   // return productList
   if (productList?.formattedData?.productList.length === TOTAL) {
     const useStockCode = productList?.formattedData?.productList.map(
@@ -288,6 +298,8 @@ export const getFilterProduct = async (
       (item1: any) =>
         !useStockCode.some((item2: any) => item2.stockCode === item1.stockCode),
     );
+    console.log('useStockCode ', useStockCode)
+    console.log('notUseStockCode ', notUseStockCode)
     stockCode.stockCodes = notUseStockCode;
     if (
       stockCode?.totalStockCode / GET_TOTAL_STOCKCODE >
@@ -338,6 +350,8 @@ export const getFilterProduct = async (
   ) {
     productList.pageInfo.hasNextPage = true;
   }
+  console.log("useStockCode ", useStockCode)
+  console.log("stockCode ", stockCode)
   session.set(PRODUCT_STOCK_CODE, useStockCode);
   session.set(PRODUCT_STOCK_CODE_INFO, stockCode);
   return productList;

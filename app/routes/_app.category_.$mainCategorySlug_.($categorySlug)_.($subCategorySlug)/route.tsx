@@ -58,7 +58,7 @@ export async function loader({params, context, request}: LoaderFunctionArgs) {
     categorySlug,
     subCategorySlug,
     categories,
-  });
+  }, { headers : [ ['Set-Cookie', await context.session.commit({})] ]});
 }
 
 export const action = async ({request, context}: ActionFunctionArgs) => {
