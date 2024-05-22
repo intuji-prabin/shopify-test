@@ -267,13 +267,7 @@ const formatExpenditureResponse = async (response: any): Promise<any> => {
     const finalPrice = data?.price.map((num: number) => Number(num.toFixed(2)));
     return {
       labels: data?.label,
-      totalSpending: formatAmount(
-        finalPrice.reduce(
-          (accumulator: number, currentValue: number) =>
-            accumulator + currentValue,
-          0,
-        ),
-      ),
+      totalSpending: data?.total,
       datasets: [
         {
           label: 'Expenditure',
@@ -289,7 +283,7 @@ const formatExpenditureResponse = async (response: any): Promise<any> => {
     spending_by_product: response?.spending_by_product,
     expenditure_brands: formatChartData(response?.expenditure_brands),
     expenditure_category: formatChartData(response?.expenditure_category),
-    currency: response?.currency || '$',
+    currency: response?.currency_code || '$',
   };
 };
 
