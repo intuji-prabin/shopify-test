@@ -1,4 +1,4 @@
-const BASE_URL = 'https://permissions-l-andrea-plymouth.trycloudflare.com/api';
+const BASE_URL = 'http://170.64.130.119:3000/api';
 
 export const ENDPOINT = {
   REPORT: {

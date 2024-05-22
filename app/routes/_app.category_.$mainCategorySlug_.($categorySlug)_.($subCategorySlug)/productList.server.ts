@@ -21,7 +21,7 @@ export async function getProducts(
   params: Params<string>,
   filterList: FilterType,
   customerId: string,
-  filterDetailsSession : any,
+  filterDetailsSession: any,
   stockCode = [],
   toNotFilter = false,
 ) {
@@ -33,11 +33,11 @@ export async function getProducts(
     throw new Error('Category of product not found. Please check the URL.');
   } else {
     const filters = filterBuilder(filterList, stockCode);
-    console.log("filter builder ", filters)
+    // console.log("filter builder ", filters)
     const products = await storefront.query(
       STOREFRONT_PRODUCT_GET_QUERY(filters, categoryIdentifier),
     );
-    console.log("product storefrn ", products?.collection?.products?.edges)
+    // console.log('product storefrn ', products?.collection?.products?.edges);
     if (!products?.collection) {
       throw new Error('Category of product not found.');
     }

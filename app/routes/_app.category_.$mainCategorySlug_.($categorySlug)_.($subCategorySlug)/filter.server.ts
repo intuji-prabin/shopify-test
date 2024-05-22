@@ -1,39 +1,44 @@
+import {Params} from '@remix-run/react';
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {
   GET_TOTAL_STOCKCODE,
   PRODUCT_STOCK_CODE,
   PRODUCT_STOCK_CODE_INFO,
-  SESSION_PRODUCT_PAGE,
   TOTAL,
 } from '~/lib/constants/product.session';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
-import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {getProducts} from './productList.server';
-import {AppLoadContext} from '@remix-run/server-runtime';
-import {Params} from '@remix-run/react';
 
 export const getFilterProduct = async (
   context: AppLoadContext,
   params: Params<string>,
   filterList: any,
   customerId: string,
-  filterDetailsSession : any
+  filterDetailsSession: any,
 ) => {
-  const {session, storefront} = context;
   const categoryIdentifier = params.subCategorySlug;
-  // await filterDetailsSession.set("sacnah", "hello")
   const minPrice = filterList.find((item: any) => item?.key == 'minPrice');
   const maxPrice = filterList.find((item: any) => item?.key === 'maxPrice');
   if (!minPrice && !maxPrice) {
-    return await getProducts(context, params, filterList, customerId, filterDetailsSession, [], true);
+    return await getProducts(
+      context,
+      params,
+      filterList,
+      customerId,
+      filterDetailsSession,
+      [],
+      true,
+    );
   }
 
-  
-
   const sessionUseStockProduct = filterDetailsSession.get(PRODUCT_STOCK_CODE);
-  const sessionStockProductList = filterDetailsSession.get(PRODUCT_STOCK_CODE_INFO);
-  console.log("sessionUseStockProduct ", sessionUseStockProduct)
-  console.log("sessionStockProductList ", sessionStockProductList)
+  const sessionStockProductList = filterDetailsSession.get(
+    PRODUCT_STOCK_CODE_INFO,
+  );
+  // console.log("sessionUseStockProduct ", sessionUseStockProduct)
+  // console.log("sessionStockProductList ", sessionStockProductList)
   const currentPage = filterList.find((item: any) => item?.key === 'pageNo');
   const after = filterList.find((item: any) => item?.key === 'after');
   let sessionProductListLength = sessionUseStockProduct
@@ -41,24 +46,44 @@ export const getFilterProduct = async (
     : 0;
   // before
   if (after && after?.value && currentPage) {
-    if( sessionProductListLength > ( ( currentPage?.value - 1 ) * TOTAL )  ) {
-      console.log("new form ")
-      if( currentPage?.value > 1 ) {
-          // let currentPage = 2
-          let startProductStockCode   = ( currentPage?.value - 1 ) * TOTAL
-          let endProductStockCode     = currentPage?.value * TOTAL
-          // console.log("first startProductStockCode ", startProductStockCode)
-          // console.log("first endProductStockCode ", endProductStockCode)
-          let showNumberOfProduct     = endProductStockCode < sessionProductListLength ?  sessionUseStockProduct.slice(startProductStockCode, endProductStockCode) : sessionUseStockProduct.slice(startProductStockCode, sessionProductListLength )
-          // console.log("first showNumberOfProduct ", showNumberOfProduct)
-          // let showProductStockCode    = sessionUseStockProduct.splice(-showNumberOfProduct);
-          const productList           =  await getProducts( context, params, filterList, customerId, filterDetailsSession, showNumberOfProduct)
-          productList.pageInfo.hasNextPage = false
-          productList.pageInfo.hasPreviousPage = true
-          if( sessionProductListLength > ( currentPage?.value * TOTAL ) || ( sessionStockProductList?.totalStockCode / TOTAL ) > sessionStockProductList?.currentPage ) {
-            productList.pageInfo.hasNextPage = true
-          }
-          return productList
+    if (sessionProductListLength > (currentPage?.value - 1) * TOTAL) {
+      // console.log('new form ');
+      if (currentPage?.value > 1) {
+        // let currentPage = 2
+        let startProductStockCode = (currentPage?.value - 1) * TOTAL;
+        let endProductStockCode = currentPage?.value * TOTAL;
+        // console.log("first startProductStockCode ", startProductStockCode)
+        // console.log("first endProductStockCode ", endProductStockCode)
+        let showNumberOfProduct =
+          endProductStockCode < sessionProductListLength
+            ? sessionUseStockProduct.slice(
+                startProductStockCode,
+                endProductStockCode,
+              )
+            : sessionUseStockProduct.slice(
+                startProductStockCode,
+                sessionProductListLength,
+              );
+        // console.log("first showNumberOfProduct ", showNumberOfProduct)
+        // let showProductStockCode    = sessionUseStockProduct.splice(-showNumberOfProduct);
+        const productList = await getProducts(
+          context,
+          params,
+          filterList,
+          customerId,
+          filterDetailsSession,
+          showNumberOfProduct,
+        );
+        productList.pageInfo.hasNextPage = false;
+        productList.pageInfo.hasPreviousPage = true;
+        if (
+          sessionProductListLength > currentPage?.value * TOTAL ||
+          sessionStockProductList?.totalStockCode / TOTAL >
+            sessionStockProductList?.currentPage
+        ) {
+          productList.pageInfo.hasNextPage = true;
+        }
+        return productList;
       }
     }
 
@@ -99,7 +124,10 @@ export const getFilterProduct = async (
           ...sessionUseStockProduct,
           ...useStockCode,
         ]);
-        filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, sessionStockProductList);
+        filterDetailsSession.set(
+          PRODUCT_STOCK_CODE_INFO,
+          sessionStockProductList,
+        );
         return productList;
       }
 
@@ -272,7 +300,7 @@ export const getFilterProduct = async (
         showNumberOfProduct,
       );
       productList.pageInfo.hasPreviousPage = false;
-      if( sessionProductListLength > TOTAL ) {
+      if (sessionProductListLength > TOTAL) {
         productList.pageInfo.hasNextPage = true;
       } else {
         productList.pageInfo.hasNextPage = false;
@@ -286,7 +314,7 @@ export const getFilterProduct = async (
     minPrice?.value,
     maxPrice?.value,
   );
-  console.log("get stock code is ", stockCode)
+  // console.log('get stock code is ', stockCode);
   const productList = await getProducts(
     context,
     params,
@@ -294,7 +322,6 @@ export const getFilterProduct = async (
     customerId,
     filterDetailsSession,
     stockCode?.stockCodes,
-    
   );
   // return true
   if (!productList?.formattedData) {
@@ -310,8 +337,8 @@ export const getFilterProduct = async (
       (item1: any) =>
         !useStockCode.some((item2: any) => item2.stockCode === item1.stockCode),
     );
-    console.log('useStockCode s ', useStockCode)
-    console.log('notUseStockCode b ', notUseStockCode)
+    // console.log('useStockCode s ', useStockCode);
+    // console.log('notUseStockCode b ', notUseStockCode);
     stockCode.stockCodes = notUseStockCode;
     if (
       stockCode?.totalStockCode / GET_TOTAL_STOCKCODE >
@@ -363,8 +390,8 @@ export const getFilterProduct = async (
   ) {
     productList.pageInfo.hasNextPage = true;
   }
-  console.log("useStockCode ", useStockCode)
-  console.log("stockCode ", stockCode)
+  // console.log('useStockCode ', useStockCode);
+  // console.log('stockCode ', stockCode);
   filterDetailsSession.set(PRODUCT_STOCK_CODE, useStockCode);
   filterDetailsSession.set(PRODUCT_STOCK_CODE_INFO, stockCode);
   return productList;
@@ -378,7 +405,7 @@ const recursiveProduct = async (
   params: any,
   filterList: any,
   customerId: string,
-  filterDetailsSession : any,
+  filterDetailsSession: any,
   extraProducts: any,
   stockCodes: any,
   recursion = false,
