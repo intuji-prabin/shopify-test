@@ -79,14 +79,15 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
             <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
             <Price currency={product1?.currency} price={product1?.defaultPrice} variant="rrp" />
             <Can I="view" a="add_to_cart">
-
-            <Form method="post">
-              <input type="hidden" name="productId" value={product1?.id} />
-              <input type="hidden" name="productVariantId" value={product1?.productVariantId} />
-              <input type="hidden" name="quantity" value={product1?.quantity} />
-              <input type="hidden" name="selectUOM" value={product1?.selectedUOM} />
-              <Button className="w-full mt-3" variant="primary">Add to cart</Button>
-            </Form>
+              {product1?.companyPrice || product1?.defaultPrice ?
+                <Form method="post">
+                  <input type="hidden" name="productId" value={product1?.id} />
+                  <input type="hidden" name="productVariantId" value={product1?.productVariantId} />
+                  <input type="hidden" name="quantity" value={product1?.quantity} />
+                  <input type="hidden" name="selectUOM" value={product1?.selectedUOM} />
+                  <Button className="w-full mt-3" variant="primary">Add to cart</Button>
+                </Form>
+                : <div className='h-[52px]'></div>}
             </Can>
           </div>
           <ProductDetailInfo productInfo={product1?.finalProductInfoArray} />
@@ -143,14 +144,15 @@ export function ProductDetailDiv({ productDetails, clearSelectedProduct }: { pro
             <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
             <Price currency={productDetails?.currency} price={productDetails?.defaultPrice} variant="rrp" />
             <Can I="view" a="add_to_cart">
-
-            <Form method="post">
-              <input type="hidden" name="productId" value={productDetails?.id} />
-              <input type="hidden" name="productVariantId" value={productDetails?.productVariantId} />
-              <input type="hidden" name="quantity" value={productDetails?.quantity} />
-              <input type="hidden" name="selectUOM" value={productDetails?.selectedUOM} />
-              <Button className="w-full mt-3" variant="primary">Add to cart</Button>
-            </Form>
+              {productDetails?.companyPrice || productDetails?.defaultPrice ?
+                <Form method="post">
+                  <input type="hidden" name="productId" value={productDetails?.id} />
+                  <input type="hidden" name="productVariantId" value={productDetails?.productVariantId} />
+                  <input type="hidden" name="quantity" value={productDetails?.quantity} />
+                  <input type="hidden" name="selectUOM" value={productDetails?.selectedUOM} />
+                  <Button className="w-full mt-3" variant="primary">Add to cart</Button>
+                </Form>
+                : <div className='h-[52px]'></div>}
             </Can>
           </div>
           <ProductDetailInfo productInfo={productDetails?.finalProductInfoArray} />

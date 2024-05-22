@@ -12,26 +12,26 @@ import {
   AppLoadContext,
   LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
-import useEmblaCarousel, {EmblaCarouselType} from 'embla-carousel-react';
-import {useCallback, useEffect, useState} from 'react';
-import {LeftArrow} from '~/components/icons/left';
-import {BackButton} from '~/components/ui/back-button';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import useEmblaCarousel, { EmblaCarouselType } from 'embla-carousel-react';
+import { useCallback, useEffect, useState } from 'react';
+import { LeftArrow } from '~/components/icons/left';
+import { BackButton } from '~/components/ui/back-button';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
 import PaginationSimple from '~/components/ui/pagination-simple';
-import {ProductCard} from '~/components/ui/product-card';
-import {Separator} from '~/components/ui/separator';
-import {Routes} from '~/lib/constants/routes.constent';
-import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
+import { ProductCard } from '~/components/ui/product-card';
+import { Separator } from '~/components/ui/separator';
+import { Routes } from '~/lib/constants/routes.constent';
+import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {productBulkCart} from '../_app.categories/bulkOrder.server';
-import {getCategoryList} from '../_app.categories/route';
-import {addProductToCart} from '../_app.product_.$productSlug/product.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { productBulkCart } from '../_app.categories/bulkOrder.server';
+import { getCategoryList } from '../_app.categories/route';
+import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 import {
   addToWishlist,
   removeFromWishlist,
@@ -46,7 +46,7 @@ import {useConditionalRender} from '~/hooks/useAuthorization';
 import { filterDetailsCommitSession, getFilterDetailsSession } from '~/lib/utils/filter-session.server';
 import { SESSION_MAX_AGE } from '~/lib/constants/auth.constent';
 
-export async function loader({params, context, request}: LoaderFunctionArgs) {
+export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   const categories = await getCategoryList(context);
   const filterDetailsSession = await getFilterDetailsSession(request);
@@ -69,7 +69,7 @@ export async function loader({params, context, request}: LoaderFunctionArgs) {
 ], ]});
 }
 
-export const action = async ({request, context}: ActionFunctionArgs) => {
+export const action = async ({ request, context }: ActionFunctionArgs) => {
   const accessTocken = (await getAccessToken(context)) as string;
   const messageSession = await getMessageSession(request);
   const fromData = await request.formData();
@@ -246,7 +246,7 @@ const ProductListing = () => {
         (subCategory) => subCategory.identifier === categorySlug,
       );
       return matchingSubcategory
-        ? {...category, subCategory: [matchingSubcategory]}
+        ? { ...category, subCategory: [matchingSubcategory] }
         : null;
     })
     .filter((category) => category !== null)[0];
@@ -299,9 +299,8 @@ const ProductListing = () => {
               </BreadcrumbItem>
               <BreadcrumbItem
                 href={subCategorySlug ? Routes.CATEGORIES : '#'}
-                className={`capitalize ${
-                  !subCategorySlug && 'text-grey-800 pointer-events-none'
-                }`}
+                className={`capitalize ${!subCategorySlug && 'text-grey-800 pointer-events-none'
+                  }`}
               >
                 {categorySlug?.split('-').join(' ')}
               </BreadcrumbItem>
@@ -323,69 +322,67 @@ const ProductListing = () => {
               <div className="flex gap-3 py-4 embla__container">
                 {subCategorySlug
                   ? matchingCategory?.subCategory.map((subCategory) =>
-                      subCategory.child_categories.map(
-                        (childCategory, index) => (
-                          <div
-                            className="max-w-full min-w-0 flex-autoCustom embla__slide"
-                            key={childCategory.id}
-                          >
-                            <NavLink
-                              to={`/category/${matchingCategory.identifier}/${subCategory?.identifier}/${childCategory?.identifier}`}
-                              data-index={index}
-                              className={({isActive, isPending}) =>
-                                isPending
-                                  ? `active__tab ${linkStyles}`
-                                  : isActive
-                                  ? `active__tab ${linkStyles}`
-                                  : linkStyles
-                              }
-                            >
-                              {childCategory.title}
-                            </NavLink>
-                          </div>
-                        ),
-                      ),
-                    )
-                  : matchingCategory?.child_categories
-                      .filter(
-                        (subCategory) =>
-                          subCategory.child_categories.length === 0,
-                      )
-                      .map((subCategory, index: number) => (
+                    subCategory.child_categories.map(
+                      (childCategory, index) => (
                         <div
                           className="max-w-full min-w-0 flex-autoCustom embla__slide"
-                          key={subCategory.id}
+                          key={childCategory.id}
                         >
                           <NavLink
-                            to={`/category/${matchingCategory.identifier}/${subCategory?.identifier}`}
+                            to={`/category/${matchingCategory.identifier}/${subCategory?.identifier}/${childCategory?.identifier}`}
                             data-index={index}
-                            className={({isActive, isPending}) =>
+                            className={({ isActive, isPending }) =>
                               isPending
                                 ? `active__tab ${linkStyles}`
                                 : isActive
-                                ? `active__tab ${linkStyles}`
-                                : linkStyles
+                                  ? `active__tab ${linkStyles}`
+                                  : linkStyles
                             }
                           >
-                            {subCategory.title}
+                            {childCategory.title}
                           </NavLink>
                         </div>
-                      ))}
+                      ),
+                    ),
+                  )
+                  : matchingCategory?.child_categories
+                    .filter(
+                      (subCategory) =>
+                        subCategory.child_categories.length === 0,
+                    )
+                    .map((subCategory, index: number) => (
+                      <div
+                        className="max-w-full min-w-0 flex-autoCustom embla__slide"
+                        key={subCategory.id}
+                      >
+                        <NavLink
+                          to={`/category/${matchingCategory.identifier}/${subCategory?.identifier}`}
+                          data-index={index}
+                          className={({ isActive, isPending }) =>
+                            isPending
+                              ? `active__tab ${linkStyles}`
+                              : isActive
+                                ? `active__tab ${linkStyles}`
+                                : linkStyles
+                          }
+                        >
+                          {subCategory.title}
+                        </NavLink>
+                      </div>
+                    ))}
               </div>
             </div>
             <button
-              className={`absolute z-10 flex items-center justify-center w-6 h-auto -translate-y-1/2 cursor-pointer -left-3 embla__button embla__next aspect-square top-1/2 bg-white shadow-md ${
-                prevBtnDisabled ? 'hidden' : 'flex'
-              }`}
+              className={`absolute z-10 flex items-center justify-center w-6 h-auto -translate-y-1/2 cursor-pointer -left-3 embla__button embla__next aspect-square top-1/2 bg-white shadow-md ${prevBtnDisabled ? 'hidden' : 'flex'
+                }`}
               onClick={scrollPrev}
               disabled={prevBtnDisabled}
             >
               <LeftArrow height={10} fill="#000" />
             </button>
             <button
-              className={`absolute z-10 items-center justify-center w-6 h-auto rotate-180 -translate-y-1/2 cursor-pointer -right-3 embla__button embla__prev aspect-square top-1/2 bg-white shadow-md ${
-                nextBtnDisabled ? 'hidden' : 'flex'
-              }`}
+              className={`absolute z-10 items-center justify-center w-6 h-auto rotate-180 -translate-y-1/2 cursor-pointer -right-3 embla__button embla__prev aspect-square top-1/2 bg-white shadow-md ${nextBtnDisabled ? 'hidden' : 'flex'
+                }`}
               onClick={scrollNext}
               disabled={nextBtnDisabled}
             >
@@ -490,10 +487,10 @@ export const getProductList = async (
   page: number;
 }> => {
   try {
-    const {searchParams} = new URL(request.url);
+    const { searchParams } = new URL(request.url);
     const searchParam = Object.fromEntries(searchParams);
     const pageInfo = searchParams.get('pageNo');
-    const {userDetails} = await getUserDetails(request);
+    const { userDetails } = await getUserDetails(request);
 
     let page = 1;
     if (pageInfo) {
@@ -507,8 +504,8 @@ export const getProductList = async (
     }[] = [];
 
     searchKey.map((value) => {
-      searchList.push({key: value, value: searchParams.getAll(value)});
-      return {[value]: searchParams.getAll(value)};
+      searchList.push({ key: value, value: searchParams.getAll(value) });
+      return { [value]: searchParams.getAll(value) };
     });
 
     let results;
@@ -533,7 +530,7 @@ export const getProductList = async (
       );
     }
     const productFilter = await getProductFilterList(context);
-    return {productFilter, results, page};
+    return { productFilter, results, page };
   } catch (error) {
     if (error instanceof Error) {
       console.log('err', error);

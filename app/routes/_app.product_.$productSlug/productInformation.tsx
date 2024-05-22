@@ -1,5 +1,5 @@
-import {Form, Link, useSubmit} from '@remix-run/react';
-import {useState} from 'react';
+import { Form, Link, useSubmit } from '@remix-run/react';
+import { useState } from 'react';
 import Info from '~/components/icons/info';
 import {
   CircleInformationMajor,
@@ -7,18 +7,18 @@ import {
   ProductLoveRed,
   ProductLoveWhite,
 } from '~/components/icons/orderStatus';
-import {badgeVariants} from '~/components/ui/badge';
-import {Button} from '~/components/ui/button';
-import {Price} from '~/components/ui/price';
-import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
-import {useMediaQuery} from '../../hooks/useMediaQuery';
+import { badgeVariants } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { Price } from '~/components/ui/price';
+import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 import CarouselThumb from './carouselThumb';
-import {getProductPriceByQty} from './product-detail';
-import {ProductInfoTable} from './productInfoTable';
-import {Can} from '~/lib/helpers/Can';
-import {StockStatusChip} from '~/components/ui/stock-status-chip';
+import { getProductPriceByQty } from './product-detail';
+import { ProductInfoTable } from './productInfoTable';
+import { Can } from '~/lib/helpers/Can';
+import { StockStatusChip } from '~/components/ui/stock-status-chip';
 
-export default function ProductInformation({product}: any) {
+export default function ProductInformation({ product }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
   const volumePrice = product?.priceRange?.length > 0 ? true : false;
 
@@ -29,7 +29,7 @@ export default function ProductInformation({product}: any) {
           <div className="w-full lg:w-[calc(50%_-_28px)] pt-6 pb-8">
             <CarouselThumb
               images={product?.imageUrl}
-              thumbNailCarouseloptions={{axis: matches ? 'y' : 'x'}}
+              thumbNailCarouseloptions={{ axis: matches ? 'y' : 'x' }}
               mainCarouseloptions={{}}
               volumePrice={volumePrice}
             />
@@ -166,34 +166,35 @@ const ProductDetailsSection = ({
 
   return (
     <div
-      className={`w-full ${
-        productImageLength > 0 && 'lg:w-[calc(50%_-_28px)]'
-      } py-8`}
+      className={`w-full ${productImageLength > 0 && 'lg:w-[calc(50%_-_28px)]'
+        } py-8`}
     >
       <div className="flex justify-between">
         <figure>
           <img src="/cigweld-logo.png" alt="" className="max-h-7" />
         </figure>
-        <ul className="flex gap-[7px]">
-          <li className="w-[36px] h-[36px] flex justify-center items-center border-grey-50 border-[1px]">
-            <Link to={`/product-comparison/${productId}`}>
-              <Compare />
-            </Link>
-          </li>
-          <Can I="view" a="add_to_wishlist">
-            <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]">
-              <Form method={isFavorited ? 'DELETE' : 'POST'} className="flex">
-                <input type="hidden" name="productId" value={productId} />
-                <button
-                  value={isFavorited ? 'removeFromWishList' : 'addToWishList'}
-                  name="action"
-                >
-                  {isFavorited ? <ProductLoveRed /> : <ProductLoveWhite />}
-                </button>
-              </Form>
+        {productPrice || originalPrice ?
+          <ul className="flex gap-[7px]">
+            <li className="w-[36px] h-[36px] flex justify-center items-center border-grey-50 border-[1px]">
+              <Link to={`/product-comparison/${productId}`}>
+                <Compare />
+              </Link>
             </li>
-          </Can>
-        </ul>
+            <Can I="view" a="add_to_wishlist">
+              <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]">
+                <Form method={isFavorited ? 'DELETE' : 'POST'} className="flex">
+                  <input type="hidden" name="productId" value={productId} />
+                  <button
+                    value={isFavorited ? 'removeFromWishList' : 'addToWishList'}
+                    name="action"
+                  >
+                    {isFavorited ? <ProductLoveRed /> : <ProductLoveWhite />}
+                  </button>
+                </Form>
+              </li>
+            </Can>
+          </ul>
+          : null}
       </div>
       <h3 className="pt-4">{productName}</h3>
       <div className="flex flex-col justify-between pt-4 sm:flex-row gap-y-2">
@@ -207,7 +208,7 @@ const ProductDetailsSection = ({
               {unitOfMeasurement}
             </p>
             <p className="font-normal text-Grey-500">{box}</p>
-            <div className={`${badgeVariants({variant: 'primary'})} !m-0`}>
+            <div className={`${badgeVariants({ variant: 'primary' })} !m-0`}>
               {defaultButton}
             </div>
           </div>
@@ -250,105 +251,106 @@ const ProductDetailsSection = ({
           Price will change if you increase quantity of items.
         </p>
       </div>
-      <div className="flex flex-col items-start gap-4 pt-6 sm:flex-row">
-        <div>
-          <div className="flex cart__list--quantity">
-            <button
-              className={`border-[1px] border-grey-500 flex justify-center items-center w-14 aspect-square ${
-                quantity - 1 < moq && 'cursor-not-allowed'
-              }`}
-              onClick={decreaseQuantity}
-              disabled={quantity - 1 < moq}
-            >
-              -
-            </button>
-            <input
-              type="number"
-              className="w-20 min-h-14 h-full text-center border-x-0 !border-grey-500"
-              value={quantity}
-              onChange={handleInputChange}
-              min={moq || 1}
-              max={CART_QUANTITY_MAX}
-              required
-            />
-            <button
-              className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-14"
-              onClick={increaseQuantity}
-            >
-              +
-            </button>
+      {productPrice || originalPrice ?
+        <div className="flex flex-col items-start gap-4 pt-6 sm:flex-row">
+          <div>
+            <div className="flex cart__list--quantity">
+              <button
+                className={`border-[1px] border-grey-500 flex justify-center items-center w-14 aspect-square ${quantity - 1 < moq && 'cursor-not-allowed'
+                  }`}
+                onClick={decreaseQuantity}
+                disabled={quantity - 1 < moq}
+              >
+                -
+              </button>
+              <input
+                type="number"
+                className="w-20 min-h-14 h-full text-center border-x-0 !border-grey-500"
+                value={quantity}
+                onChange={handleInputChange}
+                min={moq || 1}
+                max={CART_QUANTITY_MAX}
+                required
+              />
+              <button
+                className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-14"
+                onClick={increaseQuantity}
+              >
+                +
+              </button>
+            </div>
+            <p className="text-sm text-grey-700 pt-2.5 flex gap-x-1">
+              <Info />
+              Minimum Order Quantity {moq || 1}
+            </p>
           </div>
-          <p className="text-sm text-grey-700 pt-2.5 flex gap-x-1">
-            <Info />
-            Minimum Order Quantity {moq || 1}
-          </p>
-        </div>
-        <div className="flex flex-col">
-          <select
-            name="filter_by"
-            className="w-full min-w-[120px] min-h-14 place-order h-full !border-grey-500 filter-select"
-            onChange={(e: any) => handleUOM(e.target.value)}
-            value={UOM}
+          <div className="flex flex-col">
+            <select
+              name="filter_by"
+              className="w-full min-w-[120px] min-h-14 place-order h-full !border-grey-500 filter-select"
+              onChange={(e: any) => handleUOM(e.target.value)}
+              value={UOM}
+            >
+              {unitOfMeasure.length > 0 ? (
+                unitOfMeasure?.map((uom: any, index: number) => (
+                  <option value={uom.code} key={index + 'uom'}>
+                    {uom.unit}
+                  </option>
+                ))
+              ) : (
+                <option value={UOM}>{box}</option>
+              )}
+            </select>
+          </div>
+          <Form
+            method="POST"
+            className="w-full"
+            onSubmit={(event) => {
+              submit(event.currentTarget);
+            }}
           >
-            {unitOfMeasure.length > 0 ? (
-              unitOfMeasure?.map((uom: any, index: number) => (
-                <option value={uom.code} key={index + 'uom'}>
-                  {uom.unit}
-                </option>
-              ))
+            <input type="hidden" name="productId" value={productId} />
+            <input
+              type="hidden"
+              name="productVariantId"
+              value={productVariantId}
+            />
+            <input type="hidden" name="quantity" value={quantity} />
+            <input type="hidden" name="selectUOM" value={UOM} />
+            {quantity < moq ||
+              quantity < 1 ||
+              quantity > CART_QUANTITY_MAX ||
+              isNaN(quantity) ? (
+              <>
+                <Can I="view" a="add_to_cart">
+                  <button
+                    className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-not-allowed text-grey-400 bg-grey-200 min-h-14"
+                    disabled
+                  >
+                    {addToCart}
+                  </button>
+                </Can>
+                <p className="text-red-500">
+                  Minimum order quantity is {moq || 1} and maximum quantity is{' '}
+                  {CART_QUANTITY_MAX}
+                </p>
+              </>
             ) : (
-              <option value={UOM}>{box}</option>
-            )}
-          </select>
-        </div>
-        <Form
-          method="POST"
-          className="w-full"
-          onSubmit={(event) => {
-            submit(event.currentTarget);
-          }}
-        >
-          <input type="hidden" name="productId" value={productId} />
-          <input
-            type="hidden"
-            name="productVariantId"
-            value={productVariantId}
-          />
-          <input type="hidden" name="quantity" value={quantity} />
-          <input type="hidden" name="selectUOM" value={UOM} />
-          {quantity < moq ||
-          quantity < 1 ||
-          quantity > CART_QUANTITY_MAX ||
-          isNaN(quantity) ? (
-            <>
               <Can I="view" a="add_to_cart">
-                <button
-                  className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-not-allowed text-grey-400 bg-grey-200 min-h-14"
-                  disabled
+                <Button
+                  className="flex-grow w-full uppercase min-h-14"
+                  variant="primary"
+                  type="submit"
+                  value="addToCart"
+                  name="action"
                 >
                   {addToCart}
-                </button>
+                </Button>
               </Can>
-              <p className="text-red-500">
-                Minimum order quantity is {moq || 1} and maximum quantity is{' '}
-                {CART_QUANTITY_MAX}
-              </p>
-            </>
-          ) : (
-            <Can I="view" a="add_to_cart">
-              <Button
-                className="flex-grow w-full uppercase min-h-14"
-                variant="primary"
-                type="submit"
-                value="addToCart"
-                name="action"
-              >
-                {addToCart}
-              </Button>
-            </Can>
-          )}
-        </Form>
-      </div>
+            )}
+          </Form>
+        </div>
+        : null}
     </div>
   );
 };
