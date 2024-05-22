@@ -1,10 +1,6 @@
-import {CONSTANT} from '~/lib/constants/product.session';
-import {
-  ADD_ITEMS_IN_CART,
-  addProductToCart,
-} from '../_app.product_.$productSlug/product.server';
 import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
-import {getAccessToken} from '~/lib/utils/auth-session.server';
+import {CONSTANT} from '~/lib/constants/product.session';
+import {addProductToCart} from '../_app.product_.$productSlug/product.server';
 
 export const addedBulkCart = async (
   cartInfo: any,
@@ -14,7 +10,7 @@ export const addedBulkCart = async (
 ) => {
   const {storefront, session} = context;
   const sessionCartInfo = session.get(CART_SESSION_KEY);
-  console.log('cartInfo', cartInfo);
+  // console.log('cartInfo', cartInfo);
   const keyList = Object.keys(cartInfo);
   const productData = [] as any;
   const formateData = keyList.map((key: any) => {
@@ -38,7 +34,7 @@ export const addedBulkCart = async (
       quantity: parseInt(cartInfo[`${id}_quantity`]),
     };
   });
-  console.log('first', itemData);
+  // console.log('first', itemData);
   const data = await addProductToCart(
     {},
     accessTocken,
