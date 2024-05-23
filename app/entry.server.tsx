@@ -46,7 +46,7 @@ export default async function handleRequest(
       'https://cig-backend.webo.dev',
       'https://www.w3.org',
       'https://cigweld-middleware.intuji.com',
-      'http://170.64.130.119',
+      'http://170.64.130.119:3000',
       ...localDirectives,
     ],
     mediaSrc: [
@@ -66,7 +66,7 @@ export default async function handleRequest(
       'relaxing-hawk-ace.ngrok-free.app',
       'cig-backend.webo.dev',
       'pimcoredata.intuji.com',
-      '170.64.130.119',
+      '170.64.130.119:3000',
       ...localDirectives,
     ],
     workerSrc: [
