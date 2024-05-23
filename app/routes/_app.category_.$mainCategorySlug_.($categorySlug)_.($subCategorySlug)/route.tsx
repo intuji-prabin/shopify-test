@@ -17,11 +17,15 @@ import { useCallback, useEffect, useState } from 'react';
 import { LeftArrow } from '~/components/icons/left';
 import { BackButton } from '~/components/ui/back-button';
 import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { BulkCsvUpload } from '~/components/ui/bulk-csv-upload';
 import PaginationSimple from '~/components/ui/pagination-simple';
 import { ProductCard } from '~/components/ui/product-card';
 import { Separator } from '~/components/ui/separator';
+import { useConditionalRender } from '~/hooks/useAuthorization';
+import { SESSION_MAX_AGE } from '~/lib/constants/auth.constent';
 import { Routes } from '~/lib/constants/routes.constent';
 import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
+import { filterDetailsCommitSession, getFilterDetailsSession } from '~/lib/utils/filter-session.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -29,22 +33,17 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
-import { productBulkCart } from '../_app.categories/bulkOrder.server';
 import { getCategoryList } from '../_app.categories/route';
 import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 import {
   addToWishlist,
   removeFromWishlist,
 } from '../_app.product_.$productSlug/wishlist.server';
-import {PAGE_LIMIT} from '../_app.promotions/promotion-constants';
-import {getFilterProduct} from './filter.server';
-import {FilterForm, SortByFilterForm} from './filterForm';
-import {getProductFilterList} from './productFilter.server';
-import {getProducts} from './productList.server';
-import {BulkCsvUpload} from '~/components/ui/bulk-csv-upload';
-import {useConditionalRender} from '~/hooks/useAuthorization';
-import { filterDetailsCommitSession, getFilterDetailsSession } from '~/lib/utils/filter-session.server';
-import { SESSION_MAX_AGE } from '~/lib/constants/auth.constent';
+import { PAGE_LIMIT } from '../_app.promotions/promotion-constants';
+import { getFilterProduct } from './filter.server';
+import { FilterForm } from './filterForm';
+import { getProductFilterList } from './productFilter.server';
+import { getProducts } from './productList.server';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -61,12 +60,14 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     categorySlug,
     subCategorySlug,
     categories,
-  }, { headers : [ ['Set-Cookie', await context.session.commit({})], [
-    'Set-Cookie',
-    await filterDetailsCommitSession(filterDetailsSession, {
+  }, {
+    headers: [['Set-Cookie', await context.session.commit({})], [
+      'Set-Cookie',
+      await filterDetailsCommitSession(filterDetailsSession, {
         maxAge: SESSION_MAX_AGE['30_DAYS'],
-    }),
-], ]});
+      }),
+    ],]
+  });
 }
 
 export const action = async ({ request, context }: ActionFunctionArgs) => {
@@ -476,7 +477,7 @@ export const getProductList = async (
   params: Params<string>,
   context: AppLoadContext,
   request: Request,
-  filterDetailsSession : any
+  filterDetailsSession: any
 ): Promise<{
   productFilter: {
     filterLabel: string;
@@ -509,7 +510,7 @@ export const getProductList = async (
     });
 
     let results;
-    
+
     if (searchList.length > 0) {
       results = await getFilterProduct(
         context,
