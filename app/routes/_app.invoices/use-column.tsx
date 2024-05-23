@@ -1,23 +1,23 @@
-import {useMemo} from 'react';
-import {Link} from 'react-router-dom';
-import {ColumnDef} from '@tanstack/react-table';
-import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
-import {Routes} from '~/lib/constants/routes.constent';
-import {Button} from '~/components/ui/button';
-import {EyeOn} from '~/components/icons/eye';
-import {DownloadIcon} from '~/components/icons/download-icon';
-import {Invoices} from '~/routes/_app.invoices/invoices.server';
-import {formatDateToLocaleDateString} from '~/lib/helpers/dateTime.helper';
-import {useDownload} from '~/hooks/useDownload';
-import {PDF} from '~/lib/constants/pdf.constent';
-import {OrderStatusChip} from '~/components/ui/order-status-chip';
+import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import { ColumnDef } from '@tanstack/react-table';
+import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
+import { Routes } from '~/lib/constants/routes.constent';
+import { Button } from '~/components/ui/button';
+import { EyeOn } from '~/components/icons/eye';
+import { DownloadIcon } from '~/components/icons/download-icon';
+import { Invoices } from '~/routes/_app.invoices/invoices.server';
+import { formatDateToLocaleDateString } from '~/lib/helpers/dateTime.helper';
+import { useDownload } from '~/hooks/useDownload';
+import { PDF } from '~/lib/constants/pdf.constent';
+import { OrderStatusChip } from '~/components/ui/order-status-chip';
 
 export function useColumn() {
   const columns = useMemo<ColumnDef<Invoices>[]>(
     () => [
       {
         id: 'select',
-        header: ({table}) => (
+        header: ({ table }) => (
           <IndeterminateCheckbox
             {...{
               checked: table.getIsAllRowsSelected(),
@@ -26,7 +26,7 @@ export function useColumn() {
             }}
           />
         ),
-        cell: ({row}) => (
+        cell: ({ row }) => (
           <IndeterminateCheckbox
             {...{
               checked: row.getIsSelected(),
@@ -47,12 +47,12 @@ export function useColumn() {
         header: 'Sales Order No.',
         cell: (info) => info.getValue() ?? 'N/A',
       },
-      {
-        accessorKey: 'iscalaCompanyId',
-        header: 'Company ID',
-        enableSorting: false,
-        cell: (info) => info.getValue() ?? 'N/A',
-      },
+      // {
+      //   accessorKey: 'iscalaCompanyId',
+      //   header: 'Company ID',
+      //   enableSorting: false,
+      //   cell: (info) => info.getValue() ?? 'N/A',
+      // },
       {
         accessorKey: 'wareHouseNo',
         header: 'Warehouse No.',
@@ -114,7 +114,7 @@ export function useColumn() {
           const fileURL = info.row.original.files;
           const invoiceDetailsRoute = `${Routes.INVOICES}/${invoiceId}`;
 
-          const {handleDownload} = useDownload();
+          const { handleDownload } = useDownload();
 
           return (
             <div className="flex justify-start gap-x-2">
@@ -129,7 +129,7 @@ export function useColumn() {
                 onClick={() =>
                   handleDownload({
                     url: fileURL,
-                    headers: {apiKey: PDF.SECRET_KEY},
+                    headers: { apiKey: PDF.SECRET_KEY },
                   })
                 }
               >
@@ -143,5 +143,5 @@ export function useColumn() {
     [],
   );
 
-  return {columns};
+  return { columns };
 }
