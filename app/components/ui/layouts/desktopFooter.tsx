@@ -1,10 +1,11 @@
 import Enquire from '~/components/icons/enquire';
 import Phone from '~/components/icons/phone';
-import {Link} from '@remix-run/react';
-import {Routes} from '~/lib/constants/routes.constent';
-import {Can} from '~/lib/helpers/Can';
+import { Link } from '@remix-run/react';
+import { Routes } from '~/lib/constants/routes.constent';
+import { Can } from '~/lib/helpers/Can';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 
-export default function DesktopFooter() {
+export default function DesktopFooter({ footerData }: { footerData: any }) {
   const footerNavs = [
     {
       id: 0,
@@ -76,6 +77,7 @@ export default function DesktopFooter() {
       url: Routes.SAFETY,
     },
   ];
+  console.log("footerData", footerData)
 
   return (
     <div className="bg-grey-900 ">
@@ -83,28 +85,32 @@ export default function DesktopFooter() {
         <div className="flex flex-col justify-between gap-10 py-20 md:flex-row">
           <div className="flex flex-col gap-10">
             <figure className="max-w-48">
-              <img src="/myCigweldWhite.svg" alt="" />
+              <img src={footerData?.logo || DEFAULT_IMAGE.IMAGE} alt="" />
             </figure>
             <div className="flex flex-col gap-[23px]">
-              <div className="flex">
-                <Enquire />
-                <h4 className="italic font-bold text-lg md:text-2xl leading-[29px] text-white">
-                  enquire@cigweld.com.au
-                </h4>
-              </div>
-              <div className="flex">
-                <Phone />
-                <h4 className="italic font-bold text-lg md:text-2xl leading-[29px] text-white">
-                  1300 654 674
-                </h4>
-              </div>
+              {footerData?.email &&
+                <div className="flex">
+                  <Enquire />
+                  <h4 className="italic font-bold text-lg md:text-2xl leading-[29px] text-white">
+                    {footerData?.email}
+                  </h4>
+                </div>
+              }
+              {footerData?.phoneNumber &&
+                <div className="flex">
+                  <Phone />
+                  <h4 className="italic font-bold text-lg md:text-2xl leading-[29px] text-white">
+                    {footerData?.phoneNumber}
+                  </h4>
+                </div>
+              }
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             <div className="">
               <ul className="flex flex-col gap-8">
-                {footerNavs.map((nav) =>
+                {footerData?.firstColumn?.firstColumnList.map((nav: any) =>
                   nav.title === 'my team' ? (
                     <Can I="view" a="view_team" key={nav.id}>
                       <Link to={nav.link}>
@@ -125,25 +131,25 @@ export default function DesktopFooter() {
             </div>
             <div className="flex flex-col gap-5">
               <h4 className="text-2xl font-bold italic leading-[29px] text-white">
-                Products
+                {footerData?.secondColumn?.secondColumnTitle}
               </h4>
 
               <ul className="z-10 flex flex-col space-y-2 text-white submenu-nav">
-                {products?.map((prod) => (
+                {footerData?.secondColumn?.secondColumnList?.map((prod: any) => (
                   <li key={prod.id}>{prod.title}</li>
                 ))}
               </ul>
             </div>
             <div className="flex flex-col gap-5">
               <h4 className="text-2xl font-bold italic leading-[29px] text-white">
-                Accounts
+                {footerData?.thirdColumn?.thirdColumnTitle}
               </h4>
 
               <ul className="flex flex-col">
-                {accounts.map((account) => (
+                {footerData?.thirdColumn?.thirdColumnList.map((account: any) => (
                   <Link to={account.url} key={account.id}>
                     {account.title === 'Orders' ||
-                    account.title === 'Invoice' ? (
+                      account.title === 'Invoice' ? (
                       <Can
                         I="view"
                         a={
@@ -167,13 +173,13 @@ export default function DesktopFooter() {
             </div>
             <div className="flex flex-col gap-5">
               <h4 className="text-2xl font-bold italic leading-[29px] text-white">
-                Content Management
+                {footerData?.fourthColumn?.fourthColumnTitle}
               </h4>
 
-              <ul className="flex flex-col gap-3">
-                <li className="text-lg font-normal  leading-[29px] text-white">
-                  <Link to={Routes.PROMOTIONS}> Promotions</Link>
-                </li>
+              <ul className="z-10 flex flex-col space-y-2 text-white submenu-nav">
+                {footerData?.fourthColumn?.fourthColumnList?.map((mgt: any) => (
+                  <li key={mgt.id}>{mgt.title}</li>
+                ))}
               </ul>
             </div>
           </div>
