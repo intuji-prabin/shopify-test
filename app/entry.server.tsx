@@ -74,6 +74,7 @@ export default async function handleRequest(
       'http://cdnjs.cloudflare.com',
       'http://localhost:4000',
       'https://pimcoredata.intuji.com',
+      'cig-backuat.webo.dev',
       ...localDirectives,
     ],
   });

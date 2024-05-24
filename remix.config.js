@@ -26,4 +26,7 @@ module.exports = {
   serverModuleFormat: 'esm',
   serverPlatform: 'neutral',
   serverMinify: process.env.NODE_ENV === 'production',
+  dev: {
+    port: 5011,
+  },
 };
