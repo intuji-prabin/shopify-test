@@ -29,7 +29,7 @@ export function FilterForm({
   const filteredData = searchList.filter((item) => item.key !== 'warranty');
   const filteredValues = filteredData.map((item) => item.value);
 
-  const initialRange = [1, 5000];
+  const initialRange = [1, 50000];
   const [range, setRange] = useState(initialRange);
   const [isMinChecked, setIsMinChecked] = useState(false);
   const [isMaxChecked, setIsMaxChecked] = useState(false);
