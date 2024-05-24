@@ -71,6 +71,7 @@ export async function getOrdersProductDetails({
       method: AllowedHTTPMethods.GET,
       url,
     });
+    console.log('results', results);
 
     if (!results.status) {
       throw new Error(results.message);

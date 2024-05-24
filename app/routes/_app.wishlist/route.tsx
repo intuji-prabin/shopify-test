@@ -22,6 +22,7 @@ import { Routes } from '~/lib/constants/routes.constent';
 import { CART_QUANTITY_ERROR, CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
 import { BackButton } from '~/components/ui/back-button';
 import { Can } from '~/lib/helpers/Can';
+import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
 
 export interface WishListResponse {
   productId: string;
@@ -55,7 +56,10 @@ export interface UnitOfMeasure {
 export const loader = async ({ request, context }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
   const items = await getWishlist(request);
-  return json({ items });
+  await context.session.set(WISHLIST_SESSION_KEY, items?.length);
+  return json({ items }, {
+    headers: [['Set-Cookie', await context.session.commit({})]]
+  });
 };
 
 export const action = async ({ request, context }: LoaderFunctionArgs) => {
