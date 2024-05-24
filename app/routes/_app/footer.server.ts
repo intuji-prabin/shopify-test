@@ -31,7 +31,7 @@ const formatFooter = async (footerList: any) => {
   return {
     phoneNumber: footerList?.phoneNumber?.value,
     email: footerList?.email?.value,
-    logo: footerList?.logo?.value,
+    logo: footerList?.logo?.reference?.image?.url,
     firstColumn: {
       firstColumnTitle: footerList?.firstColumnTitle?.value,
       firstColumnList: formatColumn(
@@ -64,7 +64,15 @@ const GET_FOOTER_QUERY = `query getMetaDefinition {
         nodes {
             phoneNumber: field(key: "phone_number") {value}
             email: field(key: "email") {value}
-            logo: field(key: "logo") {value}
+            logo: field(key: "logo") {
+              reference {
+              ... on MediaImage {
+                  image {
+                    url
+                  }
+                }
+              } 
+            }
             firstColumnTitle : field(key: "column_first_header") { value }
             firstColumnList : field(key: "column_first_list") { value }
             secondColumnTitle : field(key: "column_second_header") { value }
