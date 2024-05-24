@@ -47,12 +47,14 @@ export default async function handleRequest(
       'https://www.w3.org',
       'https://cigweld-middleware.intuji.com',
       'http://170.64.130.119:3000',
+      'gid://shopify/MediaImage',
       ...localDirectives,
     ],
     mediaSrc: [
       "'self'",
       'pimcoredata.intuji.com',
       'https://pimcoredata.intuji.com/',
+      'gid://shopify/MediaImage',
       ...localDirectives,
     ],
     imgSrc: [
@@ -67,6 +69,7 @@ export default async function handleRequest(
       'cig-backend.webo.dev',
       'pimcoredata.intuji.com',
       '170.64.130.119:3000',
+      'gid://shopify/MediaImage',
       ...localDirectives,
     ],
     workerSrc: [
