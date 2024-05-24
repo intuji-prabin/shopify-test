@@ -21,6 +21,9 @@ export type DefaultAddress = {
   zip: string;
   firstName: string;
   country: string;
+  fax: string;
+  suburb: string;
+  houseNumber: string;
 };
 
 export type Address = DefaultAddress;
@@ -33,7 +36,6 @@ export async function getAllCompanyShippingAddresses(customerId: string) {
       method: AllowedHTTPMethods.GET,
       url: `${ENDPOINT.COMPANY.GET_SHIPPING_ADDRESS}?customerId=${customer}`,
     });
-
     if (!response.status) {
       throw new Error(response.message);
     }

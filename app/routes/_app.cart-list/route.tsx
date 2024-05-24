@@ -62,7 +62,6 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
     lineItems: cartList?.productList?.length,
   };
   await context.session.set(CART_SESSION_KEY, finalCartSession);
-  console.log("first", context.session.get(CART_SESSION_KEY));
   return json(
     { cartList, shippingAddresses },
     {

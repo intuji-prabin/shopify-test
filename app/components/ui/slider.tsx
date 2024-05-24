@@ -86,7 +86,7 @@ const Slider = React.forwardRef(
                 className="absolute text-center"
                 style={{
                   // Needs improvement in this calculation
-                  left: `calc(${((value - min) / (max - min)) * 85}% + 0px)`,
+                  left: `calc(${((value - min) / (max - min)) * 82}% + 0px)`,
                   top: `-50px`,
                 }}
               >

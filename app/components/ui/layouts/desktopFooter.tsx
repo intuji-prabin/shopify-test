@@ -4,8 +4,6 @@ import Phone from '~/components/icons/phone';
 import { Can } from '~/lib/helpers/Can';
 
 export default function DesktopFooter({ footerData }: { footerData: any }) {
-  console.log("footerData", footerData)
-
   return (
     <div className="bg-grey-900 ">
       <div className="container">
