@@ -23,10 +23,6 @@ export const getFilterProduct = async (
   const catParam = subCategoryIdentifier
     ? subCategoryIdentifier
     : categoryIdentifier;
-  console.log(
-    'param',
-    subCategoryIdentifier ? subCategoryIdentifier : categoryIdentifier,
-  );
   const minPrice = filterList.find((item: any) => item?.key == 'minPrice');
   const maxPrice = filterList.find((item: any) => item?.key === 'maxPrice');
   if (!minPrice && !maxPrice) {
