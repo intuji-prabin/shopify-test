@@ -5,29 +5,44 @@ import {useFetch} from '~/hooks/useFetch';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {useFormatCart} from '~/hooks/useFormatCart';
+import {emitter3} from '~/lib/utils/emitter.server';
+import {EVENTS} from '~/lib/constants/events.contstent';
+import { USER_SESSION_ID } from '~/lib/utils/auth-session.server';
 
-export const placeOrder = async (request: Request, context: any) => {
+export const placeOrder = async (
+  formData: any,
+  request: Request,
+  context: any,
+) => {
+  const { session } = context;
+
   const {userDetails} = await getUserDetails(request);
-
+  const userSessionId = session.get(USER_SESSION_ID);
   try {
     let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
 
     if (!sessionCartInfo) {
       throw new Error('Cart not found');
     }
-    const formData = await request.formData();
-    const allData = Object.fromEntries(formData);
+    const allData = Object.fromEntries(formData) as any;
     const cartList = await getCartList(context, request, sessionCartInfo, true);
-
+    allData.customerDetails = {
+      parentId:
+        userDetails?.meta?.parent?.value &&
+        userDetails?.meta?.parent?.value !== 'null'
+          ? userDetails?.meta?.parent?.value
+          : userDetails?.id,
+    };
     const orderPlaceResponse = await orderCreate(
       cartList,
       userDetails?.id,
       allData,
     );
+
     if (orderPlaceResponse?.status === false) {
       throw new Error('Order not placed due to server error');
     }
-    const shopifyOrderId = orderPlaceResponse?.ShopifyID;
+    const shopifyOrderId = orderPlaceResponse?.orderId;
 
     const lineItems = [] as any;
     cartList.map((items: any) => {
@@ -47,11 +62,19 @@ export const placeOrder = async (request: Request, context: any) => {
     }
     const finalCartSession = useFormatCart(cartSession);
     context.session.set(CART_SESSION_KEY, finalCartSession);
+       emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
+        payload: {
+          type: 'cart',
+          totalNumber: cartRemoveResponse === true ? 0 : cartRemoveResponse,
+          customerId: userDetails.id,
+          sessionId: userSessionId
+        },
+      });
     return {cartSession, shopifyOrderId};
   } catch (error) {
     if (error instanceof Error) {
       console.log('err', error?.message);
-      return {};
+      throw new Error(error?.message);
     }
     return {};
   }

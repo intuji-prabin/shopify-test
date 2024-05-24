@@ -16,6 +16,7 @@ interface Permission {
 interface Node {
   role: {value: string};
   permission: {value: string};
+  handle: string;
 }
 
 interface Edge {
@@ -76,10 +77,9 @@ export async function formatRolesAndPermission(response: Response) {
   const rolePermission = roleListEgdge?.edges.map((items: Edge) => {
     const role = items?.node?.role?.value;
     const permission = items?.node?.permission?.value;
-
     return {
       title: role,
-      value: role.toLowerCase(),
+      value: items?.node?.handle,
       permissions: formatPermission(permission),
     };
   });
@@ -104,6 +104,7 @@ const GET_ROLES_AND_PERMISSION = `query getMeta {
     metaobjects(type : "customer_roles_and_permission", first: 100) {
       edges {
           node {
+              handle
               role : field(key: "role") { value }
               permission: field(key: "permission") { value }
           }

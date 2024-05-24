@@ -25,7 +25,6 @@ export default function MobileNav({
   wishlistCount: number;
   pendingOrderCount: number;
 }) {
-  // const [isOpen, setisOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { isOpen, toggleMenu } = useHamburgerMenu();
   const mobileNavSectionRef = useRef<HTMLDivElement>(null);

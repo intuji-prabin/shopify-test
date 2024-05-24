@@ -1,6 +1,7 @@
 import {useMemo, useState} from 'react';
 import {ColumnDef} from '@tanstack/react-table';
 import {Button} from '~/components/ui/button';
+import { Can } from '~/lib/helpers/Can';
 
 export type BulkOrderColumn = {
   id: string;
@@ -116,6 +117,8 @@ function QuantityColumn({quantity}: QuantityColumnType) {
           </button>
         </div>
       </div>
+      <Can I="view" a="add_to_cart">
+
       <Button
         onClick={handleAddAllToCart}
         className="uppercase max-w-[129px]"
@@ -123,6 +126,7 @@ function QuantityColumn({quantity}: QuantityColumnType) {
       >
         Add to cart
       </Button>
+      </Can>
     </div>
   );
 }

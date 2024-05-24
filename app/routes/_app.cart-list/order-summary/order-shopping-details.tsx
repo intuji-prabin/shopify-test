@@ -1,33 +1,37 @@
+import { useFetcher } from '@remix-run/react';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
-import Tick from '~/components/icons/tick';
 import { Button } from '~/components/ui/button';
 import { Calendar } from '~/components/ui/calendar';
+import Loader from '~/components/ui/loader';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
+import { Can } from '~/lib/helpers/Can';
 
 function concatDefaultAddress(address1: string, address2: string) {
   return address1.concat(' ', address2).trim();
 }
 
-export function ShippingLocation({ addressList, mergedAddressList, defaultAddress1, defaultAddress2, defaultId, defaultCountry, defaultFax, defaultPhone, defaultZip }: any) {
+export function ShippingLocation({ addressList, mergedAddressList, defaultAddress1, defaultAddress2, defaultId, defaultCountry, defaultFax, defaultPhone, defaultZip, defaultCountryCodeV2 }: any) {
   const [country, setCountry] = useState(defaultCountry);
   const [address1, setAddress1] = useState(defaultAddress1);
   const [address2, setAddress2] = useState(defaultAddress2);
   const [zip, setZip] = useState(defaultZip);
   const [phone, setPhone] = useState(defaultPhone);
   const [fax, setFax] = useState(defaultFax);
+  const [countryCodeV2, setCountryCodeV2] = useState(defaultCountryCodeV2);
 
   const getAddressDetail = (e: any) => {
     const selectedAddressId = e.target.value;
     const selectedAddress = mergedAddressList.find((address: any) => address.id === selectedAddressId);
-    setCountry(selectedAddress?.country);
-    setAddress1(selectedAddress?.address1);
-    setAddress2(selectedAddress?.address2);
-    setZip(selectedAddress?.zip);
-    setPhone(selectedAddress?.phone);
-    setFax(selectedAddress?.fax);
+    setCountry(selectedAddress?.country ? selectedAddress?.country : '');
+    setAddress1(selectedAddress?.address1 ? selectedAddress?.address1 : '');
+    setAddress2(selectedAddress?.address2 ? selectedAddress?.address2 : '');
+    setZip(selectedAddress?.zip ? selectedAddress?.zip : '');
+    setPhone(selectedAddress?.phone ? selectedAddress?.phone : '');
+    setFax(selectedAddress?.fax ? selectedAddress?.fax : '');
+    setCountryCodeV2(selectedAddress?.countryCodeV2 ? selectedAddress?.countryCodeV2 : '')
   };
 
   const defaultAddress = concatDefaultAddress(
@@ -46,6 +50,7 @@ export function ShippingLocation({ addressList, mergedAddressList, defaultAddres
       <input type="text" name="zip" value={zip} className='hidden' />
       <input type="text" name="phone" value={phone} className='hidden' />
       <input type="text" name="fax" value={fax} className='hidden' />
+      <input type='text' name='countryCodeV2' value={countryCodeV2} className='hidden' />
       <select
         name="addressId"
         className="w-full min-w-[92px] place-order h-full border-grey-100"
@@ -127,6 +132,7 @@ export function PurchaseOrder() {
         required
         pattern="[^' ']+"
         title="Purchase Order Number Or Order Number cannot have space."
+        maxLength={30}
       />
     </div>
   );
@@ -145,42 +151,80 @@ export function TextArea() {
     </div>
   );
 }
-export function PromoCode() {
-  const [activatePromo, setActivatePromo] = useState(false);
-  function handleActivatePromoCode() {
-    setActivatePromo(!activatePromo);
-  }
+export function PromoCode({ data, setPromoCode, promoCode, promoCodeApplied }: { data: { status: boolean, message: string }, setPromoCode: React.Dispatch<React.SetStateAction<string>>, promoCode: string, promoCodeApplied: string }) {
+  const fetcher = useFetcher();
   return (
     <div className="flex flex-col gap-1">
       <p className="text-base text-normal leading-[21px] text-grey-800">
-        Enter promo code here
+        Do you have any promocode?
       </p>
-      <div className="flex flex-col w-full gap-2 sm:flex-row">
-        <input
-          type=" text"
-          className={` ${activatePromo ? 'bg-semantic-success-100 border-none' : 'bg-white'
-            } grow`}
-          placeholder="Enter promo code here"
-        />
-        <Button
-          variant="secondary"
-          className="min-w-[99px]"
-          onClick={handleActivatePromoCode}
-          type='button'
-        >
-          {activatePromo ? 'Remove' : 'Apply'}
-        </Button>
-      </div>
-      {activatePromo ? (
-        <div className="flex">
-          <Tick width="20px" height="20px" fillColor="#3BBA53" />
-
-          <p className="text-semantic-success-500 font-normal leading-5 text-[14px] items-center">
-            {' '}
-            Promo code activated
-          </p>
-        </div>
-      ) : undefined}
+      {promoCodeApplied || !!data?.status ? (
+        <fetcher.Form method="DELETE" onSubmit={(event) => {
+          fetcher.submit(event.currentTarget);
+          setPromoCode("");
+        }}>
+          <div className="flex flex-col w-full gap-2 sm:flex-row">
+            <input
+              type="text"
+              className="grow bg-semantic-success-100 pointer-events-none !border-semantic-success-100"
+              placeholder="Enter promo code here"
+              name='promoCode'
+              value={promoCode}
+              disabled={fetcher.state === "submitting"}
+            />
+            <Button
+              variant="secondary"
+              className="min-w-[99px]"
+              type='submit'
+              value="promo_code_delete"
+              name="action"
+              disabled={fetcher.state === "submitting"}
+            >
+              {fetcher.state === "submitting" ?
+                <div className="flex items-center justify-center h-full gap-2">
+                  <span>Removing</span>
+                  <Loader />
+                </div> :
+                "Remove"
+              }
+            </Button>
+          </div>
+        </fetcher.Form>
+      ) : (
+        <fetcher.Form method="POST" onSubmit={(event) => {
+          fetcher.submit(event.currentTarget);
+        }}>
+          <div className="flex flex-col w-full gap-2 sm:flex-row">
+            <input
+              type="text"
+              className={`grow`}
+              placeholder="Enter promo code here"
+              name='promoCode'
+              value={promoCode}
+              onChange={(e) => setPromoCode(e?.target?.value)}
+              disabled={fetcher.state === "submitting"}
+              required
+            />
+            <Button
+              variant="secondary"
+              className="min-w-[99px]"
+              type='submit'
+              value="promo_code"
+              disabled={fetcher.state === "submitting"}
+              name="action"
+            >
+              {fetcher.state === "submitting" ?
+                <div className="flex items-center justify-center h-full gap-2">
+                  <span>Applying</span>
+                  <Loader />
+                </div>
+                : "Apply"
+              }
+            </Button>
+          </div>
+        </fetcher.Form>
+      )}
+      {promoCodeApplied && <p className="bg-semantic-success-100 uppercase text-xs py-1 px-2.5 font-semibold w-max">Discount HAS BEEN applied</p>}
     </div>
   );
 }
@@ -240,14 +284,13 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: a
       </h3>
       {/* shipping detail form starts here */}
       <div className="flex flex-col gap-4">
-        <ShippingLocation addressList={addressList} mergedAddressList={mergedAddressList} defaultAddress1={defaultAddress1} defaultAddress2={defaultAddress2} defaultId={defaultAddress.id} defaultCountry={defaultAddress.country} defaultFax={defaultAddress.fax} defaultPhone={defaultAddress.phone} defaultZip={defaultAddress.zip} />
+        <ShippingLocation addressList={addressList} mergedAddressList={mergedAddressList} defaultAddress1={defaultAddress1} defaultAddress2={defaultAddress2} defaultId={defaultAddress.id} defaultCountry={defaultAddress.country} defaultFax={defaultAddress.fax} defaultPhone={defaultAddress.phone} defaultZip={defaultAddress.zip} defaultCountryCodeV2={defaultAddress.countryCodeV2} />
         <DateDelivery />
         <PurchaseOrder />
         <TextArea />
       </div>
       {/* shipping location starts here */}
       <div className="flex flex-col gap-4">
-        <PromoCode />
         <ShippingAddress
           default_address={defaultAddresses && defaultAddresses || '-'}
           phone={defaultAddress?.phone && defaultAddress?.phone || '-'}
@@ -255,24 +298,27 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: a
         />
       </div>
       {/* place order starts here */}
-      {!updateCart && placeOrder ?
-        <Button className="text-lg min-h-14" variant="primary" type="submit">
-          Place order
-        </Button>
-        : <div>
-          <button
-            className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-not-allowed text-grey-400 bg-grey-200 min-h-14"
-            disabled
-          >
+      <Can I='view' a='place_order'>
+        {!updateCart && placeOrder ?
+          <Button className="text-lg min-h-14" variant="primary" type="submit" value="place_order"
+            name="action">
             Place order
-          </button>
-          <p className='pt-1 text-lg italic text-red-500'>TO "PLACE ORDER":</p>
-          <ul className='pl-5 list-disc'>
-            <li>Press UPDATE CART button.</li>
-            <li>Update quantity to be greater than Minimum Order Quantity (MOQ) or zero.</li>
-            <li>Update quantity to be less than {CART_QUANTITY_MAX}.</li>
-          </ul>
-        </div>}
+          </Button>
+          : <div>
+            <button
+              className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-not-allowed text-grey-400 bg-grey-200 min-h-14"
+              disabled
+            >
+              Place order
+            </button>
+            <p className='pt-1 text-lg italic text-red-500'>TO "PLACE ORDER":</p>
+            <ul className='pl-5 list-disc'>
+              <li>Press UPDATE CART button.</li>
+              <li>Update quantity to be greater than Minimum Order Quantity (MOQ) or zero.</li>
+              <li>Update quantity to be less than {CART_QUANTITY_MAX}.</li>
+            </ul>
+          </div>}
+      </Can>
       <p className="text-lg font-normal leading-[22px] text-grey-700">
         <span className="underline text-primary-500">
           Availability, shipping, tax & promotions

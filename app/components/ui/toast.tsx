@@ -1,11 +1,11 @@
-import * as React from 'react';
 import * as ToastPrimitives from '@radix-ui/react-toast';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { X } from 'lucide-react';
+import * as React from 'react';
 
-import { toast } from './use-toast';
 import { cn } from '~/lib/utils/utils';
 import Tick from '../icons/tick';
+import { toast } from './use-toast';
 
 const ToastProvider = ToastPrimitives.Provider;
 
@@ -123,9 +123,11 @@ type ToastActionElement = React.ReactElement<typeof ToastAction>;
 function displayToast({
   message,
   type,
+  messageCase = "capitalize",
 }: {
   message: string;
   type: 'success' | 'error';
+  messageCase?: 'upper' | 'capitalize' | 'normal';
 }) {
   return toast({
     className: cn(
@@ -133,8 +135,8 @@ function displayToast({
     ),
     action: (
       <div className="flex items-center justify-center w-full !ml-0">
-        {type === 'success' ? <Tick /> : <Tick fillColor='#D92F28' />}
-        <span className="pl-2 text-lg italic font-bold capitalize">
+        {type === 'success' && <Tick />}
+        <span className={`pl-2 text-lg italic font-bold ${messageCase}`}>
           {message}
         </span>
       </div>
@@ -143,14 +145,6 @@ function displayToast({
 }
 
 export {
-  type ToastProps,
-  type ToastActionElement,
-  ToastProvider,
-  ToastViewport,
-  Toast,
-  ToastTitle,
-  ToastDescription,
-  ToastClose,
-  ToastAction,
-  displayToast,
+  Toast, ToastAction, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport, displayToast, type ToastActionElement, type ToastProps
 };
+

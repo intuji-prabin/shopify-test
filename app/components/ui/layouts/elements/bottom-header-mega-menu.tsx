@@ -1,6 +1,7 @@
 import {Link} from '@remix-run/react';
 import {useLayoutEffect, useState} from 'react';
 import ArrowForward from '~/components/icons/arrowForward';
+import {Can} from '~/lib/helpers/Can';
 import {Payload} from '~/routes/_app/app.server';
 
 export const MegaMenu = ({categories}: {categories: Payload[]}) => {
@@ -114,9 +115,9 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                           <span className="w-[calc(100%_-_24px)] text-lg font-medium text-grey-900">
                             {subMenu.title}
                           </span>
-                          <div className="w-6">
+                          <span className="w-6">
                             <ArrowForward width={'24px'} height={'24px'} />
-                          </div>
+                          </span>
                         </p>
                       </Link>
                     ) : (
@@ -150,22 +151,37 @@ export const MegaMenu = ({categories}: {categories: Payload[]}) => {
                   )
                   ?.child_categories?.map((subMenu: Payload) => {
                     return (
-                      <li
+                      <Can
                         key={subMenu.id}
-                        className="relative flex items-center text-lg not-italic font-medium text-grey-900 menu-hov"
+                        I="view"
+                        a="view_products"
+                        passThrough
                       >
-                        <Link
-                          to={`/category/${activeMenu?.menu?.identifier}/${activeMenu?.subMenu?.identifier}/${subMenu?.identifier}`}
-                          className="w-full"
-                        >
-                          <p className="flex items-center px-2 py-1 rounded menu-hov justify- ">
-                            {' '}
-                            <span className="w-[169px] text-grey-900 text-lg font-medium">
-                              {subMenu.title}
-                            </span>
-                          </p>
-                        </Link>
-                      </li>
+                        {(allowed) => (
+                          <li className="relative flex items-center text-lg not-italic font-medium text-grey-900 menu-hov">
+                            {allowed ? (
+                              <Link
+                                to={`/category/${activeMenu?.menu?.identifier}/${activeMenu?.subMenu?.identifier}/${subMenu?.identifier}`}
+                                className="w-full"
+                              >
+                                <p className="flex items-center px-2 py-1 rounded menu-hov justify- ">
+                                  {' '}
+                                  <span className="w-[169px] text-grey-900 text-lg font-medium">
+                                    {subMenu.title}
+                                  </span>
+                                </p>
+                              </Link>
+                            ) : (
+                              <p className="flex items-center px-2 py-1 rounded menu-hov justify- ">
+                                {' '}
+                                <span className="w-[169px] text-grey-900 text-lg font-medium">
+                                  {subMenu.title}
+                                </span>
+                              </p>
+                            )}
+                          </li>
+                        )}
+                      </Can>
                     );
                   })}
               </ul>

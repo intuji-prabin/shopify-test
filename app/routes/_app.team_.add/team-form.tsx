@@ -18,6 +18,7 @@ import {
 } from '~/lib/constants/form.constant';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {AUSTRALIAN_PHONENUMBER_VALIDATION_REGEX} from '~/lib/constants/regex.constant';
+import { Can } from '~/lib/helpers/Can';
 
 type TeamFormProps = {
   defaultValues?: Omit<AddTeamFormType, 'profileImage'> & {
@@ -153,11 +154,13 @@ export default function TeamForm({
               placeholder="address"
             />
             <input type="hidden" name="addressId" value={addressId} />
-            <Input type="hidden" name="customerId" value={customerId} />
+            <input type="hidden" name="customerId" value={customerId} />
           </div>
         </div>
       </div>
       <Separator className="my-8" />
+      <Can I="view" a="change_role">
+
       <div className="grid gap-4 sm:grid-cols-4">
         <div className="sm:col-start-1 sm:col-end-2">
           <h4>User Roles</h4>
@@ -196,6 +199,7 @@ export default function TeamForm({
           </div>
         </div>
       </div>
+      </Can>
       {hasUnsavedChanges && (
         <div className="fixed inset-x-0 bottom-0 z-40 py-4 bg-primary-500">
           <div className="container">

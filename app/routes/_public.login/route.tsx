@@ -23,6 +23,10 @@ import {
   messageCommitSession,
   setErrorMessage,
 } from '~/lib/utils/toast-session.server';
+import StorageService from '~/services/storage.service';
+import {LOCAL_STORAGE_KEYS} from '~/lib/constants/general.constant';
+import React from 'react';
+import {v4 as uuidv4} from 'uuid';
 
 export const loader = async ({context}: LoaderFunctionArgs) => {
   const accessToken = await getAccessToken(context);
@@ -46,6 +50,10 @@ export const action = async ({request, context}: ActionFunctionArgs) => {
 
     const {email, password, rememberMe} = result.data;
 
+    const {accessToken} = await verifyLogin({email, password, context});
+
+    if (!accessToken) return redirect(Routes.LOGIN);
+
     const customerData = await getCustomerByEmail({email});
 
     const isActive = isUserActive(customerData.meta.status);
@@ -53,17 +61,15 @@ export const action = async ({request, context}: ActionFunctionArgs) => {
     if (!isActive) {
       throw new Error('User not active');
     }
-
-    const {accessToken} = await verifyLogin({email, password, context});
-
-    if (!accessToken) return redirect(Routes.LOGIN);
-
+    // Generate a unique session ID
+    const sessionId = uuidv4();
     return createUserSession({
       request,
       accessToken,
       rememberMe,
       context,
       customerData,
+      sessionId
     });
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -82,5 +88,12 @@ export const action = async ({request, context}: ActionFunctionArgs) => {
 };
 
 export default function LoginPage() {
+  React.useEffect(() => {
+    // Check if localStorage is available (client-side)
+    if (typeof window !== 'undefined') {
+      const storageService = new StorageService(); // Assuming StorageService is a class
+      storageService.remove(LOCAL_STORAGE_KEYS.PERMISSIONS); // Remove permission from localStorage
+    }
+  }, []);
   return <LoginForm />;
 }

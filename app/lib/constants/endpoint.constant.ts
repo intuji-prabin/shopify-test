@@ -1,9 +1,10 @@
-// const BASE_URL = 'https://accept-option-peak-prepare.trycloudflare.com/api'; // Sanchay NGRok
-
 const BASE_URL = 'https://cig-backuat.webo.dev/api'; // Live
-// const BASE_URL = 'https://2fea-2400-1a00-b050-cc31-40b-6853-d570-6878.ngrok-free.app/api'; // Live
 
 export const ENDPOINT = {
+  REPORT: {
+    GET: `${BASE_URL}/order/report`,
+    PRODUCT_GET: `${BASE_URL}/product/report`,
+  },
   AUTH: {
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',
@@ -51,17 +52,31 @@ export const ENDPOINT = {
     ORDER: `${BASE_URL}/order`,
     FILTER: `${BASE_URL}/product/filter`,
   },
-
+  BULK: {
+    GET_PRODUCT: `${BASE_URL}/bulk/product-id`,
+  },
   WISHLIST: {
     ADD: `${BASE_URL}/wishlist`,
   },
   ORDERS: {
     GET: `${BASE_URL}/order`,
     GET_ORDER_DETAIL: `${BASE_URL}/order-detail`,
+    EXPORT: `${BASE_URL}/download/orders`,
   },
   PENDING_ORDERS: {
     PRODUCT_GROUP: `${BASE_URL}/product/group`,
     PRODUCT_GROUP_ITEM: `${BASE_URL}/product-group/items`,
   },
   PLACE_AN_ORDER: `${BASE_URL}/place-an-order`,
+  INVOICE: {
+    GET: `${BASE_URL}/invoices`,
+    GET_INVOCIE_DETAIL: `${BASE_URL}/invoice`,
+    EXPORT: `${BASE_URL}/download/invoice`,
+  },
+  PROMO_CODE: {
+    POST: `${BASE_URL}/promo-code`,
+  },
+  NOTIFICATIONS: {
+    GET: `${BASE_URL}/notifications`,
+  },
 };

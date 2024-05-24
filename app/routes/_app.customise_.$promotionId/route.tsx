@@ -9,32 +9,38 @@ import {
   LoaderFunctionArgs,
   json,
 } from '@remix-run/server-runtime';
-import { withZod } from '@remix-validated-form/with-zod';
+import {withZod} from '@remix-validated-form/with-zod';
 import html2canvas from 'html2canvas';
-import { useRef, useState } from 'react';
-import { ValidatedForm } from 'remix-validated-form';
-import { z } from 'zod';
-import { zfd } from 'zod-form-data';
-import { FullScreen } from '~/components/icons/full-screen';
+import {useRef, useState} from 'react';
+import {ValidatedForm} from 'remix-validated-form';
+import {z} from 'zod';
+import {zfd} from 'zod-form-data';
+import {FullScreen} from '~/components/icons/full-screen';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import { BackButton } from '~/components/ui/back-button';
-import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
-import { Button } from '~/components/ui/button';
+import {BackButton} from '~/components/ui/back-button';
+import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import {Button} from '~/components/ui/button';
 import ColorPicker from '~/components/ui/color-picker';
-import { Dialog, DialogContent, DialogOverlay, DialogTrigger } from '~/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogOverlay,
+  DialogTrigger,
+} from '~/components/ui/dialog';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import ImageEdit from '~/components/ui/imageEdit';
 import Loader from '~/components/ui/loader';
-import { displayToast } from '~/components/ui/toast';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { Routes } from '~/lib/constants/routes.constent';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
+import {displayToast} from '~/components/ui/toast';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {Routes} from '~/lib/constants/routes.constent';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 import PromotionNavigation from './promotion-navigation';
-import { createPromotion, getPromotionById } from './promotion.server';
-import { Input } from '~/components/ui/input';
-import { NumberPlusOnly } from '~/lib/constants/regex.constant';
+import {createPromotion, getPromotionById} from './promotion.server';
+import {Input} from '~/components/ui/input';
+import {NumberPlusOnly} from '~/lib/constants/regex.constant';
 import FullPageLoading from '~/components/ui/fullPageLoading';
+import {useConditionalRender} from '~/hooks/useAuthorization';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -62,15 +68,21 @@ const EditFormValidator = z.object({
         return true;
       }, 'Max file size is 15MB.'),
   ),
-  companyPhone: z.string().min(1, { message: 'Company Phone is required' }).trim()
+  companyPhone: z
+    .string()
+    .min(1, {message: 'Company Phone is required'})
+    .trim()
     .refine(
       (value) => NumberPlusOnly.test(value),
       'Company Phone must only contain numbers and +',
     ),
-  company_name: z.string().min(1, { message: 'Company Name is required' }),
-  company_email: z.string().min(1, { message: 'Company Email is required' }).email({ message: 'Invalid email address' }),
-  company_domain: z.string().min(1, { message: 'Company Website is required' }),
-  company_fax: z.string().min(1, { message: 'Company Fax is required' }),
+  company_name: z.string().min(1, {message: 'Company Name is required'}),
+  company_email: z
+    .string()
+    .min(1, {message: 'Company Email is required'})
+    .email({message: 'Invalid email address'}),
+  company_domain: z.string().min(1, {message: 'Company Website is required'}),
+  company_fax: z.string().min(1, {message: 'Company Fax is required'}),
 });
 
 export const EditFormSchemaValidator = withZod(EditFormValidator);
@@ -79,27 +91,27 @@ export type EditFormType = z.infer<typeof EditFormValidator>;
 
 export type EditFormFieldNameType = keyof EditFormType;
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({request, params}: ActionFunctionArgs) {
   const data = await request.formData();
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
   const customerId = userDetails?.id;
   let formData = Object.fromEntries(data);
-  formData = { ...formData };
+  formData = {...formData};
   const bannerId = params.promotionId as string;
   await createPromotion(formData, bannerId, customerId);
   return json({});
 }
 
-export async function loader({ params, context, request }: LoaderFunctionArgs) {
+export async function loader({params, context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
   try {
-    const { userDetails } = await getUserDetails(request);
+    const {userDetails} = await getUserDetails(request);
     const customerId = userDetails?.id;
     const promotionId = params?.promotionId as string;
     const response = await getPromotionById(promotionId, customerId);
     if (response?.payload) {
       const results = response?.payload;
-      return json({ results, promotionId });
+      return json({results, promotionId});
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -118,7 +130,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
 }
 
 const PromotionEdit = () => {
-  const { results, promotionId } = useLoaderData<any>();
+  const {results, promotionId} = useLoaderData<any>();
   const [isLoading, setIsLoading] = useState(false);
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
   const [image, setImage] = useState('');
@@ -149,7 +161,7 @@ const PromotionEdit = () => {
   };
 
   const handleChangeFile = (field: string, value: string) => {
-    setCompanyInfo({ ...companyInfo, [field]: value });
+    setCompanyInfo({...companyInfo, [field]: value});
   };
 
   const resetCompanyInfo = () => {
@@ -249,240 +261,257 @@ const PromotionEdit = () => {
 
   let imageName = companyInfo?.companyName;
   imageName = imageName && imageName.replace(/ /g, '_');
+  const shouldRender = useConditionalRender('customize_promotions');
 
   return (
-    <div className="bg-grey-25">
-      {isLoading && (
-        <FullPageLoading description='The image is being processed. Please wait for few moments....' />
-      )}
-      <section className="container pt-8 pb-1">
-        <div className="flex flex-wrap justify-between gap-4">
-          <BackButton title="Customize Promotion" />
-          <PromotionNavigation canvasRef={canvasRef} imageName={imageName} />
-        </div>
-      </section>
-      <section className="container mt-1">
-        <Breadcrumb>
-          <BreadcrumbItem>Content Management</BreadcrumbItem>
-          <BreadcrumbItem href={Routes.PROMOTIONS}>Promotions</BreadcrumbItem>
-          <BreadcrumbItem className="text-grey-900">
-            Customize Promotion
-          </BreadcrumbItem>
-        </Breadcrumb>
-      </section>
-      <section className="container">
-        <div className="grid items-start grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="order-2 lg:col-span-2 lg:order-1">
-            <div className="flex flex-wrap justify-between gap-4 px-6 py-4 bg-white border-b border-solid border-grey-50">
-              <h5>Live Preview</h5>
-              <Dialog>
-                <DialogTrigger
-                  onClick={() => htmlProcessPop(canvasRef.current)}
-                  asChild
-                >
-                  <p className="flex items-center gap-1 cursor-pointer">
-                    <FullScreen />
-                    Full Screen
-                  </p>
-                </DialogTrigger>
-                <DialogContent overlayBgColor={`${image && renderedImageWidth ? "bg-black/80" : "bg-white/80"}`} className={`bg-white/80 p-0 border-0 gap-y-0 promotion-view w-auto ${image && renderedImageWidth ? "max-w-[1280px]" : "h-full w-full max-w-[unset]"}`}>
-                  {image && renderedImageWidth ? (
-                    <div style={{ maxWidth: renderedImageWidth }}>
-                      <img
-                        alt="preview"
-                        src={image}
-                        className="h-auto max-h-[calc(100vh_-_100px)] mx-auto"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-                      <p className="text-lg">
-                        Loading...
-                      </p>
-                      <Loader width="w-8" height="h-8" />
-                    </div>
-                  )}
-                </DialogContent>
-              </Dialog>
-            </div>
-            <img
-              src={results?.image_url}
-              alt="previewHidden"
-              className="hidden"
-              onLoad={(event: any) =>
-                setRenderedImageWidth(event?.target?.width)
-              }
-            />
-            <ImageEdit
-              alt={'preview'}
-              imgSrc={results?.image_url}
-              canvasRef={canvasRef}
-              companyInfo={companyInfo}
-              renderedImageWidth={renderedImageWidth}
-            />
+    shouldRender && (
+      <div className="bg-grey-25">
+        {isLoading && (
+          <FullPageLoading description="The image is being processed. Please wait for few moments...." />
+        )}
+        <section className="container pt-8 pb-1">
+          <div className="flex flex-wrap justify-between gap-4">
+            <BackButton title="Customize Promotion" />
+            <PromotionNavigation canvasRef={canvasRef} imageName={imageName} />
           </div>
-          <div className="relative order-1 px-6 py-1 bg-white lg:order-2">
-            <ValidatedForm
-              method="post"
-              validator={EditFormSchemaValidator}
-              encType="multipart/form-data"
-              id="customize-form"
-              data-cy="customize-promotion"
-              onSubmit={(_, event) => {
-                event.preventDefault();
-                handleClick();
-              }}
-            >
-              <input
-                ref={blobRef}
-                type="text"
-                name="image"
-                className="hidden"
-              />
-              <h5 className="py-4">Company Logo</h5>
-              <ImageUploadInput
-                name="logo"
-                imageUrl={results?.logo_url ?? DEFAULT_IMAGE.IMAGE}
-                className="pb-4 promotion__edit"
-                unsavedChanges={unsavedChanges}
-                handleFile={(field: string, value: string) => handleChangeFile(field, value)}
-              />
-              <div className="accordion__section">
-                <AccordionCustom
-                  accordianLabel="company-information"
-                  setOpenAccordian={setOpenAccordian}
-                  isOpen={openAccordian === 'company-information'}
-                  accordionTitle="Company Information"
-                >
-                  <div className="space-y-6">
-                    <div>
-                      <Input
-                        required
-                        type="text"
-                        name="company_name"
-                        label='Company Name'
-                        value={companyInfo.companyName}
-                        className="w-full"
-                        placeholder="company name"
-                        onInput={(e) =>
-                          handleChange('companyName', e.currentTarget.value)
-                        }
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        required
-                        type="text"
-                        name="company_email"
-                        value={companyInfo.companyEmail}
-                        className="w-full"
-                        label='Company Email'
-                        placeholder="company email"
-                        onInput={(e) =>
-                          handleChange('companyEmail', e.currentTarget.value)
-                        }
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        required
-                        type="text"
-                        name="company_domain"
-                        value={companyInfo.companyWebsite}
-                        className="w-full"
-                        label="Company Website"
-                        placeholder="company website"
-                        onInput={(e) =>
-                          handleChange('companyWebsite', e.currentTarget.value)
-                        }
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        required
-                        type="text"
-                        name="companyPhone"
-                        label="Company Phone"
-                        placeholder="company phone"
-                        value={companyInfo.companyPhone}
-                        onInput={(e) =>
-                          handleChange('companyPhone', e.currentTarget.value)
-                        }
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        required
-                        type="text"
-                        name="company_fax"
-                        value={companyInfo.companyFax}
-                        className="w-full"
-                        placeholder="company fax"
-                        label="Company Fax"
-                        onInput={(e) =>
-                          handleChange('companyFax', e.currentTarget.value)
-                        }
-                      />
-                    </div>
-                  </div>
-                </AccordionCustom>
-                <AccordionCustom
-                  accordianLabel="text-color"
-                  setOpenAccordian={setOpenAccordian}
-                  isOpen={openAccordian === 'text-color'}
-                  accordionTitle="Text Color"
-                >
-                  <ColorPicker
-                    name="color"
-                    color={companyInfo.textColor}
-                    onChange={(color) => handleChange('textColor', color)}
-                  />
-                </AccordionCustom>
-                <AccordionCustom
-                  accordianLabel="background"
-                  setOpenAccordian={setOpenAccordian}
-                  isOpen={openAccordian === 'background'}
-                  accordionTitle="Background"
-                >
-                  <ColorPicker
-                    name="background_color"
-                    color={companyInfo.bgColor}
-                    onChange={(color) => handleChange('bgColor', color)}
-                  />
-                </AccordionCustom>
+        </section>
+        <section className="container mt-1">
+          <Breadcrumb>
+            <BreadcrumbItem>Content Management</BreadcrumbItem>
+            <BreadcrumbItem href={Routes.PROMOTIONS}>Promotions</BreadcrumbItem>
+            <BreadcrumbItem className="text-grey-900">
+              Customize Promotion
+            </BreadcrumbItem>
+          </Breadcrumb>
+        </section>
+        <section className="container">
+          <div className="grid items-start grid-cols-1 gap-6 lg:grid-cols-3">
+            <div className="order-2 lg:col-span-2 lg:order-1">
+              <div className="flex flex-wrap justify-between gap-4 px-6 py-4 bg-white border-b border-solid border-grey-50">
+                <h5>Live Preview</h5>
+                <Dialog>
+                  <DialogTrigger
+                    onClick={() => htmlProcessPop(canvasRef.current)}
+                    asChild
+                  >
+                    <p className="flex items-center gap-1 cursor-pointer">
+                      <FullScreen />
+                      Full Screen
+                    </p>
+                  </DialogTrigger>
+                  <DialogContent
+                    overlayBgColor={`${
+                      image && renderedImageWidth
+                        ? 'bg-black/80'
+                        : 'bg-white/80'
+                    }`}
+                    className={`bg-white/80 p-0 border-0 gap-y-0 promotion-view w-auto ${
+                      image && renderedImageWidth
+                        ? 'max-w-[1280px]'
+                        : 'h-full w-full max-w-[unset]'
+                    }`}
+                  >
+                    {image && renderedImageWidth ? (
+                      <div style={{maxWidth: renderedImageWidth}}>
+                        <img
+                          alt="preview"
+                          src={image}
+                          className="h-auto max-h-[calc(100vh_-_100px)] mx-auto"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+                        <p className="text-lg">Loading...</p>
+                        <Loader width="w-8" height="h-8" />
+                      </div>
+                    )}
+                  </DialogContent>
+                </Dialog>
               </div>
-              {showUnsavedChanges && (
-                <div className="fixed inset-x-0 bottom-0 z-50 py-4 bg-primary-500">
-                  <div className="container">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <h5 className="text-white">Unsaved changes</h5>
-                      <div className="flex gap-3">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          className="text-white border-white"
-                          onClick={resetCompanyInfo}
-                        >
-                          discard
-                        </Button>
-                        <Button
-                          type="submit"
-                          variant="secondary"
-                          name="action"
-                          disabled={isLoading}
-                        >
-                          save changes
-                        </Button>
+              <img
+                src={results?.image_url}
+                alt="previewHidden"
+                className="hidden"
+                onLoad={(event: any) =>
+                  setRenderedImageWidth(event?.target?.width)
+                }
+              />
+              <ImageEdit
+                alt={'preview'}
+                imgSrc={results?.image_url}
+                canvasRef={canvasRef}
+                companyInfo={companyInfo}
+                renderedImageWidth={renderedImageWidth}
+              />
+            </div>
+            <div className="relative order-1 px-6 py-1 bg-white lg:order-2">
+              <ValidatedForm
+                method="post"
+                validator={EditFormSchemaValidator}
+                encType="multipart/form-data"
+                id="customize-form"
+                data-cy="customize-promotion"
+                onSubmit={(_, event) => {
+                  event.preventDefault();
+                  handleClick();
+                }}
+              >
+                <input
+                  ref={blobRef}
+                  type="text"
+                  name="image"
+                  className="hidden"
+                />
+                <h5 className="py-4">Company Logo</h5>
+                <ImageUploadInput
+                  name="logo"
+                  imageUrl={results?.logo_url ?? DEFAULT_IMAGE.IMAGE}
+                  className="pb-4 promotion__edit"
+                  unsavedChanges={unsavedChanges}
+                  handleFile={(field: string, value: string) =>
+                    handleChangeFile(field, value)
+                  }
+                />
+                <div className="accordion__section">
+                  <AccordionCustom
+                    accordianLabel="company-information"
+                    setOpenAccordian={setOpenAccordian}
+                    isOpen={openAccordian === 'company-information'}
+                    accordionTitle="Company Information"
+                  >
+                    <div className="space-y-6">
+                      <div>
+                        <Input
+                          required
+                          type="text"
+                          name="company_name"
+                          label="Company Name"
+                          value={companyInfo.companyName}
+                          className="w-full"
+                          placeholder="company name"
+                          onInput={(e) =>
+                            handleChange('companyName', e.currentTarget.value)
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          required
+                          type="text"
+                          name="company_email"
+                          value={companyInfo.companyEmail}
+                          className="w-full"
+                          label="Company Email"
+                          placeholder="company email"
+                          onInput={(e) =>
+                            handleChange('companyEmail', e.currentTarget.value)
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          required
+                          type="text"
+                          name="company_domain"
+                          value={companyInfo.companyWebsite}
+                          className="w-full"
+                          label="Company Website"
+                          placeholder="company website"
+                          onInput={(e) =>
+                            handleChange(
+                              'companyWebsite',
+                              e.currentTarget.value,
+                            )
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          required
+                          type="text"
+                          name="companyPhone"
+                          label="Company Phone"
+                          placeholder="company phone"
+                          value={companyInfo.companyPhone || ''}
+                          onInput={(e) =>
+                            handleChange('companyPhone', e.currentTarget.value)
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          required
+                          type="text"
+                          name="company_fax"
+                          value={companyInfo.companyFax}
+                          className="w-full"
+                          placeholder="company fax"
+                          label="Company Fax"
+                          onInput={(e) =>
+                            handleChange('companyFax', e.currentTarget.value)
+                          }
+                        />
+                      </div>
+                    </div>
+                  </AccordionCustom>
+                  <AccordionCustom
+                    accordianLabel="text-color"
+                    setOpenAccordian={setOpenAccordian}
+                    isOpen={openAccordian === 'text-color'}
+                    accordionTitle="Text Color"
+                  >
+                    <ColorPicker
+                      name="color"
+                      color={companyInfo.textColor}
+                      onChange={(color) => handleChange('textColor', color)}
+                    />
+                  </AccordionCustom>
+                  <AccordionCustom
+                    accordianLabel="background"
+                    setOpenAccordian={setOpenAccordian}
+                    isOpen={openAccordian === 'background'}
+                    accordionTitle="Background"
+                  >
+                    <ColorPicker
+                      name="background_color"
+                      color={companyInfo.bgColor}
+                      onChange={(color) => handleChange('bgColor', color)}
+                    />
+                  </AccordionCustom>
+                </div>
+                {showUnsavedChanges && (
+                  <div className="fixed inset-x-0 bottom-0 z-50 py-4 bg-primary-500">
+                    <div className="container">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <h5 className="text-white">Unsaved changes</h5>
+                        <div className="flex gap-3">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            className="text-white border-white"
+                            onClick={resetCompanyInfo}
+                          >
+                            discard
+                          </Button>
+                          <Button
+                            type="submit"
+                            variant="secondary"
+                            name="action"
+                            disabled={isLoading}
+                          >
+                            save changes
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </ValidatedForm>
+                )}
+              </ValidatedForm>
+            </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
+    )
   );
 };
 

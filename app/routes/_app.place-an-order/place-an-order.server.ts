@@ -8,19 +8,13 @@ interface DefaultResponse {
 }
 
 export async function addProductToList({
-  formData,
+  body,
   customerId,
 }: {
-  formData: FormData;
+  body: string;
   customerId: string;
 }) {
   const url = `${ENDPOINT.PLACE_AN_ORDER}/${customerId}`;
-
-  const productId = formData.get('productId');
-  const quantity = formData.get('quantity');
-  const uom = formData.get('uom');
-
-  const body = JSON.stringify({productId, quantity, uom});
 
   const response = await useFetch<DefaultResponse>({
     url,

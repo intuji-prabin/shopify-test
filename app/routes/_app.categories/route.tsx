@@ -1,15 +1,17 @@
-import { useLoaderData } from '@remix-run/react';
-import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
-import { useEffect } from 'react';
-import { Button } from '~/components/ui/button';
+import { useLoaderData, useNavigate } from '@remix-run/react';
+import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
+import { AppLoadContext } from '@shopify/remix-oxygen';
+import { useContext, useEffect } from 'react';
+import { BackButton } from '~/components/ui/back-button';
+import { BulkCsvUpload } from '~/components/ui/bulk-csv-upload';
 import { useScroll } from '~/hooks/useScroll';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import { CategoryCard } from '~/routes/_app.categories/category-card';
 import { getCategory } from './categories.server';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { AppLoadContext } from '@shopify/remix-oxygen';
-import { BackButton } from '~/components/ui/back-button';
+import { AbilityContext } from '~/lib/helpers/Can';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 
-export async function loader({ context }: ActionFunctionArgs) {
+export async function loader({ context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   const categoriesDetail = await getCategoryList(context);
   if (categoriesDetail && categoriesDetail.length > 0) {
@@ -46,6 +48,7 @@ export default function CategoriesPage() {
   const { handleScroll } = useScroll('categories-menu');
   const { categoriesDetail } = useLoaderData<typeof loader>();
 
+
   useEffect(() => {
     const handleScroll: EventListener = () => {
       const scrollPos: number =
@@ -81,16 +84,19 @@ export default function CategoriesPage() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+  
+  
+  const shouldRender = useConditionalRender('view_categories');
 
   return (
-    <>
+    shouldRender && (<>
       <section className="mt-10">
         <div className="container flex flex-wrap items-center justify-between gap-x-5 gap-y-2">
           <BackButton
             className="capitalize"
             title="Categories"
           />
-          <Button>upload order</Button>
+          <BulkCsvUpload action='/bulkCsvUpload' />
         </div>
       </section>
       <section
@@ -121,7 +127,7 @@ export default function CategoriesPage() {
           <h4>NO DATA FOUND</h4>
         </section>
       )}
-    </>
+    </>)
   );
 }
 

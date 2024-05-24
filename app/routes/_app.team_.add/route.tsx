@@ -6,7 +6,7 @@ import {
 import {validationError} from 'remix-validated-form';
 import {BackButton} from '~/components/ui/back-button';
 import {addTeam} from '~/routes/_app.team_.add/add-team.server';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {isAuthenticate, isAuthorize} from '~/lib/utils/auth-session.server';
 import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
 import {Routes} from '~/lib/constants/routes.constent';
 import {SelectInputOptions} from '~/components/ui/select-input';
@@ -26,20 +26,29 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
 import {MetaFunction} from '@shopify/remix-oxygen';
-import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {useConditionalRender} from '~/hooks/useAuthorization';
+import {getRoles} from '~/routes/_app.team/team.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Add Team Member'}];
 };
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({request, context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
-  const roles = await getCustomerRolePermission(context);
+
+  const {userDetails} = await getUserDetails(request);
+
+  const currentUserRole = userDetails.meta.user_role.value;
+
+  const roles = await getRoles({context, currentUserRole});
+
   return json({roles});
 }
 
 export async function action({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
+
   const messageSession = await getMessageSession(request);
 
   try {
@@ -92,19 +101,23 @@ export async function action({request, context}: ActionFunctionArgs) {
 export default function AddTeam() {
   const {roles} = useLoaderData<typeof loader>();
 
+  const shouldRender = useConditionalRender('add_customer');
+
   return (
-    <section className="container">
-      <div className="py-6">
-        <BackButton title="Add Team Memeber" />
-        <Breadcrumb>
-          <BreadcrumbItem href={Routes.TEAM}>My Team</BreadcrumbItem>
-          <BreadcrumbItem href={Routes.TEAM_ADD} className="text-grey-900">
-            Add Team Member
-          </BreadcrumbItem>
-        </Breadcrumb>
-      </div>
-      <TeamForm options={roles?.data as SelectInputOptions[]} />
-    </section>
+    shouldRender && (
+      <section className="container">
+        <div className="py-6">
+          <BackButton title="Add Team Memeber" />
+          <Breadcrumb>
+            <BreadcrumbItem href={Routes.TEAM}>My Team</BreadcrumbItem>
+            <BreadcrumbItem href={Routes.TEAM_ADD} className="text-grey-900">
+              Add Team Member
+            </BreadcrumbItem>
+          </Breadcrumb>
+        </div>
+        <TeamForm options={roles as SelectInputOptions[]} />
+      </section>
+    )
   );
 }
 

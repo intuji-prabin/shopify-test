@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {useFetcher} from '@remix-run/react';
+import {FetcherWithComponents, useFetcher} from '@remix-run/react';
 import {Table} from '@tanstack/react-table';
 import {Button} from '~/components/ui/button';
 import {DangerAlert, InfoAlert} from '~/components/icons/alert';
@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/ui/dialog';
+import { Can } from '~/lib/helpers/Can';
 
 interface GroupItem {
   productId: string;
@@ -28,81 +29,48 @@ export interface SubmitPayload {
   group: string;
 }
 
-/**
- * @description Merge group item with same UOM
- */
-function mergeGroupItemWithSameUOM(groupItemList: GroupItem[]) {
-  const mergedItem = groupItemList.reduce((accumulator, item) => {
-    const key = `${item.productId}-${item.uom}`;
-    if (!accumulator[key]) {
-      accumulator[key] = {...item};
-    } else {
-      accumulator[key].quantity += item.quantity;
-    }
-
-    return accumulator;
-  }, {} as Record<string, GroupItem>);
-  return Object.values(mergedItem);
+interface CreateGroupProps {
+  table: Table<Product>;
+  selectedValue: string | null;
+  setSelectedValue: React.Dispatch<React.SetStateAction<string | null>>;
+  fetcher: FetcherWithComponents<unknown>;
+  productGroupOptions: {value: string; label: string}[];
+  numberOfSelectedRows: number;
+  handleSaveForLater: () => void;
+  error: {
+    isError: boolean;
+    message: string;
+  };
+  setError: React.Dispatch<
+    React.SetStateAction<{
+      isError: boolean;
+      message: string;
+    }>
+  >;
 }
-
 export default function CreateGroup({
   table,
+  error,
+  fetcher,
+  selectedValue,
+  setError,
+  handleSaveForLater,
+  numberOfSelectedRows,
+  setSelectedValue,
   productGroupOptions,
-}: {
-  table: Table<Product>;
-  productGroupOptions: {value: string; label: string}[];
-}) {
-  const [selectedValue, setSelectedValue] = useState<string | null>(null);
-
-  const [error, setError] = useState({isError: false, message: ''});
-
-  const fetcher = useFetcher();
-
-  const isButtonDisabled = table.getSelectedRowModel().rows.length === 0;
-
-  const groupItemList: GroupItem[] = [];
-
-  table.getSelectedRowModel().flatRows.map((item) => {
-    groupItemList.push({
-      productId: item.original.productId,
-      quantity: item.original.quantity,
-      uom: item.original.uom,
-    });
-  });
-
-  const handleSaveForLater = () => {
-    if (selectedValue === null || selectedValue.trim().length === 0) {
-      setError({isError: true, message: 'Group Name is required'});
-      return;
-    }
-
-    const isCreateGroup = Number.isNaN(Number(selectedValue));
-
-    const mergeGroupList = mergeGroupItemWithSameUOM(groupItemList);
-
-    const submitPayload: SubmitPayload = {
-      groupItemList: mergeGroupList,
-      submitType: isCreateGroup ? 'create' : 'update',
-      group: selectedValue,
-    };
-
-    fetcher.submit(
-      //@ts-ignore
-      submitPayload,
-      {method: 'POST', encType: 'application/json'},
-    );
-  };
-
+}: CreateGroupProps) {
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          variant={isButtonDisabled ? 'disabled' : 'primary'}
-          className="min-w-[111px] min-h-10"
-        >
-          Save for later
-        </Button>
-      </DialogTrigger>
+      <Can I="view" a="save_product_list_to_group">
+        <DialogTrigger asChild>
+          <Button
+            variant={numberOfSelectedRows === 0 ? 'disabled' : 'primary'}
+            className="min-w-[111px] min-h-10"
+          >
+            Save for later
+          </Button>
+        </DialogTrigger>
+      </Can>
       <DialogContent className="sm:max-w-[452px] track-an-order p-0 block">
         <DialogHeader>
           <DialogTitle className="leading-6 font-bold italic text-lg text-grey-900 flex p-4 uppercase">

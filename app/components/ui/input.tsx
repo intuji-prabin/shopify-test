@@ -1,24 +1,26 @@
-import React from 'react';
-import {useField} from 'remix-validated-form';
-import {DangerAlert} from '~/components/icons/alert';
-import {cn} from '~/lib/utils/utils';
-import {EditFormFieldNameType} from '~/routes/_app.edit_.$promotionId/route';
-import {CreateTicketFormFieldNameType} from '~/routes/_app.support_.create-ticket/create-ticket-form';
-import {LoginFormFieldNameType} from '~/routes/_public.login/login-form';
+import React, { useEffect } from 'react';
+import { useField } from 'remix-validated-form';
+import { DangerAlert } from '~/components/icons/alert';
+import { cn } from '~/lib/utils/utils';
+import { EditFormFieldNameType } from '~/routes/_app.edit_.$promotionId/route';
+import { CreateTicketFormFieldNameType } from '~/routes/_app.support_.create-ticket/create-ticket-form';
+import { LoginFormFieldNameType } from '~/routes/_public.login/login-form';
 import {
   AddTeamFormFieldNameType,
   EditTeamFormFieldNameType,
 } from '~/routes/_app.team_.add/team-form';
-import {OrderFilterFormFieldNameType} from '~/routes/_app.order/filter-form';
+import { OrderFilterFormFieldNameType } from '~/routes/_app.order/filter-form';
+import { TrackAnOrderFormFieldNameType } from './layouts/elements/track-an-order-dialog';
 
 interface InputType extends React.ComponentPropsWithoutRef<'input'> {
   name:
-    | AddTeamFormFieldNameType
-    | EditTeamFormFieldNameType
-    | LoginFormFieldNameType
-    | CreateTicketFormFieldNameType
-    | EditFormFieldNameType
-    | OrderFilterFormFieldNameType;
+  | AddTeamFormFieldNameType
+  | EditTeamFormFieldNameType
+  | LoginFormFieldNameType
+  | CreateTicketFormFieldNameType
+  | EditFormFieldNameType
+  | TrackAnOrderFormFieldNameType
+  | OrderFilterFormFieldNameType;
   label?: string;
   placeholder?: string;
   required?: boolean;
@@ -35,7 +37,7 @@ export const Input = ({
   className,
   ...props
 }: InputType) => {
-  const {error, getInputProps} = useField(name);
+  const { error, getInputProps } = useField(name);
 
   return (
     <div>
@@ -46,12 +48,11 @@ export const Input = ({
       <div className="relative">
         <input
           {...props}
-          {...getInputProps({id: name})}
+          {...getInputProps({ id: name })}
           disabled={disabled}
           placeholder={placeholder}
           className={cn(
-            `${error ? 'invalid' : ''} ${
-              icon ? 'with-icon' : ''
+            `${error ? 'invalid' : ''} ${icon ? 'with-icon' : ''
             } w-full text-grey-400 disabled:bg-grey-25 disabled:!border-grey-25 disabled:border disabled:opacity-50`,
             className,
           )}

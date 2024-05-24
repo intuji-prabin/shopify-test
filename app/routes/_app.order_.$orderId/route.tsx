@@ -1,21 +1,32 @@
-import {Suspense} from 'react';
 import {
-  Await,
-  defer,
   isRouteErrorResponse,
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
-import {LoaderFunctionArgs, MetaFunction} from '@shopify/remix-oxygen';
-import {DeferDataTable} from '~/components/ui/defer-data-table';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {useColumn} from '~/routes/_app.order_.$orderId/use-column';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  MetaFunction,
+  json,
+  redirect,
+} from '@shopify/remix-oxygen';
+import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
 import OrderSteps from '~/routes/_app.order_.$orderId/order-steps';
 import OrderInformation from '~/routes/_app.order_.$orderId/order-information';
 import {OrderBreadcrumb} from '~/routes/_app.order_.$orderId/order-breadcrumb';
 import OrderNumberDetails from '~/routes/_app.order_.$orderId/order-number-details';
 import {getOrdersProductDetails} from '~/routes/_app.order_.$orderId/order-details.server';
-import {Separator} from '~/components/ui/separator';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {ProductTable} from '~/routes/_app.order_.$orderId/product-table';
+import {
+  getMessageSession,
+  messageCommitSession,
+  setErrorMessage,
+  setSuccessMessage,
+} from '~/lib/utils/toast-session.server';
+import {addedBulkCart} from '~/routes/_app.wishlist/bulk.cart.server';
+import {Routes} from '~/lib/constants/routes.constent';
+import {useMemo} from 'react';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Order Details'}];
@@ -24,96 +35,110 @@ export const meta: MetaFunction = () => {
 export async function loader({context, request, params}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
+  const {userDetails} = await getUserDetails(request);
+  const customerId = userDetails.id;
   const orderId = params.orderId as string;
 
-  const ordersProductDetailsPromise = getOrdersProductDetails({orderId});
+  const ordersProductDetails = await getOrdersProductDetails({
+    orderId,
+    customerId,
+  });
 
-  return defer({orderId, ordersProductDetails: ordersProductDetailsPromise});
+  return json({orderId, ordersProductDetails});
+}
+
+export async function action({request, context}: ActionFunctionArgs) {
+  await isAuthenticate(context);
+
+  const messageSession = await getMessageSession(request);
+
+  const formData = await request.formData();
+
+  const action = formData.get('_action') as 'add_to_cart';
+
+  switch (action) {
+    case 'add_to_cart': {
+      try {
+        const cartInfo = Object.fromEntries(formData);
+
+        const accessTocken = (await getAccessToken(context)) as string;
+
+        await addedBulkCart(cartInfo, context, accessTocken, request);
+
+        setSuccessMessage(messageSession, 'Item has been reorder successfully');
+
+        return redirect(Routes.CART_LIST, {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        });
+      } catch (error) {
+        if (error instanceof Error) {
+          setErrorMessage(messageSession, error?.message);
+          return json(
+            {},
+            {
+              headers: [
+                ['Set-Cookie', await context.session.commit({})],
+                ['Set-Cookie', await messageCommitSession(messageSession)],
+              ],
+            },
+          );
+        }
+        setErrorMessage(
+          messageSession,
+          'Item could not reorder. Please try again later.',
+        );
+        return json(
+          {},
+          {
+            headers: [
+              ['Set-Cookie', await context.session.commit({})],
+              ['Set-Cookie', await messageCommitSession(messageSession)],
+            ],
+          },
+        );
+      }
+    }
+
+    default: {
+      throw new Error('Unexpected action');
+    }
+  }
 }
 
 export default function OrderDetailPage() {
   const {orderId, ordersProductDetails} = useLoaderData<typeof loader>();
+  const {products, ...rest} = ordersProductDetails;
+
+  const displayOrderSteps =
+    ordersProductDetails.orderStatus !== 'Order Cancel' &&
+    ordersProductDetails.orderStatus !== 'On Hold';
+
+  const productWithNoBackOrderStatus = useMemo(() => {
+    return products.filter((product) => product.backOrderStatus !== 'No');
+  }, [products]);
 
   return (
     <section className="container">
-      <OrderBreadcrumb orderId={orderId!} />
+      <OrderBreadcrumb orderId={orderId} products={products} />
+
       <div className="bg-white p-6 flex flex-col gap-6">
-        <OrderNumberDetails orderNumber={orderId!} orderStatus="processing" />
-        <OrderSteps />
-        <OrderInformation />
+        <OrderNumberDetails
+          orderNumber={orderId}
+          orderStatus={ordersProductDetails.orderStatus}
+        />
+        {displayOrderSteps && (
+          <OrderSteps
+            orderStatus={ordersProductDetails.orderStatus}
+            products={productWithNoBackOrderStatus}
+          />
+        )}
+        <OrderInformation orderInformation={rest} />
       </div>
-      <div className="bg-white p-2 mt-6">
-        {/* Loading Fallback UI needs to be added as per the design */}
-        <Suspense fallback={<h1>Loading</h1>}>
-          <Await resolve={ordersProductDetails}>
-            {(orderProductDetails) => {
-              function prefixWithCurrency(price: string) {
-                return `${orderProductDetails.currency} ${price}`;
-              }
 
-              const {columns} = useColumn({prefixWithCurrency});
-
-              return (
-                <>
-                  <DeferDataTable
-                    columns={columns}
-                    tableData={orderProductDetails.products}
-                  />
-                  <Separator />
-                  <div className="flex justify-between px-4 py-6">
-                    <article className="space-y-2 bg-primary-50 p-4 border-grey-50 border">
-                      <h5>What’s next?</h5>
-                      <p className="text-grey-900 font-medium">
-                        You product will be delivered on following steps.
-                      </p>
-                      <p className="text-grey-900 font-medium">
-                        Received {'>'} Processing {'>'} Order Picked {'>'}{' '}
-                        Dispatched {'>'} In Transit {'>'} Delivered
-                      </p>
-                    </article>
-                    <table className="w-48">
-                      <tr>
-                        <th className="text-left">Subtotal</th>
-                        <td>
-                          {prefixWithCurrency(orderProductDetails.subTotal)}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th className="text-left">Freight</th>
-                        <td>
-                          {prefixWithCurrency(orderProductDetails.freight)}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th className="text-left">Surcharges</th>
-                        <td>
-                          {prefixWithCurrency(orderProductDetails.surCharges)}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th className="text-left"> Total Excl GST</th>
-                        <td>
-                          {prefixWithCurrency(orderProductDetails.totalExclGst)}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th className="text-left">GST</th>
-                        <td>{prefixWithCurrency(orderProductDetails.gst)}</td>
-                      </tr>
-                      <tr className="leading-7.5 text-[22px]">
-                        <th className="text-left">Total</th>
-                        <td className="font-bold text-primary-500">
-                          {prefixWithCurrency(orderProductDetails.totalPrice)}
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-                </>
-              );
-            }}
-          </Await>
-        </Suspense>
-      </div>
+      <ProductTable orderProductDetails={ordersProductDetails} />
     </section>
   );
 }

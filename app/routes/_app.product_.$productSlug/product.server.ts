@@ -4,8 +4,98 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {CONSTANT} from '~/lib/constants/product.session';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getUserDetails} from '~/lib/utils/user-session.server';
-import {GET_CART_LIST} from '../_app.cart-list/cart.server';
+import {GET_CART_LIST} from '~/routes/_app.cart-list/cart.server';
 import {useFormatCart} from '~/hooks/useFormatCart';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {emitter3} from '~/lib/utils/emitter.server';
+import {EVENTS} from '~/lib/constants/events.contstent';
+import {StockStatus} from '~/routes/_app.cart-list/order-my-products/use-column';
+import { USER_SESSION_ID } from '~/lib/utils/auth-session.server';
+
+export interface relatedProductsType {
+  productId: string;
+  productHandle: string;
+  variantId: string;
+  title: string;
+  sku: string;
+  stockCode: string;
+  moq: number;
+  quantity: number;
+  uom: string;
+  defaultPrice: number;
+  companyPrice: number;
+  currency: string;
+  featuredImage: string;
+  liked: boolean;
+  priceRange: any;
+}
+
+export interface ProductType {
+  id: string;
+  title: string;
+  tags: string[];
+  description: string;
+  warranty: string;
+  inventory: StockStatus;
+  supplier: string;
+  specification: string;
+  packageContent: string;
+  features: string;
+  faq: faqType[];
+  brochure: brochureType[];
+  video: brochureType[];
+  download: brochureType[];
+  thumbnailImage: string;
+  serviceManual: brochureType[];
+  operatingManual: brochureType[];
+  uom: string;
+  uomCode: string;
+  unitOfMeasure: uomType[];
+  currency: string;
+  imageUrl: imageType[];
+  brand: string;
+  liked: boolean;
+  variantId: string;
+  supplierSku: string;
+  variantTitle: string;
+  moq: string;
+  compareAtPrice: number;
+  originalPrice: number;
+  companyDefaultPrice: number;
+  priceRange: priceRangeType[];
+  productWeight: string;
+  categoryUrl: string;
+  relatedProducts: relatedProductsType[];
+  alternativeProduct: relatedProductsType[];
+}
+
+type faqType = {
+  question: string;
+  answer: string;
+};
+
+type brochureType = {
+  url: string;
+  title: string;
+  text: string;
+};
+
+type imageType = {
+  url: string;
+  altText: string;
+};
+
+type uomType = {
+  unit: string;
+  code: string;
+  conversionFactor: number;
+};
+
+type priceRangeType = {
+  minQty: number;
+  maxQty: number;
+  price: number;
+};
 
 export async function getProductDetails(customerId: string, handle: string) {
   try {
@@ -16,20 +106,90 @@ export async function getProductDetails(customerId: string, handle: string) {
       },
     );
     const response = await results.json();
-    // console.log('response', response);
+
     if (response?.errors) {
       throw new Error('Something went wrong');
     }
     if (!response?.status) {
       throw new Error(response?.message);
     }
-    return response.payload;
+
+    const finalResponse = await formatResponse(response?.payload);
+    return finalResponse;
   } catch (error) {
     throw new Error(
       'Oops! Something went wrong. Please hold tight and try again in a little while. Thank you for your understanding.',
     );
   }
 }
+
+const formatResponse = async (response: ProductType) => {
+  const formatRelatedProduct = (item: relatedProductsType) => ({
+    id: item.productId,
+    title: item.title,
+    handle: item.productHandle,
+    stockCode: item.stockCode,
+    uom: item.uom,
+    featuredImageUrl: item.featuredImage ?? DEFAULT_IMAGE.IMAGE,
+    volumePrice: item.priceRange?.length > 0,
+    companyPrice: item.companyPrice,
+    currency: item.currency,
+    defaultPrice: item.defaultPrice,
+    quantity: item.quantity,
+    liked: item.liked,
+    variants: {
+      id: item.variantId,
+      sku: item.sku,
+      moq: item.moq,
+    },
+  });
+  const finalResponse = {
+    productInfo: {
+      id: response?.id,
+      title: response?.title,
+      tags: response?.tags,
+      thumbnailImage: response?.thumbnailImage,
+      uom: response?.uom,
+      uomCode: response?.uomCode,
+      unitOfMeasure: response?.unitOfMeasure,
+      imageUrl: response?.imageUrl,
+      liked: response?.liked,
+      variantId: response?.variantId,
+      supplierSku: response?.supplierSku,
+      variantTitle: response?.variantTitle,
+      moq: response?.moq,
+      compareAtPrice: response?.compareAtPrice,
+      originalPrice: response?.originalPrice,
+      companyDefaultPrice: response?.companyDefaultPrice,
+      priceRange: response?.priceRange,
+      currency: response?.currency,
+      categoryUrl: response?.categoryUrl,
+      inventory: response.inventory,
+    },
+    productTab: {
+      description: response?.description === 'N/A' ? '' : response?.description,
+      warranty: response?.warranty === 'N/A' ? '' : response?.warranty,
+      productWeight:
+        response?.productWeight === 'N/A' ? '' : response?.productWeight,
+      supplier: response?.supplier === 'N/A' ? '' : response?.supplier,
+      specification:
+        response?.specification === 'N/A' ? '' : response?.specification,
+      packageContent:
+        response?.packageContent === 'N/A' ? '' : response?.packageContent,
+      features: response?.features === 'N/A' ? '' : response?.features,
+      faq: response?.faq,
+      brochure: response?.brochure,
+      video: response?.video,
+      download: response?.download,
+      serviceManual: response?.serviceManual,
+      operatingManual: response?.operatingManual,
+      brand: response?.brand === 'N/A' ? '' : response?.brand,
+    },
+    relatedProducts: response?.relatedProducts.map(formatRelatedProduct),
+    alternativeProduct: response?.alternativeProduct.map(formatRelatedProduct),
+  };
+  return finalResponse;
+};
 
 export const addProductToCart = async (
   cartInfo: any,
@@ -38,6 +198,8 @@ export const addProductToCart = async (
   request: any,
   cartItems = [],
 ) => {
+  const {userDetails} = await getUserDetails(request);
+
   // console.log('cartInfo', cartInfo);
   if (cartItems.length < 0) {
     if (!cartInfo.productId) {
@@ -65,7 +227,6 @@ export const addProductToCart = async (
       cartInfo,
       cartItems,
     );
-    console.log('cartSetInfo', cartSetInfo);
     const finalCartSet = useFormatCart(cartSetInfo);
     session.set(CART_SESSION_KEY, finalCartSet);
     const storeCartId = await storeCartIdOnBackend(
@@ -82,13 +243,23 @@ export const addProductToCart = async (
     cartItems,
   );
   const finalCartLine = useFormatCart(cartLineAddResponse);
+
   //  session.unset( CART_SESSION_KEY)
   session.set(CART_SESSION_KEY, finalCartLine);
+  const userSessionId = session.get(USER_SESSION_ID);
+
   const cartLists = await context.storefront.query(GET_CART_LIST, {
     variables: {cartId: sessionCartInfo?.cartId},
   });
-  // console.log('asfsfwerewr cartLists ', cartLists);
-  // console.log('asfsfwerewr cartListssss nodes ', cartLists?.cart?.lines?.nodes);
+
+  emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
+    payload: {
+      type: 'cart',
+      totalNumber: finalCartLine.lineItems,
+      customerId: userDetails.id,
+      session: userSessionId
+    },
+  });
   return true;
 };
 

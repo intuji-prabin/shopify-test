@@ -21,6 +21,7 @@ import { displayToast } from '~/components/ui/toast';
 import { Routes } from '~/lib/constants/routes.constent';
 import { CART_QUANTITY_ERROR, CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
 import { BackButton } from '~/components/ui/back-button';
+import { Can } from '~/lib/helpers/Can';
 
 export interface WishListResponse {
   productId: string;
@@ -189,51 +190,53 @@ export default function route() {
             {table.getSelectedRowModel().rows.length > 0 &&
               <div className='flex items-center gap-2'>
                 <p className='text-lg italic font-bold'>{table.getSelectedRowModel().rows.length} item selected</p>
-                <Button
-                  variant='primary'
-                  onClick={() => {
-                    const formData = new FormData();
-                    table
-                      .getSelectedRowModel()
-                      .flatRows.map((item) => {
-                        formData.append(
-                          `${item.original.productId}_productId`,
-                          item.original.productId,
-                        )
-                        formData.append(
-                          `${item.original.productId}_variantId`,
-                          item.original.variantId,
-                        )
-                        formData.append(
-                          `${item.original.productId}_quantity`,
-                          item.original.quantity,
-                        )
-                        formData.append(
-                          `${item.original.productId}_moq`,
-                          item.original.moq,
-                        )
-                        formData.append(
-                          `${item.original.productId}_uom`,
-                          item.original.uom,
-                        )
-                        formData.append(
-                          `bulkCart`,
-                          "true",
-                        )
-                        const quantityVal = Number(formData.get(`${item.original.productId}_quantity`));
-                        const moqVal = Number(formData.get(`${item.original.productId}_moq`));
-                        if (quantityVal && moqVal && quantityVal < moqVal || quantityVal && quantityVal > CART_QUANTITY_MAX) {
-                          canSubmit = false;
-                          displayToast({ message: CART_QUANTITY_ERROR, type: "error" });
-                        }
-                      },
-                      );
-                    { canSubmit ? submit(formData, { method: 'POST' }) : null }
-                    table.resetRowSelection();
-                  }}
-                >
-                  Add all to cart
-                </Button>
+                <Can I="view" a="add_wishlist_to_cart">
+                  <Button
+                    variant='primary'
+                    onClick={() => {
+                      const formData = new FormData();
+                      table
+                        .getSelectedRowModel()
+                        .flatRows.map((item) => {
+                          formData.append(
+                            `${item.original.productId}_productId`,
+                            item.original.productId,
+                          )
+                          formData.append(
+                            `${item.original.productId}_variantId`,
+                            item.original.variantId,
+                          )
+                          formData.append(
+                            `${item.original.productId}_quantity`,
+                            item.original.quantity,
+                          )
+                          formData.append(
+                            `${item.original.productId}_moq`,
+                            item.original.moq,
+                          )
+                          formData.append(
+                            `${item.original.productId}_uom`,
+                            item.original.uom,
+                          )
+                          formData.append(
+                            `bulkCart`,
+                            "true",
+                          )
+                          const quantityVal = Number(formData.get(`${item.original.productId}_quantity`));
+                          const moqVal = Number(formData.get(`${item.original.productId}_moq`));
+                          if (quantityVal && moqVal && quantityVal < moqVal || quantityVal && quantityVal > CART_QUANTITY_MAX) {
+                            canSubmit = false;
+                            displayToast({ message: CART_QUANTITY_ERROR, type: "error" });
+                          }
+                        },
+                        );
+                      { canSubmit ? submit(formData, { method: 'POST' }) : null }
+                      table.resetRowSelection();
+                    }}
+                  >
+                    Add all to cart
+                  </Button>
+                </Can>
                 <Button
                   variant='danger_dark'
                   onClick={() => {
@@ -241,7 +244,7 @@ export default function route() {
                     table
                       .getSelectedRowModel()
                       .flatRows.map((item, index) => {
-                        console.log('"rererwer "', item)
+                        // console.log('"rererwer "', item)
                         formData.append(
                           `wishList-${index}`,
                           item.original.productId,

@@ -5,12 +5,22 @@ import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.cons
 import {generateUrlWithParams} from '~/lib/helpers/url.helper';
 
 export type OrderStatus =
-  | 'received'
-  | 'processing'
-  | 'order_picked'
-  | 'dispatched'
-  | 'in_transit'
-  | 'delivered';
+  | 'Received'
+  | 'Order Cancel'
+  | 'On Hold'
+  | 'Processing'
+  | 'Order Picked'
+  | 'Dispatched'
+  | 'Invoice Billing'
+  | 'InTransit'
+  | 'Delivered';
+
+export type LineItem = {
+  productId: string;
+  variantId: string;
+  uom: string;
+  quantity: number;
+};
 
 export type Order = {
   id: string;
@@ -18,21 +28,16 @@ export type Order = {
   poNumber: string;
   estimatedDate: string | null;
   internalOrderNumber: string;
+  uniqueId: string;
   orderStatus: OrderStatus;
   orderBy: string;
   customerId: string;
-};
-
-type OrderPageInfo = {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  endCursor: string;
-  startCursor: string;
+  lineItems: LineItem[];
 };
 
 type Payload = {
   orderList: Order[];
-  orderPageInfo: OrderPageInfo;
+  totalOrder: number;
 };
 
 type ResponseData = {

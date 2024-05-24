@@ -1,5 +1,5 @@
 import {useMemo} from 'react';
-import {Link} from '@remix-run/react';
+import {Link, useFetcher, useSubmit} from '@remix-run/react';
 import {EyeOn} from '~/components/icons/eye';
 import {Button} from '~/components/ui/button';
 import {ColumnDef} from '@tanstack/react-table';
@@ -9,6 +9,7 @@ import {Routes} from '~/lib/constants/routes.constent';
 import {formatDateToLocaleDateString} from '~/lib/helpers/dateTime.helper';
 import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
 import {OrderStatusChip} from '~/components/ui/order-status-chip';
+import {Can} from '~/lib/helpers/Can';
 
 export function useColumn() {
   const columns = useMemo<ColumnDef<Order>[]>(
@@ -43,8 +44,13 @@ export function useColumn() {
       {
         accessorKey: 'internalOrderNumber',
         header: 'Cigweld Internal Order Number',
-        enableSorting: false,
-        cell: (info) => info.getValue() ?? 'N/A',
+        cell: (info) => {
+          const rawInternalOrderNumber = info.row.original.internalOrderNumber;
+          const internalOrderNumber =
+            rawInternalOrderNumber.length > 0 ? rawInternalOrderNumber : 'N/A';
+
+          return internalOrderNumber;
+        },
       },
       {
         accessorKey: 'orderDate',
@@ -54,7 +60,6 @@ export function useColumn() {
       {
         accessorKey: 'estimatedDate',
         header: 'Estimated Delivery Date',
-        enableSorting: false,
         cell: (info) =>
           info.getValue()
             ? formatDateToLocaleDateString(info.getValue() as string)
@@ -86,6 +91,38 @@ export function useColumn() {
 
           const orderDetailsRoute = `${Routes.ORDERS}/${orderId}`;
 
+          const lineItems = info.row.original.lineItems;
+
+          const fetcher = useFetcher();
+
+          const handleReOrder = () => {
+            const formData = new FormData();
+
+            lineItems.map((item, index) => {
+              formData.append(
+                `${item.productId + index}_productId`,
+                item.productId,
+              );
+
+              formData.append(
+                `${item.productId + index}_variantId`,
+                item.variantId!,
+              );
+
+              formData.append(
+                `${item.productId + index}_quantity`,
+                item.quantity.toString(),
+              );
+
+              formData.append(`${item.productId + index}_uom`, item.uom);
+
+              formData.append('bulkCart', 'true');
+
+              formData.append('_action', 'add_to_cart');
+
+              fetcher.submit(formData, {method: 'POST'});
+            });
+          };
           return (
             <div className="flex justify-center gap-x-2">
               <Link to={orderDetailsRoute}>
@@ -93,9 +130,19 @@ export function useColumn() {
                   <EyeOn />
                 </Button>
               </Link>
-              <Button size="icon" variant="icon">
-                <ReOrder />
-              </Button>
+              <Can I="view" a="reorder_order">
+                <Button
+                  size="icon"
+                  variant={
+                    fetcher.state === 'submitting' || fetcher.state !== 'idle'
+                      ? 'disabled'
+                      : 'icon'
+                  }
+                  onClick={handleReOrder}
+                >
+                  <ReOrder />
+                </Button>
+              </Can>
             </div>
           );
         },

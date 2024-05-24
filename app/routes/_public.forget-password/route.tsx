@@ -8,6 +8,7 @@ import {
 import {validationError} from 'remix-validated-form';
 import {ArrowLeftSmall} from '~/components/icons/arrowleft';
 import {Alert, AlertDescription} from '~/components/ui/alert';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {getAccessToken} from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
@@ -18,7 +19,7 @@ import {
 import ForgetPasswordForm, {
   ForgetPassFormFieldValidator,
 } from '~/routes/_public.forget-password/forget-password-form';
-import {customerRecover} from '~/routes/_public.forget-password/forget-password.server';
+import {passwordRecover} from '~/routes/_public.forget-password/forget-password.server';
 
 type ActionResponse = {
   status: string | null;
@@ -27,9 +28,11 @@ type ActionResponse = {
 
 export const loader = async ({context}: LoaderFunctionArgs) => {
   const accessToken = await getAccessToken(context);
+
   if (accessToken) {
     return redirect('/');
   }
+
   return json({});
 };
 
@@ -45,31 +48,32 @@ export const action = async ({request, context}: ActionFunctionArgs) => {
     }
 
     const {email} = result.data;
-    const passwordRecover = await customerRecover({email, context});
-    if (passwordRecover?.customerRecover?.customerUserErrors.length == 0) {
-      setSuccessMessage(messageSession, 'Email sent successfully');
-      return json(
-        {status: 'OK', email: result.data.email},
-        {
-          headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
-        },
-      );
-    } else {
-      setErrorMessage(
-        messageSession,
-        passwordRecover?.customerRecover?.customerUserErrors[0]
-          .message as string,
-      );
-      return json(
-        {},
-        {
-          headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
-        },
-      );
+    const {customerRecover} = await passwordRecover({email, context});
+
+    if (
+      customerRecover?.customerUserErrors &&
+      customerRecover.customerUserErrors.length > 0
+    ) {
+      throw new Error(customerRecover.customerUserErrors[0].message);
     }
+
+    setSuccessMessage(messageSession, 'Email sent successfully');
+
+    return json(
+      {status: 'OK', email: result.data.email},
+      {
+        headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+      },
+    );
   } catch (error) {
     if (error instanceof Error) {
-      setErrorMessage(messageSession, error.message);
+      error.message.split(' ')[1] === 'Resetting'
+        ? setErrorMessage(
+            messageSession,
+            'Resetting password limit exceeded. Please try again later.',
+          )
+        : setErrorMessage(messageSession, error.message);
+
       return json(
         {error},
         {
@@ -79,7 +83,17 @@ export const action = async ({request, context}: ActionFunctionArgs) => {
         },
       );
     }
-    return json({error}, {status: 400});
+
+    setErrorMessage(messageSession, DEFAULT_ERRROR_MESSAGE);
+
+    return json(
+      {error},
+      {
+        headers: {
+          'Set-Cookie': await messageCommitSession(messageSession),
+        },
+      },
+    );
   }
 };
 

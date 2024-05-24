@@ -1,12 +1,10 @@
+import {useState} from 'react';
 import {useTable} from '~/hooks/useTable';
 import {DataTable} from '~/components/ui/data-table';
 import HeroBanner from '~/components/ui/hero-section';
 import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
-import {
-  ActionBar,
-  GroupItem,
-} from '~/routes/_app.pending-order_.$groupId/action-bar';
+import {ActionBar} from '~/routes/_app.pending-order_.$groupId/action-bar';
 import {Routes} from '~/lib/constants/routes.constent';
 import {PredictiveSearch} from '~/components/ui/predictive-search';
 import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
@@ -39,7 +37,11 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {useState} from 'react';
+import {
+  GroupItem,
+  SelectProductProvider,
+} from '~/routes/_app.pending-order_.$groupId/select-product-context';
+import {Can} from '~/lib/helpers/Can';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Pending Order Details'}];
@@ -227,14 +229,11 @@ export async function action({request, context, params}: ActionFunctionArgs) {
 
         setSuccessMessage(messageSession, deletedProduct.message);
 
-        return json(
-          {},
-          {
-            headers: {
-              'Set-Cookie': await messageCommitSession(messageSession),
-            },
+        return redirect(`${Routes.PENDING_ORDER}/${groupId}`, {
+          headers: {
+            'Set-Cookie': await messageCommitSession(messageSession),
           },
-        );
+        });
       } catch (error) {
         if (error instanceof Error) {
           setErrorMessage(messageSession, error.message);
@@ -352,7 +351,7 @@ export default function PendingOrderDetailsPage() {
 
   const {columns} = useMyProductColumn({setUpdateCart: setIsProductUpdate});
 
-  const {table} = useTable(columns, groupDetails.products);
+  const {table} = useTable(columns, groupDetails.products, 'placeId');
 
   return (
     <>
@@ -360,22 +359,26 @@ export default function PendingOrderDetailsPage() {
         imageUrl={'/place-order.png'}
         sectionName={groupDetails.groupName}
       />
-      <div className=" bg-primary-500">
-        <div className="container flex items-center gap-6 py-6">
-          <div className="search-bar flex bg-white items-center min-w-[unset] w-full px-4 py-3 xl:min-w-[453px] max-h-14 relative">
-            <PredictiveSearch
-              searchVariant="pending_order"
-              inputPlaceholder="Rapid Product Search..."
-            />
+      <Can I="view" a="search_products">
+        <div className=" bg-primary-500">
+          <div className="container flex items-center gap-6 py-6">
+            <div className="search-bar flex bg-white items-center min-w-[unset] w-full px-4 py-3 xl:min-w-[453px] max-h-14 relative">
+              <PredictiveSearch
+                searchVariant="pending_order"
+                inputPlaceholder="Rapid Product Search..."
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </Can>
       <section className="container data__table">
-        <ActionBar
-          isProductUpdate={isProductUpdate}
-          groupName={groupDetails.groupName}
-          table={table}
-        />
+        <SelectProductProvider>
+          <ActionBar
+            isProductUpdate={isProductUpdate}
+            table={table}
+            group={groupDetails}
+          />
+        </SelectProductProvider>
         <DataTable
           table={table}
           columns={columns}

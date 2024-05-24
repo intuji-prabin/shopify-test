@@ -1,10 +1,11 @@
 import React from 'react';
 import {useField} from 'remix-validated-form';
-import {ImpersonateFormFieldNameType} from '~/routes/support_.allow-impersonate/allow-impersonate-form';
 import {DangerAlert} from '../icons/alert';
+import {ImpersonateFormFieldNameType} from '~/routes/_app.support_.allow-impersonate/allow-impersonate-form';
+import {CreateTicketFormFieldNameType} from '~/routes/_app.support_.create-ticket/create-ticket-form';
 
 type TextAreaInputType = {
-  name: ImpersonateFormFieldNameType;
+  name: ImpersonateFormFieldNameType | CreateTicketFormFieldNameType;
   label: string;
   placeholder?: string;
   required?: boolean;

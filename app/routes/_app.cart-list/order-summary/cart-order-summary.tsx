@@ -1,6 +1,7 @@
 import { Form } from '@remix-run/react';
 import EstimatedTotal from './estimated-total';
 import { ShoppingDetails } from './order-shopping-details';
+import { useState } from 'react';
 
 export default function OrderSummary({
   cartSubTotalPrice,
@@ -11,15 +12,30 @@ export default function OrderSummary({
   shippingAddresses,
   currency,
   updateCart,
-  placeOrder
+  placeOrder,
+  data,
+  promoCodeApplied,
+  discountPrice,
+  discountMessage,
+  totalPriceWithDiscount,
 }: any) {
+  const [promoCode, setPromoCode] = useState(promoCodeApplied);
   return (
     <div className="bg-white w-full xl:w-[411px]">
       <EstimatedTotal cartSubTotalPrice={cartSubTotalPrice}
         cartTotalPrice={cartTotalPrice}
         freight={freight}
         surcharges={surcharges}
-        gst={gst} currency={currency} />
+        gst={gst}
+        currency={currency}
+        data={data}
+        setPromoCode={setPromoCode}
+        promoCode={promoCode}
+        promoCodeApplied={promoCodeApplied}
+        discountPrice={discountPrice}
+        discountMessage={discountMessage}
+        totalPriceWithDiscount={totalPriceWithDiscount}
+      />
       {shippingAddresses ?
         <Form method="POST">
           <ShoppingDetails shippingAddresses={shippingAddresses} updateCart={updateCart} placeOrder={placeOrder} />

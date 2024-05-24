@@ -1,9 +1,8 @@
-import { Link } from '@remix-run/react';
-import { CategoryType } from './route';
+import {Link} from '@remix-run/react';
+import {CategoryType} from './route';
+import {Can} from '~/lib/helpers/Can';
 
-export function CategoryCard({ category }: {
-  category: CategoryType
-}) {
+export function CategoryCard({category}: {category: CategoryType}) {
   const {
     category_id,
     title,
@@ -29,20 +28,42 @@ export function CategoryCard({ category }: {
         <div className="grid md:col-start-2 md:col-end-5 sm:grid-cols-3 gap-x-6 bg-neutral-white">
           {child_categories?.map((subCategoryItem) => (
             <div className="p-6" key={subCategoryItem.id}>
-              {subCategoryItem?.child_categories?.length > 0 ?
-                <h4 className="mb-4">{subCategoryItem.title}</h4> :
-                <h4 className="mb-4 text-primary-500"><Link to={`/category/${identifier}/${subCategoryItem?.identifier}`}>{subCategoryItem.title}</Link></h4>
-              }
+              {subCategoryItem?.child_categories?.length > 0 ? (
+                <h4 className="mb-4">{subCategoryItem.title}</h4>
+              ) : (
+                <h4 className="mb-4 text-primary-500">
+                  <Link
+                    to={`/category/${identifier}/${subCategoryItem?.identifier}`}
+                  >
+                    {subCategoryItem.title}
+                  </Link>
+                </h4>
+              )}
               <ul>
                 {subCategoryItem?.child_categories?.map((childCategoryItem) => (
-                  <li key={childCategoryItem.id}>
-                    <Link
-                      to={`/category/${identifier}/${subCategoryItem.identifier}/${childCategoryItem.identifier}`}
-                      className="text-base font-medium leading-5.5 text-grey-600 duration-150 hover:text-primary-500"
-                    >
-                      {childCategoryItem.title}
-                    </Link>
-                  </li>
+                  <Can
+                    key={childCategoryItem.id}
+                    I="view"
+                    a="view_products"
+                    passThrough
+                  >
+                    {(allowed) => (
+                      <li key={childCategoryItem.id}>
+                        {allowed ? (
+                          <Link
+                            to={`/category/${identifier}/${subCategoryItem.identifier}/${childCategoryItem.identifier}`}
+                            className="text-base font-medium leading-5.5 text-grey-600 duration-150 hover:text-primary-500"
+                          >
+                            {childCategoryItem.title}
+                          </Link>
+                        ) : (
+                          <span className="text-base font-medium leading-5.5 text-grey-600 duration-150 hover:text-primary-500">
+                            {childCategoryItem.title}
+                          </span>
+                        )}
+                      </li>
+                    )}
+                  </Can>
                 ))}
               </ul>
             </div>

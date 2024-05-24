@@ -8,6 +8,10 @@ module.exports = {
     modules: {
       crypto: true, // Provide a JSPM polyfill
       events: true,
+      fs: true,
+      url: true,
+      http: true,
+      https: true,
     },
   },
   /**

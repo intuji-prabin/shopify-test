@@ -70,6 +70,7 @@ export function DataTable<T>({
     }
     return <ArrowUpDown />;
   };
+  
 
   return (
     <TableShadcn className={`${className} bg-neutral-white`} data-cy="table">

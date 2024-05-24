@@ -1,11 +1,14 @@
 import {BackButton} from '~/components/ui/back-button';
 import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 import {Routes} from '~/lib/constants/routes.constent';
 import {AllowImpersonateForm} from '~/routes/_app.support_.allow-impersonate/allow-impersonate-form';
 
 export default function AllowImpersonatePage() {
+  const shouldRender = useConditionalRender('allow_impersonation');
+
   return (
-    <section className="container">
+    shouldRender && (<section className="container">
       <div className=" pt-6 pb-4">
         <BackButton title="Allow Impersonate" />
         <Breadcrumb>
@@ -26,6 +29,6 @@ export default function AllowImpersonatePage() {
         presence.
       </p>
       <AllowImpersonateForm />
-    </section>
+    </section>)
   );
 }

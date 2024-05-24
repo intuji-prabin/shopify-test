@@ -21,8 +21,9 @@ import {
 import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 import { getCartList } from '../_app.cart-list/cart.server';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
-import { getPrices } from '../_app.category_.$mainCategory.$categoryId_.$subCategoryId/product-list.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
+import { getPrices } from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/productList.server';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 
 type PredicticeSearchResultItemImage =
   | PredictiveCollectionFragment['image']
@@ -45,6 +46,7 @@ export type NormalizedPredictiveSearchResultItem = {
   variantId: string;
   unitOfMeasure: { unit: string; code: string; conversionFactor: number }[];
   defaultUomValue: string;
+  featuredPriceImageUrl: string;
 };
 
 type NormalizedPredictiveSearchResults = Array<
@@ -108,6 +110,12 @@ async function normalizePredictiveSearchResults(
             price: prices?.[productId]
               ? prices?.[productId]?.company_price
               : null,
+            featuredPriceImageUrl:
+              prices &&
+                prices?.[productId].featuredImage &&
+                prices?.[productId].featuredImage != ''
+                ? prices?.[productId].featuredImage
+                : DEFAULT_IMAGE.IMAGE,
             //@ts-ignore
             sku: product.variants.nodes[0]?.sku,
             //@ts-ignore
@@ -287,7 +295,7 @@ fragment PredictiveQuery on SearchQuerySuggestion {
   trackingParameters
 }
 
-query predictiveSearch($limit: Int!, $limitScope: PredictiveSearchLimitScope!, $searchTerm: String!, $types: [PredictiveSearchType!]) {
+query predictiveSearch($limit: Int!, $limitScope: PredictiveSearchLimitScope!, $searchTerm: String!, $types: [PredictiveSearchType!], $country: CountryCode, $language: LanguageCode) @inContext(country: $country, language: $language) {
   predictiveSearch(
     limit: $limit
     limitScope: $limitScope

@@ -10,49 +10,56 @@ import {
   json,
   redirect,
 } from '@remix-run/server-runtime';
+import {MetaFunction} from '@shopify/remix-oxygen';
 import {ArrowLeft} from 'lucide-react';
 import {validationError} from 'remix-validated-form';
 import {Button} from '~/components/ui/button';
+import {PageNotFound} from '~/components/ui/page-not-found';
 import {SelectInputOptions} from '~/components/ui/select-input';
+import {useConditionalRender} from '~/hooks/useAuthorization';
+import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
+import {EVENTS} from '~/lib/constants/events.contstent';
 import {Routes} from '~/lib/constants/routes.constent';
-import TeamForm, {
-  EditTeamFormSchemaValidator,
-} from '~/routes/_app.team_.add/team-form';
-import {
-  getCustomerById,
-  updateTeam,
-} from '~/routes/_app.team_.$teamId/edit-team.server';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {emitter} from '~/lib/utils/emitter.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {MetaFunction} from '@shopify/remix-oxygen';
-import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {
   USER_DETAILS_KEY,
   getUserDetails,
   getUserDetailsSession,
   userDetailsCommitSession,
 } from '~/lib/utils/user-session.server';
+import {
+  getCustomerById,
+  updateTeam,
+} from '~/routes/_app.team_.$teamId/edit-team.server';
+import TeamForm, {
+  EditTeamFormSchemaValidator,
+} from '~/routes/_app.team_.add/team-form';
 import {getCustomerByEmail} from '~/routes/_public.login/login.server';
-import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
-import {PageNotFound} from '~/components/ui/page-not-found';
+import {getRoles} from '~/routes/_app.team/team.server';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Edit Team Member'}];
 };
 
-export async function loader({params, context}: LoaderFunctionArgs) {
+export async function loader({params, context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
   const customerId = params?.teamId as string;
 
+  const {userDetails} = await getUserDetails(request);
+
+  const currentUserRole = userDetails.meta.user_role.value;
+
   const customerDetails = await getCustomerById({customerId});
 
-  const roles = await getCustomerRolePermission(context);
+  const roles = await getRoles({context, currentUserRole});
 
   return json({customerDetails, roles});
 }
@@ -128,6 +135,11 @@ export async function action({request, context, params}: ActionFunctionArgs) {
         ],
       });
     }
+    // emitter.emit(EVENTS.LOGOUT.KEY, email);
+    emitter.emit(EVENTS.LOGOUT.KEY, {
+      customerId: customerId,
+      message: 'User Role Changed Logging Out',
+    });
 
     setSuccessMessage(messageSession, 'Customer update successful');
 
@@ -155,27 +167,31 @@ export default function TeamDetailsPage() {
 
   const {customerDetails, roles} = useLoaderData<typeof loader>();
 
+  const shouldRender = useConditionalRender('edit_other_profile');
+
   return (
-    <section className="container">
-      <div className="flex items-center py-6 space-x-4">
-        <Button
-          type="button"
-          size="icon"
-          variant="ghost"
-          className="border-grey-50 hover:bg-inherit"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="text-grey-400" />
-        </Button>
-        <h3>Edit Details</h3>
-      </div>
-      <TeamForm
-        defaultValues={customerDetails}
-        addressId={customerDetails?.addressId}
-        customerId={customerDetails?.customerId}
-        options={roles.data as SelectInputOptions[]}
-      />
-    </section>
+    shouldRender && (
+      <section className="container">
+        <div className="flex items-center py-6 space-x-4">
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            className="border-grey-50 hover:bg-inherit"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="text-grey-400" />
+          </Button>
+          <h3>Edit Details</h3>
+        </div>
+        <TeamForm
+          defaultValues={customerDetails}
+          addressId={customerDetails?.addressId}
+          customerId={customerDetails?.customerId}
+          options={roles as SelectInputOptions[]}
+        />
+      </section>
+    )
   );
 }
 

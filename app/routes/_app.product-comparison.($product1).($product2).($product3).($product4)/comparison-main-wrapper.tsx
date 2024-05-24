@@ -4,6 +4,7 @@ import { Button } from '~/components/ui/button';
 import { PredictiveSearch } from '~/components/ui/predictive-search';
 import { Price } from '~/components/ui/price';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { Can } from '~/lib/helpers/Can';
 
 export type finalProductResponse = {
   productResponse: {
@@ -19,7 +20,7 @@ export type ProductFinalResponse = {
   handle: string;
   title: string;
   finalProductInfoArray: { key: string, value: string }[];
-  featuredImage: { url: string };
+  featuredImage: string;
   companyPrice: number;
   currency: string;
   defaultPrice: number;
@@ -39,7 +40,7 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
   const product2 = finalResponse?.product2?.product;
   const product3 = finalResponse?.product3?.product;
   const product4 = finalResponse?.product4?.product;
-  console.log(finalResponse);
+  // console.log(finalResponse);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -64,7 +65,7 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
       <div className='flex gap-6 p-6'>
         <div className='min-w-[290px] w-full max-w-[290px]'>
           <figure className='flex items-center justify-center h-48 p-5 bg-grey-25'>
-            <img src={product1?.featuredImage?.url || DEFAULT_IMAGE?.IMAGE} alt="product1" className='object-contain h-full overflow-hidden' />
+            <img src={product1?.featuredImage || DEFAULT_IMAGE?.IMAGE} alt="product1" className='object-contain h-full overflow-hidden' />
           </figure>
           <div className='pt-3'>
             <p className='text-lg font-medium leading-[22px] text-grey-900 overflow-y-hidden h-11 line-clamp-2'>
@@ -77,13 +78,17 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
             <Price currency={product1?.currency} price={product1?.companyPrice} />
             <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
             <Price currency={product1?.currency} price={product1?.defaultPrice} variant="rrp" />
-            <Form method="post">
-              <input type="hidden" name="productId" value={product1?.id} />
-              <input type="hidden" name="productVariantId" value={product1?.productVariantId} />
-              <input type="hidden" name="quantity" value={product1?.quantity} />
-              <input type="hidden" name="selectUOM" value={product1?.selectedUOM} />
-              <Button className="w-full mt-3" variant="primary">Add to cart</Button>
-            </Form>
+            <Can I="view" a="add_to_cart">
+              {product1?.companyPrice || product1?.defaultPrice ?
+                <Form method="post">
+                  <input type="hidden" name="productId" value={product1?.id} />
+                  <input type="hidden" name="productVariantId" value={product1?.productVariantId} />
+                  <input type="hidden" name="quantity" value={product1?.quantity} />
+                  <input type="hidden" name="selectUOM" value={product1?.selectedUOM} />
+                  <Button className="w-full mt-3" variant="primary">Add to cart</Button>
+                </Form>
+                : <div className='h-[52px]'></div>}
+            </Can>
           </div>
           <ProductDetailInfo productInfo={product1?.finalProductInfoArray} />
         </div>
@@ -119,7 +124,7 @@ export function ProductDetailDiv({ productDetails, clearSelectedProduct }: { pro
       {productDetails ?
         <>
           <figure className='relative flex items-center justify-center h-48 p-5 bg-grey-25'>
-            <img src={productDetails?.featuredImage?.url || DEFAULT_IMAGE?.IMAGE} alt="product2" className='object-contain h-full overflow-hidden' />
+            <img src={productDetails?.featuredImage || DEFAULT_IMAGE?.IMAGE} alt="product2" className='object-contain h-full overflow-hidden' />
             <Button
               className="absolute top-2 right-2 bg-white max-h-5 max-w-5 md:max-h-8 md:max-w-8 p-[3px] md:p-2 hover:bg-white"
               onClick={() => clearSelectedProduct(productDetails?.id)}
@@ -138,13 +143,17 @@ export function ProductDetailDiv({ productDetails, clearSelectedProduct }: { pro
             <Price currency={productDetails?.currency} price={productDetails?.companyPrice} />
             <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
             <Price currency={productDetails?.currency} price={productDetails?.defaultPrice} variant="rrp" />
-            <Form method="post">
-              <input type="hidden" name="productId" value={productDetails?.id} />
-              <input type="hidden" name="productVariantId" value={productDetails?.productVariantId} />
-              <input type="hidden" name="quantity" value={productDetails?.quantity} />
-              <input type="hidden" name="selectUOM" value={productDetails?.selectedUOM} />
-              <Button className="w-full mt-3" variant="primary">Add to cart</Button>
-            </Form>
+            <Can I="view" a="add_to_cart">
+              {productDetails?.companyPrice || productDetails?.defaultPrice ?
+                <Form method="post">
+                  <input type="hidden" name="productId" value={productDetails?.id} />
+                  <input type="hidden" name="productVariantId" value={productDetails?.productVariantId} />
+                  <input type="hidden" name="quantity" value={productDetails?.quantity} />
+                  <input type="hidden" name="selectUOM" value={productDetails?.selectedUOM} />
+                  <Button className="w-full mt-3" variant="primary">Add to cart</Button>
+                </Form>
+                : <div className='h-[52px]'></div>}
+            </Can>
           </div>
           <ProductDetailInfo productInfo={productDetails?.finalProductInfoArray} />
         </> :

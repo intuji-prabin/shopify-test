@@ -1,44 +1,9 @@
 import {Button} from '~/components/ui/button';
 import {Dialog, DialogContent, DialogTrigger} from '~/components/ui/dialog';
+import {Product} from './order-details.server';
+import {OrderStatusChip} from '~/components/ui/order-status-chip';
 
-export function PickedButton() {
-  return (
-    <Button variant="status_brown" className="w-full min-w-[184px] py-2">
-      Picked
-    </Button>
-  );
-}
-export function DeliveredButton() {
-  return (
-    <Button variant="status_green" className="w-full min-w-[184px] py-2">
-      Delivered
-    </Button>
-  );
-}
-export function ShippedButton() {
-  return (
-    <Button variant="status_blue" className="w-full min-w-[184px] py-2">
-      Shipped
-    </Button>
-  );
-}
-
-export default function ProcessingPopover() {
-  const participants = [
-    {
-      product_name: 'Thermal Dynamics 1Torch SL100 Plasma Torch 6m Lead',
-      status: <PickedButton />,
-    },
-    {
-      product_name: 'Arcair DC Carbon Arc Gouging - Pointed',
-      status: <DeliveredButton />,
-    },
-    {
-      product_name: 'WeldSkill 180 AC-DC TIG Welder',
-      status: <ShippedButton />,
-    },
-  ];
-
+export default function ProcessingPopover({products}: {products: Product[]}) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -65,12 +30,12 @@ export default function ProcessingPopover() {
             </tr>
           </thead>
           <tbody>
-            {participants.map((participant, index) => (
+            {products.map((product, index) => (
               <tr key={index} className="border-x">
+                <td className="px-4 py-3 border-b">{product.name}</td>
                 <td className="px-4 py-3 border-b">
-                  {participant.product_name}
+                  <OrderStatusChip status={product.shippingStatus} />
                 </td>
-                <td className="px-4 py-3 border-b">{participant.status}</td>
               </tr>
             ))}
           </tbody>

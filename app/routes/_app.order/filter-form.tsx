@@ -1,5 +1,4 @@
 import {z} from 'zod';
-import {Input} from '~/components/ui/input';
 import {Button} from '~/components/ui/button';
 import {ValidatedForm} from 'remix-validated-form';
 import {Separator} from '~/components/ui/separator';
@@ -16,6 +15,7 @@ const orderStatusOptions: SelectInputOptions[] = [
   {title: 'Order Picked', value: 'order_picked'},
   {title: 'Dispatch', value: 'dispatched'},
   {title: 'In Transit', value: 'in_transit'},
+  {title: 'Invoice Billing', value: 'invoice_billing'},
   {title: 'Delivered', value: 'delivered'},
 ];
 
@@ -27,11 +27,10 @@ const OrderFilterFormSchema = z.object({
       orderDateTo: z.string().trim().optional(),
     })
     .optional(),
-
-  deliveryDateRange: z
+  estimatedDeliveryDateRange: z
     .object({
-      deliveryDateFrom: z.string().trim().optional(),
-      deliveryDateTo: z.string().trim().optional(),
+      estimatedDeliveryDateFrom: z.string().trim().optional(),
+      estimatedDeliveryDateTo: z.string().trim().optional(),
     })
     .optional(),
 });
@@ -62,13 +61,13 @@ export default function OrderFilterForm() {
     to: orderDateTo ? new Date(orderDateTo) : undefined,
   };
 
-  const deliveryDateFrom = searchParams.get('deliveryDateFrom');
+  const estimatedDateFrom = searchParams.get('estimatedDeliveryDateFrom');
 
-  const deliveryDateTo = searchParams.get('deliveryDateTo');
+  const estimatedDateTo = searchParams.get('estimatedDeliveryDateTo');
 
-  const defaultDeliveryDateRangeValues = {
-    from: deliveryDateFrom ? new Date(deliveryDateFrom) : undefined,
-    to: deliveryDateTo ? new Date(deliveryDateTo) : undefined,
+  const defaultEstimatedDateRangeValues = {
+    from: estimatedDateFrom ? new Date(estimatedDateFrom) : undefined,
+    to: estimatedDateTo ? new Date(estimatedDateTo) : undefined,
   };
 
   return (
@@ -98,13 +97,13 @@ export default function OrderFilterForm() {
             dateRange={defaultOrderDateRangeValues}
           />
         </div>
-        <Separator />{' '}
+        <Separator />
         <div className="p-6">
-          <h5 className="pb-2">Delivery Date</h5>
+          <h5 className="pb-2">Estimated Delivery Date</h5>
           <DatePickerWithRange
-            fromFieldName="deliveryDateFrom"
-            toFieldName="deliveryDateTo"
-            dateRange={defaultDeliveryDateRangeValues}
+            fromFieldName="estimatedDeliveryDateFrom"
+            toFieldName="estimatedDeliveryDateTo"
+            dateRange={defaultEstimatedDateRangeValues}
           />
         </div>
         <Separator />

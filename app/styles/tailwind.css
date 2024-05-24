@@ -146,6 +146,9 @@ label .required {
 .error-msg {
   @apply flex items-center leading-5 text-semantic-danger-500 text-sm;
 }
+.steps li span {
+  @apply z-10 relative;
+}
 .steps li.active span {
   @apply bg-status-back_order;
 }
@@ -160,7 +163,7 @@ label .required {
 }
 .steps__order li:first-of-type,
 .steps li:last-of-type {
-  @apply before:bg-inherit before:w-[calc(50%_-_32px)] before:h-full before:content-[''] before:absolute before:left-0 before:-z-10;
+  @apply before:bg-white before:w-[calc(50%_-_32px)] before:h-full before:content-[''] before:absolute before:left-0 before:z-10;
 }
 .steps li:last-of-type {
   @apply before:left-[unset] before:right-0;
@@ -685,7 +688,7 @@ div[data-state='open'].fixed.inset-0 {
 }
 
 .track-an-order .track-order {
-  @apply !top-[10%] !right-4 shadow-[unset];
+  @apply shadow-[unset];
 }
 /* underline for lsubmenu  of reosurces in bottom header */
 .menus li:nth-child(7):hover ul li a h5 {
@@ -878,4 +881,21 @@ div[data-state='open'].fixed.inset-0 {
 }
 .cart__list .data__table table thead tr th:nth-child(2) {
   @apply min-w-[329px];
+}
+.order-error .track-order {
+  @apply mx-auto bg-primary-500 py-3 px-4;
+}
+
+.react-pdf__Page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.react-pdf__Page__canvas {
+  margin-left: 2.5rem !important;
+}
+
+.similar__product .single-product-card {
+  @apply border border-solid border-grey-25;
 }
