@@ -20,6 +20,7 @@ export default async function handleRequest(
       'cdn.shopify.com',
       'shopify.com',
       'http://cdnjs.cloudflare.com',
+      'https://cig-backuat.webo.dev',
       ...localDirectives,
     ],
     styleSrc: [
@@ -27,7 +28,7 @@ export default async function handleRequest(
       "'unsafe-inline'",
       'fonts.googleapis.com',
       'cdn.shopify.com',
-
+      'cig-backuat.webo.dev',
       ...localDirectives,
     ],
     frameSrc: [
@@ -35,6 +36,7 @@ export default async function handleRequest(
       'youtube.com',
       'https://www.youtube.com/',
       'pimcoredata.intuji.com',
+      'https://cig-backuat.webo.dev',
       'https://pimcoredata.intuji.com/',
       ...localDirectives,
     ],
@@ -44,6 +46,7 @@ export default async function handleRequest(
       'https://shopify.com',
       'https://pimcoredata.intuji.com',
       'https://cig-backend.webo.dev',
+      'https://cig-backuat.webo.dev',
       'https://www.w3.org',
       'https://cigweld-middleware.intuji.com',
       'http://170.64.130.119:3000',
@@ -54,6 +57,7 @@ export default async function handleRequest(
       "'self'",
       'pimcoredata.intuji.com',
       'https://pimcoredata.intuji.com/',
+      'https://cig-backuat.webo.dev/',
       'gid://shopify/MediaImage',
       ...localDirectives,
     ],
@@ -67,6 +71,7 @@ export default async function handleRequest(
       'casual-mink-routinely.ngrok-free.app',
       'relaxing-hawk-ace.ngrok-free.app',
       'cig-backend.webo.dev',
+      'cig-backuat.webo.dev',
       'pimcoredata.intuji.com',
       '170.64.130.119:3000',
       'gid://shopify/MediaImage',
@@ -77,7 +82,7 @@ export default async function handleRequest(
       'http://cdnjs.cloudflare.com',
       'http://localhost:4000',
       'https://pimcoredata.intuji.com',
-      'cig-backuat.webo.dev',
+      'https://cig-backuat.webo.dev',
       ...localDirectives,
     ],
   });
