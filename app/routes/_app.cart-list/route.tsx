@@ -57,6 +57,11 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   if (cartList?.productList?.length === 0) {
     await getCartList(context, request, sessionCartInfo);
   }
+  const finalCartSession = {
+    cartId: sessionCartInfo?.cartId,
+    lineItems: cartList?.productList?.length,
+  };
+  await context.session.set(CART_SESSION_KEY, finalCartSession);
   return json(
     { cartList, shippingAddresses },
     {

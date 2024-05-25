@@ -36,32 +36,44 @@ export default function ShippingAddressCards({
             </span>
           </li>
           <li className="flex flex-wrap gap-x-4 gap-y-2">
-            <p className="text-lg font-medium w-[85px]">Address</p>
-            <p className="text-lg w-[calc(100%_-_101px)]">
+            <p className="text-lg font-medium w-[95px]">Address</p>
+            <p className="text-lg w-[calc(100%_-_111px)]">
               {defaultAddresses || '-'}
             </p>
           </li>
           <li className="flex flex-wrap gap-x-4 gap-y-2">
-            <p className="text-lg font-medium w-[85px]">Postal Code</p>
-            <p className="text-lg w-[calc(100%_-_101px)]">
+            <p className="text-lg font-medium w-[95px]">Postal Code</p>
+            <p className="text-lg w-[calc(100%_-_111px)]">
               {defaultAddress.zip || '-'}
             </p>
           </li>
           <li className="flex flex-wrap gap-x-4 gap-y-2">
-            <p className="text-lg font-medium w-[85px]">Fax</p>
-            <p className="text-lg w-[calc(100%_-_101px)]">
-              {defaultAddress.firstName || '-'}
+            <p className="text-lg font-medium w-[95px]">Fax</p>
+            <p className="text-lg w-[calc(100%_-_111px)]">
+              {defaultAddress.fax || '-'}
             </p>
           </li>
           <li className="flex flex-wrap gap-x-4 gap-y-2">
-            <p className="text-lg font-medium w-[85px]">Phone</p>
-            <p className="text-lg w-[calc(100%_-_101px)]">
+            <p className="text-lg font-medium w-[95px]">Suburb</p>
+            <p className="text-lg w-[calc(100%_-_111px)]">
+              {defaultAddress.suburb || '-'}
+            </p>
+          </li>
+          <li className="flex flex-wrap gap-x-4 gap-y-2">
+            <p className="text-lg font-medium w-[95px]">House Number</p>
+            <p className="text-lg w-[calc(100%_-_111px)]">
+              {defaultAddress.houseNumber || '-'}
+            </p>
+          </li>
+          <li className="flex flex-wrap gap-x-4 gap-y-2">
+            <p className="text-lg font-medium w-[95px]">Phone</p>
+            <p className="text-lg w-[calc(100%_-_111px)]">
               {defaultAddress.phone || '-'}
             </p>
           </li>
           <li className="flex flex-wrap gap-x-4 gap-y-2">
-            <p className="text-lg font-medium w-[85px]">Country</p>
-            <p className="text-lg w-[calc(100%_-_101px)]">
+            <p className="text-lg font-medium w-[95px]">Country</p>
+            <p className="text-lg w-[calc(100%_-_111px)]">
               {defaultAddress.country || '-'}
             </p>
           </li>
@@ -79,32 +91,44 @@ export default function ShippingAddressCards({
           >
             <ul className="space-y-3">
               <li className="flex flex-wrap gap-x-4 gap-y-2">
-                <p className="text-lg font-medium w-[85px]">Address</p>
-                <p className="text-lg w-[calc(100%_-_101px)]">
+                <p className="text-lg font-medium w-[95px]">Address</p>
+                <p className="text-lg w-[calc(100%_-_111px)]">
                   {concatAddresses || '-'}
                 </p>
               </li>
               <li className="flex flex-wrap gap-x-4 gap-y-2">
-                <p className="text-lg font-medium w-[85px]">Postal Code</p>
-                <p className="text-lg w-[calc(100%_-_101px)]">
+                <p className="text-lg font-medium w-[95px]">Postal Code</p>
+                <p className="text-lg w-[calc(100%_-_111px)]">
                   {shippingCard.zip || '-'}
                 </p>
               </li>
               <li className="flex flex-wrap gap-x-4 gap-y-2">
-                <p className="text-lg font-medium w-[85px]">Fax</p>
-                <p className="text-lg w-[calc(100%_-_101px)]">
-                  {shippingCard.firstName || '-'}
+                <p className="text-lg font-medium w-[95px]">Fax</p>
+                <p className="text-lg w-[calc(100%_-_111px)]">
+                  {shippingCard.fax || '-'}
                 </p>
               </li>
               <li className="flex flex-wrap gap-x-4 gap-y-2">
-                <p className="text-lg font-medium w-[85px]">Phone</p>
-                <p className="text-lg w-[calc(100%_-_101px)]">
+                <p className="text-lg font-medium w-[95px]">Suburb</p>
+                <p className="text-lg w-[calc(100%_-_111px)]">
+                  {shippingCard.suburb || '-'}
+                </p>
+              </li>
+              <li className="flex flex-wrap gap-x-4 gap-y-2">
+                <p className="text-lg font-medium w-[95px]">House Number</p>
+                <p className="text-lg w-[calc(100%_-_111px)]">
+                  {shippingCard.houseNumber || '-'}
+                </p>
+              </li>
+              <li className="flex flex-wrap gap-x-4 gap-y-2">
+                <p className="text-lg font-medium w-[95px]">Phone</p>
+                <p className="text-lg w-[calc(100%_-_111px)]">
                   {shippingCard.phone || '-'}
                 </p>
               </li>
               <li className="flex flex-wrap gap-x-4 gap-y-2">
-                <p className="text-lg font-medium w-[85px]">Country</p>
-                <p className="text-lg w-[calc(100%_-_101px)]">
+                <p className="text-lg font-medium w-[95px]">Country</p>
+                <p className="text-lg w-[calc(100%_-_111px)]">
                   {shippingCard.country || '-'}
                 </p>
               </li>

@@ -6,26 +6,26 @@ import {
   useRouteError,
   useSubmit,
 } from '@remix-run/react';
-import {ActionFunctionArgs, json, redirect} from '@remix-run/server-runtime';
-import {useEffect, useState} from 'react';
-import {useEventSource} from 'remix-utils/sse/react';
+import { ActionFunctionArgs, json, redirect } from '@remix-run/server-runtime';
+import { useEffect, useState } from 'react';
+import { useEventSource } from 'remix-utils/sse/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
-import {HamburgerMenuProvider} from '~/components/ui/layouts/elements/HamburgerMenuContext';
+import { HamburgerMenuProvider } from '~/components/ui/layouts/elements/HamburgerMenuContext';
 import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
 import TopHeader from '~/components/ui/layouts/top-header';
-import {useMediaQuery} from '~/hooks/useMediaQuery';
-import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
-import {Routes} from '~/lib/constants/routes.constent';
-import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
-import {USER_SESSION_ID, isAuthenticate} from '~/lib/utils/auth-session.server';
+import { useMediaQuery } from '~/hooks/useMediaQuery';
+import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { Routes } from '~/lib/constants/routes.constent';
+import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
+import { USER_SESSION_ID, isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
 } from '~/lib/utils/toast-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {CustomerData} from '~/routes/_public.login/login.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { CustomerData } from '~/routes/_public.login/login.server';
 import {
   getCagetoryList,
   getNewNotificationCount,
@@ -33,17 +33,18 @@ import {
   getSessionCart,
   getSessionData,
 } from '~/routes/_app/app.server';
-import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
-import {EVENTS} from '~/lib/constants/events.contstent';
+import { getProductGroup } from '~/routes/_app.pending-order/pending-order.server';
+import { EVENTS } from '~/lib/constants/events.contstent';
 import {
   defineAbilitiesForAdmin,
   defineAbilitiesForUser,
 } from '~/lib/helpers/roles';
-import {AbilityContext, DEFAULT_ABILITIES} from '~/lib/helpers/Can';
-import {LOCAL_STORAGE_KEYS} from '~/lib/constants/general.constant';
+import { AbilityContext, DEFAULT_ABILITIES } from '~/lib/helpers/Can';
+import { LOCAL_STORAGE_KEYS } from '~/lib/constants/general.constant';
 import StorageService from '~/services/storage.service';
-import {emitter} from '~/lib/utils/emitter.server';
-import {ro} from 'date-fns/locale';
+import { emitter } from '~/lib/utils/emitter.server';
+import { ro } from 'date-fns/locale';
+import { getFooter } from './footer.server';
 
 interface Payload {
   type: 'cart' | 'wishlist' | 'productGroup ' | 'notification';
@@ -62,26 +63,27 @@ interface Data {
   // Add other properties if present in your data
 }
 
-export async function loader({request, context}: ActionFunctionArgs) {
+export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
-  const {userDetails} = await getUserDetails(request);
-  const {session} = context;
+  const { userDetails } = await getUserDetails(request);
+  const { session } = context;
 
   const sessionData = await getSessionData(userDetails, context);
 
   const userSessionId = session.get(USER_SESSION_ID);
 
   const categories = await getCagetoryList(context);
+  const footer = await getFooter(context);
 
   const messageSession = await getMessageSession(request);
 
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
 
-  const productGroup = await getProductGroup({customerId: userDetails.id});
+  const productGroup = await getProductGroup({ customerId: userDetails.id });
 
   const customerId = userDetails.id;
 
-  const {totalNotifications} = await getNewNotificationCount({
+  const { totalNotifications } = await getNewNotificationCount({
     customerId,
     request,
   });
@@ -113,6 +115,7 @@ export async function loader({request, context}: ActionFunctionArgs) {
       pendingOrderCount: productGroup?.length ?? 0,
       notificationCount: totalNotifications,
       userSessionId,
+      footer
     },
     {
       headers,
@@ -129,6 +132,7 @@ export default function PublicPageLayout() {
     pendingOrderCount,
     notificationCount,
     userSessionId,
+    footer,
   } = useLoaderData<typeof loader>();
 
   const submit = useSubmit();
@@ -174,8 +178,8 @@ export default function PublicPageLayout() {
       const dataObject = JSON.parse(userData) as Data;
       if (dataObject.customerId === userDetails.id) {
         submit(
-          {message: dataObject.message},
-          {method: 'POST', action: '/logout'},
+          { message: dataObject.message },
+          { method: 'POST', action: '/logout' },
         );
       }
     }
@@ -202,7 +206,7 @@ export default function PublicPageLayout() {
           payload: Payload;
         };
       };
-      const {type, totalNumber, customerId, companyId, sessionId} =
+      const { type, totalNumber, customerId, companyId, sessionId } =
         parsedData.notificationData.payload;
       const currentUrl = window.location.pathname; // Capture the current URL
       const handlers: Handlers = {
@@ -210,8 +214,8 @@ export default function PublicPageLayout() {
           if (userDetails.id === customerId && userSessionId !== sessionId) {
             cartCount = totalNumber | 0;
             submit(
-              {returnUrl: currentUrl, type, totalNumber},
-              {method: 'GET', action: '/update-notifications-session'},
+              { returnUrl: currentUrl, type, totalNumber },
+              { method: 'GET', action: '/update-notifications-session' },
             );
           }
         },
@@ -219,8 +223,8 @@ export default function PublicPageLayout() {
           if (userDetails?.meta.company_id.companyId === companyId) {
             wishlistCount = totalNumber;
             submit(
-              {returnUrl: currentUrl, type, totalNumber},
-              {method: 'GET', action: '/update-notifications-session'},
+              { returnUrl: currentUrl, type, totalNumber },
+              { method: 'GET', action: '/update-notifications-session' },
             );
           }
         },
@@ -258,7 +262,7 @@ export default function PublicPageLayout() {
       // Parse the string into an object
       const parsedData = JSON.parse(hasPermissionBeenUpdated) as {
         permissionData: {
-          payload: {user_role: string; permission: string[]};
+          payload: { user_role: string; permission: string[] };
         };
       };
 
@@ -268,7 +272,7 @@ export default function PublicPageLayout() {
 
       // If permissions are empty, logout the user
       if (eventUserRolePermissions.permission.length === 0) {
-        submit({}, {method: 'POST', action: '/logout'});
+        submit({}, { method: 'POST', action: '/logout' });
       }
 
       // Check if the event role matches the user's role
@@ -284,8 +288,8 @@ export default function PublicPageLayout() {
 
         // Update user session with returnUrl
         submit(
-          {returnUrl: currentUrl},
-          {method: 'GET', action: '/update-user-session'},
+          { returnUrl: currentUrl },
+          { method: 'GET', action: '/update-user-session' },
         );
       }
     }
@@ -300,6 +304,7 @@ export default function PublicPageLayout() {
         wishlistCount={wishlistCount}
         pedingOrderCount={pendingOrderCounts}
         notificationCount={notificationCounts}
+        footerData={footer}
       >
         <Outlet />
       </Layout>
@@ -315,6 +320,7 @@ const Layout = ({
   wishlistCount,
   pedingOrderCount,
   notificationCount,
+  footerData,
 }: {
   children: React.ReactNode;
   categories: any;
@@ -323,6 +329,7 @@ const Layout = ({
   wishlistCount: number;
   pedingOrderCount: number;
   notificationCount: number;
+  footerData: any
 }) => {
   const matches = useMediaQuery('(min-width: 768px)');
   const submit = useSubmit();
@@ -349,7 +356,7 @@ const Layout = ({
       )}
       <div className="mb-12">{children}</div>
       <footer>
-        <DesktopFooter />
+        <DesktopFooter footerData={footerData} />
       </footer>
     </HamburgerMenuProvider>
   );

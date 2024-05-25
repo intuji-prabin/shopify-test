@@ -83,10 +83,10 @@ const Slider = React.forwardRef(
           {localValues.map((value, index) => (
             <React.Fragment key={index}>
               <div
-                className="absolute text-center"
+                className="absolute text-center slider-tag"
                 style={{
                   // Needs improvement in this calculation
-                  left: `calc(${((value - min) / (max - min)) * 85}% + 0px)`,
+                  left: `calc(${((value - min) / (max - min)) * 81}% + 0px)`,
                   top: `-50px`,
                 }}
               >

@@ -18,7 +18,11 @@ export const getFilterProduct = async (
   customerId: string,
   filterDetailsSession: any,
 ) => {
-  const categoryIdentifier = params.subCategorySlug;
+  const subCategoryIdentifier = params.subCategorySlug;
+  const categoryIdentifier = params.categorySlug;
+  const catParam = subCategoryIdentifier
+    ? subCategoryIdentifier
+    : categoryIdentifier;
   const minPrice = filterList.find((item: any) => item?.key == 'minPrice');
   const maxPrice = filterList.find((item: any) => item?.key === 'maxPrice');
   if (!minPrice && !maxPrice) {
@@ -138,6 +142,7 @@ export const getFilterProduct = async (
         filterList,
         customerId,
         filterDetailsSession,
+        catParam,
         productList,
         sessionStockProductList,
       );
@@ -162,6 +167,7 @@ export const getFilterProduct = async (
     }
 
     const stockCode = await getStockCode(
+      catParam,
       customerId,
       minPrice?.value,
       maxPrice?.value,
@@ -214,6 +220,7 @@ export const getFilterProduct = async (
         filterList,
         customerId,
         filterDetailsSession,
+        catParam,
         productList,
         stockCode,
       );
@@ -310,6 +317,7 @@ export const getFilterProduct = async (
   }
 
   const stockCode = await getStockCode(
+    catParam,
     customerId,
     minPrice?.value,
     maxPrice?.value,
@@ -358,6 +366,7 @@ export const getFilterProduct = async (
       filterList,
       customerId,
       filterDetailsSession,
+      catParam,
       productList,
       stockCode,
     );
@@ -406,6 +415,7 @@ const recursiveProduct = async (
   filterList: any,
   customerId: string,
   filterDetailsSession: any,
+  catParam: any,
   extraProducts: any,
   stockCodes: any,
   recursion = false,
@@ -419,6 +429,7 @@ const recursiveProduct = async (
   const maxPrice = filterList.find((item: any) => item?.key === 'maxPrice');
 
   const newStockCode = await getStockCode(
+    catParam,
     customerId,
     minPrice?.value,
     maxPrice?.value,
@@ -494,18 +505,20 @@ const recursiveProduct = async (
     filterList,
     customerId,
     filterDetailsSession,
+    catParam,
     productList,
     newStockCode,
   );
 };
 
 const getStockCode = async (
+  catParam: any,
   customerId: any,
   minPrice: any,
   maxPrice: any,
   page = 1,
 ) => {
-  const url = `${ENDPOINT.PRODUCT.FILTER}/${customerId}?minPrice=${minPrice}&maxPrice=${maxPrice}&page=${page}`;
+  const url = `${ENDPOINT.PRODUCT.FILTER}/${catParam}/${customerId}?minPrice=${minPrice}&maxPrice=${maxPrice}&page=${page}`;
   const stockCode = await useFetch<any>({
     method: AllowedHTTPMethods.GET,
     url: url,

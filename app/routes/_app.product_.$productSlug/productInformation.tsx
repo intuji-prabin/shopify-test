@@ -42,7 +42,7 @@ export default function ProductInformation({ product }: any) {
           productId={product?.id}
           productVariantId={product?.variantId}
           isFavorited={product?.liked}
-          sku={'Sku'}
+          sku={'SKU'}
           skuUnits={product?.supplierSku}
           unitOfMeasurement={'Unit Of Measurement:'}
           box={product?.uom}

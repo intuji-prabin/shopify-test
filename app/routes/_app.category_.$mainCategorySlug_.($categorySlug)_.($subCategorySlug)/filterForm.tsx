@@ -1,9 +1,9 @@
-import {Form, useSearchParams, useSubmit} from '@remix-run/react';
-import {FormEvent, Fragment, useState} from 'react';
+import { Form, useSearchParams, useSubmit } from '@remix-run/react';
+import { FormEvent, Fragment, useState } from 'react';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import {Button} from '~/components/ui/button';
-import {Separator} from '~/components/ui/separator';
-import {Slider} from '~/components/ui/slider';
+import { Button } from '~/components/ui/button';
+import { Separator } from '~/components/ui/separator';
+import { Slider } from '~/components/ui/slider';
 
 export function FilterForm({
   filterList,
@@ -24,12 +24,12 @@ export function FilterForm({
     value: string[];
   }[] = [];
   searchKey.map((value) => {
-    searchList.push({key: value, value: searchParams.getAll(value)});
+    searchList.push({ key: value, value: searchParams.getAll(value) });
   });
   const filteredData = searchList.filter((item) => item.key !== 'warranty');
   const filteredValues = filteredData.map((item) => item.value);
 
-  const initialRange = [1, 300];
+  const initialRange = [1, 50000];
   const [range, setRange] = useState(initialRange);
   const [isMinChecked, setIsMinChecked] = useState(false);
   const [isMaxChecked, setIsMaxChecked] = useState(false);
@@ -159,7 +159,7 @@ export function FilterForm({
                 name="minPrice"
                 value={range[0]}
                 checked={isMinChecked}
-                onChange={() => {}}
+                onChange={() => { }}
               />
               <input
                 type="checkbox"
@@ -168,7 +168,7 @@ export function FilterForm({
                 name="maxPrice"
                 value={range[1]}
                 checked={isMaxChecked}
-                onChange={() => {}}
+                onChange={() => { }}
               />
 
               <Button
@@ -217,7 +217,7 @@ export function SortByFilterForm() {
       <select
         name="sort-by"
         value={queryParams.get('sort-by') as string}
-        onChange={() => {}}
+        onChange={() => { }}
         className="!p-2 !border-grey-500 text-base bg-transparent text-grey-800"
       >
         <option value="">Sort By</option>
