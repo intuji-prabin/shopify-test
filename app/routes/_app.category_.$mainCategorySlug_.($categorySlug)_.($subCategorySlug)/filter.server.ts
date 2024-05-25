@@ -322,6 +322,16 @@ export const getFilterProduct = async (
     minPrice?.value,
     maxPrice?.value,
   );
+  if( !stockCode?.stockCodes || stockCode?.stockCodes.length < 1 ) return {
+    formattedData: {
+        // categorytitle : 
+        productList: [],
+    },
+    pageInfo: {
+      hasNextPage: false,
+      hasPreviousPage: false,
+    },
+  }
   // console.log('get stock code is ', stockCode);
   const productList = await getProducts(
     context,
