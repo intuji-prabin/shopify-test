@@ -7,11 +7,14 @@ interface FormDataObject {
   [key: string]: string | Blob;
 }
 
-export const getMyPromotionById = async (promotionId: string) => {
+export const getMyPromotionById = async (
+  promotionId: string,
+  customerId: string,
+) => {
   try {
     const results = await useFetch<PromotionType>({
       method: AllowedHTTPMethods.GET,
-      url: `${ENDPOINT.PROMOTION.GET_MYPROMOTION}/${promotionId}`,
+      url: `${ENDPOINT.PROMOTION.GET_MYPROMOTION}/${customerId}/${promotionId}`,
     });
 
     if (!results.status) {
@@ -30,6 +33,7 @@ export const getMyPromotionById = async (promotionId: string) => {
 export async function updatePromotion(
   formData: FormDataObject,
   bannerId: string,
+  customerId: string,
 ) {
   try {
     const fData = new FormData();
@@ -38,7 +42,7 @@ export async function updatePromotion(
     }
 
     const results: any = await fetch(
-      `${ENDPOINT.PROMOTION.GET_MYPROMOTION}/${bannerId}`,
+      `${ENDPOINT.PROMOTION.GET_MYPROMOTION}/${customerId}/${bannerId}`,
       {
         method: 'PATCH',
         body: fData,
