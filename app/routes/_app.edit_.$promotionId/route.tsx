@@ -35,6 +35,7 @@ import { getMyPromotionById, updatePromotion } from './edit-promotion.server';
 import { NumberPlusOnly } from '~/lib/constants/regex.constant';
 import FullPageLoading from '~/components/ui/fullPageLoading';
 import { useConditionalRender } from '~/hooks/useAuthorization';
+import { getUserDetails } from '~/lib/utils/user-session.server';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -85,16 +86,23 @@ export async function action({ request, params }: ActionFunctionArgs) {
   let formData = Object.fromEntries(data);
   formData = { ...formData };
   const bannerId = params.promotionId as string;
-  await updatePromotion(formData, bannerId);
+  const { userDetails } = await getUserDetails(request);
+
+  const customerId = userDetails.id;
+  await updatePromotion(formData, bannerId, customerId);
 
   return json({});
 }
 
-export async function loader({ params, context }: LoaderFunctionArgs) {
+export async function loader({ request, params, context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   try {
     const promotionId = params?.promotionId as string;
-    const response = await getMyPromotionById(promotionId);
+    const { userDetails } = await getUserDetails(request);
+
+    const customerId = userDetails.id;
+
+    const response = await getMyPromotionById(promotionId, customerId);
 
     if (response?.payload) {
       const results = response?.payload;

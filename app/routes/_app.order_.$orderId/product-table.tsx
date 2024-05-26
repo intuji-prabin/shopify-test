@@ -21,7 +21,7 @@ export function ProductTable({
     <div className="p-2 mt-6 bg-white">
       <DataTable table={table} columns={columns} />
       <Separator />
-      <div className="flex justify-between px-4 py-6">
+      <div className="flex flex-wrap justify-between gap-3 px-4 py-6">
         <article className="p-4 space-y-2 border bg-primary-50 border-grey-50">
           <h5>What’s next?</h5>
           <p className="font-medium text-grey-900">
@@ -33,7 +33,7 @@ export function ProductTable({
           </p>
         </article>
         <Can I="view" a="view_tracked_order_price">
-          <table className="w-48">
+          <table className='border-spacing-x-3.5 border-separate'>
             <tbody>
               <tr>
                 <th className="text-left">Subtotal</th>
