@@ -18,7 +18,7 @@ export const Routes = {
   SHIPPING_ADDRESS: '/shipping-address',
   ORDERS: '/order',
   INVOICES: '/invoices',
-  STATEMENTS: './statements',
+  STATEMENTS: '/statements',
   PROMOTIONS: '/promotions/available-promotion',
   MY_PROMOTIONS: '/promotions/my-promotion',
   CERTIFICATE_GENERATION: '/certificate-generation',

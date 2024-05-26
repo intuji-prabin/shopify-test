@@ -1,4 +1,5 @@
-const BASE_URL = 'http://170.64.130.119:3000/api'; //test 1
+// const BASE_URL = 'http://170.64.130.119:3000/api'; //test 1
+const BASE_URL = 'https://cig-backuat.webo.dev/api';
 
 export const ENDPOINT = {
   REPORT: {
@@ -72,6 +73,9 @@ export const ENDPOINT = {
     GET: `${BASE_URL}/invoices`,
     GET_INVOCIE_DETAIL: `${BASE_URL}/invoice`,
     EXPORT: `${BASE_URL}/download/invoice`,
+  },
+  STATEMENT: {
+    GET: `${BASE_URL}/statement`,
   },
   PROMO_CODE: {
     POST: `${BASE_URL}/promo-code`,
