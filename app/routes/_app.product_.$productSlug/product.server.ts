@@ -10,7 +10,7 @@ import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {emitter3} from '~/lib/utils/emitter.server';
 import {EVENTS} from '~/lib/constants/events.contstent';
 import {StockStatus} from '~/routes/_app.cart-list/order-my-products/use-column';
-import { USER_SESSION_ID } from '~/lib/utils/auth-session.server';
+import {USER_SESSION_ID} from '~/lib/utils/auth-session.server';
 
 export interface relatedProductsType {
   productId: string;
@@ -37,6 +37,10 @@ export interface ProductType {
   description: string;
   warranty: string;
   inventory: StockStatus;
+  productRank: string;
+  shortDescription: string;
+  brandImage: string;
+  productType: string;
   supplier: string;
   specification: string;
   packageContent: string;
@@ -113,7 +117,6 @@ export async function getProductDetails(customerId: string, handle: string) {
     if (!response?.status) {
       throw new Error(response?.message);
     }
-
     const finalResponse = await formatResponse(response?.payload);
     return finalResponse;
   } catch (error) {
@@ -165,6 +168,10 @@ const formatResponse = async (response: ProductType) => {
       currency: response?.currency,
       categoryUrl: response?.categoryUrl,
       inventory: response.inventory,
+      productRank: response.productRank,
+      shortDescription: response?.shortDescription,
+      brandImage: response?.brandImage,
+      productType: response?.productType,
     },
     productTab: {
       description: response?.description === 'N/A' ? '' : response?.description,
@@ -257,7 +264,7 @@ export const addProductToCart = async (
       type: 'cart',
       totalNumber: finalCartLine.lineItems,
       customerId: userDetails.id,
-      session: userSessionId
+      session: userSessionId,
     },
   });
   return true;

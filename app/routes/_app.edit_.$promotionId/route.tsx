@@ -62,11 +62,7 @@ const EditFormValidator = z.object({
         return true;
       }, 'Max file size is 15MB.'),
   ),
-  companyPhone: z.string().min(1, { message: 'Company Phone is required' }).trim()
-    .refine(
-      (value) => NumberPlusOnly.test(value),
-      'Phone Number must only contain numbers and +',
-    ),
+  companyPhone: z.string().min(1, { message: 'Company Phone is required' }),
   company_name: z.string().min(1, { message: 'Company Name is required' }),
   company_email: z.string().min(1, { message: 'Company Email is required' }).email({ message: 'Invalid email address' }),
   company_domain: z.string().min(1, { message: 'Company Website is required' }),
@@ -255,7 +251,7 @@ const PromotionEdit = () => {
 
 
   return (
-    shouldRender &&(<div className="bg-grey-25">
+    shouldRender && (<div className="bg-grey-25">
       {isLoading && (
         <FullPageLoading description='The image is being processed. Please wait for few moments....' />
       )}

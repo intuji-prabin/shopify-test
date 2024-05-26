@@ -2,11 +2,10 @@ import {
   Outlet,
   isRouteErrorResponse,
   useLoaderData,
-  useRevalidator,
   useRouteError,
-  useSubmit,
+  useSubmit
 } from '@remix-run/react';
-import { ActionFunctionArgs, json, redirect } from '@remix-run/server-runtime';
+import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
 import { useEffect, useState } from 'react';
 import { useEventSource } from 'remix-utils/sse/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
@@ -16,8 +15,13 @@ import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav
 import TopHeader from '~/components/ui/layouts/top-header';
 import { useMediaQuery } from '~/hooks/useMediaQuery';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { EVENTS } from '~/lib/constants/events.contstent';
 import { Routes } from '~/lib/constants/routes.constent';
 import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
+import { AbilityContext, DEFAULT_ABILITIES } from '~/lib/helpers/Can';
+import {
+  defineAbilitiesForUser
+} from '~/lib/helpers/roles';
 import { USER_SESSION_ID, isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
@@ -25,25 +29,14 @@ import {
   setErrorMessage,
 } from '~/lib/utils/toast-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
-import { CustomerData } from '~/routes/_public.login/login.server';
+import { getProductGroup } from '~/routes/_app.pending-order/pending-order.server';
 import {
   getCagetoryList,
   getNewNotificationCount,
-  getOrderId,
   getSessionCart,
-  getSessionData,
+  getSessionData
 } from '~/routes/_app/app.server';
-import { getProductGroup } from '~/routes/_app.pending-order/pending-order.server';
-import { EVENTS } from '~/lib/constants/events.contstent';
-import {
-  defineAbilitiesForAdmin,
-  defineAbilitiesForUser,
-} from '~/lib/helpers/roles';
-import { AbilityContext, DEFAULT_ABILITIES } from '~/lib/helpers/Can';
-import { LOCAL_STORAGE_KEYS } from '~/lib/constants/general.constant';
-import StorageService from '~/services/storage.service';
-import { emitter } from '~/lib/utils/emitter.server';
-import { ro } from 'date-fns/locale';
+import { CustomerData } from '~/routes/_public.login/login.server';
 import { getFooter } from './footer.server';
 
 interface Payload {
@@ -352,6 +345,7 @@ const Layout = ({
           userDetails={userDetails}
           wishlistCount={wishlistCount}
           pendingOrderCount={pedingOrderCount}
+          notificationCount={notificationCount}
         />
       )}
       <div className="mb-12">{children}</div>

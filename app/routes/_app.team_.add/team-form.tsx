@@ -1,23 +1,23 @@
-import {withZod} from '@remix-validated-form/with-zod';
-import {useState} from 'react';
+import { withZod } from '@remix-validated-form/with-zod';
+import { useState } from 'react';
 import {
   ValidatedForm,
   useFormContext,
   useIsSubmitting,
 } from 'remix-validated-form';
-import {z} from 'zod';
-import {zfd} from 'zod-form-data';
-import {Button} from '~/components/ui/button';
+import { z } from 'zod';
+import { zfd } from 'zod-form-data';
+import { Button } from '~/components/ui/button';
 import ImageUploadInput from '~/components/ui/image-upload-input';
-import {Input} from '~/components/ui/input';
-import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
-import {Separator} from '~/components/ui/separator';
+import { Input } from '~/components/ui/input';
+import SelectInput, { SelectInputOptions } from '~/components/ui/select-input';
+import { Separator } from '~/components/ui/separator';
 import {
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE_MB,
 } from '~/lib/constants/form.constant';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {AUSTRALIAN_PHONENUMBER_VALIDATION_REGEX} from '~/lib/constants/regex.constant';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { AUSTRALIAN_PHONENUMBER_VALIDATION_REGEX } from '~/lib/constants/regex.constant';
 import { Can } from '~/lib/helpers/Can';
 
 type TeamFormProps = {
@@ -47,27 +47,27 @@ const EditTeamFormSchema = z.object({
         return true;
       }, 'Max file size is 15MB.'),
   ),
-  fullName: z.string().trim().min(1, {message: 'Full Name is required'}),
+  fullName: z.string().trim().min(1, { message: 'Full Name is required' }),
   email: z
     .string()
-    .min(1, {message: 'Email is required'})
+    .min(1, { message: 'Email is required' })
     .email()
     .trim()
     .toLowerCase(),
   phoneNumber: z
     .string()
-    .min(1, {message: 'Phone Number is required'})
+    .min(1, { message: 'Phone Number is required' })
     .trim()
     .refine(
       (value) => AUSTRALIAN_PHONENUMBER_VALIDATION_REGEX.test(value),
       'Invalid Phone Number',
     ),
-  address: z.string().min(1, {message: 'Address is required'}).trim(),
-  userRole: z.string().min(1, {message: 'User Role is required'}).trim(),
+  address: z.string().min(1, { message: 'Address is required' }).trim(),
+  userRole: z.string().min(1, { message: 'User Role is required' }).trim(),
   customerId: z.string(),
   addressId: z.string(),
 });
-const AddTeamFormSchema = EditTeamFormSchema.omit({customerId: true}).extend({
+const AddTeamFormSchema = EditTeamFormSchema.omit({ customerId: true }).extend({
   customerID: z.string().optional(),
 });
 
@@ -90,7 +90,7 @@ export default function TeamForm({
 
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
-  const {reset} = useFormContext('team-form');
+  const { reset } = useFormContext('team-form');
 
   const updatePermissions = (value: string) => {
     setSelectedRole(value);
@@ -161,44 +161,44 @@ export default function TeamForm({
       <Separator className="my-8" />
       <Can I="view" a="change_role">
 
-      <div className="grid gap-4 sm:grid-cols-4">
-        <div className="sm:col-start-1 sm:col-end-2">
-          <h4>User Roles</h4>
-          <p>Set the user roles, change teams</p>
-        </div>
-        <div className="sm:col-start-2 sm:col-end-5">
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div className="">
-              <label htmlFor="userRole">
-                Role <span className="required">*</span>
-              </label>
-              <SelectInput
-                name="userRole"
-                options={options}
-                label="select roles"
-                updatePermissions={(value: string) => updatePermissions(value)}
-              />
-            </div>
-            {selectedRole && (
-              <div className="p-6 bg-primary-50">
-                <h4 className="pb-4 capitalize">
-                  {selectedRole} role permissions
-                </h4>
-                <ul className="pl-5">
-                  {roles?.map((role) => (
-                    <li
-                      key={role.id}
-                      className="text-base font-normal list-disc text-grey-700"
-                    >
-                      {role.title}
-                    </li>
-                  ))}
-                </ul>
+        <div className="grid gap-4 sm:grid-cols-4">
+          <div className="sm:col-start-1 sm:col-end-2">
+            <h4>User Roles</h4>
+            <p>Set the user roles, change teams</p>
+          </div>
+          <div className="sm:col-start-2 sm:col-end-5">
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="">
+                <label htmlFor="userRole">
+                  Role <span className="required">*</span>
+                </label>
+                <SelectInput
+                  name="userRole"
+                  options={options}
+                  label="select roles"
+                  updatePermissions={(value: string) => updatePermissions(value)}
+                />
               </div>
-            )}
+              {selectedRole && (
+                <div className="p-6 bg-primary-50">
+                  <h4 className="pb-4 capitalize">
+                    {selectedRole} role permissions
+                  </h4>
+                  <ul className="pl-5">
+                    {roles?.map((role) => (
+                      <li
+                        key={role.id}
+                        className="text-base font-normal capitalize list-disc text-grey-700"
+                      >
+                        {role.title.replace(/_/g, ' ')}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
       </Can>
       {hasUnsavedChanges && (
         <div className="fixed inset-x-0 bottom-0 z-40 py-4 bg-primary-500">
