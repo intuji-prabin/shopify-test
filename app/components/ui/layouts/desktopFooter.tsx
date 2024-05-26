@@ -1,9 +1,11 @@
 import { Link } from '@remix-run/react';
 import Enquire from '~/components/icons/enquire';
 import Phone from '~/components/icons/phone';
+import useDate from '~/hooks/useDate';
 import { Can } from '~/lib/helpers/Can';
 
 export default function DesktopFooter({ footerData }: { footerData: any }) {
+  const currentDate = useDate();
   return (
     <div className="bg-grey-900 ">
       <div className="container">
@@ -119,7 +121,7 @@ export default function DesktopFooter({ footerData }: { footerData: any }) {
         </div>
         <div className="flex flex-col-reverse items-center justify-center gap-6 py-4 pt-4 border border-t-2 border-b-0 border-grey-700 border-x-0 md:justify-between md:flex-row md:items-baseline ">
           <p className="text-base font-normal text-white">
-            Cigweld © 2024 All Rights Reserved
+            Cigweld © {currentDate.currentYear} All Rights Reserved
           </p>
           {/* <div className="text-base font-normal [&>*]:text-white flex gap-6 ">
             <p>Privacy Policy</p>

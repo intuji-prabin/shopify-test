@@ -84,8 +84,8 @@ export default function CategoriesPage() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-  
-  
+
+
   const shouldRender = useConditionalRender('view_categories');
 
   return (
@@ -104,7 +104,7 @@ export default function CategoriesPage() {
         className="container sticky top-0 hidden mt-0 sm:block bg-primary-25"
       >
         {categoriesDetail.length > 0 && (
-          <div className="flex items-center gap-3 py-4">
+          <div className="flex items-center gap-3 pt-4">
             {categoriesDetail?.map((category) => (
               <a
                 href={String(category?.category_id)}

@@ -17,6 +17,7 @@ import { getProductPriceByQty } from './product-detail';
 import { ProductInfoTable } from './productInfoTable';
 import { Can } from '~/lib/helpers/Can';
 import { StockStatusChip } from '~/components/ui/stock-status-chip';
+import { Separator } from '~/components/ui/separator';
 
 export default function ProductInformation({ product }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
@@ -37,29 +38,30 @@ export default function ProductInformation({ product }: any) {
         )}
 
         <ProductDetailsSection
-          productImageLength={product?.imageUrl?.length}
           productName={product?.title}
-          productId={product?.id}
-          productVariantId={product?.variantId}
           isFavorited={product?.liked}
           sku={'Sku'}
           skuUnits={product?.supplierSku}
           unitOfMeasurement={'Unit Of Measurement:'}
           box={product?.uom}
-          unitOfMeasure={product?.unitOfMeasure}
-          isInStock={false}
           defaultButton={'Default'}
           addToCart={'Add to cart'}
-          pickupStatus={'Pickup available at '}
-          pickupAddress={' SUPERCHEAP AUTO NZ PTY LTD'}
-          arrivalTime={'Usually ready in 4 hours'}
+          unitOfMeasure={product?.unitOfMeasure}
           priceRange={product?.priceRange}
           companyDefaultPrice={product?.companyDefaultPrice}
           originalPrice={product?.originalPrice}
+          productId={product?.id}
+          productVariantId={product?.variantId}
+          productImageLength={product?.imageUrl?.length}
           moq={product?.moq || 1}
           uomCode={product?.uomCode}
           currency={product?.currency}
           inventory={product?.inventory}
+          tags={product?.tags}
+          brandImage={product?.brandImage}
+          shortDescription={product?.shortDescription}
+          productType={product?.productType}
+          productRank={product?.productRank}
         />
       </div>
     </section>
@@ -74,11 +76,7 @@ const ProductDetailsSection = ({
   unitOfMeasurement,
   box,
   defaultButton,
-  isInStock,
   addToCart,
-  pickupStatus,
-  pickupAddress,
-  arrivalTime,
   unitOfMeasure,
   priceRange,
   companyDefaultPrice,
@@ -90,6 +88,11 @@ const ProductDetailsSection = ({
   uomCode,
   currency,
   inventory,
+  tags,
+  brandImage,
+  shortDescription,
+  productType,
+  productRank
 }: any) => {
   const [quantity, setQuantity] = useState(parseFloat(moq) || 1);
   const [UOM, setUOM] = useState(uomCode);
@@ -171,7 +174,9 @@ const ProductDetailsSection = ({
     >
       <div className="flex justify-between">
         <figure>
-          <img src="/cigweld-logo.png" alt="" className="max-h-7" />
+          {brandImage &&
+            <img src={brandImage} alt="brand" className="object-contain max-h-7" />
+          }
         </figure>
         {productPrice || originalPrice ?
           <ul className="flex gap-[7px]">
@@ -196,7 +201,33 @@ const ProductDetailsSection = ({
           </ul>
           : null}
       </div>
-      <h3 className="pt-4">{productName}</h3>
+      <div className='flex gap-x-4 pt-3.5 items-center'>
+        <h3>{productName}</h3>
+        {productRank &&
+          <p className='flex items-center justify-center h-8 font-bold rounded-full bg-secondary-500 min-w-8'>{productRank}</p>
+        }
+      </div>
+      {tags.length > 0 &&
+        <div className='flex flex-wrap mt-2 gap-x-1'>
+          <p className='text-sm font-semibold'>TAGS:</p>
+          <ul className='flex flex-wrap'>
+            {tags?.map((tagslist: string, index: number) => (
+              <li className='text-sm' key={index + 'tags'}>
+                {tagslist}
+                {index < tags.length - 1 && ','}
+              </li>
+            )
+            )}
+          </ul>
+        </div>
+      }
+      {productType &&
+        <div className='flex flex-wrap mt-2 gap-x-1'>
+          <p className='text-sm font-semibold'>TYPE:</p>
+          <p className='text-sm'>{productType}</p>
+        </div>
+      }
+      <Separator className='mt-4' />
       <div className="flex flex-col justify-between pt-4 sm:flex-row gap-y-2">
         <div className="flex flex-wrap gap-x-5 gap-y-2">
           <div className="flex items-center gap-1 text-base">
@@ -245,12 +276,13 @@ const ProductDetailsSection = ({
           </div>
         )}
       </Can>
-      <div className="flex gap-2 px-4 py-2 mt-6 border-l-4 border-r-0 bg-semantic-info-100 border-semantic-info-500 border-y-0">
+      <div className="flex gap-2 px-4 py-2 mt-3 border-l-4 border-r-0 bg-semantic-info-100 border-semantic-info-500 border-y-0">
         <CircleInformationMajor />
         <p className="text-base font-normal leading-[21px]">
           Price will change if you increase quantity of items.
         </p>
       </div>
+      {shortDescription && <p className='mt-4'>{shortDescription}</p>}
       {productPrice || originalPrice ?
         <div className="flex flex-col items-start gap-4 pt-6 sm:flex-row">
           <div>

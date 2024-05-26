@@ -19,11 +19,13 @@ export default function MobileNav({
   cartCount,
   wishlistCount,
   pendingOrderCount,
+  notificationCount,
 }: {
   userDetails: CustomerData;
   cartCount: number;
   wishlistCount: number;
   pendingOrderCount: number;
+  notificationCount: number;
 }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { isOpen, toggleMenu } = useHamburgerMenu();
@@ -75,6 +77,7 @@ export default function MobileNav({
                 cartCount={cartCount}
                 wishlistCount={wishlistCount}
                 pendingOrderCount={pendingOrderCount}
+                notificationCount={notificationCount}
               />
             </div>
             {/* menu navigation starts here */}
