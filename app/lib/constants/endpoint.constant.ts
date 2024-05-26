@@ -73,6 +73,9 @@ export const ENDPOINT = {
     GET_INVOCIE_DETAIL: `${BASE_URL}/invoice`,
     EXPORT: `${BASE_URL}/download/invoice`,
   },
+  STATEMENT: {
+    GET: `${BASE_URL}/statement`,
+  },
   PROMO_CODE: {
     POST: `${BASE_URL}/promo-code`,
   },

@@ -211,12 +211,13 @@ const ProductDetailsSection = ({
         <div className='flex flex-wrap mt-2 gap-x-1'>
           <p className='text-sm font-semibold'>TAGS:</p>
           <ul className='flex flex-wrap'>
-            {tags?.map((tagslist: string, index: number) => (
-              <li className='text-sm' key={index + 'tags'}>
-                {tagslist}
-                {index < tags.length - 1 && ','}
-              </li>
-            )
+            {tags?.map((tagslist: string, index: number) => {
+              return (
+                <li className='text-sm' key={index + 'tags'}>
+                  <div className='[&>*]:text-sm tag-list' dangerouslySetInnerHTML={{ __html: tagslist }}></div>
+                </li>
+              )
+            }
             )}
           </ul>
         </div>
@@ -282,7 +283,7 @@ const ProductDetailsSection = ({
           Price will change if you increase quantity of items.
         </p>
       </div>
-      {shortDescription && <p className='mt-4'>{shortDescription}</p>}
+      {shortDescription && <p className='mt-4' dangerouslySetInnerHTML={{ __html: shortDescription }}></p>}
       {productPrice || originalPrice ?
         <div className="flex flex-col items-start gap-4 pt-6 sm:flex-row">
           <div>
