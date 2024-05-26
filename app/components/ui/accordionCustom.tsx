@@ -33,8 +33,7 @@ const AccordionCustom = ({ accordionTitle, children, isOpen = false, setOpenAcco
         </span>
       </button>
       <div
-        className={` overflow-auto accordion__content ${isOpen ? 'block' : 'hidden'
-          }`}
+        className={` overflow-auto accordion__content ${isOpen ? 'slide-in' : 'slide-out'}`}
       >
         <div className="mb-4">{children}</div>
       </div>

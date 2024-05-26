@@ -34,7 +34,7 @@ export function NotificationNavbarMobile({
     {
       id: 4,
       icon: <NotificationIcon width={'20px'} height={'20px'} />,
-      url: Routes.NOTIFICATION,
+      url: Routes.NOTIFICATIONS_NEW,
       title: 'Notifications',
       notification: '3',
     },
