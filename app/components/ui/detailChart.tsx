@@ -199,7 +199,6 @@ const DetailChart = ({
           </div>
         </Can>
       </div>
-      <Separator className="mt-6" />
     </section>
   );
 };

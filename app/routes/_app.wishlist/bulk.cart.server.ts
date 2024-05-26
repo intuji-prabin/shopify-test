@@ -34,7 +34,6 @@ export const addedBulkCart = async (
       quantity: parseInt(cartInfo[`${id}_quantity`]),
     };
   });
-  // console.log('first', itemData);
   const data = await addProductToCart(
     {},
     accessTocken,

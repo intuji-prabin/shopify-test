@@ -107,13 +107,13 @@ const Carousel = (props: PropType) => {
               <LeftArrow />
             </button>
           </div>
-          <div className="absolute inset-x-0 text-center embla__dots bottom-3">
+          <div className="absolute inset-x-0 bottom-0 text-center embla__dots sm:bottom-1 lg:bottom-3">
             {scrollSnaps.map((_, index) => (
               <button
                 key={index}
                 onClick={() => scrollTo(index)}
                 type="button"
-                className={'w-2 sm:w-3 aspect-square mx-0.5 sm:mx-1 bg-grey-50 rounded-full embla__dot'.concat(
+                className={'w-1 sm:w-3 aspect-square mx-px sm:mx-1 bg-grey-50 rounded-full embla__dot'.concat(
                   index === selectedIndex
                     ? ' embla__dot--selected bg-secondary-500'
                     : '',

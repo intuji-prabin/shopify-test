@@ -1,8 +1,8 @@
-import {Link} from '@remix-run/react';
-import {CategoryType} from './route';
-import {Can} from '~/lib/helpers/Can';
+import { Link } from '@remix-run/react';
+import { CategoryType } from './route';
+import { Can } from '~/lib/helpers/Can';
 
-export function CategoryCard({category}: {category: CategoryType}) {
+export function CategoryCard({ category }: { category: CategoryType }) {
   const {
     category_id,
     title,
@@ -12,17 +12,19 @@ export function CategoryCard({category}: {category: CategoryType}) {
     identifier,
   } = category;
   return (
-    <section className="container pt-6 mt-0 category-wrap" id={category_id}>
+    <section className="container pt-10 mt-0 category-wrap" id={category_id}>
       <div className="grid md:grid-cols-4">
         <div className="p-6 md:col-span-1 bg-grey-50">
           <figure className="flex flex-col flex-wrap justify-between h-full">
-            <figcaption className="mb-20 space-y-4">
+            <figcaption className="mb-32 space-y-4">
               <h3 className="uppercase text-primary-500">{title}</h3>
               <p className="text-lg leading-5.5">{description}</p>
             </figcaption>
-            <div className="flex items-center justify-center w-full">
-              <img src={imageUrl} alt="category-image" />
-            </div>
+            {imageUrl !== "no" || !imageUrl &&
+              <div className="flex items-center justify-center w-full">
+                <img src={imageUrl} alt="category-image" />
+              </div>
+            }
           </figure>
         </div>
         <div className="grid md:col-start-2 md:col-end-5 sm:grid-cols-3 gap-x-6 bg-neutral-white">
