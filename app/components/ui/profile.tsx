@@ -1,16 +1,16 @@
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {CalendarIconBlue} from '../icons/calendar-icon';
-import {Designation} from '../icons/designation';
-import {Office} from '../icons/office';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { CalendarIconBlue } from '../icons/calendar-icon';
+import { Designation } from '../icons/designation';
+import { Office } from '../icons/office';
 import useDate from '~/hooks/useDate';
-import {CustomerData} from '~/routes/_public.login/login.server';
+import { CustomerData } from '~/routes/_public.login/login.server';
 
 type PropType = {
   sectionClass?: string;
   profileInfo?: CustomerData;
 };
 
-const Profile = ({sectionClass, profileInfo}: PropType) => {
+const Profile = ({ sectionClass, profileInfo }: PropType) => {
   function getGreeting() {
     const now = new Date();
     const hour = now.getHours();
@@ -38,7 +38,7 @@ const Profile = ({sectionClass, profileInfo}: PropType) => {
                   : DEFAULT_IMAGE.DEFAULT
               }
               alt="profile"
-              className="rounded-full w-full h-full object-cover"
+              className="object-cover w-full h-full rounded-full"
             />
           </div>
           <div className="text-center xs:space-y-1 xs:text-left">
@@ -50,18 +50,22 @@ const Profile = ({sectionClass, profileInfo}: PropType) => {
                 {profileInfo?.firstName} {profileInfo?.lastName}
               </h2>
               <div className="flex flex-wrap gap-x-6 gap-y-2 profile__details">
-                <div className="flex flex-wrap relative w-full xs:w-auto items-center gap-1 xs:after:content-[''] xs:after:bg-grey-100 xs:after:w-px xs:after:h-6 xs:after:absolute xs:after:-right-3 justify-center xs:justify-start">
-                  <Designation />
-                  <p className="text-base lg:text-lg lg:leading-[22px] font-medium text-grey-900 capitalize">
-                    {profileInfo?.meta?.user_role?.value}
-                  </p>
-                </div>
-                <div className="flex flex-wrap relative w-full xs:w-auto items-center gap-1 xs:after:content-[''] xs:after:bg-grey-100 xs:after:w-px xs:after:h-6 xs:after:absolute xs:after:-right-3 justify-center xs:justify-start">
-                  <Office />
-                  <p className="text-base lg:text-lg lg:leading-[22px] font-medium text-grey-900 capitalize">
-                    {profileInfo?.meta?.company_id?.value}
-                  </p>
-                </div>
+                {profileInfo?.meta?.user_role?.value &&
+                  <div className="flex flex-wrap relative w-full xs:w-auto items-center gap-1 xs:after:content-[''] xs:after:bg-grey-100 xs:after:w-px xs:after:h-6 xs:after:absolute xs:after:-right-3 justify-center xs:justify-start">
+                    <Designation />
+                    <p className="text-base lg:text-lg lg:leading-[22px] font-medium text-grey-900 capitalize">
+                      {profileInfo?.meta?.user_role?.value}
+                    </p>
+                  </div>
+                }
+                {profileInfo?.meta?.company_id?.name &&
+                  <div className="flex flex-wrap relative w-full xs:w-auto items-center gap-1 xs:after:content-[''] xs:after:bg-grey-100 xs:after:w-px xs:after:h-6 xs:after:absolute xs:after:-right-3 justify-center xs:justify-start">
+                    <Office />
+                    <p className="text-base lg:text-lg lg:leading-[22px] font-medium text-grey-900 capitalize">
+                      {profileInfo?.meta?.company_id?.name}
+                    </p>
+                  </div>
+                }
               </div>
             </div>
           </div>
