@@ -76,12 +76,12 @@ export default function Homepage() {
       ) : null}
       <Profile sectionClass="mt-10" profileInfo={data?.userDetails} />
       <CtaHome />
-      {Object.keys(data?.chartData?.finalAreaResponse).length !== 0 && <SpendCard data={data?.chartData?.finalAreaResponse} />}
-      {Object.keys(data?.chartData?.finalBarResponse).length !== 0 && <DetailChart
+      {Object.keys(data?.chartData?.finalAreaResponse)?.length !== 0 && <SpendCard data={data?.chartData?.finalAreaResponse} />}
+      {Object.keys(data?.chartData?.finalBarResponse)?.length !== 0 && <DetailChart
         barChartData={data?.chartData?.finalBarResponse}
       />}
       {/* {Object.keys(data?.expenditureData).length !== 0 && <ExpenditureCard doughnutChartData={data?.expenditureData} currency={data?.expenditureData?.currency} />} */}
-      {data?.expenditureData?.spending_by_product.length > 0 &&
+      {data?.expenditureData?.spending_by_product?.length > 0 &&
         <ProductTable productList={data?.expenditureData?.spending_by_product} currency={data?.expenditureData?.currency} />
       }
       {latestFiveInvoices.length > 0 &&
