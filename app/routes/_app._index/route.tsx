@@ -29,6 +29,7 @@ import { Routes } from '~/lib/constants/routes.constent';
 import { useMemo } from 'react';
 import ProductTable from './productTable';
 import { Separator } from '~/components/ui/separator';
+import { getNewNotificationCount } from '../_app/app.server';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Cigweld | Home' }];
@@ -48,13 +49,18 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     customerId,
     searchParams,
   });
+  const { totalNotifications } = await getNewNotificationCount({
+    customerId,
+    request,
+  });
 
   return json({
     slides,
     userDetails,
     chartData,
     expenditureData,
-    invoiceList
+    invoiceList,
+    totalNotifications
   });
 }
 
@@ -75,7 +81,7 @@ export default function Homepage() {
         <Carousel images={sliderData} sectionClass="mt-0 home-banner" />
       ) : null}
       <Profile sectionClass="mt-10" profileInfo={data?.userDetails} />
-      <CtaHome />
+      <CtaHome totalNotificationCount={data?.totalNotifications} />
       {Object.keys(data?.chartData?.finalAreaResponse)?.length !== 0 && <SpendCard data={data?.chartData?.finalAreaResponse} />}
       {Object.keys(data?.chartData?.finalBarResponse)?.length !== 0 && <DetailChart
         barChartData={data?.chartData?.finalBarResponse}
