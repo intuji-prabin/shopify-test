@@ -104,28 +104,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
-  try {
-    const { userDetails } = await getUserDetails(request);
-    const customerId = userDetails?.id;
-    const promotionId = params?.promotionId as string;
-    const response = await getPromotionById(promotionId, customerId);
-    if (response?.payload) {
-      const results = response?.payload;
-      return json({ results, promotionId });
-    }
-  } catch (error) {
-    if (error instanceof Error) {
-      console.log('err', error);
-      return (
-        <div className="flex items-center justify-center">
-          <div className="text-center">
-            <h1>Oops</h1>
-            <p>Something went wrong</p>
-          </div>
-        </div>
-      );
-    }
-    return <h1>Unknown Error</h1>;
+  const { userDetails } = await getUserDetails(request);
+  const customerId = userDetails?.id;
+  const promotionId = params?.promotionId as string;
+  const response = await getPromotionById(promotionId, customerId);
+  if (response?.payload) {
+    const results = response?.payload;
+    return json({ results, promotionId });
   }
 }
 
@@ -519,9 +504,27 @@ export function ErrorBoundary() {
   const error = useRouteError();
   if (isRouteErrorResponse(error)) {
     return (
-      <section className="container">
-        <h1 className="text-center uppercase">No data found</h1>
-      </section>
+      <div>
+        <h1>
+          {error.status} {error.statusText}
+        </h1>
+        <p>{error.data}</p>
+      </div>
     );
+  } else if (error instanceof Error) {
+    return (
+      <div className="container pt-6">
+        <div className="min-h-[400px] flex justify-center items-center ">
+          <div className="flex flex-col items-center gap-2">
+            <h3>Error has occured</h3>
+            <p className="leading-[22px] text-lg text-grey uppercase font-medium text-red-500">
+              {error?.message}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  } else {
+    return <h1>Unknown Error</h1>;
   }
 }

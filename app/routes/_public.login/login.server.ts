@@ -46,7 +46,7 @@ export async function getCustomerByEmail({email}: {email: string}) {
     method: AllowedHTTPMethods.GET,
     url: `${ENDPOINT.CUSTOMER.GET}?email=${email}`,
   });
-
+  console.log('Customer', customerResponse);
   if (!customerResponse.status) {
     throw new Error(customerResponse.message);
   }
@@ -65,7 +65,10 @@ export async function verifyLogin({email, password, context}: LoginParams) {
         },
       },
     );
-
+    console.log(
+      'Login successful',
+      customerAccessTokenCreate?.customerAccessToken,
+    );
     if (!customerAccessTokenCreate?.customerAccessToken?.accessToken) {
       throw new Error(customerAccessTokenCreate?.customerUserErrors[0].message);
     }
