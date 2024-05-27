@@ -5,7 +5,7 @@ import { Routes } from '~/lib/constants/routes.constent';
 export default function CompanyInfoHeader({ title }: { title: string }) {
   return (
     <div className="mb-4 flex flex-col gap-[6px]">
-      <BackButton title="Distributor Profile Management" />
+      <BackButton title="Distributor Profile" />
       <Breadcrumb>
         <BreadcrumbItem href={Routes.DISTRIBUTOR_INFO}>
           Distributor Information

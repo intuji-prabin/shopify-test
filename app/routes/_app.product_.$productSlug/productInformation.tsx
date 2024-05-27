@@ -62,6 +62,7 @@ export default function ProductInformation({ product }: any) {
           shortDescription={product?.shortDescription}
           productType={product?.productType}
           productRank={product?.productRank}
+          categories={product?.categories}
         />
       </div>
     </section>
@@ -92,7 +93,8 @@ const ProductDetailsSection = ({
   brandImage,
   shortDescription,
   productType,
-  productRank
+  productRank,
+  categories
 }: any) => {
   const [quantity, setQuantity] = useState(parseFloat(moq) || 1);
   const [UOM, setUOM] = useState(uomCode);
@@ -201,6 +203,21 @@ const ProductDetailsSection = ({
           </ul>
           : null}
       </div>
+      {categories.length > 0 &&
+        <div className='flex mt-2 gap-x-1'>
+          <p className='text-sm font-semibold'>CATEGORIES:</p>
+          <ul className='flex flex-wrap'>
+            {categories?.map((categorylist: { title: string; handle: string; categoryId: string; }, index: number) => {
+              return (
+                <li className='text-sm tag-list' key={index + 'tags'}>
+                  <Link to={categorylist?.handle} className='text-primary-500'>{categorylist?.title}</Link>
+                </li>
+              )
+            }
+            )}
+          </ul>
+        </div>
+      }
       <div className='flex gap-x-4 pt-3.5 items-center'>
         <h3>{productName}</h3>
         {productRank &&
@@ -208,13 +225,13 @@ const ProductDetailsSection = ({
         }
       </div>
       {tags.length > 0 &&
-        <div className='flex flex-wrap mt-2 gap-x-1'>
+        <div className='flex mt-2 gap-x-1'>
           <p className='text-sm font-semibold'>TAGS:</p>
           <ul className='flex flex-wrap'>
             {tags?.map((tagslist: string, index: number) => {
               return (
-                <li className='text-sm' key={index + 'tags'}>
-                  <div className='[&>*]:text-sm tag-list' dangerouslySetInnerHTML={{ __html: tagslist }}></div>
+                <li className='text-sm tag-list' key={index + 'tags'}>
+                  <div className='[&>*]:text-sm' dangerouslySetInnerHTML={{ __html: tagslist }}></div>
                 </li>
               )
             }
@@ -223,7 +240,7 @@ const ProductDetailsSection = ({
         </div>
       }
       {productType &&
-        <div className='flex flex-wrap mt-2 gap-x-1'>
+        <div className='flex mt-2 gap-x-1'>
           <p className='text-sm font-semibold'>TYPE:</p>
           <p className='text-sm'>{productType}</p>
         </div>
@@ -262,9 +279,6 @@ const ProductDetailsSection = ({
           />
         </div>
       </Can>
-      <p className="text-lg font-normal leading-[22px] pt-6">
-        Minimum Order ({moq})
-      </p>
       <Can I="view" a="view_product_price">
         {priceRange && priceRange.length > 0 && (
           <div className="w-full pt-4">
@@ -314,7 +328,7 @@ const ProductDetailsSection = ({
             </div>
             <p className="text-sm text-grey-700 pt-2.5 flex gap-x-1">
               <Info />
-              Minimum Order Quantity {moq || 1}
+              Minimum Order Quantity: {moq || 1}
             </p>
           </div>
           <div className="flex flex-col">

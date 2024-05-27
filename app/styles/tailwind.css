@@ -932,3 +932,7 @@ div[data-state='open'].fixed.inset-0 {
 .accordion__content.slide-out {
   animation: slideOut 0.65s forwards;
 }
+
+.tag-list:not(:last-child) > *:after {
+  content: ',';
+}

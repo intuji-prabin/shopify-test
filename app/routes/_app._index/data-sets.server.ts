@@ -252,6 +252,7 @@ export async function getExpenditureData(customerID: string) {
         expenditureData: {},
       };
     }
+    console.log('repsone', response?.payload);
     const finalResponse = await formatExpenditureResponse(response?.payload);
     return finalResponse;
   } catch (error) {
