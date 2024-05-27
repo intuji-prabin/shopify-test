@@ -350,8 +350,6 @@ export default function CartList() {
 
   const [updateCart, setUpdateCart] = useState(false);
   const [placeOrder, setPlaceOrder] = useState(result);
-
-  const data = useActionData<any>();
   return (
     <>
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
@@ -378,7 +376,6 @@ export default function CartList() {
               shippingAddresses={shippingAddresses}
               updateCart={updateCart}
               placeOrder={placeOrder}
-              data={data}
               promoCodeApplied={cartList?.promoCode}
               discountPrice={cartList?.discountPrice}
               discountMessage={cartList?.discountMessage}
