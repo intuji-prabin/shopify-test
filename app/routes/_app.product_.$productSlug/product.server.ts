@@ -71,7 +71,14 @@ export interface ProductType {
   categoryUrl: string;
   relatedProducts: relatedProductsType[];
   alternativeProduct: relatedProductsType[];
+  categories: Category[];
 }
+
+type Category = {
+  handle: string;
+  categoryId: string;
+  title: string;
+};
 
 type faqType = {
   question: string;
@@ -117,6 +124,7 @@ export async function getProductDetails(customerId: string, handle: string) {
     if (!response?.status) {
       throw new Error(response?.message);
     }
+
     const finalResponse = await formatResponse(response?.payload);
     return finalResponse;
   } catch (error) {
@@ -172,6 +180,7 @@ const formatResponse = async (response: ProductType) => {
       shortDescription: response?.shortDescription,
       brandImage: response?.brandImage,
       productType: response?.productType,
+      categories: response?.categories,
     },
     productTab: {
       description: response?.description === 'N/A' ? '' : response?.description,
