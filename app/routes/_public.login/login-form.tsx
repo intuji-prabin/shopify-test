@@ -6,6 +6,7 @@ import {Button} from '~/components/ui/button';
 import CheckboxInput from '~/components/ui/checkbox-input';
 import {Input} from '~/components/ui/input';
 import ValidatedFormPassword from '~/components/ui/validated-form-password';
+import {Routes} from '~/lib/constants/routes.constent';
 
 export const LoginFormFieldSchema = z.object({
   email: z
@@ -58,7 +59,7 @@ export default function LoginForm() {
                 className="mt-1"
               />
               <Link
-                to="/forget-password"
+                to={Routes.FORGOT_PASSWORD}
                 className="text-sm font-normal leading-normal underline text-grey-900"
               >
                 Forget Password ?
@@ -73,6 +74,12 @@ export default function LoginForm() {
           >
             log in
           </Button>
+          <Link
+            to={Routes.RESEND_ACTIVATION_LINK}
+            className="text-sm font-normal leading-normal underline text-grey-900 text-center"
+          >
+            Activation Link Expired ?
+          </Link>
         </ValidatedForm>
       </div>
     </div>
