@@ -80,7 +80,7 @@ export default function Homepage() {
       {Object.keys(data?.chartData?.finalBarResponse).length !== 0 && <DetailChart
         barChartData={data?.chartData?.finalBarResponse}
       />}
-      {Object.keys(data?.expenditureData).length !== 0 && <ExpenditureCard doughnutChartData={data?.expenditureData} currency={data?.expenditureData?.currency} />}
+      {/* {Object.keys(data?.expenditureData).length !== 0 && <ExpenditureCard doughnutChartData={data?.expenditureData} currency={data?.expenditureData?.currency} />} */}
       {data?.expenditureData?.spending_by_product.length > 0 &&
         <ProductTable productList={data?.expenditureData?.spending_by_product} currency={data?.expenditureData?.currency} />
       }
