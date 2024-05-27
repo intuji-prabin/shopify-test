@@ -1,9 +1,6 @@
 # Front End | Cigweld
 
-This is the front end for Cigweld, built using Hydrogen. Hydrogen is Shopify’s stack specifically designed for headless commerce, enabling highly customized and dynamic storefronts. It integrates seamlessly with [Remix](https://remix.run/), Shopify’s comprehensive full-stack web framework, providing a robust and efficient development experience.
-
-[Check out Hydrogen docs](https://shopify.dev/custom-storefronts/hydrogen)
-[Get familiar with Remix](https://remix.run/docs/en/main)
+This is the front end for Cigweld, built using Hydrogen. [Hydrogen](https://shopify.dev/custom-storefronts/hydrogen) is Shopify’s stack specifically designed for headless commerce, enabling highly customized and dynamic storefronts. It integrates seamlessly with [Remix](https://remix.run/), Shopify’s comprehensive full-stack web framework, providing a robust and efficient development experience.
 
 ## Getting started
 
