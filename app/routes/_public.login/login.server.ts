@@ -44,9 +44,8 @@ export function isUserActive(status: Metafield) {
 export async function getCustomerByEmail({email}: {email: string}) {
   const customerResponse = await useFetch<CustomerResponse>({
     method: AllowedHTTPMethods.GET,
-    url: `${ENDPOINT.CUSTOMER.GET}?email=${email}`,
+    url: `${ENDPOINT.CUSTOMER.GET}?email=${encodeURIComponent(email)}`,
   });
-  console.log('Customer', customerResponse);
   if (!customerResponse.status) {
     throw new Error(customerResponse.message);
   }
@@ -64,10 +63,6 @@ export async function verifyLogin({email, password, context}: LoginParams) {
           input: {email, password},
         },
       },
-    );
-    console.log(
-      'Login successful',
-      customerAccessTokenCreate?.customerAccessToken,
     );
     if (!customerAccessTokenCreate?.customerAccessToken?.accessToken) {
       throw new Error(customerAccessTokenCreate?.customerUserErrors[0].message);

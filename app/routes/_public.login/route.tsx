@@ -49,9 +49,7 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
     }
 
     const { email, password, rememberMe } = result.data;
-    console.log("email: ", email, password)
     const { accessToken } = await verifyLogin({ email, password, context });
-    console.log("accessToken: ", accessToken)
     if (!accessToken) return redirect(Routes.LOGIN);
 
     const customerData = await getCustomerByEmail({ email });
