@@ -186,7 +186,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         case 'order_delete': {
           try {
             res = await removeItemFromCart(finalData, context, request);
-            await promoCodeRemove(request);
+            await promoCodeRemove(request, false);
             setSuccessMessage(messageSession, 'Order deleted successfully');
             return json(
               {},
