@@ -186,6 +186,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         case 'order_delete': {
           try {
             res = await removeItemFromCart(finalData, context, request);
+            await promoCodeRemove(request, false);
             setSuccessMessage(messageSession, 'Order deleted successfully');
             return json(
               {},
@@ -259,7 +260,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
               'Some issue has occured while deleting promocode. Please try again later.',
             );
             return json(
-              {},
+              { status: res?.status, message: res?.message },
               {
                 headers: [
                   ['Set-Cookie', await context.session.commit({})],

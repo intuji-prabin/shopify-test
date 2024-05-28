@@ -59,7 +59,7 @@ export default function LoginForm() {
                 className="mt-1"
               />
               <Link
-                to={Routes.FORGOT_PASSWORD}
+                to={Routes.FORGET_PASSWORD}
                 className="text-sm font-normal leading-normal underline text-grey-900"
               >
                 Forget Password ?
