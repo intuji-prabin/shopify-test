@@ -38,15 +38,16 @@ export async function getPromotionById(
     });
 
     if (!results.status) {
-      throw new Response(results.message, {
-        status: 404,
-      });
+      throw new Error(results.message);
     }
     return results;
   } catch (error) {
-    throw new Error(
-      'Oops! Something went wrong. Please hold tight and try again in a little while. Thank you for your understanding.',
-    );
+    console.log('error: ', error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -80,8 +81,11 @@ export async function createPromotion(
     }
     return results;
   } catch (error) {
-    throw new Error(
-      'Oops! Something went wrong. Please hold tight and try again in a little while. Thank you for your understanding.',
-    );
+    console.log('error: ', error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error('An unknown error occurred');
+    }
   }
 }
