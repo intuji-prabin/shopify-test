@@ -53,7 +53,7 @@ export default function StatementDetailsPage() {
                     onClick={() =>
                         handleDownload({
                             url: statementDetails.files,
-                            headers: { 'x-api-key': PDF.SECRET_KEY },
+                            headers: { apiKey: PDF.SECRET_KEY },
                         })
                     }
                 >
