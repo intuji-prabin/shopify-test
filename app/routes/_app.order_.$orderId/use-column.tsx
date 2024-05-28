@@ -18,6 +18,12 @@ export function useColumn({
     () => {
       const baseColumns: ColumnDef<Product>[] = [
         {
+          accessorKey: 'itemLineNumber',
+          header: 'iScala Line Item ID',
+          enableSorting: false,
+          cell: (info) => info.getValue(),
+        },
+        {
           accessorKey: 'name',
           header: 'Product',
           enableSorting: false,

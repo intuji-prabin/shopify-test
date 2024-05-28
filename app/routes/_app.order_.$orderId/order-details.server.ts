@@ -49,6 +49,7 @@ export type OrderDetails = {
   totalExclGst: string;
   gst: string;
   discount: string;
+  iscalaOrderId: string;
   products: Product[];
 };
 
