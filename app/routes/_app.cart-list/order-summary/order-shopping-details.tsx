@@ -1,7 +1,7 @@
 import { useFetcher } from '@remix-run/react';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { Calendar } from '~/components/ui/calendar';
 import Loader from '~/components/ui/loader';
@@ -151,14 +151,18 @@ export function TextArea() {
     </div>
   );
 }
-export function PromoCode({ data, setPromoCode, promoCode, promoCodeApplied }: { data: { status: boolean, message: string }, setPromoCode: React.Dispatch<React.SetStateAction<string>>, promoCode: string, promoCodeApplied: string }) {
+export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
+  const [promoCode, setPromoCode] = useState(promoCodeApplied);
+  useEffect(() => {
+    setPromoCode(promoCodeApplied);
+  }, [promoCodeApplied]);
   const fetcher = useFetcher();
   return (
     <div className="flex flex-col gap-1">
       <p className="text-base text-normal leading-[21px] text-grey-800">
         Do you have any promocode?
       </p>
-      {promoCodeApplied || !!data?.status ? (
+      {promoCodeApplied ? (
         <fetcher.Form method="DELETE" onSubmit={(event) => {
           fetcher.submit(event.currentTarget);
           setPromoCode("");
@@ -169,7 +173,7 @@ export function PromoCode({ data, setPromoCode, promoCode, promoCodeApplied }: {
               className="grow bg-semantic-success-100 pointer-events-none !border-semantic-success-100"
               placeholder="Enter promo code here"
               name='promoCode'
-              value={promoCode}
+              value={promoCode ? promoCode : ''}
               disabled={fetcher.state === "submitting"}
             />
             <Button
@@ -200,7 +204,7 @@ export function PromoCode({ data, setPromoCode, promoCode, promoCodeApplied }: {
               className={`grow`}
               placeholder="Enter promo code here"
               name='promoCode'
-              value={promoCode}
+              value={promoCode ? promoCode : ''}
               onChange={(e) => setPromoCode(e?.target?.value)}
               disabled={fetcher.state === "submitting"}
               required

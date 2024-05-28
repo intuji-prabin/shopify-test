@@ -109,7 +109,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           }
           catch (error) {
             if (error instanceof Error) {
-              // console.log('this is err', error?.message);
+              console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
               return json(
                 {},
@@ -150,7 +150,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
             );
           } catch (error) {
             if (error instanceof Error) {
-              // console.log('this is err', error?.message);
+              console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
               return json(
                 { status: false, message: error?.message },
@@ -198,7 +198,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
             );
           } catch (error) {
             if (error instanceof Error) {
-              // console.log('this is err', error?.message);
+              console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
               return json(
                 {},
@@ -241,7 +241,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
             );
           } catch (error) {
             if (error instanceof Error) {
-              // console.log('this is err', error?.message);
+              console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
               return json(
                 { status: false, message: error?.message },
@@ -286,7 +286,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         );
       } catch (error) {
         if (error instanceof Error) {
-          // console.log('this is err', error?.message);
+          console.log('this is err', error?.message);
           setErrorMessage(messageSession, error?.message);
           return json(
             {},
@@ -350,8 +350,6 @@ export default function CartList() {
 
   const [updateCart, setUpdateCart] = useState(false);
   const [placeOrder, setPlaceOrder] = useState(result);
-
-  const data = useActionData<any>();
   return (
     <>
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
@@ -378,7 +376,6 @@ export default function CartList() {
               shippingAddresses={shippingAddresses}
               updateCart={updateCart}
               placeOrder={placeOrder}
-              data={data}
               promoCodeApplied={cartList?.promoCode}
               discountPrice={cartList?.discountPrice}
               discountMessage={cartList?.discountMessage}

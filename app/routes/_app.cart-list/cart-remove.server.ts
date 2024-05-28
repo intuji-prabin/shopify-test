@@ -6,6 +6,7 @@ import {emitter3} from '~/lib/utils/emitter.server';
 import {EVENTS} from '~/lib/constants/events.contstent';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import { USER_SESSION_ID } from '~/lib/utils/auth-session.server';
+import { promoCodeRemove } from './promoCodeRemove.server';
 
 export const removeItemFromCart = async (
   formData: any,
@@ -45,6 +46,7 @@ export const removeItemFromCart = async (
   const finalCartSession = useFormatCart(cartSession);
   context.session.set(CART_SESSION_KEY, finalCartSession);
   await getCartList(context, request, cartSession);
+  await promoCodeRemove(request);
 
   //this is use to emit notification for the cart on
     emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {

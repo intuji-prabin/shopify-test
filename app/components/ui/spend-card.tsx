@@ -14,7 +14,6 @@ import { Line } from 'react-chartjs-2';
 import { ClientOnly } from 'remix-utils/client-only';
 import useDate from '~/hooks/useDate';
 import { ArrowDown, ArrowUp } from './arrow';
-import { ResponseAreaDataType } from '~/routes/_app._index/data-sets.server';
 import { Can } from '~/lib/helpers/Can';
 
 ChartJS.register(
@@ -55,7 +54,7 @@ export const options = {
   },
 };
 
-const SpendCard = ({ data }: { data: ResponseAreaDataType }) => {
+const SpendCard = ({ data }: { data: any }) => {
   const currentDate = useDate();
   return (
     <section className="container">
