@@ -197,6 +197,7 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
       ) : (
         <fetcher.Form method="POST" onSubmit={(event) => {
           fetcher.submit(event.currentTarget);
+          setPromoCode("");
         }}>
           <div className="flex flex-col w-full gap-2 sm:flex-row">
             <input
