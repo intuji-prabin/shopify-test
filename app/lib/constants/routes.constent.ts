@@ -2,7 +2,7 @@ export const Routes = {
   HOME: '/',
   LOGIN: '/login',
   REGISTER: '/register',
-  FORGOT_PASSWORD: '/forgot-password',
+  FORGET_PASSWORD: '/forget-password',
   RESET_PASSWORD: '/reset-password',
   RESEND_ACTIVATION_LINK: '/resend-activation-link',
   CATEGORIES: '/categories',
