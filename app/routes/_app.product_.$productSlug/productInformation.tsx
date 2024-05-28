@@ -10,7 +10,7 @@ import {
 import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Price } from '~/components/ui/price';
-import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
+import { CART_QUANTITY_MAX, PRODUCT_MAX_PRICE } from '~/lib/constants/cartInfo.constant';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import CarouselThumb from './carouselThumb';
 import { getProductPriceByQty } from './product-detail';
@@ -181,7 +181,7 @@ const ProductDetailsSection = ({
             <img src={brandImage} alt="brand" className="object-contain max-h-7" />
           }
         </figure>
-        {productPrice || originalPrice ?
+        {productPrice && productPrice < PRODUCT_MAX_PRICE ?
           <ul className="flex gap-[7px]">
             <li className="w-[36px] h-[36px] flex justify-center items-center border-grey-50 border-[1px]">
               <Link to={`/product-comparison/${productId}`}>
@@ -274,7 +274,7 @@ const ProductDetailsSection = ({
           />
           <Price
             currency={currency}
-            price={originalPrice}
+            price={productPrice && productPrice < PRODUCT_MAX_PRICE ? originalPrice : 0}
             variant="rrp"
             className="relative"
           />
@@ -299,7 +299,7 @@ const ProductDetailsSection = ({
         </p>
       </div>
       {shortDescription && <p className='mt-4' dangerouslySetInnerHTML={{ __html: shortDescription }}></p>}
-      {productPrice || originalPrice ?
+      {productPrice && productPrice < PRODUCT_MAX_PRICE ?
         <div className="flex flex-col items-start gap-4 pt-6 sm:flex-row">
           <div>
             <div className="flex cart__list--quantity">

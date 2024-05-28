@@ -19,7 +19,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import { getAccessToken } from '~/lib/utils/auth-session.server';
+import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 
 export const loader = async ({
@@ -27,6 +27,7 @@ export const loader = async ({
   context,
   request,
 }: LoaderFunctionArgs) => {
+  await isAuthenticate(context);
   const productResponse = {} as any;
   const { userDetails } = await getUserDetails(request);
   if (params?.product1) {

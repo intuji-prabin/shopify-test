@@ -11,7 +11,7 @@ import {
   NormalizedPredictiveSearchResultItem,
 } from '~/routes/_app.predictive-search/route';
 import { CompareSearch } from '../icons/compareSearch';
-import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
+import { CART_QUANTITY_MAX, PRODUCT_MAX_PRICE } from '~/lib/constants/cartInfo.constant';
 import { Can } from '~/lib/helpers/Can';
 
 export type SearchVariant =
@@ -251,7 +251,7 @@ function renderProductItem(
               </p>
               <p className="text-2xl italic font-bold text-grey-900">
                 {product?.currency || '$'}
-                {product?.price}
+                {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? product?.price : "N/A"}
                 <span className="text-sm italic font-bold text-grey-500">
                   {' '}
                   (Excl. GST)
@@ -259,7 +259,7 @@ function renderProductItem(
               </p>
             </div>
           </div>
-          {product?.price ?
+          {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ?
             <div className="sm:w-[calc(33.33%_-_1rem)]">
               <div className="flex cart__list--quantity">
                 <button
@@ -371,7 +371,7 @@ function renderProductItem(
               </p>
               <p className="text-2xl italic font-bold text-grey-900">
                 {product?.currency || '$'}
-                {product?.price}
+                {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? product?.price : 'N/A'}
                 <span className="text-sm italic font-bold text-grey-500">
                   {' '}
                   (Excl. GST)
@@ -379,7 +379,7 @@ function renderProductItem(
               </p>
             </div>
           </div>
-          {product?.price ?
+          {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ?
             <div className="sm:w-[calc(33.33%_-_1rem)]">
               <div className="flex cart__list--quantity">
                 <button
@@ -513,7 +513,7 @@ function renderProductItem(
               </p>
               <p className="text-2xl italic font-bold text-grey-900">
                 {product?.currency || '$'}
-                {product?.price}
+                {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? product?.price : 'N/A'}
                 <span className="text-sm italic font-bold text-grey-500">
                   {' '}
                   (Excl. GST)
@@ -521,7 +521,7 @@ function renderProductItem(
               </p>
             </div>
           </div>
-          {product?.price ?
+          {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ?
             <div className="grid grid-cols-1 items-start gap-x-4 w-full gap-y-2 sm:grid-cols-2 sm:w-[calc(60%_-_1rem)]">
               <select
                 name="filter_by"
