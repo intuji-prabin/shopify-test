@@ -1,4 +1,5 @@
-import {TooltipInfo} from '../icons/orderStatus';
+import { PRODUCT_MAX_PRICE } from '~/lib/constants/cartInfo.constant';
+import { TooltipInfo } from '../icons/orderStatus';
 
 export const Price = ({
   currency,
@@ -15,9 +16,8 @@ export const Price = ({
     <div className={`space-y-0.5 ${className}`}>
       <div className="flex items-center gap-1">
         <p
-          className={`${
-            variant === 'base' ? 'text-semantic-success-500' : 'text-grey-300'
-          } text-base font-medium uppercase leading-[21px]`}
+          className={`${variant === 'base' ? 'text-semantic-success-500' : 'text-grey-300'
+            } text-base font-medium uppercase leading-[21px]`}
         >
           {variant === 'base' ? 'BUY PRICE' : 'rrp'}
         </p>
@@ -25,11 +25,10 @@ export const Price = ({
           <div className="flex items-center justify-center w-5 h-5 ">
             <div
               className="cursor-pointer"
-              data-tooltip={`${
-                variant === 'base'
-                  ? 'Buy Price is your account specific price, including all contracted prices or discounts'
-                  : 'Recommended retail price'
-              }`}
+              data-tooltip={`${variant === 'base'
+                ? 'Buy Price is your account specific price, including all contracted prices or discounts'
+                : 'Recommended retail price'
+                }`}
             >
               <span>
                 <TooltipInfo />
@@ -39,19 +38,17 @@ export const Price = ({
         </div>
       </div>
       <h3
-        className={`price leading-6 font-medium ${
-          variant === 'rrp' && 'text-grey-300'
-        }`}
+        className={`price leading-6 font-medium ${variant === 'rrp' && 'text-grey-300'
+          }`}
       >
         <span className="text-lg font-medium">
           {currency ? currency : '$'}{' '}
         </span>
-        {(price && price?.toFixed(2)) || 'N/A'}
+        {price && price < PRODUCT_MAX_PRICE ? price?.toFixed(2) : 'N/A'}
       </h3>
       <p
-        className={`text-sm leading-4 ${
-          variant === 'base' ? 'text-grey-500' : 'text-grey-300'
-        }`}
+        className={`text-sm leading-4 ${variant === 'base' ? 'text-grey-500' : 'text-grey-300'
+          }`}
       >
         {variant === 'base' ? '(Excl. GST)' : '(inc. GST)'}
       </p>
