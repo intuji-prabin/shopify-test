@@ -1,6 +1,6 @@
-import {withZod} from '@remix-validated-form/with-zod';
-import {ValidatedForm} from 'remix-validated-form';
 import {z} from 'zod';
+import {withZod} from '@remix-validated-form/with-zod';
+import {ValidatedForm, useIsSubmitting} from 'remix-validated-form';
 import {Button} from '~/components/ui/button';
 import {Input} from '~/components/ui/input';
 
@@ -23,9 +23,11 @@ export type ResendActivationLinkFormFieldNameType =
   keyof ResendActivationLinkFormType;
 
 export default function ResendActivationLinkForm() {
+  const isSubmitting = useIsSubmitting('resend-activation-link-form');
   return (
     <ValidatedForm
       method="post"
+      id="resend-activation-link-form"
       validator={ResendActivationLinkFormFieldValidator}
       className="flex flex-col gap-y-6"
     >
@@ -38,7 +40,12 @@ export default function ResendActivationLinkForm() {
           placeholder="email@example.com"
         />
       </div>
-      <Button type="submit" variant="primary" className="w-full">
+      <Button
+        type="submit"
+        variant="primary"
+        className="w-full"
+        disabled={isSubmitting}
+      >
         RESEND ACTIVATION LINK
       </Button>
     </ValidatedForm>

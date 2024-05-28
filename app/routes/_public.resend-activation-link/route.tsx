@@ -9,7 +9,7 @@ import {Alert, AlertDescription} from '~/components/ui/alert';
 import {ArrowLeftSmall} from '~/components/icons/arrowleft';
 import ResendActivationLinkForm, {
   ResendActivationLinkFormFieldValidator,
-} from './resend-activation-link-form';
+} from '~/routes/_public.resend-activation-link/resend-activation-link-form';
 import {getAccessToken} from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
@@ -20,6 +20,7 @@ import {
 import {validationError} from 'remix-validated-form';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {Routes} from '~/lib/constants/routes.constent';
+import {resendActivationLink} from '~/routes/_public.resend-activation-link/resend-activation-link.server';
 
 export async function loader({context}: LoaderFunctionArgs) {
   const accessToken = await getAccessToken(context);
@@ -31,10 +32,9 @@ export async function loader({context}: LoaderFunctionArgs) {
   return null;
 }
 
-/**
- * TO-DO : API Integration
- */
 export async function action({request, context}: ActionFunctionArgs) {
+  await getAccessToken(context);
+
   const messageSession = await getMessageSession(request);
   try {
     const result = await ResendActivationLinkFormFieldValidator.validate(
@@ -47,25 +47,22 @@ export async function action({request, context}: ActionFunctionArgs) {
 
     const {email} = result.data;
 
-    setSuccessMessage(messageSession, 'Email sent successfully');
+    const {status, message} = await resendActivationLink({email});
+
+    setSuccessMessage(messageSession, message);
 
     return json(
-      {status: 'OK', email: result.data.email},
+      {status, email},
       {
         headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
       },
     );
   } catch (error) {
     if (error instanceof Error) {
-      error.message.split(' ')[1] === 'Resetting'
-        ? setErrorMessage(
-            messageSession,
-            'Resetting password limit exceeded. Please try again later.',
-          )
-        : setErrorMessage(messageSession, error.message);
+      setErrorMessage(messageSession, error.message);
 
       return json(
-        {error},
+        {status: false, error: error.message},
         {
           headers: {
             'Set-Cookie': await messageCommitSession(messageSession),
@@ -77,7 +74,7 @@ export async function action({request, context}: ActionFunctionArgs) {
     setErrorMessage(messageSession, DEFAULT_ERRROR_MESSAGE);
 
     return json(
-      {error},
+      {status: false, error: DEFAULT_ERRROR_MESSAGE},
       {
         headers: {
           'Set-Cookie': await messageCommitSession(messageSession),
@@ -88,18 +85,18 @@ export async function action({request, context}: ActionFunctionArgs) {
 }
 
 export default function ResendActivationLinkPage() {
-  const data = useActionData<typeof action>();
+  const actionData = useActionData<{status: boolean; email: string}>();
   return (
     <div className="md:w-[398px] w-full min-h-[414px]">
       <div className="flex flex-col p-8 space-y-8 bg-white shadow-3xl">
         <div className="flex flex-col items-center justify-center gap-y-5">
           <h4>Activation Link Expired ?</h4>
         </div>
-        {data?.status ? (
+        {actionData?.status ? (
           <Alert className='border-0 rounded-none bg-semantic-info-100 before:content-[""] before:bg-semantic-info-500 before:inline-block before:h-full before:absolute before:w-1 before:left-0 before:top-0 py-2.5 [&>svg]:top-1/2 [&>svg]:-translate-y-1/2 [&>svg]:left-3'>
             <AlertDescription className="text-base !translate-y-0">
-              We’ve sent the activation link to your email ({data.email}) if it
-              has been registered with us.
+              We’ve sent the activation link to your email ({actionData.email})
+              if it has been registered with us.
             </AlertDescription>
           </Alert>
         ) : (
