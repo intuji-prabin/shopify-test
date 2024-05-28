@@ -7,6 +7,7 @@ import {
   Variants,
 } from '~/routes/_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/route';
 import { Can } from '~/lib/helpers/Can';
+import { PRODUCT_MAX_PRICE } from '~/lib/constants/cartInfo.constant';
 
 export function ProductCard({
   id,
@@ -32,7 +33,7 @@ export function ProductCard({
           featuredImageUrl={featuredImageUrl}
           imageBackgroundColor={imageBackgroundColor ?? ''}
           id={id}
-          visibility={defaultPrice || companyPrice ? true : false}
+          visibility={companyPrice && companyPrice < PRODUCT_MAX_PRICE ? true : false}
         />
         <ProductCardInfo
           sku={variants?.sku}
@@ -96,7 +97,7 @@ export function ProductCardInfo({
           <div className="pt-2">
             <Price currency={currency} price={companyPrice} />
             <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
-            <Price currency={currency} price={defaultPrice} variant="rrp" />
+            <Price currency={currency} price={companyPrice && companyPrice < PRODUCT_MAX_PRICE ? defaultPrice : 0} variant="rrp" />
           </div>
         </Can>
         <div className="sm:absolute bottom-4 inset-x-4">
@@ -106,7 +107,7 @@ export function ProductCardInfo({
             uom={uom}
             moq={moq}
             productVariantId={productVariantId}
-            visibility={defaultPrice || companyPrice ? true : false}
+            visibility={companyPrice && companyPrice < PRODUCT_MAX_PRICE ? true : false}
           />
         </div>
       </div>

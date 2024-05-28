@@ -3,6 +3,7 @@ import CloseMenu from '~/components/icons/closeMenu';
 import { Button } from '~/components/ui/button';
 import { PredictiveSearch } from '~/components/ui/predictive-search';
 import { Price } from '~/components/ui/price';
+import { PRODUCT_MAX_PRICE } from '~/lib/constants/cartInfo.constant';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 import { Can } from '~/lib/helpers/Can';
 
@@ -77,9 +78,9 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
           <div className="pt-2 pb-6">
             <Price currency={product1?.currency} price={product1?.companyPrice} />
             <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
-            <Price currency={product1?.currency} price={product1?.defaultPrice} variant="rrp" />
+            <Price currency={product1?.currency} price={product1?.companyPrice && product1?.companyPrice < PRODUCT_MAX_PRICE ? product1?.defaultPrice : 0} variant="rrp" />
             <Can I="view" a="add_to_cart">
-              {product1?.companyPrice || product1?.defaultPrice ?
+              {product1?.companyPrice && product1?.companyPrice < PRODUCT_MAX_PRICE ?
                 <Form method="post">
                   <input type="hidden" name="productId" value={product1?.id} />
                   <input type="hidden" name="productVariantId" value={product1?.productVariantId} />
@@ -142,9 +143,9 @@ export function ProductDetailDiv({ productDetails, clearSelectedProduct }: { pro
           <div className="pt-2 pb-6">
             <Price currency={productDetails?.currency} price={productDetails?.companyPrice} />
             <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
-            <Price currency={productDetails?.currency} price={productDetails?.defaultPrice} variant="rrp" />
+            <Price currency={productDetails?.currency} price={productDetails?.companyPrice && productDetails?.companyPrice < PRODUCT_MAX_PRICE ? productDetails?.defaultPrice : 0} variant="rrp" />
             <Can I="view" a="add_to_cart">
-              {productDetails?.companyPrice || productDetails?.defaultPrice ?
+              {productDetails?.companyPrice && productDetails?.companyPrice < PRODUCT_MAX_PRICE ?
                 <Form method="post">
                   <input type="hidden" name="productId" value={productDetails?.id} />
                   <input type="hidden" name="productVariantId" value={productDetails?.productVariantId} />
