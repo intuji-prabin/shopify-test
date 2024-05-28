@@ -1,4 +1,4 @@
-const BASE_URL = 'http://170.64.130.119:3000/api'; //test 1
+const BASE_URL = 'https://cig-backuat.webo.dev/api'; //test 1
 
 export const ENDPOINT = {
   REPORT: {
@@ -23,6 +23,7 @@ export const ENDPOINT = {
     UPDATE_STATUS: `${BASE_URL}/customer-status`,
     CREATE: `${BASE_URL}/customer`,
     UPDATE: `${BASE_URL}/customer-update`,
+    ACTIVATE: `${BASE_URL}/customer/activate`,
   },
   CUSTOMER_LIST: {
     GET: `${BASE_URL}/customer`,
