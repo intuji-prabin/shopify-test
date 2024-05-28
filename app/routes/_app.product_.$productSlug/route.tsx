@@ -143,7 +143,7 @@ export default function route() {
           alternateProduct={product.alternativeProduct}
         />
         {product?.relatedProducts?.length > 0 && (
-          <section className="bg-white mt-0 border-[1px] border-grey-50 py-12">
+          <section className="bg-white py-12">
             <div className="container">
               <h3 className="text-[30px] italic font-bold leading-[36px] mb-8 uppercase">
                 Similar Products

@@ -16,7 +16,7 @@ const ProductTable = ({ productList, currency }: { productList: any, currency: s
                             <span className='flex items-center justify-center w-12 h-12 bg-primary-200'>
                                 <Expenditure />
                             </span>
-                            <h4>Spending by products</h4>
+                            <h4>Spending by products | Top 10 products</h4>
                         </div>
                     </div>
                     <DataTable table={table} columns={columns} />

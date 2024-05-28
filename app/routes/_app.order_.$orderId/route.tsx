@@ -127,6 +127,7 @@ export default function OrderDetailPage() {
       <div className="bg-white p-6 flex flex-col gap-6">
         <OrderNumberDetails
           orderNumber={orderId}
+          iscalaOrderId={ordersProductDetails.iscalaOrderId}
           orderStatus={ordersProductDetails.orderStatus}
         />
         {displayOrderSteps && (

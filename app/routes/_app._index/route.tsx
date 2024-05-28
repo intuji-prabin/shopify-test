@@ -1,9 +1,10 @@
 import {
+  Await,
   Link,
+  defer,
   useLoaderData,
   type MetaFunction,
 } from '@remix-run/react';
-import { json } from '@remix-run/server-runtime';
 import { type LoaderFunctionArgs } from '@shopify/remix-oxygen';
 import { Expenditure } from '~/components/icons/expenditure';
 import Carousel from '~/components/ui/carousel';
@@ -26,7 +27,7 @@ import { useTable } from '~/hooks/useTable';
 import { useColumn } from './use-column';
 import { Button } from '~/components/ui/button';
 import { Routes } from '~/lib/constants/routes.constent';
-import { useMemo } from 'react';
+import { Suspense, useMemo } from 'react';
 import ProductTable from './productTable';
 import { Separator } from '~/components/ui/separator';
 import { getNewNotificationCount } from '../_app/app.server';
@@ -38,9 +39,9 @@ export const meta: MetaFunction = () => {
 export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   const { userDetails } = await getUserDetails(request);
+  const chartData = getChartData(userDetails?.id);
+  const expenditureData = getExpenditureData(userDetails?.id);
   const slides = await getSlides({ context });
-  const chartData = await getChartData(userDetails?.id);
-  const expenditureData = await getExpenditureData(userDetails?.id);
   const customerId = userDetails.id;
 
   const { searchParams } = new URL(request.url);
@@ -54,7 +55,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     request,
   });
 
-  return json({
+  return defer({
     slides,
     userDetails,
     chartData,
@@ -65,31 +66,54 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 }
 
 export default function Homepage() {
-  const data = useLoaderData<typeof loader>();
-  const sliderData = data?.slides;
+  const { slides, chartData,
+    expenditureData,
+    invoiceList, userDetails,
+    totalNotifications
+  } = useLoaderData<typeof loader>();
   const { columns } = useColumn();
 
   const latestFiveInvoices = useMemo(() => {
-    return data?.invoiceList.slice(0, 5)
-  }, [data?.invoiceList]);
+    return invoiceList.slice(0, 5)
+  }, [invoiceList]);
 
   const { table } = useTable(columns, latestFiveInvoices);
 
   return (
     <article className="home">
-      {data?.slides.length > 0 ? (
-        <Carousel images={sliderData} sectionClass="mt-0 home-banner" />
+      {slides.length > 0 ? (
+        <Carousel images={slides} sectionClass="mt-0 home-banner" />
       ) : null}
-      <Profile sectionClass="mt-10" profileInfo={data?.userDetails} />
-      <CtaHome totalNotificationCount={data?.totalNotifications} />
-      {Object.keys(data?.chartData?.finalAreaResponse)?.length !== 0 && <SpendCard data={data?.chartData?.finalAreaResponse} />}
-      {Object.keys(data?.chartData?.finalBarResponse)?.length !== 0 && <DetailChart
-        barChartData={data?.chartData?.finalBarResponse}
-      />}
-      {/* {Object.keys(data?.expenditureData).length !== 0 && <ExpenditureCard doughnutChartData={data?.expenditureData} currency={data?.expenditureData?.currency} />} */}
-      {data?.expenditureData?.spending_by_product?.length > 0 &&
-        <ProductTable productList={data?.expenditureData?.spending_by_product} currency={data?.expenditureData?.currency} />
-      }
+      <Profile sectionClass="mt-10" profileInfo={userDetails} />
+      <CtaHome totalNotificationCount={totalNotifications} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Await resolve={chartData} errorElement={<div></div>}>
+          {(resolvedValue) => {
+            return (<SpendCard data={resolvedValue?.finalAreaResponse} />)
+          }}
+        </Await>
+      </Suspense>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Await resolve={chartData} errorElement={<div></div>}>
+          {(resolvedValue) => {
+            return (<DetailChart barChartData={resolvedValue?.finalBarResponse} />)
+          }}
+        </Await>
+      </Suspense>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Await resolve={expenditureData} errorElement={<div></div>}>
+          {(resolvedValue) => {
+            return (<ExpenditureCard brand={resolvedValue?.expenditure_brands} category={resolvedValue?.expenditure_category} currency={resolvedValue?.currency} />)
+          }}
+        </Await>
+      </Suspense>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Await resolve={expenditureData} errorElement={<div></div>}>
+          {(resolvedValue) => {
+            return (<ProductTable productList={resolvedValue?.spending_by_product} currency={resolvedValue?.currency} />)
+          }}
+        </Await>
+      </Suspense>
       {latestFiveInvoices.length > 0 &&
         <section className="container">
           <Separator className="mt-6 " />

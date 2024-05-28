@@ -18,6 +18,7 @@ import { ProductInfoTable } from './productInfoTable';
 import { Can } from '~/lib/helpers/Can';
 import { StockStatusChip } from '~/components/ui/stock-status-chip';
 import { Separator } from '~/components/ui/separator';
+import { Routes } from '~/lib/constants/routes.constent';
 
 export default function ProductInformation({ product }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
@@ -210,7 +211,7 @@ const ProductDetailsSection = ({
             {categories?.map((categorylist: { title: string; handle: string; categoryId: string; }, index: number) => {
               return (
                 <li className='text-sm tag-list' key={index + 'tags'}>
-                  <Link to={categorylist?.handle} className='text-primary-500'>{categorylist?.title}</Link>
+                  <Link to={Routes.CATEGORIES} className='text-primary-500'>{categorylist?.title}</Link>
                 </li>
               )
             }

@@ -4,6 +4,7 @@ export const Routes = {
   REGISTER: '/register',
   FORGOT_PASSWORD: '/forgot-password',
   RESET_PASSWORD: '/reset-password',
+  RESEND_ACTIVATION_LINK: '/resend-activation-link',
   CATEGORIES: '/categories',
   TEAM: '/team',
   TEAM_ADD: '/team/add',

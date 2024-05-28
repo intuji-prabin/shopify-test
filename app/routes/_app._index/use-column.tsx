@@ -41,7 +41,7 @@ export function useSpendingByProductColumn(currency: string) {
                 cell: (info) => {
                     const product = info?.row?.original;
                     return (
-                        <p>{product?.recent_purchase_date}</p>
+                        <p>{product?.recent_purchase_date ? formatDateToLocaleDateString(product?.recent_purchase_date) : "N/A"}</p>
                     );
                 },
             },
@@ -52,7 +52,7 @@ export function useSpendingByProductColumn(currency: string) {
                 cell: (info) => {
                     const product = info?.row?.original;
                     return (
-                        <p>{product?.quantity}</p>
+                        <p>{product?.quantity ? product?.quantity : "N/A"}</p>
                     );
                 },
             },
@@ -63,7 +63,7 @@ export function useSpendingByProductColumn(currency: string) {
                 cell: (info) => {
                     const product = info?.row?.original;
                     return (
-                        <p>{currency}{product?.total_spending.toFixed(2)}</p>
+                        <p>{currency ? currency : "$"} {product?.total_spending ? product?.total_spending.toFixed(2) : "N/A"}</p>
                     );
                 },
             },
