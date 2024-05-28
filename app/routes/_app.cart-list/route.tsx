@@ -109,7 +109,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           }
           catch (error) {
             if (error instanceof Error) {
-              // console.log('this is err', error?.message);
+              console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
               return json(
                 {},
@@ -150,7 +150,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
             );
           } catch (error) {
             if (error instanceof Error) {
-              // console.log('this is err', error?.message);
+              console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
               return json(
                 { status: false, message: error?.message },
@@ -198,7 +198,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
             );
           } catch (error) {
             if (error instanceof Error) {
-              // console.log('this is err', error?.message);
+              console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
               return json(
                 {},
@@ -241,7 +241,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
             );
           } catch (error) {
             if (error instanceof Error) {
-              // console.log('this is err', error?.message);
+              console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
               return json(
                 { status: false, message: error?.message },
@@ -286,7 +286,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         );
       } catch (error) {
         if (error instanceof Error) {
-          // console.log('this is err', error?.message);
+          console.log('this is err', error?.message);
           setErrorMessage(messageSession, error?.message);
           return json(
             {},

@@ -2,7 +2,7 @@ import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 
-const formatAmount = (amount: number) => {
+export const formatAmount = (amount: number) => {
   return amount > 999 ? (amount / 1000).toFixed(2) + 'k' : amount;
 };
 
@@ -227,6 +227,7 @@ export async function getExpenditureData(customerID: string) {
     if (!response?.status) {
       throw new Error('Unexpected action');
     }
+    // console.log('first', response?.payload);
     const finalResponse = await formatExpenditureResponse(response?.payload);
     return finalResponse;
   } catch (error) {

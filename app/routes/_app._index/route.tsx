@@ -68,9 +68,9 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 export default function Homepage() {
   const { slides, chartData,
     expenditureData,
-    invoiceList, userDetails
+    invoiceList, userDetails,
+    totalNotifications
   } = useLoaderData<typeof loader>();
-  // const sliderData = data?.slides;
   const { columns } = useColumn();
 
   const latestFiveInvoices = useMemo(() => {
@@ -85,43 +85,35 @@ export default function Homepage() {
         <Carousel images={slides} sectionClass="mt-0 home-banner" />
       ) : null}
       <Profile sectionClass="mt-10" profileInfo={userDetails} />
-      <CtaHome totalNotificationCount={data?.totalNotifications} />
+      <CtaHome totalNotificationCount={totalNotifications} />
       <Suspense fallback={<div>Loading...</div>}>
-        <Await resolve={chartData} errorElement={<div className='container'>Error occurred</div>}>
+        <Await resolve={chartData} errorElement={<div></div>}>
           {(resolvedValue) => {
             return (<SpendCard data={resolvedValue?.finalAreaResponse} />)
           }}
         </Await>
       </Suspense>
       <Suspense fallback={<div>Loading...</div>}>
-        <Await resolve={chartData} errorElement={<div className='container'>Error occurred</div>}>
+        <Await resolve={chartData} errorElement={<div></div>}>
           {(resolvedValue) => {
             return (<DetailChart barChartData={resolvedValue?.finalBarResponse} />)
           }}
         </Await>
       </Suspense>
       <Suspense fallback={<div>Loading...</div>}>
-        <Await resolve={expenditureData} errorElement={<div className='container'>Error occurred</div>}>
+        <Await resolve={expenditureData} errorElement={<div></div>}>
           {(resolvedValue) => {
-            return (<ExpenditureCard doughnutChartData={resolvedValue?.expenditureData} currency={resolvedValue?.expenditureData?.currency} />)
+            return (<ExpenditureCard brand={resolvedValue?.expenditure_brands} category={resolvedValue?.expenditure_category} currency={resolvedValue?.currency} />)
           }}
         </Await>
       </Suspense>
       <Suspense fallback={<div>Loading...</div>}>
-        <Await resolve={chartData} errorElement={<div className='container'>Error occurred</div>}>
+        <Await resolve={expenditureData} errorElement={<div></div>}>
           {(resolvedValue) => {
-            return (<ProductTable productList={resolvedValue?.expenditureData?.spending_by_product} currency={resolvedValue?.expenditureData?.currency} />)
+            return (<ProductTable productList={resolvedValue?.spending_by_product} currency={resolvedValue?.currency} />)
           }}
         </Await>
       </Suspense>
-      {/* {Object.keys(data?.chartData?.finalAreaResponse)?.length !== 0 && <SpendCard data={data?.chartData?.finalAreaResponse} />}
-      {Object.keys(data?.chartData?.finalBarResponse)?.length !== 0 && <DetailChart
-        barChartData={data?.chartData?.finalBarResponse}
-      />} */}
-      {/* {Object.keys(data?.expenditureData).length !== 0 && <ExpenditureCard doughnutChartData={data?.expenditureData} currency={data?.expenditureData?.currency} />} */}
-      {/* {data?.expenditureData?.spending_by_product?.length > 0 &&
-        <ProductTable productList={data?.expenditureData?.spending_by_product} currency={data?.expenditureData?.currency} />
-      } */}
       {latestFiveInvoices.length > 0 &&
         <section className="container">
           <Separator className="mt-6 " />
