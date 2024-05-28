@@ -44,7 +44,7 @@ export function isUserActive(status: Metafield) {
 export async function getCustomerByEmail({email}: {email: string}) {
   const customerResponse = await useFetch<CustomerResponse>({
     method: AllowedHTTPMethods.GET,
-    url: `${ENDPOINT.CUSTOMER.GET}?email=${encodeURIComponent(email)}`,
+    url: `${ENDPOINT.CUSTOMER.GET}?email=${email}`,
   });
   if (!customerResponse.status) {
     throw new Error(customerResponse.message);
