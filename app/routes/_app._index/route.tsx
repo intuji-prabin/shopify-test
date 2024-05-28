@@ -30,7 +30,7 @@ import { Routes } from '~/lib/constants/routes.constent';
 import { Suspense, useMemo } from 'react';
 import ProductTable from './productTable';
 import { Separator } from '~/components/ui/separator';
-import { Divide } from 'lucide-react';
+import { getNewNotificationCount } from '../_app/app.server';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Cigweld | Home' }];
@@ -50,13 +50,18 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     customerId,
     searchParams,
   });
+  const { totalNotifications } = await getNewNotificationCount({
+    customerId,
+    request,
+  });
 
   return defer({
     slides,
     userDetails,
     chartData,
     expenditureData,
-    invoiceList
+    invoiceList,
+    totalNotifications
   });
 }
 
@@ -80,7 +85,7 @@ export default function Homepage() {
         <Carousel images={slides} sectionClass="mt-0 home-banner" />
       ) : null}
       <Profile sectionClass="mt-10" profileInfo={userDetails} />
-      <CtaHome />
+      <CtaHome totalNotificationCount={data?.totalNotifications} />
       <Suspense fallback={<div>Loading...</div>}>
         <Await resolve={chartData} errorElement={<div className='container'>Error occurred</div>}>
           {(resolvedValue) => {
