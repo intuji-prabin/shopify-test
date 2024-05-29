@@ -1,4 +1,5 @@
-const BASE_URL = 'http://170.64.130.119:3000/api'; //test 1
+// const BASE_URL = 'http://170.64.130.119:3000/api'; //test 1
+const BASE_URL = 'https://dynamics-comic-uh-images.trycloudflare.com/api'; //test 1
 
 
 export const ENDPOINT = {
