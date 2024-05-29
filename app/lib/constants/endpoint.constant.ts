@@ -1,4 +1,4 @@
-const BASE_URL = 'https://cig-backuat.webo.dev/api'; // Live
+const BASE_URL = 'https://expiration-curtis-sol-editorial.trycloudflare.com/api'; // Live
 
 export const ENDPOINT = {
   REPORT: {
