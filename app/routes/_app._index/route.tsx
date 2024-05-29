@@ -14,7 +14,7 @@ import ExpenditureCard from '~/components/ui/expenditureCard';
 import Profile from '~/components/ui/profile';
 import SpendCard from '~/components/ui/spend-card';
 import { Can } from '~/lib/helpers/Can';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { USER_SESSION_ID, isAuthenticate } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import {
   getChartData,
@@ -27,10 +27,13 @@ import { useTable } from '~/hooks/useTable';
 import { useColumn } from './use-column';
 import { Button } from '~/components/ui/button';
 import { Routes } from '~/lib/constants/routes.constent';
-import { Suspense, useMemo } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import ProductTable from './productTable';
 import { Separator } from '~/components/ui/separator';
 import { getNewNotificationCount } from '../_app/app.server';
+import { Handlers, Payload } from '../_app/route';
+import { useEventSource } from 'remix-utils/sse/react';
+import { EVENTS } from '~/lib/constants/events.contstent';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Cigweld | Home' }];
@@ -38,11 +41,14 @@ export const meta: MetaFunction = () => {
 
 export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
+  const { session } = context;
+
   const { userDetails } = await getUserDetails(request);
   const chartData = getChartData(userDetails?.id);
   const expenditureData = getExpenditureData(userDetails?.id);
   const slides = await getSlides({ context });
   const customerId = userDetails.id;
+  const userSessionId = session.get(USER_SESSION_ID);
 
   const { searchParams } = new URL(request.url);
 
@@ -61,7 +67,8 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     chartData,
     expenditureData,
     invoiceList,
-    totalNotifications
+    totalNotifications,
+    userSessionId
   });
 }
 
@@ -69,15 +76,56 @@ export default function Homepage() {
   const { slides, chartData,
     expenditureData,
     invoiceList, userDetails,
-    totalNotifications
+    totalNotifications,
+    userSessionId
   } = useLoaderData<typeof loader>();
   const { columns } = useColumn();
-
+  const [notificationCounts, setNotificationCounts] = useState(
+    totalNotifications | 0,
+  );
   const latestFiveInvoices = useMemo(() => {
     return invoiceList.slice(0, 5)
   }, [invoiceList]);
 
   const { table } = useTable(columns, latestFiveInvoices);
+
+  const hasNotificationBeenUpdated = useEventSource(
+    Routes.NOTIFICATIONS_SUBSCRIBE,
+    {
+      event: EVENTS.NOTIFICATIONS_UPDATED.NAME,
+    },
+  );
+
+  useEffect(() => {
+    if (typeof hasNotificationBeenUpdated === 'string') {
+      const parsedData = JSON.parse(hasNotificationBeenUpdated) as {
+        notificationData: {
+          payload: Payload;
+        };
+      };
+      const { type, totalNumber, companyId, sessionId } =
+        parsedData.notificationData.payload;
+      const handlers: Handlers = {
+        notification: () => {
+          const companyMeta = userDetails?.meta.company_id;
+
+          if (
+            (companyMeta?.companyId === companyId ||
+              companyMeta?.value === companyId) &&
+            userSessionId !== sessionId
+          ) {
+            setNotificationCounts(totalNumber);
+          }
+        },
+      };
+
+      const handler = handlers[type];
+      if (handler) {
+        handler();
+      }
+    }
+  }, [hasNotificationBeenUpdated]);
+
 
   return (
     <article className="home">
@@ -85,7 +133,7 @@ export default function Homepage() {
         <Carousel images={slides} sectionClass="mt-0 home-banner" />
       ) : null}
       <Profile sectionClass="mt-10" profileInfo={userDetails} />
-      <CtaHome totalNotificationCount={totalNotifications} />
+      <CtaHome totalNotificationCount={notificationCounts} />
       <Suspense fallback={<div>Loading...</div>}>
         <Await resolve={chartData} errorElement={<div></div>}>
           {(resolvedValue) => {
