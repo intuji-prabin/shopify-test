@@ -4,14 +4,14 @@ import {LoaderFunctionArgs} from '@remix-run/server-runtime';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {MetaFunction} from '@shopify/remix-oxygen';
 import {BackButton} from '~/components/ui/back-button';
-import { Can } from '~/lib/helpers/Can';
+import {Can} from '~/lib/helpers/Can';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Company Information'}];
 };
 export async function loader({context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
-  return {};
+  return null;
 }
 
 export default function CompanySettings() {
