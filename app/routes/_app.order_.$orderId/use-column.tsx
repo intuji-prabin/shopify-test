@@ -9,8 +9,10 @@ import {OrderStatus} from '~/routes/_app.order/order.server';
 
 export function useColumn({
   prefixWithCurrency,
+  isShippedProduct = false,
 }: {
   prefixWithCurrency(price: string): string;
+  isShippedProduct?: boolean;
 }) {
   const ability = useContext(AbilityContext);
 
@@ -85,7 +87,7 @@ export function useColumn({
                 {invoiceId}
               </Link>
             ) : (
-              'N/A'
+              <span className="text-center">{' - '}</span>
             );
           },
         },
@@ -100,7 +102,7 @@ export function useColumn({
       // Conditionally add the "Total" column if the user has the ability
       if (ability.can('view', 'view_tracked_order_price')) {
         baseColumns.push({
-          accessorKey: 'total',
+          accessorKey: isShippedProduct ? 'shippedTotalPrice' : 'total',
           header: 'Total',
           enableSorting: false,
           cell: (info) => {

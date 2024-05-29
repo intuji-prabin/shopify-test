@@ -54,7 +54,7 @@ export function OrderBreadcrumb({
       <div className="flex gap-2 items-center">
         <p className="text-lg italic font-bold leading-[22p-x]">
           {' '}
-          {products.length} items
+          {products.length} {products.length > 1 ? 'items' : 'item'}
         </p>
         <Can I="view" a="reorder_order">
           <Button
