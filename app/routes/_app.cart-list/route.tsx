@@ -1,6 +1,7 @@
 import {
   isRouteErrorResponse,
   useActionData,
+  useFetcher,
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
@@ -86,7 +87,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
             if (trackAnOrderResponse?.orderList.length > 0) {
               setErrorMessage(messageSession, "Purchase Order Number or Order Number already taken. Please use another one.");
               return json(
-                {},
+                { status: false, type: "PONO", message: "Purchase Order Number or Order Number already taken. Please use another one." },
                 {
                   headers: [
                     ['Set-Cookie', await context.session.commit({})],
@@ -138,28 +139,28 @@ export async function action({ request, context }: ActionFunctionArgs) {
           }
         }
         case 'promo_code': {
+          console.log("apply code")
           try {
             const promoCode = formData.get("promoCode") as string;
             res = await promoCodeApply(promoCode, context, request);
             setSuccessMessage(messageSession, res?.message);
             return json(
-              { status: res?.status, message: res?.message },
-              {
-                headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
-              },
+              { status: true, type: "success", message: res?.message, method: "POST" },
+              // {
+              //   headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+              // },
             );
           } catch (error) {
             if (error instanceof Error) {
               console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
               return json(
-                { status: false, message: error?.message },
-                {
-                  headers: [
-                    ['Set-Cookie', await context.session.commit({})],
-                    ['Set-Cookie', await messageCommitSession(messageSession)],
-                  ],
-                },
+                { status: false, type: "error", message: error?.message, method: "POST" },
+                // {
+                //   headers: [
+                //     ['Set-Cookie', await messageCommitSession(messageSession)],
+                //   ],
+                // },
               );
             }
             // console.log('this is err');
@@ -168,13 +169,12 @@ export async function action({ request, context }: ActionFunctionArgs) {
               'Some issue has occured while applying promocode. Please try again later.',
             );
             return json(
-              { status: res?.status, message: res?.message },
-              {
-                headers: [
-                  ['Set-Cookie', await context.session.commit({})],
-                  ['Set-Cookie', await messageCommitSession(messageSession)],
-                ],
-              },
+              { status: false, type: "error", message: res?.message, method: "POST" },
+              // {
+              //   headers: [
+              //     ['Set-Cookie', await messageCommitSession(messageSession)],
+              //   ],
+              // },
             );
           }
         }
@@ -228,30 +228,29 @@ export async function action({ request, context }: ActionFunctionArgs) {
           }
         }
         case 'promo_code_delete': {
+          console.log("remove code")
           try {
             res = await promoCodeRemove(request);
             setSuccessMessage(messageSession, res?.message);
             return json(
-              { status: false, message: res?.message },
-              {
-                headers: [
-                  ['Set-Cookie', await context.session.commit({})],
-                  ['Set-Cookie', await messageCommitSession(messageSession)],
-                ],
-              },
+              { status: false, type: "success", message: res?.message, method: "DELETE" },
+              // {
+              //   headers: [
+              //     ['Set-Cookie', await messageCommitSession(messageSession)],
+              //   ],
+              // },
             );
           } catch (error) {
             if (error instanceof Error) {
               console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
               return json(
-                { status: false, message: error?.message },
-                {
-                  headers: [
-                    ['Set-Cookie', await context.session.commit({})],
-                    ['Set-Cookie', await messageCommitSession(messageSession)],
-                  ],
-                },
+                { status: false, type: "error", message: res?.message, method: "DELETE" },
+                // {
+                //   headers: [
+                //     ['Set-Cookie', await messageCommitSession(messageSession)],
+                //   ],
+                // },
               );
             }
             // console.log('this is err');
@@ -260,13 +259,12 @@ export async function action({ request, context }: ActionFunctionArgs) {
               'Some issue has occured while deleting promocode. Please try again later.',
             );
             return json(
-              { status: res?.status, message: res?.message },
-              {
-                headers: [
-                  ['Set-Cookie', await context.session.commit({})],
-                  ['Set-Cookie', await messageCommitSession(messageSession)],
-                ],
-              },
+              { status: false, type: "error", message: res?.message, method: "DELETE" },
+              // {
+              //   headers: [
+              //     ['Set-Cookie', await messageCommitSession(messageSession)],
+              //   ],
+              // },
             );
           }
         }
@@ -351,6 +349,7 @@ export default function CartList() {
 
   const [updateCart, setUpdateCart] = useState(false);
   const [placeOrder, setPlaceOrder] = useState(result);
+  const actionData = useActionData<typeof action>();
   return (
     <>
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
@@ -381,6 +380,7 @@ export default function CartList() {
               discountPrice={cartList?.discountPrice}
               discountMessage={cartList?.discountMessage}
               totalPriceWithDiscount={cartList?.totalPriceWithDiscount}
+              actionData={actionData}
             />
           </div>
         </div>
@@ -403,16 +403,11 @@ export function ErrorBoundary() {
     );
   } else if (error instanceof Error) {
     return (
-      <div className="container pt-6">
-        <div className="min-h-[400px] flex justify-center items-center">
-          <div className="flex flex-col items-center gap-2">
-            <h3>Error has occured</h3>
-            <p className="leading-[22px] text-lg text-grey uppercase font-medium text-red-500">
-              {error?.message}
-            </p>
-          </div>
-        </div>
-      </div>
+      <>
+        <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
+        <UploadSearchbar searchVariant="cart" action="/bulkCsvUpload" />
+        <EmptyList />
+      </>
     );
   } else {
     return <h1>Unknown Error</h1>;

@@ -1,11 +1,13 @@
-import { useFetcher } from '@remix-run/react';
+import { Form, useFetcher, useNavigation, useSubmit } from '@remix-run/react';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { DangerAlert } from '~/components/icons/alert';
 import { Button } from '~/components/ui/button';
 import { Calendar } from '~/components/ui/calendar';
 import Loader from '~/components/ui/loader';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
+import { displayToast } from '~/components/ui/toast';
 import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
 import { Can } from '~/lib/helpers/Can';
 
@@ -114,7 +116,12 @@ export function DateDelivery() {
   );
 }
 
-export function PurchaseOrder() {
+export function PurchaseOrder({ actionData }: { actionData: { status: boolean, type: string, message: string } }) {
+  const [actionDataState, setActionDataState] = useState(actionData?.message);
+  useEffect(() => {
+    setActionDataState(actionData?.message);
+  }, [actionData]);
+
   return (
     <div className="flex flex-col gap-1 ">
       <label
@@ -133,7 +140,14 @@ export function PurchaseOrder() {
         pattern="[^' ']+"
         title="Purchase Order Number Or Order Number cannot have space."
         maxLength={30}
+        onChange={() => actionData?.message && setActionDataState("")}
       />
+      {actionData && actionDataState && actionData?.type === "PONO" &&
+        <p className={`pt-1 error-msg ${actionDataState ? "block" : "hidden"}`}>
+          <DangerAlert />
+          <span className="pl-1">{actionDataState}</span>
+        </p>
+      }
     </div>
   );
 }
@@ -156,13 +170,18 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
   useEffect(() => {
     setPromoCode(promoCodeApplied);
   }, [promoCodeApplied]);
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<{ status: boolean; type: "success" | "error"; message: string; method: "POST" | "DELETE" }>();
+  if (fetcher?.data?.message && fetcher?.state !== "idle" && fetcher?.state !== "submitting" && fetcher?.data?.type) {
+    displayToast({ message: fetcher?.data?.message, type: fetcher?.data?.type });
+  }
+  console.log("promoCode", promoCode)
+
   return (
     <div className="flex flex-col gap-1">
       <p className="text-base text-normal leading-[21px] text-grey-800">
         Do you have any promocode?
       </p>
-      {promoCodeApplied ? (
+      {fetcher?.data?.message && fetcher?.data?.status ? (
         <fetcher.Form method="DELETE" onSubmit={(event) => {
           fetcher.submit(event.currentTarget);
           setPromoCode("");
@@ -174,7 +193,7 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
               placeholder="Enter promo code here"
               name='promoCode'
               value={promoCode ? promoCode : ''}
-              disabled={fetcher.state === "submitting"}
+              disabled={fetcher.state === "submitting" || fetcher.state === "loading"}
             />
             <Button
               variant="secondary"
@@ -182,7 +201,7 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
               type='submit'
               value="promo_code_delete"
               name="action"
-              disabled={fetcher.state === "submitting"}
+              disabled={fetcher.state === "submitting" || fetcher.state === "loading"}
             >
               {fetcher.state === "submitting" ?
                 <div className="flex items-center justify-center h-full gap-2">
@@ -197,7 +216,6 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
       ) : (
         <fetcher.Form method="POST" onSubmit={(event) => {
           fetcher.submit(event.currentTarget);
-          setPromoCode("");
         }}>
           <div className="flex flex-col w-full gap-2 sm:flex-row">
             <input
@@ -206,8 +224,10 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
               placeholder="Enter promo code here"
               name='promoCode'
               value={promoCode ? promoCode : ''}
-              onChange={(e) => setPromoCode(e?.target?.value)}
-              disabled={fetcher.state === "submitting"}
+              onChange={(e) => {
+                setPromoCode(e?.target?.value);
+              }}
+              disabled={fetcher.state === "submitting" || fetcher.state === "loading"}
               required
             />
             <Button
@@ -215,7 +235,7 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
               className="min-w-[99px]"
               type='submit'
               value="promo_code"
-              disabled={fetcher.state === "submitting"}
+              disabled={fetcher.state === "submitting" || fetcher.state === "loading"}
               name="action"
             >
               {fetcher.state === "submitting" ?
@@ -229,7 +249,13 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
           </div>
         </fetcher.Form>
       )}
-      {promoCodeApplied && <p className="bg-semantic-success-100 uppercase text-xs py-1 px-2.5 font-semibold w-max">Discount HAS BEEN applied</p>}
+      {fetcher?.data?.message && !fetcher?.data?.status && fetcher?.data?.method === "POST" &&
+        <p className={`pt-1 error-msg ${fetcher?.data && promoCode ? "block" : "hidden"}`}>
+          <DangerAlert />
+          <span className="pl-1">{fetcher?.data?.message}</span>
+        </p>
+      }
+      {fetcher?.data?.message && fetcher?.data?.status && <p className="bg-semantic-success-100 uppercase text-xs py-1 px-2.5 font-semibold w-max">Discount HAS BEEN applied</p>}
     </div>
   );
 }
@@ -268,7 +294,7 @@ export function ShippingAddress({
   );
 }
 
-export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: any) {
+export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder, actionData }: any) {
   const addressList = shippingAddresses.addresses;
   const defaultAddress = shippingAddresses.defaultAddress;
   const mergedAddressList = [shippingAddresses.defaultAddress, ...shippingAddresses.addresses];
@@ -291,7 +317,7 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder }: a
       <div className="flex flex-col gap-4">
         <ShippingLocation addressList={addressList} mergedAddressList={mergedAddressList} defaultAddress1={defaultAddress1} defaultAddress2={defaultAddress2} defaultId={defaultAddress.id} defaultCountry={defaultAddress.country} defaultFax={defaultAddress.fax} defaultPhone={defaultAddress.phone} defaultZip={defaultAddress.zip} defaultCountryCodeV2={defaultAddress.countryCodeV2} />
         <DateDelivery />
-        <PurchaseOrder />
+        <PurchaseOrder actionData={actionData} />
         <TextArea />
       </div>
       {/* shipping location starts here */}
