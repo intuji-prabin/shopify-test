@@ -30,19 +30,11 @@ export function ProductTable({
   return (
     <>
       <div className="p-2 mt-6 bg-white">
+        <h5 className="not-italic px-4">Total Products:</h5>
         <DataTable table={table} columns={columns} />
         <Separator />
         <div className="flex flex-wrap justify-between gap-3 px-4 py-6">
-          <article className="p-4 space-y-2 border bg-primary-50 border-grey-50">
-            <h5>What’s next?</h5>
-            <p className="font-medium text-grey-900">
-              You product will be delivered on following steps.
-            </p>
-            <p className="font-medium text-grey-900">
-              Received {'>'} Processing {'>'} Order Picked {'>'} Dispatched{' '}
-              {'>'} Invoice Billing {'>'} In Transit {'>'} Delivered
-            </p>
-          </article>
+          <div></div>
           <Can I="view" a="view_tracked_order_price">
             <table className="border-spacing-x-3.5 border-separate">
               <tbody>
@@ -86,6 +78,7 @@ export function ProductTable({
         </div>
       </div>
       <div className="p-2 mt-6 bg-white">
+        <h5 className="not-italic px-4">Shipped Products:</h5>
         <DataTable
           table={shippedProductTable}
           columns={shippedProductColumns}

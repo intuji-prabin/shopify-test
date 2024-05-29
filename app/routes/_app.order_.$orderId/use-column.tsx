@@ -87,7 +87,7 @@ export function useColumn({
                 {invoiceId}
               </Link>
             ) : (
-              'N/A'
+              <span className="text-center">{' - '}</span>
             );
           },
         },
