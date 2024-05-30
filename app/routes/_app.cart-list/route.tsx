@@ -10,7 +10,7 @@ import {
   json,
   redirect,
 } from '@remix-run/server-runtime';
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import EmptyList from '~/components/ui/empty-list';
 import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
@@ -19,29 +19,29 @@ import {
   CART_QUANTITY_MAX,
   CART_SESSION_KEY,
 } from '~/lib/constants/cartInfo.constant';
-import { Routes } from '~/lib/constants/routes.constent';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import {Routes} from '~/lib/constants/routes.constent';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { getAllCompanyShippingAddresses } from '../_app.shipping-address/shipping-address.server';
-import { getOrderId } from '../_app/app.server';
-import { removeItemFromCart } from './cart-remove.server';
-import { cartUpdate } from './cart-update.server';
-import { getCartList } from './cart.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {getAllCompanyShippingAddresses} from '../_app.shipping-address/shipping-address.server';
+import {getOrderId} from '../_app/app.server';
+import {removeItemFromCart} from './cart-remove.server';
+import {cartUpdate} from './cart-update.server';
+import {getCartList} from './cart.server';
 import MyProducts from './order-my-products/cart-myproduct';
-import { placeOrder } from './order-place.server';
+import {placeOrder} from './order-place.server';
 import OrderSummary from './order-summary/cart-order-summary';
-import { promoCodeApply } from './promoCode.server';
-import { promoCodeRemove } from './promoCodeRemove.server';
+import {promoCodeApply} from './promoCode.server';
+import {promoCodeRemove} from './promoCodeRemove.server';
 
-export const loader = async ({ context, request }: LoaderFunctionArgs) => {
+export const loader = async ({context, request}: LoaderFunctionArgs) => {
   await isAuthenticate(context);
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
 
   const metaParentValue = userDetails.meta.parent.value;
 
@@ -63,28 +63,34 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   };
   await context.session.set(CART_SESSION_KEY, finalCartSession);
   return json(
-    { cartList, shippingAddresses },
+    {cartList, shippingAddresses},
     {
       headers: [['Set-Cookie', await context.session.commit({})]],
     },
   );
 };
 
-export async function action({ request, context }: ActionFunctionArgs) {
+export async function action({request, context}: ActionFunctionArgs) {
   const messageSession = await getMessageSession(request);
   let res;
   switch (request.method) {
     case 'POST':
       const formData = await request.formData();
-      switch (formData.get("action")) {
+      switch (formData.get('action')) {
         case 'place_order': {
           try {
-            const poNumber = formData.get("poNumber") as string;
-            const { userDetails } = await getUserDetails(request);
-            const trackAnOrderResponse = await getOrderId(poNumber, userDetails?.id);
+            const poNumber = formData.get('poNumber') as string;
+            const {userDetails} = await getUserDetails(request);
+            const trackAnOrderResponse = await getOrderId(
+              poNumber,
+              userDetails?.id,
+            );
 
             if (trackAnOrderResponse?.orderList.length > 0) {
-              setErrorMessage(messageSession, "Purchase Order Number or Order Number already taken. Please use another one.");
+              setErrorMessage(
+                messageSession,
+                'Purchase Order Number or Order Number already taken. Please use another one.',
+              );
               return json(
                 {},
                 {
@@ -97,7 +103,9 @@ export async function action({ request, context }: ActionFunctionArgs) {
             }
             res = await placeOrder(formData, request, context);
             // console.log("orderPlacedResponseFInal", res);
-            const shopifyID = res?.shopifyOrderId ? '/' + res?.shopifyOrderId : '';
+            const shopifyID = res?.shopifyOrderId
+              ? '/' + res?.shopifyOrderId
+              : '';
 
             setSuccessMessage(messageSession, 'Order placed successfully');
             return redirect(Routes.ORDER_SUCCESSFUL + shopifyID, {
@@ -106,8 +114,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
                 ['Set-Cookie', await messageCommitSession(messageSession)],
               ],
             });
-          }
-          catch (error) {
+          } catch (error) {
             if (error instanceof Error) {
               console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
@@ -139,13 +146,15 @@ export async function action({ request, context }: ActionFunctionArgs) {
         }
         case 'promo_code': {
           try {
-            const promoCode = formData.get("promoCode") as string;
+            const promoCode = formData.get('promoCode') as string;
             res = await promoCodeApply(promoCode, context, request);
             setSuccessMessage(messageSession, res?.message);
             return json(
-              { status: res?.status, message: res?.message },
+              {status: res?.status, message: res?.message},
               {
-                headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+                headers: [
+                  ['Set-Cookie', await messageCommitSession(messageSession)],
+                ],
               },
             );
           } catch (error) {
@@ -153,7 +162,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
               console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
               return json(
-                { status: false, message: error?.message },
+                {status: false, message: error?.message},
                 {
                   headers: [
                     ['Set-Cookie', await context.session.commit({})],
@@ -168,7 +177,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
               'Some issue has occured while applying promocode. Please try again later.',
             );
             return json(
-              { status: res?.status, message: res?.message },
+              {status: res?.status, message: res?.message},
               {
                 headers: [
                   ['Set-Cookie', await context.session.commit({})],
@@ -182,7 +191,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
       break;
     case 'DELETE':
       const finalData = await request.formData();
-      switch (finalData.get("action")) {
+      switch (finalData.get('action')) {
         case 'order_delete': {
           try {
             res = await removeItemFromCart(finalData, context, request);
@@ -232,7 +241,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
             res = await promoCodeRemove(request);
             setSuccessMessage(messageSession, res?.message);
             return json(
-              { status: false, message: res?.message },
+              {status: false, message: res?.message},
               {
                 headers: [
                   ['Set-Cookie', await context.session.commit({})],
@@ -245,7 +254,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
               console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
               return json(
-                { status: false, message: error?.message },
+                {status: false, message: error?.message},
                 {
                   headers: [
                     ['Set-Cookie', await context.session.commit({})],
@@ -260,7 +269,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
               'Some issue has occured while deleting promocode. Please try again later.',
             );
             return json(
-              { status: res?.status, message: res?.message },
+              {status: res?.status, message: res?.message},
               {
                 headers: [
                   ['Set-Cookie', await context.session.commit({})],
@@ -328,8 +337,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function CartList() {
-  const { cartList, shippingAddresses }: any = useLoaderData<typeof loader>();
-  const finalProductList = useSort({ items: cartList?.productList });
+  const {cartList, shippingAddresses}: any = useLoaderData<typeof loader>();
+  const finalProductList = useSort({items: cartList?.productList});
   const checkQuantityAgainstMOQ = (finalProductList: any) => {
     for (let item of finalProductList) {
       if (
@@ -356,7 +365,7 @@ export default function CartList() {
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
       <UploadSearchbar searchVariant="cart" action="/bulkCsvUpload" />
       {finalProductList?.length === 0 ? (
-        <EmptyList />
+        <EmptyList placeholder="cart" />
       ) : (
         <div className="container">
           <div className="flex flex-col flex-wrap items-start gap-6 my-6 xl:flex-row cart__list">
