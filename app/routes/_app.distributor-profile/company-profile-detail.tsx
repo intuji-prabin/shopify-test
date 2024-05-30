@@ -5,8 +5,8 @@ import {
   PhoneMajor,
   PrintMinor,
 } from '~/components/icons/orderStatus';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { CompanyProfile } from './company-profile.server';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {CompanyProfile} from '~/routes/_app.distributor-profile/company-profile.server';
 
 export default function CompanyProfileDetail({
   companyProfileDetails,

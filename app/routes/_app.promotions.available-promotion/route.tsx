@@ -120,32 +120,3 @@ export default function AvailablePromotionPage() {
     </div>
   );
 }
-
-export function ErrorBoundary() {
-  const error = useRouteError();
-
-  if (isRouteErrorResponse(error)) {
-    return (
-      <div>
-        <h1>
-          {error.status} {error.statusText}
-        </h1>
-        <p>{error.data}</p>
-      </div>
-    );
-  } else if (error instanceof Error) {
-    return (
-      <div className="flex justify-center items-center h-[220px] flex-col gap-2">
-        {' '}
-        <h4
-          className="text-center font-bold leading-[29px] text-2xl"
-          data-cy="not-found"
-        >
-          No promotions found
-        </h4>
-      </div>
-    );
-  } else {
-    return <h1>Unknown Error</h1>;
-  }
-}

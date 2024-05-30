@@ -27,10 +27,10 @@ const OrderFilterFormSchema = z.object({
       orderDateTo: z.string().trim().optional(),
     })
     .optional(),
-  estimatedDeliveryDateRange: z
+  estimateDateRange: z
     .object({
-      estimatedDeliveryDateFrom: z.string().trim().optional(),
-      estimatedDeliveryDateTo: z.string().trim().optional(),
+      estimateDateFrom: z.string().trim().optional(),
+      estimateDateTo: z.string().trim().optional(),
     })
     .optional(),
 });
@@ -61,13 +61,13 @@ export default function OrderFilterForm() {
     to: orderDateTo ? new Date(orderDateTo) : undefined,
   };
 
-  const estimatedDateFrom = searchParams.get('estimatedDeliveryDateFrom');
+  const estimateDateFrom = searchParams.get('estimateDateFrom');
 
-  const estimatedDateTo = searchParams.get('estimatedDeliveryDateTo');
+  const estimateDateTo = searchParams.get('estimateDateTo');
 
-  const defaultEstimatedDateRangeValues = {
-    from: estimatedDateFrom ? new Date(estimatedDateFrom) : undefined,
-    to: estimatedDateTo ? new Date(estimatedDateTo) : undefined,
+  const defaultEstimateDateRangeValues = {
+    from: estimateDateFrom ? new Date(estimateDateFrom) : undefined,
+    to: estimateDateTo ? new Date(estimateDateTo) : undefined,
   };
 
   return (
@@ -101,9 +101,9 @@ export default function OrderFilterForm() {
         <div className="p-6">
           <h5 className="pb-2">Estimated Delivery Date</h5>
           <DatePickerWithRange
-            fromFieldName="estimatedDeliveryDateFrom"
-            toFieldName="estimatedDeliveryDateTo"
-            dateRange={defaultEstimatedDateRangeValues}
+            fromFieldName="estimateDateFrom"
+            toFieldName="estimateDateTo"
+            dateRange={defaultEstimateDateRangeValues}
           />
         </div>
         <Separator />
