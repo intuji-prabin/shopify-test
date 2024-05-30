@@ -3,13 +3,13 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
-import { validationError } from 'remix-validated-form';
-import { BackButton } from '~/components/ui/back-button';
-import { addTeam } from '~/routes/_app.team_.add/add-team.server';
-import { isAuthenticate, isAuthorize } from '~/lib/utils/auth-session.server';
-import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
-import { Routes } from '~/lib/constants/routes.constent';
-import { SelectInputOptions } from '~/components/ui/select-input';
+import {validationError} from 'remix-validated-form';
+import {BackButton} from '~/components/ui/back-button';
+import {addTeam} from '~/routes/_app.team_.add/add-team.server';
+import {isAuthenticate, isAuthorize} from '~/lib/utils/auth-session.server';
+import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import {Routes} from '~/lib/constants/routes.constent';
+import {SelectInputOptions} from '~/components/ui/select-input';
 import TeamForm, {
   AddTeamFormSchemaValidator,
 } from '~/routes/_app.team_.add/team-form';
@@ -25,28 +25,29 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import { MetaFunction } from '@shopify/remix-oxygen';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { useConditionalRender } from '~/hooks/useAuthorization';
-import { getRoles } from '~/routes/_app.team/team.server';
+import {MetaFunction} from '@shopify/remix-oxygen';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {useConditionalRender} from '~/hooks/useAuthorization';
+import {getRoles} from '~/routes/_app.team/team.server';
+import {AddTeamError} from './add-team-error';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Add Team Member' }];
+  return [{title: 'Add Team Member'}];
 };
 
-export async function loader({ request, context }: LoaderFunctionArgs) {
+export async function loader({request, context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
 
   const currentUserRole = userDetails.meta.user_role.value;
 
-  const roles = await getRoles({ context, currentUserRole });
+  const roles = await getRoles({context, currentUserRole});
 
-  return json({ roles });
+  return json({roles});
 }
 
-export async function action({ request, context }: ActionFunctionArgs) {
+export async function action({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
 
   const messageSession = await getMessageSession(request);
@@ -60,7 +61,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
       return validationError(result.error);
     }
 
-    const { email, fullName, address, phoneNumber, userRole, profileImage } =
+    const {email, fullName, address, phoneNumber, userRole, profileImage} =
       result.data;
 
     const team = await addTeam({
@@ -94,12 +95,12 @@ export async function action({ request, context }: ActionFunctionArgs) {
       );
     }
 
-    return json({ error }, { status: 400 });
+    return json({error}, {status: 500});
   }
 }
 
 export default function AddTeam() {
-  const { roles } = useLoaderData<typeof loader>();
+  const {roles} = useLoaderData<typeof loader>();
 
   const shouldRender = useConditionalRender('add_customer');
 
@@ -125,23 +126,9 @@ export function ErrorBoundary() {
   const error = useRouteError();
 
   if (isRouteErrorResponse(error)) {
-    return (
-      <div>
-        <h1>
-          {error.status} {error.statusText}
-        </h1>
-        <p>{error.data}</p>
-      </div>
-    );
+    return <AddTeamError />;
   } else if (error instanceof Error) {
-    return (
-      <div className="flex items-center justify-center">
-        <div className="text-center">
-          <h1>Opps</h1>
-          <p>{error.message}</p>
-        </div>
-      </div>
-    );
+    return <AddTeamError errorMessage={error.message} />;
   } else {
     return <h1>Unknown Error</h1>;
   }

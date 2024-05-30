@@ -82,7 +82,7 @@ export async function getGroupDetails({
   searchParams: URLSearchParams;
 }) {
   try {
-    const baseUrl = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}fsdfs`;
+    const baseUrl = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
 
     const url = new URL(baseUrl);
 
