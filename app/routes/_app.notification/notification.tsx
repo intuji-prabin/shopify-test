@@ -15,7 +15,7 @@ function NotificationLink({notification}: {notification: Notification}) {
     }
     case 'PROMOTION': {
       return (
-        <Link to={`/customise/${notification.shopifyId}`}>
+        <Link to={`/promotions/available-promotion?id=${notification.shopifyId}`}>
           <button className="text-[14px] italic font-bold leading-6 uppercase border-t-0 border-2 border-x-0 border-b-primary-500 mb-[2px]">
             view
           </button>
