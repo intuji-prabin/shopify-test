@@ -30,7 +30,7 @@ export function ProductTable({
   return (
     <>
       <div className="p-2 mt-6 bg-white">
-        <h5 className="not-italic px-4">Total Products:</h5>
+        <h4 className="not-italic px-4">Total Products</h4>
         <DataTable table={table} columns={columns} />
         <Separator />
         <div className="flex flex-wrap justify-between gap-3 px-4 py-6">
@@ -78,7 +78,7 @@ export function ProductTable({
         </div>
       </div>
       <div className="p-2 mt-6 bg-white">
-        <h5 className="not-italic px-4">Shipped Products:</h5>
+        <h4 className="not-italic px-4">Shipped Products</h4>
         <DataTable
           table={shippedProductTable}
           columns={shippedProductColumns}

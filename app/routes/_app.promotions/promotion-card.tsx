@@ -53,11 +53,11 @@ const PromotionCard = ({
       </figure>
       <div className="p-4 space-y-4 bg-grey-25">
         <h5>{title}</h5>
-        <div className="grid grid-cols-1 gap-2 mxs:grid-cols-2">
+        <div className="flex gap-2 flex-col mxs:flex-row">
           <Dialog>
             <Can I="view" a="view_promotional_banners">
               <DialogTrigger asChild>
-                <Button type="button" variant="primary">
+                <Button type="button" variant="primary" className="grow">
                   View
                 </Button>
               </DialogTrigger>
@@ -82,7 +82,7 @@ const PromotionCard = ({
           </Dialog>
           {isExpired() ? (
             <button
-              className="flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-not-allowed text-grey-400 bg-grey-200"
+              className="flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-not-allowed text-grey-400 bg-grey-200 grow"
               disabled
             >
               Expired
@@ -91,7 +91,7 @@ const PromotionCard = ({
             <Can I="view" a="edit_promotions">
               <Link
                 to={`/edit/${id}`}
-                className="flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-pointer text-grey-900 border-primary-500 hover:bg-primary-100 disabled:border-none disabled:text-neutral-white disabled:bg-grey-50"
+                className="flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-pointer text-grey-900 border-primary-500 hover:bg-primary-100 disabled:border-none disabled:text-neutral-white disabled:bg-grey-50 grow"
               >
                 Edit
               </Link>
@@ -100,7 +100,7 @@ const PromotionCard = ({
             <Can I="view" a="customize_promotions">
               <Link
                 to={`/customise/${id}`}
-                className="flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-pointer text-grey-900 border-primary-500 hover:bg-primary-100 disabled:border-none disabled:text-neutral-white disabled:bg-grey-50"
+                className="flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-pointer text-grey-900 border-primary-500 hover:bg-primary-100 disabled:border-none disabled:text-neutral-white disabled:bg-grey-50 grow"
               >
                 customise
               </Link>
