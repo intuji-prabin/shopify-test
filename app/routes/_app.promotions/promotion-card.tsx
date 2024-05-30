@@ -1,5 +1,5 @@
-import {Link} from '@remix-run/react';
-import {useRef, useState} from 'react';
+import {Link, useLocation, useNavigate} from '@remix-run/react';
+import {useEffect, useRef, useState} from 'react';
 import {Button} from '~/components/ui/button';
 import {Dialog, DialogContent, DialogTrigger} from '~/components/ui/dialog';
 import {Can} from '~/lib/helpers/Can';
@@ -41,6 +41,32 @@ const PromotionCard = ({
   };
 
   const [renderedImageWidth, setRenderedImageWidth] = useState();
+  const location = useLocation();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+
+    if (params.get('id') === String(id)) {
+      setIsDialogOpen(true);
+    }
+  }, [location.search, id]);
+
+  const handleViewClick = () => {
+    const params = new URLSearchParams(location.search);
+    params.set('id', id.toString());
+    window.history.pushState({}, '', `${location.pathname}?${params.toString()}`);
+    setIsDialogOpen(true);
+  };
+  
+
+  const handleClosePreview = () => {
+    const params = new URLSearchParams(location.search);
+    params.delete('id');
+    window.history.pushState({}, '', `${location.pathname}`);
+    setIsDialogOpen(false);
+  };
+  
 
   return (
     <>
@@ -53,11 +79,18 @@ const PromotionCard = ({
       </figure>
       <div className="p-4 space-y-4 bg-grey-25">
         <h5>{title}</h5>
-        <div className="flex gap-2 flex-col mxs:flex-row">
-          <Dialog>
+        <div className="grid grid-cols-1 gap-2 mxs:grid-cols-2">
+          <Dialog
+            open={isDialogOpen}
+            onOpenChange={(isOpen) => !isOpen && handleClosePreview()}
+          >
             <Can I="view" a="view_promotional_banners">
               <DialogTrigger asChild>
-                <Button type="button" variant="primary" className="grow">
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={handleViewClick}
+                >
                   View
                 </Button>
               </DialogTrigger>

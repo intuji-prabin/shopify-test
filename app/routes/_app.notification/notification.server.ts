@@ -53,7 +53,7 @@ export async function getNotifications({url}: {url: string}) {
 export function urlBuilder(notification: Notification) {
   switch (notification.type) {
     case 'PROMOTION':
-      return `/customise/${notification.shopifyId}`;
+      return `/promotions/available-promotion?id=${notification.shopifyId}`;
 
     case 'ORDER':
       return `/order/${notification.shopifyId}`;
