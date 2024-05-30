@@ -1,5 +1,4 @@
 import {
-  Link,
   isRouteErrorResponse,
   json,
   useLoaderData,
@@ -28,7 +27,8 @@ import {getAllInvoices} from '~/routes/_app.invoices/invoices.server';
 import InvoicesFilterForm from '~/routes/_app.invoices/filter-form';
 import {ActionBar} from '~/routes/_app.invoices/action-bar';
 import {useConditionalRender} from '~/hooks/useAuthorization';
-import {Routes} from '~/lib/constants/routes.constent';
+import {InvoiceError} from '~/routes/_app.invoices/invoice-error';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Invoices List'}];
@@ -116,36 +116,10 @@ export function ErrorBoundary() {
   const error = useRouteError();
 
   if (isRouteErrorResponse(error)) {
-    return (
-      <div className="container order-error min-h-[calc(100vh_-_140px)] flex justify-center items-center">
-        <div className="space-y-2 text-center">
-          <h3>
-            {error.status} {error.statusText}
-          </h3>
-          <div className="space-y-5">
-            <p className="text-lg text-grey-800">{error.data}</p>
-            <Button className="mx-auto">
-              <Link to={Routes.INVOICES}>Got back to invoice</Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
+    return <InvoiceError />;
   } else if (error instanceof Error) {
-    return (
-      <div className="container order-error min-h-[calc(100vh_-_140px)] flex justify-center items-center">
-        <div className="space-y-2 text-center">
-          <h3>Something went wrong</h3>
-          <div className="space-y-5">
-            <p className="text-lg text-grey-800">{error.message}</p>
-            <Button className="mx-auto">
-              <Link to={Routes.INVOICES}>Got back to invoice</Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
+    return <InvoiceError errorMessage={error.message} />;
   } else {
-    return <h1>Unknown Error</h1>;
+    return <h1>{DEFAULT_ERRROR_MESSAGE}</h1>;
   }
 }

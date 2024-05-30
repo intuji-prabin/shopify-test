@@ -104,29 +104,3 @@ export default function PlaceAnOrderPage() {
     </>
   );
 }
-
-export function ErrorBoundary() {
-  const error = useRouteError();
-
-  if (isRouteErrorResponse(error)) {
-    return (
-      <div>
-        <h1>
-          {error.status} {error.statusText}
-        </h1>
-        <p>{error.data}</p>
-      </div>
-    );
-  } else if (error instanceof Error) {
-    return (
-      <div className="flex items-center justify-center">
-        <div className="text-center">
-          <h1>Opps</h1>
-          <p>{error.message}</p>
-        </div>
-      </div>
-    );
-  } else {
-    return <h1>Unknown Error</h1>;
-  }
-}

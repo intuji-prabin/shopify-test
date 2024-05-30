@@ -10,6 +10,8 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
+import {RouteError} from '~/components/ui/route-error';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Pending Order'}];
@@ -36,30 +38,4 @@ export default function PendingOrderPage() {
       <ProductGroupCardGrid productGroupList={productGroup} />
     </>
   );
-}
-
-export function ErrorBoundary() {
-  const error = useRouteError();
-
-  if (isRouteErrorResponse(error)) {
-    return (
-      <div>
-        <h1>
-          {error.status} {error.statusText}
-        </h1>
-        <p>{error.data}</p>
-      </div>
-    );
-  } else if (error instanceof Error) {
-    return (
-      <div className="flex items-center justify-center">
-        <div className="text-center">
-          <h1>Opps</h1>
-          <p>{error.message}</p>
-        </div>
-      </div>
-    );
-  } else {
-    return <h1>Unknown Error</h1>;
-  }
 }

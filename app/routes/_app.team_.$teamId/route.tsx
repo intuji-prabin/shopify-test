@@ -11,7 +11,7 @@ import {
   redirect,
 } from '@remix-run/server-runtime';
 import {MetaFunction} from '@shopify/remix-oxygen';
-import {ArrowLeft} from 'lucide-react';
+import {ArrowLeft, Edit} from 'lucide-react';
 import {validationError} from 'remix-validated-form';
 import {Button} from '~/components/ui/button';
 import {PageNotFound} from '~/components/ui/page-not-found';
@@ -43,6 +43,7 @@ import TeamForm, {
 } from '~/routes/_app.team_.add/team-form';
 import {getCustomerByEmail} from '~/routes/_public.login/login.server';
 import {getRoles} from '~/routes/_app.team/team.server';
+import {EditTeamError} from '~/routes/_app.team_.$teamId/edit-team-error';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Edit Team Member'}];
@@ -199,16 +200,9 @@ export function ErrorBoundary() {
   const error = useRouteError();
 
   if (isRouteErrorResponse(error)) {
-    return (
-      <div>
-        <h1>
-          {error.status} {error.statusText}
-        </h1>
-        <p>{error.data}</p>
-      </div>
-    );
+    return <EditTeamError />;
   } else if (error instanceof Error) {
-    return <PageNotFound />;
+    return <EditTeamError errorMessage={error.message} />;
   } else {
     return <h1>Unknown Error</h1>;
   }

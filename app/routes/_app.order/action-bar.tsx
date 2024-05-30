@@ -32,7 +32,7 @@ export function ActionBar({
 
     const downloadCSVLink = `${
       ENDPOINT.ORDERS.EXPORT
-    }/${customerId}?uniqueIds=${selectedItem.join(',')}`;
+    }/${customerId}?orderIds=${selectedItem.join(',')}`;
 
     handleDownload({
       url: downloadCSVLink,

@@ -30,7 +30,8 @@ import {
   useSearchParams,
 } from '@remix-run/react';
 import {Can} from '~/lib/helpers/Can';
-import { useConditionalRender } from '~/hooks/useAuthorization';
+import {useConditionalRender} from '~/hooks/useAuthorization';
+import {TicketError} from '~/routes/_app.support_.tickets/ticket-error';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Ticket List'}];
@@ -81,52 +82,53 @@ export default function TicketsPage() {
   }
   const shouldRender = useConditionalRender('ticket_operations');
 
-
   return (
-    shouldRender && (<section className="container">
-      <div className=" pt-6 pb-4 flex items-center justify-between">
-        <div>
-          <BackButton title="Tickets History" />
-          <Breadcrumb>
-            <BreadcrumbItem href="/support">Support</BreadcrumbItem>
-            <BreadcrumbItem href="/support/tickets" className="text-grey-900">
-              Tickets
-            </BreadcrumbItem>
-          </Breadcrumb>
+    shouldRender && (
+      <section className="container">
+        <div className=" pt-6 pb-4 flex items-center justify-between">
+          <div>
+            <BackButton title="Tickets History" />
+            <Breadcrumb>
+              <BreadcrumbItem href="/support">Support</BreadcrumbItem>
+              <BreadcrumbItem href="/support/tickets" className="text-grey-900">
+                Tickets
+              </BreadcrumbItem>
+            </Breadcrumb>
+          </div>
+          <Can I="view" a="open_ticket">
+            <Link to={Routes.SUPPORT_TICKETS_CREATE}>
+              <Button>Open A Ticket</Button>
+            </Link>
+          </Can>
         </div>
-        <Can I="view" a="open_ticket">
-          <Link to={Routes.SUPPORT_TICKETS_CREATE}>
-            <Button>Open A Ticket</Button>
-          </Link>
-        </Can>
-      </div>
-      <div className="flex gap-2 flex-col bg-neutral-white p-4 border-b sm:flex-row sm:justify-between sm:items-center">
-        <div className="sm:w-[451px]">
-          <SearchInput />
+        <div className="flex gap-2 flex-col bg-neutral-white p-4 border-b sm:flex-row sm:justify-between sm:items-center">
+          <div className="sm:w-[451px]">
+            <SearchInput />
+          </div>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" className="border-grey-50 relative">
+                <HorizontalHamburgerIcon />
+                Filter
+                {isFilterApplied && (
+                  <div className="bg-primary-500 h-3 w-3 rounded-full absolute top-0.5 right-0.5"></div>
+                )}
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="p-0">
+              <SheetHeader className="px-4 py-6">
+                <SheetTitle className="text-3xl font-bold">Filter</SheetTitle>
+              </SheetHeader>
+              <Separator className="" />
+              <TicketsFilterForm options={departmentOptions} />
+            </SheetContent>
+          </Sheet>
         </div>
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" className="border-grey-50 relative">
-              <HorizontalHamburgerIcon />
-              Filter
-              {isFilterApplied && (
-                <div className="bg-primary-500 h-3 w-3 rounded-full absolute top-0.5 right-0.5"></div>
-              )}
-            </Button>
-          </SheetTrigger>
-          <SheetContent className="p-0">
-            <SheetHeader className="px-4 py-6">
-              <SheetTitle className="text-3xl font-bold">Filter</SheetTitle>
-            </SheetHeader>
-            <Separator className="" />
-            <TicketsFilterForm options={departmentOptions} />
-          </SheetContent>
-        </Sheet>
-      </div>
-      <DataTable table={table} columns={columns} />
+        <DataTable table={table} columns={columns} />
 
-      <PaginationWrapper pageSize={PAGE_LIMIT} totalCount={totalCount} />
-    </section>)
+        <PaginationWrapper pageSize={PAGE_LIMIT} totalCount={totalCount} />
+      </section>
+    )
   );
 }
 
@@ -134,23 +136,9 @@ export function ErrorBoundary() {
   const error = useRouteError();
 
   if (isRouteErrorResponse(error)) {
-    return (
-      <div>
-        <h1>
-          {error.status} {error.statusText}
-        </h1>
-        <p>{error.data}</p>
-      </div>
-    );
+    return <TicketError />;
   } else if (error instanceof Error) {
-    return (
-      <div className="flex items-center justify-center">
-        <div className="text-center">
-          <h1>Opps</h1>
-          <p>{error.message}</p>
-        </div>
-      </div>
-    );
+    return <TicketError errorMessage={error.message} />;
   } else {
     return <h1>Unknown Error</h1>;
   }

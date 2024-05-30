@@ -49,6 +49,7 @@ export async function loader({request, context}: LoaderFunctionArgs) {
     url,
   });
 
+
   return json({notifications: notificationList, totalNotifications});
 }
 export async function action({request, context}: ActionFunctionArgs) {

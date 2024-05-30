@@ -43,7 +43,7 @@ export async function getAllCompanyShippingAddresses(customerId: string) {
     return response.payload;
   } catch (error) {
     if (error instanceof Error) {
-      return null;
+      throw new Error(error.message);
     }
     throw new Response(DEFAULT_ERRROR_MESSAGE, {status: 500});
   }
