@@ -113,26 +113,30 @@ export default function OrderInformation({
                 orderInformation.shipmentTrackingUrl ? (
                   <>
                     {orderInformation.shipmentDocumentUrl && (
-                      <Link
-                        to={orderInformation.shipmentDocumentUrl}
-                        className="bg-primary-500 p-2"
-                      >
-                        <CopyLink />
+                      <>
+                        <Link
+                          to={orderInformation.shipmentDocumentUrl}
+                          className="bg-primary-500 p-2"
+                        >
+                          <CopyLink />
+                        </Link>
                         <p className="font-normal text-base">
                           Shipment Document
                         </p>
-                      </Link>
+                      </>
                     )}
                     {orderInformation.shipmentTrackingUrl && (
-                      <Link
-                        to={orderInformation.shipmentTrackingUrl}
-                        className="bg-primary-500 p-2"
-                      >
-                        <CopyLink />
+                      <>
+                        <Link
+                          to={orderInformation.shipmentTrackingUrl}
+                          className="bg-primary-500 p-2"
+                        >
+                          <CopyLink />
+                        </Link>
                         <p className="font-normal text-base">
                           Shipment Tracking
                         </p>
-                      </Link>
+                      </>
                     )}
                   </>
                 ) : (

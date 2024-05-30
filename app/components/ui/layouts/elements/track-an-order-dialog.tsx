@@ -26,7 +26,7 @@ const TrackAnOrderFormValidator = z.object({
   trackAnOrderId: z
     .string()
     .trim()
-    .min(1, {message: 'Purchase Order Number or Order Number is required'}),
+    .min(1, {message: 'Purchase Order Number is required'}),
 });
 
 export const TrackAnOrderSchemaValidator = withZod(TrackAnOrderFormValidator);

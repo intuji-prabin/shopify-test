@@ -265,30 +265,3 @@ export default function MyPromotionsPage() {
     </div>
   );
 }
-
-export function ErrorBoundary() {
-  const error = useRouteError();
-
-  if (isRouteErrorResponse(error)) {
-    return (
-      <section className="container">
-        <h1 className="text-center uppercase">No data found</h1>
-      </section>
-    );
-  } else if (error instanceof Error) {
-    return (
-      <div className="flex justify-center items-center h-[220px] flex-col gap-2">
-        {' '}
-        <h4
-          className="text-center font-bold leading-[29px] text-2xl"
-          data-cy="not-found"
-        >
-          No promotions found
-        </h4>
-        <p className="text-lg leading-[22px]">Try editing promotions</p>
-      </div>
-    );
-  } else {
-    return <h1>Unknown Error</h1>;
-  }
-}
