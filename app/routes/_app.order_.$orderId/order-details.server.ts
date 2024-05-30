@@ -56,6 +56,8 @@ export interface OrderDetails {
   productSubTotal: string;
   productGST: string;
   productTotalPrice: string;
+  errorStatus: boolean;
+  errorMessage: string;
   products: Product[];
 }
 

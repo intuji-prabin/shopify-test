@@ -15,7 +15,7 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 }
 
 export default function PlaceAnOrderIndexPage() {
-  return <EmptyList />;
+  return <EmptyList placeholder="order" />;
 }
 
 export function ErrorBoundary() {
