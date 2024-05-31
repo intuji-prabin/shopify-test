@@ -937,6 +937,10 @@ div[data-state='open'].fixed.inset-0 {
   content: ',';
 }
 
+
 .tab-header .profile-wrap .profile-detail {
   width: calc(100% - 32px);
+}
+.expenditure__detail canvas {
+  @apply z-50 relative;
 }
