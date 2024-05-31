@@ -14,9 +14,9 @@ export function CategoryCard({ category }: { category: CategoryType }) {
   return (
     <section className="container pt-10 mt-0 category-wrap" id={category_id}>
       <div className="grid md:grid-cols-4">
-        <div className="p-6 md:col-span-1 bg-grey-50">
+        <div className="p-7 md:col-span-1 bg-grey-50">
           <figure className="flex flex-col flex-wrap justify-between h-full">
-            <figcaption className="mb-32 space-y-4">
+            <figcaption className="mb-40 space-y-4">
               <h3 className="uppercase text-primary-500">{title}</h3>
               <p className="text-lg leading-5.5">{description}</p>
             </figcaption>
@@ -29,7 +29,7 @@ export function CategoryCard({ category }: { category: CategoryType }) {
         </div>
         <div className="grid md:col-start-2 md:col-end-5 sm:grid-cols-3 gap-x-6 bg-neutral-white">
           {child_categories?.map((subCategoryItem) => (
-            <div className="p-6" key={subCategoryItem.id}>
+            <div className="p-7" key={subCategoryItem.id}>
               {subCategoryItem?.child_categories?.length > 0 ? (
                 <h4 className="mb-4">{subCategoryItem.title}</h4>
               ) : (
