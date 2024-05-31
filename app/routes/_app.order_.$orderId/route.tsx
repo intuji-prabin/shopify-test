@@ -129,9 +129,7 @@ export default function OrderDetailPage() {
       <div className="bg-white p-6 flex flex-col gap-6">
         {ordersProductDetails.errorStatus ? (
           <OrderInformationError
-            errorMessage={
-              "Order details couldn't be loaded. Please try again later."
-            }
+            errorMessage={ordersProductDetails.errorMessage}
           />
         ) : (
           <>

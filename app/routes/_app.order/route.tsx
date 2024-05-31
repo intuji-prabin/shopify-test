@@ -94,7 +94,14 @@ export async function action({request, context}: ActionFunctionArgs) {
         });
       } catch (error) {
         if (error instanceof Error) {
-          setErrorMessage(messageSession, error?.message);
+          if (error.message.includes('does not exist')) {
+            setErrorMessage(
+              messageSession,
+              'You can not reorder this item as it does not exist in the store anymore.',
+            );
+          } else {
+            setErrorMessage(messageSession, error.message);
+          }
           return json(
             {},
             {
