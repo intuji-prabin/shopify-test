@@ -184,12 +184,12 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
       <p className="text-base text-normal leading-[21px] text-grey-800">
         Do you have any promocode?
       </p>
-      {fetcher?.data?.message && fetcher?.data?.status ? (
+      {promoCodeApplied ? (
         <fetcher.Form method="DELETE" onSubmit={(event) => {
           fetcher.submit(event.currentTarget);
           setPromoCode("");
         }}>
-          <div className="flex flex-col w-full gap-2 sm:flex-row">
+          <div className="flex flex-col items-center w-full gap-2 sm:flex-row">
             <input
               type="text"
               className="grow bg-semantic-success-100 pointer-events-none !border-semantic-success-100"
@@ -209,24 +209,26 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
               {fetcher.state === "submitting" ?
                 <div className="flex items-center justify-center h-full gap-2">
                   <span>Removing</span>
-                  <Loader />
                 </div> :
                 "Remove"
               }
             </Button>
+            {fetcher.state === "submitting" || fetcher.state === "loading" ? <Loader /> : null}
           </div>
         </fetcher.Form>
       ) : (
         <fetcher.Form method="POST" onSubmit={(event) => {
           fetcher.submit(event.currentTarget);
         }}>
-          <div className="flex flex-col w-full gap-2 sm:flex-row">
+          <div className="flex flex-col items-center w-full gap-2 sm:flex-row">
             <input
               type="text"
               className={`grow`}
               placeholder="Enter promo code here"
               name='promoCode'
               value={promoCode ? promoCode : ''}
+              pattern=".*\S+.*"
+              title="Promo code cannot have only spaces."
               onChange={(e) => {
                 setPromoCode(e?.target?.value);
                 setPromoError(false);
@@ -245,11 +247,11 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
               {fetcher.state === "submitting" ?
                 <div className="flex items-center justify-center h-full gap-2">
                   <span>Applying</span>
-                  <Loader />
                 </div>
                 : "Apply"
               }
             </Button>
+            {fetcher.state === "submitting" || fetcher.state === "loading" ? <Loader /> : null}
           </div>
         </fetcher.Form>
       )}
@@ -259,7 +261,7 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
           <span className="pl-1">{fetcher?.data?.message}</span>
         </p>
       }
-      {fetcher?.data?.message && fetcher?.data?.status && <p className="bg-semantic-success-100 uppercase text-xs py-1 px-2.5 font-semibold w-max">Discount HAS BEEN applied</p>}
+      {promoCodeApplied && <p className="bg-semantic-success-100 uppercase text-xs py-1 px-2.5 font-semibold w-max">Discount HAS BEEN applied</p>}
     </div>
   );
 }

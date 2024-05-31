@@ -1,15 +1,15 @@
-import {useRef, useState} from 'react';
-import {TabletHamburger} from '~/components/icons/orderStatus';
+import { useRef, useState } from 'react';
+import { TabletHamburger } from '~/components/icons/orderStatus';
 
 import NavMenu from '../elements/mobile-navbar/nav-menu';
 import UserProfile from '../elements/mobile-navbar/user-profle';
 import OrderTrackMobile from '../elements/mobile-navbar/order-track';
 import LogoutForm from '../elements/mobile-navbar/logout-form';
-import {Button} from '../../button';
+import { Button } from '../../button';
 import CloseMenu from '~/components/icons/closeMenu';
-import {useOutsideClick} from '~/hooks/useOutsideClick';
+import { useOutsideClick } from '~/hooks/useOutsideClick';
 
-export default function TabletNavmenu() {
+export default function TabletNavmenu({ profileName, profileImage }: { profileName: string; profileImage: string }) {
   const [ishamburgerOpen, setIsHamburgerOpen] = useState(false);
   const tabletSectionRef = useRef<HTMLDivElement>(null);
   useOutsideClick(tabletSectionRef, () => setIsHamburgerOpen(false));
@@ -28,8 +28,8 @@ export default function TabletNavmenu() {
       {ishamburgerOpen ? (
         <div ref={tabletSectionRef}>
           <div className="absolute top-0 w-40 z-30 left-0 bg-primary-500 min-w-[300px]">
-            <div className="bg-grey-900 p-4 flex justify-between items-center">
-              <UserProfile user_name={'Neil de grass'} />
+            <div className="flex items-center justify-between p-4 bg-grey-900 tab-header">
+              <UserProfile user_name={profileName} image_url={profileImage} />
               <Button
                 className="bg-semantic-danger-500 p-1 hover:bg-semantic-danger-500 w-[28px] h-[28px]"
                 onClick={() => {
@@ -39,10 +39,10 @@ export default function TabletNavmenu() {
                 <CloseMenu fillColor="#fff" />
               </Button>
             </div>
-            <div className="bg-primary-500 p-4">
+            <div className="p-4 bg-primary-500">
               {' '}
               <NavMenu />
-              <div className="flex flex-col justify-between gap-52 mt-2">
+              <div className="flex flex-col justify-between mt-2 gap-52">
                 <OrderTrackMobile />
                 <LogoutForm />
               </div>
