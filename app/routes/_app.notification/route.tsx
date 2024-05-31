@@ -1,12 +1,16 @@
-import { NavLink, Outlet, useFetcher, useLocation } from '@remix-run/react';
-import { BackButton } from '~/components/ui/back-button';
-import ClearAllDialouge from './clear-all-dialouge-box';
-import { Routes } from '~/lib/constants/routes.constent';
-import { Separator } from '~/components/ui/separator';
-import { Button } from '~/components/ui/button';
-import { LoaderFunctionArgs, redirect } from '@remix-run/server-runtime';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
-
+import {
+  NavLink,
+  Outlet,
+  useFetcher,
+  useLocation,
+  useRouteLoaderData,
+} from '@remix-run/react';
+import {BackButton} from '~/components/ui/back-button';
+import {Routes} from '~/lib/constants/routes.constent';
+import {Separator} from '~/components/ui/separator';
+import {Button} from '~/components/ui/button';
+import {LoaderFunctionArgs, redirect} from '@remix-run/server-runtime';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 export type NotificationListItem = {
   id: string;
   date: string;
@@ -26,7 +30,7 @@ const routes = [
   },
 ];
 
-export async function loader({ context, request }: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
   const url = new URL(request.url);
@@ -39,7 +43,12 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 }
 
 export default function route() {
+  const {notificationCount} = useRouteLoaderData('routes/_app') as {
+    notificationCount: number;
+  };
+
   const location = useLocation();
+
   const fetcher = useFetcher();
 
   return (
@@ -62,29 +71,30 @@ export default function route() {
               <NavLink
                 key={route.link}
                 to={route.link}
-                className={({ isActive, isPending }) =>
+                className={({isActive, isPending}) =>
                   isPending
                     ? 'py-2 px-4 text-center border-b-[3px] border-b-transparent'
                     : isActive
-                      ? 'py-2 px-4 text-center border-b-[3px] text-primary-500 border-b-primary-500'
-                      : 'py-2  px-4 text-center border-b-[3px] border-b-transparent text-grey-400'
+                    ? 'py-2 px-4 text-center border-b-[3px] text-primary-500 border-b-primary-500'
+                    : 'py-2  px-4 text-center border-b-[3px] border-b-transparent text-grey-400'
                 }
               >
                 {route.name}
               </NavLink>
             ))}
           </div>
-          {location.pathname === Routes.NOTIFICATIONS_NEW && (
-            <fetcher.Form method="PUT" action={Routes.NOTIFICATIONS_NEW}>
-              <Button
-                type="submit"
-                variant="link"
-                className="before:!bottom-1.5 !px-1"
-              >
-                mark all as read
-              </Button>
-            </fetcher.Form>
-          )}
+          {location.pathname === Routes.NOTIFICATIONS_NEW &&
+            notificationCount > 0 && (
+              <fetcher.Form method="PUT" action={Routes.NOTIFICATIONS_NEW}>
+                <Button
+                  type="submit"
+                  variant="link"
+                  className="before:!bottom-1.5 !px-1"
+                >
+                  mark all as read
+                </Button>
+              </fetcher.Form>
+            )}
         </div>
         <Separator className="mb-6" />
         <Outlet />
