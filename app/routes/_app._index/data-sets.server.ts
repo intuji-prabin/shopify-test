@@ -227,7 +227,6 @@ export async function getExpenditureData(customerID: string) {
     if (!response?.status) {
       throw new Error('Unexpected action');
     }
-    // console.log('first', response?.payload);
     const finalResponse = await formatExpenditureResponse(response?.payload);
     return finalResponse;
   } catch (error) {
