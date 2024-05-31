@@ -167,12 +167,17 @@ export function TextArea() {
 }
 export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
   const [promoCode, setPromoCode] = useState(promoCodeApplied);
+  console.log("promoCodeApplied", promoCodeApplied);
   useEffect(() => {
     setPromoCode(promoCodeApplied);
   }, [promoCodeApplied]);
   const fetcher = useFetcher<{ status: boolean; type: "success" | "error"; message: string; method: "POST" | "DELETE" }>();
+  console.log("fetcher?.data?.type", fetcher?.data?.type)
   const [promoError, setPromoError] = useState(fetcher?.data?.message ? true : false);
-  if (fetcher?.data?.message && fetcher?.state !== "idle" && fetcher?.state !== "submitting" && fetcher?.data?.type) {
+  // if (fetcher?.data?.message && fetcher?.state !== "idle" && fetcher?.state !== "submitting" && fetcher?.data?.type) {
+  //   displayToast({ message: fetcher?.data?.message, type: fetcher?.data?.type });
+  // }
+  if (fetcher?.data?.message && fetcher?.data?.type && promoCodeApplied) {
     displayToast({ message: fetcher?.data?.message, type: fetcher?.data?.type });
   }
   useEffect(() => {
