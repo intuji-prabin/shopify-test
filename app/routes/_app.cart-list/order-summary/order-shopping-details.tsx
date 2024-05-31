@@ -171,10 +171,13 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
     setPromoCode(promoCodeApplied);
   }, [promoCodeApplied]);
   const fetcher = useFetcher<{ status: boolean; type: "success" | "error"; message: string; method: "POST" | "DELETE" }>();
+  const [promoError, setPromoError] = useState(fetcher?.data?.message ? true : false);
   if (fetcher?.data?.message && fetcher?.state !== "idle" && fetcher?.state !== "submitting" && fetcher?.data?.type) {
     displayToast({ message: fetcher?.data?.message, type: fetcher?.data?.type });
   }
-  console.log("promoCode", promoCode)
+  useEffect(() => {
+    setPromoError(fetcher?.data?.message ? true : false);
+  }, [fetcher?.data?.message]);
 
   return (
     <div className="flex flex-col gap-1">
@@ -226,6 +229,7 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
               value={promoCode ? promoCode : ''}
               onChange={(e) => {
                 setPromoCode(e?.target?.value);
+                setPromoError(false);
               }}
               disabled={fetcher.state === "submitting" || fetcher.state === "loading"}
               required
@@ -249,7 +253,7 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
           </div>
         </fetcher.Form>
       )}
-      {fetcher?.data?.message && !fetcher?.data?.status && fetcher?.data?.method === "POST" &&
+      {fetcher?.data?.message && !fetcher?.data?.status && fetcher?.data?.method === "POST" && promoError &&
         <p className={`pt-1 error-msg ${fetcher?.data && promoCode ? "block" : "hidden"}`}>
           <DangerAlert />
           <span className="pl-1">{fetcher?.data?.message}</span>
