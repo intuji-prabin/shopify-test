@@ -936,3 +936,7 @@ div[data-state='open'].fixed.inset-0 {
 .tag-list:not(:last-child) > *:after {
   content: ',';
 }
+
+.tab-header .profile-wrap .profile-detail {
+  width: calc(100% - 32px);
+}

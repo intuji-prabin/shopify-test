@@ -10,11 +10,11 @@ export default function UserProfile({ user_name, image_url }: UserInfoProps) {
   const { isOpen, toggleMenu } = useHamburgerMenu();
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 profile-wrap">
       <figure className='w-8 h-8'>
         <img src={image_url} alt="profile-image" className="object-cover object-center w-full h-full rounded-full" />
       </figure>
-      <div className="flex flex-row items-center justify-between w-full md:flex-col md:items-baseline ">
+      <div className="flex flex-row items-center justify-between w-full md:flex-col md:items-baseline profile-detail">
         <p className="text-lg font-normal text-white not-itallic md:text-base md:font-bold md:italic">
           {user_name}
         </p>
