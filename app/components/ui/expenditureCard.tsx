@@ -29,7 +29,7 @@ const ExpenditureCard = ({ brand, category, currency }: { brand: any, category: 
               <h4>Expenditure by Categories</h4>
             </div>
             <div className="grid items-start grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-5">
-              <div className="relative">
+              <div className="relative expenditure__detail">
                 <ExpenditureChart doughnutChartData={category} />
                 <div className="absolute space-y-2 transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
                   <p className="text-center">Total Spending</p>
@@ -74,7 +74,7 @@ const ExpenditureCard = ({ brand, category, currency }: { brand: any, category: 
               <h4>Expenditure by Brands</h4>
             </div>
             <div className="grid items-start grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-5">
-              <div className="relative">
+              <div className="relative expenditure__detail">
                 <ExpenditureChart doughnutChartData={brand} />
                 <div className="absolute space-y-2 transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
                   <p className="text-center">Total Spending</p>
