@@ -1,15 +1,14 @@
 import {
-  Link,
   isRouteErrorResponse,
   json,
   useLoaderData,
   useRouteError,
   useSearchParams,
 } from '@remix-run/react';
-import { LoaderFunctionArgs, MetaFunction } from '@shopify/remix-oxygen';
-import { useTable } from '~/hooks/useTable';
-import { Button } from '~/components/ui/button';
-import { SearchInput } from '~/components/ui/search-input';
+import {LoaderFunctionArgs, MetaFunction} from '@shopify/remix-oxygen';
+import {useTable} from '~/hooks/useTable';
+import {Button} from '~/components/ui/button';
+import {SearchInput} from '~/components/ui/search-input';
 import {
   Sheet,
   SheetContent,
@@ -17,35 +16,36 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '~/components/ui/sheet';
-import { HorizontalHamburgerIcon } from '~/components/icons/hamburgerIcon';
-import { Separator } from '~/components/ui/separator';
-import { DataTable } from '~/components/ui/data-table';
-import { PaginationWrapper } from '~/components/ui/pagination-wrapper';
-import { useColumn } from '~/routes/_app.invoices/use-column';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { getAllInvoices } from '~/routes/_app.invoices/invoices.server';
+import {HorizontalHamburgerIcon} from '~/components/icons/hamburgerIcon';
+import {Separator} from '~/components/ui/separator';
+import {DataTable} from '~/components/ui/data-table';
+import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
+import {useColumn} from '~/routes/_app.invoices/use-column';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {getAllInvoices} from '~/routes/_app.invoices/invoices.server';
 import InvoicesFilterForm from '~/routes/_app.invoices/filter-form';
-import { ActionBar } from '~/routes/_app.invoices/action-bar';
-import { useConditionalRender } from '~/hooks/useAuthorization';
-import { Routes } from '~/lib/constants/routes.constent';
+import {ActionBar} from '~/routes/_app.invoices/action-bar';
+import {useConditionalRender} from '~/hooks/useAuthorization';
+import {InvoiceError} from '~/routes/_app.invoices/invoice-error';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Invoices List' }];
+  return [{title: 'Invoices List'}];
 };
 
 const PAGE_LIMIT = 10;
 
-export async function loader({ request, context }: LoaderFunctionArgs) {
+export async function loader({request, context}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
 
   const customerId = userDetails.id;
 
-  const { searchParams } = new URL(request.url);
+  const {searchParams} = new URL(request.url);
 
-  const { invoiceList, totalInvoices } = await getAllInvoices({
+  const {invoiceList, totalInvoices} = await getAllInvoices({
     customerId,
     searchParams,
   });
@@ -58,14 +58,14 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 }
 
 export default function InvoicesPage() {
-  const { invoiceList, totalInvoices, customerId } =
+  const {invoiceList, totalInvoices, customerId} =
     useLoaderData<typeof loader>();
 
-  const { columns } = useColumn();
+  const {columns} = useColumn();
 
   const [searchParams] = useSearchParams();
 
-  const { table } = useTable(columns, invoiceList, 'invoiceId');
+  const {table} = useTable(columns, invoiceList, 'invoiceId');
 
   let isFilterApplied = false;
 
@@ -116,34 +116,10 @@ export function ErrorBoundary() {
   const error = useRouteError();
 
   if (isRouteErrorResponse(error)) {
-    return (
-      <div className="container order-error min-h-[calc(100vh_-_140px)] flex justify-center items-center">
-        <div className="space-y-2 text-center">
-          <h3>{error.status} {error.statusText}</h3>
-          <div className="space-y-5">
-            <p className="text-lg text-grey-800">{error.data}</p>
-            <Button className='mx-auto'>
-              <Link to={Routes.INVOICES}>Got back to invoice</Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
+    return <InvoiceError />;
   } else if (error instanceof Error) {
-    return (
-      <div className="container order-error min-h-[calc(100vh_-_140px)] flex justify-center items-center">
-        <div className="space-y-2 text-center">
-          <h3>Something went wrong</h3>
-          <div className="space-y-5">
-            <p className="text-lg text-grey-800">{error.message}</p>
-            <Button className='mx-auto'>
-              <Link to={Routes.INVOICES}>Got back to invoice</Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
+    return <InvoiceError errorMessage={error.message} />;
   } else {
-    return <h1>Unknown Error</h1>;
+    return <h1>{DEFAULT_ERRROR_MESSAGE}</h1>;
   }
 }

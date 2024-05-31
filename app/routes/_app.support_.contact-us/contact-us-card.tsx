@@ -1,8 +1,16 @@
 import {PhoneIcon} from '~/components/icons/phone-icon';
-import {ContactUsDataType} from '~/routes/_app.support_.contact-us/contact-us-data';
 import {LargeMailIcon} from '~/components/icons/mail';
 import {BuildingIcon} from '~/components/icons/building-icon';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+
+export type ContactUsDataType = {
+  service: string;
+  imageUrl: string;
+  name: string;
+  phone: string;
+  email: string;
+  department: string;
+};
 
 export function ContactUsCard({
   service,

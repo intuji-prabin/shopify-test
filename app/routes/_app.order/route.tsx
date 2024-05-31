@@ -32,14 +32,16 @@ import {HorizontalHamburgerIcon} from '~/components/icons/hamburgerIcon';
 import {ActionBar} from '~/routes/_app.order/action-bar';
 import {useConditionalRender} from '~/hooks/useAuthorization';
 import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
-import {addedBulkCart} from '../_app.wishlist/bulk.cart.server';
+import {addedBulkCart} from '~/routes/_app.wishlist/bulk.cart.server';
+import {Routes} from '~/lib/constants/routes.constent';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {Routes} from '~/lib/constants/routes.constent';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import {OrderError} from '~/routes/_app.order/order-error';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Orders List'}];
@@ -132,7 +134,7 @@ export default function OrdersPage() {
 
   const [searchParams] = useSearchParams();
 
-  const {table} = useTable(columns, orderList, 'uniqueId');
+  const {table} = useTable(columns, orderList, 'id');
 
   let isFilterApplied = false;
 
@@ -183,24 +185,10 @@ export function ErrorBoundary() {
   const error = useRouteError();
 
   if (isRouteErrorResponse(error)) {
-    return (
-      <div>
-        <h1>
-          {error.status} {error.statusText}
-        </h1>
-        <p>{error.data}</p>
-      </div>
-    );
+    return <OrderError />;
   } else if (error instanceof Error) {
-    return (
-      <div className="flex items-center justify-center">
-        <div className="text-center">
-          <h1>Opps</h1>
-          <p>{error.message}</p>
-        </div>
-      </div>
-    );
+    return <OrderError errorMessage={error.message} />;
   } else {
-    return <h1>Unknown Error</h1>;
+    return <h1>{DEFAULT_ERRROR_MESSAGE}</h1>;
   }
 }

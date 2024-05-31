@@ -77,15 +77,21 @@ export async function action({ request, context }: ActionFunctionArgs) {
   switch (request.method) {
     case 'POST':
       const formData = await request.formData();
-      switch (formData.get("action")) {
+      switch (formData.get('action')) {
         case 'place_order': {
           try {
-            const poNumber = formData.get("poNumber") as string;
+            const poNumber = formData.get('poNumber') as string;
             const { userDetails } = await getUserDetails(request);
-            const trackAnOrderResponse = await getOrderId(poNumber, userDetails?.id);
+            const trackAnOrderResponse = await getOrderId(
+              poNumber,
+              userDetails?.id,
+            );
 
             if (trackAnOrderResponse?.orderList.length > 0) {
-              setErrorMessage(messageSession, "Purchase Order Number or Order Number already taken. Please use another one.");
+              setErrorMessage(
+                messageSession,
+                'Purchase Order Number or Order Number already taken. Please use another one.',
+              );
               return json(
                 { status: false, type: "PONO", message: "Purchase Order Number or Order Number already taken. Please use another one." },
                 {
@@ -98,7 +104,9 @@ export async function action({ request, context }: ActionFunctionArgs) {
             }
             res = await placeOrder(formData, request, context);
             // console.log("orderPlacedResponseFInal", res);
-            const shopifyID = res?.shopifyOrderId ? '/' + res?.shopifyOrderId : '';
+            const shopifyID = res?.shopifyOrderId
+              ? '/' + res?.shopifyOrderId
+              : '';
 
             setSuccessMessage(messageSession, 'Order placed successfully');
             return redirect(Routes.ORDER_SUCCESSFUL + shopifyID, {
@@ -107,8 +115,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
                 ['Set-Cookie', await messageCommitSession(messageSession)],
               ],
             });
-          }
-          catch (error) {
+          } catch (error) {
             if (error instanceof Error) {
               console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
@@ -141,7 +148,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         case 'promo_code': {
           console.log("apply code")
           try {
-            const promoCode = formData.get("promoCode") as string;
+            const promoCode = formData.get('promoCode') as string;
             res = await promoCodeApply(promoCode, context, request);
             setSuccessMessage(messageSession, res?.message);
             return json(
@@ -182,12 +189,12 @@ export async function action({ request, context }: ActionFunctionArgs) {
       break;
     case 'DELETE':
       const finalData = await request.formData();
-      switch (finalData.get("action")) {
+      switch (finalData.get('action')) {
         case 'order_delete': {
           try {
             res = await removeItemFromCart(finalData, context, request);
             await promoCodeRemove(request, false);
-            setSuccessMessage(messageSession, 'Order deleted successfully');
+            setSuccessMessage(messageSession, 'line item removed successfully');
             return json(
               {},
               {
@@ -355,7 +362,7 @@ export default function CartList() {
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
       <UploadSearchbar searchVariant="cart" action="/bulkCsvUpload" />
       {finalProductList?.length === 0 ? (
-        <EmptyList />
+        <EmptyList placeholder="cart" />
       ) : (
         <div className="container">
           <div className="flex flex-col flex-wrap items-start gap-6 my-6 xl:flex-row cart__list">
@@ -406,7 +413,7 @@ export function ErrorBoundary() {
       <>
         <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
         <UploadSearchbar searchVariant="cart" action="/bulkCsvUpload" />
-        <EmptyList />
+        <EmptyList placeholder='Cart' />
       </>
     );
   } else {

@@ -42,6 +42,8 @@ import {
   SelectProductProvider,
 } from '~/routes/_app.pending-order_.$groupId/select-product-context';
 import {Can} from '~/lib/helpers/Can';
+import {RouteError} from '~/components/ui/route-error';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Pending Order Details'}];
@@ -397,24 +399,10 @@ export function ErrorBoundary() {
   const error = useRouteError();
 
   if (isRouteErrorResponse(error)) {
-    return (
-      <div>
-        <h1>
-          {error.status} {error.statusText}
-        </h1>
-        <p>{error.data}</p>
-      </div>
-    );
+    return <RouteError />;
   } else if (error instanceof Error) {
-    return (
-      <div className="flex items-center justify-center">
-        <div className="text-center">
-          <h1>Opps</h1>
-          <p>{error.message}</p>
-        </div>
-      </div>
-    );
+    return <RouteError errorMessage={error.message} />;
   } else {
-    return <h1>Unknown Error</h1>;
+    return <h1>{DEFAULT_ERRROR_MESSAGE}</h1>;
   }
 }

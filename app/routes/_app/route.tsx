@@ -39,7 +39,7 @@ import {
 import { CustomerData } from '~/routes/_public.login/login.server';
 import { getFooter } from './footer.server';
 
-interface Payload {
+export interface Payload {
   type: 'cart' | 'wishlist' | 'productGroup ' | 'notification';
   totalNumber: number;
   companyId?: string;
@@ -47,7 +47,7 @@ interface Payload {
   sessionId?: string;
 }
 
-interface Handlers {
+export interface Handlers {
   [key: string]: () => void;
 }
 interface Data {

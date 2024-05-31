@@ -1,11 +1,12 @@
 import {isRouteErrorResponse, useRouteError} from '@remix-run/react';
 import {LoaderFunctionArgs} from '@remix-run/server-runtime';
-import {EmptyArrow} from '~/components/icons/emptyArrow';
 import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {deletePlaceAnOrderList} from '~/routes/_app.place-an-order.list/place-an-order-list.server';
 import EmptyList from '~/components/ui/empty-list';
+import {RouteError} from '~/components/ui/route-error';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 
-export async function loader({ context, request }: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
   await deletePlaceAnOrderList({request});
@@ -14,33 +15,17 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 }
 
 export default function PlaceAnOrderIndexPage() {
-  return (
-    <EmptyList />
-  );
+  return <EmptyList placeholder="order" />;
 }
 
 export function ErrorBoundary() {
   const error = useRouteError();
 
   if (isRouteErrorResponse(error)) {
-    return (
-      <div>
-        <h1>
-          {error.status} {error.statusText}
-        </h1>
-        <p>{error.data}</p>
-      </div>
-    );
+    return <RouteError />;
   } else if (error instanceof Error) {
-    return (
-      <div className="flex items-center justify-center">
-        <div className="text-center">
-          <h1>Opps</h1>
-          <p>{error.message}</p>
-        </div>
-      </div>
-    );
+    return <RouteError errorMessage={error.message} />;
   } else {
-    return <h1>Unknown Error</h1>;
+    return <h1>{DEFAULT_ERRROR_MESSAGE}</h1>;
   }
 }

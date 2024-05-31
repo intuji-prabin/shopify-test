@@ -27,6 +27,9 @@ import {
 import {addedBulkCart} from '~/routes/_app.wishlist/bulk.cart.server';
 import {Routes} from '~/lib/constants/routes.constent';
 import {useMemo} from 'react';
+import {BackButton} from '~/components/ui/back-button';
+import {RouteError} from '~/components/ui/route-error';
+import {OrderInformationError} from '~/routes/_app.order_.$orderId/order-information-error';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Order Details'}];
@@ -123,20 +126,31 @@ export default function OrderDetailPage() {
   return (
     <section className="container">
       <OrderBreadcrumb orderId={orderId} products={products} />
-
       <div className="bg-white p-6 flex flex-col gap-6">
-        <OrderNumberDetails
-          orderNumber={orderId}
-          iscalaOrderId={ordersProductDetails.iscalaOrderId}
-          orderStatus={ordersProductDetails.orderStatus}
-        />
-        {displayOrderSteps && (
-          <OrderSteps
-            orderStatus={ordersProductDetails.orderStatus}
-            products={productWithNoBackOrderStatus}
+        {ordersProductDetails.errorStatus ? (
+          <OrderInformationError
+            errorMessage={
+              "Order details couldn't be loaded. Please try again later."
+            }
           />
+        ) : (
+          <>
+            <OrderNumberDetails
+              orderNumber={orderId}
+              iscalaOrderId={ordersProductDetails.iscalaOrderId}
+              orderStatus={ordersProductDetails.orderStatus}
+            />
+
+            {displayOrderSteps && (
+              <OrderSteps
+                orderStatus={ordersProductDetails.orderStatus}
+                products={productWithNoBackOrderStatus}
+              />
+            )}
+
+            <OrderInformation orderInformation={rest} />
+          </>
         )}
-        <OrderInformation orderInformation={rest} />
       </div>
 
       <ProductTable orderProductDetails={ordersProductDetails} />
@@ -149,21 +163,21 @@ export function ErrorBoundary() {
 
   if (isRouteErrorResponse(error)) {
     return (
-      <div>
-        <h1>
-          {error.status} {error.statusText}
-        </h1>
-        <p>{error.data}</p>
-      </div>
+      <section className="container">
+        <div className="pt-6 pb-4">
+          <BackButton title="Order Details" />
+        </div>
+        <RouteError />
+      </section>
     );
   } else if (error instanceof Error) {
     return (
-      <div className="flex items-center justify-center">
-        <div className="text-center">
-          <h1>Opps</h1>
-          <p>{error.message}</p>
+      <section className="container">
+        <div className="pt-6 pb-4">
+          <BackButton title="Order Details" />
         </div>
-      </div>
+        <RouteError errorMessage={error.message} />
+      </section>
     );
   } else {
     return <h1>Unknown Error</h1>;
