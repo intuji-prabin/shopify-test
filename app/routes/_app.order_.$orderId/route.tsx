@@ -78,7 +78,14 @@ export async function action({request, context}: ActionFunctionArgs) {
         });
       } catch (error) {
         if (error instanceof Error) {
-          setErrorMessage(messageSession, error?.message);
+          if (error.message.includes('does not exist')) {
+            setErrorMessage(
+              messageSession,
+              'You can not reorder this item as it does not exist in the store anymore.',
+            );
+          } else {
+            setErrorMessage(messageSession, error.message);
+          }
           return json(
             {},
             {
@@ -129,9 +136,7 @@ export default function OrderDetailPage() {
       <div className="bg-white p-6 flex flex-col gap-6">
         {ordersProductDetails.errorStatus ? (
           <OrderInformationError
-            errorMessage={
-              "Order details couldn't be loaded. Please try again later."
-            }
+            errorMessage={ordersProductDetails.errorMessage}
           />
         ) : (
           <>
