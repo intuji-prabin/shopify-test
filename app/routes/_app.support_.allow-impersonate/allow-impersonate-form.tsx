@@ -5,6 +5,7 @@ import {ValidatedForm} from 'remix-validated-form';
 import {Button} from '~/components/ui/button';
 import {TextAreaInput} from '~/components/ui/text-area-input';
 import {Routes} from '~/lib/constants/routes.constent';
+import {Switch} from '~/components/ui/switch';
 
 const ImpersonateFormFieldSchema = z.object({
   reason: z.string().min(1, {message: 'Reason is required'}).trim(),
@@ -23,6 +24,11 @@ export function AllowImpersonateForm() {
     <div className="bg-neutral-white p-6 grid gap-6 sm:grid-cols-2">
       <div>
         <ValidatedForm method="POST" validator={ImpersonateFormFieldValidator}>
+          <label htmlFor="allow-impersonate">
+            Allow impersonate
+            <span className="required">*</span>
+          </label>
+          <Switch type="button" checked={true} />
           <TextAreaInput
             label="Reason to Impersonate"
             name="reason"
