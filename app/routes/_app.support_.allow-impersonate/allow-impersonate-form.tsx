@@ -28,7 +28,7 @@ export function AllowImpersonateForm() {
             Allow impersonate
             <span className="required">*</span>
           </label>
-          <Switch type="button" checked={true} />
+          <Switch disabled type="button" checked={true} />
           <TextAreaInput
             label="Reason to Impersonate"
             name="reason"
