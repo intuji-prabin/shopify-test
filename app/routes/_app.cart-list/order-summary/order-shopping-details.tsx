@@ -176,10 +176,6 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
   useEffect(() => {
     setPromoError(fetcher?.data?.message);
   }, [fetcher?.data]);
-  console.log("fetcher.state", fetcher.state)
-  if (fetcher.state === "idle" && promoError) {
-    displayToast({ message: promoError, type: "error" });
-  }
 
   return (
     <div className="flex flex-col gap-1">

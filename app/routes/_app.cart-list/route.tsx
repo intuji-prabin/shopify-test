@@ -163,11 +163,11 @@ export async function action({ request, context }: ActionFunctionArgs) {
               setErrorMessage(messageSession, error?.message);
               return json(
                 { message: error?.message },
-                // {
-                //   headers: [
-                //     ['Set-Cookie', await messageCommitSession(messageSession)],
-                //   ],
-                // },
+                {
+                  headers: [
+                    ['Set-Cookie', await messageCommitSession(messageSession)],
+                  ],
+                },
               );
             }
             // console.log('this is err');
