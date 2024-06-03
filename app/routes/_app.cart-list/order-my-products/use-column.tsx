@@ -1,15 +1,15 @@
-import {Link} from '@remix-run/react';
-import {ColumnDef} from '@tanstack/react-table';
-import {useEffect, useMemo, useState} from 'react';
-import {TooltipInfo} from '~/components/icons/orderStatus';
-import {badgeVariants} from '~/components/ui/badge';
-import {Button} from '~/components/ui/button';
-import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
-import {StockStatusChip} from '~/components/ui/stock-status-chip';
-import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {Can} from '~/lib/helpers/Can';
-import {getProductPriceByQty} from '~/routes/_app.product_.$productSlug/product-detail';
+import { Link } from '@remix-run/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { useEffect, useMemo, useState } from 'react';
+import { TooltipInfo } from '~/components/icons/orderStatus';
+import { badgeVariants } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
+import { StockStatusChip } from '~/components/ui/stock-status-chip';
+import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { Can } from '~/lib/helpers/Can';
+import { getProductPriceByQty } from '~/routes/_app.product_.$productSlug/product-detail';
 
 export type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock';
 
@@ -46,7 +46,7 @@ export type BulkOrderColumn = {
     },
   ];
   totalPrice: number;
-  discount: string;
+  discountMessage: string;
 };
 
 export function useMyProductColumn({
@@ -62,7 +62,7 @@ export function useMyProductColumn({
     () => [
       {
         id: 'select',
-        header: ({table}) => (
+        header: ({ table }) => (
           <IndeterminateCheckbox
             {...{
               checked: table.getIsAllRowsSelected(),
@@ -71,7 +71,7 @@ export function useMyProductColumn({
             }}
           />
         ),
-        cell: ({row}) => (
+        cell: ({ row }) => (
           <div className="px-1">
             <IndeterminateCheckbox
               {...{
@@ -163,7 +163,7 @@ export function useMyProductColumn({
               setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
               isRowChecked={info?.row?.getIsSelected()}
               currency={currency || '$'}
-              discount={product?.discount}
+              discount={product?.discountMessage}
             />
           );
         },
@@ -172,7 +172,7 @@ export function useMyProductColumn({
     [],
   );
 
-  return {columns};
+  return { columns };
 }
 
 /**
@@ -181,7 +181,7 @@ export function useMyProductColumn({
 type ItemsColumnType = Pick<
   BulkOrderColumn,
   'title' | 'sku' | 'featuredImage' | 'moq'
-> & {handle?: string; inventory: StockStatus};
+> & { handle?: string; inventory: StockStatus };
 
 export function ItemsColumn({
   title,
@@ -299,9 +299,8 @@ export function QuantityColumn({
       <div className="flex flex-col gap-[11.5px] mt-[2.2rem] cart__list--quantity">
         <div className="flex items-center">
           <button
-            className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${
-              quantity - 1 < moq && 'cursor-not-allowed'
-            }`}
+            className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${quantity - 1 < moq && 'cursor-not-allowed'
+              }`}
             type="button"
             onClick={handleDecreaseQuantity}
             disabled={quantity - 1 < moq}
@@ -322,7 +321,7 @@ export function QuantityColumn({
             className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
             type="button"
             onClick={handleIncreaseQuantity}
-            // disabled={quantity + 1 < moq}
+          // disabled={quantity + 1 < moq}
           >
             +
           </button>
@@ -507,7 +506,7 @@ export function ProductTotal({
           (Excl. GST)
         </p>
         {discount && (
-          <p className="bg-secondary-500 uppercase text-xs py-1 px-2.5 font-semibold">
+          <p className={`${discount === "Discount Applied" ? "bg-secondary-500" : "bg-red-500 text-white"} uppercase text-xs py-1 px-2.5 font-semibold`}>
             {discount}
           </p>
         )}
@@ -516,9 +515,8 @@ export function ProductTotal({
         <Button
           onClick={setIsBulkDetailsVisible}
           type="button"
-          className={`${
-            isRowChecked ? 'bg-white' : 'bg-primary-200'
-          }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
+          className={`${isRowChecked ? 'bg-white' : 'bg-primary-200'
+            }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
         >
           {isBulkDetailVisible ? 'Hide' : 'View'} BULK PRICE
         </Button>
