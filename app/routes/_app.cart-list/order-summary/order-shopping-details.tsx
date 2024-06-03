@@ -165,106 +165,65 @@ export function TextArea() {
     </div>
   );
 }
+
 export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
   const [promoCode, setPromoCode] = useState(promoCodeApplied);
   useEffect(() => {
     setPromoCode(promoCodeApplied);
   }, [promoCodeApplied]);
-  const fetcher = useFetcher<{ status: boolean; type: "success" | "error" | "errorCatch"; message: string; method: "POST" | "DELETE" }>();
-  const [promoError, setPromoError] = useState(fetcher?.data?.message ? true : false);
-  if (promoError && fetcher?.data?.type === "success" && promoCodeApplied && fetcher?.state !== "submitting") {
-    displayToast({ message: fetcher?.data?.message, type: fetcher?.data?.type });
-  }
-  else if (promoError && fetcher?.data?.type === "error" && !promoCodeApplied && fetcher?.state !== "submitting") {
-    displayToast({ message: fetcher?.data?.message, type: "success" });
-  }
-  // else if (fetcher?.data?.type === "errorCatch" && fetcher?.state !== "submitting" && !fetcher?.data?.status) {
-  //   displayToast({ message: fetcher?.data?.message, type: "error" });
-  // }
-  console.log("promoError", promoError)
+  const fetcher = useFetcher<{ status: boolean; type: "success" | "error"; message: string; method: "POST" | "DELETE" }>();
+  const [promoError, setPromoError] = useState(fetcher?.data?.message);
   useEffect(() => {
-    console.log("fetcher?.data?.message", fetcher?.data?.message)
-    setPromoError(fetcher?.data?.message ? true : false);
-  }, [fetcher?.data?.message, fetcher?.state !== "submitting"]);
+    setPromoError(fetcher?.data?.message);
+  }, [fetcher?.data]);
+  console.log("fetcher.state", fetcher.state)
+  if (fetcher.state === "idle" && promoError) {
+    displayToast({ message: promoError, type: "error" });
+  }
 
   return (
     <div className="flex flex-col gap-1">
       <p className="text-base text-normal leading-[21px] text-grey-800">
         Do you have any promocode?
       </p>
-      {promoCodeApplied ? (
-        <fetcher.Form method="DELETE" onSubmit={(event) => {
-          fetcher.submit(event.currentTarget);
-          // setPromoCode("");
-        }}>
-          <div className="flex flex-col items-center w-full gap-2 sm:flex-row">
-            <input
-              type="text"
-              className="grow bg-semantic-success-100 pointer-events-none !border-semantic-success-100"
-              placeholder="Enter promo code here"
-              name='promoCode'
-              value={promoCode ? promoCode : ''}
-              disabled={fetcher.state === "submitting" || fetcher.state === "loading"}
-            />
-            <Button
-              variant="secondary"
-              className="min-w-[99px]"
-              type='submit'
-              value="promo_code_delete"
-              name="action"
-              disabled={fetcher.state === "submitting" || fetcher.state === "loading"}
-            >
-              {fetcher.state === "submitting" ?
-                <div className="flex items-center justify-center h-full gap-2">
-                  <span>Removing</span>
-                </div> :
-                "Remove"
-              }
-            </Button>
-            {fetcher.state === "submitting" || fetcher.state === "loading" ? <Loader /> : null}
-          </div>
-        </fetcher.Form>
-      ) : (
-        <fetcher.Form method="POST" onSubmit={(event) => {
-          fetcher.submit(event.currentTarget);
-        }}>
-          <div className="flex flex-col items-center w-full gap-2 sm:flex-row">
-            <input
-              type="text"
-              className={`grow`}
-              placeholder="Enter promo code here"
-              name='promoCode'
-              value={promoCode ? promoCode : ''}
-              pattern=".*\S+.*"
-              title="Promo code cannot have only spaces."
-              onChange={(e) => {
-                setPromoCode(e?.target?.value);
-                setPromoError(false);
-              }}
-              disabled={fetcher.state === "submitting" || fetcher.state === "loading"}
-              required
-            />
-            <Button
-              variant="secondary"
-              className="min-w-[99px]"
-              type='submit'
-              value="promo_code"
-              disabled={fetcher.state === "submitting" || fetcher.state === "loading"}
-              name="action"
-            >
-              {fetcher.state === "submitting" ?
-                <div className="flex items-center justify-center h-full gap-2">
-                  <span>Applying</span>
-                </div>
-                : "Apply"
-              }
-            </Button>
-            {fetcher.state === "submitting" || fetcher.state === "loading" ? <Loader /> : null}
-          </div>
-        </fetcher.Form>
-      )}
-      {fetcher?.data?.message && !fetcher?.data?.status && fetcher?.data?.method === "POST" && promoError &&
-        <p className={`pt-1 error-msg ${fetcher?.data && promoCode && promoError ? "block" : "hidden"}`}>
+      <fetcher.Form method={promoCodeApplied ? "DELETE" : "POST"} onSubmit={(event) => {
+        fetcher.submit(event.currentTarget);
+      }}>
+        <div className="flex flex-col items-center w-full gap-2 sm:flex-row">
+          <input
+            type="text"
+            className={`grow ${promoCodeApplied && "bg-semantic-success-100 pointer-events-none !border-semantic-success-100"}`}
+            placeholder="Enter promo code here"
+            name='promoCode'
+            value={promoCode ? promoCode : ''}
+            pattern=".*\S+.*"
+            title="Promo code cannot have only spaces."
+            disabled={fetcher.state === "submitting" || fetcher.state === "loading"}
+            onChange={(e) => {
+              setPromoCode(e?.target?.value);
+              setPromoError("");
+            }}
+          />
+          <Button
+            variant="secondary"
+            className="min-w-[99px]"
+            type='submit'
+            value={promoCodeApplied ? "promo_code_delete" : "promo_code"}
+            name="action"
+            disabled={fetcher.state === "submitting" || fetcher.state === "loading"}
+          >
+            {fetcher.state === "submitting" || fetcher.state === "loading" ?
+              <div className="flex items-center justify-center h-full gap-2">
+                <span>{promoCodeApplied ? "Removing" : "Applying"}</span>
+              </div> :
+              <>{promoCodeApplied ? "Remove" : "Apply"}</>
+            }
+          </Button>
+          {fetcher.state === "submitting" || fetcher.state === "loading" ? <Loader /> : null}
+        </div>
+      </fetcher.Form>
+      {fetcher.state === "idle" && promoError &&
+        <p className={`pt-1 error-msg`}>
           <DangerAlert />
           <span className="pl-1">{fetcher?.data?.message}</span>
         </p>
