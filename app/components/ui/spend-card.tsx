@@ -67,13 +67,13 @@ const SpendCard = ({ data }: { data: any }) => {
                 {currentDate.currentLongMonth}
               </p>
             </div>
-            <div className="grid items-center grid-cols-1 md:grid-cols-2 gap-y-1 gap-x-3">
+            <div className="grid items-center grid-cols-1 xl:grid-cols-2 gap-y-1 gap-x-3">
               <div className="space-y-2">
                 <h4 className="text-grey-900">{data?.monthly?.currency} <span className="text-5xl italic font-bold">{data?.monthly?.amount}</span></h4>
                 <p className="flex items-center text-lg font-medium gap-1.5">{data?.monthly?.increment ? <ArrowUp /> : <ArrowDown />}<span className={
                   data?.monthly?.increment ? "text-semantic-success-500" : "text-semantic-danger-500"}> {data?.monthly?.percentage}% </span>VS LAST MONTH</p>
               </div>
-              <div className="md:w-72 md:ml-auto">
+              <div className="xl:w-72 xl:ml-auto">
                 <ClientOnly fallback={<Fallback />}>
                   {() => <Line options={options} data={data?.monthly?.areaChartData} />}
                 </ClientOnly>
@@ -95,13 +95,13 @@ const SpendCard = ({ data }: { data: any }) => {
                 </li>
               </ul>
             </div>
-            <div className="grid items-center grid-cols-1 md:grid-cols-2 gap-y-1 gap-x-3">
+            <div className="grid items-center grid-cols-1 xl:grid-cols-2 gap-y-1 gap-x-3">
               <div className="space-y-2">
                 <h4 className="text-grey-900">{data?.ytd?.currency} <span className="text-5xl italic font-bold">{data?.ytd?.amount}</span></h4>
                 <p className="flex items-center text-lg font-medium gap-1.5">{data?.ytd?.increment ? <ArrowUp /> : <ArrowDown />}<span className={
                   data?.ytd?.increment ? "text-semantic-success-500" : "text-semantic-danger-500"}> {data?.ytd?.percentage}% </span>VS LAST YEAR</p>
               </div>
-              <div className="md:w-72 md:ml-auto">
+              <div className="xl:w-72 xl:ml-auto">
                 <ClientOnly fallback={<Fallback />}>
                   {() => <Line options={options} data={data?.ytd?.areaChartData} />}
                 </ClientOnly>

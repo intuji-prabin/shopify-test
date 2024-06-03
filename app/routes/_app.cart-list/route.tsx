@@ -357,7 +357,6 @@ export default function CartList() {
   const [updateCart, setUpdateCart] = useState(false);
   const [placeOrder, setPlaceOrder] = useState(result);
   const actionData = useActionData<typeof action>();
-  console.log("cartList", cartList)
   return (
     <>
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />

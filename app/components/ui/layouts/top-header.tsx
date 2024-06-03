@@ -149,7 +149,7 @@ export default function TopHeader({
           <LogoIcon logo_url={'/myCigweldWhite.svg'} />
         </div>
         {/* Search and notification bar begins here  */}
-        <div className="flex gap-[22px] w-full xl:w-[unset]">
+        <div className="flex gap-[22px] w-full md:w-[calc(100%_-_228px)] xl:w-[unset]">
           {/* search bar begins here */}
           <div className="search-bar flex bg-white items-center min-w-[unset] w-full max-h-12 px-4 py-3 xl:min-w-[453px] relative">
             <PredictiveSearch searchVariant="normal" />
