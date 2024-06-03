@@ -152,22 +152,22 @@ export async function action({ request, context }: ActionFunctionArgs) {
             res = await promoCodeApply(promoCode, context, request);
             setSuccessMessage(messageSession, res?.message);
             return json(
-              { status: true, type: "success", message: res?.message, method: "POST" },
-              // {
-              //   headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
-              // },
+              {},
+              {
+                headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+              },
             );
           } catch (error) {
             if (error instanceof Error) {
               console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
               return json(
-                { status: false, type: "error", message: error?.message, method: "POST" },
-                // {
-                //   headers: [
-                //     ['Set-Cookie', await messageCommitSession(messageSession)],
-                //   ],
-                // },
+                { message: error?.message },
+                {
+                  headers: [
+                    ['Set-Cookie', await messageCommitSession(messageSession)],
+                  ],
+                },
               );
             }
             // console.log('this is err');
@@ -176,12 +176,12 @@ export async function action({ request, context }: ActionFunctionArgs) {
               'Some issue has occured while applying promocode. Please try again later.',
             );
             return json(
-              { status: false, type: "error", message: res?.message, method: "POST" },
-              // {
-              //   headers: [
-              //     ['Set-Cookie', await messageCommitSession(messageSession)],
-              //   ],
-              // },
+              {},
+              {
+                headers: [
+                  ['Set-Cookie', await messageCommitSession(messageSession)],
+                ],
+              },
             );
           }
         }
@@ -240,24 +240,24 @@ export async function action({ request, context }: ActionFunctionArgs) {
             res = await promoCodeRemove(request);
             setSuccessMessage(messageSession, res?.message);
             return json(
-              { status: false, type: "success", message: res?.message, method: "DELETE" },
-              // {
-              //   headers: [
-              //     ['Set-Cookie', await messageCommitSession(messageSession)],
-              //   ],
-              // },
+              {},
+              {
+                headers: [
+                  ['Set-Cookie', await messageCommitSession(messageSession)],
+                ],
+              },
             );
           } catch (error) {
             if (error instanceof Error) {
               console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
               return json(
-                { status: false, type: "error", message: res?.message, method: "DELETE" },
-                // {
-                //   headers: [
-                //     ['Set-Cookie', await messageCommitSession(messageSession)],
-                //   ],
-                // },
+                {},
+                {
+                  headers: [
+                    ['Set-Cookie', await messageCommitSession(messageSession)],
+                  ],
+                },
               );
             }
             // console.log('this is err');
@@ -266,12 +266,12 @@ export async function action({ request, context }: ActionFunctionArgs) {
               'Some issue has occured while deleting promocode. Please try again later.',
             );
             return json(
-              { status: false, type: "error", message: res?.message, method: "DELETE" },
-              // {
-              //   headers: [
-              //     ['Set-Cookie', await messageCommitSession(messageSession)],
-              //   ],
-              // },
+              {},
+              {
+                headers: [
+                  ['Set-Cookie', await messageCommitSession(messageSession)],
+                ],
+              },
             );
           }
         }
@@ -357,6 +357,7 @@ export default function CartList() {
   const [updateCart, setUpdateCart] = useState(false);
   const [placeOrder, setPlaceOrder] = useState(result);
   const actionData = useActionData<typeof action>();
+  console.log("cartList", cartList)
   return (
     <>
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
