@@ -167,22 +167,25 @@ export function TextArea() {
 }
 export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
   const [promoCode, setPromoCode] = useState(promoCodeApplied);
-  console.log("promoCodeApplied", promoCodeApplied);
   useEffect(() => {
     setPromoCode(promoCodeApplied);
   }, [promoCodeApplied]);
-  const fetcher = useFetcher<{ status: boolean; type: "success" | "error"; message: string; method: "POST" | "DELETE" }>();
-  console.log("fetcher?.data?.type", fetcher?.data?.type)
+  const fetcher = useFetcher<{ status: boolean; type: "success" | "error" | "errorCatch"; message: string; method: "POST" | "DELETE" }>();
   const [promoError, setPromoError] = useState(fetcher?.data?.message ? true : false);
-  // if (fetcher?.data?.message && fetcher?.state !== "idle" && fetcher?.state !== "submitting" && fetcher?.data?.type) {
-  //   displayToast({ message: fetcher?.data?.message, type: fetcher?.data?.type });
-  // }
-  if (fetcher?.data?.message && fetcher?.data?.type && promoCodeApplied) {
+  if (promoError && fetcher?.data?.type === "success" && promoCodeApplied && fetcher?.state !== "submitting") {
     displayToast({ message: fetcher?.data?.message, type: fetcher?.data?.type });
   }
+  else if (promoError && fetcher?.data?.type === "error" && !promoCodeApplied && fetcher?.state !== "submitting") {
+    displayToast({ message: fetcher?.data?.message, type: "success" });
+  }
+  // else if (fetcher?.data?.type === "errorCatch" && fetcher?.state !== "submitting" && !fetcher?.data?.status) {
+  //   displayToast({ message: fetcher?.data?.message, type: "error" });
+  // }
+  console.log("promoError", promoError)
   useEffect(() => {
+    console.log("fetcher?.data?.message", fetcher?.data?.message)
     setPromoError(fetcher?.data?.message ? true : false);
-  }, [fetcher?.data?.message]);
+  }, [fetcher?.data?.message, fetcher?.state !== "submitting"]);
 
   return (
     <div className="flex flex-col gap-1">
@@ -192,7 +195,7 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
       {promoCodeApplied ? (
         <fetcher.Form method="DELETE" onSubmit={(event) => {
           fetcher.submit(event.currentTarget);
-          setPromoCode("");
+          // setPromoCode("");
         }}>
           <div className="flex flex-col items-center w-full gap-2 sm:flex-row">
             <input
@@ -261,7 +264,7 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
         </fetcher.Form>
       )}
       {fetcher?.data?.message && !fetcher?.data?.status && fetcher?.data?.method === "POST" && promoError &&
-        <p className={`pt-1 error-msg ${fetcher?.data && promoCode ? "block" : "hidden"}`}>
+        <p className={`pt-1 error-msg ${fetcher?.data && promoCode && promoError ? "block" : "hidden"}`}>
           <DangerAlert />
           <span className="pl-1">{fetcher?.data?.message}</span>
         </p>
