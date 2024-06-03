@@ -1,13 +1,15 @@
 import {z} from 'zod';
 import {Link} from '@remix-run/react';
 import {withZod} from '@remix-validated-form/with-zod';
-import {ValidatedForm} from 'remix-validated-form';
+import {ValidatedForm, useIsSubmitting} from 'remix-validated-form';
 import {Button} from '~/components/ui/button';
 import {TextAreaInput} from '~/components/ui/text-area-input';
 import {Routes} from '~/lib/constants/routes.constent';
+import {Switch} from '~/components/ui/switch';
+import {useState} from 'react';
 
 const ImpersonateFormFieldSchema = z.object({
-  reason: z.string().min(1, {message: 'Reason is required'}).trim(),
+  reason: z.string().trim().optional(),
 });
 
 export const ImpersonateFormFieldValidator = withZod(
@@ -18,19 +20,49 @@ export type ImpersonateFormType = z.infer<typeof ImpersonateFormFieldSchema>;
 
 export type ImpersonateFormFieldNameType = keyof ImpersonateFormType;
 
-export function AllowImpersonateForm() {
+export function AllowImpersonateForm({
+  isImpersonateActive,
+}: {
+  isImpersonateActive: boolean;
+}) {
+  const isSubmitting = useIsSubmitting('impersonate-form');
+  const [isActive, setIsActive] = useState(isImpersonateActive);
+
+  const handleActiveChange = () =>
+    setIsActive((previousState) => !previousState);
+
   return (
     <div className="bg-neutral-white p-6 grid gap-6 sm:grid-cols-2">
       <div>
-        <ValidatedForm method="POST" validator={ImpersonateFormFieldValidator}>
+        <ValidatedForm
+          method="POST"
+          id="impersonate-form"
+          validator={ImpersonateFormFieldValidator}
+        >
+          <label htmlFor="allow-impersonate">
+            Allow impersonate
+            <span className="required">*</span>
+          </label>
+          <Switch
+            type="button"
+            checked={isActive}
+            onCheckedChange={handleActiveChange}
+          />
           <TextAreaInput
             label="Reason to Impersonate"
             name="reason"
             placeholder="Reason here"
-            required
           />
           <div className="flex items-center space-x-4">
-            <Button type="submit" variant="primary">
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isSubmitting}
+              name="_action"
+              value={`${
+                isActive ? 'allow_impersonate' : 'disallow_impersonate'
+              }`}
+            >
               send
             </Button>
             <p>
