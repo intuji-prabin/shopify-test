@@ -949,3 +949,7 @@ div[data-state='open'].fixed.inset-0 {
 .expenditure__detail canvas {
   @apply z-50 relative;
 }
+
+.disable-hover .group-hover\:block {
+  display: none;
+}

@@ -1,10 +1,10 @@
-import {Link, useLocation} from '@remix-run/react';
-import {useRef} from 'react';
+import { Link, useLocation } from '@remix-run/react';
+import { useRef, useState } from 'react';
 import ArrowDown from '~/components/icons/arrowDown';
 import ArrowUp from '~/components/icons/arrowUp';
-import {Payload} from '~/routes/_app/app.server';
-import {MenuItems} from '../bottom-header';
-import {DropdownMenu} from './bottom-header-dropdown-list';
+import { Payload } from '~/routes/_app/app.server';
+import { MenuItems } from '../bottom-header';
+import { DropdownMenu } from './bottom-header-dropdown-list';
 
 export const SingleNavItem = ({
   menu,
@@ -21,14 +21,19 @@ export const SingleNavItem = ({
   const menuRef = useRef<HTMLLIElement>(null);
   const location = useLocation();
   const currentPageRoute = location.pathname;
+  const [disableHover, setDisableHover] = useState(false);
+
+  const handleClick = (event: any) => {
+    event.preventDefault();
+    setDisableHover(!disableHover);
+  };
 
   return (
     <li
-      className={`flex flex-row items-center justify-center gap-1 p-3 text-lg italic font-bold text-white menu-items group ${
-        currentPageRoute === menu.url
-          ? 'bg-primary-600 [&>a]:text-secondary-500 [&_svg]:fill-secondary-500 hover:bg-primary-600 [&_path]:fill-secondary-500'
-          : ''
-      }`}
+      className={`flex flex-row items-center justify-center gap-1 p-3 text-lg italic font-bold text-white menu-items group ${currentPageRoute === menu.url
+        ? 'bg-primary-600 [&>a]:text-secondary-500 [&_svg]:fill-secondary-500 hover:bg-primary-600 [&_path]:fill-secondary-500'
+        : ''
+        }`}
       ref={menuRef}
       key={menu.title}
     >
@@ -69,7 +74,7 @@ export const SingleNavItem = ({
               onClick={(e) => {
                 e.preventDefault();
               }}
-              className={'group-hover:inline-block hidden absolute'}
+              className={`group-hover:inline-block hidden absolute ${disableHover ? 'disable-hover' : ''}`}
             >
               <DropdownMenu
                 submenus={menu.submenu}
@@ -78,6 +83,7 @@ export const SingleNavItem = ({
                 closeMenu={() => setActiveMenu('')}
                 type={menu.type === 'megamenu' ? 'megamenu' : 'normal'}
                 categories={categories}
+                handleClick={handleClick}
               />
             </div>
           </>
