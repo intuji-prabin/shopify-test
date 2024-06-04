@@ -1,27 +1,20 @@
 import {useFetch} from '~/hooks/useFetch';
+import {json, redirect} from '@remix-run/react';
+import {Routes} from '~/lib/constants/routes.constent';
+import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
-import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
-import {BulkOrderColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
-import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {generateUrlWithParams} from '~/lib/helpers/url.helper';
 import {getUserDetails} from '~/lib/utils/user-session.server';
-import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
-import {SubmitPayload} from './save-later-dialogbox';
-
-export async function getProductGroupOptions({
-  customerId,
-}: {
-  customerId: string;
-}) {
-  const productGroup = await getProductGroup({customerId});
-
-  const productGroupOptions = productGroup.map((group) => ({
-    label: group.groupName,
-    value: String(group.groupId),
-  }));
-
-  return productGroupOptions;
-}
+import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
+import {SubmitPayload} from '~/routes/_app.place-an-order.list/save-later-dialogbox';
+import {BulkOrderColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import {
+  getMessageSession,
+  messageCommitSession,
+  setErrorMessage,
+  setSuccessMessage,
+} from '~/lib/utils/toast-session.server';
 
 export type Product = BulkOrderColumn;
 interface DefaultResponse {
@@ -42,6 +35,21 @@ interface Payload {
 }
 interface GetPlaceAnOrderListResponse extends DefaultResponse {
   payload: Payload;
+}
+
+export async function getProductGroupOptions({
+  customerId,
+}: {
+  customerId: string;
+}) {
+  const productGroup = await getProductGroup({customerId});
+
+  const productGroupOptions = productGroup.map((group) => ({
+    label: group.groupName,
+    value: String(group.groupId),
+  }));
+
+  return productGroupOptions;
 }
 
 export async function getPlaceAnOrderList({
@@ -100,55 +108,80 @@ export async function deletePlaceAnOrderList({request}: {request: Request}) {
   }
 }
 
-export async function addProductToGroup({
-  sumbitPayload,
-  request,
-}: {
-  sumbitPayload: SubmitPayload;
-  request: Request;
-}) {
-  const {userDetails} = await getUserDetails(request);
+export async function addProductToGroup({request}: {request: Request}) {
+  const messageSession = await getMessageSession(request);
 
-  const customerId = userDetails.id.split('/').pop() as string;
+  try {
+    const submitPayload = (await request.json()) as SubmitPayload;
 
-  const createGroupUrl = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
+    const {userDetails} = await getUserDetails(request);
 
-  const updateGroupUrl = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
+    const customerId = userDetails.id.split('/').pop() as string;
 
-  let groupId = sumbitPayload.group;
+    const createGroupUrl = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
 
-  if (sumbitPayload.submitType === 'create') {
+    const updateGroupUrl = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
+
+    let groupId = submitPayload.group;
+
+    if (submitPayload.submitType === 'create') {
+      const body = JSON.stringify({
+        groupName: submitPayload.group.toLowerCase(),
+      });
+
+      const response = await useFetch<GroupCreateResponse>({
+        method: AllowedHTTPMethods.POST,
+        body,
+        url: createGroupUrl,
+      });
+
+      if (!response.status) {
+        throw new Error(response.message);
+      }
+
+      groupId = String(response.payload.groupId);
+    }
+
     const body = JSON.stringify({
-      groupName: sumbitPayload.group.toLowerCase(),
+      groupItemList: submitPayload.groupItemList,
+      groupId,
     });
 
-    const response = await useFetch<GroupCreateResponse>({
+    const response = await useFetch<DefaultResponse>({
       method: AllowedHTTPMethods.POST,
       body,
-      url: createGroupUrl,
+      url: updateGroupUrl,
     });
 
     if (!response.status) {
       throw new Error(response.message);
     }
-
-    groupId = String(response.payload.groupId);
+    setSuccessMessage(messageSession, response.message);
+    return redirect(Routes.PENDING_ORDER, {
+      headers: {
+        'Set-Cookie': await messageCommitSession(messageSession),
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      setErrorMessage(messageSession, error?.message);
+      return json(
+        {error},
+        {
+          headers: {
+            'Set-Cookie': await messageCommitSession(messageSession),
+          },
+        },
+      );
+    }
+    setErrorMessage(messageSession, DEFAULT_ERRROR_MESSAGE);
+    return json(
+      {error},
+      {
+        headers: {
+          'Set-Cookie': await messageCommitSession(messageSession),
+        },
+      },
+    );
   }
-
-  const body = JSON.stringify({
-    groupItemList: sumbitPayload.groupItemList,
-    groupId,
-  });
-
-  const response = await useFetch<DefaultResponse>({
-    method: AllowedHTTPMethods.POST,
-    body,
-    url: updateGroupUrl,
-  });
-
-  if (!response.status) {
-    throw new Error(response.message);
-  }
-
-  return response;
 }

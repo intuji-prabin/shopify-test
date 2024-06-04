@@ -1,4 +1,3 @@
-import { CircleInformationMajor } from "~/components/icons/orderStatus";
 import { PromoCode } from "./order-shopping-details";
 
 export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, freight, surcharges, gst, currency, data, promoCodeApplied, discountPrice, discountMessage, totalPriceWithDiscount }: any) {
@@ -7,7 +6,7 @@ export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, frei
 
   return (
     <div className="flex flex-col gap-4 p-6 border-b order border-grey-50">
-      <PromoCode promoCodeApplied={promoCodeApplied} />
+      <PromoCode promoCodeApplied={promoCodeApplied} discountMessage={discountMessage} />
       <h3 className="font-bold leading-[29px] text-2xl capi">
         YOUR ORDER SUMMARY
       </h3>
@@ -50,16 +49,6 @@ export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, frei
             <span className="text-lg font-medium">
               <span className="text-base">{currency ? currency : '$'} {discountPrice}</span>
             </span>
-          </li>
-        }
-        {discountMessage &&
-          <li>
-            <div className="flex gap-2 py-2 pl-2 pr-4 border-l-4 border-r-0 bg-semantic-info-100 border-semantic-info-500 border-y-0">
-              <CircleInformationMajor />
-              <p className="text-base font-normal leading-[21px]">
-                {discountMessage}
-              </p>
-            </div>
           </li>
         }
       </ul>

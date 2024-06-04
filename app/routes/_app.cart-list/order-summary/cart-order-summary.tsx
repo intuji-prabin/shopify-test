@@ -16,6 +16,7 @@ export default function OrderSummary({
   discountPrice,
   discountMessage,
   totalPriceWithDiscount,
+  actionData,
 }: any) {
 
   return (
@@ -33,7 +34,7 @@ export default function OrderSummary({
       />
       {shippingAddresses ?
         <Form method="POST">
-          <ShoppingDetails shippingAddresses={shippingAddresses} updateCart={updateCart} placeOrder={placeOrder} />
+          <ShoppingDetails shippingAddresses={shippingAddresses} updateCart={updateCart} placeOrder={placeOrder} actionData={actionData} />
         </Form>
         : <p className='p-6 font-medium text-red-500'>You do not have any shipping address added. Please add one to place order.</p>}
     </div>

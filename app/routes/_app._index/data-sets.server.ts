@@ -1,65 +1,56 @@
 import {useFetch} from '~/hooks/useFetch';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 
-export const formatAmount = (amount: number) => {
-  return amount > 999 ? (amount / 1000).toFixed(2) + 'k' : amount;
-};
+export enum DatumEnum {
+  NA = 'N/A',
+}
 
-export interface ChartData {
+interface BaseChartData {
+  amount: number;
+  currency: string | null;
+  increment: boolean;
+  labels: string[];
+  percentage: number;
+}
+
+interface PeriodData extends BaseChartData {
+  data: Array<DatumEnum | number>;
+}
+interface Dataset {
+  label: Date;
+  data: Array<DatumEnum | number>;
+}
+interface Total extends BaseChartData {
+  datasets: Dataset[];
+  fullSpendAmount: number;
+  lastAmount: number;
+}
+interface Payload {
+  monthly: PeriodData;
+  ytd: PeriodData;
+  totalSpend: {[key: string]: Total};
+  totalInvoice: {[key: string]: Total};
+}
+interface ChartDataResponse {
   status: boolean;
   message: string;
   payload: Payload;
 }
-export interface Payload {
-  monthly: Monthly;
-  ytd: Ytd;
-  totalSpend: {[key: string]: Total};
-  totalInvoice: {[key: string]: Total};
-}
-export interface Monthly {
-  labels: string[];
-  currency: null;
-  amount: number;
-  percentage: number;
-  increment: boolean;
-  data: Array<DatumEnum | number>;
-}
-export enum DatumEnum {
-  NA = 'N/A',
-}
-export interface Total {
-  labels: string[];
-  currency: null;
-  amount: number;
-  lastAmount: number;
-  fullSpendAmount: number;
-  percentage: number;
-  increment: boolean;
-  datasets: Dataset[];
-}
-export interface Dataset {
-  label: Date;
-  data: DatumEnum[];
-}
-export interface Ytd {
-  labels: string[];
-  currency: null;
-  amount: number;
-  percentage: number;
-  increment: boolean;
-  data: DatumEnum[];
+
+interface FormattedChartData {
+  monthly: FormattedChartDetail;
+  ytd: FormattedChartDetail;
 }
 
-export interface formattedChartData {
-  monthly: formattedChartDetail;
-  ytd: formattedChartDetail;
-}
-export interface formattedChartDetail {
-  currency: string;
+interface FormattedChartSubData {
+  currency: string | null;
   increment: boolean;
   percentage: number;
-  amount: number;
+  amount: number | string;
+}
+interface FormattedChartDetail extends FormattedChartSubData {
   areaChartData: {
     labels: string[];
     datasets: {
@@ -73,27 +64,34 @@ export interface formattedChartDetail {
   };
 }
 
+export const formatAmount = (amount: number) => {
+  return amount > 999 ? (amount / 1000).toFixed(2) + 'k' : amount;
+};
+
 export async function getChartData(customerID: string) {
   try {
-    const response = await useFetch<ChartData>({
+    const response = await useFetch<ChartDataResponse>({
       method: AllowedHTTPMethods.GET,
       url: `${ENDPOINT.REPORT.GET}/${customerID}`,
     });
     if (!response?.status) {
       throw new Error('Unexpected action');
     }
-    const finalAreaResponse = formatAreaResponse(response);
-    const finalBarResponse = await formatBarResponse(response);
+    const finalAreaResponse = formatAreaResponse(response?.payload);
+    const finalBarResponse = formatBarResponse(response?.payload);
+    console.log('finalBarResponse', finalBarResponse);
     return {finalAreaResponse, finalBarResponse};
   } catch (error) {
     console.log('error', error);
-    throw new Error('Unexpected action');
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Response(DEFAULT_ERRROR_MESSAGE);
   }
 }
 
-const formatAreaResponse = (response: ChartData): any => {
-  const finalResponse = response?.payload;
-  const formatChartData = (data: any) => {
+const formatAreaResponse = (response: Payload): FormattedChartData => {
+  const formatChartData = (data: PeriodData) => {
     return {
       labels: data?.labels,
       datasets: [
@@ -113,7 +111,7 @@ const formatAreaResponse = (response: ChartData): any => {
     };
   };
 
-  const formatChartDataAndOtherFields = (data: any) => {
+  const formatChartDataAndOtherFields = (data: PeriodData) => {
     return {
       areaChartData: formatChartData(data),
       currency: data?.currency,
@@ -124,16 +122,16 @@ const formatAreaResponse = (response: ChartData): any => {
   };
 
   return {
-    monthly: formatChartDataAndOtherFields(finalResponse?.monthly),
-    ytd: formatChartDataAndOtherFields(finalResponse?.ytd),
+    monthly: formatChartDataAndOtherFields(response?.monthly),
+    ytd: formatChartDataAndOtherFields(response?.ytd),
   };
 };
 
-const formatBarResponse = async (response: ChartData): Promise<any> => {
-  const FinalTotalSpend = response?.payload?.totalSpend;
-  const FinalTotalInvoicing = response?.payload?.totalInvoice;
+const formatBarResponse = (response: Payload) => {
+  const FinalTotalSpend = response?.totalSpend;
+  const FinalTotalInvoicing = response?.totalInvoice;
 
-  const formatBarChartData = (data: any) => {
+  const formatBarChartData = (data: Total) => {
     return {
       labels: data?.labels,
       datasets: [
@@ -153,13 +151,15 @@ const formatBarResponse = async (response: ChartData): Promise<any> => {
     };
   };
 
-  const formatLineChartData = (data: any) => {
+  const formatLineChartData = (lineChartData: Total) => {
     return {
-      labels: data?.labels,
+      labels: lineChartData?.labels,
       datasets: [
         {
-          label: data?.datasets[0]?.label,
-          data: data?.datasets[0]?.data.map((item: any) => item / 1000),
+          label: lineChartData?.datasets[0]?.label,
+          data: lineChartData?.datasets[0]?.data.map(
+            (item: any) => item / 1000,
+          ),
           cubicInterpolationMode: 'monotone',
           borderColor: 'rgb(0, 146, 207)',
           borderWidth: 2,
@@ -168,8 +168,10 @@ const formatBarResponse = async (response: ChartData): Promise<any> => {
           pointBackgroundColor: 'white',
         },
         {
-          label: data?.datasets[1]?.label,
-          data: data?.datasets[1]?.data.map((item: any) => item / 1000),
+          label: lineChartData?.datasets[1]?.label,
+          data: lineChartData?.datasets[1]?.data.map(
+            (item: any) => item / 1000,
+          ),
           cubicInterpolationMode: 'monotone',
           borderColor: 'rgb(200, 162, 0)',
           borderWidth: 2,
@@ -181,7 +183,10 @@ const formatBarResponse = async (response: ChartData): Promise<any> => {
     };
   };
 
-  const formatChartDataAndOtherFields = (data: any, chartType: string) => {
+  const formatChartDataAndOtherFields = (
+    data: Total,
+    chartType: 'bar' | 'line',
+  ) => {
     return {
       currency: data?.currency,
       amount: formatAmount(data?.amount),
@@ -191,17 +196,17 @@ const formatBarResponse = async (response: ChartData): Promise<any> => {
       increment: data?.increment,
       [`${chartType}ChartData`]:
         chartType === 'bar'
-          ? formatBarChartData(data as any)
-          : formatLineChartData(data as any),
+          ? formatBarChartData(data)
+          : formatLineChartData(data),
     };
   };
 
-  const formatBarChartDataAndOtherFields = (data: any) => {
-    return formatChartDataAndOtherFields(data, 'bar');
+  const formatBarChartDataAndOtherFields = (chartData: Total) => {
+    return formatChartDataAndOtherFields(chartData, 'bar');
   };
 
-  const formatLineChartDataAndOtherFields = (data: any) => {
-    return formatChartDataAndOtherFields(data, 'line');
+  const formatLineChartDataAndOtherFields = (chartData: Total) => {
+    return formatChartDataAndOtherFields(chartData, 'line');
   };
 
   return {
@@ -227,12 +232,14 @@ export async function getExpenditureData(customerID: string) {
     if (!response?.status) {
       throw new Error('Unexpected action');
     }
-    // console.log('first', response?.payload);
     const finalResponse = await formatExpenditureResponse(response?.payload);
     return finalResponse;
   } catch (error) {
     console.log('error', error);
-    throw new Error('Unexpected action');
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Response(DEFAULT_ERRROR_MESSAGE);
   }
 }
 

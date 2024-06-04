@@ -44,6 +44,7 @@ export const ENDPOINT = {
   },
   SUPPORT: {
     TICKETS: `${BASE_URL}/support/tickets`,
+    IMPERSONATE: `${BASE_URL}/impersonate`,
   },
   PRODUCT: {
     GET_PRICE: `${BASE_URL}/product/prices`,
