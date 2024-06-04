@@ -1,8 +1,21 @@
+import {json} from '@remix-run/react';
 import {useFetch} from '~/hooks/useFetch';
+import {redirect} from '@remix-run/server-runtime';
+import {AppLoadContext} from '@shopify/remix-oxygen';
+import {Routes} from '~/lib/constants/routes.constent';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {getAccessToken} from '~/lib/utils/auth-session.server';
+import {addedBulkCart} from '~/routes/_app.wishlist/bulk.cart.server';
 import {BulkOrderColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
+import {GroupItem} from '~/routes/_app.pending-order_.$groupId/select-product-context';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import {
+  getMessageSession,
+  messageCommitSession,
+  setErrorMessage,
+  setSuccessMessage,
+} from '~/lib/utils/toast-session.server';
 
 export type Product = BulkOrderColumn;
 
@@ -20,56 +33,6 @@ export type Group = {
 
 interface GetProductGroupResponse extends DefaultResponse {
   payload: Group;
-}
-
-export async function updateGroup({
-  groupId,
-  groupName,
-  customerId,
-}: {
-  groupId: number;
-  groupName: string;
-  customerId: string;
-}) {
-  const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
-
-  const body = JSON.stringify({groupId, groupName: groupName.toLowerCase()});
-
-  const response = await useFetch<DefaultResponse>({
-    url,
-    method: AllowedHTTPMethods.PUT,
-    body,
-  });
-
-  if (!response.status) {
-    throw new Error(response.message);
-  }
-
-  return response;
-}
-
-export async function deleteGroup({
-  groupId,
-  customerId,
-}: {
-  groupId: number;
-  customerId: string;
-}) {
-  const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
-
-  const body = JSON.stringify({groupId});
-
-  const response = await useFetch<DefaultResponse>({
-    url,
-    method: AllowedHTTPMethods.DELETE,
-    body,
-  });
-
-  if (!response.status) {
-    throw new Error(response.message);
-  }
-
-  return response;
 }
 
 export async function getGroupDetails({
@@ -118,68 +81,364 @@ export async function getGroupDetails({
   }
 }
 
+export async function updateGroup({
+  request,
+  groupId,
+  groupName,
+  customerId,
+}: {
+  groupId: number;
+  request: Request;
+  groupName: string;
+  customerId: string;
+}) {
+  const messageSession = await getMessageSession(request);
+
+  try {
+    const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
+
+    const body = JSON.stringify({groupId, groupName: groupName.toLowerCase()});
+
+    const response = await useFetch<DefaultResponse>({
+      url,
+      method: AllowedHTTPMethods.PUT,
+      body,
+    });
+
+    if (!response.status) {
+      throw new Error(response.message);
+    }
+
+    setSuccessMessage(messageSession, response.message);
+
+    return json(
+      {response},
+      {
+        headers: {
+          'Set-Cookie': await messageCommitSession(messageSession),
+        },
+      },
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      setErrorMessage(messageSession, error.message);
+      return json(
+        {error},
+        {
+          headers: {
+            'Set-Cookie': await messageCommitSession(messageSession),
+          },
+        },
+      );
+    }
+    setErrorMessage(messageSession, DEFAULT_ERRROR_MESSAGE);
+    return json(
+      {error},
+      {
+        headers: {
+          'Set-Cookie': await messageCommitSession(messageSession),
+        },
+      },
+    );
+  }
+}
+
+export async function deleteGroup({
+  groupId,
+  request,
+  customerId,
+}: {
+  groupId: number;
+  request: Request;
+  customerId: string;
+}) {
+  const messageSession = await getMessageSession(request);
+
+  try {
+    const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
+
+    const body = JSON.stringify({groupId});
+
+    const response = await useFetch<DefaultResponse>({
+      url,
+      method: AllowedHTTPMethods.DELETE,
+      body,
+    });
+
+    if (!response.status) {
+      throw new Error(response.message);
+    }
+    setSuccessMessage(messageSession, response.message);
+
+    return redirect(Routes.PENDING_ORDER, {
+      headers: {
+        'Set-Cookie': await messageCommitSession(messageSession),
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      setErrorMessage(messageSession, error.message);
+      return json(
+        {error},
+        {
+          headers: {
+            'Set-Cookie': await messageCommitSession(messageSession),
+          },
+        },
+      );
+    }
+    setErrorMessage(messageSession, DEFAULT_ERRROR_MESSAGE);
+    return json(
+      {error},
+      {
+        headers: {
+          'Set-Cookie': await messageCommitSession(messageSession),
+        },
+      },
+    );
+  }
+}
+
 export async function addProductToGroup({
   body,
+  request,
   customerId,
 }: {
   body: string;
+  request: Request;
   customerId: string;
 }) {
-  const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
+  const messageSession = await getMessageSession(request);
 
-  const response = await useFetch<DefaultResponse>({
-    method: AllowedHTTPMethods.POST,
-    url,
-    body,
-  });
+  try {
+    const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
 
-  if (!response.status) {
-    throw new Error(response.message);
+    const response = await useFetch<DefaultResponse>({
+      method: AllowedHTTPMethods.POST,
+      url,
+      body,
+    });
+
+    if (!response.status) {
+      throw new Error(response.message);
+    }
+    setSuccessMessage(messageSession, response.message);
+
+    return json(
+      {},
+      {
+        headers: {
+          'Set-Cookie': await messageCommitSession(messageSession),
+        },
+      },
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      setErrorMessage(messageSession, error.message);
+      return json(
+        {error},
+        {
+          headers: {
+            'Set-Cookie': await messageCommitSession(messageSession),
+          },
+        },
+      );
+    }
+    setErrorMessage(messageSession, DEFAULT_ERRROR_MESSAGE);
+    return json(
+      {error},
+      {
+        headers: {
+          'Set-Cookie': await messageCommitSession(messageSession),
+        },
+      },
+    );
   }
-
-  return response;
 }
 
 export async function deleteGroupProduct({
-  body,
+  groupId,
+  request,
+  placeIds,
   customerId,
 }: {
-  body: string;
   customerId: string;
+  groupId: number;
+  placeIds: number[];
+  request: Request;
 }) {
-  const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
+  const messageSession = await getMessageSession(request);
 
-  const response = await useFetch<DefaultResponse>({
-    method: AllowedHTTPMethods.DELETE,
-    url,
-    body,
-  });
+  try {
+    const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
 
-  if (!response.status) {
-    throw new Error(response.message);
+    const body = JSON.stringify({
+      groupId,
+      placeIds,
+    });
+    const response = await useFetch<DefaultResponse>({
+      method: AllowedHTTPMethods.DELETE,
+      url,
+      body,
+    });
+
+    if (!response.status) {
+      throw new Error(response.message);
+    }
+
+    setSuccessMessage(messageSession, response.message);
+
+    return redirect(`${Routes.PENDING_ORDER}/${groupId}`, {
+      headers: {
+        'Set-Cookie': await messageCommitSession(messageSession),
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      setErrorMessage(messageSession, error.message);
+      return json(
+        {error},
+        {
+          headers: {
+            'Set-Cookie': await messageCommitSession(messageSession),
+          },
+        },
+      );
+    }
+    setErrorMessage(messageSession, DEFAULT_ERRROR_MESSAGE);
+    return json(
+      {error},
+      {
+        headers: {
+          'Set-Cookie': await messageCommitSession(messageSession),
+        },
+      },
+    );
   }
-
-  return response;
 }
 
 export async function updateGroupProduct({
-  body,
+  groupId,
+  request,
   customerId,
 }: {
-  body: string;
+  groupId: number;
+  request: Request;
   customerId: string;
 }) {
-  const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
+  const messageSession = await getMessageSession(request);
 
-  const response = await useFetch<DefaultResponse>({
-    method: AllowedHTTPMethods.PUT,
-    url,
-    body,
-  });
+  try {
+    const jsonPayload = (await request.json()) as GroupItem[];
 
-  if (!response.status) {
-    throw new Error(response.message);
+    const body = JSON.stringify({
+      groupId,
+      groupItemList: jsonPayload,
+    });
+
+    const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
+
+    const response = await useFetch<DefaultResponse>({
+      method: AllowedHTTPMethods.PUT,
+      url,
+      body,
+    });
+
+    if (!response.status) {
+      throw new Error(response.message);
+    }
+
+    setSuccessMessage(messageSession, response.message);
+
+    return json(
+      {response},
+      {
+        headers: {
+          'Set-Cookie': await messageCommitSession(messageSession),
+        },
+      },
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      setErrorMessage(messageSession, error?.message);
+      return json(
+        {error},
+        {
+          headers: {
+            'Set-Cookie': await messageCommitSession(messageSession),
+          },
+        },
+      );
+    }
+    setErrorMessage(
+      messageSession,
+      'Could not update. Please try again later.',
+    );
+    return json(
+      {error},
+      {
+        headers: {
+          'Set-Cookie': await messageCommitSession(messageSession),
+        },
+      },
+    );
   }
+}
 
-  return response;
+export async function addToCart({
+  context,
+  formData,
+  request,
+}: {
+  formData: FormData;
+  context: AppLoadContext;
+  request: Request;
+}) {
+  const messageSession = await getMessageSession(request);
+
+  try {
+    const cartInfo = Object.fromEntries(formData);
+
+    const accessTocken = (await getAccessToken(context)) as string;
+
+    await addedBulkCart(cartInfo, context, accessTocken, request);
+
+    setSuccessMessage(messageSession, 'Item added to cart successfully');
+
+    return json(
+      {},
+      {
+        headers: [
+          ['Set-Cookie', await context.session.commit({})],
+          ['Set-Cookie', await messageCommitSession(messageSession)],
+        ],
+      },
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      setErrorMessage(messageSession, error?.message);
+      return json(
+        {},
+        {
+          headers: [
+            ['Set-Cookie', await context.session.commit({})],
+            ['Set-Cookie', await messageCommitSession(messageSession)],
+          ],
+        },
+      );
+    }
+    setErrorMessage(
+      messageSession,
+      'Item not added to cart. Please try again later.',
+    );
+    return json(
+      {},
+      {
+        headers: [
+          ['Set-Cookie', await context.session.commit({})],
+          ['Set-Cookie', await messageCommitSession(messageSession)],
+        ],
+      },
+    );
+  }
 }
