@@ -104,7 +104,7 @@ export function NotificationNavbar({
             <Link
               to={navIcon.url}
               className="info-block"
-              onClick={() => toggleMenu(!isOpen)}
+              onClick={() => toggleMenu(false)}
             >
               {' '}
               <div data-tooltip={navIcon.title}>

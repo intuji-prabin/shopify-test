@@ -690,7 +690,7 @@ input[type='radio']:checked + label {
 }
 /* z-index for the view warehouse info drawer */
 div[data-state='open'].fixed.inset-0 {
-  z-index: 10;
+  z-index: 31;
 }
 
 .track-an-order .track-order {
