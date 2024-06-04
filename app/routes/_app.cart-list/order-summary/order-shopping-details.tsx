@@ -166,17 +166,26 @@ export function TextArea() {
   );
 }
 
-export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
+export function PromoCode({ promoCodeApplied, discountMessage }: { promoCodeApplied: string, discountMessage: string }) {
   const [promoCode, setPromoCode] = useState(promoCodeApplied);
   useEffect(() => {
     setPromoCode(promoCodeApplied);
   }, [promoCodeApplied]);
   const fetcher = useFetcher<{ status: boolean; type: "success" | "error"; message: string; method: "POST" | "DELETE" }>();
-  const [promoError, setPromoError] = useState(fetcher?.data?.message);
+  const [promoError, setPromoError] = useState("");
   useEffect(() => {
-    setPromoError(fetcher?.data?.message);
+    if (fetcher?.data?.message) {
+      setPromoError(fetcher?.data?.message);
+    }
   }, [fetcher?.data]);
 
+  useEffect(() => {
+    if (discountMessage != "Discount has been Applied") {
+      setPromoError(discountMessage);
+    } else {
+      setPromoError("");
+    }
+  }, [discountMessage]);
   return (
     <div className="flex flex-col gap-1">
       <p className="text-base text-normal leading-[21px] text-grey-800">
@@ -218,13 +227,13 @@ export function PromoCode({ promoCodeApplied }: { promoCodeApplied: string }) {
           {fetcher.state === "submitting" || fetcher.state === "loading" ? <Loader /> : null}
         </div>
       </fetcher.Form>
-      {fetcher.state === "idle" && promoError &&
+      {(fetcher.state === "idle" && promoError) || (promoCodeApplied && promoError !== "") ?
         <p className={`pt-1 error-msg`}>
           <DangerAlert />
-          <span className="pl-1">{fetcher?.data?.message}</span>
-        </p>
+          <span className="pl-1">{promoError}</span>
+        </p> : null
       }
-      {promoCodeApplied && <p className="bg-semantic-success-100 uppercase text-xs py-1 px-2.5 font-semibold w-max">Discount HAS BEEN applied</p>}
+      {promoCodeApplied && discountMessage === "Discount has been Applied" && <p className="bg-semantic-success-100 uppercase text-xs py-1 px-2.5 font-semibold w-max">{discountMessage}</p>}
     </div>
   );
 }
