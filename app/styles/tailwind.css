@@ -633,6 +633,12 @@ label .required {
   overflow: hidden;
   transition: max-height 0.2s ease-out;
 }
+@media (max-width: 1279px) {
+  .navbar .info-block [data-tooltip]:before,
+  .navbar .info-block [data-tooltip]:after {
+    @apply hidden;
+  }
+}
 /* tooltip for product card ends here */
 
 /* Checkbox Input */
@@ -936,7 +942,6 @@ div[data-state='open'].fixed.inset-0 {
 .tag-list:not(:last-child) > *:after {
   content: ',';
 }
-
 
 .tab-header .profile-wrap .profile-detail {
   width: calc(100% - 32px);

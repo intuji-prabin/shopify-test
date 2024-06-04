@@ -142,16 +142,16 @@ export default function TopHeader({
 
   return (
     <div className="bg-grey-900">
-      <div className="container flex items-center gap-3 py-5 justify-normal xl:justify-between">
+      <div className="container flex items-center gap-3 py-5 justify-normal md:justify-between">
         <div className="flex items-center gap-4">
           <TabletNavmenu profileName={userDetails.firstName} profileImage={imageUrl} />
           {/* home logo begins here */}
           <LogoIcon logo_url={'/myCigweldWhite.svg'} />
         </div>
         {/* Search and notification bar begins here  */}
-        <div className="flex gap-[22px] w-full md:w-[calc(100%_-_228px)] xl:w-[unset]">
+        <div className="flex gap-[22px] w-full md:w-[calc(100%_-_267px)] xl:w-[unset]">
           {/* search bar begins here */}
-          <div className="search-bar flex bg-white items-center min-w-[unset] w-full max-h-12 px-4 py-3 xl:min-w-[453px] relative">
+          <div className="search-bar flex bg-white items-center min-w-[unset] md:w-[calc(100%_-_140px)] xl:w-full max-h-12 px-4 py-3 xl:min-w-[453px] relative">
             <PredictiveSearch searchVariant="normal" />
           </div>
 
