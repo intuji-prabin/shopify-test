@@ -280,7 +280,6 @@ export async function action({ request, context }: ActionFunctionArgs) {
     case 'PUT':
       try {
         res = await cartUpdate(context, request);
-        await promoCodeRemove(request, false);
         setSuccessMessage(messageSession, 'Cart updated successfully');
         return json(
           {},
