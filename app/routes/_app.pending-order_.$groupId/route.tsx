@@ -1,21 +1,22 @@
 import {useState} from 'react';
+import {Can} from '~/lib/helpers/Can';
 import {useTable} from '~/hooks/useTable';
 import {DataTable} from '~/components/ui/data-table';
 import HeroBanner from '~/components/ui/hero-section';
-import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
+import {RouteError} from '~/components/ui/route-error';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import {ActionBar} from '~/routes/_app.pending-order_.$groupId/action-bar';
-import {Routes} from '~/lib/constants/routes.constent';
 import {PredictiveSearch} from '~/components/ui/predictive-search';
 import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
-import {addedBulkCart} from '~/routes/_app.wishlist/bulk.cart.server';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {useMyProductColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
 import {renderSubComponent} from '~/routes/_app.cart-list/order-my-products/cart-myproduct';
+import {SelectProductProvider} from '~/routes/_app.pending-order_.$groupId/select-product-context';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   MetaFunction,
-  redirect,
 } from '@shopify/remix-oxygen';
 import {
   isRouteErrorResponse,
@@ -25,25 +26,13 @@ import {
 } from '@remix-run/react';
 import {
   addProductToGroup,
+  addToCart,
   deleteGroup,
   deleteGroupProduct,
   getGroupDetails,
   updateGroup,
   updateGroupProduct,
 } from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
-import {
-  getMessageSession,
-  messageCommitSession,
-  setErrorMessage,
-  setSuccessMessage,
-} from '~/lib/utils/toast-session.server';
-import {
-  GroupItem,
-  SelectProductProvider,
-} from '~/routes/_app.pending-order_.$groupId/select-product-context';
-import {Can} from '~/lib/helpers/Can';
-import {RouteError} from '~/components/ui/route-error';
-import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Pending Order Details'}];
@@ -81,263 +70,74 @@ export async function loader({context, request, params}: LoaderFunctionArgs) {
 export async function action({request, context, params}: ActionFunctionArgs) {
   await isAuthenticate(context);
 
-  const messageSession = await getMessageSession(request);
-
   const groupId = Number(params.groupId);
 
   const {userDetails} = await getUserDetails(request);
-
   const customerId = userDetails.id.split('/').pop() as string;
 
   const contentType = request.headers.get('Content-Type');
 
   if (contentType === 'application/json') {
-    const jsonPayload = (await request.json()) as GroupItem[];
-
-    const body = JSON.stringify({
+    return await updateGroupProduct({
+      customerId,
       groupId,
-      groupItemList: jsonPayload,
+      request,
     });
-
-    try {
-      const response = await updateGroupProduct({
-        customerId,
-        body,
-      });
-
-      setSuccessMessage(messageSession, response?.message);
-
-      return json(
-        {},
-        {
-          headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
-        },
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        setErrorMessage(messageSession, error?.message);
-        return json(
-          {},
-          {
-            headers: [
-              ['Set-Cookie', await context.session.commit({})],
-              ['Set-Cookie', await messageCommitSession(messageSession)],
-            ],
-          },
-        );
-      }
-      setErrorMessage(
-        messageSession,
-        'Could not update. Please try again later.',
-      );
-      return json(
-        {},
-        {
-          headers: [
-            ['Set-Cookie', await context.session.commit({})],
-            ['Set-Cookie', await messageCommitSession(messageSession)],
-          ],
-        },
-      );
-    }
   }
 
   const formData = await request.formData();
-
   const action = formData.get('_action') as ActionType;
 
   switch (action) {
     case 'update_group': {
-      try {
-        const groupName = formData.get('groupName') as string;
+      const groupName = formData.get('groupName') as string;
 
-        const updatedGroup = await updateGroup({
-          customerId,
-          groupId,
-          groupName,
-        });
-
-        setSuccessMessage(messageSession, updatedGroup.message);
-
-        return json(
-          {},
-          {
-            headers: {
-              'Set-Cookie': await messageCommitSession(messageSession),
-            },
-          },
-        );
-      } catch (error) {
-        if (error instanceof Error) {
-          setErrorMessage(messageSession, error.message);
-          return json(
-            {error},
-            {
-              headers: {
-                'Set-Cookie': await messageCommitSession(messageSession),
-              },
-            },
-          );
-        }
-        return json({error}, {status: 500});
-      }
+      return await updateGroup({
+        customerId,
+        groupId,
+        groupName,
+        request,
+      });
     }
 
     case 'delete_group': {
-      try {
-        const deletedGroup = await deleteGroup({
-          groupId,
-          customerId,
-        });
-
-        setSuccessMessage(messageSession, deletedGroup.message);
-
-        return redirect(Routes.PENDING_ORDER, {
-          headers: {
-            'Set-Cookie': await messageCommitSession(messageSession),
-          },
-        });
-      } catch (error) {
-        if (error instanceof Error) {
-          setErrorMessage(messageSession, error.message);
-          return json(
-            {error},
-            {
-              headers: {
-                'Set-Cookie': await messageCommitSession(messageSession),
-              },
-            },
-          );
-        }
-        return json({error}, {status: 500});
-      }
+      return await deleteGroup({
+        groupId,
+        customerId,
+        request,
+      });
     }
 
     case 'delete_product': {
-      try {
-        const placeIds = formData
-          .getAll('placeId')
-          .map((placeId) => Number(placeId));
+      const placeIds = formData
+        .getAll('placeId')
+        .map((placeId) => Number(placeId));
 
-        const body = JSON.stringify({
-          groupId,
-          placeIds,
-        });
-
-        const deletedProduct = await deleteGroupProduct({
-          body,
-          customerId,
-        });
-
-        setSuccessMessage(messageSession, deletedProduct.message);
-
-        return redirect(`${Routes.PENDING_ORDER}/${groupId}`, {
-          headers: {
-            'Set-Cookie': await messageCommitSession(messageSession),
-          },
-        });
-      } catch (error) {
-        if (error instanceof Error) {
-          setErrorMessage(messageSession, error.message);
-          return json(
-            {error},
-            {
-              headers: {
-                'Set-Cookie': await messageCommitSession(messageSession),
-              },
-            },
-          );
-        }
-        return json({error}, {status: 500});
-      }
+      return await deleteGroupProduct({
+        customerId,
+        groupId,
+        placeIds,
+        request,
+      });
     }
 
     case 'add_to_cart': {
-      try {
-        const cartInfo = Object.fromEntries(formData);
-
-        const accessTocken = (await getAccessToken(context)) as string;
-
-        await addedBulkCart(cartInfo, context, accessTocken, request);
-
-        setSuccessMessage(messageSession, 'Item added to cart successfully');
-
-        return json(
-          {},
-          {
-            headers: [
-              ['Set-Cookie', await context.session.commit({})],
-              ['Set-Cookie', await messageCommitSession(messageSession)],
-            ],
-          },
-        );
-      } catch (error) {
-        if (error instanceof Error) {
-          setErrorMessage(messageSession, error?.message);
-          return json(
-            {},
-            {
-              headers: [
-                ['Set-Cookie', await context.session.commit({})],
-                ['Set-Cookie', await messageCommitSession(messageSession)],
-              ],
-            },
-          );
-        }
-        setErrorMessage(
-          messageSession,
-          'Item not added to cart. Please try again later.',
-        );
-        return json(
-          {},
-          {
-            headers: [
-              ['Set-Cookie', await context.session.commit({})],
-              ['Set-Cookie', await messageCommitSession(messageSession)],
-            ],
-          },
-        );
-      }
+      return await addToCart({context, formData, request});
     }
 
     case 'add_product': {
-      try {
-        const body = JSON.stringify({
-          groupId,
-          productId: formData.get('productId'),
-          quantity: formData.get('quantity'),
-          uom: formData.get('uom'),
-        });
+      const body = JSON.stringify({
+        groupId,
+        productId: formData.get('productId'),
+        quantity: formData.get('quantity'),
+        uom: formData.get('uom'),
+      });
 
-        const productResponse = await addProductToGroup({
-          body,
-          customerId,
-        });
-
-        setSuccessMessage(messageSession, productResponse.message);
-
-        return json(
-          {},
-          {
-            headers: {
-              'Set-Cookie': await messageCommitSession(messageSession),
-            },
-          },
-        );
-      } catch (error) {
-        if (error instanceof Error) {
-          setErrorMessage(messageSession, error.message);
-          return json(
-            {error},
-            {
-              headers: {
-                'Set-Cookie': await messageCommitSession(messageSession),
-              },
-            },
-          );
-        }
-        return json({error}, {status: 500});
-      }
+      return await addProductToGroup({
+        body,
+        request,
+        customerId,
+      });
     }
 
     default: {
