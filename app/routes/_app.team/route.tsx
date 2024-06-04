@@ -1,17 +1,24 @@
 import {useMemo, useState} from 'react';
+import {Can} from '~/lib/helpers/Can';
 import {validationError} from 'remix-validated-form';
 import {Button} from '~/components/ui/button';
 import {SearchInput} from '~/components/ui/search-input';
 import {Routes} from '~/lib/constants/routes.constent';
 import {TabsTable} from '~/routes/_app.team/tabs-table';
+import {MetaFunction} from '@shopify/remix-oxygen';
+import {BackButton} from '~/components/ui/back-button';
+import {TeamError} from '~/routes/_app.team/team-error';
+import {useConditionalRender} from '~/hooks/useAuthorization';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {Tabs, TabsContent, TabsList, TabsTrigger} from '~/components/ui/tabs';
+import {ConfirmationFormSchemaValidator} from '~/routes/_app.team/confirmation-form';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {
   getAllTeams,
   getRoles,
   updateStatus,
 } from '~/routes/_app.team/team.server';
-import {Tabs, TabsContent, TabsList, TabsTrigger} from '~/components/ui/tabs';
-import {ConfirmationFormSchemaValidator} from '~/routes/_app.team/confirmation-form';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
 import {
   Link,
   isRouteErrorResponse,
@@ -23,19 +30,6 @@ import {
   LoaderFunctionArgs,
   json,
 } from '@remix-run/server-runtime';
-import {
-  getMessageSession,
-  messageCommitSession,
-  setErrorMessage,
-  setSuccessMessage,
-} from '~/lib/utils/toast-session.server';
-import {MetaFunction} from '@shopify/remix-oxygen';
-import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {BackButton} from '~/components/ui/back-button';
-import {Can} from '~/lib/helpers/Can';
-import {useConditionalRender} from '~/hooks/useAuthorization';
-import {TeamError} from '~/routes/_app.team/team-error';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Team List'}];
@@ -73,77 +67,25 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 
 export async function action({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
-  const messageSession = await getMessageSession(request);
   const formData = await request.formData();
 
   const action = formData.get('_action') as 'activate' | 'deactivate';
 
   switch (action) {
     case 'activate': {
-      try {
-        const customerId = formData.get('customerId') as string;
-
-        await updateStatus({customerId, value: 'true'});
-        setSuccessMessage(messageSession, 'Customer Activated Successfully');
-
-        return json(
-          {},
-          {
-            headers: {
-              'Set-Cookie': await messageCommitSession(messageSession),
-            },
-          },
-        );
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          setErrorMessage(messageSession, error.message);
-          return json(
-            {error},
-            {
-              headers: {
-                'Set-Cookie': await messageCommitSession(messageSession),
-              },
-            },
-          );
-        }
-        return json({error}, {status: 400});
-      }
+      const customerId = formData.get('customerId') as string;
+      return await updateStatus({customerId, value: 'true', request});
     }
     case 'deactivate': {
-      try {
-        const result = await ConfirmationFormSchemaValidator.validate(formData);
+      const result = await ConfirmationFormSchemaValidator.validate(formData);
 
-        if (result.error) {
-          return validationError(result.error);
-        }
-        if (result.data.confirmation === 'Deactivate') {
-          const customerId = result.data.customerId;
-          await updateStatus({customerId, value: 'false'});
-        }
+      if (result.error) {
+        return validationError(result.error);
+      }
 
-        setSuccessMessage(messageSession, 'Customer Deactivated Successfully');
-
-        return json(
-          {},
-          {
-            headers: {
-              'Set-Cookie': await messageCommitSession(messageSession),
-            },
-          },
-        );
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          setErrorMessage(messageSession, error.message);
-          return json(
-            {error},
-            {
-              headers: {
-                'Set-Cookie': await messageCommitSession(messageSession),
-              },
-            },
-          );
-        }
-        return json({error}, {status: 400});
+      if (result.data.confirmation === 'Deactivate') {
+        const customerId = result.data.customerId;
+        return await updateStatus({customerId, value: 'false', request});
       }
     }
     default: {

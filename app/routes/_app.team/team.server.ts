@@ -6,6 +6,14 @@ import {emitter} from '~/lib/utils/emitter.server';
 import {EVENTS} from '~/lib/constants/events.contstent';
 import {AppLoadContext} from '@shopify/remix-oxygen';
 import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
+import {
+  getMessageSession,
+  messageCommitSession,
+  setErrorMessage,
+  setSuccessMessage,
+} from '~/lib/utils/toast-session.server';
+import {json} from '@remix-run/react';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 
 interface MetaField {
   key: string;
@@ -102,28 +110,68 @@ export async function getRoles({
 export async function updateStatus({
   customerId,
   value,
+  request,
 }: {
   customerId: string;
   value: 'true' | 'false';
+  request: Request;
 }) {
-  const body = JSON.stringify({
-    customerId,
-    status: value,
-  });
-
-  const results = await useFetch<ResponseData>({
-    method: AllowedHTTPMethods.POST,
-    url: ENDPOINT.CUSTOMER.UPDATE_STATUS,
-    body,
-  });
-
-  if (!results.status) {
-    throw new Response('Oh no! Something went wrong!', {
-      status: 404,
+  const messageSession = await getMessageSession(request);
+  try {
+    const body = JSON.stringify({
+      customerId,
+      status: value,
     });
+
+    const response = await useFetch<ResponseData>({
+      method: AllowedHTTPMethods.POST,
+      url: ENDPOINT.CUSTOMER.UPDATE_STATUS,
+      body,
+    });
+
+    if (!response.status) {
+      throw new Error(response.message);
+    }
+
+    const successMessage =
+      value === 'true'
+        ? 'Customer Activated Successfully'
+        : 'Customer Deactivated Successfully';
+    setSuccessMessage(messageSession, successMessage);
+
+    emitter.emit(EVENTS.LOGOUT.KEY, {
+      customerId: customerId,
+      message: 'User Deactivated',
+    });
+
+    return json(
+      {},
+      {
+        headers: {
+          'Set-Cookie': await messageCommitSession(messageSession),
+        },
+      },
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      setErrorMessage(messageSession, error.message);
+      return json(
+        {error},
+        {
+          headers: {
+            'Set-Cookie': await messageCommitSession(messageSession),
+          },
+        },
+      );
+    }
+    setErrorMessage(messageSession, DEFAULT_ERRROR_MESSAGE);
+    return json(
+      {error},
+      {
+        headers: {
+          'Set-Cookie': await messageCommitSession(messageSession),
+        },
+      },
+    );
   }
-  emitter.emit(EVENTS.LOGOUT.KEY, {
-    customerId: customerId,
-    message: 'User Deactivated',
-  });
 }
