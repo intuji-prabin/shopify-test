@@ -23,8 +23,8 @@ export const SingleNavItem = ({
   const currentPageRoute = location.pathname;
   const [disableHover, setDisableHover] = useState(false);
 
-  const handleClick = (event: any) => {
-    event.preventDefault();
+  const handleClick = () => {
+    console.log("inside handleClick")
     setDisableHover(!disableHover);
   };
 

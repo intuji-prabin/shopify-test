@@ -74,7 +74,7 @@ export const MegaMenu = ({ categories, handleClick }: { categories: Payload[], h
               >
                 <Link to="/categories" className="w-full" onClick={() => {
                   console.log("first click")
-                  handleClick
+                  handleClick;
                 }}>
                   <p className="flex flex-row-reverse items-center justify-between w-full px-2 py-1 text-lg rounded menu-hov">
                     {' '}
