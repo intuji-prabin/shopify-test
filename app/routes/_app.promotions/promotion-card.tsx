@@ -55,10 +55,13 @@ const PromotionCard = ({
   const handleViewClick = () => {
     const params = new URLSearchParams(location.search);
     params.set('id', id.toString());
-    window.history.pushState({}, '', `${location.pathname}?${params.toString()}`);
+    window.history.pushState(
+      {},
+      '',
+      `${location.pathname}?${params.toString()}`,
+    );
     setIsDialogOpen(true);
   };
-  
 
   const handleClosePreview = () => {
     const params = new URLSearchParams(location.search);
@@ -66,7 +69,6 @@ const PromotionCard = ({
     window.history.pushState({}, '', `${location.pathname}`);
     setIsDialogOpen(false);
   };
-  
 
   return (
     <>
@@ -79,7 +81,7 @@ const PromotionCard = ({
       </figure>
       <div className="p-4 space-y-4 bg-grey-25">
         <h5>{title}</h5>
-        <div className="grid grid-cols-1 gap-2 mxs:grid-cols-2">
+        <div className="flex gap-2 flex-col mxs:flex-row">
           <Dialog
             open={isDialogOpen}
             onOpenChange={(isOpen) => !isOpen && handleClosePreview()}
@@ -89,6 +91,7 @@ const PromotionCard = ({
                 <Button
                   type="button"
                   variant="primary"
+                  className="grow"
                   onClick={handleViewClick}
                 >
                   View
