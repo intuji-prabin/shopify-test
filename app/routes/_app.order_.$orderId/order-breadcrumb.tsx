@@ -1,10 +1,10 @@
-import {useFetcher} from '@remix-run/react';
-import {BackButton} from '~/components/ui/back-button';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {Button} from '~/components/ui/button';
-import {Routes} from '~/lib/constants/routes.constent';
-import {Can} from '~/lib/helpers/Can';
-import {Product} from '~/routes/_app.order_.$orderId/order-details.server';
+import { useFetcher } from '@remix-run/react';
+import { BackButton } from '~/components/ui/back-button';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { Button } from '~/components/ui/button';
+import { Routes } from '~/lib/constants/routes.constent';
+import { Can } from '~/lib/helpers/Can';
+import { Product } from '~/routes/_app.order_.$orderId/order-details.server';
 
 export function OrderBreadcrumb({
   orderId,
@@ -37,12 +37,12 @@ export function OrderBreadcrumb({
 
       formData.append('_action', 'add_to_cart');
 
-      fetcher.submit(formData, {method: 'POST'});
+      fetcher.submit(formData, { method: 'POST' });
     });
   };
 
   return (
-    <div className=" pt-6 pb-4 flex items-center justify-between">
+    <div className="flex flex-wrap items-center justify-between gap-2 pt-6 pb-4">
       <div>
         <BackButton title="Order Details" />
         <Breadcrumb>
@@ -50,8 +50,7 @@ export function OrderBreadcrumb({
           <BreadcrumbItem className="text-grey-900">{orderId}</BreadcrumbItem>
         </Breadcrumb>
       </div>
-
-      <div className="flex gap-2 items-center">
+      <div className="flex items-center gap-2">
         <p className="text-lg italic font-bold leading-[22p-x]">
           {' '}
           {products.length} {products.length > 1 ? 'items' : 'item'}

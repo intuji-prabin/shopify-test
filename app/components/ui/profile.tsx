@@ -6,11 +6,10 @@ import useDate from '~/hooks/useDate';
 import { CustomerData } from '~/routes/_public.login/login.server';
 
 type PropType = {
-  sectionClass?: string;
   profileInfo?: CustomerData;
 };
 
-const Profile = ({ sectionClass, profileInfo }: PropType) => {
+const Profile = ({ profileInfo }: PropType) => {
   function getGreeting() {
     const now = new Date();
     const hour = now.getHours();
@@ -27,7 +26,7 @@ const Profile = ({ sectionClass, profileInfo }: PropType) => {
 
   const currentDate = useDate();
   return (
-    <section className={`container ${sectionClass}`}>
+    <section className="container mt-3 md:mt-6 lg:mt-10">
       <div className="flex flex-wrap items-start justify-between gap-x-5 gap-y-2">
         <div className="flex flex-wrap items-center justify-center order-2 w-full gap-x-4 gap-y-2 sm:w-auto sm:order-1 xs:justify-start">
           <div className="border-4 border-white border-solid rounded-full max-w-28 aspect-square">

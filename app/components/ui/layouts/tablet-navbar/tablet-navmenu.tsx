@@ -23,7 +23,7 @@ export default function TabletNavmenu({ profileName, profileImage }: { profileNa
       >
         <TabletHamburger />
       </figure>
-      <div className={`${isOpen ? "block" : "hidden"} absolute top-0 w-40 z-30 left-0 bg-primary-500 min-w-[300px]`} ref={tabletSectionRef}>
+      <div className={`${isOpen ? "block xl:hidden" : "hidden"} absolute top-0 w-40 z-30 left-0 bg-primary-500 min-w-[300px]`} ref={tabletSectionRef}>
         <div className="flex items-center justify-between p-4 bg-grey-900 tab-header">
           <UserProfile user_name={profileName} image_url={profileImage} />
           <Button
