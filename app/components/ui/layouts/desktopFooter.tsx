@@ -9,7 +9,7 @@ export default function DesktopFooter({ footerData }: { footerData: any }) {
   return (
     <div className="bg-grey-900 ">
       <div className="container">
-        <div className="flex flex-col justify-between gap-10 py-20 md:flex-row">
+        <div className="flex flex-col justify-between gap-10 py-20 lg:flex-row">
           <div className="flex flex-col gap-10">
             {footerData?.logo &&
               <figure className="max-w-48">
