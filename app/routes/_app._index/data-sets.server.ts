@@ -79,7 +79,6 @@ export async function getChartData(customerID: string) {
     }
     const finalAreaResponse = formatAreaResponse(response?.payload);
     const finalBarResponse = formatBarResponse(response?.payload);
-    console.log('finalBarResponse', finalBarResponse);
     return {finalAreaResponse, finalBarResponse};
   } catch (error) {
     console.log('error', error);
