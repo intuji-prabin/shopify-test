@@ -11,7 +11,12 @@ export function OrderStatusChip({status}: {status: OrderStatus}) {
   switch (status) {
     case 'Received':
       return (
-        <div className={statusVariants({variant: 'received'})}>Received</div>
+        <div
+          className={statusVariants({variant: 'received'})}
+          data-cy="order-status"
+        >
+          Received
+        </div>
       );
     case 'Order Cancel':
       return (
