@@ -66,7 +66,7 @@ export function TrackAnOrderButton({
           ) : (
             <button
               className="flex items-center gap-1 track-order"
-            // onClick={() => toggleMenu(false)}
+              onClick={() => toggleMenu(false)}
             >
               <Ordertrack />
               <p className="text-base italic font-bold text-white uppercase ">

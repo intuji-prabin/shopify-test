@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import { TabletHamburger } from '~/components/icons/orderStatus';
-
 import CloseMenu from '~/components/icons/closeMenu';
 import { useOutsideClick } from '~/hooks/useOutsideClick';
 import { Button } from '../../button';
@@ -24,28 +23,26 @@ export default function TabletNavmenu({ profileName, profileImage }: { profileNa
       >
         <TabletHamburger />
       </figure>
-      {isOpen ? (
-        <div className="absolute top-0 w-40 z-30 left-0 bg-primary-500 min-w-[300px]" ref={tabletSectionRef}>
-          <div className="flex items-center justify-between p-4 bg-grey-900 tab-header">
-            <UserProfile user_name={profileName} image_url={profileImage} />
-            <Button
-              className="bg-semantic-danger-500 p-1 hover:bg-semantic-danger-500 w-[28px] h-[28px]"
-              onClick={() => {
-                toggleMenu(!isOpen)
-              }}
-            >
-              <CloseMenu fillColor="#fff" />
-            </Button>
-          </div>
-          <div className="p-4 bg-primary-500">
-            <NavMenu />
-            <div className="flex flex-col justify-between mt-2 gap-52">
-              <OrderTrackMobile />
-              <LogoutForm />
-            </div>
+      <div className={`${isOpen ? "block" : "hidden"} absolute top-0 w-40 z-30 left-0 bg-primary-500 min-w-[300px]`} ref={tabletSectionRef}>
+        <div className="flex items-center justify-between p-4 bg-grey-900 tab-header">
+          <UserProfile user_name={profileName} image_url={profileImage} />
+          <Button
+            className="bg-semantic-danger-500 p-1 hover:bg-semantic-danger-500 w-[28px] h-[28px]"
+            onClick={() => {
+              toggleMenu(!isOpen)
+            }}
+          >
+            <CloseMenu fillColor="#fff" />
+          </Button>
+        </div>
+        <div className="p-4 bg-primary-500">
+          <NavMenu />
+          <div className="flex flex-col justify-between mt-2 gap-52">
+            <OrderTrackMobile />
+            <LogoutForm />
           </div>
         </div>
-      ) : null}
+      </div>
     </>
   );
 }
