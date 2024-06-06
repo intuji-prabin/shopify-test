@@ -104,6 +104,7 @@ export function useColumn({currentUser}: {currentUser: string}) {
                 {status === 'true' ? (
                   <Switch
                     type="button"
+                    disabled={currentUser === customerId}
                     checked={status === 'true'}
                     onCheckedChange={() =>
                       setIsChecked((prevState) => !prevState)
