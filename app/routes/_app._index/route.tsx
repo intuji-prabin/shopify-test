@@ -132,30 +132,30 @@ export default function Homepage() {
       {slides.length > 0 ? (
         <Carousel images={slides} sectionClass="mt-0 home-banner" />
       ) : null}
-      <Profile sectionClass="mt-10" profileInfo={userDetails} />
+      <Profile profileInfo={userDetails} />
       <CtaHome totalNotificationCount={notificationCounts} />
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div className='container'>Loading...</div>}>
         <Await resolve={chartData} errorElement={<div></div>}>
           {(resolvedValue) => {
             return (<SpendCard data={resolvedValue?.finalAreaResponse} />)
           }}
         </Await>
       </Suspense>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div className='container'>Loading...</div>}>
         <Await resolve={chartData} errorElement={<div></div>}>
           {(resolvedValue) => {
             return (<DetailChart barChartData={resolvedValue?.finalBarResponse} />)
           }}
         </Await>
       </Suspense>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div className='container'>Loading...</div>}>
         <Await resolve={expenditureData} errorElement={<div></div>}>
           {(resolvedValue) => {
             return (<ExpenditureCard brand={resolvedValue?.expenditure_brands} category={resolvedValue?.expenditure_category} currency={resolvedValue?.currency} />)
           }}
         </Await>
       </Suspense>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div className='container'>Loading...</div>}>
         <Await resolve={expenditureData} errorElement={<div></div>}>
           {(resolvedValue) => {
             return (<ProductTable productList={resolvedValue?.spending_by_product} currency={resolvedValue?.currency} />)

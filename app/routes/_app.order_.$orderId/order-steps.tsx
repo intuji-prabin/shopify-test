@@ -1,8 +1,8 @@
-import {ReactNode} from 'react';
-import {Steps} from '~/components/ui/steps';
+import { ReactNode } from 'react';
+import { Steps } from '~/components/ui/steps';
 import ProcessingPopover from '~/routes/_app.order_.$orderId/order-processing-popover';
-import {OrderStatus} from '~/routes/_app.order/order.server';
-import {Product} from '~/routes/_app.order_.$orderId/order-details.server';
+import { OrderStatus } from '~/routes/_app.order/order.server';
+import { Product } from '~/routes/_app.order_.$orderId/order-details.server';
 import {
   BackOrder,
   Delivered,
@@ -68,9 +68,8 @@ export default function OrderSteps({
       label: 'Invoice Billing',
       icon: (
         <InvoiceBilling
-          fillColor={`${
-            orderStatus === 'Invoice Billing' ? '#fff' : '#969C9C'
-          }`}
+          fillColor={`${orderStatus === 'Invoice Billing' ? '#fff' : '#969C9C'
+            }`}
         />
       ),
       status: 'Invoice Billing',
@@ -100,18 +99,17 @@ export default function OrderSteps({
       {orderSteps.map((step) => (
         <li
           key={step.label}
-          className={`relative text-center basis-full ${
-            orderStatus === step.status ? 'active' : ''
-          }`}
+          className={`relative text-center basis-full ${orderStatus === step.status ? 'active' : ''
+            }`}
         >
           <span className="inline-flex items-center justify-center w-16 h-16 text-lg font-medium text-white rounded-full bg-grey-100">
             {step.icon}
           </span>
-          <p className="pt-2 text-lg italic font-bold text-grey-100">
+          <p className="relative z-20 text-lg italic font-bold bg-white md:mt-2 text-grey-100">
             {step.label}
           </p>
           {step.status === 'Processing' && products.length > 0 && (
-            <>
+            <div className='mb-2 bg-white'>
               <div className="bg-status-back_order h-5 w-0.5 mx-auto"></div>
               <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-grey-100">
                 <BackOrder fillColor="#fff" />
@@ -120,10 +118,11 @@ export default function OrderSteps({
                 Items On Back Order
               </p>
               <ProcessingPopover products={products} />
-            </>
+            </div>
           )}
         </li>
-      ))}
-    </Steps>
+      ))
+      }
+    </Steps >
   );
 }

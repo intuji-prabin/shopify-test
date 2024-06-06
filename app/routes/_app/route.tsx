@@ -61,8 +61,6 @@ export async function loader({ request, context }: ActionFunctionArgs) {
   const { userDetails } = await getUserDetails(request);
   const { session } = context;
 
-  const sessionData = await getSessionData(userDetails, context);
-
   const userSessionId = session.get(USER_SESSION_ID);
 
   const categories = await getCagetoryList(context);
@@ -325,7 +323,6 @@ const Layout = ({
   footerData: any
 }) => {
   const matches = useMediaQuery('(min-width: 768px)');
-  const submit = useSubmit();
   return (
     <HamburgerMenuProvider>
       {matches ? (
