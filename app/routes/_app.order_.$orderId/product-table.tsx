@@ -1,9 +1,9 @@
-import {useTable} from '~/hooks/useTable';
-import {OrderDetails} from '~/routes/_app.order_.$orderId/order-details.server';
-import {useColumn} from '~/routes/_app.order_.$orderId/use-column';
-import {DataTable} from '~/components/ui/data-table';
-import {Separator} from '~/components/ui/separator';
-import {Can} from '~/lib/helpers/Can';
+import { useTable } from '~/hooks/useTable';
+import { OrderDetails } from '~/routes/_app.order_.$orderId/order-details.server';
+import { useColumn } from '~/routes/_app.order_.$orderId/use-column';
+import { DataTable } from '~/components/ui/data-table';
+import { Separator } from '~/components/ui/separator';
+import { Can } from '~/lib/helpers/Can';
 
 export function ProductTable({
   orderProductDetails,
@@ -13,16 +13,16 @@ export function ProductTable({
   const prefixWithCurrency = (price: string) =>
     `${orderProductDetails.currency} ${parseFloat(price).toFixed(2)}`;
 
-  const {columns} = useColumn({prefixWithCurrency});
+  const { columns } = useColumn({ prefixWithCurrency });
 
-  const {table} = useTable(columns, orderProductDetails.products);
+  const { table } = useTable(columns, orderProductDetails.products);
 
-  const {columns: shippedProductColumns} = useColumn({
+  const { columns: shippedProductColumns } = useColumn({
     prefixWithCurrency,
     isShippedProduct: true,
   });
 
-  const {table: shippedProductTable} = useTable(
+  const { table: shippedProductTable } = useTable(
     columns,
     orderProductDetails.shippedProduct,
   );
@@ -30,11 +30,10 @@ export function ProductTable({
   return (
     <>
       <div className="p-2 mt-6 bg-white">
-        <h4 className="not-italic px-4">Total Products</h4>
+        <h4 className="px-4 not-italic">Total Products</h4>
         <DataTable table={table} columns={columns} />
         <Separator />
-        <div className="flex flex-wrap justify-between gap-3 px-4 py-6">
-          <div></div>
+        <div className="flex flex-wrap gap-3 px-4 py-6 lg:justify-end">
           <Can I="view" a="view_tracked_order_price">
             <table className="border-spacing-x-3.5 border-separate">
               <tbody>
@@ -78,7 +77,7 @@ export function ProductTable({
         </div>
       </div>
       <div className="p-2 mt-6 bg-white">
-        <h4 className="not-italic px-4">Shipped Products</h4>
+        <h4 className="px-4 not-italic">Shipped Products</h4>
         <DataTable
           table={shippedProductTable}
           columns={shippedProductColumns}

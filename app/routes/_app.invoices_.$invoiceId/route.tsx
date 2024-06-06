@@ -4,45 +4,45 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
-import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
-import {UploadIcon} from '~/components/icons/upload';
-import {BackButton} from '~/components/ui/back-button';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {Button} from '~/components/ui/button';
-import {PDFViewer} from '~/components/ui/pdf-viewer';
-import {useDownload} from '~/hooks/useDownload';
-import {PDF} from '~/lib/constants/pdf.constent';
-import {Routes} from '~/lib/constants/routes.constent';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {getInvoiceDetails} from '~/routes/_app.invoices_.$invoiceId/invoices-detatils.server';
+import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
+import { UploadIcon } from '~/components/icons/upload';
+import { BackButton } from '~/components/ui/back-button';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { Button } from '~/components/ui/button';
+import { PDFViewer } from '~/components/ui/pdf-viewer';
+import { useDownload } from '~/hooks/useDownload';
+import { PDF } from '~/lib/constants/pdf.constent';
+import { Routes } from '~/lib/constants/routes.constent';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { getInvoiceDetails } from '~/routes/_app.invoices_.$invoiceId/invoices-detatils.server';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Invoices Detail'}];
+  return [{ title: 'Invoices Detail' }];
 };
 
-export async function loader({context, params, request}: LoaderFunctionArgs) {
+export async function loader({ context, params, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
   const invoiceId = params.invoiceId as string;
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   const customerId = userDetails.id;
 
-  const invoiceDetails = await getInvoiceDetails({invoiceId, customerId});
+  const invoiceDetails = await getInvoiceDetails({ invoiceId, customerId });
 
-  return json({invoiceId, invoiceDetails});
+  return json({ invoiceId, invoiceDetails });
 }
 
 export default function InvoiceDetailsPage() {
-  const {invoiceId, invoiceDetails} = useLoaderData<typeof loader>();
+  const { invoiceId, invoiceDetails } = useLoaderData<typeof loader>();
 
-  const {handleDownload} = useDownload();
+  const { handleDownload } = useDownload();
 
   return (
     <section className="container">
-      <div className="flex items-center justify-between pt-6 pb-4 ">
+      <div className="flex flex-wrap items-center justify-between gap-2 pt-6 pb-4">
         <div>
           <BackButton title="Invoice Detail" />
           <Breadcrumb>
@@ -59,7 +59,7 @@ export default function InvoiceDetailsPage() {
           onClick={() =>
             handleDownload({
               url: invoiceDetails.files,
-              headers: {apiKey: PDF.SECRET_KEY},
+              headers: { apiKey: PDF.SECRET_KEY },
             })
           }
         >

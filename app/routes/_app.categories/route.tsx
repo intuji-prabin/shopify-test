@@ -101,11 +101,11 @@ export default function CategoriesPage() {
       </section>
       <section
         id="categories-menu"
-        className="container sticky top-0 hidden mt-0 sm:block bg-primary-25"
+        className="container sticky top-0 hidden mt-0 lg:block bg-primary-25"
       >
         {categoriesDetail.length > 0 && (
-          <div className="flex items-center gap-3 pt-4">
-            {categoriesDetail?.map((category) => (
+          <div className="grid items-center grid-cols-7 gap-3 pt-4">
+            {categoriesDetail?.slice(0, 7).map((category) => (
               <a
                 href={String(category?.category_id)}
                 onClick={(event) => handleScroll(event, category?.category_id ?? '')}

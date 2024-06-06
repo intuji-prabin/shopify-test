@@ -291,7 +291,7 @@ const ProductListing = () => {
   return (
     shouldRender && (
       <section className="container">
-        <div className="flex flex-wrap justify-between pt-6">
+        <div className="flex flex-wrap justify-between gap-2 pt-6">
           <div>
             <BackButton className="capitalize" title={backTitle ?? 'back'} />
             <Breadcrumb>

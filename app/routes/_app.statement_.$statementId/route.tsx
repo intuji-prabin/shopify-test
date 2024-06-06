@@ -36,7 +36,7 @@ export default function StatementDetailsPage() {
 
     return (
         <section className="container">
-            <div className="flex items-center justify-between pt-6 pb-4 ">
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-6 pb-4">
                 <div>
                     <BackButton title="Statement Detail" />
                     <Breadcrumb>
