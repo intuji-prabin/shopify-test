@@ -3,7 +3,8 @@ import {useEffect, useRef, useState} from 'react';
 import {Button} from '~/components/ui/button';
 import {Dialog, DialogContent, DialogTrigger} from '~/components/ui/dialog';
 import {Can} from '~/lib/helpers/Can';
-
+import {AsyncImage} from 'loadable-image';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 const PromotionCard = ({
   title,
   imageURL,
@@ -73,10 +74,12 @@ const PromotionCard = ({
   return (
     <>
       <figure>
-        <img
-          alt="preview"
+        <AsyncImage
+          loader={
+            <img src={DEFAULT_IMAGE.IMAGE} style={{filter: 'blur(25px)'}} />
+          }
           src={imageURL}
-          className="object-cover w-full h-60"
+          className="w-full h-60"
         />
       </figure>
       <div className="p-4 space-y-4 bg-grey-25">
