@@ -10,7 +10,7 @@ import {
   InvoiceBilling,
   Picked,
   Processing,
-  Recieved,
+  Received,
   Transit,
 } from '~/components/icons/orderStatus';
 
@@ -29,9 +29,9 @@ export default function OrderSteps({
 }) {
   const orderSteps: OrderStepsList[] = [
     {
-      label: 'Recieved',
+      label: 'Received',
       icon: (
-        <Recieved
+        <Received
           fillColor={`${orderStatus === 'Received' ? '#fff' : '#969C9C'}`}
         />
       ),
