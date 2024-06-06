@@ -188,7 +188,7 @@ export function PromoCode({ promoCodeApplied, discountMessage }: { promoCodeAppl
   }, [discountMessage]);
   return (
     <div className="flex flex-col gap-1">
-      <p className="text-base text-normal leading-[21px] text-grey-800">
+      <p className="text-base text-normal leading-[21px] text-grey-800 mb-1.5 sm:mb-0">
         Do you have any promocode?
       </p>
       <fetcher.Form method={promoCodeApplied ? "DELETE" : "POST"} onSubmit={(event) => {
@@ -197,7 +197,7 @@ export function PromoCode({ promoCodeApplied, discountMessage }: { promoCodeAppl
         <div className="flex flex-col items-center w-full gap-2 sm:flex-row">
           <input
             type="text"
-            className={`grow ${promoCodeApplied && "bg-semantic-success-100 pointer-events-none !border-semantic-success-100"}`}
+            className={`w-full sm:grow ${promoCodeApplied && "bg-semantic-success-100 pointer-events-none !border-semantic-success-100"}`}
             placeholder="Enter promo code here"
             name='promoCode'
             value={promoCode ? promoCode : ''}
@@ -211,7 +211,7 @@ export function PromoCode({ promoCodeApplied, discountMessage }: { promoCodeAppl
           />
           <Button
             variant="secondary"
-            className="min-w-[99px]"
+            className="w-full sm:min-w-[99px] sm:w-auto"
             type='submit'
             value={promoCodeApplied ? "promo_code_delete" : "promo_code"}
             name="action"
