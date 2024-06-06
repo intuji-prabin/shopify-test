@@ -1,20 +1,20 @@
-import {useTable} from '~/hooks/useTable';
-import {Button} from '~/components/ui/button';
-import {Separator} from '~/components/ui/separator';
-import {DataTable} from '~/components/ui/data-table';
-import {BackButton} from '~/components/ui/back-button';
-import {Routes} from '~/lib/constants/routes.constent';
-import {SearchInput} from '~/components/ui/search-input';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {useColumn} from '~/routes/_app.support_.tickets/use-column';
-import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {HorizontalHamburgerIcon} from '~/components/icons/hamburgerIcon';
+import { useTable } from '~/hooks/useTable';
+import { Button } from '~/components/ui/button';
+import { Separator } from '~/components/ui/separator';
+import { DataTable } from '~/components/ui/data-table';
+import { BackButton } from '~/components/ui/back-button';
+import { Routes } from '~/lib/constants/routes.constent';
+import { SearchInput } from '~/components/ui/search-input';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { useColumn } from '~/routes/_app.support_.tickets/use-column';
+import { PaginationWrapper } from '~/components/ui/pagination-wrapper';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { HorizontalHamburgerIcon } from '~/components/icons/hamburgerIcon';
 import TicketsFilterForm from '~/routes/_app.support_.tickets/filter-form';
-import {LoaderFunctionArgs, MetaFunction, json} from '@shopify/remix-oxygen';
-import {getAllTickets} from '~/routes/_app.support_.tickets/support-tickets.server';
-import {getSupportContact} from '~/routes/_app.support_.contact-us/support-contact-us.server';
+import { LoaderFunctionArgs, MetaFunction, json } from '@shopify/remix-oxygen';
+import { getAllTickets } from '~/routes/_app.support_.tickets/support-tickets.server';
+import { getSupportContact } from '~/routes/_app.support_.contact-us/support-contact-us.server';
 import {
   Sheet,
   SheetContent,
@@ -29,49 +29,49 @@ import {
   useRouteError,
   useSearchParams,
 } from '@remix-run/react';
-import {Can} from '~/lib/helpers/Can';
-import {useConditionalRender} from '~/hooks/useAuthorization';
-import {TicketError} from '~/routes/_app.support_.tickets/ticket-error';
+import { Can } from '~/lib/helpers/Can';
+import { useConditionalRender } from '~/hooks/useAuthorization';
+import { TicketError } from '~/routes/_app.support_.tickets/ticket-error';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Ticket List'}];
+  return [{ title: 'Ticket List' }];
 };
 
 const PAGE_LIMIT = 8;
 
-export async function loader({context, request}: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   const customerId = userDetails.id.split('/').pop() as string;
 
-  const {searchParams} = new URL(request.url);
+  const { searchParams } = new URL(request.url);
 
-  const {totalCount, tickets} = await getAllTickets({
+  const { totalCount, tickets } = await getAllTickets({
     customerId,
     searchParams,
   });
 
-  const supportContact = await getSupportContact({context});
+  const supportContact = await getSupportContact({ context });
 
   const departmentOptions = supportContact.map((item) => ({
     title: item.department,
     value: item.id.split('/').pop() as string,
   }));
 
-  return json({totalCount, tickets, departmentOptions});
+  return json({ totalCount, tickets, departmentOptions });
 }
 
 export default function TicketsPage() {
-  const {tickets, totalCount, departmentOptions} =
+  const { tickets, totalCount, departmentOptions } =
     useLoaderData<typeof loader>();
 
   const [searchParams] = useSearchParams();
 
-  const {columns} = useColumn();
+  const { columns } = useColumn();
 
-  const {table} = useTable(columns, tickets);
+  const { table } = useTable(columns, tickets);
 
   let isFilterApplied = false;
 
@@ -85,7 +85,7 @@ export default function TicketsPage() {
   return (
     shouldRender && (
       <section className="container">
-        <div className=" pt-6 pb-4 flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-6 pb-4">
           <div>
             <BackButton title="Tickets History" />
             <Breadcrumb>
@@ -101,13 +101,13 @@ export default function TicketsPage() {
             </Link>
           </Can>
         </div>
-        <div className="flex gap-2 flex-col bg-neutral-white p-4 border-b sm:flex-row sm:justify-between sm:items-center">
+        <div className="flex flex-col gap-2 p-4 border-b bg-neutral-white sm:flex-row sm:justify-between sm:items-center">
           <div className="sm:w-[451px]">
             <SearchInput />
           </div>
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" className="border-grey-50 relative">
+              <Button variant="ghost" className="relative border-grey-50">
                 <HorizontalHamburgerIcon />
                 Filter
                 {isFilterApplied && (
