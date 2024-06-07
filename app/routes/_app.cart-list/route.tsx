@@ -3,6 +3,7 @@ import {
   useActionData,
   useFetcher,
   useLoaderData,
+  useNavigation,
   useRouteError,
 } from '@remix-run/react';
 import {
@@ -357,7 +358,10 @@ export default function CartList() {
   const [updateCart, setUpdateCart] = useState(false);
   const [placeOrder, setPlaceOrder] = useState(result);
   const actionData = useActionData<typeof action>();
-  console.log("cartList", cartList)
+  const navigation = useNavigation();
+  const fetcher = useFetcher();
+  const isLoading = navigation.state === 'submitting' || navigation.state === 'loading' || fetcher.state === 'submitting' || fetcher.state === 'loading';
+
   return (
     <>
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
@@ -365,7 +369,7 @@ export default function CartList() {
       {finalProductList?.length === 0 ? (
         <EmptyList placeholder="cart" />
       ) : (
-        <div className="container">
+        <div className={`container ${isLoading && "loading-state"}`}>
           <div className="flex flex-col flex-wrap items-start gap-6 my-6 xl:flex-row cart__list">
             <MyProducts
               products={finalProductList}
@@ -373,6 +377,7 @@ export default function CartList() {
               updateCart={updateCart}
               setUpdateCart={setUpdateCart}
               setPlaceOrder={setPlaceOrder}
+              fetcher={fetcher}
             />
             <OrderSummary
               cartSubTotalPrice={cartList?.cartSubTotalPrice}
@@ -389,6 +394,7 @@ export default function CartList() {
               discountMessage={cartList?.discountMessage}
               totalPriceWithDiscount={cartList?.totalPriceWithDiscount}
               actionData={actionData}
+              fetcher={fetcher}
             />
           </div>
         </div>
