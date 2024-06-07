@@ -64,11 +64,11 @@
 // }
 
 
-import {useContext, useRef, useState} from 'react';
-import {useOutsideClick} from '~/hooks/useOutsideClick';
-import {PredictiveSearch, SearchVariant} from './predictive-search';
-import {BulkCsvUpload} from './bulk-csv-upload';
-import {AbilityContext, Can} from '~/lib/helpers/Can';
+import { useContext, useRef, useState } from 'react';
+import { useOutsideClick } from '~/hooks/useOutsideClick';
+import { PredictiveSearch, SearchVariant } from './predictive-search';
+import { BulkCsvUpload } from './bulk-csv-upload';
+import { AbilityContext, Can } from '~/lib/helpers/Can';
 
 export function ProductSearchBar({
   searchVariant,
@@ -104,9 +104,8 @@ export function ProductSearchBar({
     // </div>
 
     <div
-      className={`search-bar flex ${
-        !isProductSearchVisible ? 'bg-primary-500' : ' bg-white'
-      } items-center min-w-[unset] w-full px-4 py-3 xl:min-w-[453px] max-h-14 relative`}
+      className={`search-bar flex ${!isProductSearchVisible ? 'bg-primary-500' : ' bg-white'
+        } items-center min-w-[unset] w-full px-4 py-3 sm:w-[calc(100%_-_181px)] md:min-w-[453px] max-h-14 relative`}
       ref={productRef}
     >
       <Can I="view" a="search_products">
