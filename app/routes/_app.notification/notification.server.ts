@@ -9,17 +9,15 @@ interface DefaultResponse {
   message: string;
 }
 
+type NotificationType = 'PROMOTION' | 'ORDER' | 'INVOICE';
+type NotificationStatus = 'NEW' | 'OPENED';
 export interface Notification {
   id: number;
   message: string;
-  // shopifyId: string;
+  shopifyId: string;
   companyId: string;
-  // type: 'PROMOTION' | 'ORDER' | 'INVOICE';
-  notifications: {
-    type: 'PROMOTION' | 'ORDER' | 'INVOICE';
-    shopifyId: string;
-  }
-  status: 'NEW' | 'OPENED';
+  type: NotificationType;
+  status: NotificationStatus;
 }
 
 type Payload = {
@@ -30,8 +28,25 @@ type Payload = {
 interface NotificationsResponse extends DefaultResponse {
   payload: Payload;
 }
+
+export interface ViewNotification {
+  id: number;
+  message: string;
+  shopifyId: string;
+  type: NotificationType;
+  createdAt: string;
+  updatedAt: string;
+}
+interface ViewNotificationPayload {
+  id: number;
+  status: NotificationStatus;
+  notificationId: number;
+  customerId: string;
+  notifications: ViewNotification;
+}
+
 interface ViewNotificationResponse extends DefaultResponse {
-  payload: Notification;
+  payload: ViewNotificationPayload;
 }
 
 export async function getNotifications({url}: {url: string}) {
@@ -54,16 +69,16 @@ export async function getNotifications({url}: {url: string}) {
   }
 }
 
-export function urlBuilder(payload: Notification) {
-  switch (payload.notifications.type) {
+export function urlBuilder(notification: ViewNotification) {
+  switch (notification.type) {
     case 'PROMOTION':
-      return `/promotions/available-promotion?id=${payload.notifications.shopifyId}`;
+      return `/promotions/available-promotion?id=${notification.shopifyId}`;
 
     case 'ORDER':
-      return `/order/${payload.notifications.shopifyId}`;
+      return `/order/${notification.shopifyId}`;
 
     case 'INVOICE':
-      return `/invoices/${payload.notifications.shopifyId}`;
+      return `/invoices/${notification.shopifyId}`;
 
     default:
       return Routes.NOTIFICATIONS_NEW;
@@ -88,7 +103,9 @@ export async function viewNotification({
   if (!response.status) {
     throw new Error(response.message);
   }
-  const redirectLink = urlBuilder(response.payload);
+  const redirectLink = notificationId
+    ? urlBuilder(response.payload.notifications)
+    : Routes.NOTIFICATIONS_NEW;
 
   return {redirectLink};
 }
