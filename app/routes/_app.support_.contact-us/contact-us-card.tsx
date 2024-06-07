@@ -30,7 +30,7 @@ export function ContactUsCard({
           <div className="h-14 w-14">
             <img
               src={imageUrl ?? DEFAULT_IMAGE.DEFAULT}
-              alt="image-url"
+              alt="contact"
               className="w-full h-full object-cover rounded-[50%]"
             />
           </div>
@@ -38,23 +38,29 @@ export function ContactUsCard({
         </div>
         <figcaption>
           <ul className='space-y-3 mxs:space-y-0'>
-            <li className="flex flex-col space-x-6 mxs:space-x-4 mxs:items-center mxs:flex-row">
-              <p className="flex items-center w-24 text-lg leading-5.5 gap-1">
-                <PhoneIcon width="24px" height="24px" />
+            <li className="flex flex-col space-x-7 mxs:space-x-4 mxs:items-center mxs:flex-row">
+              <p className="flex items-center mxs:w-24 text-lg leading-5.5 gap-1">
+                <span className='w-6'>
+                  <PhoneIcon width="24px" height="24px" />
+                </span>
                 Phone
               </p>
               <p className="text-lg leading-5.5 font-medium break-all">{phone ?? '-'}</p>
             </li>
-            <li className="flex flex-col space-x-6 mxs:space-x-4 mxs:items-center mxs:flex-row">
-              <p className="flex items-center w-24 text-lg leading-5.5 gap-1">
-                <LargeMailIcon />
+            <li className="flex flex-col space-x-7 mxs:space-x-4 mxs:items-center mxs:flex-row">
+              <p className="flex items-center mxs:w-24 text-lg leading-5.5 gap-1">
+                <span className='w-6'>
+                  <LargeMailIcon />
+                </span>
                 Email
               </p>
               <p className="text-lg leading-5.5 font-medium break-all">{email ?? '-'}</p>
             </li>
-            <li className="flex flex-col space-x-6 mxs:space-x-4 mxs:items-center mxs:flex-row">
-              <p className="flex items-center w-24 text-lg leading-5.5 gap-1">
-                <BuildingIcon />
+            <li className="flex flex-col space-x-7 mxs:space-x-4 mxs:items-center mxs:flex-row">
+              <p className="flex items-center mxs:w-24 text-lg leading-5.5 gap-1">
+                <span className='w-6'>
+                  <BuildingIcon />
+                </span>
                 Department
               </p>
               <p className="text-lg leading-5.5 font-medium break-all">
