@@ -39,7 +39,7 @@ import {getFooter} from './footer.server';
 
 export interface Payload {
   type: 'cart' | 'wishlist' | 'productGroup ' | 'notification';
-  totalNumber: number;
+  totalNumber: any;
   companyId?: string;
   customerId?: string;
   sessionId?: string;
@@ -225,7 +225,6 @@ export default function PublicPageLayout() {
           }
         },
         notification: () => {
-          const companyMeta = userDetails?.meta.company_id;
           const loginCustomerId = userDetails?.id;
 
           //Here if the action is view and the login customer is the same as the customer id then only notification count will be updated
@@ -236,15 +235,12 @@ export default function PublicPageLayout() {
               return;
             }
           }
-
-          //Here if the company id is same as the company id and session id is not same as the user session id then only notification count will be updated
-          if (
-            (companyMeta?.companyId === companyId ||
-              companyMeta?.value === companyId) &&
-            userSessionId !== sessionId
-          ) {
-            setNotificationCounts(totalNumber);
+          else{
+          const customer = totalNumber.find((c: { customerId: string; }) =>  c.customerId === loginCustomerId)
+          if (customer) {
+            setNotificationCounts(customer.notification);
           }
+        }
         },
       };
 

@@ -12,9 +12,13 @@ interface DefaultResponse {
 export interface Notification {
   id: number;
   message: string;
-  shopifyId: string;
+  // shopifyId: string;
   companyId: string;
-  type: 'PROMOTION' | 'ORDER' | 'INVOICE';
+  // type: 'PROMOTION' | 'ORDER' | 'INVOICE';
+  notifications: {
+    type: 'PROMOTION' | 'ORDER' | 'INVOICE';
+    shopifyId: string;
+  }
   status: 'NEW' | 'OPENED';
 }
 
@@ -50,16 +54,16 @@ export async function getNotifications({url}: {url: string}) {
   }
 }
 
-export function urlBuilder(notification: Notification) {
-  switch (notification.type) {
+export function urlBuilder(payload: Notification) {
+  switch (payload.notifications.type) {
     case 'PROMOTION':
-      return `/promotions/available-promotion?id=${notification.shopifyId}`;
+      return `/promotions/available-promotion?id=${payload.notifications.shopifyId}`;
 
     case 'ORDER':
-      return `/order/${notification.shopifyId}`;
+      return `/order/${payload.notifications.shopifyId}`;
 
     case 'INVOICE':
-      return `/invoices/${notification.shopifyId}`;
+      return `/invoices/${payload.notifications.shopifyId}`;
 
     default:
       return Routes.NOTIFICATIONS_NEW;
@@ -84,7 +88,6 @@ export async function viewNotification({
   if (!response.status) {
     throw new Error(response.message);
   }
-
   const redirectLink = urlBuilder(response.payload);
 
   return {redirectLink};
