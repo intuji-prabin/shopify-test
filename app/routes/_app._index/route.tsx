@@ -103,19 +103,26 @@ export default function Homepage() {
           payload: Payload;
         };
       };
-      const { type, totalNumber, companyId, sessionId } =
+      const { type, totalNumber, companyId, customerId, sessionId, action } =
         parsedData.notificationData.payload;
       const handlers: Handlers = {
         notification: () => {
-          const companyMeta = userDetails?.meta.company_id;
+          const loginCustomerId = userDetails?.id;
 
-          if (
-            (companyMeta?.companyId === companyId ||
-              companyMeta?.value === companyId) &&
-            userSessionId !== sessionId
-          ) {
-            setNotificationCounts(totalNumber);
+          //Here if the action is view and the login customer is the same as the customer id then only notification count will be updated
+          if (action === 'view') {
+            if (loginCustomerId === customerId) {
+              setNotificationCounts(totalNumber);
+            } else {
+              return;
+            }
           }
+          else{
+          const customer = totalNumber.find((c: { customerId: string; }) =>  c.customerId === loginCustomerId)
+          if (customer) {
+            setNotificationCounts(customer.notification);
+          }
+        }
         },
       };
 
