@@ -3,41 +3,39 @@ import {
   isRouteErrorResponse,
   useLoaderData,
   useRouteError,
-  useSubmit
+  useSubmit,
 } from '@remix-run/react';
-import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
-import { useEffect, useState } from 'react';
-import { useEventSource } from 'remix-utils/sse/react';
+import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
+import {useEffect, useState} from 'react';
+import {useEventSource} from 'remix-utils/sse/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
-import { HamburgerMenuProvider } from '~/components/ui/layouts/elements/HamburgerMenuContext';
+import {HamburgerMenuProvider} from '~/components/ui/layouts/elements/HamburgerMenuContext';
 import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
 import TopHeader from '~/components/ui/layouts/top-header';
-import { useMediaQuery } from '~/hooks/useMediaQuery';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
-import { EVENTS } from '~/lib/constants/events.contstent';
-import { Routes } from '~/lib/constants/routes.constent';
-import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
-import { AbilityContext, DEFAULT_ABILITIES } from '~/lib/helpers/Can';
-import {
-  defineAbilitiesForUser
-} from '~/lib/helpers/roles';
-import { USER_SESSION_ID, isAuthenticate } from '~/lib/utils/auth-session.server';
+import {useMediaQuery} from '~/hooks/useMediaQuery';
+import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
+import {EVENTS} from '~/lib/constants/events.contstent';
+import {Routes} from '~/lib/constants/routes.constent';
+import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
+import {AbilityContext, DEFAULT_ABILITIES} from '~/lib/helpers/Can';
+import {defineAbilitiesForUser} from '~/lib/helpers/roles';
+import {USER_SESSION_ID, isAuthenticate} from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
 } from '~/lib/utils/toast-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { getProductGroup } from '~/routes/_app.pending-order/pending-order.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
 import {
   getCagetoryList,
   getNewNotificationCount,
   getSessionCart,
-  getSessionData
+  getSessionData,
 } from '~/routes/_app/app.server';
-import { CustomerData } from '~/routes/_public.login/login.server';
-import { getFooter } from './footer.server';
+import {CustomerData} from '~/routes/_public.login/login.server';
+import {getFooter} from './footer.server';
 
 export interface Payload {
   type: 'cart' | 'wishlist' | 'productGroup ' | 'notification';
@@ -45,6 +43,7 @@ export interface Payload {
   companyId?: string;
   customerId?: string;
   sessionId?: string;
+  action?: string;
 }
 
 export interface Handlers {
@@ -56,10 +55,10 @@ interface Data {
   // Add other properties if present in your data
 }
 
-export async function loader({ request, context }: ActionFunctionArgs) {
+export async function loader({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
-  const { userDetails } = await getUserDetails(request);
-  const { session } = context;
+  const {userDetails} = await getUserDetails(request);
+  const {session} = context;
 
   const userSessionId = session.get(USER_SESSION_ID);
 
@@ -70,11 +69,11 @@ export async function loader({ request, context }: ActionFunctionArgs) {
 
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
 
-  const productGroup = await getProductGroup({ customerId: userDetails.id });
+  const productGroup = await getProductGroup({customerId: userDetails.id});
 
   const customerId = userDetails.id;
 
-  const { totalNotifications } = await getNewNotificationCount({
+  const {totalNotifications} = await getNewNotificationCount({
     customerId,
     request,
   });
@@ -106,7 +105,7 @@ export async function loader({ request, context }: ActionFunctionArgs) {
       pendingOrderCount: productGroup?.length ?? 0,
       notificationCount: totalNotifications,
       userSessionId,
-      footer
+      footer,
     },
     {
       headers,
@@ -169,8 +168,8 @@ export default function PublicPageLayout() {
       const dataObject = JSON.parse(userData) as Data;
       if (dataObject.customerId === userDetails.id) {
         submit(
-          { message: dataObject.message },
-          { method: 'POST', action: '/logout' },
+          {message: dataObject.message},
+          {method: 'POST', action: '/logout'},
         );
       }
     }
@@ -197,7 +196,8 @@ export default function PublicPageLayout() {
           payload: Payload;
         };
       };
-      const { type, totalNumber, customerId, companyId, sessionId } =
+
+      const {type, totalNumber, customerId, companyId, sessionId, action} =
         parsedData.notificationData.payload;
       const currentUrl = window.location.pathname; // Capture the current URL
       const handlers: Handlers = {
@@ -205,8 +205,8 @@ export default function PublicPageLayout() {
           if (userDetails.id === customerId && userSessionId !== sessionId) {
             cartCount = totalNumber | 0;
             submit(
-              { returnUrl: currentUrl, type, totalNumber },
-              { method: 'GET', action: '/update-notifications-session' },
+              {returnUrl: currentUrl, type, totalNumber},
+              {method: 'GET', action: '/update-notifications-session'},
             );
           }
         },
@@ -214,8 +214,8 @@ export default function PublicPageLayout() {
           if (userDetails?.meta.company_id.companyId === companyId) {
             wishlistCount = totalNumber;
             submit(
-              { returnUrl: currentUrl, type, totalNumber },
-              { method: 'GET', action: '/update-notifications-session' },
+              {returnUrl: currentUrl, type, totalNumber},
+              {method: 'GET', action: '/update-notifications-session'},
             );
           }
         },
@@ -226,7 +226,18 @@ export default function PublicPageLayout() {
         },
         notification: () => {
           const companyMeta = userDetails?.meta.company_id;
+          const loginCustomerId = userDetails?.id;
 
+          //Here if the action is view and the login customer is the same as the customer id then only notification count will be updated
+          if (action === 'view') {
+            if (loginCustomerId === customerId) {
+              setNotificationCounts(totalNumber);
+            } else {
+              return;
+            }
+          }
+
+          //Here if the company id is same as the company id and session id is not same as the user session id then only notification count will be updated
           if (
             (companyMeta?.companyId === companyId ||
               companyMeta?.value === companyId) &&
@@ -253,7 +264,7 @@ export default function PublicPageLayout() {
       // Parse the string into an object
       const parsedData = JSON.parse(hasPermissionBeenUpdated) as {
         permissionData: {
-          payload: { user_role: string; permission: string[] };
+          payload: {user_role: string; permission: string[]};
         };
       };
 
@@ -263,7 +274,7 @@ export default function PublicPageLayout() {
 
       // If permissions are empty, logout the user
       if (eventUserRolePermissions.permission.length === 0) {
-        submit({}, { method: 'POST', action: '/logout' });
+        submit({}, {method: 'POST', action: '/logout'});
       }
 
       // Check if the event role matches the user's role
@@ -279,8 +290,8 @@ export default function PublicPageLayout() {
 
         // Update user session with returnUrl
         submit(
-          { returnUrl: currentUrl },
-          { method: 'GET', action: '/update-user-session' },
+          {returnUrl: currentUrl},
+          {method: 'GET', action: '/update-user-session'},
         );
       }
     }
@@ -320,7 +331,7 @@ const Layout = ({
   wishlistCount: number;
   pedingOrderCount: number;
   notificationCount: number;
-  footerData: any
+  footerData: any;
 }) => {
   const matches = useMediaQuery('(min-width: 768px)');
   return (

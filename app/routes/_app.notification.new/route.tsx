@@ -74,8 +74,10 @@ export async function action({request, context}: ActionFunctionArgs) {
   emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
     payload: {
       type: 'notification',
+      action: 'view',
       totalNumber: totalNotifications,
-      companyId: userDetails.meta?.company_id.companyId
+      companyId: userDetails.meta?.company_id.companyId,
+      customerId: userDetails.id
       // sessionId: userSessionId
     },
   });
