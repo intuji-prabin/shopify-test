@@ -953,3 +953,7 @@ div[data-state='open'].fixed.inset-0 {
 .disable-hover .group-hover\:block {
   display: none;
 }
+
+.loading-state button {
+  @apply pointer-events-none opacity-60;
+}

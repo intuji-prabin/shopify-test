@@ -166,12 +166,11 @@ export function TextArea() {
   );
 }
 
-export function PromoCode({ promoCodeApplied, discountMessage }: { promoCodeApplied: string, discountMessage: string }) {
+export function PromoCode({ promoCodeApplied, discountMessage, fetcher }: { promoCodeApplied: string, discountMessage: string, fetcher: any }) {
   const [promoCode, setPromoCode] = useState(promoCodeApplied);
   useEffect(() => {
     setPromoCode(promoCodeApplied);
   }, [promoCodeApplied]);
-  const fetcher = useFetcher<{ status: boolean; type: "success" | "error"; message: string; method: "POST" | "DELETE" }>();
   const [promoError, setPromoError] = useState("");
   useEffect(() => {
     if (fetcher?.data?.message) {
@@ -191,7 +190,7 @@ export function PromoCode({ promoCodeApplied, discountMessage }: { promoCodeAppl
       <p className="text-base text-normal leading-[21px] text-grey-800 mb-1.5 sm:mb-0">
         Do you have any promocode?
       </p>
-      <fetcher.Form method={promoCodeApplied ? "DELETE" : "POST"} onSubmit={(event) => {
+      <fetcher.Form method={promoCodeApplied ? "DELETE" : "POST"} onSubmit={(event: any) => {
         fetcher.submit(event.currentTarget);
       }}>
         <div className="flex flex-col items-center w-full gap-2 sm:flex-row">
