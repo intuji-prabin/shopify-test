@@ -67,6 +67,8 @@ export async function action({request, context}: ActionFunctionArgs) {
 
   const {redirectLink} = await viewNotification({ customerId, notificationId});
 
+  console.log('redirectLink', redirectLink)
+
   const {totalNotifications} = await getNewNotificationCount({
     customerId,
     request,
