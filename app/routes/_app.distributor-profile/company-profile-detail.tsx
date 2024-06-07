@@ -5,8 +5,8 @@ import {
   PhoneMajor,
   PrintMinor,
 } from '~/components/icons/orderStatus';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {CompanyProfile} from '~/routes/_app.distributor-profile/company-profile.server';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { CompanyProfile } from '~/routes/_app.distributor-profile/company-profile.server';
 
 export default function CompanyProfileDetail({
   companyProfileDetails,
@@ -27,8 +27,7 @@ export default function CompanyProfileDetail({
             </figure>
             <h3>{companyProfileDetails?.companyName || '-'}</h3>
           </div>
-
-          <ul className="flex flex-wrap gap-4 font-medium text-grey-700">
+          <ul className="flex flex-wrap gap-4 font-medium flex-col-sm text-grey-700">
             <li className=" settings-card-detail">
               <Email />
               <p className=" comapny-setting-text">
@@ -42,7 +41,7 @@ export default function CompanyProfileDetail({
               </p>
             </li>
           </ul>
-          <ul className="flex flex-wrap gap-4 font-medium text-grey-700">
+          <ul className="flex flex-wrap gap-4 font-medium flex-col-sm text-grey-700">
             {' '}
             <li className=" settings-card-detail">
               <PhoneMajor />
@@ -65,8 +64,8 @@ export default function CompanyProfileDetail({
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 p-6 bg-primary-50 w-max">
-        <h5 className="text-lg italic font-bold leading-6 text-nowrap">
+      <div className="flex flex-col gap-4 p-6 bg-primary-50 sm:w-max">
+        <h5 className="text-lg italic font-bold leading-6 sm:text-nowrap">
           Preferred Inventory Location
         </h5>
         <ul>
