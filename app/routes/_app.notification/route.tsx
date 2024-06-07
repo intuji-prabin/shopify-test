@@ -65,8 +65,8 @@ export default function route() {
         </div> */}
       </div>
       <div className="relative p-6 mt-6 bg-neutral-white">
-        <div className="flex flex-col justify-between gap-3 sm:items-center sm:flex-row">
-          <div className="flex items-center space-x-4">
+        <div className="flex flex-col justify-between gap-4 mb-6 sm:items-center sm:flex-row sm:mb-0">
+          <div className="flex items-center space-x-4 border-b border-solid border-slate-200 sm:border-b-0">
             {routes.map((route) => (
               <NavLink
                 key={route.link}
@@ -85,11 +85,11 @@ export default function route() {
           </div>
           {location.pathname === Routes.NOTIFICATIONS_NEW &&
             notificationCount > 0 && (
-              <fetcher.Form method="PUT" action={Routes.NOTIFICATIONS_NEW} className='mb-6 sm:mb-0'>
+              <fetcher.Form method="PUT" action={Routes.NOTIFICATIONS_NEW} className='ml-auto'>
                 <Button
                   type="submit"
                   variant="link"
-                  className="before:!bottom-1.5 !px-1"
+                  className="before:!bottom-1.5 sm:!px-1 bg-primary-500 sm:bg-transparent text-white sm:text-inherit"
                 >
                   mark all as read
                 </Button>
