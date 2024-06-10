@@ -1,4 +1,6 @@
-const BASE_URL = 'http://170.64.130.119:3000/api'; //test 1
+// const BASE_URL = 'http://170.64.130.119:3000/api'; //test 1
+const BASE_URL =
+  'https://packard-wrestling-beliefs-geography.trycloudflare.com/api';
 
 export const ENDPOINT = {
   REPORT: {
