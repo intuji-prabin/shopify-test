@@ -3,6 +3,7 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {generateUrlWithParams} from '~/lib/helpers/url.helper';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 export type OrderStatus =
   | 'Received'
@@ -47,12 +48,15 @@ type ResponseData = {
 };
 
 export async function getAllOrders({
+  request,
   customerId,
   searchParams,
 }: {
+  request: Request;
   customerId: string;
   searchParams: URLSearchParams;
 }) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const baseUrl = `${ENDPOINT.ORDERS.GET}/${customerId}`;
     const url = generateUrlWithParams({baseUrl, searchParams});
@@ -60,6 +64,7 @@ export async function getAllOrders({
     const results = await useFetch<ResponseData>({
       method: AllowedHTTPMethods.GET,
       url,
+      impersonateEnableCheck: isImpersonatingCheck,
     });
 
     if (!results.status) {

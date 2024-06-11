@@ -1,9 +1,11 @@
 import {CONSTANT} from '~/lib/constants/product.session';
 import {getPrices} from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/productList.server';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {AppLoadContext} from '@remix-run/server-runtime';
 
 export async function getSingleProduct(
-  context: any,
+  request: Request,
+  context: AppLoadContext,
   productID: string,
   customerId: string,
 ) {
@@ -16,7 +18,7 @@ export async function getSingleProduct(
     console.log('error has occured');
     throw new Error('Invalid Product ID');
   } else {
-    const prices = await getPrices(productID, customerId);
+    const prices = await getPrices(request, productID, customerId);
     const product = formatProduct(products?.product, prices);
     return {product};
   }

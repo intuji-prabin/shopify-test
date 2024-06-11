@@ -44,8 +44,8 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   const { session } = context;
 
   const { userDetails } = await getUserDetails(request);
-  const chartData = getChartData(userDetails?.id);
-  const expenditureData = getExpenditureData(userDetails?.id);
+  const chartData = getChartData(context, request, userDetails?.id);
+  const expenditureData = getExpenditureData(context, request, userDetails?.id);
   const slides = await getSlides({ context });
   const customerId = userDetails.id;
   const userSessionId = session.get(USER_SESSION_ID);
@@ -53,6 +53,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   const { searchParams } = new URL(request.url);
 
   const { invoiceList } = await getAllInvoices({
+    request,
     customerId,
     searchParams,
   });
@@ -117,12 +118,12 @@ export default function Homepage() {
               return;
             }
           }
-          else{
-          const customer = totalNumber.find((c: { customerId: string; }) =>  c.customerId === loginCustomerId)
-          if (customer) {
-            setNotificationCounts(customer.notification);
+          else {
+            const customer = totalNumber.find((c: { customerId: string; }) => c.customerId === loginCustomerId)
+            if (customer) {
+              setNotificationCounts(customer.notification);
+            }
           }
-        }
         },
       };
 

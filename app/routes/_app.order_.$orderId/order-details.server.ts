@@ -3,6 +3,7 @@ import {OrderStatus} from '~/routes/_app.order/order.server';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 export interface Product {
   name: string;
@@ -68,17 +69,21 @@ interface ResponseData {
 }
 
 export async function getOrdersProductDetails({
+  request,
   orderId,
   customerId,
 }: {
+  request: Request;
   orderId: string;
   customerId: string;
 }) {
   const url = `${ENDPOINT.ORDERS.GET_ORDER_DETAIL}/${customerId}/${orderId}`;
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const results = await useFetch<ResponseData>({
       method: AllowedHTTPMethods.GET,
       url,
+      impersonateEnableCheck: isImpersonatingCheck,
     });
 
     if (!results.status) {

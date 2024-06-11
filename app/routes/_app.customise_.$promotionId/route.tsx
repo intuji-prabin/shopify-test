@@ -107,7 +107,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   const { userDetails } = await getUserDetails(request);
   const customerId = userDetails?.id;
   const promotionId = params?.promotionId as string;
-  const response = await getPromotionById(promotionId, customerId);
+  const response = await getPromotionById(context, request, promotionId, customerId);
   if (response?.payload) {
     const results = response?.payload;
     return json({ results, promotionId });

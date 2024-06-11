@@ -4,39 +4,41 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
-import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
-import {MetaFunction} from '@shopify/remix-oxygen';
-import {CircleInformationMajor} from '~/components/icons/orderStatus';
-import {Alert, AlertDescription} from '~/components/ui/alert';
-import {Routes} from '~/lib/constants/routes.constent';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {getAllCompanyProfileDetails} from '~/routes/_app.distributor-profile/company-profile.server';
+import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
+import { MetaFunction } from '@shopify/remix-oxygen';
+import { CircleInformationMajor } from '~/components/icons/orderStatus';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { Routes } from '~/lib/constants/routes.constent';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { getAllCompanyProfileDetails } from '~/routes/_app.distributor-profile/company-profile.server';
 import CompanyInfoHeader from './company-profile-header';
 import CompanyProfileDetail from '~/routes/_app.distributor-profile/company-profile-detail';
-import {useConditionalRender} from '~/hooks/useAuthorization';
-import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
-import {CompanyProfileError} from '~/routes/_app.distributor-profile/company-profile-error';
+import { useConditionalRender } from '~/hooks/useAuthorization';
+import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
+import { CompanyProfileError } from '~/routes/_app.distributor-profile/company-profile-error';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Company Profile'}];
+  return [{ title: 'Company Profile' }];
 };
 
-export async function loader({context, request}: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   const userId = userDetails.id.split('/').pop() as string;
 
   const companyProfileDetails = await getAllCompanyProfileDetails({
+    context,
+    request,
     userId,
   });
 
-  return json({companyProfileDetails});
+  return json({ companyProfileDetails });
 }
 
 export default function CompanyProfileManagementPage() {
-  const {companyProfileDetails} = useLoaderData<typeof loader>();
+  const { companyProfileDetails } = useLoaderData<typeof loader>();
   const shouldRender = useConditionalRender('view_company_information');
 
   return (

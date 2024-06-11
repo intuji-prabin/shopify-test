@@ -1,33 +1,16 @@
-import { LoaderFunctionArgs, json, redirect } from "@remix-run/server-runtime";
+import { isRouteErrorResponse, useRouteError } from "@remix-run/react";
+import { LoaderFunctionArgs, redirect } from "@remix-run/server-runtime";
 import { getAccessToken } from "~/lib/utils/auth-session.server";
 import { getImpersonate } from "./impersonate.server";
-import { isRouteErrorResponse, useRouteError } from "@remix-run/react";
-import { getUserDetailsSession, userDetailsCommitSession } from "~/lib/utils/user-session.server";
-import { SESSION_MAX_AGE } from "~/lib/constants/auth.constent";
-import { getMessageSession, messageCommitSession } from "~/lib/utils/toast-session.server";
 
 export const loader = async ({ params, context, request }: LoaderFunctionArgs) => {
     const accessToken = await getAccessToken(context);
-    const messageSession = await getMessageSession(request);
-    const userDetailsSession = await getUserDetailsSession(request);
     if (accessToken) {
         return redirect('/');
     }
-    if (params.customerId && params.staffId) {
-        await getImpersonate({ context: context, customerId: params.customerId, staffId: params.staffId, userDetailsSession });
-    }
-    return redirect('/', {
-        headers: [
-            ['Set-Cookie', await context.session.commit({})],
-            [
-                'Set-Cookie',
-                await userDetailsCommitSession(userDetailsSession, {
-                    maxAge: SESSION_MAX_AGE['7_DAYS'],
-                }),
-            ],
-            ['Set-Cookie', await messageCommitSession(messageSession)],
-        ],
-    });
+    const customerId = params?.customerId || '';
+    const staffId = params?.staffId || '';
+    return getImpersonate({ request, context, customerId, staffId });
 }
 
 const Impersonate = () => {

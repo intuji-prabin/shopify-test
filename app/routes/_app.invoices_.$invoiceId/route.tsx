@@ -30,7 +30,7 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
 
   const customerId = userDetails.id;
 
-  const invoiceDetails = await getInvoiceDetails({ invoiceId, customerId });
+  const invoiceDetails = await getInvoiceDetails({ request, invoiceId, customerId });
 
   return json({ invoiceId, invoiceDetails });
 }

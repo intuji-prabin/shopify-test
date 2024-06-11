@@ -49,7 +49,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 
     const query = searchParams.get('search');
 
-    const teams = await getAllTeams({ customerId, query, context });
+    const teams = await getAllTeams({ request, customerId, query, context });
 
     const roles = await getRoles({ context, currentUserRole });
 

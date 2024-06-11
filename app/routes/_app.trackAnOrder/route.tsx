@@ -26,7 +26,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         trackAnOrderId,
     } = finalFormData.data;
     const { userDetails } = await getUserDetails(request);
-    const trackAnOrderResponse = await getOrderId(trackAnOrderId, userDetails?.id);
+    const trackAnOrderResponse = await getOrderId(request, trackAnOrderId, userDetails?.id);
 
     if (trackAnOrderResponse?.orderList.length < 1) {
         setErrorMessage(messageSession, "Order not found. Please try using correct Purchase Order Number or Order Number.");

@@ -3,6 +3,7 @@ import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -21,12 +22,17 @@ interface ImpersonateResponse extends BaseResponse {
   };
 }
 
-export async function getImpersonateStatus(customerId: string) {
+export async function getImpersonateStatus(
+  request: Request,
+  customerId: string,
+) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const url = `${ENDPOINT.SUPPORT.IMPERSONATE}/${customerId}`;
 
     const response = await useFetch<ImpersonateResponse>({
       url,
+      impersonateEnableCheck: isImpersonatingCheck,
     });
 
     if (!response.status) {
@@ -56,6 +62,7 @@ export async function updateImpersonateStatus({
   body: string;
 }) {
   const messageSession = await getMessageSession(request);
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const url = `${ENDPOINT.SUPPORT.IMPERSONATE}/${customerId}`;
 
@@ -63,6 +70,7 @@ export async function updateImpersonateStatus({
       url,
       method,
       body,
+      impersonateEnableCheck: isImpersonatingCheck,
     });
 
     if (!response.status) {

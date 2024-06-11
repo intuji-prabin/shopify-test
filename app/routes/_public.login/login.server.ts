@@ -2,6 +2,8 @@ import {AppLoadContext} from '@shopify/remix-oxygen';
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {ImpersonatingUser} from '../_public.impersonate_.$customerId_.$staffId/impersonate.server';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 type LoginParams = {
   email: string;
@@ -29,7 +31,10 @@ export type CustomerData = {
   firstName: string;
   lastName: string;
   phone: string;
+  displayName: string;
   addresses: CustomerAddress[];
+  impersonateEnable: boolean;
+  impersonatingUser: ImpersonatingUser;
 };
 
 type CustomerResponse = {
@@ -42,10 +47,18 @@ export function isUserActive(status: Metafield) {
   return status?.value === 'true';
 }
 
-export async function getCustomerByEmail({email}: {email: string}) {
+export async function getCustomerByEmail({
+  context,
+  email,
+}: {
+  context: AppLoadContext;
+  email: string;
+}) {
   const customerResponse = await useFetch<CustomerResponse>({
     method: AllowedHTTPMethods.GET,
     url: `${ENDPOINT.CUSTOMER.GET}?email=${email}`,
+    impersonateEnableCheck: 'false',
+    context,
   });
   if (!customerResponse.status) {
     throw new Error(customerResponse.message);

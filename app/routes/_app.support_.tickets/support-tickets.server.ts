@@ -3,6 +3,7 @@ import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.cons
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {generateUrlWithParams} from '~/lib/helpers/url.helper';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 import {TicketColumn} from '~/routes/_app.support_.tickets/use-column';
 
 type ResponseData = {
@@ -15,12 +16,15 @@ type ResponseData = {
 };
 
 export async function getAllTickets({
+  request,
   customerId,
   searchParams,
 }: {
+  request: Request;
   customerId: string;
   searchParams: URLSearchParams;
 }) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const baseUrl = `${ENDPOINT.SUPPORT.TICKETS}/${customerId}`;
 
@@ -29,6 +33,7 @@ export async function getAllTickets({
     const results = await useFetch<ResponseData>({
       method: AllowedHTTPMethods.GET,
       url,
+      impersonateEnableCheck: isImpersonatingCheck,
     });
 
     if (!results.status) {

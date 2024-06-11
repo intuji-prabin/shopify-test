@@ -1,6 +1,7 @@
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 export type ProductGroup = {
   groupId: number;
@@ -14,11 +15,21 @@ type GetProductGroupResponseSchema = {
   payload: ProductGroup[];
 };
 
-export async function getProductGroup({customerId}: {customerId: string}) {
+export async function getProductGroup({
+  request,
+  customerId,
+}: {
+  request: Request;
+  customerId: string;
+}) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
 
-    const results = await useFetch<GetProductGroupResponseSchema>({url});
+    const results = await useFetch<GetProductGroupResponseSchema>({
+      url,
+      impersonateEnableCheck: isImpersonatingCheck,
+    });
 
     if (!results.status) {
       throw new Error(results.message);

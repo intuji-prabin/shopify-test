@@ -1,6 +1,5 @@
-import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
 import {AppLoadContext, redirect} from '@shopify/remix-oxygen';
-import {CustomerData} from '~/routes/_public.login/login.server';
+import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
 import {Routes} from '~/lib/constants/routes.constent';
 import {
   getMessageSession,
@@ -11,9 +10,11 @@ import {
 import {
   USER_DETAILS_KEY,
   destroyUserDetailsSession,
+  getUserDetails,
   getUserDetailsSession,
   userDetailsCommitSession,
 } from '~/lib/utils/user-session.server';
+import {CustomerData} from '~/routes/_public.login/login.server';
 
 export const USER_SESSION_KEY = 'accessToken';
 export const USER_SESSION_ID = 'sessionId';
@@ -29,7 +30,7 @@ export async function createUserSession({
   rememberMe,
   context,
   customerData,
-  sessionId
+  sessionId,
 }: {
   request: Request;
   accessToken: string;
@@ -46,7 +47,6 @@ export async function createUserSession({
 
   session.set(USER_SESSION_KEY, accessToken);
   session.set(USER_SESSION_ID, sessionId); // Store sessionId in session
-
 
   userDetailsSession.set(USER_DETAILS_KEY, customerData);
 
@@ -97,6 +97,11 @@ export async function isAuthorize(request: Request, permission: string) {
     userDetail.meta.user_role.permission.includes(permission);
 
   return hasAddCustomerPermission;
+}
+
+export async function isImpersonating(request: Request) {
+  const {userDetails} = await getUserDetails(request);
+  return userDetails?.impersonateEnable ? 'true' : 'false';
 }
 
 export async function logout({

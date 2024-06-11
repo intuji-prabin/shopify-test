@@ -5,7 +5,7 @@ import {AppLoadContext} from '@shopify/remix-oxygen';
 import {Routes} from '~/lib/constants/routes.constent';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
-import {getAccessToken} from '~/lib/utils/auth-session.server';
+import {getAccessToken, isImpersonating} from '~/lib/utils/auth-session.server';
 import {addedBulkCart} from '~/routes/_app.wishlist/bulk.cart.server';
 import {BulkOrderColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
 import {GroupItem} from '~/routes/_app.pending-order_.$groupId/select-product-context';
@@ -36,14 +36,17 @@ interface GetProductGroupResponse extends DefaultResponse {
 }
 
 export async function getGroupDetails({
+  request,
   groupId,
   customerId,
   searchParams,
 }: {
+  request: Request;
   groupId: string;
   customerId: string;
   searchParams: URLSearchParams;
 }) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const baseUrl = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
 
@@ -63,6 +66,7 @@ export async function getGroupDetails({
 
     const results = await useFetch<GetProductGroupResponse>({
       url: url.toString(),
+      impersonateEnableCheck: isImpersonatingCheck,
     });
 
     if (!results.status) {
@@ -93,7 +97,7 @@ export async function updateGroup({
   customerId: string;
 }) {
   const messageSession = await getMessageSession(request);
-
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
 
@@ -103,6 +107,7 @@ export async function updateGroup({
       url,
       method: AllowedHTTPMethods.PUT,
       body,
+      impersonateEnableCheck: isImpersonatingCheck,
     });
 
     if (!response.status) {
@@ -153,6 +158,7 @@ export async function deleteGroup({
   customerId: string;
 }) {
   const messageSession = await getMessageSession(request);
+  const isImpersonatingCheck = await isImpersonating(request);
 
   try {
     const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP}/${customerId}`;
@@ -163,6 +169,7 @@ export async function deleteGroup({
       url,
       method: AllowedHTTPMethods.DELETE,
       body,
+      impersonateEnableCheck: isImpersonatingCheck,
     });
 
     if (!response.status) {
@@ -209,7 +216,7 @@ export async function addProductToGroup({
   customerId: string;
 }) {
   const messageSession = await getMessageSession(request);
-
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
 
@@ -217,6 +224,7 @@ export async function addProductToGroup({
       method: AllowedHTTPMethods.POST,
       url,
       body,
+      impersonateEnableCheck: isImpersonatingCheck,
     });
 
     if (!response.status) {
@@ -268,7 +276,7 @@ export async function deleteGroupProduct({
   request: Request;
 }) {
   const messageSession = await getMessageSession(request);
-
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const url = `${ENDPOINT.PENDING_ORDERS.PRODUCT_GROUP_ITEM}/${customerId}`;
 
@@ -280,6 +288,7 @@ export async function deleteGroupProduct({
       method: AllowedHTTPMethods.DELETE,
       url,
       body,
+      impersonateEnableCheck: isImpersonatingCheck,
     });
 
     if (!response.status) {
@@ -327,6 +336,7 @@ export async function updateGroupProduct({
   customerId: string;
 }) {
   const messageSession = await getMessageSession(request);
+  const isImpersonatingCheck = await isImpersonating(request);
 
   try {
     const jsonPayload = (await request.json()) as GroupItem[];
@@ -342,6 +352,7 @@ export async function updateGroupProduct({
       method: AllowedHTTPMethods.PUT,
       url,
       body,
+      impersonateEnableCheck: isImpersonatingCheck,
     });
 
     if (!response.status) {

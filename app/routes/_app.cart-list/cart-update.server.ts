@@ -1,11 +1,10 @@
+import {useFormatCart} from '~/hooks/useFormatCart';
 import {
   CART_QUANTITY_MAX,
   CART_SESSION_KEY,
 } from '~/lib/constants/cartInfo.constant';
 import {CONSTANT} from '~/lib/constants/product.session';
 import {getCartList} from './cart.server';
-import {useFormatCart} from '~/hooks/useFormatCart';
-import {promoCodeRemove} from './promoCodeRemove.server';
 
 export const cartUpdate = async (context: any, request: any) => {
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);

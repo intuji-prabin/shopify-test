@@ -81,7 +81,7 @@ export type EditFormFieldNameType = keyof EditFormType;
  * @param param0 request | params
  * @returns json
  */
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ context, request, params }: ActionFunctionArgs) {
   const data = await request.formData();
   let formData = Object.fromEntries(data);
   formData = { ...formData };
@@ -89,7 +89,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { userDetails } = await getUserDetails(request);
 
   const customerId = userDetails.id;
-  await updatePromotion(formData, bannerId, customerId);
+  await updatePromotion(context, request, formData, bannerId, customerId);
 
   return json({});
 }
@@ -101,7 +101,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
 
   const customerId = userDetails.id;
 
-  const response = await getMyPromotionById(promotionId, customerId);
+  const response = await getMyPromotionById(context, request, promotionId, customerId);
 
   if (response?.payload) {
     const results = response?.payload;

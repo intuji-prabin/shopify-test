@@ -15,6 +15,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 export type Product = BulkOrderColumn;
 interface DefaultResponse {
@@ -38,11 +39,13 @@ interface GetPlaceAnOrderListResponse extends DefaultResponse {
 }
 
 export async function getProductGroupOptions({
+  request,
   customerId,
 }: {
+  request: Request;
   customerId: string;
 }) {
-  const productGroup = await getProductGroup({customerId});
+  const productGroup = await getProductGroup({request, customerId});
 
   const productGroupOptions = productGroup.map((group) => ({
     label: group.groupName,
@@ -53,18 +56,24 @@ export async function getProductGroupOptions({
 }
 
 export async function getPlaceAnOrderList({
+  request,
   customerId,
   searchParams,
 }: {
+  request: Request;
   customerId: string;
   searchParams: URLSearchParams;
 }) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const baseUrl = `${ENDPOINT.PLACE_AN_ORDER}/${customerId}`;
 
     const url = generateUrlWithParams({baseUrl, searchParams});
 
-    const response = await useFetch<GetPlaceAnOrderListResponse>({url});
+    const response = await useFetch<GetPlaceAnOrderListResponse>({
+      url,
+      impersonateEnableCheck: isImpersonatingCheck,
+    });
 
     if (!response.status) {
       throw new Error(response.message);
@@ -82,6 +91,7 @@ export async function getPlaceAnOrderList({
 }
 
 export async function deletePlaceAnOrderList({request}: {request: Request}) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const {userDetails} = await getUserDetails(request);
 
@@ -90,6 +100,7 @@ export async function deletePlaceAnOrderList({request}: {request: Request}) {
     const response = await useFetch<DefaultResponse>({
       url: `${ENDPOINT.PLACE_AN_ORDER}/${customerId}`,
       method: AllowedHTTPMethods.DELETE,
+      impersonateEnableCheck: isImpersonatingCheck,
     });
 
     if (!response.status) {
@@ -110,6 +121,7 @@ export async function deletePlaceAnOrderList({request}: {request: Request}) {
 
 export async function addProductToGroup({request}: {request: Request}) {
   const messageSession = await getMessageSession(request);
+  const isImpersonatingCheck = await isImpersonating(request);
 
   try {
     const submitPayload = (await request.json()) as SubmitPayload;
@@ -133,6 +145,7 @@ export async function addProductToGroup({request}: {request: Request}) {
         method: AllowedHTTPMethods.POST,
         body,
         url: createGroupUrl,
+        impersonateEnableCheck: isImpersonatingCheck,
       });
 
       if (!response.status) {
@@ -151,6 +164,7 @@ export async function addProductToGroup({request}: {request: Request}) {
       method: AllowedHTTPMethods.POST,
       body,
       url: updateGroupUrl,
+      impersonateEnableCheck: isImpersonatingCheck,
     });
 
     if (!response.status) {

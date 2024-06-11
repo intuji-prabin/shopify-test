@@ -10,7 +10,10 @@ import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {emitter3} from '~/lib/utils/emitter.server';
 import {EVENTS} from '~/lib/constants/events.contstent';
 import {StockStatus} from '~/routes/_app.cart-list/order-my-products/use-column';
-import {USER_SESSION_ID} from '~/lib/utils/auth-session.server';
+import {
+  USER_SESSION_ID,
+  isImpersonating,
+} from '~/lib/utils/auth-session.server';
 
 export interface relatedProductsType {
   productId: string;
@@ -108,12 +111,20 @@ type priceRangeType = {
   price: number;
 };
 
-export async function getProductDetails(customerId: string, handle: string) {
+export async function getProductDetails(
+  request: Request,
+  customerId: string,
+  handle: string,
+) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const results: any = await fetch(
       `${ENDPOINT.PRODUCT.GET_PRODUCT}/${customerId}/${handle}`,
       {
         method: 'GET',
+        headers: {
+          impersonateEnable: isImpersonatingCheck,
+        },
       },
     );
     const response = await results.json();
@@ -384,6 +395,7 @@ const cartLineAdd = async (
 
 const storeCartIdOnBackend = async (request: any, cartId: string) => {
   const {userDetails} = await getUserDetails(request);
+  const isImpersonatingCheck = await isImpersonating(request);
   // console.log('cartId ', cartId);
   try {
     const customerId = userDetails?.id;
@@ -391,6 +403,7 @@ const storeCartIdOnBackend = async (request: any, cartId: string) => {
       method: AllowedHTTPMethods.POST,
       url: `${ENDPOINT.PRODUCT.CART}/${customerId}`,
       body: JSON.stringify({cartId}),
+      impersonateEnableCheck: isImpersonatingCheck,
     });
     // console.log('ssss ', results);
     return true;

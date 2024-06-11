@@ -1,6 +1,7 @@
 import {AppLoadContext} from '@shopify/remix-oxygen';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 
 type AddTeamParams = {
@@ -45,10 +46,14 @@ export async function addTeam({
   formData.append('parentId', parentId);
   formData.append('companyid', companyId);
   formData.append('customerCode', customerCode);
+  const isImpersonatingCheck = await isImpersonating(request);
 
   const results: any = await fetch(ENDPOINT.CUSTOMER.CREATE, {
     method: AllowedHTTPMethods.POST,
     body: formData,
+    headers: {
+      impersonateEnable: isImpersonatingCheck,
+    },
   });
 
   const response = await results.json();

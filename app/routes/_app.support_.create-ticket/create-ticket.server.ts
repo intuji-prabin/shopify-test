@@ -12,6 +12,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 type CreateTicketResponse = {
   status: boolean;
@@ -27,7 +28,7 @@ export async function createTicket({
   customerId: string;
 }) {
   const messageSession = await getMessageSession(request);
-
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const result = await CreateTicketFormFieldValidator.validate(
       await request.formData(),
@@ -46,6 +47,7 @@ export async function createTicket({
       method: AllowedHTTPMethods.POST,
       url: `${ENDPOINT.SUPPORT.TICKETS}/${customerId}`,
       body,
+      impersonateEnableCheck: isImpersonatingCheck,
     });
 
     if (!results.status) {

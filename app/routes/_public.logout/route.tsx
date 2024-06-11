@@ -1,5 +1,7 @@
-import {ActionFunctionArgs, redirect} from '@remix-run/server-runtime';
-import {logout} from '~/lib/utils/auth-session.server';
+import { ActionFunctionArgs, redirect } from '@remix-run/server-runtime';
+import { isImpersonating, logout } from '~/lib/utils/auth-session.server';
+import { getLogoutImpersonate } from '../_public.impersonate_.$customerId_.$staffId/impersonate.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
 
 export async function loader() {
   return redirect('/');
@@ -8,9 +10,17 @@ export async function loader() {
 /**
  * Logout Funtionality is in Testing phase
  */
-export async function action({context, request}: ActionFunctionArgs) {
+export async function action({ context, request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const message = formData.get('message');
+  const isImpersonatingCheck = await isImpersonating(request);
+  const { userDetails } = await getUserDetails(request);
+  const customerId = userDetails?.id;
+  const impersonateId = userDetails?.impersonatingUser?.id;
+
+  if (isImpersonatingCheck) {
+    return getLogoutImpersonate({ request, context, customerId, impersonateId });
+  }
 
   return logout({
     context,
