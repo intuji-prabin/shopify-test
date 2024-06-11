@@ -9,7 +9,9 @@ export function useDownload() {
     headers?: HeadersInit;
   }) => {
     try {
+      console.log("url",url);
       const response = await fetch(url, {headers});
+      console.log("response",response);
 
       if (!response.ok) {
         throw new Error(`Failed to fetch the file. Status: ${response.status}`);
@@ -45,6 +47,7 @@ export function useDownload() {
         window.URL.revokeObjectURL(_url);
       }
     } catch (error) {
+      console.log("error",error);
       if (error instanceof Error) {
         displayToast({message: error.message, type: 'error'});
       }
