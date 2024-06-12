@@ -14,6 +14,7 @@ import {
 } from '~/lib/utils/toast-session.server';
 import {json} from '@remix-run/react';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 interface MetaField {
   key: string;
@@ -63,19 +64,24 @@ async function normalizeTeams({
 }
 
 export async function getAllTeams({
+  request,
   customerId,
   query,
   context,
 }: {
+  request: Request;
   customerId: string;
   query: string | null;
   context: AppLoadContext;
 }): Promise<TeamColumn[]> {
+  const isImpersonatingCheck = await isImpersonating(request);
   const results = await useFetch<ResponseData>({
     method: AllowedHTTPMethods.GET,
     url: `${ENDPOINT.CUSTOMER_LIST.GET}?customer_id=${customerId}${
       query ? '&search_query=' + query : ''
     }`,
+    impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
 
   if (results.payload.length < 0) {
@@ -108,15 +114,18 @@ export async function getRoles({
 }
 
 export async function updateStatus({
+  context,
   customerId,
   value,
   request,
 }: {
+  context: AppLoadContext;
   customerId: string;
   value: 'true' | 'false';
   request: Request;
 }) {
   const messageSession = await getMessageSession(request);
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const body = JSON.stringify({
       customerId,
@@ -127,6 +136,8 @@ export async function updateStatus({
       method: AllowedHTTPMethods.POST,
       url: ENDPOINT.CUSTOMER.UPDATE_STATUS,
       body,
+      impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {

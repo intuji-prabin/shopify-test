@@ -1,15 +1,15 @@
-import {isRouteErrorResponse, useRouteError} from '@remix-run/react';
-import {LoaderFunctionArgs} from '@remix-run/server-runtime';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {deletePlaceAnOrderList} from '~/routes/_app.place-an-order.list/place-an-order-list.server';
+import { isRouteErrorResponse, useRouteError } from '@remix-run/react';
+import { LoaderFunctionArgs } from '@remix-run/server-runtime';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { deletePlaceAnOrderList } from '~/routes/_app.place-an-order.list/place-an-order-list.server';
 import EmptyList from '~/components/ui/empty-list';
-import {RouteError} from '~/components/ui/route-error';
-import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import { RouteError } from '~/components/ui/route-error';
+import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
 
-export async function loader({context, request}: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  await deletePlaceAnOrderList({request});
+  await deletePlaceAnOrderList({ context, request });
 
   return null;
 }

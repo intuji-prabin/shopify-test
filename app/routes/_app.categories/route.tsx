@@ -1,15 +1,14 @@
-import { useLoaderData, useNavigate } from '@remix-run/react';
+import { useLoaderData } from '@remix-run/react';
 import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
 import { AppLoadContext } from '@shopify/remix-oxygen';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { BackButton } from '~/components/ui/back-button';
 import { BulkCsvUpload } from '~/components/ui/bulk-csv-upload';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 import { useScroll } from '~/hooks/useScroll';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import { CategoryCard } from '~/routes/_app.categories/category-card';
 import { getCategory } from './categories.server';
-import { AbilityContext } from '~/lib/helpers/Can';
-import { useConditionalRender } from '~/hooks/useAuthorization';
 
 export async function loader({ context }: LoaderFunctionArgs) {
   await isAuthenticate(context);

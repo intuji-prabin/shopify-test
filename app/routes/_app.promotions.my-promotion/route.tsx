@@ -1,67 +1,67 @@
-import React, {FormEvent, useRef, useState} from 'react';
-import {Button} from '~/components/ui/button';
-import {MetaFunction} from '@shopify/remix-oxygen';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {UploadIcon} from '~/components/icons/upload';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {ENDPOINT} from '~/lib/constants/endpoint.constant';
-import {useLoadMore} from '~/hooks/useLoadMore';
-import PromotionCard from '~/routes/_app.promotions/promotion-card';
-import {filterOptions} from '~/routes/_app.promotions/promotion-constants';
-import {deletePromotion} from '~/routes/_app.promotions.my-promotion/my-promotion.server';
 import {
   Form,
   NavLink,
-  isRouteErrorResponse,
   json,
   useLoaderData,
-  useRouteError,
-  useSubmit,
+  useSubmit
 } from '@remix-run/react';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
-import {
-  Promotion,
-  getPromotions,
-} from '~/routes/_app.promotions/promotion.server';
+import { MetaFunction } from '@shopify/remix-oxygen';
+import React, { FormEvent, useState } from 'react';
+import { UploadIcon } from '~/components/icons/upload';
+import { Button } from '~/components/ui/button';
+import { useLoadMore } from '~/hooks/useLoadMore';
+import { ENDPOINT } from '~/lib/constants/endpoint.constant';
+import { Can } from '~/lib/helpers/Can';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {Can} from '~/lib/helpers/Can';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { deletePromotion } from '~/routes/_app.promotions.my-promotion/my-promotion.server';
+import PromotionCard from '~/routes/_app.promotions/promotion-card';
+import { filterOptions } from '~/routes/_app.promotions/promotion-constants';
+import {
+  Promotion,
+  getPromotions,
+} from '~/routes/_app.promotions/promotion.server';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'My Promotion'}];
+  return [{ title: 'My Promotion' }];
 };
 
-export async function loader({context, request}: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
-  const {searchParams} = new URL(request.url);
+  const { searchParams } = new URL(request.url);
 
   const paramsList = Object.fromEntries(searchParams);
 
   const customerId = userDetails?.id;
 
-  const {promotions, totalPromotionCount} = await getPromotions({
+  const { promotions, totalPromotionCount } = await getPromotions({
+    context,
+    request,
     customerId,
     custom: true,
     paramsList,
   });
 
-  return json({promotions, totalPromotionCount});
+  return json({ promotions, totalPromotionCount });
 }
 
-export async function action({request, context}: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
   const customerId = userDetails?.id;
 
   const messageSession = await getMessageSession(request);
@@ -80,7 +80,7 @@ export async function action({request, context}: ActionFunctionArgs) {
   });
 
   try {
-    const response = await deletePromotion(promotionId, customerId);
+    const response = await deletePromotion(context, request, promotionId, customerId);
     if (!response.status) {
       setErrorMessage(messageSession, response.message);
     }
@@ -101,13 +101,13 @@ export async function action({request, context}: ActionFunctionArgs) {
 }
 
 export default function MyPromotionsPage() {
-  const {promotions, totalPromotionCount} = useLoaderData<typeof loader>();
+  const { promotions, totalPromotionCount } = useLoaderData<typeof loader>();
 
   const [checkedPromotions, setCheckedPromotions] = useState<string[]>([]);
 
   const submit = useSubmit();
 
-  const {isLoading, isLoadMoreDisabled, handleLoadMore} = useLoadMore({
+  const { isLoading, isLoadMoreDisabled, handleLoadMore } = useLoadMore({
     totalPromotionCount,
   });
 
@@ -125,9 +125,8 @@ export default function MyPromotionsPage() {
     );
   };
 
-  const exportUrl = `${
-    ENDPOINT.PROMOTION.BULK_EXPORT
-  }?promotion_id=${checkedPromotions.join(',')}`;
+  const exportUrl = `${ENDPOINT.PROMOTION.BULK_EXPORT
+    }?promotion_id=${checkedPromotions.join(',')}`;
 
   return (
     <div className="pt-10 sm:pt-0">
@@ -185,12 +184,12 @@ export default function MyPromotionsPage() {
                     <NavLink
                       to={exportUrl}
                       reloadDocument
-                      className={({isActive, isPending}) =>
+                      className={({ isActive, isPending }) =>
                         isPending
                           ? 'bg-red-500'
                           : isActive
-                          ? 'active'
-                          : 'text-neutral-white font-bold italic uppercase bg-primary-500 disabled:bg-grey-50 px-6 py-2 text-sm leading-6 flex items-center gap-x-1.5'
+                            ? 'active'
+                            : 'text-neutral-white font-bold italic uppercase bg-primary-500 disabled:bg-grey-50 px-6 py-2 text-sm leading-6 flex items-center gap-x-1.5'
                       }
                     >
                       <UploadIcon /> Export

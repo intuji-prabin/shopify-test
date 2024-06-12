@@ -102,6 +102,8 @@ export const loader = async ({
     }
     const { userDetails } = await getUserDetails(request);
     const product = await getProductDetails(
+      context,
+      request,
       userDetails?.id,
       productSlug as string,
     );

@@ -1,8 +1,9 @@
-import {json} from '@remix-run/server-runtime';
+import {AppLoadContext, json} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -21,12 +22,19 @@ interface ImpersonateResponse extends BaseResponse {
   };
 }
 
-export async function getImpersonateStatus(customerId: string) {
+export async function getImpersonateStatus(
+  context: AppLoadContext,
+  request: Request,
+  customerId: string,
+) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const url = `${ENDPOINT.SUPPORT.IMPERSONATE}/${customerId}`;
 
     const response = await useFetch<ImpersonateResponse>({
       url,
+      impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {
@@ -45,17 +53,20 @@ export async function getImpersonateStatus(customerId: string) {
 }
 
 export async function updateImpersonateStatus({
+  context,
   customerId,
   method,
   body,
   request,
 }: {
+  context: AppLoadContext;
   customerId: string;
   request: Request;
   method: AllowedHTTPMethods;
   body: string;
 }) {
   const messageSession = await getMessageSession(request);
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const url = `${ENDPOINT.SUPPORT.IMPERSONATE}/${customerId}`;
 
@@ -63,6 +74,8 @@ export async function updateImpersonateStatus({
       url,
       method,
       body,
+      impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {

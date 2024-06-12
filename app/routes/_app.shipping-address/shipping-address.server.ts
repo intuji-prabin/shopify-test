@@ -1,7 +1,9 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 type ShippingAddressResponse = {
   status: boolean;
@@ -28,13 +30,20 @@ export type DefaultAddress = {
 
 export type Address = DefaultAddress;
 
-export async function getAllCompanyShippingAddresses(customerId: string) {
+export async function getAllCompanyShippingAddresses(
+  context: AppLoadContext,
+  request: Request,
+  customerId: string,
+) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
-    const customer = customerId.split('/').pop();
+    const customer = customerId?.split('/')?.pop();
 
     const response = await useFetch<ShippingAddressResponse>({
       method: AllowedHTTPMethods.GET,
       url: `${ENDPOINT.COMPANY.GET_SHIPPING_ADDRESS}?customerId=${customer}`,
+      impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
     if (!response.status) {
       throw new Error(response.message);
@@ -42,6 +51,7 @@ export async function getAllCompanyShippingAddresses(customerId: string) {
 
     return response.payload;
   } catch (error) {
+    console.log('first error', error);
     if (error instanceof Error) {
       throw new Error(error.message);
     }

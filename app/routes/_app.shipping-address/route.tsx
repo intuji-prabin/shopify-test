@@ -4,43 +4,43 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
-import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
-import {MetaFunction} from '@shopify/remix-oxygen';
-import {CircleInformationMajor} from '~/components/icons/orderStatus';
-import {Alert, AlertDescription} from '~/components/ui/alert';
-import {useConditionalRender} from '~/hooks/useAuthorization';
-import {Routes} from '~/lib/constants/routes.constent';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
+import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
+import { MetaFunction } from '@shopify/remix-oxygen';
+import { CircleInformationMajor } from '~/components/icons/orderStatus';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { useConditionalRender } from '~/hooks/useAuthorization';
+import { Routes } from '~/lib/constants/routes.constent';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
 import ShippingAddressHeader from '~/routes/_app.shipping-address/shipping-address-breadcrumb';
 import ShippingAddressCards from '~/routes/_app.shipping-address/shipping-address-card';
 import {
   ShippingAddress,
   getAllCompanyShippingAddresses,
 } from '~/routes/_app.shipping-address/shipping-address.server';
-import {ShippingAddressError} from '~/routes/_app.shipping-address/shipping-address-error';
-import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import { ShippingAddressError } from '~/routes/_app.shipping-address/shipping-address-error';
+import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Shipping Address'}];
+  return [{ title: 'Shipping Address' }];
 };
 
-export async function loader({context, request}: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   const metaParentValue = userDetails.meta.parent.value;
 
   const customerId =
     metaParentValue === 'null' ? userDetails.id : metaParentValue;
 
-  const shippingAddresses = await getAllCompanyShippingAddresses(customerId);
+  const shippingAddresses = await getAllCompanyShippingAddresses(context, request, customerId);
 
-  return json({shippingAddresses});
+  return json({ shippingAddresses });
 }
 
 export default function ShippingAddressMgmt() {
-  const {shippingAddresses} = useLoaderData<typeof loader>();
+  const { shippingAddresses } = useLoaderData<typeof loader>();
   const shouldRender = useConditionalRender('view_shipping_addresses');
 
   return (

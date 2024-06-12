@@ -10,18 +10,17 @@ import {
   json,
   redirect,
 } from '@remix-run/server-runtime';
-import {MetaFunction} from '@shopify/remix-oxygen';
-import {ArrowLeft, Edit} from 'lucide-react';
-import {validationError} from 'remix-validated-form';
-import {Button} from '~/components/ui/button';
-import {PageNotFound} from '~/components/ui/page-not-found';
-import {SelectInputOptions} from '~/components/ui/select-input';
-import {useConditionalRender} from '~/hooks/useAuthorization';
-import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
-import {EVENTS} from '~/lib/constants/events.contstent';
-import {Routes} from '~/lib/constants/routes.constent';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {emitter} from '~/lib/utils/emitter.server';
+import { MetaFunction } from '@shopify/remix-oxygen';
+import { ArrowLeft } from 'lucide-react';
+import { validationError } from 'remix-validated-form';
+import { Button } from '~/components/ui/button';
+import { SelectInputOptions } from '~/components/ui/select-input';
+import { useConditionalRender } from '~/hooks/useAuthorization';
+import { SESSION_MAX_AGE } from '~/lib/constants/auth.constent';
+import { EVENTS } from '~/lib/constants/events.contstent';
+import { Routes } from '~/lib/constants/routes.constent';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { emitter } from '~/lib/utils/emitter.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -34,6 +33,8 @@ import {
   getUserDetailsSession,
   userDetailsCommitSession,
 } from '~/lib/utils/user-session.server';
+import { getRoles } from '~/routes/_app.team/team.server';
+import { EditTeamError } from '~/routes/_app.team_.$teamId/edit-team-error';
 import {
   getCustomerById,
   updateTeam,
@@ -41,38 +42,36 @@ import {
 import TeamForm, {
   EditTeamFormSchemaValidator,
 } from '~/routes/_app.team_.add/team-form';
-import {getCustomerByEmail} from '~/routes/_public.login/login.server';
-import {getRoles} from '~/routes/_app.team/team.server';
-import {EditTeamError} from '~/routes/_app.team_.$teamId/edit-team-error';
+import { getCustomerByEmail } from '~/routes/_public.login/login.server';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Edit Team Member'}];
+  return [{ title: 'Edit Team Member' }];
 };
 
-export async function loader({params, context, request}: LoaderFunctionArgs) {
+export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
   const customerId = params?.teamId as string;
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   const currentUserRole = userDetails.meta.user_role.value;
 
-  const customerDetails = await getCustomerById({customerId});
+  const customerDetails = await getCustomerById({ context, request, customerId });
 
-  const roles = await getRoles({context, currentUserRole});
+  const roles = await getRoles({ context, currentUserRole });
 
-  return json({customerDetails, roles});
+  return json({ customerDetails, roles });
 }
 
-export async function action({request, context, params}: ActionFunctionArgs) {
+export async function action({ request, context, params }: ActionFunctionArgs) {
   await isAuthenticate(context);
 
   const messageSession = await getMessageSession(request);
 
   const userDetailsSession = await getUserDetailsSession(request);
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   try {
     const result = await EditTeamFormSchemaValidator.validate(
@@ -96,6 +95,8 @@ export async function action({request, context, params}: ActionFunctionArgs) {
     } = result.data;
 
     await updateTeam({
+      context,
+      request,
       address,
       addressId,
       email,
@@ -104,7 +105,6 @@ export async function action({request, context, params}: ActionFunctionArgs) {
       customerId,
       userRole,
       file: profileImage,
-      context,
     });
 
     //  This must be applied only after implementing the authorization logic
@@ -117,6 +117,7 @@ export async function action({request, context, params}: ActionFunctionArgs) {
       userDetailsSession.unset(USER_DETAILS_KEY);
 
       const customerDetails = await getCustomerByEmail({
+        context,
         email: userDetails.email,
       });
 
@@ -159,14 +160,14 @@ export async function action({request, context, params}: ActionFunctionArgs) {
         },
       );
     }
-    return json({error}, {status: 400});
+    return json({ error }, { status: 400 });
   }
 }
 
 export default function TeamDetailsPage() {
   const navigate = useNavigate();
 
-  const {customerDetails, roles} = useLoaderData<typeof loader>();
+  const { customerDetails, roles } = useLoaderData<typeof loader>();
 
   const shouldRender = useConditionalRender('edit_other_profile');
 

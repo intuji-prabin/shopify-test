@@ -69,6 +69,8 @@ const NO_PREDICTIVE_SEARCH_RESULTS: NormalizedPredictiveSearchResults = [
  * @param predictiveSearch
  */
 async function normalizePredictiveSearchResults(
+  context: AppLoadContext,
+  request: Request,
   predictiveSearch: PredictiveSearchQuery['predictiveSearch'],
   customerId: string,
 ): Promise<NormalizedPredictiveSearch> {
@@ -82,6 +84,8 @@ async function normalizePredictiveSearchResults(
 
   if (predictiveSearch.products.length) {
     const prices = await formattedProductPrice(
+      context,
+      request,
       predictiveSearch.products,
       customerId,
     );
@@ -133,6 +137,8 @@ async function normalizePredictiveSearchResults(
 }
 
 const formattedProductPrice = async (
+  context: AppLoadContext,
+  request: Request,
   predictiveSearchData: PredictiveProductFragment[],
   customerId: string,
 ) => {
@@ -147,17 +153,19 @@ const formattedProductPrice = async (
     return true;
   });
 
-  const priceList = await getPrices(productIds, customerId);
+  const priceList = await getPrices(context, request, productIds, customerId);
 
   return priceList;
 };
 
 async function getSearchProduct({
+  request,
   limit = 6,
   context,
   searchTerm,
   customerId,
 }: {
+  request: Request;
   searchTerm: string;
   context: AppLoadContext;
   limit?: number;
@@ -180,6 +188,8 @@ async function getSearchProduct({
   }
 
   const { results } = await normalizePredictiveSearchResults(
+    context,
+    request,
     searchData.predictiveSearch,
     customerId,
   );
@@ -195,6 +205,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   const searchTerm = searchParams.get('searchTerm');
   if (searchTerm) {
     const results = await getSearchProduct({
+      request,
       searchTerm,
       context,
       customerId: userDetails?.id,

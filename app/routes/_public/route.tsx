@@ -1,5 +1,5 @@
-import {Link, Outlet} from '@remix-run/react';
-import {Routes} from '~/lib/constants/routes.constent';
+import { Link, Outlet } from '@remix-run/react';
+import { Routes } from '~/lib/constants/routes.constent';
 
 /**
  * @description layout for unprotected page
@@ -10,7 +10,7 @@ export default function PublicPageLayout() {
       <div className="flex flex-col gap-y-[103px] items-center p-4">
         <Link to={Routes.HOME}>
           <figure>
-            <img src="logo_main.svg" alt="Logo" />
+            <img src="/logo_main.svg" alt="Logo" />
           </figure>
         </Link>
         <Outlet />

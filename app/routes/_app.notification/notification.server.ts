@@ -1,8 +1,10 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {Routes} from '~/lib/constants/routes.constent';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 interface DefaultResponse {
   status: boolean;
@@ -49,9 +51,22 @@ interface ViewNotificationResponse extends DefaultResponse {
   payload: ViewNotificationPayload;
 }
 
-export async function getNotifications({url}: {url: string}) {
+export async function getNotifications({
+  context,
+  request,
+  url,
+}: {
+  context: AppLoadContext;
+  request: Request;
+  url: string;
+}) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
-    const response = await useFetch<NotificationsResponse>({url});
+    const response = await useFetch<NotificationsResponse>({
+      url,
+      impersonateEnableCheck: isImpersonatingCheck,
+      context,
+    });
 
     if (!response.status) {
       throw new Error(response.message);
@@ -86,18 +101,25 @@ export function urlBuilder(notification: ViewNotification) {
 }
 
 export async function viewNotification({
+  context,
+  request,
   customerId,
   notificationId,
 }: {
+  context: AppLoadContext;
+  request: Request;
   customerId: string;
   notificationId: FormDataEntryValue | null;
 }) {
+  const isImpersonatingCheck = await isImpersonating(request);
   const baseUrl = `${ENDPOINT.NOTIFICATIONS.GET}/${customerId}/${
     notificationId === null ? 'mark-as-read' : notificationId
   }`;
   const response = await useFetch<ViewNotificationResponse>({
     url: baseUrl,
     method: AllowedHTTPMethods.PUT,
+    impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
 
   if (!response.status) {

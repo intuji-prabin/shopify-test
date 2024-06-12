@@ -25,7 +25,7 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
 
     const customerId = userDetails.id;
 
-    const statementDetails = await getStatementDetails({ statementId, customerId });
+    const statementDetails = await getStatementDetails({ context, request, statementId, customerId });
     return json({ statementId, statementDetails });
 }
 
