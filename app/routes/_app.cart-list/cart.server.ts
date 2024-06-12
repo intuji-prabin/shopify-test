@@ -104,7 +104,7 @@ export const getCartListData = async (
   sessionCartInfo: any,
 ) => {
   const cartLists = await context.storefront.query(GET_CART_LIST, {
-    variables: {cartId: sessionCartInfo?.cartId},
+    variables: {cartId: sessionCartInfo},
   });
   if (!cartLists) {
     throw new Error('Cart List not found');
