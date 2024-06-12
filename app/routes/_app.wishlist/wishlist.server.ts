@@ -56,6 +56,7 @@ export async function removeBulkFromWishlist(
     const payload = results.payload;
     const productWishlist = payload.product;
     const numberOfWishListed = productWishlist.length;
+
     session.set(WISHLIST_SESSION_KEY, numberOfWishListed);
     return payload;
   } catch (error) {
