@@ -99,6 +99,19 @@ const getPrice = async (
   return priceResponse?.payload;
 };
 
+export const getCartListData = async (
+  context: AppLoadContext,
+  sessionCartInfo: any,
+) => {
+  const cartLists = await context.storefront.query(GET_CART_LIST, {
+    variables: {cartId: sessionCartInfo?.cartId},
+  });
+  if (!cartLists) {
+    throw new Error('Cart List not found');
+  }
+  return cartLists;
+};
+
 export const GET_CART_LIST = `query getCart( $cartId : ID!) {
     cart( id : $cartId ) {
         buyerIdentity {

@@ -121,7 +121,6 @@ export const action = async ({ request, context }: LoaderFunctionArgs) => {
           );
         }
       case 'DELETE':
-        const productInfo = Object.fromEntries(formData);
         try {
           const productInfo = Object.fromEntries(formData);
           await removeBulkFromWishlist(productInfo, context, request);
