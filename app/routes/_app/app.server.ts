@@ -156,7 +156,7 @@ export const getSessionCart = async (
   const accessTocken = (await getAccessToken(context)) as string;
 
   if (isImpersonatingCheck === 'true') {
-    let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
+    let sessionCartInfo = cartResults?.payload?.sessionId;
     const cartList = await getCartListData(context, sessionCartInfo);
     const customerFinalId = cartList?.cart?.buyerIdentity?.customer?.id.replace(
       'gid://shopify/Customer/',
@@ -188,10 +188,10 @@ export const getSessionCart = async (
       });
     });
     return {
-      cartId: sessionCartInfo?.cartId,
+      cartId: cartResults?.payload?.sessionId,
       customerId: customerFinalId,
       accessTocken: accessTocken,
-      lineItems: sessionCartInfo?.lineItems || 0,
+      lineItems: cartLine.length || 0,
       cartItems: productList,
     };
   }
