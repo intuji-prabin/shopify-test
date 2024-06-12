@@ -29,7 +29,7 @@ import Loader from '~/components/ui/loader';
 import { displayToast } from '~/components/ui/toast';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 import { Routes } from '~/lib/constants/routes.constent';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
 import PromotionNavigation from '../_app.customise_.$promotionId/promotion-navigation';
 import { getMyPromotionById, updatePromotion } from './edit-promotion.server';
 import { NumberPlusOnly } from '~/lib/constants/regex.constant';
@@ -81,7 +81,7 @@ export type EditFormFieldNameType = keyof EditFormType;
  * @param param0 request | params
  * @returns json
  */
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ context, request, params }: ActionFunctionArgs) {
   const data = await request.formData();
   let formData = Object.fromEntries(data);
   formData = { ...formData };
@@ -89,7 +89,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { userDetails } = await getUserDetails(request);
 
   const customerId = userDetails.id;
-  await updatePromotion(formData, bannerId, customerId);
+  await updatePromotion(context, request, formData, bannerId, customerId);
 
   return json({});
 }
@@ -99,18 +99,21 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
   const promotionId = params?.promotionId as string;
   const { userDetails } = await getUserDetails(request);
 
+  const accessTocken = (await getAccessToken(context)) as string;
+  const isImpersonatingCheck = await isImpersonating(request);
+
   const customerId = userDetails.id;
 
-  const response = await getMyPromotionById(promotionId, customerId);
+  const response = await getMyPromotionById(context, request, promotionId, customerId);
 
   if (response?.payload) {
     const results = response?.payload;
-    return json({ results, promotionId });
+    return json({ accessTocken, isImpersonatingCheck, results, promotionId });
   }
 }
 
 const PromotionEdit = () => {
-  const { results, promotionId } = useLoaderData<any>();
+  const { accessTocken, isImpersonatingCheck, results, promotionId } = useLoaderData<any>();
   const [isLoading, setIsLoading] = useState(false);
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
   const [image, setImage] = useState('');
@@ -216,7 +219,11 @@ const PromotionEdit = () => {
     try {
       const response = await fetch(`/edit/${promotionId}`, {
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+          Authorization: accessTocken,
+          'Impersonate-Enable': isImpersonatingCheck,
+        }
       });
       if (response.ok) {
         displayToast({ message: "Promotion Edited Successfully", type: "success" });

@@ -5,19 +5,20 @@ import { setSuccessMessage, messageCommitSession } from "~/lib/utils/toast-sessi
 import { USER_DETAILS_KEY, getUserDetails, getUserDetailsSession, userDetailsCommitSession } from "~/lib/utils/user-session.server";
 import { getCustomerByEmail } from "../_public.login/login.server";
 
-export async function loader({request}: LoaderFunctionArgs) {
+export async function loader({ request, context }: LoaderFunctionArgs) {
   const userDetailsSession = await getUserDetailsSession(request);
   // Retrieve the returnUrl from the request query parameters
   const returnUrl = new URL(request.url).searchParams.get("returnUrl");
 
-  const {userDetails} = (await getUserDetails(request,)) as any;
+  const { userDetails } = (await getUserDetails(request,)) as any;
   userDetailsSession.unset(USER_DETAILS_KEY);
 
   const customerDetails = await getCustomerByEmail({
+    context,
     email: userDetails.email,
   });
   userDetailsSession.set(USER_DETAILS_KEY, customerDetails);
-  
+
   return redirect(`${returnUrl}`, {
     headers: [
       [

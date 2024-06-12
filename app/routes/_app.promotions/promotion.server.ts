@@ -1,7 +1,9 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 export interface PromotionsResponse {
   status: boolean;
@@ -22,18 +24,23 @@ export interface Promotion {
 }
 
 export async function getPromotions({
+  context,
+  request,
   custom = false,
   filterBy,
   pageNumber,
   customerId,
   paramsList,
 }: {
+  context: AppLoadContext;
+  request: Request;
   filterBy?: string | null;
   custom?: boolean;
   pageNumber?: number;
   customerId?: string;
   paramsList?: any;
 }) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     let url = `${ENDPOINT.PROMOTION.GET}/${customerId}?`;
     if (paramsList?.filter_by) {
@@ -50,6 +57,8 @@ export async function getPromotions({
     const response = await useFetch<PromotionsResponse>({
       method: AllowedHTTPMethods.GET,
       url,
+      impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {

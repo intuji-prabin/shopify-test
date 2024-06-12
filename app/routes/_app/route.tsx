@@ -5,37 +5,36 @@ import {
   useRouteError,
   useSubmit,
 } from '@remix-run/react';
-import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
-import {useEffect, useState} from 'react';
-import {useEventSource} from 'remix-utils/sse/react';
+import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
+import { useEffect, useState } from 'react';
+import { useEventSource } from 'remix-utils/sse/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
-import {HamburgerMenuProvider} from '~/components/ui/layouts/elements/HamburgerMenuContext';
+import { HamburgerMenuProvider } from '~/components/ui/layouts/elements/HamburgerMenuContext';
 import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
 import TopHeader from '~/components/ui/layouts/top-header';
-import {useMediaQuery} from '~/hooks/useMediaQuery';
-import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
-import {EVENTS} from '~/lib/constants/events.contstent';
-import {Routes} from '~/lib/constants/routes.constent';
-import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
-import {AbilityContext, DEFAULT_ABILITIES} from '~/lib/helpers/Can';
-import {defineAbilitiesForUser} from '~/lib/helpers/roles';
-import {USER_SESSION_ID, isAuthenticate} from '~/lib/utils/auth-session.server';
+import { useMediaQuery } from '~/hooks/useMediaQuery';
+import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { EVENTS } from '~/lib/constants/events.contstent';
+import { Routes } from '~/lib/constants/routes.constent';
+import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
+import { AbilityContext, DEFAULT_ABILITIES } from '~/lib/helpers/Can';
+import { defineAbilitiesForUser } from '~/lib/helpers/roles';
+import { USER_SESSION_ID, isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
 } from '~/lib/utils/toast-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {getProductGroup} from '~/routes/_app.pending-order/pending-order.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { getProductGroup } from '~/routes/_app.pending-order/pending-order.server';
 import {
   getCagetoryList,
   getNewNotificationCount,
-  getSessionCart,
-  getSessionData,
+  getSessionCart
 } from '~/routes/_app/app.server';
-import {CustomerData} from '~/routes/_public.login/login.server';
-import {getFooter} from './footer.server';
+import { CustomerData } from '~/routes/_public.login/login.server';
+import { getFooter } from './footer.server';
 
 export interface Payload {
   type: 'cart' | 'wishlist' | 'productGroup ' | 'notification';
@@ -55,10 +54,10 @@ interface Data {
   // Add other properties if present in your data
 }
 
-export async function loader({request, context}: ActionFunctionArgs) {
+export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
-  const {userDetails} = await getUserDetails(request);
-  const {session} = context;
+  const { userDetails } = await getUserDetails(request);
+  const { session } = context;
 
   const userSessionId = session.get(USER_SESSION_ID);
 
@@ -69,11 +68,12 @@ export async function loader({request, context}: ActionFunctionArgs) {
 
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
 
-  const productGroup = await getProductGroup({customerId: userDetails.id});
+  const productGroup = await getProductGroup({ context, request, customerId: userDetails.id });
 
   const customerId = userDetails.id;
 
-  const {totalNotifications} = await getNewNotificationCount({
+  const { totalNotifications } = await getNewNotificationCount({
+    context,
     customerId,
     request,
   });
@@ -81,7 +81,7 @@ export async function loader({request, context}: ActionFunctionArgs) {
   const headers = [] as any;
 
   const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY);
-  sessionCartInfo = await getSessionCart(userDetails?.id, context);
+  sessionCartInfo = await getSessionCart(request, userDetails?.id, context);
   if (sessionCartInfo) {
     const finalCartSession = {
       cartId: sessionCartInfo?.cartId,
@@ -95,6 +95,8 @@ export async function loader({request, context}: ActionFunctionArgs) {
     setErrorMessage(messageSession, 'Category not found');
     headers.push(['Set-Cookie', await messageCommitSession(messageSession)]);
   }
+  // console.log("userDetails wwsdwsd", userDetails)
+
 
   return json(
     {
@@ -168,8 +170,8 @@ export default function PublicPageLayout() {
       const dataObject = JSON.parse(userData) as Data;
       if (dataObject.customerId === userDetails.id) {
         submit(
-          {message: dataObject.message},
-          {method: 'POST', action: '/logout'},
+          { message: dataObject.message },
+          { method: 'POST', action: '/logout' },
         );
       }
     }
@@ -197,7 +199,7 @@ export default function PublicPageLayout() {
         };
       };
 
-      const {type, totalNumber, customerId, companyId, sessionId, action} =
+      const { type, totalNumber, customerId, companyId, sessionId, action } =
         parsedData.notificationData.payload;
       const currentUrl = window.location.pathname; // Capture the current URL
       const handlers: Handlers = {
@@ -205,8 +207,8 @@ export default function PublicPageLayout() {
           if (userDetails.id === customerId && userSessionId !== sessionId) {
             cartCount = totalNumber | 0;
             submit(
-              {returnUrl: currentUrl, type, totalNumber},
-              {method: 'GET', action: '/update-notifications-session'},
+              { returnUrl: currentUrl, type, totalNumber },
+              { method: 'GET', action: '/update-notifications-session' },
             );
           }
         },
@@ -214,8 +216,8 @@ export default function PublicPageLayout() {
           if (userDetails?.meta.company_id.companyId === companyId) {
             wishlistCount = totalNumber;
             submit(
-              {returnUrl: currentUrl, type, totalNumber},
-              {method: 'GET', action: '/update-notifications-session'},
+              { returnUrl: currentUrl, type, totalNumber },
+              { method: 'GET', action: '/update-notifications-session' },
             );
           }
         },
@@ -235,12 +237,12 @@ export default function PublicPageLayout() {
               return;
             }
           }
-          else{
-          const customer = totalNumber.find((c: { customerId: string; }) =>  c.customerId === loginCustomerId)
-          if (customer) {
-            setNotificationCounts(customer.notification);
+          else {
+            const customer = totalNumber.find((c: { customerId: string; }) => c.customerId === loginCustomerId)
+            if (customer) {
+              setNotificationCounts(customer.notification);
+            }
           }
-        }
         },
       };
 
@@ -260,7 +262,7 @@ export default function PublicPageLayout() {
       // Parse the string into an object
       const parsedData = JSON.parse(hasPermissionBeenUpdated) as {
         permissionData: {
-          payload: {user_role: string; permission: string[]};
+          payload: { user_role: string; permission: string[] };
         };
       };
 
@@ -270,7 +272,7 @@ export default function PublicPageLayout() {
 
       // If permissions are empty, logout the user
       if (eventUserRolePermissions.permission.length === 0) {
-        submit({}, {method: 'POST', action: '/logout'});
+        submit({}, { method: 'POST', action: '/logout' });
       }
 
       // Check if the event role matches the user's role
@@ -286,8 +288,8 @@ export default function PublicPageLayout() {
 
         // Update user session with returnUrl
         submit(
-          {returnUrl: currentUrl},
-          {method: 'GET', action: '/update-user-session'},
+          { returnUrl: currentUrl },
+          { method: 'GET', action: '/update-user-session' },
         );
       }
     }
@@ -330,8 +332,16 @@ const Layout = ({
   footerData: any;
 }) => {
   const matches = useMediaQuery('(min-width: 768px)');
+  const impersonateEnableCheck = userDetails?.impersonateEnable;
   return (
     <HamburgerMenuProvider>
+      {impersonateEnableCheck &&
+        <div className='bg-secondary-500'>
+          <div className='container'>
+            <p className='py-2 font-medium text-center'>IMPERSONATING AS <span className='font-semibold capitalize'>{userDetails?.displayName}</span> BY <span className='font-semibold capitalize'>{userDetails?.impersonatingUser?.name}</span></p>
+          </div>
+        </div>
+      }
       {matches ? (
         <header>
           <TopHeader

@@ -9,6 +9,7 @@ import {
 } from '~/lib/constants/product.session';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {PageInfo} from './route';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 type FilterItem = {
   key: string;
@@ -17,6 +18,7 @@ type FilterItem = {
 export type FilterType = FilterItem[];
 
 export async function getProducts(
+  request: Request,
   context: AppLoadContext,
   params: Params<string>,
   filterList: FilterType,
@@ -43,7 +45,12 @@ export async function getProducts(
     }
 
     const pageInfo = products?.collection?.products?.pageInfo;
-    const formattedData = await formattedResponse(products, customerId);
+    const formattedData = await formattedResponse(
+      context,
+      request,
+      products,
+      customerId,
+    );
 
     if (toNotFilter) {
       filterDetailsSession.unset(PRODUCT_STOCK_CODE);
@@ -151,6 +158,8 @@ interface ProductResponse {
 }
 
 const formattedResponse = async (
+  context: AppLoadContext,
+  request: Request,
   response: ProductResponse,
   customerId: string,
 ) => {
@@ -174,7 +183,7 @@ const formattedResponse = async (
     }
     return true;
   });
-  const priceList = await getPrices(productIds, customerId);
+  const priceList = await getPrices(context, request, productIds, customerId);
 
   const finalProductList = {
     categorytitle: productList?.title,
@@ -264,11 +273,19 @@ interface PriceList {
   };
 }
 
-export const getPrices = async (productId: any, customerId: string) => {
+export const getPrices = async (
+  context: AppLoadContext,
+  request: Request,
+  productId: any,
+  customerId: string,
+) => {
+  const isImpersonatingCheck = await isImpersonating(request);
   const customerID = customerId;
   const results = await useFetch<any>({
     method: AllowedHTTPMethods.GET,
     url: `${ENDPOINT.PRODUCT.GET_PRICE}/${customerID}?productIds=${productId}`,
+    impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
 
   if (results?.errors) {

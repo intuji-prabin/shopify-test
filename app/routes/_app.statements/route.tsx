@@ -32,6 +32,8 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     const customerId = userDetails.id;
 
     const { statementList, totalStatement } = await getAllStatements({
+        context,
+        request,
         customerId,
     });
 

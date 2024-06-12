@@ -513,6 +513,7 @@ export const getProductList = async (
 
     if (searchList.length > 0) {
       results = await getFilterProduct(
+        request,
         context,
         params,
         searchList,
@@ -521,6 +522,7 @@ export const getProductList = async (
       );
     } else {
       results = await getProducts(
+        request,
         context,
         params,
         searchList,

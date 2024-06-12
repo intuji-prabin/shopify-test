@@ -7,14 +7,18 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {useFormatCart} from '~/hooks/useFormatCart';
 import {emitter3} from '~/lib/utils/emitter.server';
 import {EVENTS} from '~/lib/constants/events.contstent';
-import { USER_SESSION_ID } from '~/lib/utils/auth-session.server';
+import {
+  USER_SESSION_ID,
+  isImpersonating,
+} from '~/lib/utils/auth-session.server';
+import {AppLoadContext} from '@remix-run/server-runtime';
 
 export const placeOrder = async (
   formData: any,
   request: Request,
   context: any,
 ) => {
-  const { session } = context;
+  const {session} = context;
 
   const {userDetails} = await getUserDetails(request);
   const userSessionId = session.get(USER_SESSION_ID);
@@ -34,6 +38,8 @@ export const placeOrder = async (
           : userDetails?.id,
     };
     const orderPlaceResponse = await orderCreate(
+      context,
+      request,
       cartList,
       userDetails?.id,
       allData,
@@ -62,14 +68,14 @@ export const placeOrder = async (
     }
     const finalCartSession = useFormatCart(cartSession);
     context.session.set(CART_SESSION_KEY, finalCartSession);
-       emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
-        payload: {
-          type: 'cart',
-          totalNumber: cartRemoveResponse === true ? 0 : cartRemoveResponse,
-          customerId: userDetails.id,
-          sessionId: userSessionId
-        },
-      });
+    emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
+      payload: {
+        type: 'cart',
+        totalNumber: cartRemoveResponse === true ? 0 : cartRemoveResponse,
+        customerId: userDetails.id,
+        sessionId: userSessionId,
+      },
+    });
     return {cartSession, shopifyOrderId};
   } catch (error) {
     if (error instanceof Error) {
@@ -80,11 +86,20 @@ export const placeOrder = async (
   }
 };
 
-const orderCreate = async (cartList: any, customerId: string, data: any) => {
+const orderCreate = async (
+  context: AppLoadContext,
+  request: Request,
+  cartList: any,
+  customerId: string,
+  data: any,
+) => {
+  const isImpersonatingCheck = await isImpersonating(request);
   const orderPlaceResponse = await useFetch<any>({
     method: AllowedHTTPMethods.POST,
     url: `${ENDPOINT.PRODUCT.ORDER}/${customerId}`,
     body: JSON.stringify({productList: cartList, extraData: data}),
+    impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
 
   if (!orderPlaceResponse?.status) {

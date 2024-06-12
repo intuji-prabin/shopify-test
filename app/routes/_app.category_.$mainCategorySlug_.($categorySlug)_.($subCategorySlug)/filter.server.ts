@@ -10,8 +10,10 @@ import {
 } from '~/lib/constants/product.session';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getProducts} from './productList.server';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 export const getFilterProduct = async (
+  request: Request,
   context: AppLoadContext,
   params: Params<string>,
   filterList: any,
@@ -27,6 +29,7 @@ export const getFilterProduct = async (
   const maxPrice = filterList.find((item: any) => item?.key === 'maxPrice');
   if (!minPrice && !maxPrice) {
     return await getProducts(
+      request,
       context,
       params,
       filterList,
@@ -71,6 +74,7 @@ export const getFilterProduct = async (
         // console.log("first showNumberOfProduct ", showNumberOfProduct)
         // let showProductStockCode    = sessionUseStockProduct.splice(-showNumberOfProduct);
         const productList = await getProducts(
+          request,
           context,
           params,
           filterList,
@@ -96,6 +100,7 @@ export const getFilterProduct = async (
       sessionStockProductList?.stockCodes.length > 0
     ) {
       const productList = await getProducts(
+        request,
         context,
         params,
         filterList,
@@ -137,6 +142,7 @@ export const getFilterProduct = async (
 
       sessionStockProductList.stockCodes = [];
       const product = await recursiveProduct(
+        request,
         context,
         params,
         filterList,
@@ -167,6 +173,8 @@ export const getFilterProduct = async (
     }
 
     const stockCode = await getStockCode(
+      context,
+      request,
       catParam,
       customerId,
       minPrice?.value,
@@ -174,6 +182,7 @@ export const getFilterProduct = async (
       sessionStockProductList?.currentPage + 1,
     );
     const productList = await getProducts(
+      request,
       context,
       params,
       filterList,
@@ -215,6 +224,7 @@ export const getFilterProduct = async (
     if (productList?.formattedData?.productList.length < TOTAL) {
       stockCode.stockCodes = [];
       const product = await recursiveProduct(
+        request,
         context,
         params,
         filterList,
@@ -286,6 +296,7 @@ export const getFilterProduct = async (
             );
       // let showProductStockCode    = sessionUseStockProduct.splice(-showNumberOfProduct);
       const productList = await getProducts(
+        request,
         context,
         params,
         filterList,
@@ -299,6 +310,7 @@ export const getFilterProduct = async (
     } else {
       let showNumberOfProduct = sessionUseStockProduct.slice(0, TOTAL);
       const productList = await getProducts(
+        request,
         context,
         params,
         filterList,
@@ -317,6 +329,8 @@ export const getFilterProduct = async (
   }
 
   const stockCode = await getStockCode(
+    context,
+    request,
     catParam,
     customerId,
     minPrice?.value,
@@ -334,6 +348,7 @@ export const getFilterProduct = async (
   }
   // console.log('get stock code is ', stockCode);
   const productList = await getProducts(
+    request,
     context,
     params,
     filterList,
@@ -371,6 +386,7 @@ export const getFilterProduct = async (
   if (productList?.formattedData?.productList.length < TOTAL) {
     stockCode.stockCodes = [];
     const product = await recursiveProduct(
+      request,
       context,
       params,
       filterList,
@@ -420,6 +436,7 @@ export const getFilterProduct = async (
 };
 
 const recursiveProduct = async (
+  request: Request,
   context: any,
   params: any,
   filterList: any,
@@ -439,6 +456,8 @@ const recursiveProduct = async (
   const maxPrice = filterList.find((item: any) => item?.key === 'maxPrice');
 
   const newStockCode = await getStockCode(
+    context,
+    request,
     catParam,
     customerId,
     minPrice?.value,
@@ -452,6 +471,7 @@ const recursiveProduct = async (
   ];
 
   const productList = await getProducts(
+    request,
     context,
     params,
     filterList,
@@ -510,6 +530,7 @@ const recursiveProduct = async (
   }
 
   return await recursiveProduct(
+    request,
     context,
     params,
     filterList,
@@ -522,6 +543,8 @@ const recursiveProduct = async (
 };
 
 const getStockCode = async (
+  context: AppLoadContext,
+  request: Request,
   catParam: any,
   customerId: any,
   minPrice: any,
@@ -529,9 +552,12 @@ const getStockCode = async (
   page = 1,
 ) => {
   const url = `${ENDPOINT.PRODUCT.FILTER}/${catParam}/${customerId}?minPrice=${minPrice}&maxPrice=${maxPrice}&page=${page}`;
+  const isImpersonatingCheck = await isImpersonating(request);
   const stockCode = await useFetch<any>({
     method: AllowedHTTPMethods.GET,
     url: url,
+    impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
 
   if (stockCode?.errors) {

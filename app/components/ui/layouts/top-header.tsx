@@ -139,6 +139,7 @@ export default function TopHeader({
   const imageUrl = userDetails.meta?.image_url?.value
     ? userDetails.meta.image_url.value
     : DEFAULT_IMAGE.DEFAULT;
+  const impersonateEnableCheck = userDetails?.impersonateEnable;
 
   return (
     <div className="bg-grey-900">
@@ -189,7 +190,7 @@ export default function TopHeader({
                   <Link
                     onClick={() => setIsClicked(false)}
                     to={Routes.PROFILE}
-                    className="flex items-center justify-start w-full gap-2 p-2 transition duration-500 ease-in-out delay-75 bg-white hover:bg-primary-100 my-profile"
+                    className={`flex items-center justify-start w-full gap-2 p-2 transition duration-500 ease-in-out delay-75 bg-white hover:bg-primary-100 my-profile ${impersonateEnableCheck && 'opacity-65 pointer-events-none'}`}
                   >
                     <UserProfile />
                     <h5 className="text-lg italic font-bold text-grey-900">

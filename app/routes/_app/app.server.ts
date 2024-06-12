@@ -1,10 +1,11 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {TRACK_AN_ORDERID} from '~/lib/constants/general.constant';
 import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {generateUrlWithParams} from '~/lib/helpers/url.helper';
-import {getAccessToken} from '~/lib/utils/auth-session.server';
+import {getAccessToken, isImpersonating} from '~/lib/utils/auth-session.server';
 import {getNotifications} from '~/routes/_app.notification/notification.server';
 
 export interface CategoriesType {
@@ -20,29 +21,19 @@ export interface Payload {
   child_categories?: Payload[];
 }
 
-export async function getCategories() {
-  try {
-    const response = await useFetch<CategoriesType>({
-      method: AllowedHTTPMethods.GET,
-      url: ENDPOINT.CATEGORY.GET,
-    });
-    if (!response?.status) {
-      throw new Error(response?.message);
-    }
-    return formattedResponse(response);
-  } catch (e) {
-    if (e instanceof Error) {
-      return [];
-    }
-    return [];
-  }
-}
-
-export const getOrderId = async (orderNumber: string, customerId: string) => {
+export const getOrderId = async (
+  context: AppLoadContext,
+  request: Request,
+  orderNumber: string,
+  customerId: string,
+) => {
   const customerID = customerId;
+  const isImpersonatingCheck = await isImpersonating(request);
   const results = await useFetch<any>({
     method: AllowedHTTPMethods.GET,
     url: `${ENDPOINT.ORDERS.GET}/${customerID}?${TRACK_AN_ORDERID}=${orderNumber}`,
+    impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
 
   if (results?.errors) {
@@ -54,21 +45,6 @@ export const getOrderId = async (orderNumber: string, customerId: string) => {
   }
 
   return results?.payload;
-};
-
-const formattedResponse = (response: CategoriesType) => {
-  if (!response.payload || response.payload.length < 1) {
-    return [];
-  }
-
-  const data: Payload[] = response.payload.map((item) => ({
-    id: item?.id,
-    title: item?.title,
-    identifier: item?.identifier,
-    child_categories: item?.child_categories,
-  }));
-
-  return data;
 };
 
 export const getCagetoryList = async (context: any) => {
@@ -87,10 +63,17 @@ export const getCagetoryList = async (context: any) => {
   }
 };
 
-export const getSessionData = async (userDetails: any, context: any) => {
+export const getSessionData = async (
+  request: Request,
+  userDetails: any,
+  context: any,
+) => {
+  const isImpersonatingCheck = await isImpersonating(request);
   const cartResults = await useFetch<any>({
     method: AllowedHTTPMethods.GET,
     url: `${ENDPOINT.AUTH.SESSION}/${userDetails?.id}`,
+    impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
   if (!cartResults?.status) {
     return false;
@@ -150,10 +133,18 @@ const formateCategory = async (categoryesponse: any) => {
   return finalCategories;
 };
 
-export const getSessionCart = async (customerId: string, context: any) => {
+export const getSessionCart = async (
+  request: Request,
+  customerId: string,
+  context: any,
+) => {
+  const isImpersonatingCheck = await isImpersonating(request);
+
   const cartResults = await useFetch<any>({
     method: AllowedHTTPMethods.GET,
     url: `${ENDPOINT.PRODUCT.CART}/${customerId}`,
+    impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
   if (!cartResults?.status) {
     return false;
@@ -220,9 +211,11 @@ const formateCartSessionResponse = (
 };
 
 export async function getNewNotificationCount({
+  context,
   customerId,
   request,
 }: {
+  context: AppLoadContext;
   customerId: string;
   request: Request;
 }) {
@@ -233,6 +226,8 @@ export async function getNewNotificationCount({
   const url = generateUrlWithParams({baseUrl, searchParams});
 
   const {totalNotifications} = await getNotifications({
+    context,
+    request,
     url,
   });
   return {totalNotifications};

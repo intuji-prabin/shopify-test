@@ -54,7 +54,7 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   if (!sessionCartInfo) {
     throw new Error('Cart not found');
   }
-  const shippingAddresses = await getAllCompanyShippingAddresses(customerId);
+  const shippingAddresses = await getAllCompanyShippingAddresses(context, request, customerId);
   const cartList = await getCartList(context, request, sessionCartInfo);
   if (cartList?.productList?.length === 0) {
     await getCartList(context, request, sessionCartInfo);
@@ -84,6 +84,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
             const poNumber = formData.get('poNumber') as string;
             const { userDetails } = await getUserDetails(request);
             const trackAnOrderResponse = await getOrderId(
+              context,
+              request,
               poNumber,
               userDetails?.id,
             );
@@ -194,7 +196,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         case 'order_delete': {
           try {
             res = await removeItemFromCart(finalData, context, request);
-            await promoCodeRemove(request, false);
+            await promoCodeRemove(context, request, false);
             setSuccessMessage(messageSession, 'line item removed successfully');
             return json(
               {},
@@ -238,7 +240,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         case 'promo_code_delete': {
           console.log("remove code")
           try {
-            res = await promoCodeRemove(request);
+            res = await promoCodeRemove(context, request);
             setSuccessMessage(messageSession, res?.message);
             return json(
               {},

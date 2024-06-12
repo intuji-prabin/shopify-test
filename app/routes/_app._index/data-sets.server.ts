@@ -1,7 +1,9 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 export enum DatumEnum {
   NA = 'N/A',
@@ -68,11 +70,18 @@ export const formatAmount = (amount: number) => {
   return amount > 999 ? (amount / 1000).toFixed(2) + 'k' : amount;
 };
 
-export async function getChartData(customerID: string) {
+export async function getChartData(
+  context: AppLoadContext,
+  request: Request,
+  customerID: string,
+) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const response = await useFetch<ChartDataResponse>({
       method: AllowedHTTPMethods.GET,
       url: `${ENDPOINT.REPORT.GET}/${customerID}`,
+      impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
     if (!response?.status) {
       throw new Error('Unexpected action');
@@ -222,11 +231,18 @@ const formatBarResponse = (response: Payload) => {
   };
 };
 
-export async function getExpenditureData(customerID: string) {
+export async function getExpenditureData(
+  context: AppLoadContext,
+  request: Request,
+  customerID: string,
+) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const response = await useFetch<any>({
       method: AllowedHTTPMethods.GET,
       url: `${ENDPOINT.REPORT.PRODUCT_GET}/${customerID}`,
+      impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
     if (!response?.status) {
       throw new Error('Unexpected action');

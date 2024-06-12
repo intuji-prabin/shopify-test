@@ -55,7 +55,7 @@ export interface UnitOfMeasure {
 
 export const loader = async ({ request, context }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
-  const items = await getWishlist(request);
+  const items = await getWishlist(context, request);
   await context.session.set(WISHLIST_SESSION_KEY, items?.length);
   return json({ items }, {
     headers: [['Set-Cookie', await context.session.commit({})]]

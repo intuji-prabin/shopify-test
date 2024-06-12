@@ -20,7 +20,7 @@ export const {
 });
 
 export async function getUserDetailsSession(request: Request) {
-  const cookie = request.headers.get('cookie');
+  const cookie = request?.headers?.get('cookie');
 
   return await getSession(cookie);
 }
