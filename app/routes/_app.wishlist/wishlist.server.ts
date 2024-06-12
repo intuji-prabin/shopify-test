@@ -49,7 +49,6 @@ export async function removeBulkFromWishlist(
       impersonateEnableCheck: isImpersonatingCheck,
       context,
     });
-    const sessionWishlistInfo = session.get(WISHLIST_SESSION_KEY);
     if (results.status === false) {
       throw new Error('Failed to add to wishlist');
     }
@@ -57,11 +56,8 @@ export async function removeBulkFromWishlist(
     const payload = results.payload;
     const productWishlist = payload.product;
     const numberOfWishListed = productWishlist.length;
-    const sessionSetData = {
-      totalWishList: numberOfWishListed,
-      wishItems: productWishlist,
-    };
-    session.set(WISHLIST_SESSION_KEY, sessionSetData);
+
+    session.set(WISHLIST_SESSION_KEY, numberOfWishListed);
     return payload;
   } catch (error) {
     return true;

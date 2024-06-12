@@ -1,12 +1,15 @@
 import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
+import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {TRACK_AN_ORDERID} from '~/lib/constants/general.constant';
 import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {generateUrlWithParams} from '~/lib/helpers/url.helper';
 import {getAccessToken, isImpersonating} from '~/lib/utils/auth-session.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 import {getNotifications} from '~/routes/_app.notification/notification.server';
+import {getCartListData} from '../_app.cart-list/cart.server';
 
 export interface CategoriesType {
   status: boolean;
@@ -146,10 +149,52 @@ export const getSessionCart = async (
     impersonateEnableCheck: isImpersonatingCheck,
     context,
   });
+
   if (!cartResults?.status) {
     return false;
   }
   const accessTocken = (await getAccessToken(context)) as string;
+
+  if (isImpersonatingCheck === 'true') {
+    let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
+    const cartList = await getCartListData(context, sessionCartInfo);
+    const customerFinalId = cartList?.cart?.buyerIdentity?.customer?.id.replace(
+      'gid://shopify/Customer/',
+      '',
+    );
+    const cartLine = cartList?.cart?.lines?.nodes;
+    let productList = [] as any;
+    if (cartLine.length < 1) {
+      return {productList: []};
+    }
+    cartLine.map((items: any) => {
+      const merchandise = items?.merchandise;
+      const variantId = merchandise?.id.replace(
+        'gid://shopify/ProductVariant/',
+        '',
+      );
+      const productId = merchandise?.product?.id.replace(
+        'gid://shopify/Product/',
+        '',
+      );
+      productList.push({
+        productId,
+        variantId,
+        lineId: items?.id,
+        quantity: items?.quantity,
+        uom: items?.attributes.filter(
+          (att: any) => att?.key == 'selectedUOM',
+        )?.[0]?.value,
+      });
+    });
+    return {
+      cartId: sessionCartInfo?.cartId,
+      customerId: customerFinalId,
+      accessTocken: accessTocken,
+      lineItems: sessionCartInfo?.lineItems || 0,
+      cartItems: productList,
+    };
+  }
   const sessionResponse = await context.storefront.mutate(
     UPDATE_CART_ACCESS_TOCKEN,
     {
@@ -206,7 +251,6 @@ const formateCartSessionResponse = (
       });
     });
   }
-
   return cartListed;
 };
 
