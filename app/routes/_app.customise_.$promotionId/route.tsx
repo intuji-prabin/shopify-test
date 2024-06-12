@@ -253,7 +253,8 @@ const PromotionEdit = () => {
   let imageName = companyInfo?.companyName;
   imageName = imageName && imageName.replace(/ /g, '_');
   const shouldRender = useConditionalRender('customize_promotions');
-
+  const [validationError, setValidationError] = useState(false);
+  console.log("validationError", validationError)
   return (
     shouldRender && (
       <div className="bg-grey-25">
@@ -378,6 +379,7 @@ const PromotionEdit = () => {
                           value={companyInfo.companyName}
                           className="w-full"
                           placeholder="company name"
+                          setValidationError={setValidationError}
                           onInput={(e) =>
                             handleChange('companyName', e.currentTarget.value)
                           }
