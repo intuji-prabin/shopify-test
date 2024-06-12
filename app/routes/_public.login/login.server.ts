@@ -1,9 +1,8 @@
-import {AppLoadContext} from '@shopify/remix-oxygen';
-import {useFetch} from '~/hooks/useFetch';
-import {ENDPOINT} from '~/lib/constants/endpoint.constant';
-import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
-import {ImpersonatingUser} from '../_public.impersonate_.$customerId_.$staffId/impersonate.server';
-import {isImpersonating} from '~/lib/utils/auth-session.server';
+import { AppLoadContext } from '@shopify/remix-oxygen';
+import { useFetch } from '~/hooks/useFetch';
+import { ENDPOINT } from '~/lib/constants/endpoint.constant';
+import { AllowedHTTPMethods } from '~/lib/enums/api.enum';
+import { ImpersonatingUser } from '../_public.impersonate_.$customerId_.$staffId/impersonate.server';
 
 type LoginParams = {
   email: string;

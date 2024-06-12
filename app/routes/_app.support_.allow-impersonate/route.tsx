@@ -33,7 +33,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 
   const customerId = userDetails.id.split('/').pop() as string;
 
-  const { impersonateActive } = await getImpersonateStatus(request, customerId);
+  const { impersonateActive } = await getImpersonateStatus(context, request, customerId);
 
   return json({ isImpersonateActive: impersonateActive });
 }
@@ -67,6 +67,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         body,
         request,
         method: AllowedHTTPMethods.POST,
+        context,
       });
     case 'disallow_impersonate':
       return await updateImpersonateStatus({
@@ -74,6 +75,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         body,
         request,
         method: AllowedHTTPMethods.PUT,
+        context
       });
 
     default:

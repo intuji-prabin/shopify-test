@@ -2,7 +2,7 @@ import {validationError} from 'remix-validated-form';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {useFetch} from '~/hooks/useFetch';
-import {json, redirect} from '@remix-run/server-runtime';
+import {AppLoadContext, json, redirect} from '@remix-run/server-runtime';
 import {Routes} from '~/lib/constants/routes.constent';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {CreateTicketFormFieldValidator} from '~/routes/_app.support_.create-ticket/create-ticket-form';
@@ -21,9 +21,11 @@ type CreateTicketResponse = {
 };
 
 export async function createTicket({
+  context,
   request,
   customerId,
 }: {
+  context: AppLoadContext;
   request: Request;
   customerId: string;
 }) {
@@ -48,6 +50,7 @@ export async function createTicket({
       url: `${ENDPOINT.SUPPORT.TICKETS}/${customerId}`,
       body,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!results.status) {

@@ -1,3 +1,4 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
@@ -23,6 +24,7 @@ export interface Promotion {
 }
 
 export async function getPromotions({
+  context,
   request,
   custom = false,
   filterBy,
@@ -30,6 +32,7 @@ export async function getPromotions({
   customerId,
   paramsList,
 }: {
+  context: AppLoadContext;
   request: Request;
   filterBy?: string | null;
   custom?: boolean;
@@ -55,6 +58,7 @@ export async function getPromotions({
       method: AllowedHTTPMethods.GET,
       url,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {

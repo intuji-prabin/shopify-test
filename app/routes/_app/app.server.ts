@@ -211,9 +211,11 @@ const formateCartSessionResponse = (
 };
 
 export async function getNewNotificationCount({
+  context,
   customerId,
   request,
 }: {
+  context: AppLoadContext;
   customerId: string;
   request: Request;
 }) {
@@ -224,6 +226,7 @@ export async function getNewNotificationCount({
   const url = generateUrlWithParams({baseUrl, searchParams});
 
   const {totalNotifications} = await getNotifications({
+    context,
     request,
     url,
   });

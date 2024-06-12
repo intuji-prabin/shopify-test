@@ -47,7 +47,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
     const { email } = result.data;
 
-    const { status, message } = await resendActivationLink({ request, email });
+    const { status, message } = await resendActivationLink({ context, request, email });
 
     setSuccessMessage(messageSession, message);
 

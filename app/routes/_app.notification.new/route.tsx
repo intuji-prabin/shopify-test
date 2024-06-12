@@ -46,6 +46,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   const url = generateUrlWithParams({ baseUrl, searchParams });
 
   const { notificationList, totalNotifications } = await getNotifications({
+    context,
     request,
     url,
   });
@@ -66,11 +67,12 @@ export async function action({ request, context }: ActionFunctionArgs) {
   const formData = await request.formData();
   const notificationId = formData.get('notificationId');
 
-  const { redirectLink } = await viewNotification({ request, customerId, notificationId });
+  const { redirectLink } = await viewNotification({ context, request, customerId, notificationId });
 
   console.log('redirectLink', redirectLink)
 
   const { totalNotifications } = await getNewNotificationCount({
+    context,
     customerId,
     request,
   });

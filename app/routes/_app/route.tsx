@@ -68,11 +68,12 @@ export async function loader({ request, context }: ActionFunctionArgs) {
 
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
 
-  const productGroup = await getProductGroup({ request, customerId: userDetails.id });
+  const productGroup = await getProductGroup({ context, request, customerId: userDetails.id });
 
   const customerId = userDetails.id;
 
   const { totalNotifications } = await getNewNotificationCount({
+    context,
     customerId,
     request,
   });
@@ -94,7 +95,7 @@ export async function loader({ request, context }: ActionFunctionArgs) {
     setErrorMessage(messageSession, 'Category not found');
     headers.push(['Set-Cookie', await messageCommitSession(messageSession)]);
   }
-  console.log("userDetails wwsdwsd", userDetails)
+  // console.log("userDetails wwsdwsd", userDetails)
 
 
   return json(

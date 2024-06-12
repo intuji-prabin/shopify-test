@@ -36,11 +36,13 @@ interface GetProductGroupResponse extends DefaultResponse {
 }
 
 export async function getGroupDetails({
+  context,
   request,
   groupId,
   customerId,
   searchParams,
 }: {
+  context: AppLoadContext;
   request: Request;
   groupId: string;
   customerId: string;
@@ -67,6 +69,7 @@ export async function getGroupDetails({
     const results = await useFetch<GetProductGroupResponse>({
       url: url.toString(),
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!results.status) {
@@ -86,11 +89,13 @@ export async function getGroupDetails({
 }
 
 export async function updateGroup({
+  context,
   request,
   groupId,
   groupName,
   customerId,
 }: {
+  context: AppLoadContext;
   groupId: number;
   request: Request;
   groupName: string;
@@ -108,6 +113,7 @@ export async function updateGroup({
       method: AllowedHTTPMethods.PUT,
       body,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {
@@ -149,10 +155,12 @@ export async function updateGroup({
 }
 
 export async function deleteGroup({
+  context,
   groupId,
   request,
   customerId,
 }: {
+  context: AppLoadContext;
   groupId: number;
   request: Request;
   customerId: string;
@@ -170,6 +178,7 @@ export async function deleteGroup({
       method: AllowedHTTPMethods.DELETE,
       body,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {
@@ -207,10 +216,12 @@ export async function deleteGroup({
 }
 
 export async function addProductToGroup({
+  context,
   body,
   request,
   customerId,
 }: {
+  context: AppLoadContext;
   body: string;
   request: Request;
   customerId: string;
@@ -225,6 +236,7 @@ export async function addProductToGroup({
       url,
       body,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {
@@ -265,11 +277,13 @@ export async function addProductToGroup({
 }
 
 export async function deleteGroupProduct({
+  context,
   groupId,
   request,
   placeIds,
   customerId,
 }: {
+  context: AppLoadContext;
   customerId: string;
   groupId: number;
   placeIds: number[];
@@ -289,6 +303,7 @@ export async function deleteGroupProduct({
       url,
       body,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {
@@ -327,10 +342,12 @@ export async function deleteGroupProduct({
 }
 
 export async function updateGroupProduct({
+  context,
   groupId,
   request,
   customerId,
 }: {
+  context: AppLoadContext;
   groupId: number;
   request: Request;
   customerId: string;
@@ -353,6 +370,7 @@ export async function updateGroupProduct({
       url,
       body,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {

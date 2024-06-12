@@ -4,6 +4,7 @@ import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {isImpersonating} from '~/lib/utils/auth-session.server';
+import {AppLoadContext} from '@remix-run/server-runtime';
 
 export interface Product {
   name: string;
@@ -69,10 +70,12 @@ interface ResponseData {
 }
 
 export async function getOrdersProductDetails({
+  context,
   request,
   orderId,
   customerId,
 }: {
+  context: AppLoadContext;
   request: Request;
   orderId: string;
   customerId: string;
@@ -84,6 +87,7 @@ export async function getOrdersProductDetails({
       method: AllowedHTTPMethods.GET,
       url,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!results.status) {

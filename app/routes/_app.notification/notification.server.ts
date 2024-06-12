@@ -1,3 +1,4 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
@@ -51,9 +52,11 @@ interface ViewNotificationResponse extends DefaultResponse {
 }
 
 export async function getNotifications({
+  context,
   request,
   url,
 }: {
+  context: AppLoadContext;
   request: Request;
   url: string;
 }) {
@@ -62,6 +65,7 @@ export async function getNotifications({
     const response = await useFetch<NotificationsResponse>({
       url,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {
@@ -97,10 +101,12 @@ export function urlBuilder(notification: ViewNotification) {
 }
 
 export async function viewNotification({
+  context,
   request,
   customerId,
   notificationId,
 }: {
+  context: AppLoadContext;
   request: Request;
   customerId: string;
   notificationId: FormDataEntryValue | null;
@@ -113,6 +119,7 @@ export async function viewNotification({
     url: baseUrl,
     method: AllowedHTTPMethods.PUT,
     impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
 
   if (!response.status) {

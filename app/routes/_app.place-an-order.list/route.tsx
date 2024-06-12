@@ -44,11 +44,12 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 
   const customerId = userDetails.id.split('/').pop() as string;
 
-  const productGroupOptions = await getProductGroupOptions({ request, customerId });
+  const productGroupOptions = await getProductGroupOptions({ context, request, customerId });
 
   const { searchParams } = new URL(request.url);
 
   const placeAnOrderList = await getPlaceAnOrderList({
+    context,
     request,
     customerId,
     searchParams,
@@ -68,6 +69,7 @@ export async function action({ context, request }: ActionFunctionArgs) {
 
   if (contentType === 'application/json') {
     return await addProductToGroup({
+      context,
       request,
     });
   }

@@ -64,7 +64,7 @@ export async function action({ context, request }: ActionFunctionArgs) {
       }
     }
 
-    const response = await addProductToList({ request, body, customerId });
+    const response = await addProductToList({ context, request, body, customerId });
 
     setSuccessMessage(messageSession, response.message);
 

@@ -74,7 +74,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
   switch (action) {
     case 'activate': {
       const customerId = formData.get('customerId') as string;
-      return await updateStatus({ customerId, value: 'true', request });
+      return await updateStatus({ context, customerId, value: 'true', request });
     }
     case 'deactivate': {
       const result = await ConfirmationFormSchemaValidator.validate(formData);
@@ -85,7 +85,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
       if (result.data.confirmation === 'Deactivate') {
         const customerId = result.data.customerId;
-        return await updateStatus({ customerId, value: 'false', request });
+        return await updateStatus({ context, customerId, value: 'false', request });
       }
     }
     default: {

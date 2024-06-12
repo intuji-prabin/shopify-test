@@ -53,11 +53,13 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   const { searchParams } = new URL(request.url);
 
   const { invoiceList } = await getAllInvoices({
+    context,
     request,
     customerId,
     searchParams,
   });
   const { totalNotifications } = await getNewNotificationCount({
+    context,
     customerId,
     request,
   });

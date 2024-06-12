@@ -101,6 +101,7 @@ export async function getImpersonate({
       method: AllowedHTTPMethods.GET,
       url: `${ENDPOINT.SUPPORT.IMPERSONATE}/${customerId}/${staffId}`,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {
@@ -150,6 +151,7 @@ export async function getLogoutImpersonate({
     method: AllowedHTTPMethods.GET,
     url: `${ENDPOINT.SUPPORT.IMPERSONATE_LOGOUT}/${customerId}/${impersonateId}`,
     impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
 
   if (!response.status) {

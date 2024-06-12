@@ -1,4 +1,4 @@
-import {json} from '@remix-run/server-runtime';
+import {AppLoadContext, json} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
@@ -23,6 +23,7 @@ interface ImpersonateResponse extends BaseResponse {
 }
 
 export async function getImpersonateStatus(
+  context: AppLoadContext,
   request: Request,
   customerId: string,
 ) {
@@ -33,6 +34,7 @@ export async function getImpersonateStatus(
     const response = await useFetch<ImpersonateResponse>({
       url,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {
@@ -51,11 +53,13 @@ export async function getImpersonateStatus(
 }
 
 export async function updateImpersonateStatus({
+  context,
   customerId,
   method,
   body,
   request,
 }: {
+  context: AppLoadContext;
   customerId: string;
   request: Request;
   method: AllowedHTTPMethods;
@@ -71,6 +75,7 @@ export async function updateImpersonateStatus({
       method,
       body,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {

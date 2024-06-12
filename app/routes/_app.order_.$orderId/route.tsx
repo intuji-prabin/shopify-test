@@ -43,6 +43,7 @@ export async function loader({ context, request, params }: LoaderFunctionArgs) {
   const orderId = params.orderId as string;
 
   const ordersProductDetails = await getOrdersProductDetails({
+    context,
     request,
     orderId,
     customerId,

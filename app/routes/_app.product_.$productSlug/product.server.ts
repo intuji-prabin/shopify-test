@@ -12,8 +12,10 @@ import {EVENTS} from '~/lib/constants/events.contstent';
 import {StockStatus} from '~/routes/_app.cart-list/order-my-products/use-column';
 import {
   USER_SESSION_ID,
+  getAccessToken,
   isImpersonating,
 } from '~/lib/utils/auth-session.server';
+import {AppLoadContext} from '@remix-run/server-runtime';
 
 export interface relatedProductsType {
   productId: string;
@@ -112,10 +114,12 @@ type priceRangeType = {
 };
 
 export async function getProductDetails(
+  context: AppLoadContext,
   request: Request,
   customerId: string,
   handle: string,
 ) {
+  const accessTocken = (await getAccessToken(context)) as string;
   const isImpersonatingCheck = await isImpersonating(request);
   try {
     const results: any = await fetch(
@@ -123,8 +127,9 @@ export async function getProductDetails(
       {
         method: 'GET',
         headers: {
-          impersonateEnable: isImpersonatingCheck,
-        },
+          Authorization: accessTocken,
+          'Impersonate-Enable': isImpersonatingCheck,
+        }
       },
     );
     const response = await results.json();
@@ -257,6 +262,7 @@ export const addProductToCart = async (
     const finalCartSet = useFormatCart(cartSetInfo);
     session.set(CART_SESSION_KEY, finalCartSet);
     const storeCartId = await storeCartIdOnBackend(
+      context,
       request,
       cartSetInfo?.cartId,
     );
@@ -393,7 +399,11 @@ const cartLineAdd = async (
   return sessionCartInfo;
 };
 
-const storeCartIdOnBackend = async (request: any, cartId: string) => {
+const storeCartIdOnBackend = async (
+  context: AppLoadContext,
+  request: Request,
+  cartId: string,
+) => {
   const {userDetails} = await getUserDetails(request);
   const isImpersonatingCheck = await isImpersonating(request);
   // console.log('cartId ', cartId);
@@ -404,6 +414,7 @@ const storeCartIdOnBackend = async (request: any, cartId: string) => {
       url: `${ENDPOINT.PRODUCT.CART}/${customerId}`,
       body: JSON.stringify({cartId}),
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
     // console.log('ssss ', results);
     return true;

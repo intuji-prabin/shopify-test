@@ -38,6 +38,7 @@ export async function addToWishlist(
       url: `${ENDPOINT.WISHLIST.ADD}/${customerId}`,
       body: JSON.stringify({productId: productId?.productId}),
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
     if (results.status === false) {
       throw new Error('Failed to add to wishlist');
@@ -67,6 +68,7 @@ export async function removeFromWishlist(
       url: `${ENDPOINT.WISHLIST.ADD}/${customerId}`,
       body: JSON.stringify({productId: productId?.productId}),
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
     if (results.status === false) {
       throw new Error('Failed to add to wishlist');

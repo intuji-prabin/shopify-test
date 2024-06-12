@@ -13,7 +13,7 @@ export async function loader({ context }: LoaderFunctionArgs) {
     return null;
 }
 
-export const action = async ({ request }: ActionFunctionArgs) => {
+export const action = async ({ context, request }: ActionFunctionArgs) => {
     const messageSession = await getMessageSession(request);
     const formData = await request.formData();
 
@@ -26,7 +26,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         trackAnOrderId,
     } = finalFormData.data;
     const { userDetails } = await getUserDetails(request);
-    const trackAnOrderResponse = await getOrderId(request, trackAnOrderId, userDetails?.id);
+    const trackAnOrderResponse = await getOrderId(context, request, trackAnOrderId, userDetails?.id);
 
     if (trackAnOrderResponse?.orderList.length < 1) {
         setErrorMessage(messageSession, "Order not found. Please try using correct Purchase Order Number or Order Number.");

@@ -69,6 +69,7 @@ const NO_PREDICTIVE_SEARCH_RESULTS: NormalizedPredictiveSearchResults = [
  * @param predictiveSearch
  */
 async function normalizePredictiveSearchResults(
+  context: AppLoadContext,
   request: Request,
   predictiveSearch: PredictiveSearchQuery['predictiveSearch'],
   customerId: string,
@@ -83,6 +84,7 @@ async function normalizePredictiveSearchResults(
 
   if (predictiveSearch.products.length) {
     const prices = await formattedProductPrice(
+      context,
       request,
       predictiveSearch.products,
       customerId,
@@ -135,6 +137,7 @@ async function normalizePredictiveSearchResults(
 }
 
 const formattedProductPrice = async (
+  context: AppLoadContext,
   request: Request,
   predictiveSearchData: PredictiveProductFragment[],
   customerId: string,
@@ -150,7 +153,7 @@ const formattedProductPrice = async (
     return true;
   });
 
-  const priceList = await getPrices(request, productIds, customerId);
+  const priceList = await getPrices(context, request, productIds, customerId);
 
   return priceList;
 };
@@ -185,6 +188,7 @@ async function getSearchProduct({
   }
 
   const { results } = await normalizePredictiveSearchResults(
+    context,
     request,
     searchData.predictiveSearch,
     customerId,

@@ -1,3 +1,4 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
@@ -9,9 +10,11 @@ interface ResendActivationLinkResponse {
 }
 
 export async function resendActivationLink({
+  context,
   request,
   email,
 }: {
+  context: AppLoadContext;
   request: Request;
   email: string;
 }) {
@@ -23,6 +26,7 @@ export async function resendActivationLink({
     url: `${ENDPOINT.CUSTOMER.ACTIVATE}`,
     body,
     impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
 
   if (!response.status) {

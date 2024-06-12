@@ -46,6 +46,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   const { searchParams } = new URL(request.url);
 
   const { invoiceList, totalInvoices } = await getAllInvoices({
+    context,
     request,
     customerId,
     searchParams,

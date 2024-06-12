@@ -59,6 +59,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   const { searchParams } = new URL(request.url);
 
   const { orderList, totalOrder } = await getAllOrders({
+    context,
     request,
     customerId,
     searchParams,

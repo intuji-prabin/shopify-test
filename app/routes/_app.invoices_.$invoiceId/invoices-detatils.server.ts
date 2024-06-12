@@ -1,3 +1,4 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
@@ -12,10 +13,12 @@ interface ResponseData {
 }
 
 export async function getInvoiceDetails({
+  context,
   request,
   invoiceId,
   customerId,
 }: {
+  context: AppLoadContext;
   request: Request;
   invoiceId: string;
   customerId: string;
@@ -28,6 +31,7 @@ export async function getInvoiceDetails({
       method: AllowedHTTPMethods.GET,
       url,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!results.status) {

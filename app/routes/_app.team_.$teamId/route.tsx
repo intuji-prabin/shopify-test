@@ -11,10 +11,9 @@ import {
   redirect,
 } from '@remix-run/server-runtime';
 import { MetaFunction } from '@shopify/remix-oxygen';
-import { ArrowLeft, Edit } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { validationError } from 'remix-validated-form';
 import { Button } from '~/components/ui/button';
-import { PageNotFound } from '~/components/ui/page-not-found';
 import { SelectInputOptions } from '~/components/ui/select-input';
 import { useConditionalRender } from '~/hooks/useAuthorization';
 import { SESSION_MAX_AGE } from '~/lib/constants/auth.constent';
@@ -34,6 +33,8 @@ import {
   getUserDetailsSession,
   userDetailsCommitSession,
 } from '~/lib/utils/user-session.server';
+import { getRoles } from '~/routes/_app.team/team.server';
+import { EditTeamError } from '~/routes/_app.team_.$teamId/edit-team-error';
 import {
   getCustomerById,
   updateTeam,
@@ -42,8 +43,6 @@ import TeamForm, {
   EditTeamFormSchemaValidator,
 } from '~/routes/_app.team_.add/team-form';
 import { getCustomerByEmail } from '~/routes/_public.login/login.server';
-import { getRoles } from '~/routes/_app.team/team.server';
-import { EditTeamError } from '~/routes/_app.team_.$teamId/edit-team-error';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Edit Team Member' }];
@@ -96,6 +95,8 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
     } = result.data;
 
     await updateTeam({
+      context,
+      request,
       address,
       addressId,
       email,
@@ -104,7 +105,6 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
       customerId,
       userRole,
       file: profileImage,
-      context,
     });
 
     //  This must be applied only after implementing the authorization logic

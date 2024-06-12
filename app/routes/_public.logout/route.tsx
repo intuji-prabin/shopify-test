@@ -18,7 +18,8 @@ export async function action({ context, request }: ActionFunctionArgs) {
   const customerId = userDetails?.id;
   const impersonateId = userDetails?.impersonatingUser?.id;
 
-  if (isImpersonatingCheck) {
+  if (isImpersonatingCheck === "true") {
+    console.log("first")
     return getLogoutImpersonate({ request, context, customerId, impersonateId });
   }
 

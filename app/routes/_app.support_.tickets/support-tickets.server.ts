@@ -1,3 +1,4 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
@@ -16,10 +17,12 @@ type ResponseData = {
 };
 
 export async function getAllTickets({
+  context,
   request,
   customerId,
   searchParams,
 }: {
+  context: AppLoadContext;
   request: Request;
   customerId: string;
   searchParams: URLSearchParams;
@@ -34,6 +37,7 @@ export async function getAllTickets({
       method: AllowedHTTPMethods.GET,
       url,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!results.status) {

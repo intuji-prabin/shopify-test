@@ -18,7 +18,7 @@ export async function getSingleProduct(
     console.log('error has occured');
     throw new Error('Invalid Product ID');
   } else {
-    const prices = await getPrices(request, productID, customerId);
+    const prices = await getPrices(context, request, productID, customerId);
     const product = formatProduct(products?.product, prices);
     return {product};
   }

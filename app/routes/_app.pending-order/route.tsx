@@ -20,7 +20,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 
   const customerId = userDetails.id.split('/').pop() as string;
 
-  const productGroup = await getProductGroup({ request, customerId });
+  const productGroup = await getProductGroup({ context, request, customerId });
 
   return json({ productGroup });
 }

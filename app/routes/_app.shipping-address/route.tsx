@@ -34,7 +34,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   const customerId =
     metaParentValue === 'null' ? userDetails.id : metaParentValue;
 
-  const shippingAddresses = await getAllCompanyShippingAddresses(request, customerId);
+  const shippingAddresses = await getAllCompanyShippingAddresses(context, request, customerId);
 
   return json({ shippingAddresses });
 }

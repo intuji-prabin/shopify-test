@@ -34,6 +34,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   const url = generateUrlWithParams({ baseUrl, searchParams });
 
   const { notificationList, totalNotifications } = await getNotifications({
+    context,
     request,
     url,
   });

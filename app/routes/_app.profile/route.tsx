@@ -119,6 +119,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
     if (typeof profileImage !== 'undefined' && customerId) {
       const { status } = await fileUpload({
+        context,
+        request,
         customerId,
         file: profileImage,
       });

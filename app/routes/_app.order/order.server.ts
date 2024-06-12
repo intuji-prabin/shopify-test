@@ -4,6 +4,7 @@ import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {generateUrlWithParams} from '~/lib/helpers/url.helper';
 import {isImpersonating} from '~/lib/utils/auth-session.server';
+import {AppLoadContext} from '@remix-run/server-runtime';
 
 export type OrderStatus =
   | 'Received'
@@ -48,10 +49,12 @@ type ResponseData = {
 };
 
 export async function getAllOrders({
+  context,
   request,
   customerId,
   searchParams,
 }: {
+  context: AppLoadContext;
   request: Request;
   customerId: string;
   searchParams: URLSearchParams;
@@ -65,6 +68,7 @@ export async function getAllOrders({
       method: AllowedHTTPMethods.GET,
       url,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!results.status) {

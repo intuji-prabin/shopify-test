@@ -1,3 +1,4 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
@@ -5,7 +6,7 @@ import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {isImpersonating} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 
-export async function getWishlist(request: any) {
+export async function getWishlist(context: AppLoadContext, request: Request) {
   const {userDetails} = await getUserDetails(request);
   const customerId = userDetails?.id;
   const isImpersonatingCheck = await isImpersonating(request);
@@ -13,6 +14,7 @@ export async function getWishlist(request: any) {
     method: AllowedHTTPMethods.GET,
     url: `${ENDPOINT.WISHLIST.ADD}/${customerId}`,
     impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
   if (!results) {
     throw new Error('An Error has Occured');
@@ -31,8 +33,8 @@ export async function getWishlist(request: any) {
 
 export async function removeBulkFromWishlist(
   productIds: any,
-  context: any,
-  request: any,
+  context: AppLoadContext,
+  request: Request,
 ) {
   const {userDetails} = await getUserDetails(request);
   const {session} = context;
@@ -45,6 +47,7 @@ export async function removeBulkFromWishlist(
       url: `${ENDPOINT.WISHLIST.ADD}/${customerId}`,
       body: JSON.stringify({productIds: productIdKey}),
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
     const sessionWishlistInfo = session.get(WISHLIST_SESSION_KEY);
     if (results.status === false) {

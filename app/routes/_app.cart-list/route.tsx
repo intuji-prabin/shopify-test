@@ -54,7 +54,7 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   if (!sessionCartInfo) {
     throw new Error('Cart not found');
   }
-  const shippingAddresses = await getAllCompanyShippingAddresses(request, customerId);
+  const shippingAddresses = await getAllCompanyShippingAddresses(context, request, customerId);
   const cartList = await getCartList(context, request, sessionCartInfo);
   if (cartList?.productList?.length === 0) {
     await getCartList(context, request, sessionCartInfo);

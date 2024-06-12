@@ -2,7 +2,7 @@ import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
-import {isImpersonating} from '~/lib/utils/auth-session.server';
+import {getAccessToken, isImpersonating} from '~/lib/utils/auth-session.server';
 
 export interface PromotionType {
   status: boolean;
@@ -63,10 +63,14 @@ interface FormDataObject {
 }
 
 export async function createPromotion(
+  context: AppLoadContext,
+  request: Request,
   formData: FormDataObject,
   bannerId: string,
   customerId: string,
 ) {
+  const accessTocken = (await getAccessToken(context)) as string;
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const fData = new FormData();
     for (const [key, value] of Object.entries(formData)) {
@@ -78,6 +82,10 @@ export async function createPromotion(
       {
         method: 'POST',
         body: fData,
+        headers: {
+          Authorization: accessTocken,
+          'Impersonate-Enable': isImpersonatingCheck,
+        },
       },
     );
 

@@ -33,7 +33,7 @@ import Loader from '~/components/ui/loader';
 import { displayToast } from '~/components/ui/toast';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 import { Routes } from '~/lib/constants/routes.constent';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import PromotionNavigation from './promotion-navigation';
 import { createPromotion, getPromotionById } from './promotion.server';
@@ -91,14 +91,14 @@ export type EditFormType = z.infer<typeof EditFormValidator>;
 
 export type EditFormFieldNameType = keyof EditFormType;
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ context, request, params }: ActionFunctionArgs) {
   const data = await request.formData();
   const { userDetails } = await getUserDetails(request);
   const customerId = userDetails?.id;
   let formData = Object.fromEntries(data);
   formData = { ...formData };
   const bannerId = params.promotionId as string;
-  await createPromotion(formData, bannerId, customerId);
+  await createPromotion(context, request, formData, bannerId, customerId);
   return json({});
 }
 
@@ -106,16 +106,18 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   const { userDetails } = await getUserDetails(request);
   const customerId = userDetails?.id;
+  const accessTocken = (await getAccessToken(context)) as string;
+  const isImpersonatingCheck = await isImpersonating(request);
   const promotionId = params?.promotionId as string;
   const response = await getPromotionById(context, request, promotionId, customerId);
   if (response?.payload) {
     const results = response?.payload;
-    return json({ results, promotionId });
+    return json({ accessTocken, isImpersonatingCheck, results, promotionId });
   }
 }
 
 const PromotionEdit = () => {
-  const { results, promotionId } = useLoaderData<any>();
+  const { accessTocken, isImpersonatingCheck, results, promotionId } = useLoaderData<any>();
   const [isLoading, setIsLoading] = useState(false);
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
   const [image, setImage] = useState('');
@@ -220,6 +222,10 @@ const PromotionEdit = () => {
       const response = await fetch(`/customise/${promotionId}`, {
         method: 'POST',
         body: formData,
+        headers: {
+          Authorization: accessTocken,
+          'Impersonate-Enable': isImpersonatingCheck,
+        }
       });
       if (response.ok) {
         displayToast({

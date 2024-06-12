@@ -1,3 +1,4 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
@@ -30,6 +31,7 @@ export type DefaultAddress = {
 export type Address = DefaultAddress;
 
 export async function getAllCompanyShippingAddresses(
+  context: AppLoadContext,
   request: Request,
   customerId: string,
 ) {
@@ -41,6 +43,7 @@ export async function getAllCompanyShippingAddresses(
       method: AllowedHTTPMethods.GET,
       url: `${ENDPOINT.COMPANY.GET_SHIPPING_ADDRESS}?customerId=${customer}`,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
     if (!response.status) {
       throw new Error(response.message);

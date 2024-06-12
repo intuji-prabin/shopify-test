@@ -1,24 +1,22 @@
-import { LoaderFunctionArgs } from '@remix-run/server-runtime';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { Button } from '~/components/ui/button';
-import PromotionCard from '~/routes/_app.promotions/promotion-card';
 import {
   Form,
-  isRouteErrorResponse,
   json,
   useLoaderData,
-  useRouteError,
-  useSubmit,
+  useSubmit
 } from '@remix-run/react';
+import { LoaderFunctionArgs } from '@remix-run/server-runtime';
+import { MetaFunction } from '@shopify/remix-oxygen';
+import { FormEvent } from 'react';
+import { Button } from '~/components/ui/button';
+import { useLoadMore } from '~/hooks/useLoadMore';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import PromotionCard from '~/routes/_app.promotions/promotion-card';
+import { filterOptions } from '~/routes/_app.promotions/promotion-constants';
 import {
   Promotion,
   getPromotions,
 } from '~/routes/_app.promotions/promotion.server';
-import { MetaFunction } from '@shopify/remix-oxygen';
-import { FormEvent } from 'react';
-import { filterOptions } from '~/routes/_app.promotions/promotion-constants';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { useLoadMore } from '~/hooks/useLoadMore';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Available Promotion' }];
@@ -34,6 +32,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 
   try {
     const { promotions, totalPromotionCount } = await getPromotions({
+      context,
       request,
       customerId,
       paramsList,

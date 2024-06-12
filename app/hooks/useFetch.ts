@@ -19,7 +19,6 @@ export async function useFetch<T>({
   impersonateEnableCheck,
   context,
 }: FetchParams) {
-  console.log('impersonateEnableCheck', impersonateEnableCheck);
   const accessTocken = (await getAccessToken(context)) as string;
   const fetchOptions: RequestInit = {
     method,

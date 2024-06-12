@@ -1,11 +1,10 @@
 import {AppLoadContext} from '@shopify/remix-oxygen';
 import {useFetch} from '~/hooks/useFetch';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {getAccessToken, isImpersonating} from '~/lib/utils/auth-session.server';
 import {EditTeamFormType} from '~/routes/_app.team_.add/team-form';
-import {fileUpload} from '~/lib/utils/file-upload';
-import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
-import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 type CustomerDetails = Omit<EditTeamFormType, 'profileImage'> & {
   profileImageUrl: string;
@@ -13,12 +12,13 @@ type CustomerDetails = Omit<EditTeamFormType, 'profileImage'> & {
 };
 
 type EditTeamParams = {
+  context: AppLoadContext;
+  request: Request;
   fullName: string;
   email: string;
   phoneNumber: string;
   address: string;
   addressId: string;
-  context: AppLoadContext;
   userRole: string;
   customerId: string;
   file: File | undefined;
@@ -62,6 +62,8 @@ export async function getCustomerById({
 }
 
 export async function updateTeam({
+  context,
+  request,
   address,
   addressId,
   email,
@@ -82,10 +84,16 @@ export async function updateTeam({
   formData.append('phoneNumber', phoneNumber);
   formData.append('customerId', customerId);
   formData.append('addressId', addressId);
+  const accessTocken = (await getAccessToken(context)) as string;
+  const isImpersonatingCheck = await isImpersonating(request);
 
   const results: any = await fetch(ENDPOINT.CUSTOMER.CREATE, {
     method: AllowedHTTPMethods.PUT,
     body: formData,
+    headers: {
+      Authorization: accessTocken,
+      'Impersonate-Enable': isImpersonatingCheck,
+    },
   });
 
   const response = await results.json();

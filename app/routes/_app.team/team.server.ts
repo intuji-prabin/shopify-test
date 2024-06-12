@@ -81,6 +81,7 @@ export async function getAllTeams({
       query ? '&search_query=' + query : ''
     }`,
     impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
 
   if (results.payload.length < 0) {
@@ -113,10 +114,12 @@ export async function getRoles({
 }
 
 export async function updateStatus({
+  context,
   customerId,
   value,
   request,
 }: {
+  context: AppLoadContext;
   customerId: string;
   value: 'true' | 'false';
   request: Request;
@@ -134,6 +137,7 @@ export async function updateStatus({
       url: ENDPOINT.CUSTOMER.UPDATE_STATUS,
       body,
       impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {

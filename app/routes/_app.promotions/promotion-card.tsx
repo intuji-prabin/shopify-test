@@ -1,10 +1,9 @@
-import {Link, useLocation, useNavigate} from '@remix-run/react';
-import {useEffect, useRef, useState} from 'react';
-import {Button} from '~/components/ui/button';
-import {Dialog, DialogContent, DialogTrigger} from '~/components/ui/dialog';
-import {Can} from '~/lib/helpers/Can';
-import {AsyncImage} from 'loadable-image';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import { Link, useLocation } from '@remix-run/react';
+import { AsyncImage } from 'loadable-image';
+import { useEffect, useState } from 'react';
+import { Button } from '~/components/ui/button';
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog';
+import { Can } from '~/lib/helpers/Can';
 const PromotionCard = ({
   title,
   imageURL,
@@ -94,7 +93,7 @@ const PromotionCard = ({
       </figure>
       <div className="p-4 space-y-4 bg-grey-25">
         <h5>{title}</h5>
-        <div className="flex gap-2 flex-col mxs:flex-row">
+        <div className="flex flex-col gap-2 mxs:flex-row">
           <Dialog
             open={isDialogOpen}
             onOpenChange={(isOpen) => !isOpen && handleClosePreview()}
@@ -115,7 +114,7 @@ const PromotionCard = ({
             <DialogContent className="max-w-[1280px] p-0 border-0 gap-y-0 promotion-view w-auto">
               <div
                 className="py-3 pl-5 pr-10"
-                style={{maxWidth: renderedImageWidth}}
+                style={{ maxWidth: renderedImageWidth }}
               >
                 <h5>{title}</h5>
               </div>

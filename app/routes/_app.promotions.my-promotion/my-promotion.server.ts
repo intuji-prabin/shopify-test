@@ -1,3 +1,4 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
@@ -10,6 +11,7 @@ type ResponseData = {
 };
 
 export async function deletePromotion(
+  context: AppLoadContext,
   request: Request,
   promotionId: number[],
   customerId: string,
@@ -25,6 +27,7 @@ export async function deletePromotion(
     method: AllowedHTTPMethods.DELETE,
     body,
     impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
 
   return response;

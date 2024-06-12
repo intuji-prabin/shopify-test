@@ -59,6 +59,7 @@ export async function loader({ context, request, params }: LoaderFunctionArgs) {
   const { searchParams } = new URL(request.url);
 
   const groupDetails = await getGroupDetails({
+    context,
     request,
     customerId,
     groupId,
@@ -80,6 +81,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 
   if (contentType === 'application/json') {
     return await updateGroupProduct({
+      context,
       customerId,
       groupId,
       request,
@@ -94,6 +96,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
       const groupName = formData.get('groupName') as string;
 
       return await updateGroup({
+        context,
         customerId,
         groupId,
         groupName,
@@ -103,6 +106,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 
     case 'delete_group': {
       return await deleteGroup({
+        context,
         groupId,
         customerId,
         request,
@@ -115,6 +119,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
         .map((placeId) => Number(placeId));
 
       return await deleteGroupProduct({
+        context,
         customerId,
         groupId,
         placeIds,
@@ -135,6 +140,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
       });
 
       return await addProductToGroup({
+        context,
         body,
         request,
         customerId,
