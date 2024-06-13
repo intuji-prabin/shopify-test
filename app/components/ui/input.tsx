@@ -40,7 +40,6 @@ export const Input = ({
   ...props
 }: InputType) => {
   const { error, getInputProps } = useField(name);
-  console.log("error", error)
 
   useEffect(() => {
     if (error) {
