@@ -105,7 +105,10 @@ export async function getImpersonate({
     });
 
     if (!response.status) {
-      throw new Error(response.message);
+      setErrorMessage(messageSession, response.message);
+      return redirect(Routes.LOGIN, {
+        headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+      });
     }
     const accessToken = response.payload.impersonatingUser.token;
     if (accessToken) {
@@ -126,9 +129,15 @@ export async function getImpersonate({
     });
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(error.message);
+      setErrorMessage(messageSession, error.message);
+      return redirect(Routes.LOGIN, {
+        headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+      });
     }
-    throw new Response(DEFAULT_ERRROR_MESSAGE, {status: 500});
+    setErrorMessage(messageSession, DEFAULT_ERRROR_MESSAGE);
+    return redirect(Routes.LOGIN, {
+      headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+    });
   }
 }
 
