@@ -22,7 +22,6 @@ export const ENDPOINT = {
     GET: `${BASE_URL}/customer`,
     UPDATE_STATUS: `${BASE_URL}/customer-status`,
     CREATE: `${BASE_URL}/customer`,
-    UPDATE: `${BASE_URL}/customer-update`,
     ACTIVATE: `${BASE_URL}/customer/activate`,
   },
   CUSTOMER_LIST: {

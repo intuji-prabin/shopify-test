@@ -11,7 +11,7 @@ import { Separator } from '~/components/ui/separator';
 import { DataTable } from '~/components/ui/data-table';
 import { SearchInput } from '~/components/ui/search-input';
 import { useColumn } from '~/routes/_app.order/use-column';
-import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import OrderFilterForm from '~/routes/_app.order/filter-form';
 import { getAllOrders } from '~/routes/_app.order/order.server';
@@ -54,6 +54,10 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
   const { userDetails } = await getUserDetails(request);
+  const impersonateEnableCheck = await isImpersonating(request);
+  console.log(":impersonateEnableCheck", impersonateEnableCheck)
+  const sessionAccessTocken = (await getAccessToken(context)) as string;
+  console.log(":sessionAccessTocken", sessionAccessTocken)
 
   const customerId = userDetails.id.split('/').pop() as string;
 
@@ -66,7 +70,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     searchParams,
   });
 
-  return json({ orderList, totalOrder, customerId });
+  return json({ orderList, totalOrder, customerId, sessionAccessTocken, impersonateEnableCheck });
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -138,7 +142,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function OrdersPage() {
-  const { orderList, totalOrder, customerId } = useLoaderData<typeof loader>();
+  const { orderList, totalOrder, customerId, sessionAccessTocken, impersonateEnableCheck } = useLoaderData<typeof loader>();
 
   const { columns } = useColumn();
 
@@ -158,7 +162,7 @@ export default function OrdersPage() {
   return (
     shouldRender && (
       <section className="container">
-        <ActionBar table={table} customerId={customerId} />
+        <ActionBar table={table} customerId={customerId} sessionAccessTocken={sessionAccessTocken} impersonateEnableCheck={impersonateEnableCheck} />
         <div className="flex flex-col gap-2 p-4 border-b bg-neutral-white sm:flex-row sm:justify-between sm:items-center">
           <div className="sm:w-[451px]">
             <SearchInput />
