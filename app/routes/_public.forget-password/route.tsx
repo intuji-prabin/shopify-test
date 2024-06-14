@@ -1,16 +1,16 @@
-import {Link, useActionData} from '@remix-run/react';
+import { Link, useActionData } from '@remix-run/react';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   json,
   redirect,
 } from '@remix-run/server-runtime';
-import {validationError} from 'remix-validated-form';
-import {ArrowLeftSmall} from '~/components/icons/arrowleft';
-import {Alert, AlertDescription} from '~/components/ui/alert';
-import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
-import {Routes} from '~/lib/constants/routes.constent';
-import {getAccessToken} from '~/lib/utils/auth-session.server';
+import { validationError } from 'remix-validated-form';
+import { ArrowLeftSmall } from '~/components/icons/arrowleft';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
+import { Routes } from '~/lib/constants/routes.constent';
+import { getAccessToken } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -20,14 +20,14 @@ import {
 import ForgetPasswordForm, {
   ForgetPassFormFieldValidator,
 } from '~/routes/_public.forget-password/forget-password-form';
-import {passwordRecover} from '~/routes/_public.forget-password/forget-password.server';
+import { passwordRecover } from '~/routes/_public.forget-password/forget-password.server';
 
 type ActionResponse = {
   status: string | null;
   email: string | null;
 };
 
-export const loader = async ({context}: LoaderFunctionArgs) => {
+export const loader = async ({ context }: LoaderFunctionArgs) => {
   const accessToken = await getAccessToken(context);
 
   if (accessToken) {
@@ -37,7 +37,7 @@ export const loader = async ({context}: LoaderFunctionArgs) => {
   return json({});
 };
 
-export const action = async ({request, context}: ActionFunctionArgs) => {
+export const action = async ({ request, context }: ActionFunctionArgs) => {
   const messageSession = await getMessageSession(request);
   try {
     const result = await ForgetPassFormFieldValidator.validate(
@@ -48,8 +48,8 @@ export const action = async ({request, context}: ActionFunctionArgs) => {
       return validationError(result.error);
     }
 
-    const {email} = result.data;
-    const {customerRecover} = await passwordRecover({email, context});
+    const { email } = result.data;
+    const { customerRecover } = await passwordRecover({ email, context });
 
     if (
       customerRecover?.customerUserErrors &&
@@ -61,7 +61,7 @@ export const action = async ({request, context}: ActionFunctionArgs) => {
     setSuccessMessage(messageSession, 'Email sent successfully');
 
     return json(
-      {status: 'OK', email: result.data.email},
+      { status: 'OK', email: result.data.email },
       {
         headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
       },
@@ -70,13 +70,13 @@ export const action = async ({request, context}: ActionFunctionArgs) => {
     if (error instanceof Error) {
       error.message.split(' ')[1] === 'Resetting'
         ? setErrorMessage(
-            messageSession,
-            'Resetting password limit exceeded. Please try again later.',
-          )
+          messageSession,
+          'Resetting password limit exceeded. Please try again later.',
+        )
         : setErrorMessage(messageSession, error.message);
 
       return json(
-        {error},
+        { error },
         {
           headers: {
             'Set-Cookie': await messageCommitSession(messageSession),
@@ -88,7 +88,7 @@ export const action = async ({request, context}: ActionFunctionArgs) => {
     setErrorMessage(messageSession, DEFAULT_ERRROR_MESSAGE);
 
     return json(
-      {error},
+      { error },
       {
         headers: {
           'Set-Cookie': await messageCommitSession(messageSession),

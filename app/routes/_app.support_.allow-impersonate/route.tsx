@@ -25,6 +25,7 @@ import {
 import { validationError } from 'remix-validated-form';
 import { AllowedHTTPMethods } from '~/lib/enums/api.enum';
 import { RouteError } from '~/components/ui/route-error';
+import { AuthError } from '~/components/ui/authError';
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -138,6 +139,9 @@ export function ErrorBoundary() {
       </section>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <section className="container">
         <div className="pt-6 pb-4 ">

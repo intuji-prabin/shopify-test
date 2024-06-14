@@ -17,6 +17,7 @@ import CompanyProfileDetail from '~/routes/_app.distributor-profile/company-prof
 import { useConditionalRender } from '~/hooks/useAuthorization';
 import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
 import { CompanyProfileError } from '~/routes/_app.distributor-profile/company-profile-error';
+import { AuthError } from '~/components/ui/authError';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Company Profile' }];
@@ -69,6 +70,9 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <CompanyProfileError />;
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return <CompanyProfileError errorMessage={error.message} />;
   } else {
     return (

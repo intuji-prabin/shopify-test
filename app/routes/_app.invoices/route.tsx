@@ -29,6 +29,7 @@ import { ActionBar } from '~/routes/_app.invoices/action-bar';
 import { useConditionalRender } from '~/hooks/useAuthorization';
 import { InvoiceError } from '~/routes/_app.invoices/invoice-error';
 import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
+import { AuthError } from '~/components/ui/authError';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Invoices List' }];
@@ -120,6 +121,9 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <InvoiceError />;
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return <InvoiceError errorMessage={error.message} />;
   } else {
     return <h1>{DEFAULT_ERRROR_MESSAGE}</h1>;

@@ -30,6 +30,7 @@ import {
   LoaderFunctionArgs,
   json,
 } from '@remix-run/server-runtime';
+import { AuthError } from '~/components/ui/authError';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Team List' }];
@@ -56,6 +57,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     return json({ teams, roles, currentUser: customerId });
   } catch (error) {
     if (error instanceof Error) {
+      console.log("error", error.message);
       throw new Error(error.message);
     }
 
@@ -162,6 +164,9 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <TeamError />;
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return <TeamError errorMessage={error.message} />;
   } else {
     return <h1>Unknown Error</h1>;

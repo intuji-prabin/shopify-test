@@ -21,6 +21,7 @@ import {
 } from '~/lib/utils/toast-session.server';
 import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import { addProductToCart } from '../_app.product_.$productSlug/product.server';
+import { AuthError } from '~/components/ui/authError';
 
 export const loader = async ({
   params,
@@ -157,6 +158,9 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <div className="container pt-6">
         <div className="min-h-[400px] flex justify-center items-center ">

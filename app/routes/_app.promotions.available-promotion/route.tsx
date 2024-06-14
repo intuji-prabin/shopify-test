@@ -30,17 +30,13 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   const paramsList = Object.fromEntries(searchParams);
   const customerId = userDetails?.id;
 
-  try {
-    const { promotions, totalPromotionCount } = await getPromotions({
-      context,
-      request,
-      customerId,
-      paramsList,
-    });
-    return json({ promotions, totalPromotionCount });
-  } catch (error) {
-    throw new Error('promotion unavailable');
-  }
+  const { promotions, totalPromotionCount } = await getPromotions({
+    context,
+    request,
+    customerId,
+    paramsList,
+  });
+  return json({ promotions, totalPromotionCount });
 }
 
 export default function AvailablePromotionPage() {

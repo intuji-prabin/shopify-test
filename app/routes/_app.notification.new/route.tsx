@@ -25,6 +25,7 @@ import {
 import { getNewNotificationCount } from '../_app/app.server';
 import { emitter3 } from '~/lib/utils/emitter.server';
 import { EVENTS } from '~/lib/constants/events.contstent';
+import { AuthError } from '~/components/ui/authError';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'New Notifications ' }];
@@ -126,6 +127,9 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <div className="flex items-center justify-center">
         <div className="text-center">

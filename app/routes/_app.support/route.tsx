@@ -1,22 +1,24 @@
-import {json} from '@remix-run/react';
-import {OptionsCardData} from '~/routes/_app.support/options-data';
-import {OptionsCard} from '~/routes/_app.support/options-card';
-import {LoaderFunctionArgs} from '@remix-run/server-runtime';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {MetaFunction} from '@shopify/remix-oxygen';
-import {BackButton} from '~/components/ui/back-button';
-import {Can} from '~/lib/helpers/Can';
+import { json, useLoaderData } from '@remix-run/react';
+import { OptionsCardData } from '~/routes/_app.support/options-data';
+import { OptionsCard } from '~/routes/_app.support/options-card';
+import { LoaderFunctionArgs } from '@remix-run/server-runtime';
+import { isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
+import { MetaFunction } from '@shopify/remix-oxygen';
+import { BackButton } from '~/components/ui/back-button';
+import { Can } from '~/lib/helpers/Can';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Support'}];
+  return [{ title: 'Support' }];
 };
 
-export const loader = async ({context}: LoaderFunctionArgs) => {
+export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
-  return json({});
+  const isImpersonatingCheck = await isImpersonating(request);
+  return json({ isImpersonatingCheck });
 };
 
 export default function SupportPage() {
+  const { isImpersonatingCheck } = useLoaderData<typeof loader>();
   return (
     <section className="container">
       <div className="pt-6 pb-4">
@@ -39,11 +41,12 @@ export default function SupportPage() {
               card.title === 'Allow Impersonation'
                 ? 'allow_impersonation'
                 : card.title === 'My Tickets'
-                ? 'ticket_operations'
-                : 'view_contact_details'
+                  ? 'ticket_operations'
+                  : 'view_contact_details'
             }
           >
-            <OptionsCard key={card.title} {...card} />
+            {(card.title === 'Allow Impersonation' && isImpersonatingCheck === "true") ?
+              null : <OptionsCard key={card.title} {...card} />}
           </Can>
         ))}
       </div>
