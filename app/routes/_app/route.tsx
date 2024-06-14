@@ -36,6 +36,7 @@ import {
 import { CustomerData } from '~/routes/_public.login/login.server';
 import { getFooter } from './footer.server';
 import { AuthError } from '../../components/ui/authError';
+import { ImpersonationMessage, UserRoleChangedMessage } from '~/lib/constants/event.toast.message';
 
 export interface Payload {
   type: 'cart' | 'wishlist' | 'productGroup ' | 'notification';
@@ -169,7 +170,13 @@ export default function PublicPageLayout() {
   useEffect(() => {
     if (userData) {
       const dataObject = JSON.parse(userData) as Data;
-      if (dataObject.customerId === userDetails.id) {
+      if (dataObject.customerId === userDetails.id && dataObject.message === UserRoleChangedMessage) {
+        submit(
+          { message: dataObject.message },
+          { method: 'POST', action: '/logout' },
+        );
+      }
+      else if(dataObject.customerId === userDetails.id && dataObject.message === ImpersonationMessage && userDetails.impersonateEnable === true && userDetails.impersonatingUser){
         submit(
           { message: dataObject.message },
           { method: 'POST', action: '/logout' },
