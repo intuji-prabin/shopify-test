@@ -2,8 +2,11 @@ import {AppLoadContext, json} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import { ImpersonationMessage } from '~/lib/constants/event.toast.message';
+import { EVENTS } from '~/lib/constants/events.contstent';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {isImpersonating} from '~/lib/utils/auth-session.server';
+import { emitter } from '~/lib/utils/emitter.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -40,6 +43,7 @@ export async function getImpersonateStatus(
     if (!response.status) {
       throw new Error(response.message);
     }
+    
     return response.payload;
   } catch (error) {
     if (error instanceof Error) {
@@ -81,6 +85,12 @@ export async function updateImpersonateStatus({
     if (!response.status) {
       throw new Error(response.message);
     }
+    // if(!isImpersonatingCheck){
+    emitter.emit(EVENTS.LOGOUT.KEY, {
+      customerId: customerId,
+      message: ImpersonationMessage,
+    });
+  // }
     setSuccessMessage(messageSession, response.message);
     return json(
       {},

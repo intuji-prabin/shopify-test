@@ -18,6 +18,7 @@ import { Button } from '~/components/ui/button';
 import { SelectInputOptions } from '~/components/ui/select-input';
 import { useConditionalRender } from '~/hooks/useAuthorization';
 import { SESSION_MAX_AGE } from '~/lib/constants/auth.constent';
+import { UserRoleChangedMessage } from '~/lib/constants/event.toast.message';
 import { EVENTS } from '~/lib/constants/events.contstent';
 import { Routes } from '~/lib/constants/routes.constent';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
@@ -141,7 +142,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
     // emitter.emit(EVENTS.LOGOUT.KEY, email);
     emitter.emit(EVENTS.LOGOUT.KEY, {
       customerId: customerId,
-      message: 'User Role Changed Logging Out',
+      message: UserRoleChangedMessage,
     });
 
     setSuccessMessage(messageSession, 'Customer update successful');
