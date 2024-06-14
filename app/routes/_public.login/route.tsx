@@ -52,7 +52,7 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
     const { accessToken } = await verifyLogin({ email, password, context });
     if (!accessToken) return redirect(Routes.LOGIN);
 
-    const customerData = await getCustomerByEmail({ context, email });
+    const customerData = await getCustomerByEmail({ context, email, accessToken });
 
     const isActive = isUserActive(customerData.meta.status);
 

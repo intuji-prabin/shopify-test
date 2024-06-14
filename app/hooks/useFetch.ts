@@ -10,6 +10,7 @@ type FetchParams = {
   url: string;
   impersonateEnableCheck: string;
   context: AppLoadContext;
+  accessToken?: string;
 };
 
 export async function useFetch<T>({
@@ -18,14 +19,18 @@ export async function useFetch<T>({
   url,
   impersonateEnableCheck,
   context,
+  accessToken = '',
 }: FetchParams) {
-  const accessTocken = (await getAccessToken(context)) as string;
+  let sessionAccessTocken = (await getAccessToken(context)) as string;
+  if (!sessionAccessTocken || sessionAccessTocken === '') {
+    sessionAccessTocken = accessToken;
+  }
   const fetchOptions: RequestInit = {
     method,
     headers: {
       'Content-Type': 'application/json',
       'X-Shopify-Access-Token': ADMIN_ACCESS_TOKEN,
-      Authorization: accessTocken,
+      Authorization: sessionAccessTocken,
       'Impersonate-Enable': impersonateEnableCheck,
     },
     body,
