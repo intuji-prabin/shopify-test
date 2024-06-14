@@ -30,6 +30,7 @@ import TeamForm, {
   AddTeamFormSchemaValidator,
 } from '~/routes/_app.team_.add/team-form';
 import { AddTeamError } from './add-team-error';
+import { AuthError } from '~/components/ui/authError';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Add Team Member' }];
@@ -128,6 +129,9 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <AddTeamError />;
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return <AddTeamError errorMessage={error.message} />;
   } else {
     return <h1>Unknown Error</h1>;

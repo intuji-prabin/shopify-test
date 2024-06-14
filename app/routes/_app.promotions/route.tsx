@@ -6,6 +6,7 @@ import {
 } from '@remix-run/react';
 import { LoaderFunctionArgs, redirect } from '@remix-run/server-runtime';
 import { MetaFunction } from '@shopify/remix-oxygen';
+import { AuthError } from '~/components/ui/authError';
 import { RouteError } from '~/components/ui/route-error';
 import { Separator } from '~/components/ui/separator';
 import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
@@ -79,6 +80,9 @@ export function ErrorBoundary() {
       </section>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <section className="container ">
         <PromotionHeader />

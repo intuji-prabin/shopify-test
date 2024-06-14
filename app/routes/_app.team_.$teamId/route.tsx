@@ -13,6 +13,7 @@ import {
 import { MetaFunction } from '@shopify/remix-oxygen';
 import { ArrowLeft } from 'lucide-react';
 import { validationError } from 'remix-validated-form';
+import { AuthError } from '~/components/ui/authError';
 import { Button } from '~/components/ui/button';
 import { SelectInputOptions } from '~/components/ui/select-input';
 import { useConditionalRender } from '~/hooks/useAuthorization';
@@ -203,6 +204,9 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <EditTeamError />;
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return <EditTeamError errorMessage={error.message} />;
   } else {
     return <h1>Unknown Error</h1>;

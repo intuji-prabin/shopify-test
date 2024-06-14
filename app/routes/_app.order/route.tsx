@@ -42,6 +42,7 @@ import {
 } from '~/lib/utils/toast-session.server';
 import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
 import { OrderError } from '~/routes/_app.order/order-error';
+import { AuthError } from '~/components/ui/authError';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Orders List' }];
@@ -196,6 +197,9 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <OrderError />;
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return <OrderError errorMessage={error.message} />;
   } else {
     return <h1>{DEFAULT_ERRROR_MESSAGE}</h1>;

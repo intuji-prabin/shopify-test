@@ -2,6 +2,7 @@ import { isRouteErrorResponse, useRouteError } from "@remix-run/react";
 import { LoaderFunctionArgs, redirect } from "@remix-run/server-runtime";
 import { getAccessToken } from "~/lib/utils/auth-session.server";
 import { getImpersonate } from "./impersonate.server";
+import { AuthError } from "~/components/ui/authError";
 
 export const loader = async ({ params, context, request }: LoaderFunctionArgs) => {
     const accessToken = await getAccessToken(context);
@@ -35,6 +36,9 @@ export function ErrorBoundary() {
             </div>
         );
     } else if (error instanceof Error) {
+        if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+            return <AuthError errorMessage={error.message} />;
+        }
         return (
             <div className="container pt-6">
                 <div className="min-h-[400px] flex justify-center items-center ">

@@ -17,6 +17,7 @@ import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getAllStatements } from './statements.server';
 import { useColumn } from './use-column';
+import { AuthError } from '~/components/ui/authError';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Statement List' }];
@@ -88,6 +89,9 @@ export function ErrorBoundary() {
             </div>
         );
     } else if (error instanceof Error) {
+        if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+            return <AuthError errorMessage={error.message} />;
+        }
         return (
             <div className="container order-error min-h-[calc(100vh_-_140px)] flex justify-center items-center">
                 <div className="space-y-2 text-center">

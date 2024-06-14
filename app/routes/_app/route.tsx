@@ -35,6 +35,7 @@ import {
 } from '~/routes/_app/app.server';
 import { CustomerData } from '~/routes/_public.login/login.server';
 import { getFooter } from './footer.server';
+import { AuthError } from '../../components/ui/authError';
 
 export interface Payload {
   type: 'cart' | 'wishlist' | 'productGroup ' | 'notification';
@@ -382,6 +383,9 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <div className="container pt-6">
         <div className="min-h-[400px] flex justify-center items-center ">

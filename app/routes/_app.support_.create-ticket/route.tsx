@@ -19,6 +19,7 @@ import {
 } from '@remix-run/react';
 import { useConditionalRender } from '~/hooks/useAuthorization';
 import { createTicket } from './create-ticket.server';
+import { AuthError } from '~/components/ui/authError';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Create Ticket' }];
@@ -101,6 +102,9 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <div className="flex items-center justify-center">
         <div className="text-center">

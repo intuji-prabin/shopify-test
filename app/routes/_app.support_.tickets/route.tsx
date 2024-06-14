@@ -32,6 +32,7 @@ import {
 import { Can } from '~/lib/helpers/Can';
 import { useConditionalRender } from '~/hooks/useAuthorization';
 import { TicketError } from '~/routes/_app.support_.tickets/ticket-error';
+import { AuthError } from '~/components/ui/authError';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Ticket List' }];
@@ -140,6 +141,9 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <TicketError />;
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return <TicketError errorMessage={error.message} />;
   } else {
     return <h1>Unknown Error</h1>;

@@ -39,6 +39,7 @@ import {
 // import {LOGOUT_MUTATION} from '~/routes/_public.logout/route';
 import { BackButton } from '~/components/ui/back-button';
 import { SESSION_MAX_AGE } from '~/lib/constants/auth.constent';
+import { AuthError } from '~/components/ui/authError';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Profile' }];
@@ -266,6 +267,9 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <div className="flex items-center justify-center">
         <div className="text-center">

@@ -83,6 +83,10 @@ export async function getAllTeams({
     impersonateEnableCheck: isImpersonatingCheck,
     context,
   });
+  console.log('first', results);
+  if (!results.status) {
+    throw new Error(results.message);
+  }
 
   if (results.payload.length < 0) {
     throw new Error(results.message);

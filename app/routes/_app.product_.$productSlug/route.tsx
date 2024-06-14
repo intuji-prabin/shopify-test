@@ -32,6 +32,7 @@ import {
 import ProductInformation from './productInformation';
 import ProductTab from './productTabs';
 import { addToWishlist, removeFromWishlist } from './wishlist.server';
+import { AuthError } from '~/components/ui/authError';
 
 interface ProductDetailType {
   productPage: string;
@@ -338,6 +339,9 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <div className="min-h-[calc(100vh_-_140px)] flex justify-center items-center">
         <div className="text-center">

@@ -92,7 +92,7 @@ const getPrice = async (
     impersonateEnableCheck: isImpersonatingCheck,
     context,
   });
-
+  console.log('firstwewe', priceResponse);
   if (!priceResponse?.status) {
     throw new Error(priceResponse?.message);
   }

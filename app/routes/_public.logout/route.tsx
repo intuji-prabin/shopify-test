@@ -13,12 +13,13 @@ export async function loader() {
 export async function action({ context, request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const message = formData.get('message');
+  const action = formData.get('_action');
   const isImpersonatingCheck = await isImpersonating(request);
   const { userDetails } = await getUserDetails(request);
   const customerId = userDetails?.id;
   const impersonateId = userDetails?.impersonatingUser?.id;
 
-  if (isImpersonatingCheck === "true") {
+  if (isImpersonatingCheck === "true" && !!action && action !== "unauthorized") {
     console.log("first")
     return getLogoutImpersonate({ request, context, customerId, impersonateId });
   }
