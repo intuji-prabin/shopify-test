@@ -23,6 +23,7 @@ import { CART_QUANTITY_ERROR, CART_QUANTITY_MAX } from '~/lib/constants/cartInfo
 import { BackButton } from '~/components/ui/back-button';
 import { Can } from '~/lib/helpers/Can';
 import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
+import { AuthError } from '~/components/ui/authError';
 
 export interface WishListResponse {
   productId: string;
@@ -297,6 +298,9 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <div className="container pt-6">
         <div className="min-h-[400px] flex justify-center items-center ">

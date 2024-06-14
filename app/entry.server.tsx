@@ -42,6 +42,7 @@ export default async function handleRequest(
     ],
     connectSrc: [
       "'self'",
+      'ws://localhost:8002/socket',
       'https://cdn.shopify.com',
       'https://shopify.com',
       'https://pimcoredata.intuji.com',

@@ -40,6 +40,7 @@ import { placeOrder } from './order-place.server';
 import OrderSummary from './order-summary/cart-order-summary';
 import { promoCodeApply } from './promoCode.server';
 import { promoCodeRemove } from './promoCodeRemove.server';
+import { AuthError } from '~/components/ui/authError';
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
@@ -406,7 +407,6 @@ export default function CartList() {
 
 export function ErrorBoundary() {
   const error = useRouteError();
-
   if (isRouteErrorResponse(error)) {
     return (
       <div>
@@ -417,6 +417,9 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <>
         <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />

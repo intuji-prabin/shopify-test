@@ -20,6 +20,7 @@ import {
 } from '~/routes/_app.shipping-address/shipping-address.server';
 import { ShippingAddressError } from '~/routes/_app.shipping-address/shipping-address-error';
 import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
+import { AuthError } from '~/components/ui/authError';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Shipping Address' }];
@@ -73,6 +74,9 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <ShippingAddressError errorMessage={error.data} />;
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return <ShippingAddressError errorMessage={error.message} />;
   } else {
     return <h1>{DEFAULT_ERRROR_MESSAGE}</h1>;
