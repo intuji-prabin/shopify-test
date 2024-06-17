@@ -174,6 +174,7 @@ const PromotionEdit = () => {
       allowTaint: true,
       useCORS: true,
       width: canvasRef.offsetWidth - 1,
+      height: canvasRef.offsetHeight - 1
     }).then((canvas) => {
       const link = document.createElement('a');
       document.body.appendChild(link);
@@ -208,6 +209,7 @@ const PromotionEdit = () => {
         allowTaint: true,
         useCORS: true,
         width: canvasRef.current.offsetWidth - 1,
+        height: canvasRef.current.offsetHeight - 1
       });
       formData.append("image", canvas.toDataURL());
     } catch (error) {

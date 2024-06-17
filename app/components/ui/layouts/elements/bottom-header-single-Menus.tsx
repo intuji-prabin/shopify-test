@@ -24,7 +24,6 @@ export const SingleNavItem = ({
   const [disableHover, setDisableHover] = useState(false);
 
   const handleClick = () => {
-    console.log("inside handleClick")
     setDisableHover(!disableHover);
   };
 
