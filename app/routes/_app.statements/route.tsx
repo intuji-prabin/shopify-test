@@ -13,7 +13,7 @@ import { DataTable } from '~/components/ui/data-table';
 import { PaginationWrapper } from '~/components/ui/pagination-wrapper';
 import { useTable } from '~/hooks/useTable';
 import { Routes } from '~/lib/constants/routes.constent';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getAllStatements } from './statements.server';
 import { useColumn } from './use-column';
@@ -29,6 +29,8 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     await isAuthenticate(context);
 
     const { userDetails } = await getUserDetails(request);
+    const impersonateEnableCheck = await isImpersonating(request);
+    const sessionAccessTocken = (await getAccessToken(context)) as string;
 
     const customerId = userDetails.id;
 
@@ -41,14 +43,16 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     return json({
         statementList,
         totalStatement,
+        sessionAccessTocken,
+        impersonateEnableCheck
     });
 }
 
 export default function StatementsPage() {
-    const { statementList, totalStatement } =
+    const { statementList, totalStatement, sessionAccessTocken, impersonateEnableCheck } =
         useLoaderData<typeof loader>();
 
-    const { columns } = useColumn();
+    const { columns } = useColumn(sessionAccessTocken, impersonateEnableCheck);
 
     const { table } = useTable(columns, statementList, 'statementId');
 

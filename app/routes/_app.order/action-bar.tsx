@@ -13,9 +13,13 @@ import { displayToast } from '~/components/ui/toast';
 export function ActionBar({
   table,
   customerId,
+  sessionAccessTocken,
+  impersonateEnableCheck,
 }: {
   table: Table<Order>;
   customerId: string;
+  sessionAccessTocken: string;
+  impersonateEnableCheck: string;
 }) {
   const { selectedItem, numberOfSelectedRows } = useTableRowSelect({ table });
 
@@ -35,7 +39,10 @@ export function ActionBar({
 
     handleDownload({
       url: downloadCSVLink,
-      // api headers here
+      headers: {
+        Authorization: sessionAccessTocken,
+        'Impersonate-Enable': impersonateEnableCheck,
+      }
     });
   };
 

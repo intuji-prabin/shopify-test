@@ -21,7 +21,7 @@ import { Separator } from '~/components/ui/separator';
 import { DataTable } from '~/components/ui/data-table';
 import { PaginationWrapper } from '~/components/ui/pagination-wrapper';
 import { useColumn } from '~/routes/_app.invoices/use-column';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getAllInvoices } from '~/routes/_app.invoices/invoices.server';
 import InvoicesFilterForm from '~/routes/_app.invoices/filter-form';
@@ -41,6 +41,8 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
   const { userDetails } = await getUserDetails(request);
+  const impersonateEnableCheck = await isImpersonating(request);
+  const sessionAccessTocken = (await getAccessToken(context)) as string;
 
   const customerId = userDetails.id;
 
@@ -57,14 +59,16 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     customerId,
     invoiceList,
     totalInvoices,
+    sessionAccessTocken,
+    impersonateEnableCheck
   });
 }
 
 export default function InvoicesPage() {
-  const { invoiceList, totalInvoices, customerId } =
+  const { invoiceList, totalInvoices, customerId, sessionAccessTocken, impersonateEnableCheck } =
     useLoaderData<typeof loader>();
 
-  const { columns } = useColumn();
+  const { columns } = useColumn(sessionAccessTocken, impersonateEnableCheck);
 
   const [searchParams] = useSearchParams();
 
@@ -82,7 +86,7 @@ export default function InvoicesPage() {
   return (
     shouldRender && (
       <section className="container">
-        <ActionBar table={table} customerId={customerId} />
+        <ActionBar table={table} customerId={customerId} sessionAccessTocken={sessionAccessTocken} impersonateEnableCheck={impersonateEnableCheck} />
         <div className="flex flex-col gap-2 p-4 border-b bg-neutral-white sm:flex-row sm:justify-between sm:items-center">
           <div className="sm:w-[451px]">
             <SearchInput />

@@ -75,24 +75,23 @@ export async function getAllTeams({
   context: AppLoadContext;
 }): Promise<TeamColumn[]> {
   const isImpersonatingCheck = await isImpersonating(request);
-  const results = await useFetch<ResponseData>({
+
+  const url = `${ENDPOINT.CUSTOMER_LIST.GET}?customer_id=${customerId}${
+    query ? '&search_query=' + query : ''
+  }`;
+
+  const response = await useFetch<ResponseData>({
+    url,
     method: AllowedHTTPMethods.GET,
-    url: `${ENDPOINT.CUSTOMER_LIST.GET}?customer_id=${customerId}${
-      query ? '&search_query=' + query : ''
-    }`,
     impersonateEnableCheck: isImpersonatingCheck,
     context,
   });
-  console.log('first', results);
-  if (!results.status) {
-    throw new Error(results.message);
+
+  if (!response.status) {
+    throw new Error(response.message);
   }
 
-  if (results.payload.length < 0) {
-    throw new Error(results.message);
-  }
-
-  return normalizeTeams({context, teams: results.payload});
+  return normalizeTeams({context, teams: response.payload});
 }
 
 export async function getRoles({
@@ -104,17 +103,19 @@ export async function getRoles({
 }) {
   const {data: roles} = await getCustomerRolePermission(context);
 
-  return roles.filter((item) => {
-    const rolesValueList = item.value.split('-');
+  return roles
+    .filter((item) => {
+      const rolesValueList = item.value.split('-');
 
-    const currentUserRolesLastValue = currentUserRole
-      .split('-')
-      .pop() as string;
+      const currentUserRolesLastValue = currentUserRole
+        .split('-')
+        .pop() as string;
 
-    if (rolesValueList.includes(currentUserRolesLastValue)) {
-      return item;
-    }
-  });
+      if (rolesValueList.includes(currentUserRolesLastValue)) {
+        return item;
+      }
+    })
+    .map((item) => ({...item, title: item.title.split(' ')[0]}));
 }
 
 export async function updateStatus({
