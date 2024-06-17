@@ -14,7 +14,7 @@ import { PDFViewer } from '~/components/ui/pdf-viewer';
 import { useDownload } from '~/hooks/useDownload';
 import { PDF } from '~/lib/constants/pdf.constent';
 import { Routes } from '~/lib/constants/routes.constent';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getInvoiceDetails } from '~/routes/_app.invoices_.$invoiceId/invoices-detatils.server';
 
@@ -28,16 +28,18 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
   const invoiceId = params.invoiceId as string;
 
   const { userDetails } = await getUserDetails(request);
+  const impersonateEnableCheck = await isImpersonating(request);
+  const sessionAccessTocken = (await getAccessToken(context)) as string;
 
   const customerId = userDetails.id;
 
   const invoiceDetails = await getInvoiceDetails({ context, request, invoiceId, customerId });
 
-  return json({ invoiceId, invoiceDetails });
+  return json({ invoiceId, invoiceDetails, sessionAccessTocken, impersonateEnableCheck });
 }
 
 export default function InvoiceDetailsPage() {
-  const { invoiceId, invoiceDetails } = useLoaderData<typeof loader>();
+  const { invoiceId, invoiceDetails, sessionAccessTocken, impersonateEnableCheck } = useLoaderData<typeof loader>();
 
   const { handleDownload } = useDownload();
 
@@ -60,7 +62,11 @@ export default function InvoiceDetailsPage() {
           onClick={() =>
             handleDownload({
               url: invoiceDetails.files,
-              headers: { apiKey: PDF.SECRET_KEY },
+              headers: {
+                apiKey: PDF.SECRET_KEY,
+                Authorization: sessionAccessTocken,
+                'Impersonate-Enable': impersonateEnableCheck,
+              },
             })
           }
         >

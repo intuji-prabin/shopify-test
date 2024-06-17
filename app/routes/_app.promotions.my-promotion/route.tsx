@@ -13,10 +13,11 @@ import { MetaFunction } from '@shopify/remix-oxygen';
 import React, { FormEvent, useState } from 'react';
 import { UploadIcon } from '~/components/icons/upload';
 import { Button } from '~/components/ui/button';
+import { useDownload } from '~/hooks/useDownload';
 import { useLoadMore } from '~/hooks/useLoadMore';
 import { ENDPOINT } from '~/lib/constants/endpoint.constant';
 import { Can } from '~/lib/helpers/Can';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -40,6 +41,8 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
   const { userDetails } = await getUserDetails(request);
+  const impersonateEnableCheck = await isImpersonating(request);
+  const sessionAccessTocken = (await getAccessToken(context)) as string;
 
   const { searchParams } = new URL(request.url);
 
@@ -55,7 +58,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     paramsList,
   });
 
-  return json({ promotions, totalPromotionCount });
+  return json({ promotions, totalPromotionCount, impersonateEnableCheck, sessionAccessTocken });
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -101,7 +104,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function MyPromotionsPage() {
-  const { promotions, totalPromotionCount } = useLoaderData<typeof loader>();
+  const { promotions, totalPromotionCount, impersonateEnableCheck, sessionAccessTocken } = useLoaderData<typeof loader>();
 
   const [checkedPromotions, setCheckedPromotions] = useState<string[]>([]);
 
@@ -124,9 +127,21 @@ export default function MyPromotionsPage() {
         : prevItems.filter((promotion) => promotion !== value),
     );
   };
+  const { handleDownload } = useDownload();
 
-  const exportUrl = `${ENDPOINT.PROMOTION.BULK_EXPORT
-    }?promotion_id=${checkedPromotions.join(',')}`;
+  const handleExport = () => {
+
+    const exportUrl = `${ENDPOINT.PROMOTION.BULK_EXPORT
+      }?promotion_id=${checkedPromotions.join(',')}`;
+
+    handleDownload({
+      url: exportUrl,
+      headers: {
+        Authorization: sessionAccessTocken,
+        'Impersonate-Enable': impersonateEnableCheck,
+      }
+    });
+  };
 
   return (
     <div className="pt-10 sm:pt-0">
@@ -181,19 +196,9 @@ export default function MyPromotionsPage() {
                     {checkedPromotions.length} items selected
                   </p>
                   <Can I="view" a="export_promotions">
-                    <NavLink
-                      to={exportUrl}
-                      reloadDocument
-                      className={({ isActive, isPending }) =>
-                        isPending
-                          ? 'bg-red-500'
-                          : isActive
-                            ? 'active'
-                            : 'text-neutral-white font-bold italic uppercase bg-primary-500 disabled:bg-grey-50 px-6 py-2 text-sm leading-6 flex items-center gap-x-1.5'
-                      }
-                    >
+                    <Button type='button' onClick={handleExport}>
                       <UploadIcon /> Export
-                    </NavLink>
+                    </Button>
                   </Can>
                   <Can I="view" a="delete_promotions">
                     <Button

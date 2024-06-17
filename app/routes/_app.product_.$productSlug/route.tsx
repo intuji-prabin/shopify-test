@@ -14,7 +14,7 @@ import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
 import { ProductCard } from '~/components/ui/product-card';
 import { useConditionalRender } from '~/hooks/useAuthorization';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
-import { getAccessToken } from '~/lib/utils/auth-session.server';
+import { getAccessToken, isImpersonating } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -36,6 +36,8 @@ import { AuthError } from '~/components/ui/authError';
 
 interface ProductDetailType {
   productPage: string;
+  sessionAccessTocken: string,
+  impersonateEnableCheck: string;
   product: {
     productInfo: ProductInfoType;
     productTab: ProductTabType;
@@ -102,6 +104,9 @@ export const loader = async ({
       });
     }
     const { userDetails } = await getUserDetails(request);
+    const impersonateEnableCheck = await isImpersonating(request);
+    const sessionAccessTocken = (await getAccessToken(context)) as string;
+
     const product = await getProductDetails(
       context,
       request,
@@ -114,6 +119,8 @@ export const loader = async ({
     return json({
       product,
       productPage,
+      sessionAccessTocken,
+      impersonateEnableCheck
     });
   } catch (error) {
     console.log('first', error);
@@ -122,7 +129,7 @@ export const loader = async ({
 };
 
 export default function route() {
-  const { product, productPage } = useLoaderData<ProductDetailType>();
+  const { product, productPage, sessionAccessTocken, impersonateEnableCheck } = useLoaderData<ProductDetailType>();
 
   const shouldRender = useConditionalRender('view_product_detail');
 
@@ -144,6 +151,7 @@ export default function route() {
         <ProductTab
           productTab={product?.productTab}
           alternateProduct={product.alternativeProduct}
+          sessionAccessTocken={sessionAccessTocken} impersonateEnableCheck={impersonateEnableCheck}
         />
         {product?.relatedProducts?.length > 0 && (
           <section className="py-12 bg-white">
