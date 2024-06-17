@@ -54,8 +54,9 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   }
 
   const customerId = userDetails.id.split('/').pop() as string;
+  const newCustomerId = `${customerId}/profile`;
 
-  const customerDetails = await getCustomerById({ context, request, customerId });
+  const customerDetails = await getCustomerById({ context, request, customerId: newCustomerId });
 
   const roles = await getCustomerRolePermission(context);
 
