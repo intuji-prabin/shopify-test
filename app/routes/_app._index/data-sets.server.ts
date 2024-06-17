@@ -42,8 +42,8 @@ interface ChartDataResponse {
 }
 
 interface FormattedChartData {
-  monthly: FormattedChartDetail;
-  ytd: FormattedChartDetail;
+  monthly: FormattedChartDetail | null;
+  ytd: FormattedChartDetail | null;
 }
 
 interface FormattedChartSubData {
@@ -130,14 +130,18 @@ const formatAreaResponse = (response: Payload): FormattedChartData => {
   };
 
   return {
-    monthly: formatChartDataAndOtherFields(response?.monthly),
-    ytd: formatChartDataAndOtherFields(response?.ytd),
+    monthly: response?.monthly
+      ? formatChartDataAndOtherFields(response?.monthly)
+      : null,
+    ytd: response?.ytd ? formatChartDataAndOtherFields(response?.ytd) : null,
   };
 };
 
 const formatBarResponse = (response: Payload) => {
-  const FinalTotalSpend = response?.totalSpend;
-  const FinalTotalInvoicing = response?.totalInvoice;
+  const FinalTotalSpend = response?.totalSpend ? response?.totalSpend : null;
+  const FinalTotalInvoicing = response?.totalInvoice
+    ? response?.totalInvoice
+    : null;
 
   const formatBarChartData = (data: Total) => {
     return {
@@ -218,16 +222,32 @@ const formatBarResponse = (response: Payload) => {
   };
 
   return {
-    totalSpend: {
-      ytd: formatBarChartDataAndOtherFields(FinalTotalSpend?.ytd),
-      qtd: formatBarChartDataAndOtherFields(FinalTotalSpend?.qtd),
-      mtd: formatBarChartDataAndOtherFields(FinalTotalSpend?.mtd),
-    },
-    totalInvoicing: {
-      ytd: formatLineChartDataAndOtherFields(FinalTotalInvoicing?.ytd),
-      qtd: formatLineChartDataAndOtherFields(FinalTotalInvoicing?.qtd),
-      mtd: formatLineChartDataAndOtherFields(FinalTotalInvoicing?.mtd),
-    },
+    totalSpend: FinalTotalSpend
+      ? {
+          ytd:
+            FinalTotalSpend?.ytd &&
+            formatBarChartDataAndOtherFields(FinalTotalSpend?.ytd),
+          qtd:
+            FinalTotalSpend?.qtd &&
+            formatBarChartDataAndOtherFields(FinalTotalSpend?.qtd),
+          mtd:
+            FinalTotalSpend?.mtd &&
+            formatBarChartDataAndOtherFields(FinalTotalSpend?.mtd),
+        }
+      : null,
+    totalInvoicing: FinalTotalInvoicing
+      ? {
+          ytd:
+            FinalTotalInvoicing?.ytd &&
+            formatLineChartDataAndOtherFields(FinalTotalInvoicing?.ytd),
+          qtd:
+            FinalTotalInvoicing?.qtd &&
+            formatLineChartDataAndOtherFields(FinalTotalInvoicing?.qtd),
+          mtd:
+            FinalTotalInvoicing?.mtd &&
+            formatLineChartDataAndOtherFields(FinalTotalInvoicing?.mtd),
+        }
+      : null,
   };
 };
 
