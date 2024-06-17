@@ -55,9 +55,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 
   const { userDetails } = await getUserDetails(request);
   const impersonateEnableCheck = await isImpersonating(request);
-  console.log(":impersonateEnableCheck", impersonateEnableCheck)
   const sessionAccessTocken = (await getAccessToken(context)) as string;
-  console.log(":sessionAccessTocken", sessionAccessTocken)
 
   const customerId = userDetails.id.split('/').pop() as string;
 

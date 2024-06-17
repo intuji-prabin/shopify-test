@@ -8,7 +8,7 @@ import { useDownload } from '~/hooks/useDownload';
 import { PDF } from '~/lib/constants/pdf.constent';
 import { formatDateToLocaleDateString } from '~/lib/helpers/dateTime.helper';
 
-export function useColumn() {
+export function useColumn(sessionAccessTocken: string, impersonateEnableCheck: string) {
     const columns = useMemo<ColumnDef<any>[]>(
         () => [
             {
@@ -48,7 +48,11 @@ export function useColumn() {
                                 onClick={() =>
                                     handleDownload({
                                         url: fileURL,
-                                        headers: { apiKey: PDF.SECRET_KEY },
+                                        headers: {
+                                            apiKey: PDF.SECRET_KEY,
+                                            Authorization: sessionAccessTocken,
+                                            'Impersonate-Enable': impersonateEnableCheck
+                                        },
                                     })
                                 }
                             >

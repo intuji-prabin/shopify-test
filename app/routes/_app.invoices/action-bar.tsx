@@ -13,9 +13,13 @@ import { Invoices } from '~/routes/_app.invoices/invoices.server';
 export function ActionBar({
   table,
   customerId,
+  sessionAccessTocken,
+  impersonateEnableCheck,
 }: {
   table: Table<Invoices>;
   customerId: string;
+  sessionAccessTocken: string;
+  impersonateEnableCheck: string;
 }) {
   const { selectedItem, numberOfSelectedRows } = useTableRowSelect({ table });
 
@@ -35,7 +39,10 @@ export function ActionBar({
 
     handleDownload({
       url: downloadInvoicePDFLink,
-      // api headers here
+      headers: {
+        Authorization: sessionAccessTocken,
+        'Impersonate-Enable': impersonateEnableCheck,
+      }
     });
   };
 

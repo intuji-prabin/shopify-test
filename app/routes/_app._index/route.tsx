@@ -14,7 +14,7 @@ import ExpenditureCard from '~/components/ui/expenditureCard';
 import Profile from '~/components/ui/profile';
 import SpendCard from '~/components/ui/spend-card';
 import { Can } from '~/lib/helpers/Can';
-import { USER_SESSION_ID, isAuthenticate } from '~/lib/utils/auth-session.server';
+import { USER_SESSION_ID, getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import {
   getChartData,
@@ -64,6 +64,9 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     request,
   });
 
+  const impersonateEnableCheck = await isImpersonating(request);
+  const sessionAccessTocken = (await getAccessToken(context)) as string;
+
   return defer({
     slides,
     userDetails,
@@ -71,7 +74,9 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     expenditureData,
     invoiceList,
     totalNotifications,
-    userSessionId
+    userSessionId,
+    sessionAccessTocken,
+    impersonateEnableCheck
   });
 }
 
@@ -80,9 +85,11 @@ export default function Homepage() {
     expenditureData,
     invoiceList, userDetails,
     totalNotifications,
-    userSessionId
+    userSessionId,
+    sessionAccessTocken,
+    impersonateEnableCheck
   } = useLoaderData<typeof loader>();
-  const { columns } = useColumn();
+  const { columns } = useColumn(sessionAccessTocken, impersonateEnableCheck);
   const [notificationCounts, setNotificationCounts] = useState(
     totalNotifications | 0,
   );
