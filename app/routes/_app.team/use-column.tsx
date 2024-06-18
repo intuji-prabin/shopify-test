@@ -1,13 +1,13 @@
-import {Link, useFetcher} from '@remix-run/react';
-import {ColumnDef} from '@tanstack/react-table';
-import {useContext, useMemo, useState} from 'react';
-import {EditIcon} from '~/components/icons/edit';
+import { Link, useFetcher } from '@remix-run/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { useContext, useMemo, useState } from 'react';
+import { EditIcon } from '~/components/icons/edit';
 import PersonIcon from '~/components/icons/person-icon';
-import {Button} from '~/components/ui/button';
-import {Switch} from '~/components/ui/switch';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {Routes} from '~/lib/constants/routes.constent';
-import {AbilityContext} from '~/lib/helpers/Can';
+import { Button } from '~/components/ui/button';
+import { Switch } from '~/components/ui/switch';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { Routes } from '~/lib/constants/routes.constent';
+import { AbilityContext } from '~/lib/helpers/Can';
 import DeactivateDialog from '~/routes/_app.team/cell-action';
 
 export type TeamColumn = {
@@ -23,7 +23,7 @@ export type TeamColumn = {
   status: 'true' | 'false';
 };
 
-export function useColumn({currentUser}: {currentUser: string}) {
+export function useColumn({ currentUser, isImpersonatingCheck }: { currentUser: string, isImpersonatingCheck: string }) {
   const ability = useContext(AbilityContext);
 
   const columns = useMemo<ColumnDef<TeamColumn>[]>(
@@ -34,7 +34,7 @@ export function useColumn({currentUser}: {currentUser: string}) {
           header: 'Name',
           enableSorting: false,
           cell: (info) => {
-            const {imageUrl, name, id} = info.row.original;
+            const { imageUrl, name, id } = info.row.original;
             const isCurrentUser = currentUser === id;
             const imageSrc =
               imageUrl?.length > 0 ? imageUrl : DEFAULT_IMAGE.DEFAULT;
@@ -139,13 +139,13 @@ export function useColumn({currentUser}: {currentUser: string}) {
           cell: (info) => {
             const teamId = info.row.original.id.split('/').pop();
             return (
-              <Link to={`${Routes.TEAM}/${teamId}`}>
+              <Link to={currentUser === teamId ? `${Routes.PROFILE}` : `${Routes.TEAM}/${teamId}`}>
                 <Button
                   data-cy="edit"
                   type="button"
                   size="icon"
                   variant="ghost"
-                  className="border-grey-50 hover:bg-inherit"
+                  className={`border-grey-50 hover:bg-inherit ${isImpersonatingCheck === "true" && currentUser === teamId ? 'hidden' : 'block'}`}
                 >
                   <EditIcon />
                 </Button>
@@ -160,5 +160,5 @@ export function useColumn({currentUser}: {currentUser: string}) {
     [currentUser, ability], // Include currentUser and ability in the dependencies array
   );
 
-  return {columns};
+  return { columns };
 }
