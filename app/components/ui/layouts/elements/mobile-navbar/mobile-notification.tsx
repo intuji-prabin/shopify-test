@@ -14,7 +14,7 @@ export function NotificationNavbarMobile({
       id: 1,
       icon: <CartIcon width={'20px'} height={'20px'} />,
       url: Routes.CART_LIST,
-      title: 'cart',
+      title: 'Cart',
       notification: '3',
     },
     {
