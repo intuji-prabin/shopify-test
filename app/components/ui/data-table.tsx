@@ -70,7 +70,7 @@ export function DataTable<T>({
     }
     return <ArrowUpDown />;
   };
-  
+
 
   return (
     <TableShadcn className={`${className} bg-neutral-white`} data-cy="table">
@@ -81,7 +81,7 @@ export function DataTable<T>({
               return (
                 <TableHead
                   key={header.id}
-                  className="text-grey-900 text-lg leading-5.5 font-medium whitespace-nowrap"
+                  className="text-grey-900 text-lg leading-5.5 font-medium whitespace-nowrap xl:whitespace-normal"
                 >
                   {header.isPlaceholder ? null : (
                     <div
@@ -122,7 +122,7 @@ export function DataTable<T>({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className="text-grey-900 text-lg leading-5.5 whitespace-nowrap"
+                      className="text-grey-900 text-lg leading-5.5 whitespace-nowrap xl:whitespace-normal"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

@@ -10,7 +10,7 @@ import { BackButton } from '~/components/ui/back-button';
 import { TeamError } from '~/routes/_app.team/team-error';
 import { useConditionalRender } from '~/hooks/useAuthorization';
 import { getUserDetails } from '~/lib/utils/user-session.server';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { ConfirmationFormSchemaValidator } from '~/routes/_app.team/confirmation-form';
 import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
@@ -49,12 +49,13 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     const { searchParams } = new URL(request.url);
 
     const query = searchParams.get('search');
+    const isImpersonatingCheck = await isImpersonating(request);
 
     const teams = await getAllTeams({ request, customerId, query, context });
 
     const roles = await getRoles({ context, currentUserRole });
 
-    return json({ teams, roles, currentUser: customerId });
+    return json({ teams, roles, currentUser: customerId, isImpersonatingCheck });
   } catch (error) {
     if (error instanceof Error) {
       console.log("error", error.message);
@@ -97,7 +98,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function TeamPage() {
-  const { teams, roles, currentUser } = useLoaderData<typeof loader>();
+  const { teams, roles, currentUser, isImpersonatingCheck } = useLoaderData<typeof loader>();
 
   const [activeDepartmentTab, setActiveDepartmentTab] = useState('all');
 
@@ -145,11 +146,11 @@ export default function TeamPage() {
             ))}
           </TabsList>
           <TabsContent value="all">
-            <TabsTable results={teams} currentUser={currentUser} />
+            <TabsTable results={teams} currentUser={currentUser} isImpersonatingCheck={isImpersonatingCheck} />
           </TabsContent>
           {roles.map((role) => (
             <TabsContent key={role.value} value={role.value}>
-              <TabsTable results={displayedList} currentUser={currentUser} />
+              <TabsTable results={displayedList} currentUser={currentUser} isImpersonatingCheck={isImpersonatingCheck} />
             </TabsContent>
           ))}
         </Tabs>
