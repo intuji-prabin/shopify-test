@@ -958,6 +958,12 @@ div[data-state='open'].fixed.inset-0 {
   @apply pointer-events-none opacity-60;
 }
 
+@media (max-width: 1279px) {
+  body.menu-active {
+    @apply overflow-y-hidden;
+  }
+}
+
 @media (max-width: 639px) {
   .flex-col-sm {
     @apply flex-col;
