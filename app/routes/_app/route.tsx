@@ -26,14 +26,14 @@ import {
   messageCommitSession,
   setErrorMessage,
 } from '~/lib/utils/toast-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
+import { USER_DETAILS_KEY, getUserDetails, getUserDetailsSession } from '~/lib/utils/user-session.server';
 import { getProductGroup } from '~/routes/_app.pending-order/pending-order.server';
 import {
   getCagetoryList,
   getNewNotificationCount,
   getSessionCart
 } from '~/routes/_app/app.server';
-import { CustomerData } from '~/routes/_public.login/login.server';
+import { CustomerData, getCustomerByEmail } from '~/routes/_public.login/login.server';
 import { getFooter } from './footer.server';
 import { AuthError } from '../../components/ui/authError';
 import { ImpersonationMessage, UserRoleChangedMessage } from '~/lib/constants/event.toast.message';
@@ -58,8 +58,17 @@ interface Data {
 
 export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
-  const { userDetails } = await getUserDetails(request);
+  let { userDetails } = await getUserDetails(request);
   const { session } = context;
+
+  const userDetailsSession = await getUserDetailsSession(request);
+  userDetailsSession.unset(USER_DETAILS_KEY);
+  userDetails = await getCustomerByEmail({
+    context,
+    email: userDetails.email,
+  });
+
+  userDetailsSession.set(USER_DETAILS_KEY, userDetails);
 
   const userSessionId = session.get(USER_SESSION_ID);
 
@@ -192,6 +201,48 @@ export default function PublicPageLayout() {
     },
   );
 
+  useEffect(() => {
+    // Extract the user role from userDetails
+    const userRole = userDetails?.meta?.user_role;
+    // Check if hasPermissionBeenUpdated is a string
+    if (typeof hasPermissionBeenUpdated === 'string') {
+      // Parse the string into an object
+      const parsedData = JSON.parse(hasPermissionBeenUpdated) as {
+        permissionData: {
+          payload: { user_role: string; permission: string[] };
+        };
+      };
+
+      // Extract role and permissions from parsedData
+      const eventUserRole = parsedData.permissionData.payload.user_role;
+      const eventUserRolePermissions = parsedData.permissionData.payload;
+
+      // If permissions are empty, logout the user
+      if (eventUserRolePermissions.permission.length === 0) {
+        submit({}, { method: 'POST', action: '/logout' });
+      }
+
+      // Check if the event role matches the user's role
+      if (eventUserRole === userRole?.value) {
+        let currentUrl = window.location.pathname; // Capture the current URL
+        if (currentUrl === '/login') {
+          currentUrl = '/';
+        }
+
+        //Here ability is created from the event because to reroute the user if it is already in the page whose permission changes
+        const userAbility = getUserAbilities(eventUserRolePermissions);
+        setAbility(userAbility);
+
+        // Update user session with returnUrl
+        submit(
+          { returnUrl: currentUrl },
+          { method: 'GET', action: '/update-user-session' },
+        );
+      }
+    }
+  }, [hasPermissionBeenUpdated]);
+
+
   const hasNotificationBeenUpdated = useEventSource(
     Routes.NOTIFICATIONS_SUBSCRIBE,
     {
@@ -261,48 +312,7 @@ export default function PublicPageLayout() {
     }
   }, [hasNotificationBeenUpdated]);
 
-  useEffect(() => {
-    // Extract the user role from userDetails
-    const userRole = userDetails?.meta?.user_role;
-
-    // Check if hasPermissionBeenUpdated is a string
-    if (typeof hasPermissionBeenUpdated === 'string') {
-      // Parse the string into an object
-      const parsedData = JSON.parse(hasPermissionBeenUpdated) as {
-        permissionData: {
-          payload: { user_role: string; permission: string[] };
-        };
-      };
-
-      // Extract role and permissions from parsedData
-      const eventUserRole = parsedData.permissionData.payload.user_role;
-      const eventUserRolePermissions = parsedData.permissionData.payload;
-
-      // If permissions are empty, logout the user
-      if (eventUserRolePermissions.permission.length === 0) {
-        submit({}, { method: 'POST', action: '/logout' });
-      }
-
-      // Check if the event role matches the user's role
-      if (eventUserRole === userRole?.value) {
-        let currentUrl = window.location.pathname; // Capture the current URL
-        if (currentUrl === '/login') {
-          currentUrl = '/';
-        }
-
-        //Here ability is created from the event because to reroute the user if it is already in the page whose permission changes
-        const userAbility = getUserAbilities(eventUserRolePermissions);
-        setAbility(userAbility);
-
-        // Update user session with returnUrl
-        submit(
-          { returnUrl: currentUrl },
-          { method: 'GET', action: '/update-user-session' },
-        );
-      }
-    }
-  }, [hasPermissionBeenUpdated]);
-
+ 
   return (
     <AbilityContext.Provider value={ability}>
       <Layout
