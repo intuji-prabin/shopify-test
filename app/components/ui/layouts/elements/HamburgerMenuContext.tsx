@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useState} from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 // Define a type for your context
 interface HamburgerContextType {
@@ -23,7 +23,7 @@ export const useHamburgerMenu = () => {
 };
 
 // Create the provider component
-export const HamburgerMenuProvider: React.FC<{children: React.ReactNode}> = ({
+export const HamburgerMenuProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -32,8 +32,21 @@ export const HamburgerMenuProvider: React.FC<{children: React.ReactNode}> = ({
     setIsOpen(state ?? !isOpen);
   };
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('menu-active');
+    } else {
+      document.body.classList.remove('menu-active');
+    }
+
+    // Cleanup function to remove the class when the component unmounts
+    return () => {
+      document.body.classList.remove('menu-active');
+    };
+  }, [isOpen]);
+
   return (
-    <HamburgerContext.Provider value={{isOpen, toggleMenu}}>
+    <HamburgerContext.Provider value={{ isOpen, toggleMenu }}>
       {children}
     </HamburgerContext.Provider>
   );
