@@ -23,22 +23,24 @@ export default function TabletNavmenu({ profileName, profileImage }: { profileNa
       >
         <TabletHamburger />
       </figure>
-      <div className={`${isOpen ? "block xl:hidden" : "hidden"} absolute top-0 w-40 z-30 left-0 bg-primary-500 min-w-[300px]`} ref={tabletSectionRef}>
-        <div className="flex items-center justify-between p-4 bg-grey-900 tab-header">
-          <UserProfile user_name={profileName} image_url={profileImage} />
-          <Button
-            className="bg-semantic-danger-500 p-1 hover:bg-semantic-danger-500 w-[28px] h-[28px]"
-            onClick={() => {
-              toggleMenu(!isOpen)
-            }}
-          >
-            <CloseMenu fillColor="#fff" />
-          </Button>
-        </div>
-        <div className="p-4 bg-primary-500">
-          <NavMenu />
-          <div className="flex flex-col justify-between mt-2 gap-52">
-            <OrderTrackMobile />
+      <div className={`${isOpen ? "block xl:hidden" : "hidden"} absolute top-0 z-30 left-0 right-0 bg-black/80`}>
+        <div className="w-40 bg-primary-500 min-w-[300px] h-screen" ref={tabletSectionRef}>
+          <div className="flex items-center justify-between p-4 bg-grey-900 tab-header">
+            <UserProfile user_name={profileName} image_url={profileImage} />
+            <Button
+              className="bg-semantic-danger-500 p-1 hover:bg-semantic-danger-500 w-[28px] h-[28px]"
+              onClick={() => {
+                toggleMenu(!isOpen)
+              }}
+            >
+              <CloseMenu fillColor="#fff" />
+            </Button>
+          </div>
+          <div className="flex flex-col p-4 bg-primary-500 justify-between h-[calc(100%_-_78px)] overflow-y-auto gap-y-11">
+            <div className='flex flex-col gap-4'>
+              <NavMenu />
+              <OrderTrackMobile />
+            </div>
             <LogoutForm />
           </div>
         </div>

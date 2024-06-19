@@ -64,31 +64,32 @@ export default function MobileNav({
         </div>
 
         <div
-          className={`bg-primary-500 p-4 flex flex-col gap-16 transition-opacity ease-in-out delay-75 duration-150 mobile-nav z-[1000] absolute w-full
+          className={`bg-primary-500 transition-opacity ease-in-out delay-75 duration-150 mobile-nav z-[1000] bottom-0 inset-x-0 top-24 absolute w-full
         ${isOpen ? 'block' : 'hidden'}  `}
         >
-          <div className="flex flex-col gap-4 user-menu">
-            <div className="flex flex-col-reverse justify-between gap-4">
-              {' '}
-              {/* user profile starts here */}
-              <UserProfile user_name={userDetails?.firstName} image_url={imageUrl ?? '/niel.png'} />
-              {/* notification menu bar starts */}
-              <NotificationNavbar
-                cartCount={cartCount}
-                wishlistCount={wishlistCount}
-                pendingOrderCount={pendingOrderCount}
-                notificationCount={notificationCount}
-              />
+          <div className='flex flex-col gap-16 p-4 overflow-y-auto h-[calc(100vh_-_96px)]'>
+            <div className="flex flex-col gap-4 user-menu">
+              <div className="flex flex-col-reverse justify-between gap-4">
+                {' '}
+                {/* user profile starts here */}
+                <UserProfile user_name={userDetails?.firstName} image_url={imageUrl ?? '/niel.png'} />
+                {/* notification menu bar starts */}
+                <NotificationNavbar
+                  cartCount={cartCount}
+                  wishlistCount={wishlistCount}
+                  pendingOrderCount={pendingOrderCount}
+                  notificationCount={notificationCount}
+                />
+              </div>
+              {/* menu navigation starts here */}
+              <NavMenu />
+
+              {/*  order track starts here */}
+              <OrderTrackMobile />
             </div>
-            {/* menu navigation starts here */}
-            <NavMenu />
-
-            {/*  order track starts here */}
-            <OrderTrackMobile />
+            {/* user logout starts here */}
+            <LogoutForm />
           </div>
-
-          {/* user logout starts here */}
-          <LogoutForm />
         </div>
       </div>
 

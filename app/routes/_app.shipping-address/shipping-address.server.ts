@@ -41,7 +41,7 @@ export async function getAllCompanyShippingAddresses(
 
     const response = await useFetch<ShippingAddressResponse>({
       method: AllowedHTTPMethods.GET,
-      url: `${ENDPOINT.COMPANY.GET_SHIPPING_ADDRESS}?customerId=${customer}`,
+      url: `${ENDPOINT.COMPANY.GET_SHIPPING_ADDRESS}/${customer}`,
       impersonateEnableCheck: isImpersonatingCheck,
       context,
     });
