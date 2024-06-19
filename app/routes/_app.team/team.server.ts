@@ -15,6 +15,7 @@ import {
 import {json} from '@remix-run/react';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {isImpersonating} from '~/lib/utils/auth-session.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 
 interface MetaField {
   key: string;
@@ -136,10 +137,12 @@ export async function updateStatus({
       customerId,
       status: value,
     });
+    const {userDetails} = await getUserDetails(request);
+    const currentCustomerId = userDetails.id;
 
     const response = await useFetch<ResponseData>({
       method: AllowedHTTPMethods.POST,
-      url: ENDPOINT.CUSTOMER.UPDATE_STATUS,
+      url: `${ENDPOINT.CUSTOMER.UPDATE_STATUS}/${currentCustomerId}`,
       body,
       impersonateEnableCheck: isImpersonatingCheck,
       context,
