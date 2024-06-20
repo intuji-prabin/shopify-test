@@ -23,7 +23,7 @@ const PromotionNavigation = ({ canvasRef, imageName }: { canvasRef: any, imageNa
         const link = document.createElement('a');
         document.body.appendChild(link);
         link.download = `${imageName}.png`;
-        link.href = canvas.toDataURL();
+        link.href = canvas.toDataURL('image/jpeg', 0.8);
         link.target = '_blank';
         link.click();
         setLoading(false);

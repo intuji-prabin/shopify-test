@@ -12,7 +12,8 @@ export function useDownload() {
       const response = await fetch(url, {headers});
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch the file. Status: ${response.status}`);
+        const responseData = (await response.json()) as any;
+        throw new Error(`${responseData?.message}`);
       }
 
       const contentDisposition = response.headers.get('Content-Disposition');
@@ -46,10 +47,11 @@ export function useDownload() {
         throw new Error('No access');
       }
     } catch (error) {
+      let message = 'Failed to download the file';
       if (error instanceof Error) {
-        displayToast({message: error.message, type: 'error'});
+        message = error.message;
       }
-      displayToast({message: 'Failed to download the file', type: 'error'});
+      displayToast({message, type: 'error'});
     }
   };
   return {handleDownload};
