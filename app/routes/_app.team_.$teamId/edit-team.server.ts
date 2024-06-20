@@ -4,6 +4,7 @@ import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.cons
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getAccessToken, isImpersonating} from '~/lib/utils/auth-session.server';
+import {encrypt} from '~/lib/utils/cryptoUtils';
 import {EditTeamFormType} from '~/routes/_app.team_.add/team-form';
 
 type CustomerDetails = Omit<EditTeamFormType, 'profileImage'> & {

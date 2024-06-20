@@ -30,6 +30,7 @@ import { useConditionalRender } from '~/hooks/useAuthorization';
 import { InvoiceError } from '~/routes/_app.invoices/invoice-error';
 import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
 import { AuthError } from '~/components/ui/authError';
+import { encrypt } from '~/lib/utils/cryptoUtils';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Invoices List' }];
@@ -43,6 +44,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   const { userDetails } = await getUserDetails(request);
   const impersonateEnableCheck = await isImpersonating(request);
   const sessionAccessTocken = (await getAccessToken(context)) as string;
+  const encryptedSession = encrypt(sessionAccessTocken);
 
   const customerId = userDetails.id;
 
@@ -59,16 +61,16 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     customerId,
     invoiceList,
     totalInvoices,
-    sessionAccessTocken,
+    encryptedSession,
     impersonateEnableCheck
   });
 }
 
 export default function InvoicesPage() {
-  const { invoiceList, totalInvoices, customerId, sessionAccessTocken, impersonateEnableCheck } =
+  const { invoiceList, totalInvoices, customerId, encryptedSession, impersonateEnableCheck } =
     useLoaderData<typeof loader>();
 
-  const { columns } = useColumn(sessionAccessTocken, impersonateEnableCheck);
+  const { columns } = useColumn(encryptedSession, impersonateEnableCheck);
 
   const [searchParams] = useSearchParams();
 
@@ -86,7 +88,7 @@ export default function InvoicesPage() {
   return (
     shouldRender && (
       <section className="container">
-        <ActionBar table={table} customerId={customerId} sessionAccessTocken={sessionAccessTocken} impersonateEnableCheck={impersonateEnableCheck} />
+        <ActionBar table={table} customerId={customerId} sessionAccessTocken={encryptedSession} impersonateEnableCheck={impersonateEnableCheck} />
         <div className="flex flex-col gap-2 p-4 border-b bg-neutral-white sm:flex-row sm:justify-between sm:items-center">
           <div className="sm:w-[451px]">
             <SearchInput />

@@ -18,6 +18,7 @@ import { useLoadMore } from '~/hooks/useLoadMore';
 import { ENDPOINT } from '~/lib/constants/endpoint.constant';
 import { Can } from '~/lib/helpers/Can';
 import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
+import { encrypt } from '~/lib/utils/cryptoUtils';
 import {
   getMessageSession,
   messageCommitSession,
@@ -43,6 +44,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   const { userDetails } = await getUserDetails(request);
   const impersonateEnableCheck = await isImpersonating(request);
   const sessionAccessTocken = (await getAccessToken(context)) as string;
+  const encryptedSession = encrypt(sessionAccessTocken);
 
   const { searchParams } = new URL(request.url);
 
@@ -58,7 +60,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     paramsList,
   });
 
-  return json({ promotions, totalPromotionCount, impersonateEnableCheck, sessionAccessTocken });
+  return json({ promotions, totalPromotionCount, impersonateEnableCheck, encryptedSession });
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -104,7 +106,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function MyPromotionsPage() {
-  const { promotions, totalPromotionCount, impersonateEnableCheck, sessionAccessTocken } = useLoaderData<typeof loader>();
+  const { promotions, totalPromotionCount, impersonateEnableCheck, encryptedSession } = useLoaderData<typeof loader>();
 
   const [checkedPromotions, setCheckedPromotions] = useState<string[]>([]);
 
@@ -137,7 +139,7 @@ export default function MyPromotionsPage() {
     handleDownload({
       url: exportUrl,
       headers: {
-        Authorization: sessionAccessTocken,
+        Authorization: encryptedSession,
         'Impersonate-Enable': impersonateEnableCheck,
       }
     });

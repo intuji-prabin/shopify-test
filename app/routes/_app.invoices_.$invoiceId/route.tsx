@@ -15,6 +15,7 @@ import { useDownload } from '~/hooks/useDownload';
 import { PDF } from '~/lib/constants/pdf.constent';
 import { Routes } from '~/lib/constants/routes.constent';
 import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
+import { encrypt } from '~/lib/utils/cryptoUtils';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getInvoiceDetails } from '~/routes/_app.invoices_.$invoiceId/invoices-detatils.server';
 
@@ -30,16 +31,17 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
   const { userDetails } = await getUserDetails(request);
   const impersonateEnableCheck = await isImpersonating(request);
   const sessionAccessTocken = (await getAccessToken(context)) as string;
+  const encryptedSession = encrypt(sessionAccessTocken);
 
   const customerId = userDetails.id;
 
   const invoiceDetails = await getInvoiceDetails({ context, request, invoiceId, customerId });
 
-  return json({ invoiceId, invoiceDetails, sessionAccessTocken, impersonateEnableCheck });
+  return json({ invoiceId, invoiceDetails, encryptedSession, impersonateEnableCheck });
 }
 
 export default function InvoiceDetailsPage() {
-  const { invoiceId, invoiceDetails, sessionAccessTocken, impersonateEnableCheck } = useLoaderData<typeof loader>();
+  const { invoiceId, invoiceDetails, encryptedSession, impersonateEnableCheck } = useLoaderData<typeof loader>();
 
   const { handleDownload } = useDownload();
 
@@ -64,7 +66,7 @@ export default function InvoiceDetailsPage() {
               url: invoiceDetails.files,
               headers: {
                 apiKey: PDF.SECRET_KEY,
-                Authorization: sessionAccessTocken,
+                Authorization: encryptedSession,
                 'Impersonate-Enable': impersonateEnableCheck,
               },
             })

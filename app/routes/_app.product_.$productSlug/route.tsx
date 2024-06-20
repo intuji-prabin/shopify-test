@@ -33,10 +33,11 @@ import ProductInformation from './productInformation';
 import ProductTab from './productTabs';
 import { addToWishlist, removeFromWishlist } from './wishlist.server';
 import { AuthError } from '~/components/ui/authError';
+import { encrypt } from '~/lib/utils/cryptoUtils';
 
 interface ProductDetailType {
   productPage: string;
-  sessionAccessTocken: string,
+  encryptedSession: string,
   impersonateEnableCheck: string;
   product: {
     productInfo: ProductInfoType;
@@ -106,6 +107,7 @@ export const loader = async ({
     const { userDetails } = await getUserDetails(request);
     const impersonateEnableCheck = await isImpersonating(request);
     const sessionAccessTocken = (await getAccessToken(context)) as string;
+    const encryptedSession = encrypt(sessionAccessTocken);
 
     const product = await getProductDetails(
       context,
@@ -119,7 +121,7 @@ export const loader = async ({
     return json({
       product,
       productPage,
-      sessionAccessTocken,
+      encryptedSession,
       impersonateEnableCheck
     });
   } catch (error) {
@@ -129,7 +131,7 @@ export const loader = async ({
 };
 
 export default function route() {
-  const { product, productPage, sessionAccessTocken, impersonateEnableCheck } = useLoaderData<ProductDetailType>();
+  const { product, productPage, encryptedSession, impersonateEnableCheck } = useLoaderData<ProductDetailType>();
 
   const shouldRender = useConditionalRender('view_product_detail');
 
@@ -151,7 +153,7 @@ export default function route() {
         <ProductTab
           productTab={product?.productTab}
           alternateProduct={product.alternativeProduct}
-          sessionAccessTocken={sessionAccessTocken} impersonateEnableCheck={impersonateEnableCheck}
+          sessionAccessTocken={encryptedSession} impersonateEnableCheck={impersonateEnableCheck}
         />
         {product?.relatedProducts?.length > 0 && (
           <section className="py-12 bg-white">
