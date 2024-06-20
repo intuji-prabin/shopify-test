@@ -179,7 +179,7 @@ export default function TopHeader({
           </figure>
           <DropdownMenu open={isClicked} onOpenChange={setIsClicked}>
             <DropdownMenuTrigger asChild>
-              <Button className="p-0 text-base italic font-bold capitalize bg-transparent border-none outline-none hover:bg-transparent focus:border-transparent focus-visible:border-transparent focus:outline-none">
+              <Button className="p-0 text-base italic font-bold capitalize bg-transparent border-none outline-none hover:bg-transparent focus:border-transparent focus-visible:border-transparent focus:outline-none" data-cy="menu-profile">
                 {userDetails?.firstName}
                 {isClicked ? <IoIosArrowUp /> : <IoIosArrowDown />}
               </Button>
