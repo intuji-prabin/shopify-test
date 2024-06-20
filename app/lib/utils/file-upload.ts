@@ -1,6 +1,7 @@
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {getAccessToken, isImpersonating} from './auth-session.server';
 import {AppLoadContext} from '@remix-run/server-runtime';
+import {encrypt} from './cryptoUtils';
 
 type ImageUploadResponse = {
   status: boolean;

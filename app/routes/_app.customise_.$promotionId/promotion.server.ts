@@ -3,6 +3,7 @@ import {useFetch} from '~/hooks/useFetch';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getAccessToken, isImpersonating} from '~/lib/utils/auth-session.server';
+import {encrypt} from '~/lib/utils/cryptoUtils';
 
 export interface PromotionType {
   status: boolean;

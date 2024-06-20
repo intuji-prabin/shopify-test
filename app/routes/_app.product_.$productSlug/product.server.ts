@@ -16,6 +16,7 @@ import {
   isImpersonating,
 } from '~/lib/utils/auth-session.server';
 import {AppLoadContext} from '@remix-run/server-runtime';
+import {encrypt} from '~/lib/utils/cryptoUtils';
 
 export interface relatedProductsType {
   productId: string;
@@ -129,7 +130,7 @@ export async function getProductDetails(
         headers: {
           Authorization: accessTocken,
           'Impersonate-Enable': isImpersonatingCheck,
-        }
+        },
       },
     );
     const response = await results.json();

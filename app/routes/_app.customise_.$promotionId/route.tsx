@@ -40,6 +40,7 @@ import { getUserDetails } from '~/lib/utils/user-session.server';
 import PromotionNavigation from './promotion-navigation';
 import { createPromotion, getPromotionById } from './promotion.server';
 import { AuthError } from '~/components/ui/authError';
+import { encrypt } from '~/lib/utils/cryptoUtils';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -105,18 +106,16 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   const { userDetails } = await getUserDetails(request);
   const customerId = userDetails?.id;
-  const accessTocken = (await getAccessToken(context)) as string;
-  const isImpersonatingCheck = await isImpersonating(request);
   const promotionId = params?.promotionId as string;
   const response = await getPromotionById(context, request, promotionId, customerId);
   if (response?.payload) {
     const results = response?.payload;
-    return json({ accessTocken, isImpersonatingCheck, results, promotionId });
+    return json({ results, promotionId });
   }
 }
 
 const PromotionEdit = () => {
-  const { accessTocken, isImpersonatingCheck, results, promotionId } = useLoaderData<any>();
+  const { results, promotionId } = useLoaderData<any>();
   const [isLoading, setIsLoading] = useState(false);
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
   const [image, setImage] = useState('');
@@ -225,10 +224,6 @@ const PromotionEdit = () => {
       const response = await fetch(`/customise/${promotionId}`, {
         method: 'POST',
         body: formData,
-        headers: {
-          Authorization: accessTocken,
-          'Impersonate-Enable': isImpersonatingCheck,
-        }
       });
       if (response.ok) {
         displayToast({
