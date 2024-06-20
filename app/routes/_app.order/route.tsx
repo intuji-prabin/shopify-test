@@ -43,6 +43,7 @@ import {
 import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
 import { OrderError } from '~/routes/_app.order/order-error';
 import { AuthError } from '~/components/ui/authError';
+import { encrypt } from '~/lib/utils/cryptoUtils';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Orders List' }];
@@ -56,6 +57,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   const { userDetails } = await getUserDetails(request);
   const impersonateEnableCheck = await isImpersonating(request);
   const sessionAccessTocken = (await getAccessToken(context)) as string;
+  const encryptedSession = encrypt(sessionAccessTocken);
 
   const customerId = userDetails.id.split('/').pop() as string;
 
@@ -68,7 +70,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     searchParams,
   });
 
-  return json({ orderList, totalOrder, customerId, sessionAccessTocken, impersonateEnableCheck });
+  return json({ orderList, totalOrder, customerId, encryptedSession, impersonateEnableCheck });
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -140,7 +142,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function OrdersPage() {
-  const { orderList, totalOrder, customerId, sessionAccessTocken, impersonateEnableCheck } = useLoaderData<typeof loader>();
+  const { orderList, totalOrder, customerId, encryptedSession, impersonateEnableCheck } = useLoaderData<typeof loader>();
 
   const { columns } = useColumn();
 
@@ -160,7 +162,7 @@ export default function OrdersPage() {
   return (
     shouldRender && (
       <section className="container">
-        <ActionBar table={table} customerId={customerId} sessionAccessTocken={sessionAccessTocken} impersonateEnableCheck={impersonateEnableCheck} />
+        <ActionBar table={table} customerId={customerId} sessionAccessTocken={encryptedSession} impersonateEnableCheck={impersonateEnableCheck} />
         <div className="flex flex-col gap-2 p-4 border-b bg-neutral-white sm:flex-row sm:justify-between sm:items-center">
           <div className="sm:w-[451px]">
             <SearchInput />

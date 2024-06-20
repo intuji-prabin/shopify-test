@@ -18,6 +18,7 @@ import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getAllStatements } from './statements.server';
 import { useColumn } from './use-column';
 import { AuthError } from '~/components/ui/authError';
+import { encrypt } from '~/lib/utils/cryptoUtils';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Statement List' }];
@@ -31,6 +32,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     const { userDetails } = await getUserDetails(request);
     const impersonateEnableCheck = await isImpersonating(request);
     const sessionAccessTocken = (await getAccessToken(context)) as string;
+    const encryptedSession = encrypt(sessionAccessTocken);
 
     const customerId = userDetails.id;
 
@@ -43,16 +45,16 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     return json({
         statementList,
         totalStatement,
-        sessionAccessTocken,
+        encryptedSession,
         impersonateEnableCheck
     });
 }
 
 export default function StatementsPage() {
-    const { statementList, totalStatement, sessionAccessTocken, impersonateEnableCheck } =
+    const { statementList, totalStatement, encryptedSession, impersonateEnableCheck } =
         useLoaderData<typeof loader>();
 
-    const { columns } = useColumn(sessionAccessTocken, impersonateEnableCheck);
+    const { columns } = useColumn(encryptedSession, impersonateEnableCheck);
 
     const { table } = useTable(columns, statementList, 'statementId');
 

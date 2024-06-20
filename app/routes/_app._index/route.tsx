@@ -34,6 +34,7 @@ import { getNewNotificationCount } from '../_app/app.server';
 import { Handlers, Payload } from '../_app/route';
 import { useEventSource } from 'remix-utils/sse/react';
 import { EVENTS } from '~/lib/constants/events.contstent';
+import { encrypt } from '~/lib/utils/cryptoUtils';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Cigweld | Home' }];
@@ -66,6 +67,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 
   const impersonateEnableCheck = await isImpersonating(request);
   const sessionAccessTocken = (await getAccessToken(context)) as string;
+  const encryptedSession = encrypt(sessionAccessTocken);
 
   return defer({
     slides,
@@ -75,7 +77,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     invoiceList,
     totalNotifications,
     userSessionId,
-    sessionAccessTocken,
+    encryptedSession,
     impersonateEnableCheck
   });
 }
@@ -86,10 +88,10 @@ export default function Homepage() {
     invoiceList, userDetails,
     totalNotifications,
     userSessionId,
-    sessionAccessTocken,
+    encryptedSession,
     impersonateEnableCheck
   } = useLoaderData<typeof loader>();
-  const { columns } = useColumn(sessionAccessTocken, impersonateEnableCheck);
+  const { columns } = useColumn(encryptedSession, impersonateEnableCheck);
   const [notificationCounts, setNotificationCounts] = useState(
     totalNotifications | 0,
   );
