@@ -20,8 +20,7 @@ export function useDownload() {
       const suggestedFilename = matches ? matches[1] : 'downloaded-file';
 
       const blob = await response.blob();
-
-      if (blob) {
+      if (isBlob(blob) && blob.size > 0) {
         const _url = window.URL.createObjectURL(blob);
 
         const a = document.createElement('a');
@@ -43,6 +42,8 @@ export function useDownload() {
         document.body.removeChild(a);
 
         window.URL.revokeObjectURL(_url);
+      } else {
+        throw new Error('No access');
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -52,4 +53,8 @@ export function useDownload() {
     }
   };
   return {handleDownload};
+}
+
+function isBlob(obj: any) {
+  return obj instanceof Blob;
 }
