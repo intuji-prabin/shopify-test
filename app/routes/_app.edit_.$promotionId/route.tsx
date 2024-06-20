@@ -173,13 +173,14 @@ const PromotionEdit = () => {
     html2canvas(canvasRef, {
       allowTaint: true,
       useCORS: true,
+      scale: 2,
       width: canvasRef.offsetWidth - 1,
       height: canvasRef.offsetHeight - 1
     }).then((canvas) => {
       const link = document.createElement('a');
       document.body.appendChild(link);
       link.download = 'preview.png';
-      link.href = canvas.toDataURL();
+      link.href = canvas.toDataURL('image/jpeg', 0.8);
       setImage(link.href);
     });
   };
@@ -208,10 +209,11 @@ const PromotionEdit = () => {
       const canvas = await html2canvas(canvasRef.current, {
         allowTaint: true,
         useCORS: true,
+        scale: 2,
         width: canvasRef.current.offsetWidth - 1,
         height: canvasRef.current.offsetHeight - 1
       });
-      formData.append("image", canvas.toDataURL());
+      formData.append("image", canvas.toDataURL('image/jpeg', 0.8));
     } catch (error) {
       console.error("An error occurred:", error);
       alert("An error has occured while creating the image");
