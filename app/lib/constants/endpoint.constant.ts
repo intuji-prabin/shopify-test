@@ -21,11 +21,11 @@ export const ENDPOINT = {
   CUSTOMER: {
     GET: `${BASE_URL}/customer`,
     UPDATE_STATUS: `${BASE_URL}/customer-status`,
-    CREATE: `${BASE_URL}/customer`,
+    CREATE: `${BASE_URL}/teams`,
     ACTIVATE: `${BASE_URL}/customer/activate`,
   },
   CUSTOMER_LIST: {
-    GET: `${BASE_URL}/customer`,
+    GET: `${BASE_URL}/teams`,
   },
   COMPANY: {
     GET_PROFILE: `${BASE_URL}/company`,

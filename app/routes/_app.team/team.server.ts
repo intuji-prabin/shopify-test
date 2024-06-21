@@ -77,7 +77,7 @@ export async function getAllTeams({
 }): Promise<TeamColumn[]> {
   const isImpersonatingCheck = await isImpersonating(request);
 
-  const url = `${ENDPOINT.CUSTOMER_LIST.GET}?customer_id=${customerId}${
+  const url = `${ENDPOINT.CUSTOMER_LIST.GET}/${customerId}${
     query ? '&search_query=' + query : ''
   }`;
 

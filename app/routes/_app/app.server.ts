@@ -10,6 +10,7 @@ import {getAccessToken, isImpersonating} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import {getNotifications} from '~/routes/_app.notification/notification.server';
 import {getCartListData} from '../_app.cart-list/cart.server';
+import {CustomerData} from '../_public.login/login.server';
 
 export interface CategoriesType {
   status: boolean;
@@ -68,7 +69,7 @@ export const getCagetoryList = async (context: any) => {
 
 export const getSessionData = async (
   request: Request,
-  userDetails: any,
+  userDetails: CustomerData,
   context: any,
 ) => {
   const isImpersonatingCheck = await isImpersonating(request);

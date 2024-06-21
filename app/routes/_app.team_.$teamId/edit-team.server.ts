@@ -4,8 +4,8 @@ import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.cons
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {getAccessToken, isImpersonating} from '~/lib/utils/auth-session.server';
-import {encrypt} from '~/lib/utils/cryptoUtils';
 import {EditTeamFormType} from '~/routes/_app.team_.add/team-form';
+import {CustomerData} from '../_public.login/login.server';
 
 type CustomerDetails = Omit<EditTeamFormType, 'profileImage'> & {
   profileImageUrl: string;
@@ -23,6 +23,7 @@ type EditTeamParams = {
   userRole: string;
   customerId: string;
   file: File | undefined;
+  userDetails: CustomerData;
 };
 
 export type CustomerResponse = {
@@ -73,6 +74,7 @@ export async function updateTeam({
   phoneNumber,
   customerId,
   file,
+  userDetails,
 }: EditTeamParams) {
   // console.log('addressId', addressId);
 
@@ -88,14 +90,17 @@ export async function updateTeam({
   const accessTocken = (await getAccessToken(context)) as string;
   const isImpersonatingCheck = await isImpersonating(request);
 
-  const results: any = await fetch(ENDPOINT.CUSTOMER.CREATE, {
-    method: AllowedHTTPMethods.PUT,
-    body: formData,
-    headers: {
-      Authorization: accessTocken,
-      'Impersonate-Enable': isImpersonatingCheck,
+  const results: any = await fetch(
+    `${ENDPOINT.CUSTOMER.CREATE}/${userDetails.id}`,
+    {
+      method: AllowedHTTPMethods.PUT,
+      body: formData,
+      headers: {
+        Authorization: accessTocken,
+        'Impersonate-Enable': isImpersonatingCheck,
+      },
     },
-  });
+  );
 
   const response = await results.json();
 

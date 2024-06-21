@@ -57,7 +57,7 @@ export async function getCustomerByEmail({
 }) {
   const customerResponse = await useFetch<CustomerResponse>({
     method: AllowedHTTPMethods.GET,
-    url: `${ENDPOINT.CUSTOMER.GET}?email=${email}`,
+    url: `${ENDPOINT.CUSTOMER_LIST.GET}?email=${email}`,
     impersonateEnableCheck: 'false',
     context,
     accessToken,
