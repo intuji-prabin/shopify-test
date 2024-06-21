@@ -26,15 +26,10 @@ export async function addTeam({
   phoneNumber,
   request,
 }: AddTeamParams) {
-  const {storefront} = context;
   const {userDetails} = await getUserDetails(request);
 
-  const companyId = userDetails.meta.company_id.value;
   const customerId = userDetails?.id;
-  const metaParentValue = userDetails.meta.parent.value;
   const customerCode = userDetails.meta.customer_code.value;
-
-  const parentId = metaParentValue === 'null' ? customerId : metaParentValue;
 
   const formData: any = new FormData();
   formData.append('fullName', fullName);
@@ -43,21 +38,21 @@ export async function addTeam({
   formData.append('address', address);
   formData.append('userRole', userRole);
   formData.append('phoneNumber', phoneNumber);
-  formData.append('customerId', customerId);
-  formData.append('parentId', parentId);
-  formData.append('companyid', companyId);
   formData.append('customerCode', customerCode);
   const accessTocken = (await getAccessToken(context)) as string;
   const isImpersonatingCheck = await isImpersonating(request);
 
-  const results: any = await fetch(ENDPOINT.CUSTOMER.CREATE, {
-    method: AllowedHTTPMethods.POST,
-    body: formData,
-    headers: {
-      Authorization: accessTocken,
-      'Impersonate-Enable': isImpersonatingCheck,
+  const results: any = await fetch(
+    `${ENDPOINT.CUSTOMER.CREATE}/${customerId}`,
+    {
+      method: AllowedHTTPMethods.POST,
+      body: formData,
+      headers: {
+        Authorization: accessTocken,
+        'Impersonate-Enable': isImpersonatingCheck,
+      },
     },
-  });
+  );
 
   const response = await results.json();
 

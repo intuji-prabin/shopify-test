@@ -106,6 +106,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
       phoneNumber,
       customerId,
       userRole,
+      userDetails,
       file: profileImage,
     });
 

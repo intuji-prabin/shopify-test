@@ -217,6 +217,9 @@ function renderProductItem(
             >
               {product.title}
             </Link>
+            <p className="text-sm text-primary-500">
+              SKU: <span>{product.sku}</span>
+            </p>
           </figcaption>
         </figure>
       );
