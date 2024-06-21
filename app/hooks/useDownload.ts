@@ -1,14 +1,18 @@
 import {displayToast} from '~/components/ui/toast';
 
+type CustomHeaders = HeadersInit & {
+  callEncrypted?: string;
+};
 export function useDownload() {
   const handleDownload = async ({
     url,
     headers,
   }: {
     url: string;
-    headers?: HeadersInit;
+    headers?: CustomHeaders;
   }) => {
     try {
+      headers && (headers.callEncrypted = 'true');
       const response = await fetch(url, {headers});
 
       if (!response.ok) {
