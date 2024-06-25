@@ -60,15 +60,17 @@ export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
   let { userDetails } = await getUserDetails(request);
   const { session } = context;
+  const impersonateCheck = userDetails?.impersonateEnable;
+  if (!impersonateCheck) {
+    const userDetailsSession = await getUserDetailsSession(request);
+    userDetailsSession.unset(USER_DETAILS_KEY);
+    userDetails = await getCustomerByEmail({
+      context,
+      email: userDetails.email,
+    });
 
-  const userDetailsSession = await getUserDetailsSession(request);
-  userDetailsSession.unset(USER_DETAILS_KEY);
-  userDetails = await getCustomerByEmail({
-    context,
-    email: userDetails.email,
-  });
-
-  userDetailsSession.set(USER_DETAILS_KEY, userDetails);
+    userDetailsSession.set(USER_DETAILS_KEY, userDetails);
+  }
 
   const userSessionId = session.get(USER_SESSION_ID);
 
@@ -185,7 +187,7 @@ export default function PublicPageLayout() {
           { method: 'POST', action: '/logout' },
         );
       }
-      else if(dataObject.customerId === userDetails.id && dataObject.message === ImpersonationMessage && userDetails.impersonateEnable === true && userDetails.impersonatingUser){
+      else if (dataObject.customerId === userDetails.id && dataObject.message === ImpersonationMessage && userDetails.impersonateEnable === true && userDetails.impersonatingUser) {
         submit(
           { message: dataObject.message },
           { method: 'POST', action: '/logout' },
@@ -312,7 +314,7 @@ export default function PublicPageLayout() {
     }
   }, [hasNotificationBeenUpdated]);
 
- 
+
   return (
     <AbilityContext.Provider value={ability}>
       <Layout
