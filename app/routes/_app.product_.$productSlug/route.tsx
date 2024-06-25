@@ -98,12 +98,6 @@ export const loader = async ({
 }: LoaderFunctionArgs) => {
   try {
     const { productSlug } = params;
-    const sessionCartInfo = await context.session.get(CART_SESSION_KEY);
-    if (sessionCartInfo) {
-      const cartLists = await context.storefront.query(GET_CART_LIST, {
-        variables: { cartId: sessionCartInfo?.cartId },
-      });
-    }
     const { userDetails } = await getUserDetails(request);
     const impersonateEnableCheck = await isImpersonating(request);
     const sessionAccessTocken = (await getAccessToken(context)) as string;

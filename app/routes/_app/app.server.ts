@@ -156,46 +156,6 @@ export const getSessionCart = async (
   }
   const accessTocken = (await getAccessToken(context)) as string;
 
-  if (isImpersonatingCheck === 'true') {
-    let sessionCartInfo = cartResults?.payload?.sessionId;
-    const cartList = await getCartListData(context, sessionCartInfo);
-    const customerFinalId = cartList?.cart?.buyerIdentity?.customer?.id.replace(
-      'gid://shopify/Customer/',
-      '',
-    );
-    const cartLine = cartList?.cart?.lines?.nodes;
-    let productList = [] as any;
-    if (cartLine.length < 1) {
-      return {productList: []};
-    }
-    cartLine.map((items: any) => {
-      const merchandise = items?.merchandise;
-      const variantId = merchandise?.id.replace(
-        'gid://shopify/ProductVariant/',
-        '',
-      );
-      const productId = merchandise?.product?.id.replace(
-        'gid://shopify/Product/',
-        '',
-      );
-      productList.push({
-        productId,
-        variantId,
-        lineId: items?.id,
-        quantity: items?.quantity,
-        uom: items?.attributes.filter(
-          (att: any) => att?.key == 'selectedUOM',
-        )?.[0]?.value,
-      });
-    });
-    return {
-      cartId: cartResults?.payload?.sessionId,
-      customerId: customerFinalId,
-      accessTocken: accessTocken,
-      lineItems: cartLine.length || 0,
-      cartItems: productList,
-    };
-  }
   const sessionResponse = await context.storefront.mutate(
     UPDATE_CART_ACCESS_TOCKEN,
     {
