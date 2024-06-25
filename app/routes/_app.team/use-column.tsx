@@ -71,10 +71,10 @@ export function useColumn({ currentUser, isImpersonatingCheck }: { currentUser: 
           header: 'Department',
           enableSorting: false,
           cell: (info) => {
-            const department = info.row.original.department;
+            const department = info.row.original.department.title;
             return (
               <p className="capitalize text-grey-900 text-lg leading-5.5">
-                {department.title}
+                {department && department.split(' ')[0]}
               </p>
             );
           },
