@@ -3,7 +3,8 @@ import {
     isRouteErrorResponse,
     json,
     useLoaderData,
-    useRouteError
+    useRouteError,
+    useSearchParams
 } from '@remix-run/react';
 import { LoaderFunctionArgs, MetaFunction } from '@shopify/remix-oxygen';
 import { BackButton } from '~/components/ui/back-button';
@@ -19,6 +20,10 @@ import { getAllStatements } from './statements.server';
 import { useColumn } from './use-column';
 import { AuthError } from '~/components/ui/authError';
 import { encrypt } from '~/lib/utils/cryptoUtils';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~/components/ui/sheet';
+import { HorizontalHamburgerIcon } from '~/components/icons/hamburgerIcon';
+import { Separator } from '~/components/ui/separator';
+import StatementsFilterForm from './filter-form';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Statement List' }];
@@ -36,10 +41,13 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 
     const customerId = userDetails.id;
 
+    const { searchParams } = new URL(request.url);
+
     const { statementList, totalStatement } = await getAllStatements({
         context,
         request,
         customerId,
+        searchParams
     });
 
     return json({
@@ -54,9 +62,19 @@ export default function StatementsPage() {
     const { statementList, totalStatement, encryptedSession, impersonateEnableCheck } =
         useLoaderData<typeof loader>();
 
+    const [searchParams] = useSearchParams();
+
     const { columns } = useColumn(encryptedSession, impersonateEnableCheck);
 
     const { table } = useTable(columns, statementList, 'statementId');
+
+    let isFilterApplied = false;
+
+    for (const [key, value] of searchParams.entries()) {
+        if (key === '__rvfInternalFormId' && value === 'statement-filter-form') {
+            isFilterApplied = true;
+        }
+    }
 
     return (
         <section className="container">
@@ -68,6 +86,27 @@ export default function StatementsPage() {
                         Statements
                     </BreadcrumbItem>
                 </Breadcrumb>
+            </div>
+
+            <div className="flex flex-col gap-2 p-4 border-b bg-neutral-white sm:flex-row sm:justify-between sm:items-center">
+                <Sheet>
+                    <SheetTrigger asChild>
+                        <Button variant="ghost" className="relative border-grey-50">
+                            <HorizontalHamburgerIcon />
+                            Filter
+                            {isFilterApplied && (
+                                <div className="bg-primary-500 h-3 w-3 rounded-full absolute top-0.5 right-0.5"></div>
+                            )}
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent className="p-0">
+                        <SheetHeader className="px-4 py-6">
+                            <SheetTitle className="text-3xl font-bold">Filter</SheetTitle>
+                        </SheetHeader>
+                        <Separator className="" />
+                        <StatementsFilterForm />
+                    </SheetContent>
+                </Sheet>
             </div>
 
             <DataTable table={table} columns={columns} />

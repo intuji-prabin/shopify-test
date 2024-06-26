@@ -31,7 +31,8 @@ import { getProductGroup } from '~/routes/_app.pending-order/pending-order.serve
 import {
   getCagetoryList,
   getNewNotificationCount,
-  getSessionCart
+  getSessionCart,
+  getSessionData
 } from '~/routes/_app/app.server';
 import { CustomerData, getCustomerByEmail } from '~/routes/_public.login/login.server';
 import { getFooter } from './footer.server';
@@ -59,6 +60,8 @@ interface Data {
 export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
   let { userDetails } = await getUserDetails(request);
+  // to set the total wishlist count in the header
+  await getSessionData(request, userDetails, context);
   const { session } = context;
   const impersonateCheck = userDetails?.impersonateEnable;
   if (!impersonateCheck) {
