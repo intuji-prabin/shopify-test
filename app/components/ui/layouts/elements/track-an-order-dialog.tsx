@@ -1,10 +1,10 @@
-import {Link, useSubmit} from '@remix-run/react';
-import {withZod} from '@remix-validated-form/with-zod';
-import {useState} from 'react';
-import {ValidatedForm, useIsValid} from 'remix-validated-form';
-import {z} from 'zod';
-import {Ordertrack} from '~/components/icons/orderStatus';
-import {Button} from '~/components/ui/button';
+import { Link, useSubmit } from '@remix-run/react';
+import { withZod } from '@remix-validated-form/with-zod';
+import { useState } from 'react';
+import { ValidatedForm, useIsValid } from 'remix-validated-form';
+import { z } from 'zod';
+import { Ordertrack } from '~/components/icons/orderStatus';
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -14,12 +14,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/ui/dialog';
-import {TRACK_AN_ORDERID} from '~/lib/constants/general.constant';
-import {Routes} from '~/lib/constants/routes.constent';
-import {ConfirmationInput} from '~/routes/_app.team/confirmation-form';
-import {useHamburgerMenu} from './HamburgerMenuContext';
-import {Label} from '~/components/ui/label';
-import {Can} from '~/lib/helpers/Can';
+import { TRACK_AN_ORDERID } from '~/lib/constants/general.constant';
+import { Routes } from '~/lib/constants/routes.constent';
+import { ConfirmationInput } from '~/routes/_app.team/confirmation-form';
+import { useHamburgerMenu } from './HamburgerMenuContext';
+import { Label } from '~/components/ui/label';
+import { Can } from '~/lib/helpers/Can';
 import Distance from '~/components/icons/distance';
 import ArrowRight from '~/components/icons/arrowRight';
 
@@ -27,7 +27,7 @@ const TrackAnOrderFormValidator = z.object({
   trackAnOrderId: z
     .string()
     .trim()
-    .min(1, {message: 'Purchase Order Number is required'}),
+    .min(1, { message: 'Purchase Order Number is required' }),
 });
 
 export const TrackAnOrderSchemaValidator = withZod(TrackAnOrderFormValidator);
@@ -41,7 +41,7 @@ export function TrackAnOrderButton({
 }: {
   trackAnOrderHome?: boolean;
 }) {
-  const {toggleMenu} = useHamburgerMenu();
+  const { toggleMenu } = useHamburgerMenu();
   const [open, setOpen] = useState(false);
   const isConfirm = useIsValid('trackOrder-form');
   const submit = useSubmit();
@@ -109,7 +109,7 @@ export function TrackAnOrderButton({
             >
               Track Order
             </Button>
-            <p className="text-sm font-medium leading-none text-grey-800 pt-4 !m-0">
+            <p className="text-sm font-medium leading-none text-grey-800 pt-4 !m-0 text-center">
               Don’t know your Purchase Order Number, Go to your{' '}
               <DialogClose asChild>
                 <Link to={Routes.ORDERS} className="text-primary-500">
