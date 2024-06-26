@@ -158,6 +158,10 @@ const formattedProductPrice = async (
   return priceList;
 };
 
+function capitalizeStringRegex(str: string) {
+  return str.replace(/./g, (char) => char.toUpperCase());
+}
+
 async function getSearchProduct({
   request,
   limit = 6,
@@ -193,6 +197,9 @@ async function getSearchProduct({
     searchData.predictiveSearch,
     customerId,
   );
+  const productsData = results?.[0]?.items;
+  const finalProducts = productsData.filter((list: NormalizedPredictiveSearchResultItem) => capitalizeStringRegex(list?.title)?.includes(capitalizeStringRegex(searchTerm)) || capitalizeStringRegex(list?.sku)?.includes(capitalizeStringRegex(searchTerm)));
+  results[0].items = finalProducts;
 
   return results;
 }

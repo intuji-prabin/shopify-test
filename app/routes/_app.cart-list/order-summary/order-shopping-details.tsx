@@ -206,22 +206,24 @@ export function PromoCode({ promoCodeApplied, discountMessage, fetcher }: { prom
               setPromoError("");
             }}
           />
-          <Button
-            variant="secondary"
-            className="w-full sm:min-w-[99px] sm:w-auto"
-            type='submit'
-            value={promoCodeApplied ? "promo_code_delete" : "promo_code"}
-            name="action"
-            disabled={fetcher.state === "submitting" || fetcher.state === "loading"}
-          >
-            {fetcher.state === "submitting" || fetcher.state === "loading" ?
-              <div className="flex items-center justify-center h-full gap-2">
-                <span>{promoCodeApplied ? "Removing" : "Applying"}</span>
-              </div> :
-              <>{promoCodeApplied ? "Remove" : "Apply"}</>
-            }
-          </Button>
-          {fetcher.state === "submitting" || fetcher.state === "loading" ? <Loader /> : null}
+          <div className='flex items-center gap-1'>
+            <Button
+              variant="secondary"
+              className="w-full sm:min-w-[99px] sm:w-auto"
+              type='submit'
+              value={promoCodeApplied ? "promo_code_delete" : "promo_code"}
+              name="action"
+              disabled={fetcher.state === "submitting" || fetcher.state === "loading"}
+            >
+              {fetcher.state === "submitting" || fetcher.state === "loading" ?
+                <div className="flex items-center justify-center h-full gap-2">
+                  <span>{promoCodeApplied ? "Removing" : "Applying"}</span>
+                </div> :
+                <>{promoCodeApplied ? "Remove" : "Apply"}</>
+              }
+            </Button>
+            {fetcher.state === "submitting" || fetcher.state === "loading" ? <Loader /> : null}
+          </div>
         </div>
       </fetcher.Form>
       {(fetcher.state === "idle" && promoError) || (promoCodeApplied && promoError !== "") ?
