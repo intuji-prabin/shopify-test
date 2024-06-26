@@ -197,7 +197,7 @@ export function ItemsColumn({
         <img
           src={featuredImage ?? DEFAULT_IMAGE.IMAGE}
           alt="featured"
-          className="object-contain object-center h-full"
+          className="object-contain w-14 h-14"
         />
       </figure>
       <figcaption className="flex flex-col gap-y-1 w-[calc(100%_-_88px)] text-wrap">

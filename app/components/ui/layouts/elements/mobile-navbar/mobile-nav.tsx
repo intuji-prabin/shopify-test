@@ -64,7 +64,7 @@ export default function MobileNav({
         </div>
 
         <div
-          className={`bg-primary-500 transition-opacity ease-in-out delay-75 duration-150 mobile-nav z-[1000] bottom-0 inset-x-0 top-24 absolute w-full
+          className={`bg-primary-500 transition-opacity h-[calc(100vh_-_96px)] ease-in-out delay-75 duration-150 mobile-nav z-[1000] bottom-0 inset-x-0 top-24 absolute w-full
         ${isOpen ? 'block' : 'hidden'}  `}
         >
           <div className='flex flex-col gap-16 justify-between p-4 overflow-y-auto h-[calc(100vh_-_96px)]'>
