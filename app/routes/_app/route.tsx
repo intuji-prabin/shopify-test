@@ -15,9 +15,9 @@ import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav
 import TopHeader from '~/components/ui/layouts/top-header';
 import { useMediaQuery } from '~/hooks/useMediaQuery';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { ImpersonationMessage, UserRoleChangedMessage } from '~/lib/constants/event.toast.message';
 import { EVENTS } from '~/lib/constants/events.contstent';
 import { Routes } from '~/lib/constants/routes.constent';
-import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
 import { AbilityContext, DEFAULT_ABILITIES } from '~/lib/helpers/Can';
 import { defineAbilitiesForUser } from '~/lib/helpers/roles';
 import { USER_SESSION_ID, isAuthenticate } from '~/lib/utils/auth-session.server';
@@ -27,17 +27,13 @@ import {
   setErrorMessage,
 } from '~/lib/utils/toast-session.server';
 import { USER_DETAILS_KEY, getUserDetails, getUserDetailsSession } from '~/lib/utils/user-session.server';
-import { getProductGroup } from '~/routes/_app.pending-order/pending-order.server';
 import {
   getCagetoryList,
-  getNewNotificationCount,
-  getSessionCart,
   getSessionData
 } from '~/routes/_app/app.server';
 import { CustomerData, getCustomerByEmail } from '~/routes/_public.login/login.server';
-import { getFooter } from './footer.server';
 import { AuthError } from '../../components/ui/authError';
-import { ImpersonationMessage, UserRoleChangedMessage } from '~/lib/constants/event.toast.message';
+import { getFooter } from './footer.server';
 
 export interface Payload {
   type: 'cart' | 'wishlist' | 'productGroup ' | 'notification';
