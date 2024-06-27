@@ -1,15 +1,12 @@
 import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
-import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {TRACK_AN_ORDERID} from '~/lib/constants/general.constant';
 import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {generateUrlWithParams} from '~/lib/helpers/url.helper';
 import {getAccessToken, isImpersonating} from '~/lib/utils/auth-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
 import {getNotifications} from '~/routes/_app.notification/notification.server';
-import {getCartListData} from '../_app.cart-list/cart.server';
 import {CustomerData} from '../_public.login/login.server';
 
 export interface CategoriesType {
@@ -70,24 +67,45 @@ export const getCagetoryList = async (context: any) => {
 export const getSessionData = async (
   request: Request,
   userDetails: CustomerData,
-  context: any,
+  context: AppLoadContext,
 ) => {
   const isImpersonatingCheck = await isImpersonating(request);
-  const cartResults = await useFetch<any>({
+  const sessionData = await useFetch<any>({
     method: AllowedHTTPMethods.GET,
     url: `${ENDPOINT.AUTH.SESSION}/${userDetails?.id}`,
     impersonateEnableCheck: isImpersonatingCheck,
     context,
   });
-  if (!cartResults?.status) {
+  if (!sessionData?.status) {
     return false;
   }
+  const sessionDataResponse = sessionData?.payload;
+  // await context.session.set(
+  //   WISHLIST_SESSION_KEY,
+  //   sessionDataResponse?.wishlist,
+  // );
 
-  await context.session.set(
-    WISHLIST_SESSION_KEY,
-    cartResults?.payload?.wishlist,
+  const accessTocken = (await getAccessToken(context)) as string;
+
+  const sessionResponse = await context.storefront.mutate(
+    UPDATE_CART_ACCESS_TOCKEN,
+    {
+      variables: {
+        buyerIdentity: {
+          customerAccessToken: accessTocken,
+        },
+        cartId: sessionDataResponse?.cartSessionId,
+      },
+    },
   );
-  return true;
+
+  return {
+    cartDetails: formateCartSessionResponse(sessionResponse, accessTocken),
+    productGroup: sessionDataResponse?.productGroup,
+    notification: sessionDataResponse?.notification,
+    wishlist: sessionDataResponse?.wishlist,
+  };
+  // return true;
 };
 
 const formateCategory = async (categoryesponse: any) => {

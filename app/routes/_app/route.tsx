@@ -60,8 +60,8 @@ interface Data {
 export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
   let { userDetails } = await getUserDetails(request);
-  // to set the total wishlist count in the header
-  await getSessionData(request, userDetails, context);
+  // to set or get the total wishlist, pending order, cart and notification count in the header
+  const sessionData: any = await getSessionData(request, userDetails, context);
   const { session } = context;
   const impersonateCheck = userDetails?.impersonateEnable;
   if (!impersonateCheck) {
@@ -71,7 +71,6 @@ export async function loader({ request, context }: ActionFunctionArgs) {
       context,
       email: userDetails.email,
     });
-
     userDetailsSession.set(USER_DETAILS_KEY, userDetails);
   }
 
@@ -82,22 +81,15 @@ export async function loader({ request, context }: ActionFunctionArgs) {
 
   const messageSession = await getMessageSession(request);
 
-  let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
+  const productGroup = sessionData?.productGroup;
 
-  const productGroup = await getProductGroup({ context, request, customerId: userDetails.id });
+  const totalNotifications = sessionData?.notification;
 
-  const customerId = userDetails.id;
-
-  const { totalNotifications } = await getNewNotificationCount({
-    context,
-    customerId,
-    request,
-  });
+  const wishlistSession = sessionData?.wishlist;
 
   const headers = [] as any;
 
-  const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY);
-  sessionCartInfo = await getSessionCart(request, userDetails?.id, context);
+  const sessionCartInfo = sessionData?.cartDetails;
   if (sessionCartInfo) {
     const finalCartSession = {
       cartId: sessionCartInfo?.cartId,
@@ -111,8 +103,6 @@ export async function loader({ request, context }: ActionFunctionArgs) {
     setErrorMessage(messageSession, 'Category not found');
     headers.push(['Set-Cookie', await messageCommitSession(messageSession)]);
   }
-  // console.log("userDetails wwsdwsd", userDetails)
-
 
   return json(
     {
@@ -120,8 +110,8 @@ export async function loader({ request, context }: ActionFunctionArgs) {
       userDetails,
       sessionCartInfo,
       wishlistSession,
-      pendingOrderCount: productGroup?.length ?? 0,
-      notificationCount: totalNotifications,
+      pendingOrderCount: productGroup ?? 0,
+      notificationCount: totalNotifications ?? 0,
       userSessionId,
       footer,
     },
