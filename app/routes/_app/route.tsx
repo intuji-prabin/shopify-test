@@ -15,9 +15,9 @@ import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav
 import TopHeader from '~/components/ui/layouts/top-header';
 import { useMediaQuery } from '~/hooks/useMediaQuery';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { ImpersonationMessage, UserRoleChangedMessage } from '~/lib/constants/event.toast.message';
 import { EVENTS } from '~/lib/constants/events.contstent';
 import { Routes } from '~/lib/constants/routes.constent';
-import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
 import { AbilityContext, DEFAULT_ABILITIES } from '~/lib/helpers/Can';
 import { defineAbilitiesForUser } from '~/lib/helpers/roles';
 import { USER_SESSION_ID, isAuthenticate } from '~/lib/utils/auth-session.server';
@@ -27,17 +27,13 @@ import {
   setErrorMessage,
 } from '~/lib/utils/toast-session.server';
 import { USER_DETAILS_KEY, getUserDetails, getUserDetailsSession } from '~/lib/utils/user-session.server';
-import { getProductGroup } from '~/routes/_app.pending-order/pending-order.server';
 import {
   getCagetoryList,
-  getNewNotificationCount,
-  getSessionCart,
   getSessionData
 } from '~/routes/_app/app.server';
 import { CustomerData, getCustomerByEmail } from '~/routes/_public.login/login.server';
-import { getFooter } from './footer.server';
 import { AuthError } from '../../components/ui/authError';
-import { ImpersonationMessage, UserRoleChangedMessage } from '~/lib/constants/event.toast.message';
+import { getFooter } from './footer.server';
 
 export interface Payload {
   type: 'cart' | 'wishlist' | 'productGroup ' | 'notification';
@@ -60,8 +56,8 @@ interface Data {
 export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
   let { userDetails } = await getUserDetails(request);
-  // to set the total wishlist count in the header
-  await getSessionData(request, userDetails, context);
+  // to set or get the total wishlist, pending order, cart and notification count in the header
+  const sessionData: any = await getSessionData(request, userDetails, context);
   const { session } = context;
   const impersonateCheck = userDetails?.impersonateEnable;
   if (!impersonateCheck) {
@@ -71,7 +67,6 @@ export async function loader({ request, context }: ActionFunctionArgs) {
       context,
       email: userDetails.email,
     });
-
     userDetailsSession.set(USER_DETAILS_KEY, userDetails);
   }
 
@@ -82,22 +77,15 @@ export async function loader({ request, context }: ActionFunctionArgs) {
 
   const messageSession = await getMessageSession(request);
 
-  let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
+  const productGroup = sessionData?.productGroup;
 
-  const productGroup = await getProductGroup({ context, request, customerId: userDetails.id });
+  const totalNotifications = sessionData?.notification;
 
-  const customerId = userDetails.id;
-
-  const { totalNotifications } = await getNewNotificationCount({
-    context,
-    customerId,
-    request,
-  });
+  const wishlistSession = sessionData?.wishlist;
 
   const headers = [] as any;
 
-  const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY);
-  sessionCartInfo = await getSessionCart(request, userDetails?.id, context);
+  const sessionCartInfo = sessionData?.cartDetails;
   if (sessionCartInfo) {
     const finalCartSession = {
       cartId: sessionCartInfo?.cartId,
@@ -111,8 +99,6 @@ export async function loader({ request, context }: ActionFunctionArgs) {
     setErrorMessage(messageSession, 'Category not found');
     headers.push(['Set-Cookie', await messageCommitSession(messageSession)]);
   }
-  // console.log("userDetails wwsdwsd", userDetails)
-
 
   return json(
     {
@@ -120,8 +106,8 @@ export async function loader({ request, context }: ActionFunctionArgs) {
       userDetails,
       sessionCartInfo,
       wishlistSession,
-      pendingOrderCount: productGroup?.length ?? 0,
-      notificationCount: totalNotifications,
+      pendingOrderCount: productGroup ?? 0,
+      notificationCount: totalNotifications ?? 0,
       userSessionId,
       footer,
     },
