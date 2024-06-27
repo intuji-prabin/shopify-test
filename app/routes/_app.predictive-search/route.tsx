@@ -197,9 +197,11 @@ async function getSearchProduct({
     searchData.predictiveSearch,
     customerId,
   );
-  const productsData = results?.[0]?.items;
-  const finalProducts = productsData.filter((list: NormalizedPredictiveSearchResultItem) => capitalizeStringRegex(list?.title)?.includes(capitalizeStringRegex(searchTerm)) || capitalizeStringRegex(list?.sku)?.includes(capitalizeStringRegex(searchTerm)));
-  results[0].items = finalProducts;
+  if (results?.length > 0) {
+    const productsData = results?.[0]?.items;
+    const finalProducts = productsData?.filter((list: NormalizedPredictiveSearchResultItem) => capitalizeStringRegex(list?.title)?.includes(capitalizeStringRegex(searchTerm)) || capitalizeStringRegex(list?.sku)?.includes(capitalizeStringRegex(searchTerm)));
+    results[0].items = finalProducts;
+  }
 
   return results;
 }
