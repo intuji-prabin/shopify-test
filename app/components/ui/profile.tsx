@@ -61,7 +61,7 @@ const Profile = ({ profileInfo }: PropType) => {
                   <div className="flex flex-wrap relative w-full xs:w-auto items-center gap-1 xs:after:content-[''] xs:after:bg-grey-100 xs:after:w-px xs:after:h-6 xs:after:absolute xs:after:-right-3 justify-center xs:justify-start">
                     <Office />
                     <p className="text-base lg:text-lg lg:leading-[22px] font-medium text-grey-900 capitalize">
-                      {profileInfo?.meta?.company_id?.name}
+                      {profileInfo?.meta?.company_id?.name.split('-')[0]}
                     </p>
                   </div>
                 }

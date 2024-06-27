@@ -1,15 +1,11 @@
 import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
-import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {TRACK_AN_ORDERID} from '~/lib/constants/general.constant';
-import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {generateUrlWithParams} from '~/lib/helpers/url.helper';
 import {getAccessToken, isImpersonating} from '~/lib/utils/auth-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
 import {getNotifications} from '~/routes/_app.notification/notification.server';
-import {getCartListData} from '../_app.cart-list/cart.server';
 import {CustomerData} from '../_public.login/login.server';
 
 export interface CategoriesType {
@@ -54,7 +50,7 @@ export const getOrderId = async (
 export const getCagetoryList = async (context: any) => {
   try {
     const {storefront} = context;
-    const catList = await storefront.query(GET_CATEGORY_QUEYR);
+    const catList = await storefront.query(GET_CATEGORY_QUERY);
     const formateCategories = await formateCategory(catList);
     return formateCategories;
   } catch (error) {
@@ -70,24 +66,40 @@ export const getCagetoryList = async (context: any) => {
 export const getSessionData = async (
   request: Request,
   userDetails: CustomerData,
-  context: any,
+  context: AppLoadContext,
 ) => {
   const isImpersonatingCheck = await isImpersonating(request);
-  const cartResults = await useFetch<any>({
+  const sessionData = await useFetch<any>({
     method: AllowedHTTPMethods.GET,
     url: `${ENDPOINT.AUTH.SESSION}/${userDetails?.id}`,
     impersonateEnableCheck: isImpersonatingCheck,
     context,
   });
-  if (!cartResults?.status) {
+  if (!sessionData?.status) {
     return false;
   }
+  const sessionDataResponse = sessionData?.payload;
 
-  await context.session.set(
-    WISHLIST_SESSION_KEY,
-    cartResults?.payload?.wishlist,
+  const accessTocken = (await getAccessToken(context)) as string;
+
+  const sessionResponse = await context.storefront.mutate(
+    UPDATE_CART_ACCESS_TOCKEN,
+    {
+      variables: {
+        buyerIdentity: {
+          customerAccessToken: accessTocken,
+        },
+        cartId: sessionDataResponse?.cartSessionId,
+      },
+    },
   );
-  return true;
+
+  return {
+    cartDetails: formateCartSessionResponse(sessionResponse, accessTocken),
+    productGroup: sessionDataResponse?.productGroup,
+    notification: sessionDataResponse?.notification,
+    wishlist: sessionDataResponse?.wishlist,
+  };
 };
 
 const formateCategory = async (categoryesponse: any) => {
@@ -135,39 +147,6 @@ const formateCategory = async (categoryesponse: any) => {
         : [],
     }));
   return finalCategories;
-};
-
-export const getSessionCart = async (
-  request: Request,
-  customerId: string,
-  context: any,
-) => {
-  const isImpersonatingCheck = await isImpersonating(request);
-
-  const cartResults = await useFetch<any>({
-    method: AllowedHTTPMethods.GET,
-    url: `${ENDPOINT.PRODUCT.CART}/${customerId}`,
-    impersonateEnableCheck: isImpersonatingCheck,
-    context,
-  });
-
-  if (!cartResults?.status) {
-    return false;
-  }
-  const accessTocken = (await getAccessToken(context)) as string;
-
-  const sessionResponse = await context.storefront.mutate(
-    UPDATE_CART_ACCESS_TOCKEN,
-    {
-      variables: {
-        buyerIdentity: {
-          customerAccessToken: accessTocken,
-        },
-        cartId: cartResults?.payload?.sessionId,
-      },
-    },
-  );
-  return formateCartSessionResponse(sessionResponse, accessTocken);
 };
 
 const formateCartSessionResponse = (
@@ -238,7 +217,7 @@ export async function getNewNotificationCount({
   return {totalNotifications};
 }
 
-const GET_CATEGORY_QUEYR = `query getCollection {
+const GET_CATEGORY_QUERY = `query getCollection {
   collections(first :  250 ) {
       nodes {
           id
