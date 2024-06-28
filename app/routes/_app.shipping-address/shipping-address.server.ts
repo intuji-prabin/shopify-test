@@ -53,6 +53,7 @@ export async function getAllCompanyShippingAddresses(
       }
       throw new Error(response.message);
     }
+    return response.payload;
   } catch (error) {
     console.log('first error', error);
     if (error instanceof Error) {
