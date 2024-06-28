@@ -34,6 +34,7 @@ export async function getAllCompanyShippingAddresses(
   context: AppLoadContext,
   request: Request,
   customerId: string,
+  cartList: boolean = false,
 ) {
   const isImpersonatingCheck = await isImpersonating(request);
   try {
@@ -46,10 +47,12 @@ export async function getAllCompanyShippingAddresses(
       context,
     });
     if (!response.status) {
+      // this case is for the cart page if shipping address is not added
+      if (cartList) {
+        return null;
+      }
       throw new Error(response.message);
     }
-
-    return response.payload;
   } catch (error) {
     console.log('first error', error);
     if (error instanceof Error) {
