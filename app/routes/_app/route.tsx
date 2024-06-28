@@ -56,7 +56,7 @@ interface Data {
 export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
   let { userDetails } = await getUserDetails(request);
-  // to set or get the total wishlist, pending order, cart and notification count in the header
+  // to get the total wishlist, pending order, cart and notification count in the header
   const sessionData: any = await getSessionData(request, userDetails, context);
   const { session } = context;
   const impersonateCheck = userDetails?.impersonateEnable;

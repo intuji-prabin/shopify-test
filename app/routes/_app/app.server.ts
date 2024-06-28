@@ -81,21 +81,26 @@ export const getSessionData = async (
   const sessionDataResponse = sessionData?.payload;
 
   const accessTocken = (await getAccessToken(context)) as string;
-
-  const sessionResponse = await context.storefront.mutate(
-    UPDATE_CART_ACCESS_TOCKEN,
-    {
-      variables: {
-        buyerIdentity: {
-          customerAccessToken: accessTocken,
+  let sessionResponse = null;
+  if (sessionDataResponse?.cartSessionId && accessTocken) {
+    sessionResponse = await context.storefront.mutate(
+      UPDATE_CART_ACCESS_TOCKEN,
+      {
+        variables: {
+          buyerIdentity: {
+            customerAccessToken: accessTocken,
+          },
+          cartId: sessionDataResponse?.cartSessionId,
         },
-        cartId: sessionDataResponse?.cartSessionId,
       },
-    },
-  );
+    );
+  }
 
   return {
-    cartDetails: formateCartSessionResponse(sessionResponse, accessTocken),
+    cartDetails:
+      sessionDataResponse?.cartSessionId &&
+      accessTocken &&
+      formateCartSessionResponse(sessionResponse, accessTocken),
     productGroup: sessionDataResponse?.productGroup,
     notification: sessionDataResponse?.notification,
     wishlist: sessionDataResponse?.wishlist,
