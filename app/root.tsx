@@ -9,7 +9,7 @@ import {
   useLoaderData,
   useMatches,
   useRouteError,
-  type ShouldRevalidateFunction,
+  type ShouldRevalidateFunction
 } from '@remix-run/react';
 import { useNonce } from '@shopify/hydrogen';
 import {
@@ -32,6 +32,7 @@ import tailwindStyles from '~/styles/tailwind.css';
 import favicon from '../public/logo_main.svg';
 import { PageNotFound } from './components/ui/page-not-found';
 import { useGlobalLoader } from './hooks/useGlobalLoader';
+import { useWindowFocusRevalidator } from './hooks/useWindowFocusRevalidator';
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
  */
@@ -119,6 +120,9 @@ export default function App() {
         throw new Error(`${type} is not handled`);
     }
   }, [toastMessage]);
+
+  useWindowFocusRevalidator();
+
   return (
     <html lang="en">
       <head>
