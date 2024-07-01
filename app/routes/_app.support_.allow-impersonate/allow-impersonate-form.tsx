@@ -6,7 +6,7 @@ import { Button } from '~/components/ui/button';
 import { TextAreaInput } from '~/components/ui/text-area-input';
 import { Routes } from '~/lib/constants/routes.constent';
 import { Switch } from '~/components/ui/switch';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const ImpersonateFormFieldSchema = z.object({
   reason: z.string().max(900).trim().optional(),
@@ -21,22 +21,27 @@ export type ImpersonateFormType = z.infer<typeof ImpersonateFormFieldSchema>;
 export type ImpersonateFormFieldNameType = keyof ImpersonateFormType;
 
 export function AllowImpersonateForm({
-  isImpersonateActive,
+  defaultValues
 }: {
-  isImpersonateActive: boolean;
+  defaultValues: {
+    impersonateActive: boolean;
+    reason: string;
+  };
 }) {
+
   const isSubmitting = useIsSubmitting('impersonate-form');
-  const [isActive, setIsActive] = useState(isImpersonateActive);
+  const [isActive, setIsActive] = useState(defaultValues.impersonateActive);
 
   const handleActiveChange = () =>
     setIsActive((previousState) => !previousState);
-
+  console.log("first", defaultValues)
   return (
     <div className="grid gap-6 p-6 bg-neutral-white sm:grid-cols-2">
       <div>
         <ValidatedForm
           method="POST"
           id="impersonate-form"
+          defaultValues={defaultValues}
           validator={ImpersonateFormFieldValidator}
         >
           <label htmlFor="allow-impersonate">
@@ -48,12 +53,14 @@ export function AllowImpersonateForm({
             checked={isActive}
             onCheckedChange={handleActiveChange}
           />
-          <TextAreaInput
-            label="Reason to Impersonate"
-            name="reason"
-            placeholder="Reason here"
-          />
-          <div className="flex items-center space-x-4">
+          {isActive &&
+            <TextAreaInput
+              label="Reason to Impersonate"
+              name="reason"
+              placeholder="Reason here"
+            />
+          }
+          <div className={`flex items-center space-x-4 ${!isActive && "mt-5"}`}>
             <Button
               type="submit"
               variant="primary"

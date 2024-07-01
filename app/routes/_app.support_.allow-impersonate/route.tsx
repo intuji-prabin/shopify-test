@@ -1,12 +1,22 @@
 import {
+  isRouteErrorResponse,
+  useLoaderData,
+  useRouteError
+} from '@remix-run/react';
+import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   json,
 } from '@remix-run/server-runtime';
+import { useEffect, useState } from 'react';
+import { setFormDefaults, validationError } from 'remix-validated-form';
+import { AuthError } from '~/components/ui/authError';
 import { BackButton } from '~/components/ui/back-button';
 import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { RouteError } from '~/components/ui/route-error';
 import { useConditionalRender } from '~/hooks/useAuthorization';
 import { Routes } from '~/lib/constants/routes.constent';
+import { AllowedHTTPMethods } from '~/lib/enums/api.enum';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import {
@@ -14,18 +24,9 @@ import {
   ImpersonateFormFieldValidator,
 } from '~/routes/_app.support_.allow-impersonate/allow-impersonate-form';
 import {
-  getImpersonateStatus,
+  getImpersonateDetails,
   updateImpersonateStatus,
 } from '~/routes/_app.support_.allow-impersonate/allow-impoersonate.server';
-import {
-  isRouteErrorResponse,
-  useLoaderData,
-  useRouteError,
-} from '@remix-run/react';
-import { validationError } from 'remix-validated-form';
-import { AllowedHTTPMethods } from '~/lib/enums/api.enum';
-import { RouteError } from '~/components/ui/route-error';
-import { AuthError } from '~/components/ui/authError';
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -34,9 +35,8 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 
   const customerId = userDetails.id.split('/').pop() as string;
 
-  const { impersonateActive } = await getImpersonateStatus(context, request, customerId);
-
-  return json({ isImpersonateActive: impersonateActive });
+  const impersonateDetails = await getImpersonateDetails(context, request, customerId);
+  return json({ impersonateDetails, ...setFormDefaults('impersonate-form', impersonateDetails) });
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -85,7 +85,13 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function AllowImpersonatePage() {
-  const { isImpersonateActive } = useLoaderData<typeof loader>();
+  const { impersonateDetails } = useLoaderData<typeof loader>();
+  console.log("impersonateDetails", impersonateDetails)
+  const [defaultValues, setDefaultValues] = useState(impersonateDetails);
+
+  useEffect(() => {
+    setDefaultValues(impersonateDetails);
+  }, [impersonateDetails]);
 
   const shouldRender = useConditionalRender('allow_impersonation');
 
@@ -111,7 +117,7 @@ export default function AllowImpersonatePage() {
           provides an efficient way to address problems without the need for
           physical presence.
         </p>
-        <AllowImpersonateForm isImpersonateActive={isImpersonateActive} />
+        <AllowImpersonateForm defaultValues={defaultValues} />
       </section>
     )
   );
