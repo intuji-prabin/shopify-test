@@ -268,6 +268,7 @@ export default function route() {
             <DataTable
               table={table}
               renderSubComponent={renderSubComponent}
+              bulkColSpan={4}
             />
           </section>
         </div>
