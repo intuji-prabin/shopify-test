@@ -34,6 +34,7 @@ import ProductTab from './productTabs';
 import { addToWishlist, removeFromWishlist } from './wishlist.server';
 import { AuthError } from '~/components/ui/authError';
 import { encrypt } from '~/lib/utils/cryptoUtils';
+import { RouteError } from '~/components/ui/route-error';
 
 interface ProductDetailType {
   productPage: string;
@@ -347,12 +348,9 @@ export function ErrorBoundary() {
       return <AuthError errorMessage={error.message} />;
     }
     return (
-      <div className="min-h-[calc(100vh_-_140px)] flex justify-center items-center">
-        <div className="text-center">
-          <h1>Opps</h1>
-          <p>{error.message}</p>
-        </div>
-      </div>
+      <div className="container">
+        <RouteError errorMessage={error.message} />
+      </div >
     );
   } else {
     return (

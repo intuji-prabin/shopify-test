@@ -60,7 +60,7 @@ export function ActionBar({
       <div className="flex items-center justify-between gap-2">
         {numberOfSelectedRows > 0 && (
           <p className="text-lg font-bold leading-[22px] text-grey-900 italic max-w-[281px] lg:max-w-[unset]">
-            {`${numberOfSelectedRows} items `}
+            {`${numberOfSelectedRows} ${numberOfSelectedRows > 1 ? 'Items' : 'Item'} `}
           </p>
         )}
         <Button onClick={handleExport}>
