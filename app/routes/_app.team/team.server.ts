@@ -78,7 +78,7 @@ export async function getAllTeams({
   const isImpersonatingCheck = await isImpersonating(request);
 
   const url = `${ENDPOINT.CUSTOMER_LIST.GET}/${customerId}${
-    query ? '&search_query=' + query : ''
+    query ? '?search_query=' + query : ''
   }`;
 
   const response = await useFetch<ResponseData>({
