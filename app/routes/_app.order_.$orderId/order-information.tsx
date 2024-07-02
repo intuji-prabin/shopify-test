@@ -16,7 +16,7 @@ export default function OrderInformation({
 }) {
   const orderNumber = [
     {
-      title: 'WMS Consignment No',
+      title: 'Warehouse Consignment No',
       value: orderInformation.consignmentNumber || 'N/A',
     },
     {

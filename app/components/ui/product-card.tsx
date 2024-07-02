@@ -178,9 +178,9 @@ function ProductCardButtons({
       <Can I="view" a="view_product_detail">
         <Link
           to={`/product/${handle}`}
-          className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600"
+          className="flex items-center justify-center w-full gap-2 p-2 px-3 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600"
         >
-          view detail
+          product details
         </Link>
       </Can>
       {visibility &&

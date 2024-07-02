@@ -33,7 +33,7 @@ export function ActionBar({
         <p className="text-lg font-bold leading-[22px] text-grey-900 italic">
           {numberOfSelectedRows === 0
             ? 'Please select items to create a group or add to cart. '
-            : `${numberOfSelectedRows} items `}
+            : `${numberOfSelectedRows} ${numberOfSelectedRows > 1 ? 'Items' : 'Item'} `}
         </p>
 
         <div className="flex gap-2">

@@ -193,7 +193,7 @@ export default function route() {
             />
             {table.getSelectedRowModel().rows.length > 0 &&
               <div className='flex items-center gap-2'>
-                <p className='text-lg italic font-bold'>{table.getSelectedRowModel().rows.length} item selected</p>
+                <p className='text-lg italic font-bold'>{table.getSelectedRowModel().rows.length} {table.getSelectedRowModel().rows.length > 1 ? "Items" : "Item"} selected</p>
                 <Can I="view" a="add_wishlist_to_cart">
                   <Button
                     variant='primary'
