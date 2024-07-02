@@ -1,7 +1,7 @@
-import {useState} from 'react';
-import {ProductLoveRed, ProductLoveWhite} from '~/components/icons/orderStatus';
-import {Button} from '~/components/ui/button';
-import {Can} from '~/lib/helpers/Can';
+import { useState } from 'react';
+import { ProductLoveRed, ProductLoveWhite } from '~/components/icons/orderStatus';
+import { Button } from '~/components/ui/button';
+import { Can } from '~/lib/helpers/Can';
 
 // Product Card Info Props
 type ProductCardInfoProps = {
@@ -126,7 +126,7 @@ export default function AlternativeProduct() {
               product_name="ProLite Auto-Darkening Welding Helmet – Terra – 100 Years Of CIGWELD Edition"
               buy_price={649.22}
               rpp_price={799.87}
-              gst_rrp={'inc.gst'}
+              gst_rrp={'Incl. GST'}
             />
           </div>
         ))}

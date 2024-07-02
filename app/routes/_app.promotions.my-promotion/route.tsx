@@ -195,7 +195,7 @@ export default function MyPromotionsPage() {
                     className="font-bold text-lg leading-5.5 italic basis-full sm:basis-auto"
                     data-cy="item-selected"
                   >
-                    {checkedPromotions.length} items selected
+                    {checkedPromotions.length} {checkedPromotions.length > 1 ? 'Items' : 'Item'} selected
                   </p>
                   <Can I="view" a="export_promotions">
                     <Button type='button' onClick={handleExport}>
@@ -214,7 +214,7 @@ export default function MyPromotionsPage() {
                 </div>
               ) : (
                 <p className="font-bold text-lg leading-5.5 italic basis-full sm:basis-auto sm:hidden">
-                  0 items selected
+                  0 Item selected
                 </p>
               )}
             </div>

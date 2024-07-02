@@ -32,7 +32,7 @@ export function SelectedProduct({
               </p>
               <div className="info-block">
                 <p className="flex items-center justify-center w-5 h-5 ">
-                  <Link to="" data-tooltip="Recommended retail price">
+                  <Link to="" data-tooltip="Recommended Retail Price">
                     <span>
                       <TooltipInfo />
                     </span>
@@ -66,7 +66,7 @@ export function SelectedProduct({
             <h3 className="italic leading-[36px] text-lg md:text-[30px] font-bold text-[#252727]">
               ${rppPrice?.toFixed(2)}
             </h3>
-            <p className="text-[14px] font-normal leading-4">(inc. GST)</p>
+            <p className="text-[14px] font-normal leading-4">(Incl. GST)</p>
           </div>
         </div>
       </div>
@@ -176,7 +176,7 @@ export default function CompareProductCardItem({
                     </p>
                     <div className="info-block">
                       <p className="flex items-center justify-center w-5 h-5 ">
-                        <Link to="" data-tooltip="Recommended retail price">
+                        <Link to="" data-tooltip="Recommended Retail Price">
                           <span>
                             <TooltipInfo />
                           </span>
@@ -213,7 +213,7 @@ export default function CompareProductCardItem({
                     ${rppPrice?.toFixed(2)}
                   </h3>
                   <p className="text-[14px] font-normal leading-4">
-                    (inc. GST)
+                    (Incl. GST)
                   </p>
                 </div>
               </div>

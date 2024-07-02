@@ -1,13 +1,13 @@
-import {useState} from 'react';
-import {Form} from '@remix-run/react';
-import {Table} from '@tanstack/react-table';
-import {Done} from '~/components/icons/done';
-import {Button} from '~/components/ui/button';
-import {BackButton} from '~/components/ui/back-button';
-import {Alert, AlertDescription} from '~/components/ui/alert';
-import {DeleteGroupModal} from '~/routes/_app.pending-order_.$groupId/delete-group-modal';
-import {DeleteProductModal} from '~/routes/_app.pending-order_.$groupId/delete-product-modal';
-import {useSelectedProduct} from '~/routes/_app.pending-order_.$groupId/use-selected-product';
+import { useState } from 'react';
+import { Form } from '@remix-run/react';
+import { Table } from '@tanstack/react-table';
+import { Done } from '~/components/icons/done';
+import { Button } from '~/components/ui/button';
+import { BackButton } from '~/components/ui/back-button';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { DeleteGroupModal } from '~/routes/_app.pending-order_.$groupId/delete-group-modal';
+import { DeleteProductModal } from '~/routes/_app.pending-order_.$groupId/delete-product-modal';
+import { useSelectedProduct } from '~/routes/_app.pending-order_.$groupId/use-selected-product';
 import {
   Group,
   Product,
@@ -43,15 +43,14 @@ export function ActionBar({
 
   return (
     <div className="flex justify-between md:items-center my-[30px] flex-col gap-4 md:flex-row md:gap-0 items-baseline ">
-      <div className="flex items-baseline gap-4  flex-col sm:flex-row sm:items-center">
+      <div className="flex flex-col items-baseline gap-4 sm:flex-row sm:items-center">
         <div className="flex items-center">
           <BackButton title="" />
           <div
-            className={`${
-              isEditing
+            className={`${isEditing
                 ? 'bg-primary-25 border border-primary-500 hover:bg-primary-25 '
                 : 'border-none'
-            }`}
+              }`}
           >
             {isEditing ? (
               <Form
@@ -80,7 +79,7 @@ export function ActionBar({
               </Form>
             ) : (
               <div className="flex items-center gap-4">
-                <h3 className="whitespace-nowrap capitalize">
+                <h3 className="capitalize whitespace-nowrap">
                   {group.groupName}
                 </h3>
                 <button onClick={() => setIsEditing(true)}>
@@ -104,7 +103,7 @@ export function ActionBar({
         <p className="text-lg text-nowrap font-bold leading-[22px] text-grey-900 italic max-w-[281px] md:max-w-[unset]">
           {numberOfSelectedRows === 0
             ? ' '
-            : `${numberOfSelectedRows} items selected `}
+            : `${numberOfSelectedRows} ${numberOfSelectedRows > 1 ? 'Items' : 'Item'} selected `}
         </p>
 
         <div className={`flex gap-2 ${numberOfSelectedRows ? 'w-full' : ''}`}>

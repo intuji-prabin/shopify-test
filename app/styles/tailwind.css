@@ -847,14 +847,11 @@ div[data-state='open'].fixed.inset-0 {
   @apply text-grey-700;
 }
 
-.cart-order .info-block [data-tooltip]:before {
-  @apply min-w-28;
-}
 .bg-dialogBgColor {
   background-color: rgba(255, 255, 255, 0.95);
 }
 .price-tooltip[data-tooltip]:before {
-  @apply left-[unset] -right-2;
+  @apply left-[unset] -right-2 normal-case min-w-44;
 }
 .embla-thumbs button:disabled svg path {
   fill: #0092cf !important;
