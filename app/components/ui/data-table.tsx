@@ -21,6 +21,7 @@ export type DataTableProps<T> = {
   renderSubComponent?: (props: { row: Row<T> }) => React.ReactElement;
   getRowCanExpand?: (row: Row<T>) => boolean;
   className?: string;
+  bulkColSpan?: number;
 };
 
 export function DataTable<T>({
@@ -29,6 +30,7 @@ export function DataTable<T>({
   renderSubComponent,
   getRowCanExpand,
   className,
+  bulkColSpan = 3,
 }: DataTableProps<T>) {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -150,7 +152,7 @@ export function DataTable<T>({
                         </p>
                       </div>
                     </TableCell>
-                    <TableCell colSpan={3}>
+                    <TableCell colSpan={bulkColSpan}>
                       {/* <BulkTable quantity={'Quantity'} price={'Price'} /> */}
                       {renderSubComponent && renderSubComponent({ row })}
                     </TableCell>
