@@ -182,14 +182,14 @@ const ProductDetailsSection = ({
           }
         </figure>
         {productPrice && productPrice < PRODUCT_MAX_PRICE ?
-          <ul className="flex gap-[7px]">
-            <li className="w-[36px] h-[36px] flex justify-center items-center border-grey-50 border-[1px]">
+          <ul className="flex gap-[7px] info-block">
+            <li className="w-[36px] h-[36px] flex justify-center items-center border-grey-50 border-[1px]" data-tooltip="Compare Product">
               <Link to={`/product-comparison/${productId}`}>
                 <Compare />
               </Link>
             </li>
             <Can I="view" a="add_to_wishlist">
-              <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]">
+              <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]" data-tooltip="Add To Wishlist">
                 <Form method={isFavorited ? 'DELETE' : 'POST'} className="flex">
                   <input type="hidden" name="productId" value={productId} />
                   <button
