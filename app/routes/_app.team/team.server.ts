@@ -16,6 +16,7 @@ import {json} from '@remix-run/react';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {isImpersonating} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
+import { UserStatusChangedMessage } from '~/lib/constants/event.toast.message';
 
 interface MetaField {
   key: string;
@@ -160,7 +161,7 @@ export async function updateStatus({
 
     emitter.emit(EVENTS.LOGOUT.KEY, {
       customerId: customerId,
-      message: 'User Deactivated',
+      message: UserStatusChangedMessage,
     });
 
     return json(
