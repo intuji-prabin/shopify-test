@@ -121,7 +121,7 @@ export default function App() {
     }
   }, [toastMessage]);
 
-  useWindowFocusRevalidator();
+  // useWindowFocusRevalidator();
 
   return (
     <html lang="en">

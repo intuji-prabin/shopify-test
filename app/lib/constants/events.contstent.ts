@@ -11,4 +11,5 @@ export const EVENTS = {
     KEY: 'notifications',
     NAME: 'notifications-event',
   },
+  
 };

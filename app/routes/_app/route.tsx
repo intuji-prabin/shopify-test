@@ -15,7 +15,7 @@ import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav
 import TopHeader from '~/components/ui/layouts/top-header';
 import { useMediaQuery } from '~/hooks/useMediaQuery';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
-import { ImpersonationMessage, UserRoleChangedMessage } from '~/lib/constants/event.toast.message';
+import { ImpersonationMessage, UserRoleChangedMessage, UserStatusChangedMessage } from '~/lib/constants/event.toast.message';
 import { EVENTS } from '~/lib/constants/events.contstent';
 import { Routes } from '~/lib/constants/routes.constent';
 import { AbilityContext, DEFAULT_ABILITIES } from '~/lib/helpers/Can';
@@ -163,14 +163,14 @@ export default function PublicPageLayout() {
     setAbility(userAbility);
   }, [userDetails]);
 
-  const userData = useEventSource(Routes.LOGOUT_SUBSCRIBE, {
+  const userData = useEventSource(Routes.EVENTS_SUBSCRIBE, {
     event: EVENTS.LOGOUT.NAME,
   });
 
   useEffect(() => {
     if (userData) {
       const dataObject = JSON.parse(userData) as Data;
-      if (dataObject.customerId === userDetails.id && dataObject.message === UserRoleChangedMessage) {
+      if (dataObject.customerId === userDetails.id && (dataObject.message === UserRoleChangedMessage || dataObject.message === UserStatusChangedMessage)) {
         submit(
           { message: dataObject.message },
           { method: 'POST', action: '/logout' },
@@ -186,7 +186,7 @@ export default function PublicPageLayout() {
   }, [userData]);
 
   const hasPermissionBeenUpdated = useEventSource(
-    Routes.PERMISSIONS_SUBSCRIBE,
+    Routes.EVENTS_SUBSCRIBE,
     {
       event: EVENTS.PERMISSIONS_UPDATED.NAME,
     },
@@ -235,7 +235,7 @@ export default function PublicPageLayout() {
 
 
   const hasNotificationBeenUpdated = useEventSource(
-    Routes.NOTIFICATIONS_SUBSCRIBE,
+    Routes.EVENTS_SUBSCRIBE,
     {
       event: EVENTS.NOTIFICATIONS_UPDATED.NAME,
     },
