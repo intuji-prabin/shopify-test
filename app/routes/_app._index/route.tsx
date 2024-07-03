@@ -102,7 +102,7 @@ export default function Homepage() {
   const { table } = useTable(columns, latestFiveInvoices);
 
   const hasNotificationBeenUpdated = useEventSource(
-    Routes.NOTIFICATIONS_SUBSCRIBE,
+    Routes.EVENTS_SUBSCRIBE,
     {
       event: EVENTS.NOTIFICATIONS_UPDATED.NAME,
     },
