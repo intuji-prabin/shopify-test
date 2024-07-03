@@ -41,7 +41,7 @@ export default function ProductInformation({ product }: any) {
         <ProductDetailsSection
           productName={product?.title}
           isFavorited={product?.liked}
-          sku={'Sku'}
+          sku={'SKU'}
           skuUnits={product?.supplierSku}
           unitOfMeasurement={'Unit Of Measurement:'}
           box={product?.uom}
