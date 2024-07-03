@@ -204,7 +204,7 @@ function renderProductItem(
           <div className="size-14">
             <Link
               prefetch="intent"
-              to={`/product/${product.handle}`}
+              to={product.handle ? `/product/${product.handle}` : "#"}
               onClick={handleClose}
             >
               <img
@@ -217,7 +217,7 @@ function renderProductItem(
           <figcaption className="w-[calc(100%_-_72px)]">
             <Link
               prefetch="intent"
-              to={`/product/${product.handle}`}
+              to={product.handle ? `/product/${product.handle}` : "#"}
               onClick={handleClose}
               className="text-base font-bold text-grey-900"
             >
@@ -240,7 +240,7 @@ function renderProductItem(
             <div className="size-16">
               <Link
                 prefetch="intent"
-                to={`/product/${product.handle}`}
+                to={product.handle ? `/product/${product.handle}` : "#"}
                 onClick={handleClose}
               >
                 <img
@@ -257,7 +257,7 @@ function renderProductItem(
               <p>
                 <Link
                   prefetch="intent"
-                  to={`/product/${product.handle}`}
+                  to={product.handle ? `/product/${product.handle}` : "#"}
                   onClick={handleClose}
                   className="text-base font-medium text-grey-900"
                 >
@@ -366,7 +366,7 @@ function renderProductItem(
             <div className="size-16">
               <Link
                 prefetch="intent"
-                to={`/product/${product.handle}`}
+                to={product.handle ? `/product/${product.handle}` : "#"}
                 onClick={handleClose}
               >
                 <img
@@ -383,7 +383,7 @@ function renderProductItem(
               <p>
                 <Link
                   prefetch="intent"
-                  to={`/product/${product.handle}`}
+                  to={product.handle ? `/product/${product.handle}` : "#"}
                   onClick={handleClose}
                   className="text-base font-medium text-grey-900"
                 >
@@ -523,7 +523,7 @@ function renderProductItem(
             <div className="size-16">
               <Link
                 prefetch="intent"
-                to={`/product/${product.handle}`}
+                to={product.handle ? `/product/${product.handle}` : "#"}
                 onClick={handleClose}
               >
                 <img
@@ -540,7 +540,7 @@ function renderProductItem(
               <p>
                 <Link
                   prefetch="intent"
-                  to={`/product/${product.handle}`}
+                  to={product.handle ? `/product/${product.handle}` : "#"}
                   onClick={handleClose}
                   className="text-base font-medium text-grey-900"
                 >
@@ -666,7 +666,7 @@ function renderProductItem(
           <div className="size-14">
             <Link
               prefetch="intent"
-              to={`/product/${product.handle}`}
+              to={product.handle ? `/product/${product.handle}` : "#"}
               onClick={handleClose}
             >
               <img
@@ -679,7 +679,7 @@ function renderProductItem(
           <figcaption className="w-[calc(100%_-_72px)]">
             <Link
               prefetch="intent"
-              to={`/product/${product.handle}`}
+              to={product.handle ? `/product/${product.handle}` : "#"}
               onClick={handleClose}
               className="text-base font-bold text-grey-900"
             >
