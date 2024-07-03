@@ -1,4 +1,7 @@
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {getAccessToken, isImpersonating} from './auth-session.server';
+import {AppLoadContext} from '@remix-run/server-runtime';
+import {encrypt} from './cryptoUtils';
 
 type ImageUploadResponse = {
   status: boolean;
@@ -11,9 +14,16 @@ type ImageUploadResponse = {
 type FileUploadParams = {
   file: File;
   customerId: string;
+  context: AppLoadContext;
+  request: Request;
 };
 
-export async function fileUpload({file, customerId}: FileUploadParams) {
+export async function fileUpload({
+  context,
+  request,
+  file,
+  customerId,
+}: FileUploadParams) {
   const formData = new FormData();
 
   const formatCustomerId = customerId.split('/').pop();
@@ -21,10 +31,16 @@ export async function fileUpload({file, customerId}: FileUploadParams) {
   formData.append('image', file);
 
   const url = `${ENDPOINT.FILE.POST}/${formatCustomerId}`;
+  const accessTocken = (await getAccessToken(context)) as string;
+  const isImpersonatingCheck = await isImpersonating(request);
 
   const response = await fetch(url, {
     method: 'POST',
     body: formData,
+    headers: {
+      Authorization: accessTocken,
+      'Impersonate-Enable': isImpersonatingCheck,
+    },
   });
 
   const results = (await response.json()) as ImageUploadResponse;

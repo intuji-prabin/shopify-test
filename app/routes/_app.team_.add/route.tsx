@@ -3,51 +3,52 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
-import {validationError} from 'remix-validated-form';
-import {BackButton} from '~/components/ui/back-button';
-import {addTeam} from '~/routes/_app.team_.add/add-team.server';
-import {isAuthenticate, isAuthorize} from '~/lib/utils/auth-session.server';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {Routes} from '~/lib/constants/routes.constent';
-import {SelectInputOptions} from '~/components/ui/select-input';
-import TeamForm, {
-  AddTeamFormSchemaValidator,
-} from '~/routes/_app.team_.add/team-form';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   json,
   redirect,
 } from '@remix-run/server-runtime';
+import { MetaFunction } from '@shopify/remix-oxygen';
+import { validationError } from 'remix-validated-form';
+import { BackButton } from '~/components/ui/back-button';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { SelectInputOptions } from '~/components/ui/select-input';
+import { useConditionalRender } from '~/hooks/useAuthorization';
+import { Routes } from '~/lib/constants/routes.constent';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {MetaFunction} from '@shopify/remix-oxygen';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {useConditionalRender} from '~/hooks/useAuthorization';
-import {getRoles} from '~/routes/_app.team/team.server';
-import {AddTeamError} from './add-team-error';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { getRoles } from '~/routes/_app.team/team.server';
+import { addTeam } from '~/routes/_app.team_.add/add-team.server';
+import TeamForm, {
+  AddTeamFormSchemaValidator,
+} from '~/routes/_app.team_.add/team-form';
+import { AddTeamError } from './add-team-error';
+import { AuthError } from '~/components/ui/authError';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Add Team Member'}];
+  return [{ title: 'Add Team Member' }];
 };
 
-export async function loader({request, context}: LoaderFunctionArgs) {
+export async function loader({ request, context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   const currentUserRole = userDetails.meta.user_role.value;
 
-  const roles = await getRoles({context, currentUserRole});
+  const roles = await getRoles({ context, currentUserRole });
 
-  return json({roles});
+  return json({ roles });
 }
 
-export async function action({request, context}: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
 
   const messageSession = await getMessageSession(request);
@@ -61,7 +62,7 @@ export async function action({request, context}: ActionFunctionArgs) {
       return validationError(result.error);
     }
 
-    const {email, fullName, address, phoneNumber, userRole, profileImage} =
+    const { email, fullName, address, phoneNumber, userRole, profileImage } =
       result.data;
 
     const team = await addTeam({
@@ -95,12 +96,12 @@ export async function action({request, context}: ActionFunctionArgs) {
       );
     }
 
-    return json({error}, {status: 500});
+    return json({ error }, { status: 500 });
   }
 }
 
 export default function AddTeam() {
-  const {roles} = useLoaderData<typeof loader>();
+  const { roles } = useLoaderData<typeof loader>();
 
   const shouldRender = useConditionalRender('add_customer');
 
@@ -128,6 +129,9 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <AddTeamError />;
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return <AddTeamError errorMessage={error.message} />;
   } else {
     return <h1>Unknown Error</h1>;

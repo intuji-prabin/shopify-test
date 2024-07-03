@@ -1,4 +1,4 @@
-const BASE_URL = 'https://cig-backuat.webo.dev/api'; // Live
+const BASE_URL = 'https://cig-backend.webo.dev/api'; //test 1
 
 export const ENDPOINT = {
   REPORT: {
@@ -21,12 +21,11 @@ export const ENDPOINT = {
   CUSTOMER: {
     GET: `${BASE_URL}/customer`,
     UPDATE_STATUS: `${BASE_URL}/customer-status`,
-    CREATE: `${BASE_URL}/customer`,
-    UPDATE: `${BASE_URL}/customer-update`,
+    CREATE: `${BASE_URL}/teams`,
     ACTIVATE: `${BASE_URL}/customer/activate`,
   },
   CUSTOMER_LIST: {
-    GET: `${BASE_URL}/customer`,
+    GET: `${BASE_URL}/teams`,
   },
   COMPANY: {
     GET_PROFILE: `${BASE_URL}/company`,
@@ -45,6 +44,7 @@ export const ENDPOINT = {
   SUPPORT: {
     TICKETS: `${BASE_URL}/support/tickets`,
     IMPERSONATE: `${BASE_URL}/impersonate`,
+    IMPERSONATE_LOGOUT: `${BASE_URL}/impersonate/logout`,
   },
   PRODUCT: {
     GET_PRICE: `${BASE_URL}/product/prices`,

@@ -1,15 +1,14 @@
-import { useLoaderData, useNavigate } from '@remix-run/react';
+import { useLoaderData } from '@remix-run/react';
 import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
 import { AppLoadContext } from '@shopify/remix-oxygen';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { BackButton } from '~/components/ui/back-button';
 import { BulkCsvUpload } from '~/components/ui/bulk-csv-upload';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 import { useScroll } from '~/hooks/useScroll';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import { CategoryCard } from '~/routes/_app.categories/category-card';
 import { getCategory } from './categories.server';
-import { AbilityContext } from '~/lib/helpers/Can';
-import { useConditionalRender } from '~/hooks/useAuthorization';
 
 export async function loader({ context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -101,11 +100,11 @@ export default function CategoriesPage() {
       </section>
       <section
         id="categories-menu"
-        className="container sticky top-0 hidden mt-0 sm:block bg-primary-25"
+        className="container sticky top-0 hidden mt-0 lg:block bg-primary-25"
       >
         {categoriesDetail.length > 0 && (
-          <div className="flex items-center gap-3 pt-4">
-            {categoriesDetail?.map((category) => (
+          <div className="grid items-center grid-cols-7 gap-3 pt-4">
+            {categoriesDetail?.slice(0, 7).map((category) => (
               <a
                 href={String(category?.category_id)}
                 onClick={(event) => handleScroll(event, category?.category_id ?? '')}

@@ -3,7 +3,7 @@ import {
   isRouteErrorResponse,
   useLoaderData,
   useRouteError,
-  useSubmit
+  useSubmit,
 } from '@remix-run/react';
 import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
 import { useEffect, useState } from 'react';
@@ -15,36 +15,33 @@ import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav
 import TopHeader from '~/components/ui/layouts/top-header';
 import { useMediaQuery } from '~/hooks/useMediaQuery';
 import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { ImpersonationMessage, UserRoleChangedMessage } from '~/lib/constants/event.toast.message';
 import { EVENTS } from '~/lib/constants/events.contstent';
 import { Routes } from '~/lib/constants/routes.constent';
-import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
 import { AbilityContext, DEFAULT_ABILITIES } from '~/lib/helpers/Can';
-import {
-  defineAbilitiesForUser
-} from '~/lib/helpers/roles';
+import { defineAbilitiesForUser } from '~/lib/helpers/roles';
 import { USER_SESSION_ID, isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
 } from '~/lib/utils/toast-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { getProductGroup } from '~/routes/_app.pending-order/pending-order.server';
+import { USER_DETAILS_KEY, getUserDetails, getUserDetailsSession } from '~/lib/utils/user-session.server';
 import {
   getCagetoryList,
-  getNewNotificationCount,
-  getSessionCart,
   getSessionData
 } from '~/routes/_app/app.server';
-import { CustomerData } from '~/routes/_public.login/login.server';
+import { CustomerData, getCustomerByEmail } from '~/routes/_public.login/login.server';
+import { AuthError } from '../../components/ui/authError';
 import { getFooter } from './footer.server';
 
 export interface Payload {
   type: 'cart' | 'wishlist' | 'productGroup ' | 'notification';
-  totalNumber: number;
+  totalNumber: any;
   companyId?: string;
   customerId?: string;
   sessionId?: string;
+  action?: string;
 }
 
 export interface Handlers {
@@ -58,10 +55,20 @@ interface Data {
 
 export async function loader({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
-  const { userDetails } = await getUserDetails(request);
+  let { userDetails } = await getUserDetails(request);
+  // to get the total wishlist, pending order, cart and notification count in the header
+  const sessionData: any = await getSessionData(request, userDetails, context);
   const { session } = context;
-
-  const sessionData = await getSessionData(userDetails, context);
+  const impersonateCheck = userDetails?.impersonateEnable;
+  if (!impersonateCheck) {
+    const userDetailsSession = await getUserDetailsSession(request);
+    userDetailsSession.unset(USER_DETAILS_KEY);
+    userDetails = await getCustomerByEmail({
+      context,
+      email: userDetails.email,
+    });
+    userDetailsSession.set(USER_DETAILS_KEY, userDetails);
+  }
 
   const userSessionId = session.get(USER_SESSION_ID);
 
@@ -70,21 +77,15 @@ export async function loader({ request, context }: ActionFunctionArgs) {
 
   const messageSession = await getMessageSession(request);
 
-  let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
+  const productGroup = sessionData?.productGroup;
 
-  const productGroup = await getProductGroup({ customerId: userDetails.id });
+  const totalNotifications = sessionData?.notification;
 
-  const customerId = userDetails.id;
-
-  const { totalNotifications } = await getNewNotificationCount({
-    customerId,
-    request,
-  });
+  const wishlistSession = sessionData?.wishlist;
 
   const headers = [] as any;
 
-  const wishlistSession = await context.session.get(WISHLIST_SESSION_KEY);
-  sessionCartInfo = await getSessionCart(userDetails?.id, context);
+  const sessionCartInfo = sessionData?.cartDetails;
   if (sessionCartInfo) {
     const finalCartSession = {
       cartId: sessionCartInfo?.cartId,
@@ -105,10 +106,10 @@ export async function loader({ request, context }: ActionFunctionArgs) {
       userDetails,
       sessionCartInfo,
       wishlistSession,
-      pendingOrderCount: productGroup?.length ?? 0,
-      notificationCount: totalNotifications,
+      pendingOrderCount: productGroup ?? 0,
+      notificationCount: totalNotifications ?? 0,
       userSessionId,
-      footer
+      footer,
     },
     {
       headers,
@@ -169,7 +170,13 @@ export default function PublicPageLayout() {
   useEffect(() => {
     if (userData) {
       const dataObject = JSON.parse(userData) as Data;
-      if (dataObject.customerId === userDetails.id) {
+      if (dataObject.customerId === userDetails.id && dataObject.message === UserRoleChangedMessage) {
+        submit(
+          { message: dataObject.message },
+          { method: 'POST', action: '/logout' },
+        );
+      }
+      else if (dataObject.customerId === userDetails.id && dataObject.message === ImpersonationMessage && userDetails.impersonateEnable === true && userDetails.impersonatingUser) {
         submit(
           { message: dataObject.message },
           { method: 'POST', action: '/logout' },
@@ -185,71 +192,9 @@ export default function PublicPageLayout() {
     },
   );
 
-  const hasNotificationBeenUpdated = useEventSource(
-    Routes.NOTIFICATIONS_SUBSCRIBE,
-    {
-      event: EVENTS.NOTIFICATIONS_UPDATED.NAME,
-    },
-  );
-
-  useEffect(() => {
-    if (typeof hasNotificationBeenUpdated === 'string') {
-      const parsedData = JSON.parse(hasNotificationBeenUpdated) as {
-        notificationData: {
-          payload: Payload;
-        };
-      };
-      const { type, totalNumber, customerId, companyId, sessionId } =
-        parsedData.notificationData.payload;
-      const currentUrl = window.location.pathname; // Capture the current URL
-      const handlers: Handlers = {
-        cart: () => {
-          if (userDetails.id === customerId && userSessionId !== sessionId) {
-            cartCount = totalNumber | 0;
-            submit(
-              { returnUrl: currentUrl, type, totalNumber },
-              { method: 'GET', action: '/update-notifications-session' },
-            );
-          }
-        },
-        wishlist: () => {
-          if (userDetails?.meta.company_id.companyId === companyId) {
-            wishlistCount = totalNumber;
-            submit(
-              { returnUrl: currentUrl, type, totalNumber },
-              { method: 'GET', action: '/update-notifications-session' },
-            );
-          }
-        },
-        productGroup: () => {
-          if (userDetails?.meta.company_id.companyId === companyId) {
-            setPendingOrderCounts(totalNumber);
-          }
-        },
-        notification: () => {
-          const companyMeta = userDetails?.meta.company_id;
-
-          if (
-            (companyMeta?.companyId === companyId ||
-              companyMeta?.value === companyId) &&
-            userSessionId !== sessionId
-          ) {
-            setNotificationCounts(totalNumber);
-          }
-        },
-      };
-
-      const handler = handlers[type];
-      if (handler) {
-        handler();
-      }
-    }
-  }, [hasNotificationBeenUpdated]);
-
   useEffect(() => {
     // Extract the user role from userDetails
     const userRole = userDetails?.meta?.user_role;
-
     // Check if hasPermissionBeenUpdated is a string
     if (typeof hasPermissionBeenUpdated === 'string') {
       // Parse the string into an object
@@ -288,6 +233,77 @@ export default function PublicPageLayout() {
     }
   }, [hasPermissionBeenUpdated]);
 
+
+  const hasNotificationBeenUpdated = useEventSource(
+    Routes.NOTIFICATIONS_SUBSCRIBE,
+    {
+      event: EVENTS.NOTIFICATIONS_UPDATED.NAME,
+    },
+  );
+
+  useEffect(() => {
+    if (typeof hasNotificationBeenUpdated === 'string') {
+      const parsedData = JSON.parse(hasNotificationBeenUpdated) as {
+        notificationData: {
+          payload: Payload;
+        };
+      };
+
+      const { type, totalNumber, customerId, companyId, sessionId, action } =
+        parsedData.notificationData.payload;
+      const currentUrl = window.location.pathname; // Capture the current URL
+      const handlers: Handlers = {
+        cart: () => {
+          if (userDetails.id === customerId && userSessionId !== sessionId) {
+            cartCount = totalNumber | 0;
+            submit(
+              { returnUrl: currentUrl, type, totalNumber },
+              { method: 'GET', action: '/update-notifications-session' },
+            );
+          }
+        },
+        wishlist: () => {
+          if (userDetails?.meta.company_id.companyId === companyId) {
+            wishlistCount = totalNumber;
+            submit(
+              { returnUrl: currentUrl, type, totalNumber },
+              { method: 'GET', action: '/update-notifications-session' },
+            );
+          }
+        },
+        productGroup: () => {
+          if (userDetails?.meta.company_id.companyId === companyId) {
+            setPendingOrderCounts(totalNumber);
+          }
+        },
+        notification: () => {
+          const loginCustomerId = userDetails?.id;
+
+          //Here if the action is view and the login customer is the same as the customer id then only notification count will be updated
+          if (action === 'view') {
+            if (loginCustomerId === customerId) {
+              setNotificationCounts(totalNumber);
+            } else {
+              return;
+            }
+          }
+          else {
+            const customer = totalNumber.find((c: { customerId: string; }) => c.customerId === loginCustomerId)
+            if (customer) {
+              setNotificationCounts(customer.notification);
+            }
+          }
+        },
+      };
+
+      const handler = handlers[type];
+      if (handler) {
+        handler();
+      }
+    }
+  }, [hasNotificationBeenUpdated]);
+
+
   return (
     <AbilityContext.Provider value={ability}>
       <Layout
@@ -322,12 +338,19 @@ const Layout = ({
   wishlistCount: number;
   pedingOrderCount: number;
   notificationCount: number;
-  footerData: any
+  footerData: any;
 }) => {
   const matches = useMediaQuery('(min-width: 768px)');
-  const submit = useSubmit();
+  const impersonateEnableCheck = userDetails?.impersonateEnable;
   return (
     <HamburgerMenuProvider>
+      {impersonateEnableCheck &&
+        <div className='bg-secondary-500'>
+          <div className='container'>
+            <p className='py-2 font-medium text-center'>IMPERSONATING AS <span className='font-semibold capitalize'>{userDetails?.displayName}</span> BY <span className='font-semibold capitalize'>{userDetails?.impersonatingUser?.name}</span></p>
+          </div>
+        </div>
+      }
       {matches ? (
         <header>
           <TopHeader
@@ -368,6 +391,9 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <div className="container pt-6">
         <div className="min-h-[400px] flex justify-center items-center ">

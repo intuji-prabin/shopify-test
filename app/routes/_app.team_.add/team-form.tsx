@@ -182,7 +182,7 @@ export default function TeamForm({
               {selectedRole && (
                 <div className="p-6 bg-primary-50">
                   <h4 className="pb-4 capitalize">
-                    {selectedRole} role permissions
+                    {selectedRole && selectedRole.split('-')[0]} role permissions
                   </h4>
                   <ul className="pl-5">
                     {roles?.map((role) => (

@@ -1,8 +1,8 @@
-import {Link} from '@remix-run/react';
-import {useState} from 'react';
-import {TooltipInfo} from '~/components/icons/orderStatus';
+import { Link } from '@remix-run/react';
+import { useState } from 'react';
+import { TooltipInfo } from '~/components/icons/orderStatus';
 
-export default function WishlistQuantity({count}: {count: number}) {
+export default function WishlistQuantity({ count }: { count: number }) {
   const [quantity, setQuantity] = useState(count);
 
   function decreaseQuantity() {
@@ -16,16 +16,16 @@ export default function WishlistQuantity({count}: {count: number}) {
     <div className="flex flex-col gap-2">
       <div className="flex items-center">
         <button
-          className="border border-solid border-grey-200 flex items-center justify-center  min-h-10 w-10"
+          className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
           onClick={decreaseQuantity}
         >
           -
         </button>
-        <p className="border-y border-solid border-grey-200 flex items-center justify-center min-h-10 w-10">
+        <p className="flex items-center justify-center w-10 border-solid border-y border-grey-200 min-h-10">
           {quantity}
         </p>
         <button
-          className="border border-solid border-grey-200 flex items-center justify-center  min-h-10 w-10"
+          className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
           onClick={increaseQuantity}
         >
           +
@@ -33,8 +33,8 @@ export default function WishlistQuantity({count}: {count: number}) {
       </div>
       <div className="flex items-center gap-1">
         <div className="info-block">
-          <p className="h-5 w-5 flex justify-center items-center ">
-            <Link to="" data-tooltip="Recommended retail price">
+          <p className="flex items-center justify-center w-5 h-5 ">
+            <Link to="" data-tooltip="Recommended Retail Price">
               <span>
                 <TooltipInfo fillColor="#0092CF" />
               </span>

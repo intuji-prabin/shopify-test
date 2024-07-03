@@ -8,22 +8,22 @@ import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
-import {ReactNode} from 'react';
-import {BackButton} from '~/components/ui/back-button';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {ProductCard} from '~/components/ui/product-card';
-import {useConditionalRender} from '~/hooks/useAuthorization';
-import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
-import {getAccessToken} from '~/lib/utils/auth-session.server';
+import { ReactNode } from 'react';
+import { BackButton } from '~/components/ui/back-button';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { ProductCard } from '~/components/ui/product-card';
+import { useConditionalRender } from '~/hooks/useAuthorization';
+import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { getAccessToken, isImpersonating } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {GET_CART_LIST} from '../_app.cart-list/cart.server';
-import {ProductList} from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/route';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { GET_CART_LIST } from '../_app.cart-list/cart.server';
+import { ProductList } from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/route';
 import {
   ProductType,
   addProductToCart,
@@ -31,10 +31,15 @@ import {
 } from './product.server';
 import ProductInformation from './productInformation';
 import ProductTab from './productTabs';
-import {addToWishlist, removeFromWishlist} from './wishlist.server';
+import { addToWishlist, removeFromWishlist } from './wishlist.server';
+import { AuthError } from '~/components/ui/authError';
+import { encrypt } from '~/lib/utils/cryptoUtils';
+import { RouteError } from '~/components/ui/route-error';
 
 interface ProductDetailType {
   productPage: string;
+  encryptedSession: string,
+  impersonateEnableCheck: string;
   product: {
     productInfo: ProductInfoType;
     productTab: ProductTabType;
@@ -93,15 +98,15 @@ export const loader = async ({
   context,
 }: LoaderFunctionArgs) => {
   try {
-    const {productSlug} = params;
-    const sessionCartInfo = await context.session.get(CART_SESSION_KEY);
-    if (sessionCartInfo) {
-      const cartLists = await context.storefront.query(GET_CART_LIST, {
-        variables: {cartId: sessionCartInfo?.cartId},
-      });
-    }
-    const {userDetails} = await getUserDetails(request);
+    const { productSlug } = params;
+    const { userDetails } = await getUserDetails(request);
+    const impersonateEnableCheck = await isImpersonating(request);
+    const sessionAccessTocken = (await getAccessToken(context)) as string;
+    const encryptedSession = encrypt(sessionAccessTocken);
+
     const product = await getProductDetails(
+      context,
+      request,
       userDetails?.id,
       productSlug as string,
     );
@@ -111,6 +116,8 @@ export const loader = async ({
     return json({
       product,
       productPage,
+      encryptedSession,
+      impersonateEnableCheck
     });
   } catch (error) {
     console.log('first', error);
@@ -119,7 +126,7 @@ export const loader = async ({
 };
 
 export default function route() {
-  const {product, productPage} = useLoaderData<ProductDetailType>();
+  const { product, productPage, encryptedSession, impersonateEnableCheck } = useLoaderData<ProductDetailType>();
 
   const shouldRender = useConditionalRender('view_product_detail');
 
@@ -141,14 +148,15 @@ export default function route() {
         <ProductTab
           productTab={product?.productTab}
           alternateProduct={product.alternativeProduct}
+          sessionAccessTocken={encryptedSession} impersonateEnableCheck={impersonateEnableCheck}
         />
         {product?.relatedProducts?.length > 0 && (
-          <section className="bg-white py-12">
+          <section className="py-12 bg-white">
             <div className="container">
               <h3 className="text-[30px] italic font-bold leading-[36px] mb-8 uppercase">
                 Similar Products
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-[18px] similar__product">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-[18px] similar__product">
                 {product.relatedProducts?.slice(0, 4).map((product, index) => (
                   <ProductCard key={index} {...product} />
                 ))}
@@ -161,11 +169,11 @@ export default function route() {
   );
 }
 
-const ProductDetailPageWrapper = ({children}: {children: ReactNode}) => {
+const ProductDetailPageWrapper = ({ children }: { children: ReactNode }) => {
   return <div className="container">{children}</div>;
 };
 
-export const action = async ({request, context}: ActionFunctionArgs) => {
+export const action = async ({ request, context }: ActionFunctionArgs) => {
   const messageSession = await getMessageSession(request);
 
   const fromData = await request.formData();
@@ -336,13 +344,13 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
-      <div className="min-h-[calc(100vh_-_140px)] flex justify-center items-center">
-        <div className="text-center">
-          <h1>Opps</h1>
-          <p>{error.message}</p>
-        </div>
-      </div>
+      <div className="container">
+        <RouteError errorMessage={error.message} />
+      </div >
     );
   } else {
     return (

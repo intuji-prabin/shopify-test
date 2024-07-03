@@ -23,6 +23,7 @@ export default function MyProducts({
   setUpdateCart,
   updateCart,
   setPlaceOrder,
+  fetcher
 }: any) {
   const { columns } = useMyProductColumn({
     currency,
@@ -31,15 +32,11 @@ export default function MyProducts({
   });
   const { table } = useTable(columns, products);
 
-  const fetcher = useFetcher();
-
   let isLoading = fetcher.formData?.get('cartList-0');
 
   const [open, setOpen] = useState(false);
 
   const submit = useSubmit();
-
-  
 
   return (
     <div className="relative flex flex-col w-full bg-white xl:w-[calc(100%_-_435px)]">

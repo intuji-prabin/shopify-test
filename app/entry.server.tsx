@@ -42,6 +42,7 @@ export default async function handleRequest(
     ],
     connectSrc: [
       "'self'",
+      'ws://localhost:8002/socket',
       'https://cdn.shopify.com',
       'https://shopify.com',
       'https://pimcoredata.intuji.com',
@@ -51,6 +52,7 @@ export default async function handleRequest(
       'https://cigweld-middleware.intuji.com',
       'http://170.64.130.119:3000',
       'gid://shopify/MediaImage',
+      'https://broadway-passing-spend-continuous.trycloudflare.com',
       ...localDirectives,
     ],
     mediaSrc: [

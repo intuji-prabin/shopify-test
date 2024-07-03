@@ -1,9 +1,9 @@
-import {Link, useLocation, useNavigate} from '@remix-run/react';
-import {useEffect, useRef, useState} from 'react';
-import {Button} from '~/components/ui/button';
-import {Dialog, DialogContent, DialogTrigger} from '~/components/ui/dialog';
-import {Can} from '~/lib/helpers/Can';
-
+import { Link, useLocation } from '@remix-run/react';
+import { AsyncImage } from 'loadable-image';
+import { useEffect, useState } from 'react';
+import { Button } from '~/components/ui/button';
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog';
+import { Can } from '~/lib/helpers/Can';
 const PromotionCard = ({
   title,
   imageURL,
@@ -73,15 +73,27 @@ const PromotionCard = ({
   return (
     <>
       <figure>
-        <img
-          alt="preview"
+        <AsyncImage
+          loader={
+            <div className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96 dark:bg-gray-700 animate-pulse">
+              <svg
+                className="w-10 h-10 text-gray-200 dark:text-gray-600"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 18"
+              >
+                <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" />
+              </svg>
+            </div>
+          }
           src={imageURL}
-          className="object-cover w-full h-60"
+          className="w-full h-60"
         />
       </figure>
       <div className="p-4 space-y-4 bg-grey-25">
         <h5>{title}</h5>
-        <div className="flex gap-2 flex-col mxs:flex-row">
+        <div className="flex flex-col gap-2 mxs:flex-row">
           <Dialog
             open={isDialogOpen}
             onOpenChange={(isOpen) => !isOpen && handleClosePreview()}
@@ -102,7 +114,7 @@ const PromotionCard = ({
             <DialogContent className="max-w-[1280px] p-0 border-0 gap-y-0 promotion-view w-auto">
               <div
                 className="py-3 pl-5 pr-10"
-                style={{maxWidth: renderedImageWidth}}
+                style={{ maxWidth: renderedImageWidth }}
               >
                 <h5>{title}</h5>
               </div>

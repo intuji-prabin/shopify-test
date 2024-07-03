@@ -11,7 +11,7 @@ import {
 } from '@remix-run/server-runtime';
 import { withZod } from '@remix-validated-form/with-zod';
 import html2canvas from 'html2canvas';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ValidatedForm } from 'remix-validated-form';
 import { z } from 'zod';
 import { zfd } from 'zod-form-data';
@@ -24,23 +24,23 @@ import ColorPicker from '~/components/ui/color-picker';
 import {
   Dialog,
   DialogContent,
-  DialogOverlay,
-  DialogTrigger,
+  DialogTrigger
 } from '~/components/ui/dialog';
+import FullPageLoading from '~/components/ui/fullPageLoading';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import ImageEdit from '~/components/ui/imageEdit';
+import { Input } from '~/components/ui/input';
 import Loader from '~/components/ui/loader';
 import { displayToast } from '~/components/ui/toast';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 import { Routes } from '~/lib/constants/routes.constent';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import PromotionNavigation from './promotion-navigation';
 import { createPromotion, getPromotionById } from './promotion.server';
-import { Input } from '~/components/ui/input';
-import { NumberPlusOnly } from '~/lib/constants/regex.constant';
-import FullPageLoading from '~/components/ui/fullPageLoading';
-import { useConditionalRender } from '~/hooks/useAuthorization';
+import { AuthError } from '~/components/ui/authError';
+import { encrypt } from '~/lib/utils/cryptoUtils';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -91,14 +91,14 @@ export type EditFormType = z.infer<typeof EditFormValidator>;
 
 export type EditFormFieldNameType = keyof EditFormType;
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ context, request, params }: ActionFunctionArgs) {
   const data = await request.formData();
   const { userDetails } = await getUserDetails(request);
   const customerId = userDetails?.id;
   let formData = Object.fromEntries(data);
   formData = { ...formData };
   const bannerId = params.promotionId as string;
-  await createPromotion(formData, bannerId, customerId);
+  await createPromotion(context, request, formData, bannerId, customerId);
   return json({});
 }
 
@@ -107,7 +107,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   const { userDetails } = await getUserDetails(request);
   const customerId = userDetails?.id;
   const promotionId = params?.promotionId as string;
-  const response = await getPromotionById(promotionId, customerId);
+  const response = await getPromotionById(context, request, promotionId, customerId);
   if (response?.payload) {
     const results = response?.payload;
     return json({ results, promotionId });
@@ -177,12 +177,14 @@ const PromotionEdit = () => {
     html2canvas(canvasRef, {
       allowTaint: true,
       useCORS: true,
+      scale: 2,
       width: canvasRef.offsetWidth - 1,
+      height: canvasRef.offsetHeight - 1
     }).then((canvas) => {
       const link = document.createElement('a');
       document.body.appendChild(link);
       link.download = 'preview.png';
-      link.href = canvas.toDataURL();
+      link.href = canvas.toDataURL('image/jpeg', 0.8);
       setImage(link.href);
     });
   };
@@ -208,9 +210,11 @@ const PromotionEdit = () => {
       const canvas = await html2canvas(canvasRef.current, {
         allowTaint: true,
         useCORS: true,
+        scale: 2,
         width: canvasRef.current.offsetWidth - 1,
+        height: canvasRef.current.offsetHeight - 1
       });
-      formData.append('image', canvas.toDataURL());
+      formData.append('image', canvas.toDataURL('image/jpeg', 0.8));
     } catch (error) {
       console.error('An error occurred:', error);
       alert('An error has occured while creating the image');
@@ -247,7 +251,12 @@ const PromotionEdit = () => {
   let imageName = companyInfo?.companyName;
   imageName = imageName && imageName.replace(/ /g, '_');
   const shouldRender = useConditionalRender('customize_promotions');
-
+  const [validationError, setValidationError] = useState(false);
+  useEffect(() => {
+    if (validationError) {
+      setOpenAccordian('company-information');
+    }
+  }, [validationError]);
   return (
     shouldRender && (
       <div className="bg-grey-25">
@@ -372,6 +381,7 @@ const PromotionEdit = () => {
                           value={companyInfo.companyName}
                           className="w-full"
                           placeholder="company name"
+                          setValidationError={setValidationError}
                           onInput={(e) =>
                             handleChange('companyName', e.currentTarget.value)
                           }
@@ -386,6 +396,7 @@ const PromotionEdit = () => {
                           className="w-full"
                           label="Company Email"
                           placeholder="company email"
+                          setValidationError={setValidationError}
                           onInput={(e) =>
                             handleChange('companyEmail', e.currentTarget.value)
                           }
@@ -400,6 +411,7 @@ const PromotionEdit = () => {
                           className="w-full"
                           label="Company Website"
                           placeholder="company website"
+                          setValidationError={setValidationError}
                           onInput={(e) =>
                             handleChange(
                               'companyWebsite',
@@ -416,6 +428,7 @@ const PromotionEdit = () => {
                           label="Company Phone"
                           placeholder="company phone"
                           value={companyInfo.companyPhone || ''}
+                          setValidationError={setValidationError}
                           onInput={(e) =>
                             handleChange('companyPhone', e.currentTarget.value)
                           }
@@ -430,6 +443,7 @@ const PromotionEdit = () => {
                           className="w-full"
                           placeholder="company fax"
                           label="Company Fax"
+                          setValidationError={setValidationError}
                           onInput={(e) =>
                             handleChange('companyFax', e.currentTarget.value)
                           }
@@ -481,6 +495,7 @@ const PromotionEdit = () => {
                             variant="secondary"
                             name="action"
                             disabled={isLoading}
+                            onClick={() => validationError && setOpenAccordian('company-information')}
                           >
                             save changes
                           </Button>
@@ -512,6 +527,9 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <div className="container pt-6">
         <div className="min-h-[400px] flex justify-center items-center ">

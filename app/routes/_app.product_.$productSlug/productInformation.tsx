@@ -182,14 +182,14 @@ const ProductDetailsSection = ({
           }
         </figure>
         {productPrice && productPrice < PRODUCT_MAX_PRICE ?
-          <ul className="flex gap-[7px]">
-            <li className="w-[36px] h-[36px] flex justify-center items-center border-grey-50 border-[1px]">
+          <ul className="flex gap-[7px] info-block">
+            <li className="w-[36px] h-[36px] flex justify-center items-center border-grey-50 border-[1px]" data-tooltip="Compare Product">
               <Link to={`/product-comparison/${productId}`}>
                 <Compare />
               </Link>
             </li>
             <Can I="view" a="add_to_wishlist">
-              <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]">
+              <li className="w-[36px] h-[36px] flex justify-center items-center  border-grey-50 border-[1px]" data-tooltip="Add To Wishlist">
                 <Form method={isFavorited ? 'DELETE' : 'POST'} className="flex">
                   <input type="hidden" name="productId" value={productId} />
                   <button
@@ -282,22 +282,24 @@ const ProductDetailsSection = ({
       </Can>
       <Can I="view" a="view_product_price">
         {priceRange && priceRange.length > 0 && (
-          <div className="w-full pt-4">
-            <ProductInfoTable
-              quantity={'Quantity'}
-              price={'Price'}
-              volumePrice={priceRange}
-              className="product_det__table"
-            />
-          </div>
+          <>
+            <div className="w-full pt-4">
+              <ProductInfoTable
+                quantity={'Quantity'}
+                price={'Price'}
+                volumePrice={priceRange}
+                className="product_det__table"
+              />
+            </div>
+            <div className="flex gap-2 px-4 py-2 mt-3 border-l-4 border-r-0 bg-semantic-info-100 border-semantic-info-500 border-y-0">
+              <CircleInformationMajor />
+              <p className="text-base font-normal leading-[21px]">
+                Price will change if you increase quantity of items.
+              </p>
+            </div>
+          </>
         )}
       </Can>
-      <div className="flex gap-2 px-4 py-2 mt-3 border-l-4 border-r-0 bg-semantic-info-100 border-semantic-info-500 border-y-0">
-        <CircleInformationMajor />
-        <p className="text-base font-normal leading-[21px]">
-          Price will change if you increase quantity of items.
-        </p>
-      </div>
       {shortDescription && <p className='mt-4' dangerouslySetInnerHTML={{ __html: shortDescription }}></p>}
       {productPrice && productPrice < PRODUCT_MAX_PRICE ?
         <div className="flex flex-col items-start gap-4 pt-6 sm:flex-row">

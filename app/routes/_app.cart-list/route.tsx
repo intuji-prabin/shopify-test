@@ -3,6 +3,7 @@ import {
   useActionData,
   useFetcher,
   useLoaderData,
+  useNavigation,
   useRouteError,
 } from '@remix-run/react';
 import {
@@ -39,6 +40,7 @@ import { placeOrder } from './order-place.server';
 import OrderSummary from './order-summary/cart-order-summary';
 import { promoCodeApply } from './promoCode.server';
 import { promoCodeRemove } from './promoCodeRemove.server';
+import { AuthError } from '~/components/ui/authError';
 
 export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
@@ -49,11 +51,10 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   const customerId =
     metaParentValue === 'null' ? userDetails.id : metaParentValue;
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);
-
   if (!sessionCartInfo) {
     throw new Error('Cart not found');
   }
-  const shippingAddresses = await getAllCompanyShippingAddresses(customerId);
+  const shippingAddresses = await getAllCompanyShippingAddresses(context, request, customerId, true);
   const cartList = await getCartList(context, request, sessionCartInfo);
   if (cartList?.productList?.length === 0) {
     await getCartList(context, request, sessionCartInfo);
@@ -83,6 +84,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
             const poNumber = formData.get('poNumber') as string;
             const { userDetails } = await getUserDetails(request);
             const trackAnOrderResponse = await getOrderId(
+              context,
+              request,
               poNumber,
               userDetails?.id,
             );
@@ -193,7 +196,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         case 'order_delete': {
           try {
             res = await removeItemFromCart(finalData, context, request);
-            await promoCodeRemove(request, false);
+            await promoCodeRemove(context, request, false);
             setSuccessMessage(messageSession, 'line item removed successfully');
             return json(
               {},
@@ -237,7 +240,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         case 'promo_code_delete': {
           console.log("remove code")
           try {
-            res = await promoCodeRemove(request);
+            res = await promoCodeRemove(context, request);
             setSuccessMessage(messageSession, res?.message);
             return json(
               {},
@@ -357,7 +360,10 @@ export default function CartList() {
   const [updateCart, setUpdateCart] = useState(false);
   const [placeOrder, setPlaceOrder] = useState(result);
   const actionData = useActionData<typeof action>();
-  console.log("cartList", cartList)
+  const navigation = useNavigation();
+  const fetcher = useFetcher();
+  const isLoading = navigation.state === 'submitting' || navigation.state === 'loading' || fetcher.state === 'submitting' || fetcher.state === 'loading';
+
   return (
     <>
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
@@ -365,7 +371,7 @@ export default function CartList() {
       {finalProductList?.length === 0 ? (
         <EmptyList placeholder="cart" />
       ) : (
-        <div className="container">
+        <div className={`container ${isLoading && "loading-state"}`}>
           <div className="flex flex-col flex-wrap items-start gap-6 my-6 xl:flex-row cart__list">
             <MyProducts
               products={finalProductList}
@@ -373,6 +379,7 @@ export default function CartList() {
               updateCart={updateCart}
               setUpdateCart={setUpdateCart}
               setPlaceOrder={setPlaceOrder}
+              fetcher={fetcher}
             />
             <OrderSummary
               cartSubTotalPrice={cartList?.cartSubTotalPrice}
@@ -389,6 +396,7 @@ export default function CartList() {
               discountMessage={cartList?.discountMessage}
               totalPriceWithDiscount={cartList?.totalPriceWithDiscount}
               actionData={actionData}
+              fetcher={fetcher}
             />
           </div>
         </div>
@@ -399,7 +407,6 @@ export default function CartList() {
 
 export function ErrorBoundary() {
   const error = useRouteError();
-
   if (isRouteErrorResponse(error)) {
     return (
       <div>
@@ -410,6 +417,9 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <>
         <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />

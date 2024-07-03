@@ -8,9 +8,10 @@ import { PDFViewer } from '~/components/ui/pdf-viewer';
 import { useDownload } from '~/hooks/useDownload';
 import { PDF } from '~/lib/constants/pdf.constent';
 import { Routes } from '~/lib/constants/routes.constent';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getStatementDetails } from './statement-details.server';
+import { encrypt } from '~/lib/utils/cryptoUtils';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Statement Detail' }];
@@ -22,21 +23,24 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
     const statementId = params.statementId as string;
 
     const { userDetails } = await getUserDetails(request);
+    const impersonateEnableCheck = await isImpersonating(request);
+    const sessionAccessTocken = (await getAccessToken(context)) as string;
+    const encryptedSession = encrypt(sessionAccessTocken);
 
     const customerId = userDetails.id;
 
-    const statementDetails = await getStatementDetails({ statementId, customerId });
-    return json({ statementId, statementDetails });
+    const statementDetails = await getStatementDetails({ context, request, statementId, customerId });
+    return json({ statementId, statementDetails, encryptedSession, impersonateEnableCheck });
 }
 
 export default function StatementDetailsPage() {
-    const { statementId, statementDetails } = useLoaderData<typeof loader>();
+    const { statementId, statementDetails, encryptedSession, impersonateEnableCheck } = useLoaderData<typeof loader>();
 
     const { handleDownload } = useDownload();
 
     return (
         <section className="container">
-            <div className="flex items-center justify-between pt-6 pb-4 ">
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-6 pb-4">
                 <div>
                     <BackButton title="Statement Detail" />
                     <Breadcrumb>
@@ -53,7 +57,11 @@ export default function StatementDetailsPage() {
                     onClick={() =>
                         handleDownload({
                             url: statementDetails.files,
-                            headers: { apiKey: PDF.SECRET_KEY },
+                            headers: {
+                                apiKey: PDF.SECRET_KEY,
+                                Authorization: encryptedSession,
+                                'Impersonate-Enable': impersonateEnableCheck,
+                            },
                         })
                     }
                 >

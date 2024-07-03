@@ -10,47 +10,50 @@ import {
   json,
   redirect,
 } from '@shopify/remix-oxygen';
-import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
+import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import OrderSteps from '~/routes/_app.order_.$orderId/order-steps';
 import OrderInformation from '~/routes/_app.order_.$orderId/order-information';
-import {OrderBreadcrumb} from '~/routes/_app.order_.$orderId/order-breadcrumb';
+import { OrderBreadcrumb } from '~/routes/_app.order_.$orderId/order-breadcrumb';
 import OrderNumberDetails from '~/routes/_app.order_.$orderId/order-number-details';
-import {getOrdersProductDetails} from '~/routes/_app.order_.$orderId/order-details.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {ProductTable} from '~/routes/_app.order_.$orderId/product-table';
+import { getOrdersProductDetails } from '~/routes/_app.order_.$orderId/order-details.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { ProductTable } from '~/routes/_app.order_.$orderId/product-table';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {addedBulkCart} from '~/routes/_app.wishlist/bulk.cart.server';
-import {Routes} from '~/lib/constants/routes.constent';
-import {useMemo} from 'react';
-import {BackButton} from '~/components/ui/back-button';
-import {RouteError} from '~/components/ui/route-error';
-import {OrderInformationError} from '~/routes/_app.order_.$orderId/order-information-error';
+import { addedBulkCart } from '~/routes/_app.wishlist/bulk.cart.server';
+import { Routes } from '~/lib/constants/routes.constent';
+import { useMemo } from 'react';
+import { BackButton } from '~/components/ui/back-button';
+import { RouteError } from '~/components/ui/route-error';
+import { OrderInformationError } from '~/routes/_app.order_.$orderId/order-information-error';
+import { AuthError } from '~/components/ui/authError';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Order Details'}];
+  return [{ title: 'Order Details' }];
 };
 
-export async function loader({context, request, params}: LoaderFunctionArgs) {
+export async function loader({ context, request, params }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
   const customerId = userDetails.id;
   const orderId = params.orderId as string;
 
   const ordersProductDetails = await getOrdersProductDetails({
+    context,
+    request,
     orderId,
     customerId,
   });
 
-  return json({orderId, ordersProductDetails});
+  return json({ orderId, ordersProductDetails });
 }
 
-export async function action({request, context}: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
 
   const messageSession = await getMessageSession(request);
@@ -119,8 +122,8 @@ export async function action({request, context}: ActionFunctionArgs) {
 }
 
 export default function OrderDetailPage() {
-  const {orderId, ordersProductDetails} = useLoaderData<typeof loader>();
-  const {products, ...rest} = ordersProductDetails;
+  const { orderId, ordersProductDetails } = useLoaderData<typeof loader>();
+  const { products, ...rest } = ordersProductDetails;
 
   const displayOrderSteps =
     ordersProductDetails.orderStatus !== 'Order Cancel' &&
@@ -133,7 +136,7 @@ export default function OrderDetailPage() {
   return (
     <section className="container">
       <OrderBreadcrumb orderId={orderId} products={products} />
-      <div className="bg-white p-6 flex flex-col gap-6">
+      <div className="flex flex-col gap-6 p-6 bg-white">
         {ordersProductDetails.errorStatus ? (
           <OrderInformationError
             errorMessage={ordersProductDetails.errorMessage}
@@ -176,6 +179,9 @@ export function ErrorBoundary() {
       </section>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <section className="container">
         <div className="pt-6 pb-4">

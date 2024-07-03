@@ -14,7 +14,7 @@ import ExpenditureCard from '~/components/ui/expenditureCard';
 import Profile from '~/components/ui/profile';
 import SpendCard from '~/components/ui/spend-card';
 import { Can } from '~/lib/helpers/Can';
-import { USER_SESSION_ID, isAuthenticate } from '~/lib/utils/auth-session.server';
+import { USER_SESSION_ID, getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import {
   getChartData,
@@ -34,6 +34,7 @@ import { getNewNotificationCount } from '../_app/app.server';
 import { Handlers, Payload } from '../_app/route';
 import { useEventSource } from 'remix-utils/sse/react';
 import { EVENTS } from '~/lib/constants/events.contstent';
+import { encrypt } from '~/lib/utils/cryptoUtils';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Cigweld | Home' }];
@@ -44,8 +45,8 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   const { session } = context;
 
   const { userDetails } = await getUserDetails(request);
-  const chartData = getChartData(userDetails?.id);
-  const expenditureData = getExpenditureData(userDetails?.id);
+  const chartData = getChartData(context, request, userDetails?.id);
+  const expenditureData = getExpenditureData(context, request, userDetails?.id);
   const slides = await getSlides({ context });
   const customerId = userDetails.id;
   const userSessionId = session.get(USER_SESSION_ID);
@@ -53,13 +54,20 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   const { searchParams } = new URL(request.url);
 
   const { invoiceList } = await getAllInvoices({
+    context,
+    request,
     customerId,
     searchParams,
   });
   const { totalNotifications } = await getNewNotificationCount({
+    context,
     customerId,
     request,
   });
+
+  const impersonateEnableCheck = await isImpersonating(request);
+  const sessionAccessTocken = (await getAccessToken(context)) as string;
+  const encryptedSession = encrypt(sessionAccessTocken);
 
   return defer({
     slides,
@@ -68,7 +76,9 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     expenditureData,
     invoiceList,
     totalNotifications,
-    userSessionId
+    userSessionId,
+    encryptedSession,
+    impersonateEnableCheck
   });
 }
 
@@ -77,9 +87,11 @@ export default function Homepage() {
     expenditureData,
     invoiceList, userDetails,
     totalNotifications,
-    userSessionId
+    userSessionId,
+    encryptedSession,
+    impersonateEnableCheck
   } = useLoaderData<typeof loader>();
-  const { columns } = useColumn();
+  const { columns } = useColumn(encryptedSession, impersonateEnableCheck);
   const [notificationCounts, setNotificationCounts] = useState(
     totalNotifications | 0,
   );
@@ -103,18 +115,25 @@ export default function Homepage() {
           payload: Payload;
         };
       };
-      const { type, totalNumber, companyId, sessionId } =
+      const { type, totalNumber, companyId, customerId, sessionId, action } =
         parsedData.notificationData.payload;
       const handlers: Handlers = {
         notification: () => {
-          const companyMeta = userDetails?.meta.company_id;
+          const loginCustomerId = userDetails?.id;
 
-          if (
-            (companyMeta?.companyId === companyId ||
-              companyMeta?.value === companyId) &&
-            userSessionId !== sessionId
-          ) {
-            setNotificationCounts(totalNumber);
+          //Here if the action is view and the login customer is the same as the customer id then only notification count will be updated
+          if (action === 'view') {
+            if (loginCustomerId === customerId) {
+              setNotificationCounts(totalNumber);
+            } else {
+              return;
+            }
+          }
+          else {
+            const customer = totalNumber.find((c: { customerId: string; }) => c.customerId === loginCustomerId)
+            if (customer) {
+              setNotificationCounts(customer.notification);
+            }
           }
         },
       };
@@ -132,30 +151,30 @@ export default function Homepage() {
       {slides.length > 0 ? (
         <Carousel images={slides} sectionClass="mt-0 home-banner" />
       ) : null}
-      <Profile sectionClass="mt-10" profileInfo={userDetails} />
+      <Profile profileInfo={userDetails} />
       <CtaHome totalNotificationCount={notificationCounts} />
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div className='container'>Loading...</div>}>
         <Await resolve={chartData} errorElement={<div></div>}>
           {(resolvedValue) => {
             return (<SpendCard data={resolvedValue?.finalAreaResponse} />)
           }}
         </Await>
       </Suspense>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div className='container'>Loading...</div>}>
         <Await resolve={chartData} errorElement={<div></div>}>
           {(resolvedValue) => {
             return (<DetailChart barChartData={resolvedValue?.finalBarResponse} />)
           }}
         </Await>
       </Suspense>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div className='container'>Loading...</div>}>
         <Await resolve={expenditureData} errorElement={<div></div>}>
           {(resolvedValue) => {
             return (<ExpenditureCard brand={resolvedValue?.expenditure_brands} category={resolvedValue?.expenditure_category} currency={resolvedValue?.currency} />)
           }}
         </Await>
       </Suspense>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div className='container'>Loading...</div>}>
         <Await resolve={expenditureData} errorElement={<div></div>}>
           {(resolvedValue) => {
             return (<ProductTable productList={resolvedValue?.spending_by_product} currency={resolvedValue?.currency} />)

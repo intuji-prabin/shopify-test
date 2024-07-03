@@ -633,6 +633,12 @@ label .required {
   overflow: hidden;
   transition: max-height 0.2s ease-out;
 }
+@media (max-width: 1279px) {
+  .navbar .info-block [data-tooltip]:before,
+  .navbar .info-block [data-tooltip]:after {
+    @apply hidden;
+  }
+}
 /* tooltip for product card ends here */
 
 /* Checkbox Input */
@@ -684,7 +690,7 @@ input[type='radio']:checked + label {
 }
 /* z-index for the view warehouse info drawer */
 div[data-state='open'].fixed.inset-0 {
-  z-index: 10;
+  z-index: 31;
 }
 
 .track-an-order .track-order {
@@ -841,14 +847,11 @@ div[data-state='open'].fixed.inset-0 {
   @apply text-grey-700;
 }
 
-.cart-order .info-block [data-tooltip]:before {
-  @apply min-w-28;
-}
 .bg-dialogBgColor {
   background-color: rgba(255, 255, 255, 0.95);
 }
 .price-tooltip[data-tooltip]:before {
-  @apply left-[unset] -right-2;
+  @apply left-[unset] -right-2 normal-case min-w-44;
 }
 .embla-thumbs button:disabled svg path {
   fill: #0092cf !important;
@@ -937,10 +940,29 @@ div[data-state='open'].fixed.inset-0 {
   content: ',';
 }
 
-
 .tab-header .profile-wrap .profile-detail {
   width: calc(100% - 32px);
 }
 .expenditure__detail canvas {
   @apply z-50 relative;
+}
+
+.disable-hover .group-hover\:block {
+  display: none;
+}
+
+.loading-state button {
+  @apply pointer-events-none opacity-60;
+}
+
+@media (max-width: 1279px) {
+  body.menu-active {
+    @apply overflow-y-hidden;
+  }
+}
+
+@media (max-width: 639px) {
+  .flex-col-sm {
+    @apply flex-col;
+  }
 }

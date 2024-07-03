@@ -10,7 +10,13 @@ import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {emitter3} from '~/lib/utils/emitter.server';
 import {EVENTS} from '~/lib/constants/events.contstent';
 import {StockStatus} from '~/routes/_app.cart-list/order-my-products/use-column';
-import {USER_SESSION_ID} from '~/lib/utils/auth-session.server';
+import {
+  USER_SESSION_ID,
+  getAccessToken,
+  isImpersonating,
+} from '~/lib/utils/auth-session.server';
+import {AppLoadContext} from '@remix-run/server-runtime';
+import {encrypt} from '~/lib/utils/cryptoUtils';
 
 export interface relatedProductsType {
   productId: string;
@@ -108,12 +114,23 @@ type priceRangeType = {
   price: number;
 };
 
-export async function getProductDetails(customerId: string, handle: string) {
+export async function getProductDetails(
+  context: AppLoadContext,
+  request: Request,
+  customerId: string,
+  handle: string,
+) {
+  const accessTocken = (await getAccessToken(context)) as string;
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const results: any = await fetch(
       `${ENDPOINT.PRODUCT.GET_PRODUCT}/${customerId}/${handle}`,
       {
         method: 'GET',
+        headers: {
+          Authorization: accessTocken,
+          'Impersonate-Enable': isImpersonatingCheck,
+        },
       },
     );
     const response = await results.json();
@@ -246,6 +263,7 @@ export const addProductToCart = async (
     const finalCartSet = useFormatCart(cartSetInfo);
     session.set(CART_SESSION_KEY, finalCartSet);
     const storeCartId = await storeCartIdOnBackend(
+      context,
       request,
       cartSetInfo?.cartId,
     );
@@ -382,8 +400,13 @@ const cartLineAdd = async (
   return sessionCartInfo;
 };
 
-const storeCartIdOnBackend = async (request: any, cartId: string) => {
+const storeCartIdOnBackend = async (
+  context: AppLoadContext,
+  request: Request,
+  cartId: string,
+) => {
   const {userDetails} = await getUserDetails(request);
+  const isImpersonatingCheck = await isImpersonating(request);
   // console.log('cartId ', cartId);
   try {
     const customerId = userDetails?.id;
@@ -391,6 +414,8 @@ const storeCartIdOnBackend = async (request: any, cartId: string) => {
       method: AllowedHTTPMethods.POST,
       url: `${ENDPOINT.PRODUCT.CART}/${customerId}`,
       body: JSON.stringify({cartId}),
+      impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
     // console.log('ssss ', results);
     return true;

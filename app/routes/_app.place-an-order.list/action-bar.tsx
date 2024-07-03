@@ -1,17 +1,17 @@
-import {Table} from '@tanstack/react-table';
-import {Button} from '~/components/ui/button';
+import { Table } from '@tanstack/react-table';
+import { Button } from '~/components/ui/button';
 import CreateGroup from '~/routes/_app.place-an-order.list/save-later-dialogbox';
-import {Product} from '~/routes/_app.place-an-order.list/place-an-order-list.server';
-import {BackButton} from '~/components/ui/back-button';
-import {useSelectedProduct} from '~/routes/_app.pending-order_.$groupId/use-selected-product';
-import {Can} from '~/lib/helpers/Can';
+import { Product } from '~/routes/_app.place-an-order.list/place-an-order-list.server';
+import { BackButton } from '~/components/ui/back-button';
+import { useSelectedProduct } from '~/routes/_app.pending-order_.$groupId/use-selected-product';
+import { Can } from '~/lib/helpers/Can';
 
 export function ActionBar({
   table,
   productGroupOptions,
 }: {
   table: Table<Product>;
-  productGroupOptions: {value: string; label: string}[];
+  productGroupOptions: { value: string; label: string }[];
 }) {
   const {
     handleAddToCart,
@@ -29,11 +29,11 @@ export function ActionBar({
   return (
     <div className="flex  justify-between lg:items-center my-[30px] flex-col gap-4 lg:flex-row lg:gap-0 items-baseline ">
       <BackButton title="Order List" />
-      <div className="flex gap-2 items-center w-full justify-between lg:justify-[unset] lg:w-[unset]">
-        <p className="text-lg font-bold leading-[22px] text-grey-900 italic max-w-[281px] lg:max-w-[unset]">
+      <div className="flex items-center w-full justify-between lg:justify-[unset] lg:w-[unset] flex-wrap gap-2">
+        <p className="text-lg font-bold leading-[22px] text-grey-900 italic">
           {numberOfSelectedRows === 0
             ? 'Please select items to create a group or add to cart. '
-            : `${numberOfSelectedRows} items `}
+            : `${numberOfSelectedRows} ${numberOfSelectedRows > 1 ? 'Items' : 'Item'} `}
         </p>
 
         <div className="flex gap-2">

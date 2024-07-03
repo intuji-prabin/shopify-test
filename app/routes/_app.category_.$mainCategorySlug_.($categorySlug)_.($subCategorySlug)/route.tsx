@@ -44,6 +44,7 @@ import { getFilterProduct } from './filter.server';
 import { FilterForm } from './filterForm';
 import { getProductFilterList } from './productFilter.server';
 import { getProducts } from './productList.server';
+import { AuthError } from '~/components/ui/authError';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -291,7 +292,7 @@ const ProductListing = () => {
   return (
     shouldRender && (
       <section className="container">
-        <div className="flex flex-wrap justify-between pt-6">
+        <div className="flex flex-wrap justify-between gap-2 pt-6">
           <div>
             <BackButton className="capitalize" title={backTitle ?? 'back'} />
             <Breadcrumb>
@@ -513,6 +514,7 @@ export const getProductList = async (
 
     if (searchList.length > 0) {
       results = await getFilterProduct(
+        request,
         context,
         params,
         searchList,
@@ -521,6 +523,7 @@ export const getProductList = async (
       );
     } else {
       results = await getProducts(
+        request,
         context,
         params,
         searchList,
@@ -561,6 +564,9 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <div className="min-h-[calc(100vh_-_140px)] flex justify-center items-center">
         <div className="text-center">

@@ -14,6 +14,8 @@ import {
 } from '~/lib/utils/toast-session.server';
 import {json} from '@remix-run/react';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 
 interface MetaField {
   key: string;
@@ -63,26 +65,34 @@ async function normalizeTeams({
 }
 
 export async function getAllTeams({
+  request,
   customerId,
   query,
   context,
 }: {
+  request: Request;
   customerId: string;
   query: string | null;
   context: AppLoadContext;
 }): Promise<TeamColumn[]> {
-  const results = await useFetch<ResponseData>({
+  const isImpersonatingCheck = await isImpersonating(request);
+
+  const url = `${ENDPOINT.CUSTOMER_LIST.GET}/${customerId}${
+    query ? '?search_query=' + query : ''
+  }`;
+
+  const response = await useFetch<ResponseData>({
+    url,
     method: AllowedHTTPMethods.GET,
-    url: `${ENDPOINT.CUSTOMER_LIST.GET}?customer_id=${customerId}${
-      query ? '&search_query=' + query : ''
-    }`,
+    impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
 
-  if (results.payload.length < 0) {
-    throw new Error(results.message);
+  if (!response.status) {
+    throw new Error(response.message);
   }
 
-  return normalizeTeams({context, teams: results.payload});
+  return normalizeTeams({context, teams: response.payload});
 }
 
 export async function getRoles({
@@ -94,39 +104,48 @@ export async function getRoles({
 }) {
   const {data: roles} = await getCustomerRolePermission(context);
 
-  return roles.filter((item) => {
-    const rolesValueList = item.value.split('-');
+  return roles
+    .filter((item) => {
+      const rolesValueList = item.value.split('-');
 
-    const currentUserRolesLastValue = currentUserRole
-      .split('-')
-      .pop() as string;
+      const currentUserRolesLastValue = currentUserRole
+        .split('-')
+        .pop() as string;
 
-    if (rolesValueList.includes(currentUserRolesLastValue)) {
-      return item;
-    }
-  });
+      if (rolesValueList.includes(currentUserRolesLastValue)) {
+        return item;
+      }
+    })
+    .map((item) => ({...item, title: item.title.split(' ')[0]}));
 }
 
 export async function updateStatus({
+  context,
   customerId,
   value,
   request,
 }: {
+  context: AppLoadContext;
   customerId: string;
   value: 'true' | 'false';
   request: Request;
 }) {
   const messageSession = await getMessageSession(request);
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const body = JSON.stringify({
       customerId,
       status: value,
     });
+    const {userDetails} = await getUserDetails(request);
+    const currentCustomerId = userDetails.id;
 
     const response = await useFetch<ResponseData>({
       method: AllowedHTTPMethods.POST,
-      url: ENDPOINT.CUSTOMER.UPDATE_STATUS,
+      url: `${ENDPOINT.CUSTOMER.UPDATE_STATUS}/${currentCustomerId}`,
       body,
+      impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {

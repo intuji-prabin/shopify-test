@@ -7,30 +7,30 @@ import {
   json,
   redirect,
 } from '@shopify/remix-oxygen';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {Outlet, isRouteErrorResponse, useRouteError} from '@remix-run/react';
-import {getUserDetails} from '~/lib/utils/user-session.server';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { Outlet, isRouteErrorResponse, useRouteError } from '@remix-run/react';
+import { getUserDetails } from '~/lib/utils/user-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {addProductToList} from '~/routes/_app.place-an-order/place-an-order.server';
+import { addProductToList } from '~/routes/_app.place-an-order/place-an-order.server';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Place an Order'}];
+  return [{ title: 'Place an Order' }];
 };
 
-export async function loader({context, request}: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
   return null;
 }
 
-export async function action({context, request}: ActionFunctionArgs) {
+export async function action({ context, request }: ActionFunctionArgs) {
   await isAuthenticate(context);
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   const messageSession = await getMessageSession(request);
 
@@ -44,7 +44,7 @@ export async function action({context, request}: ActionFunctionArgs) {
     if (contentType === 'application/json') {
       const jsonPayload = await request.json();
 
-      body = JSON.stringify({products: jsonPayload});
+      body = JSON.stringify({ products: jsonPayload });
     } else {
       const formData = await request.formData();
 
@@ -56,7 +56,7 @@ export async function action({context, request}: ActionFunctionArgs) {
           const quantity = formData.get('quantity');
           const uom = formData.get('uom');
 
-          body = JSON.stringify({productId, quantity, uom});
+          body = JSON.stringify({ productId, quantity, uom });
           break;
         }
         default:
@@ -64,7 +64,7 @@ export async function action({context, request}: ActionFunctionArgs) {
       }
     }
 
-    const response = await addProductToList({body, customerId});
+    const response = await addProductToList({ context, request, body, customerId });
 
     setSuccessMessage(messageSession, response.message);
 
@@ -77,7 +77,7 @@ export async function action({context, request}: ActionFunctionArgs) {
     if (error instanceof Error) {
       setErrorMessage(messageSession, error.message);
       return json(
-        {error},
+        { error },
         {
           headers: {
             'Set-Cookie': await messageCommitSession(messageSession),
@@ -85,7 +85,7 @@ export async function action({context, request}: ActionFunctionArgs) {
         },
       );
     }
-    return json({error}, {status: 500});
+    return json({ error }, { status: 500 });
   }
 }
 

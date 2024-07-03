@@ -1,7 +1,9 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 export enum DatumEnum {
   NA = 'N/A',
@@ -40,8 +42,8 @@ interface ChartDataResponse {
 }
 
 interface FormattedChartData {
-  monthly: FormattedChartDetail;
-  ytd: FormattedChartDetail;
+  monthly: FormattedChartDetail | null;
+  ytd: FormattedChartDetail | null;
 }
 
 interface FormattedChartSubData {
@@ -68,18 +70,24 @@ export const formatAmount = (amount: number) => {
   return amount > 999 ? (amount / 1000).toFixed(2) + 'k' : amount;
 };
 
-export async function getChartData(customerID: string) {
+export async function getChartData(
+  context: AppLoadContext,
+  request: Request,
+  customerID: string,
+) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const response = await useFetch<ChartDataResponse>({
       method: AllowedHTTPMethods.GET,
       url: `${ENDPOINT.REPORT.GET}/${customerID}`,
+      impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
     if (!response?.status) {
       throw new Error('Unexpected action');
     }
     const finalAreaResponse = formatAreaResponse(response?.payload);
     const finalBarResponse = formatBarResponse(response?.payload);
-    console.log('finalBarResponse', finalBarResponse);
     return {finalAreaResponse, finalBarResponse};
   } catch (error) {
     console.log('error', error);
@@ -122,14 +130,18 @@ const formatAreaResponse = (response: Payload): FormattedChartData => {
   };
 
   return {
-    monthly: formatChartDataAndOtherFields(response?.monthly),
-    ytd: formatChartDataAndOtherFields(response?.ytd),
+    monthly: response?.monthly
+      ? formatChartDataAndOtherFields(response?.monthly)
+      : null,
+    ytd: response?.ytd ? formatChartDataAndOtherFields(response?.ytd) : null,
   };
 };
 
 const formatBarResponse = (response: Payload) => {
-  const FinalTotalSpend = response?.totalSpend;
-  const FinalTotalInvoicing = response?.totalInvoice;
+  const FinalTotalSpend = response?.totalSpend ? response?.totalSpend : null;
+  const FinalTotalInvoicing = response?.totalInvoice
+    ? response?.totalInvoice
+    : null;
 
   const formatBarChartData = (data: Total) => {
     return {
@@ -210,24 +222,47 @@ const formatBarResponse = (response: Payload) => {
   };
 
   return {
-    totalSpend: {
-      ytd: formatBarChartDataAndOtherFields(FinalTotalSpend?.ytd),
-      qtd: formatBarChartDataAndOtherFields(FinalTotalSpend?.qtd),
-      mtd: formatBarChartDataAndOtherFields(FinalTotalSpend?.mtd),
-    },
-    totalInvoicing: {
-      ytd: formatLineChartDataAndOtherFields(FinalTotalInvoicing?.ytd),
-      qtd: formatLineChartDataAndOtherFields(FinalTotalInvoicing?.qtd),
-      mtd: formatLineChartDataAndOtherFields(FinalTotalInvoicing?.mtd),
-    },
+    totalSpend: FinalTotalSpend
+      ? {
+          ytd:
+            FinalTotalSpend?.ytd &&
+            formatBarChartDataAndOtherFields(FinalTotalSpend?.ytd),
+          qtd:
+            FinalTotalSpend?.qtd &&
+            formatBarChartDataAndOtherFields(FinalTotalSpend?.qtd),
+          mtd:
+            FinalTotalSpend?.mtd &&
+            formatBarChartDataAndOtherFields(FinalTotalSpend?.mtd),
+        }
+      : null,
+    totalInvoicing: FinalTotalInvoicing
+      ? {
+          ytd:
+            FinalTotalInvoicing?.ytd &&
+            formatLineChartDataAndOtherFields(FinalTotalInvoicing?.ytd),
+          qtd:
+            FinalTotalInvoicing?.qtd &&
+            formatLineChartDataAndOtherFields(FinalTotalInvoicing?.qtd),
+          mtd:
+            FinalTotalInvoicing?.mtd &&
+            formatLineChartDataAndOtherFields(FinalTotalInvoicing?.mtd),
+        }
+      : null,
   };
 };
 
-export async function getExpenditureData(customerID: string) {
+export async function getExpenditureData(
+  context: AppLoadContext,
+  request: Request,
+  customerID: string,
+) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const response = await useFetch<any>({
       method: AllowedHTTPMethods.GET,
       url: `${ENDPOINT.REPORT.PRODUCT_GET}/${customerID}`,
+      impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
     if (!response?.status) {
       throw new Error('Unexpected action');

@@ -5,16 +5,16 @@ import {
   json,
   redirect,
 } from '@shopify/remix-oxygen';
-import {useTable} from '~/hooks/useTable';
-import {Button} from '~/components/ui/button';
-import {Separator} from '~/components/ui/separator';
-import {DataTable} from '~/components/ui/data-table';
-import {SearchInput} from '~/components/ui/search-input';
-import {useColumn} from '~/routes/_app.order/use-column';
-import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
+import { useTable } from '~/hooks/useTable';
+import { Button } from '~/components/ui/button';
+import { Separator } from '~/components/ui/separator';
+import { DataTable } from '~/components/ui/data-table';
+import { SearchInput } from '~/components/ui/search-input';
+import { useColumn } from '~/routes/_app.order/use-column';
+import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
 import OrderFilterForm from '~/routes/_app.order/filter-form';
-import {getAllOrders} from '~/routes/_app.order/order.server';
+import { getAllOrders } from '~/routes/_app.order/order.server';
 import {
   isRouteErrorResponse,
   useLoaderData,
@@ -28,45 +28,52 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '~/components/ui/sheet';
-import {HorizontalHamburgerIcon} from '~/components/icons/hamburgerIcon';
-import {ActionBar} from '~/routes/_app.order/action-bar';
-import {useConditionalRender} from '~/hooks/useAuthorization';
-import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
-import {addedBulkCart} from '~/routes/_app.wishlist/bulk.cart.server';
-import {Routes} from '~/lib/constants/routes.constent';
+import { HorizontalHamburgerIcon } from '~/components/icons/hamburgerIcon';
+import { ActionBar } from '~/routes/_app.order/action-bar';
+import { useConditionalRender } from '~/hooks/useAuthorization';
+import { PaginationWrapper } from '~/components/ui/pagination-wrapper';
+import { addedBulkCart } from '~/routes/_app.wishlist/bulk.cart.server';
+import { Routes } from '~/lib/constants/routes.constent';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
-import {OrderError} from '~/routes/_app.order/order-error';
+import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
+import { OrderError } from '~/routes/_app.order/order-error';
+import { AuthError } from '~/components/ui/authError';
+import { encrypt } from '~/lib/utils/cryptoUtils';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Orders List'}];
+  return [{ title: 'Orders List' }];
 };
 
 const PAGE_LIMIT = 10;
 
-export async function loader({context, request}: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
+  const impersonateEnableCheck = await isImpersonating(request);
+  const sessionAccessTocken = (await getAccessToken(context)) as string;
+  const encryptedSession = encrypt(sessionAccessTocken);
 
   const customerId = userDetails.id.split('/').pop() as string;
 
-  const {searchParams} = new URL(request.url);
+  const { searchParams } = new URL(request.url);
 
-  const {orderList, totalOrder} = await getAllOrders({
+  const { orderList, totalOrder } = await getAllOrders({
+    context,
+    request,
     customerId,
     searchParams,
   });
 
-  return json({orderList, totalOrder, customerId});
+  return json({ orderList, totalOrder, customerId, encryptedSession, impersonateEnableCheck });
 }
 
-export async function action({request, context}: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
 
   const messageSession = await getMessageSession(request);
@@ -135,13 +142,13 @@ export async function action({request, context}: ActionFunctionArgs) {
 }
 
 export default function OrdersPage() {
-  const {orderList, totalOrder, customerId} = useLoaderData<typeof loader>();
+  const { orderList, totalOrder, customerId, encryptedSession, impersonateEnableCheck } = useLoaderData<typeof loader>();
 
-  const {columns} = useColumn();
+  const { columns } = useColumn();
 
   const [searchParams] = useSearchParams();
 
-  const {table} = useTable(columns, orderList, 'id');
+  const { table } = useTable(columns, orderList, 'id');
 
   let isFilterApplied = false;
 
@@ -155,7 +162,7 @@ export default function OrdersPage() {
   return (
     shouldRender && (
       <section className="container">
-        <ActionBar table={table} customerId={customerId} />
+        <ActionBar table={table} customerId={customerId} sessionAccessTocken={encryptedSession} impersonateEnableCheck={impersonateEnableCheck} />
         <div className="flex flex-col gap-2 p-4 border-b bg-neutral-white sm:flex-row sm:justify-between sm:items-center">
           <div className="sm:w-[451px]">
             <SearchInput />
@@ -194,6 +201,9 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <OrderError />;
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return <OrderError errorMessage={error.message} />;
   } else {
     return <h1>{DEFAULT_ERRROR_MESSAGE}</h1>;

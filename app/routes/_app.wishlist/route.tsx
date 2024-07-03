@@ -23,6 +23,7 @@ import { CART_QUANTITY_ERROR, CART_QUANTITY_MAX } from '~/lib/constants/cartInfo
 import { BackButton } from '~/components/ui/back-button';
 import { Can } from '~/lib/helpers/Can';
 import { WISHLIST_SESSION_KEY } from '~/lib/constants/wishlist.constant';
+import { AuthError } from '~/components/ui/authError';
 
 export interface WishListResponse {
   productId: string;
@@ -55,7 +56,7 @@ export interface UnitOfMeasure {
 
 export const loader = async ({ request, context }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
-  const items = await getWishlist(request);
+  const items = await getWishlist(context, request);
   await context.session.set(WISHLIST_SESSION_KEY, items?.length);
   return json({ items }, {
     headers: [['Set-Cookie', await context.session.commit({})]]
@@ -121,7 +122,6 @@ export const action = async ({ request, context }: LoaderFunctionArgs) => {
           );
         }
       case 'DELETE':
-        const productInfo = Object.fromEntries(formData);
         try {
           const productInfo = Object.fromEntries(formData);
           await removeBulkFromWishlist(productInfo, context, request);
@@ -193,7 +193,7 @@ export default function route() {
             />
             {table.getSelectedRowModel().rows.length > 0 &&
               <div className='flex items-center gap-2'>
-                <p className='text-lg italic font-bold'>{table.getSelectedRowModel().rows.length} item selected</p>
+                <p className='text-lg italic font-bold'>{table.getSelectedRowModel().rows.length} {table.getSelectedRowModel().rows.length > 1 ? "Items" : "Item"} selected</p>
                 <Can I="view" a="add_wishlist_to_cart">
                   <Button
                     variant='primary'
@@ -268,6 +268,7 @@ export default function route() {
             <DataTable
               table={table}
               renderSubComponent={renderSubComponent}
+              bulkColSpan={4}
             />
           </section>
         </div>
@@ -298,6 +299,9 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <div className="container pt-6">
         <div className="min-h-[400px] flex justify-center items-center ">

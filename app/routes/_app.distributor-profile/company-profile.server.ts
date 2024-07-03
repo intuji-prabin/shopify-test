@@ -1,7 +1,9 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 export type CompanyProfile = {
   id: string;
@@ -22,11 +24,22 @@ type CompanyProfileResponse = {
   payload: CompanyProfile;
 };
 
-export async function getAllCompanyProfileDetails({userId}: {userId: string}) {
+export async function getAllCompanyProfileDetails({
+  context,
+  request,
+  userId,
+}: {
+  context: AppLoadContext;
+  request: Request;
+  userId: string;
+}) {
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const response = await useFetch<CompanyProfileResponse>({
       method: AllowedHTTPMethods.GET,
       url: `${ENDPOINT.COMPANY.GET_PROFILE}/${userId}`,
+      impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!response.status) {

@@ -1,7 +1,8 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
-import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 
 export const getCartList = async (
@@ -19,28 +20,26 @@ export const getCartList = async (
     throw new Error('Cart List not found');
   }
   return await formateCartList(
+    context,
+    request,
     cartLists,
     userDetails?.id,
     fronOrder,
-    // sessionCartInfo,
-    // context,
   );
 };
 
 const formateCartList = async (
+  context: AppLoadContext,
+  request: Request,
   cartResponse: any,
   customerId: string,
   fronOrder: boolean,
-  // sessionCartInfo: any,
-  // context: any,
 ) => {
   const cartLine = cartResponse?.cart?.lines?.nodes;
   let productList = [] as any;
   if (cartLine.length < 1) {
     return {productList: []};
   }
-  // sessionCartInfo.lineItems = cartLine.length;
-  // await context.session.set(CART_SESSION_KEY, sessionCartInfo);
   cartLine.map((items: any) => {
     const merchandise = items?.merchandise;
     const variantId = merchandise?.id.replace(
@@ -69,22 +68,48 @@ const formateCartList = async (
   if (fronOrder) {
     return productList;
   }
-  const productWithPrice = await getPrice(customerId, productList);
+  const productWithPrice = await getPrice(
+    context,
+    request,
+    customerId,
+    productList,
+  );
   // console.log('werwerwed ', productWithPrice);
   return productWithPrice;
 };
 
-const getPrice = async (customerId: string, productList: any) => {
+const getPrice = async (
+  context: AppLoadContext,
+  request: Request,
+  customerId: string,
+  productList: any,
+) => {
+  const isImpersonatingCheck = await isImpersonating(request);
   const priceResponse = await useFetch<any>({
     method: AllowedHTTPMethods.POST,
     url: `${ENDPOINT.PRODUCT.CART_DETAIL}/${customerId}`,
     body: JSON.stringify({productList}),
+    impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
-
+  // console.log('firstwewe', priceResponse);
   if (!priceResponse?.status) {
     throw new Error(priceResponse?.message);
   }
   return priceResponse?.payload;
+};
+
+export const getCartListData = async (
+  context: AppLoadContext,
+  sessionCartInfo: any,
+) => {
+  const cartLists = await context.storefront.query(GET_CART_LIST, {
+    variables: {cartId: sessionCartInfo},
+  });
+  if (!cartLists) {
+    throw new Error('Cart List not found');
+  }
+  return cartLists;
 };
 
 export const GET_CART_LIST = `query getCart( $cartId : ID!) {

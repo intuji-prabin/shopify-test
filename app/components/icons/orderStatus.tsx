@@ -1,4 +1,4 @@
-export function Recieved({fillColor = '#969C9C'}: {fillColor?: string}) {
+export function Received({fillColor = '#969C9C'}: {fillColor?: string}) {
   return (
     <svg
       width="19"

@@ -1,4 +1,3 @@
-import { Form, useFetcher, useNavigation, useSubmit } from '@remix-run/react';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -7,7 +6,6 @@ import { Button } from '~/components/ui/button';
 import { Calendar } from '~/components/ui/calendar';
 import Loader from '~/components/ui/loader';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
-import { displayToast } from '~/components/ui/toast';
 import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
 import { Can } from '~/lib/helpers/Can';
 
@@ -166,12 +164,11 @@ export function TextArea() {
   );
 }
 
-export function PromoCode({ promoCodeApplied, discountMessage }: { promoCodeApplied: string, discountMessage: string }) {
+export function PromoCode({ promoCodeApplied, discountMessage, fetcher }: { promoCodeApplied: string, discountMessage: string, fetcher: any }) {
   const [promoCode, setPromoCode] = useState(promoCodeApplied);
   useEffect(() => {
     setPromoCode(promoCodeApplied);
   }, [promoCodeApplied]);
-  const fetcher = useFetcher<{ status: boolean; type: "success" | "error"; message: string; method: "POST" | "DELETE" }>();
   const [promoError, setPromoError] = useState("");
   useEffect(() => {
     if (fetcher?.data?.message) {
@@ -188,16 +185,16 @@ export function PromoCode({ promoCodeApplied, discountMessage }: { promoCodeAppl
   }, [discountMessage]);
   return (
     <div className="flex flex-col gap-1">
-      <p className="text-base text-normal leading-[21px] text-grey-800">
+      <p className="text-base text-normal leading-[21px] text-grey-800 mb-1.5 sm:mb-0">
         Do you have any promocode?
       </p>
-      <fetcher.Form method={promoCodeApplied ? "DELETE" : "POST"} onSubmit={(event) => {
+      <fetcher.Form method={promoCodeApplied ? "DELETE" : "POST"} onSubmit={(event: any) => {
         fetcher.submit(event.currentTarget);
       }}>
         <div className="flex flex-col items-center w-full gap-2 sm:flex-row">
           <input
             type="text"
-            className={`grow ${promoCodeApplied && "bg-semantic-success-100 pointer-events-none !border-semantic-success-100"}`}
+            className={`w-full sm:grow ${promoCodeApplied && "bg-semantic-success-100 pointer-events-none !border-semantic-success-100"}`}
             placeholder="Enter promo code here"
             name='promoCode'
             value={promoCode ? promoCode : ''}
@@ -209,22 +206,24 @@ export function PromoCode({ promoCodeApplied, discountMessage }: { promoCodeAppl
               setPromoError("");
             }}
           />
-          <Button
-            variant="secondary"
-            className="min-w-[99px]"
-            type='submit'
-            value={promoCodeApplied ? "promo_code_delete" : "promo_code"}
-            name="action"
-            disabled={fetcher.state === "submitting" || fetcher.state === "loading"}
-          >
-            {fetcher.state === "submitting" || fetcher.state === "loading" ?
-              <div className="flex items-center justify-center h-full gap-2">
-                <span>{promoCodeApplied ? "Removing" : "Applying"}</span>
-              </div> :
-              <>{promoCodeApplied ? "Remove" : "Apply"}</>
-            }
-          </Button>
-          {fetcher.state === "submitting" || fetcher.state === "loading" ? <Loader /> : null}
+          <div className='flex items-center gap-1'>
+            <Button
+              variant="secondary"
+              className="w-full sm:min-w-[99px] sm:w-auto"
+              type='submit'
+              value={promoCodeApplied ? "promo_code_delete" : "promo_code"}
+              name="action"
+              disabled={fetcher.state === "submitting" || fetcher.state === "loading"}
+            >
+              {fetcher.state === "submitting" || fetcher.state === "loading" ?
+                <div className="flex items-center justify-center h-full gap-2">
+                  <span>{promoCodeApplied ? "Removing" : "Applying"}</span>
+                </div> :
+                <>{promoCodeApplied ? "Remove" : "Apply"}</>
+              }
+            </Button>
+            {fetcher.state === "submitting" || fetcher.state === "loading" ? <Loader /> : null}
+          </div>
         </div>
       </fetcher.Form>
       {(fetcher.state === "idle" && promoError) || (promoCodeApplied && promoError !== "") ?

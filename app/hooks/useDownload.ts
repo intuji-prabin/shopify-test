@@ -1,18 +1,23 @@
 import {displayToast} from '~/components/ui/toast';
 
+type CustomHeaders = HeadersInit & {
+  callEncrypted?: string;
+};
 export function useDownload() {
   const handleDownload = async ({
     url,
     headers,
   }: {
     url: string;
-    headers?: HeadersInit;
+    headers?: CustomHeaders;
   }) => {
     try {
+      headers && (headers.callEncrypted = 'true');
       const response = await fetch(url, {headers});
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch the file. Status: ${response.status}`);
+        const responseData = (await response.json()) as any;
+        throw new Error(`${responseData?.message}`);
       }
 
       const contentDisposition = response.headers.get('Content-Disposition');
@@ -20,8 +25,7 @@ export function useDownload() {
       const suggestedFilename = matches ? matches[1] : 'downloaded-file';
 
       const blob = await response.blob();
-
-      if (blob) {
+      if (isBlob(blob) && blob.size > 0) {
         const _url = window.URL.createObjectURL(blob);
 
         const a = document.createElement('a');
@@ -43,13 +47,20 @@ export function useDownload() {
         document.body.removeChild(a);
 
         window.URL.revokeObjectURL(_url);
+      } else {
+        throw new Error('No access');
       }
     } catch (error) {
+      let message = 'Failed to download the file';
       if (error instanceof Error) {
-        displayToast({message: error.message, type: 'error'});
+        message = error.message;
       }
-      displayToast({message: 'Failed to download the file', type: 'error'});
+      displayToast({message, type: 'error'});
     }
   };
   return {handleDownload};
+}
+
+function isBlob(obj: any) {
+  return obj instanceof Blob;
 }

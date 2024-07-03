@@ -193,11 +193,11 @@ export function ItemsColumn({
 }: ItemsColumnType) {
   return (
     <div className="flex flex-wrap items-center space-x-2">
-      <figure className="w-20 p-3 bg-grey-25">
+      <figure className="w-20 p-3 bg-grey-25 max-h-20">
         <img
           src={featuredImage ?? DEFAULT_IMAGE.IMAGE}
           alt="featured"
-          className="object-contain object-center h-full"
+          className="object-contain w-14 h-14"
         />
       </figure>
       <figcaption className="flex flex-col gap-y-1 w-[calc(100%_-_88px)] text-wrap">

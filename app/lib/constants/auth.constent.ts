@@ -1,4 +1,4 @@
-import { he } from "date-fns/locale";
+import {he} from 'date-fns/locale';
 
 export const USER_STATUS = Object.freeze({
   ACTIVE: 'active',
@@ -18,6 +18,8 @@ export const TOAST_MESSAGE_SECRET =
 
 export const USER_DETAILS_SESSION_SECRET =
   'iFaXBRJ6HzfoNgOLmtwKudAVHyIfsYrRtNMxFZ7PI4M=';
+
+export const ENCRYPT_SECRET = 'uRKwjZ4EIXRjRxyNO1nc8BX9ioZRO0JVfvjg/RIQ8wU=';
 
 export const ADMIN_ACCESS_TOKEN = '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';
 

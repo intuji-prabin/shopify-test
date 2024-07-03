@@ -3,12 +3,12 @@ import {
   LoaderFunctionArgs,
   json,
 } from '@remix-run/server-runtime';
-import {BackButton} from '~/components/ui/back-button';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {useConditionalRender} from '~/hooks/useAuthorization';
-import {Routes} from '~/lib/constants/routes.constent';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
+import { BackButton } from '~/components/ui/back-button';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { useConditionalRender } from '~/hooks/useAuthorization';
+import { Routes } from '~/lib/constants/routes.constent';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
 import {
   AllowImpersonateForm,
   ImpersonateFormFieldValidator,
@@ -22,26 +22,27 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
-import {validationError} from 'remix-validated-form';
-import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
-import {RouteError} from '~/components/ui/route-error';
+import { validationError } from 'remix-validated-form';
+import { AllowedHTTPMethods } from '~/lib/enums/api.enum';
+import { RouteError } from '~/components/ui/route-error';
+import { AuthError } from '~/components/ui/authError';
 
-export async function loader({request, context}: LoaderFunctionArgs) {
+export async function loader({ request, context }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   const customerId = userDetails.id.split('/').pop() as string;
 
-  const {impersonateActive} = await getImpersonateStatus(customerId);
+  const { impersonateActive } = await getImpersonateStatus(context, request, customerId);
 
-  return json({isImpersonateActive: impersonateActive});
+  return json({ isImpersonateActive: impersonateActive });
 }
 
-export async function action({request, context}: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   const customerId = userDetails.id.split('/').pop() as string;
 
@@ -52,13 +53,13 @@ export async function action({request, context}: ActionFunctionArgs) {
   if (results.error) {
     return validationError(results.error);
   }
-  const {reason} = results.data;
+  const { reason } = results.data;
 
   const action = formData.get('_action') as
     | 'allow_impersonate'
     | 'disallow_impersonate';
 
-  const body = JSON.stringify({impersonateReason: reason});
+  const body = JSON.stringify({ impersonateReason: reason });
 
   switch (action) {
     case 'allow_impersonate':
@@ -67,6 +68,7 @@ export async function action({request, context}: ActionFunctionArgs) {
         body,
         request,
         method: AllowedHTTPMethods.POST,
+        context,
       });
     case 'disallow_impersonate':
       return await updateImpersonateStatus({
@@ -74,6 +76,7 @@ export async function action({request, context}: ActionFunctionArgs) {
         body,
         request,
         method: AllowedHTTPMethods.PUT,
+        context
       });
 
     default:
@@ -82,14 +85,14 @@ export async function action({request, context}: ActionFunctionArgs) {
 }
 
 export default function AllowImpersonatePage() {
-  const {isImpersonateActive} = useLoaderData<typeof loader>();
+  const { isImpersonateActive } = useLoaderData<typeof loader>();
 
   const shouldRender = useConditionalRender('allow_impersonation');
 
   return (
     shouldRender && (
       <section className="container">
-        <div className=" pt-6 pb-4">
+        <div className="pt-6 pb-4 ">
           <BackButton title="Impersonate" />
           <Breadcrumb>
             <BreadcrumbItem href={Routes.SUPPORT}>Support</BreadcrumbItem>
@@ -120,7 +123,7 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return (
       <section className="container">
-        <div className=" pt-6 pb-4">
+        <div className="pt-6 pb-4 ">
           <BackButton title="Impersonate" />
           <Breadcrumb>
             <BreadcrumbItem href={Routes.SUPPORT}>Support</BreadcrumbItem>
@@ -136,9 +139,12 @@ export function ErrorBoundary() {
       </section>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <section className="container">
-        <div className=" pt-6 pb-4">
+        <div className="pt-6 pb-4 ">
           <BackButton title="Impersonate" />
           <Breadcrumb>
             <BreadcrumbItem href={Routes.SUPPORT}>Support</BreadcrumbItem>

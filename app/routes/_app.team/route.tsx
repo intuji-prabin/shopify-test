@@ -1,19 +1,19 @@
-import {useMemo, useState} from 'react';
-import {Can} from '~/lib/helpers/Can';
-import {validationError} from 'remix-validated-form';
-import {Button} from '~/components/ui/button';
-import {SearchInput} from '~/components/ui/search-input';
-import {Routes} from '~/lib/constants/routes.constent';
-import {TabsTable} from '~/routes/_app.team/tabs-table';
-import {MetaFunction} from '@shopify/remix-oxygen';
-import {BackButton} from '~/components/ui/back-button';
-import {TeamError} from '~/routes/_app.team/team-error';
-import {useConditionalRender} from '~/hooks/useAuthorization';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {Tabs, TabsContent, TabsList, TabsTrigger} from '~/components/ui/tabs';
-import {ConfirmationFormSchemaValidator} from '~/routes/_app.team/confirmation-form';
-import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import { useMemo, useState } from 'react';
+import { Can } from '~/lib/helpers/Can';
+import { validationError } from 'remix-validated-form';
+import { Button } from '~/components/ui/button';
+import { SearchInput } from '~/components/ui/search-input';
+import { Routes } from '~/lib/constants/routes.constent';
+import { TabsTable } from '~/routes/_app.team/tabs-table';
+import { MetaFunction } from '@shopify/remix-oxygen';
+import { BackButton } from '~/components/ui/back-button';
+import { TeamError } from '~/routes/_app.team/team-error';
+import { useConditionalRender } from '~/hooks/useAuthorization';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { ConfirmationFormSchemaValidator } from '~/routes/_app.team/confirmation-form';
+import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
 import {
   getAllTeams,
   getRoles,
@@ -30,32 +30,35 @@ import {
   LoaderFunctionArgs,
   json,
 } from '@remix-run/server-runtime';
+import { AuthError } from '~/components/ui/authError';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Team List'}];
+  return [{ title: 'Team List' }];
 };
 
-export async function loader({request, context}: LoaderFunctionArgs) {
+export async function loader({ request, context }: LoaderFunctionArgs) {
   try {
     await isAuthenticate(context);
 
-    const {userDetails} = await getUserDetails(request);
+    const { userDetails } = await getUserDetails(request);
 
     const customerId = userDetails.id;
 
     const currentUserRole = userDetails.meta.user_role.value;
 
-    const {searchParams} = new URL(request.url);
+    const { searchParams } = new URL(request.url);
 
     const query = searchParams.get('search');
+    const isImpersonatingCheck = await isImpersonating(request);
 
-    const teams = await getAllTeams({customerId, query, context});
+    const teams = await getAllTeams({ request, customerId, query, context });
 
-    const roles = await getRoles({context, currentUserRole});
+    const roles = await getRoles({ context, currentUserRole });
 
-    return json({teams, roles, currentUser: customerId});
+    return json({ teams, roles, currentUser: customerId, isImpersonatingCheck });
   } catch (error) {
     if (error instanceof Error) {
+      console.log("error", error.message);
       throw new Error(error.message);
     }
 
@@ -65,7 +68,7 @@ export async function loader({request, context}: LoaderFunctionArgs) {
   }
 }
 
-export async function action({request, context}: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
   const formData = await request.formData();
 
@@ -74,7 +77,7 @@ export async function action({request, context}: ActionFunctionArgs) {
   switch (action) {
     case 'activate': {
       const customerId = formData.get('customerId') as string;
-      return await updateStatus({customerId, value: 'true', request});
+      return await updateStatus({ context, customerId, value: 'true', request });
     }
     case 'deactivate': {
       const result = await ConfirmationFormSchemaValidator.validate(formData);
@@ -85,7 +88,7 @@ export async function action({request, context}: ActionFunctionArgs) {
 
       if (result.data.confirmation === 'Deactivate') {
         const customerId = result.data.customerId;
-        return await updateStatus({customerId, value: 'false', request});
+        return await updateStatus({ context, customerId, value: 'false', request });
       }
     }
     default: {
@@ -95,7 +98,7 @@ export async function action({request, context}: ActionFunctionArgs) {
 }
 
 export default function TeamPage() {
-  const {teams, roles, currentUser} = useLoaderData<typeof loader>();
+  const { teams, roles, currentUser, isImpersonatingCheck } = useLoaderData<typeof loader>();
 
   const [activeDepartmentTab, setActiveDepartmentTab] = useState('all');
 
@@ -112,7 +115,7 @@ export default function TeamPage() {
   return (
     shouldRender && (
       <section className="container">
-        <div className="flex items-center justify-between py-6">
+        <div className="flex flex-wrap items-center justify-between gap-2 py-6">
           <BackButton className="capitalize" title="My Team" />
           <Can I="view" a="add_customer">
             <Link to={Routes.TEAM_ADD}>
@@ -143,11 +146,11 @@ export default function TeamPage() {
             ))}
           </TabsList>
           <TabsContent value="all">
-            <TabsTable results={teams} currentUser={currentUser} />
+            <TabsTable results={teams} currentUser={currentUser} isImpersonatingCheck={isImpersonatingCheck} />
           </TabsContent>
           {roles.map((role) => (
             <TabsContent key={role.value} value={role.value}>
-              <TabsTable results={displayedList} currentUser={currentUser} />
+              <TabsTable results={displayedList} currentUser={currentUser} isImpersonatingCheck={isImpersonatingCheck} />
             </TabsContent>
           ))}
         </Tabs>
@@ -162,6 +165,9 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <TeamError />;
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return <TeamError errorMessage={error.message} />;
   } else {
     return <h1>Unknown Error</h1>;

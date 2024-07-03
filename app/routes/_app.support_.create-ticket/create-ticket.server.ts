@@ -2,7 +2,7 @@ import {validationError} from 'remix-validated-form';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {useFetch} from '~/hooks/useFetch';
-import {json, redirect} from '@remix-run/server-runtime';
+import {AppLoadContext, json, redirect} from '@remix-run/server-runtime';
 import {Routes} from '~/lib/constants/routes.constent';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {CreateTicketFormFieldValidator} from '~/routes/_app.support_.create-ticket/create-ticket-form';
@@ -12,6 +12,7 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 type CreateTicketResponse = {
   status: boolean;
@@ -20,14 +21,16 @@ type CreateTicketResponse = {
 };
 
 export async function createTicket({
+  context,
   request,
   customerId,
 }: {
+  context: AppLoadContext;
   request: Request;
   customerId: string;
 }) {
   const messageSession = await getMessageSession(request);
-
+  const isImpersonatingCheck = await isImpersonating(request);
   try {
     const result = await CreateTicketFormFieldValidator.validate(
       await request.formData(),
@@ -46,6 +49,8 @@ export async function createTicket({
       method: AllowedHTTPMethods.POST,
       url: `${ENDPOINT.SUPPORT.TICKETS}/${customerId}`,
       body,
+      impersonateEnableCheck: isImpersonatingCheck,
+      context,
     });
 
     if (!results.status) {

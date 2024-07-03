@@ -7,6 +7,7 @@ export const DropdownMenu = ({
   type,
   categories,
   submenus,
+  handleClick
 }: {
   activeMenu: string;
   submenus: {
@@ -18,11 +19,12 @@ export const DropdownMenu = ({
   closeMenu: () => void;
   type: 'normal' | 'megamenu';
   categories: Payload[];
+  handleClick: (event: any) => void;
 }) => {
   return (
     <>
       {type === 'megamenu' ? (
-        <MegaMenu categories={categories} />
+        <MegaMenu categories={categories} handleClick={handleClick} />
       ) : (
         <NormalMenuList submenus={submenus} />
       )}

@@ -1,28 +1,28 @@
-import {Link, useActionData} from '@remix-run/react';
+import { Link, useActionData } from '@remix-run/react';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   json,
   redirect,
 } from '@remix-run/server-runtime';
-import {Alert, AlertDescription} from '~/components/ui/alert';
-import {ArrowLeftSmall} from '~/components/icons/arrowleft';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { ArrowLeftSmall } from '~/components/icons/arrowleft';
 import ResendActivationLinkForm, {
   ResendActivationLinkFormFieldValidator,
 } from '~/routes/_public.resend-activation-link/resend-activation-link-form';
-import {getAccessToken} from '~/lib/utils/auth-session.server';
+import { getAccessToken } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import {validationError} from 'remix-validated-form';
-import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
-import {Routes} from '~/lib/constants/routes.constent';
-import {resendActivationLink} from '~/routes/_public.resend-activation-link/resend-activation-link.server';
+import { validationError } from 'remix-validated-form';
+import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
+import { Routes } from '~/lib/constants/routes.constent';
+import { resendActivationLink } from '~/routes/_public.resend-activation-link/resend-activation-link.server';
 
-export async function loader({context}: LoaderFunctionArgs) {
+export async function loader({ context }: LoaderFunctionArgs) {
   const accessToken = await getAccessToken(context);
 
   if (accessToken) {
@@ -32,7 +32,7 @@ export async function loader({context}: LoaderFunctionArgs) {
   return null;
 }
 
-export async function action({request, context}: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
   await getAccessToken(context);
 
   const messageSession = await getMessageSession(request);
@@ -45,14 +45,14 @@ export async function action({request, context}: ActionFunctionArgs) {
       return validationError(result.error);
     }
 
-    const {email} = result.data;
+    const { email } = result.data;
 
-    const {status, message} = await resendActivationLink({email});
+    const { status, message } = await resendActivationLink({ context, request, email });
 
     setSuccessMessage(messageSession, message);
 
     return json(
-      {status, email},
+      { status, email },
       {
         headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
       },
@@ -62,7 +62,7 @@ export async function action({request, context}: ActionFunctionArgs) {
       setErrorMessage(messageSession, error.message);
 
       return json(
-        {status: false, error: error.message},
+        { status: false, error: error.message },
         {
           headers: {
             'Set-Cookie': await messageCommitSession(messageSession),
@@ -74,7 +74,7 @@ export async function action({request, context}: ActionFunctionArgs) {
     setErrorMessage(messageSession, DEFAULT_ERRROR_MESSAGE);
 
     return json(
-      {status: false, error: DEFAULT_ERRROR_MESSAGE},
+      { status: false, error: DEFAULT_ERRROR_MESSAGE },
       {
         headers: {
           'Set-Cookie': await messageCommitSession(messageSession),
@@ -85,7 +85,7 @@ export async function action({request, context}: ActionFunctionArgs) {
 }
 
 export default function ResendActivationLinkPage() {
-  const actionData = useActionData<{status: boolean; email: string}>();
+  const actionData = useActionData<{ status: boolean; email: string }>();
   return (
     <div className="md:w-[398px] w-full min-h-[414px]">
       <div className="flex flex-col p-8 space-y-8 bg-white shadow-3xl">

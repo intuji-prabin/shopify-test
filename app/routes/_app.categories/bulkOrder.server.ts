@@ -4,6 +4,7 @@ import {CONSTANT} from '~/lib/constants/product.session';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {addProductToCart} from '../_app.product_.$productSlug/product.server';
 import {AppLoadContext} from '@remix-run/server-runtime';
+import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 export interface ProductResponse {
   status: boolean;
@@ -23,15 +24,20 @@ export interface UnitOfMeasure {
 }
 
 export async function getProductList(
+  context: AppLoadContext,
+  request: Request,
   formData: {stockCode: string; quantity: number; uom: string}[],
 ) {
   const url = `${ENDPOINT.BULK.GET_PRODUCT}`;
+  const isImpersonatingCheck = await isImpersonating(request);
 
   const body = JSON.stringify(formData);
   const productResponse = await useFetch<ProductResponse>({
     method: AllowedHTTPMethods.POST,
     url,
     body,
+    impersonateEnableCheck: isImpersonatingCheck,
+    context,
   });
 
   if (!productResponse?.status) {
@@ -47,7 +53,7 @@ export const productBulkCart = async (
   request: Request,
 ) => {
   try {
-    const getProductResponse = await getProductList(cartInfo);
+    const getProductResponse = await getProductList(context, request, cartInfo);
     const itemData: any = Object.values(getProductResponse).map((product) => {
       return {
         attributes: [

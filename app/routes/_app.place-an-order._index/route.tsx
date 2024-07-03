@@ -1,15 +1,16 @@
-import {isRouteErrorResponse, useRouteError} from '@remix-run/react';
-import {LoaderFunctionArgs} from '@remix-run/server-runtime';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {deletePlaceAnOrderList} from '~/routes/_app.place-an-order.list/place-an-order-list.server';
+import { isRouteErrorResponse, useRouteError } from '@remix-run/react';
+import { LoaderFunctionArgs } from '@remix-run/server-runtime';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { deletePlaceAnOrderList } from '~/routes/_app.place-an-order.list/place-an-order-list.server';
 import EmptyList from '~/components/ui/empty-list';
-import {RouteError} from '~/components/ui/route-error';
-import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import { RouteError } from '~/components/ui/route-error';
+import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
+import { AuthError } from '~/components/ui/authError';
 
-export async function loader({context, request}: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  await deletePlaceAnOrderList({request});
+  await deletePlaceAnOrderList({ context, request });
 
   return null;
 }
@@ -24,6 +25,9 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <RouteError />;
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return <RouteError errorMessage={error.message} />;
   } else {
     return <h1>{DEFAULT_ERRROR_MESSAGE}</h1>;

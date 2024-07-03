@@ -1,29 +1,21 @@
 import {
+  isRouteErrorResponse,
+  useLoaderData,
+  useRouteError,
+} from '@remix-run/react';
+import { CustomerUpdateInput } from '@shopify/hydrogen/storefront-api-types';
+import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   MetaFunction,
   json,
   redirect,
 } from '@shopify/remix-oxygen';
-import ProfileForm, {
-  ProfileFormSchemaValidator,
-} from '~/routes/_app.profile/profile-form';
-import {isAuthenticate, logout} from '~/lib/utils/auth-session.server';
-import {getCustomerById} from '~/routes/_app.team_.$teamId/edit-team.server';
-import {getCustomerRolePermission} from '~/lib/customer-role/customer-role-permission';
-import {
-  isRouteErrorResponse,
-  useLoaderData,
-  useRouteError,
-} from '@remix-run/react';
-import {
-  USER_DETAILS_KEY,
-  getUserDetails,
-  getUserDetailsSession,
-  userDetailsCommitSession,
-} from '~/lib/utils/user-session.server';
-import {validationError} from 'remix-validated-form';
-import {CustomerUpdateInput} from '@shopify/hydrogen/storefront-api-types';
+import { validationError } from 'remix-validated-form';
+import { Routes } from '~/lib/constants/routes.constent';
+import { getCustomerRolePermission } from '~/lib/customer-role/customer-role-permission';
+import { isAuthenticate, logout } from '~/lib/utils/auth-session.server';
+import { fileUpload } from '~/lib/utils/file-upload';
 import {
   getMessageSession,
   messageCommitSession,
@@ -31,44 +23,56 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
 import {
+  USER_DETAILS_KEY,
+  getUserDetails,
+  getUserDetailsSession,
+  userDetailsCommitSession,
+} from '~/lib/utils/user-session.server';
+import ProfileForm, {
+  ProfileFormSchemaValidator,
+} from '~/routes/_app.profile/profile-form';
+import { getCustomerById } from '~/routes/_app.team_.$teamId/edit-team.server';
+import {
   LOGIN_MUTATION,
   getCustomerByEmail,
 } from '~/routes/_public.login/login.server';
-import {Routes} from '~/lib/constants/routes.constent';
-import {fileUpload} from '~/lib/utils/file-upload';
 // import {LOGOUT_MUTATION} from '~/routes/_public.logout/route';
-import {SESSION_MAX_AGE} from '~/lib/constants/auth.constent';
-import {BackButton} from '~/components/ui/back-button';
-import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import { BackButton } from '~/components/ui/back-button';
+import { SESSION_MAX_AGE } from '~/lib/constants/auth.constent';
+import { AuthError } from '~/components/ui/authError';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Profile'}];
+  return [{ title: 'Profile' }];
 };
 
-export async function loader({context, request}: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
+  if (userDetails?.impersonateEnable) {
+    return redirect(Routes.HOME);
+  }
 
   const customerId = userDetails.id.split('/').pop() as string;
+  const newCustomerId = `${customerId}/profile`;
 
-  const customerDetails = await getCustomerById({customerId});
+  const customerDetails = await getCustomerById({ context, request, customerId: newCustomerId });
 
   const roles = await getCustomerRolePermission(context);
 
-  return json({customerDetails, roles, customerId});
+  return json({ customerDetails, roles, customerId });
 }
 
-export async function action({request, context}: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
   const accessToken = await isAuthenticate(context);
 
-  const {session, storefront} = context;
+  const { session, storefront } = context;
 
   const messageSession = await getMessageSession(request);
 
   const userDetailsSession = await getUserDetailsSession(request);
 
-  const {userDetails} = (await getUserDetails(request)) as any;
+  const { userDetails } = (await getUserDetails(request)) as any;
 
   try {
     const result = await ProfileFormSchemaValidator.validate(
@@ -94,11 +98,11 @@ export async function action({request, context}: ActionFunctionArgs) {
     let newAccessToken = accessToken;
 
     if (typeof oldPassword !== 'undefined' && oldPassword !== '') {
-      const {customerAccessTokenCreate}: any = await storefront.mutate(
+      const { customerAccessTokenCreate }: any = await storefront.mutate(
         LOGIN_MUTATION,
         {
           variables: {
-            input: {email: userDetails?.email, password: oldPassword},
+            input: { email: userDetails?.email, password: oldPassword },
           },
         },
       );
@@ -116,7 +120,9 @@ export async function action({request, context}: ActionFunctionArgs) {
     }
 
     if (typeof profileImage !== 'undefined' && customerId) {
-      const {status} = await fileUpload({
+      const { status } = await fileUpload({
+        context,
+        request,
         customerId,
         file: profileImage,
       });
@@ -186,6 +192,7 @@ export async function action({request, context}: ActionFunctionArgs) {
       userDetailsSession.unset(USER_DETAILS_KEY);
 
       const customerDetails = await getCustomerByEmail({
+        context,
         email: userDetails.email,
       });
 
@@ -227,12 +234,12 @@ export async function action({request, context}: ActionFunctionArgs) {
       );
     }
 
-    return json({error}, {status: 500});
+    return json({ error }, { status: 500 });
   }
 }
 
 export default function ProfilePage() {
-  const {customerDetails, roles, customerId} = useLoaderData<typeof loader>();
+  const { customerDetails, roles, customerId } = useLoaderData<typeof loader>();
 
   return (
     <section className="container">
@@ -261,6 +268,9 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <div className="flex items-center justify-center">
         <div className="text-center">

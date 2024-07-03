@@ -1,12 +1,12 @@
-import {MetaFunction} from '@shopify/remix-oxygen';
-import {setFormDefaults} from 'remix-validated-form';
-import {Routes} from '~/lib/constants/routes.constent';
-import {BackButton} from '~/components/ui/back-button';
-import {isAuthenticate} from '~/lib/utils/auth-session.server';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
-import {getSupportContact} from '~/routes/_app.support_.contact-us/support-contact-us.server';
-import {CreateTicketForm} from '~/routes/_app.support_.create-ticket/create-ticket-form';
+import { MetaFunction } from '@shopify/remix-oxygen';
+import { setFormDefaults } from 'remix-validated-form';
+import { Routes } from '~/lib/constants/routes.constent';
+import { BackButton } from '~/components/ui/back-button';
+import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
+import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
+import { getSupportContact } from '~/routes/_app.support_.contact-us/support-contact-us.server';
+import { CreateTicketForm } from '~/routes/_app.support_.create-ticket/create-ticket-form';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -17,19 +17,20 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
-import {useConditionalRender} from '~/hooks/useAuthorization';
-import {createTicket} from './create-ticket.server';
+import { useConditionalRender } from '~/hooks/useAuthorization';
+import { createTicket } from './create-ticket.server';
+import { AuthError } from '~/components/ui/authError';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Create Ticket'}];
+  return [{ title: 'Create Ticket' }];
 };
 
-export async function loader({context, request}: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const supportContact = await getSupportContact({context});
+  const supportContact = await getSupportContact({ context });
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   const contactName = `${userDetails.firstName} ${userDetails.lastName}`;
 
@@ -46,24 +47,24 @@ export async function loader({context, request}: LoaderFunctionArgs) {
   });
 }
 
-export async function action({request, context}: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
   await isAuthenticate(context);
 
-  const {userDetails} = await getUserDetails(request);
+  const { userDetails } = await getUserDetails(request);
 
   const customerId = userDetails.id.split('/').pop() as string;
 
-  return createTicket({request, customerId});
+  return createTicket({ context, request, customerId });
 }
 
 export default function CreateTicketPage() {
-  const {departmentOptions} = useLoaderData<typeof loader>();
+  const { departmentOptions } = useLoaderData<typeof loader>();
   const shouldRender = useConditionalRender('open_ticket');
 
   return (
     shouldRender && (
       <section className="container">
-        <div className=" pt-6 pb-4">
+        <div className="pt-6 pb-4 ">
           <BackButton title="Open A Ticket" />
           <Breadcrumb>
             <BreadcrumbItem href={Routes.SUPPORT}>Support</BreadcrumbItem>
@@ -101,6 +102,9 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <div className="flex items-center justify-center">
         <div className="text-center">

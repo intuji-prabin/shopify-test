@@ -217,6 +217,9 @@ function renderProductItem(
             >
               {product.title}
             </Link>
+            <p className="text-sm text-primary-500">
+              SKU: <span>{product.sku}</span>
+            </p>
           </figcaption>
         </figure>
       );
@@ -250,7 +253,7 @@ function renderProductItem(
                 </Link>
               </p>
               <p className="text-2xl italic font-bold text-grey-900">
-                {product?.currency || '$'}
+                {product?.currency || '$'}&nbsp;
                 {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? product?.price : "N/A"}
                 <span className="text-sm italic font-bold text-grey-500">
                   {' '}
@@ -370,7 +373,7 @@ function renderProductItem(
                 </Link>
               </p>
               <p className="text-2xl italic font-bold text-grey-900">
-                {product?.currency || '$'}
+                {product?.currency || '$'}&nbsp;
                 {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? product?.price : 'N/A'}
                 <span className="text-sm italic font-bold text-grey-500">
                   {' '}
@@ -475,6 +478,9 @@ function renderProductItem(
             >
               {product.title}
             </Link>
+            <p className="text-sm text-primary-500">
+              SKU: <span>{product.sku}</span>
+            </p>
           </figcaption>
         </figure>
       );
@@ -512,7 +518,7 @@ function renderProductItem(
                 </Link>
               </p>
               <p className="text-2xl italic font-bold text-grey-900">
-                {product?.currency || '$'}
+                {product?.currency || '$'}&nbsp;
                 {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? product?.price : 'N/A'}
                 <span className="text-sm italic font-bold text-grey-500">
                   {' '}
@@ -643,6 +649,9 @@ function renderProductItem(
             >
               {product.title}
             </Link>
+            <p className="text-sm text-primary-500">
+              SKU: <span>{product.sku}</span>
+            </p>
           </figcaption>
         </figure>
       );

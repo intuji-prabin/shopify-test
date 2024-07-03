@@ -1,13 +1,13 @@
-import {z} from 'zod';
-import {useState} from 'react';
-import {zfd} from 'zod-form-data';
-import {Input} from '~/components/ui/input';
-import {Button} from '~/components/ui/button';
-import {Separator} from '~/components/ui/separator';
-import {withZod} from '@remix-validated-form/with-zod';
+import { z } from 'zod';
+import { useState } from 'react';
+import { zfd } from 'zod-form-data';
+import { Input } from '~/components/ui/input';
+import { Button } from '~/components/ui/button';
+import { Separator } from '~/components/ui/separator';
+import { withZod } from '@remix-validated-form/with-zod';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import ValidatedFormPassword from '~/components/ui/validated-form-password';
-import SelectInput, {SelectInputOptions} from '~/components/ui/select-input';
+import SelectInput, { SelectInputOptions } from '~/components/ui/select-input';
 import {
   AUSTRALIAN_PHONENUMBER_VALIDATION_REGEX,
   PASSWORD_REGEX,
@@ -21,7 +21,7 @@ import {
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE_MB,
 } from '~/lib/constants/form.constant';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 
 type ProfileFormProps = {
   defaultValues?: Omit<
@@ -57,20 +57,20 @@ export const ProfileFormSchema = z
           return true;
         }, 'Max file size is 15MB.'),
     ),
-    fullName: z.string().trim().min(1, {message: 'Full Name is required'}),
+    fullName: z.string().trim().min(1, { message: 'Full Name is required' }),
     email: z.string().email().trim().toLowerCase().optional(),
     phoneNumber: z
       .string()
-      .min(1, {message: 'Phone Number is required'})
+      .min(1, { message: 'Phone Number is required' })
       .trim()
       .refine(
         (value) => AUSTRALIAN_PHONENUMBER_VALIDATION_REGEX.test(value),
         'Invalid Phone Number',
       ),
-    address: z.string().min(1, {message: 'Address is required'}).trim(),
+    address: z.string().min(1, { message: 'Address is required' }).trim(),
     userRole: z
       .string()
-      .min(1, {message: 'User Role is required'})
+      .min(1, { message: 'User Role is required' })
       .trim()
       .optional(),
     customerId: z.string().optional(),
@@ -85,23 +85,23 @@ export const ProfileFormSchema = z
       }, 'Password must be at least 8 characters, one capital letter, one number, and one special character'),
     confirmPassword: z.string().trim().optional(),
   })
-  .refine(({oldPassword, password}) => !(oldPassword && !password), {
+  .refine(({ oldPassword, password }) => !(oldPassword && !password), {
     path: ['password'],
     message: 'New password is required',
   })
-  .refine(({oldPassword, password}) => !(!oldPassword && password), {
+  .refine(({ oldPassword, password }) => !(!oldPassword && password), {
     path: ['oldPassword'],
     message: 'Old password is required',
   })
   .refine(
-    ({oldPassword, password}) =>
+    ({ oldPassword, password }) =>
       !(oldPassword && password && oldPassword === password),
     {
       path: ['password'],
       message: 'New password cannot be the same as the old password',
     },
   )
-  .refine(({password, confirmPassword}) => password == confirmPassword, {
+  .refine(({ password, confirmPassword }) => password == confirmPassword, {
     path: ['confirmPassword'],
     message: "Password don't match",
   });
@@ -121,25 +121,24 @@ export default function ProfileForm({
 
   const formId = 'profile-form';
 
-  const {reset} = useFormContext(formId);
+  const { reset } = useFormContext(formId);
 
   const isSubmitting = useIsSubmitting(formId);
 
   const imageUrl = defaultValues?.profileImageUrl
     ? defaultValues.profileImageUrl
     : DEFAULT_IMAGE.DEFAULT;
-
   return (
     <ValidatedForm
       method="POST"
       encType="multipart/form-data"
       id={formId}
-      className="bg-neutral-white p-6"
+      className="p-6 bg-neutral-white"
       defaultValues={defaultValues}
       validator={ProfileFormSchemaValidator}
       onChange={() => setHasUnsavedChanges(true)}
     >
-      <div className="grid sm:grid-cols-4 gap-4">
+      <div className="grid gap-4 sm:grid-cols-4">
         <div className="sm:col-start-1 sm:col-end-2">
           <h4>Basic Information</h4>
           <p>View and change the user information</p>
@@ -181,7 +180,7 @@ export default function ProfileForm({
         </div>
       </div>
       <Separator className="my-8" />
-      <div className="grid sm:grid-cols-4 gap-4">
+      <div className="grid gap-4 sm:grid-cols-4">
         <div className="sm:col-start-1 sm:col-end-2">
           <h4>User Roles</h4>
           <p>Set the user roles, change Profiles</p>
@@ -196,6 +195,7 @@ export default function ProfileForm({
                 name="userRole"
                 options={options}
                 isDisabled={true}
+                role={true}
                 label="Select Roles"
               />
             </div>
@@ -204,7 +204,7 @@ export default function ProfileForm({
         </div>
       </div>
       <Separator className="my-8" />
-      <div className="grid sm:grid-cols-4 gap-4">
+      <div className="grid gap-4 sm:grid-cols-4">
         <div className="sm:col-start-1 sm:col-end-2">
           <h4>Passwords</h4>
           <p>Change the password of the users</p>

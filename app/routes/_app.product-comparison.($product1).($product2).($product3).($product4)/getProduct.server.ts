@@ -1,9 +1,11 @@
 import {CONSTANT} from '~/lib/constants/product.session';
 import {getPrices} from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/productList.server';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {AppLoadContext} from '@remix-run/server-runtime';
 
 export async function getSingleProduct(
-  context: any,
+  request: Request,
+  context: AppLoadContext,
   productID: string,
   customerId: string,
 ) {
@@ -16,7 +18,7 @@ export async function getSingleProduct(
     console.log('error has occured');
     throw new Error('Invalid Product ID');
   } else {
-    const prices = await getPrices(productID, customerId);
+    const prices = await getPrices(context, request, productID, customerId);
     const product = formatProduct(products?.product, prices);
     return {product};
   }
@@ -54,10 +56,10 @@ const formatProduct = (product: ProductResponse, prices: any) => {
   const productId = product?.id.replace('gid://shopify/Product/', '');
   const finalProductInfoArray = [
     {key: 'warranty', value: product?.warranty?.value || 'N/A'},
-    {key: 'material', value: product?.material?.value || 'N/A'},
+    {key: 'welding process', value: product?.material?.value || 'N/A'},
     {key: 'product weight', value: product?.product_weight?.value || 'N/A'},
-    {key: 'supplier', value: product?.supplier?.value || 'N/A'},
-    {key: 'vendor', value: product?.vendor || 'N/A'},
+    // {key: 'supplier', value: product?.supplier?.value || 'N/A'},
+    // {key: 'vendor', value: product?.vendor || 'N/A'},
     {
       key: 'minimum order quantity',
       value: product?.variants?.edges[0]?.node?.moq?.value || 1,

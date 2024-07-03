@@ -71,7 +71,7 @@ export function NotificationNavbar({
       id: 1,
       icon: <CartIcon width={'20px'} height={'20px'} />,
       url: Routes.CART_LIST,
-      title: 'cart',
+      title: 'Cart',
       notification: cartCount,
     },
     {
@@ -104,7 +104,7 @@ export function NotificationNavbar({
             <Link
               to={navIcon.url}
               className="info-block"
-              onClick={() => toggleMenu(!isOpen)}
+              onClick={() => toggleMenu(false)}
             >
               {' '}
               <div data-tooltip={navIcon.title}>
@@ -139,19 +139,20 @@ export default function TopHeader({
   const imageUrl = userDetails.meta?.image_url?.value
     ? userDetails.meta.image_url.value
     : DEFAULT_IMAGE.DEFAULT;
+  const impersonateEnableCheck = userDetails?.impersonateEnable;
 
   return (
     <div className="bg-grey-900">
-      <div className="container flex items-center gap-3 py-5 justify-normal xl:justify-between">
+      <div className="container flex items-center gap-3 py-5 justify-normal md:justify-between">
         <div className="flex items-center gap-4">
           <TabletNavmenu profileName={userDetails.firstName} profileImage={imageUrl} />
           {/* home logo begins here */}
           <LogoIcon logo_url={'/myCigweldWhite.svg'} />
         </div>
         {/* Search and notification bar begins here  */}
-        <div className="flex gap-[22px] w-full xl:w-[unset]">
+        <div className="flex gap-[22px] w-full md:w-[calc(100%_-_267px)] xl:w-[unset]">
           {/* search bar begins here */}
-          <div className="search-bar flex bg-white items-center min-w-[unset] w-full max-h-12 px-4 py-3 xl:min-w-[453px] relative">
+          <div className="search-bar flex bg-white items-center min-w-[unset] md:w-[calc(100%_-_140px)] xl:w-full max-h-12 px-4 py-3 xl:min-w-[453px] relative">
             <PredictiveSearch searchVariant="normal" />
           </div>
 
@@ -178,7 +179,7 @@ export default function TopHeader({
           </figure>
           <DropdownMenu open={isClicked} onOpenChange={setIsClicked}>
             <DropdownMenuTrigger asChild>
-              <Button className="p-0 text-base italic font-bold capitalize bg-transparent border-none outline-none hover:bg-transparent focus:border-transparent focus-visible:border-transparent focus:outline-none">
+              <Button className="p-0 text-base italic font-bold capitalize bg-transparent border-none outline-none hover:bg-transparent focus:border-transparent focus-visible:border-transparent focus:outline-none" data-cy="menu-profile">
                 {userDetails?.firstName}
                 {isClicked ? <IoIosArrowUp /> : <IoIosArrowDown />}
               </Button>
@@ -189,7 +190,7 @@ export default function TopHeader({
                   <Link
                     onClick={() => setIsClicked(false)}
                     to={Routes.PROFILE}
-                    className="flex items-center justify-start w-full gap-2 p-2 transition duration-500 ease-in-out delay-75 bg-white hover:bg-primary-100 my-profile"
+                    className={`flex items-center justify-start w-full gap-2 p-2 transition duration-500 ease-in-out delay-75 bg-white hover:bg-primary-100 my-profile ${impersonateEnableCheck && 'opacity-65 pointer-events-none'}`}
                   >
                     <UserProfile />
                     <h5 className="text-lg italic font-bold text-grey-900">

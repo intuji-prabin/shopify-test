@@ -11,7 +11,7 @@ import {
 } from '@remix-run/server-runtime';
 import { withZod } from '@remix-validated-form/with-zod';
 import html2canvas from 'html2canvas';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ValidatedForm } from 'remix-validated-form';
 import { z } from 'zod';
 import { zfd } from 'zod-form-data';
@@ -22,20 +22,21 @@ import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
 import { Button } from '~/components/ui/button';
 import ColorPicker from '~/components/ui/color-picker';
 import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog';
+import FullPageLoading from '~/components/ui/fullPageLoading';
 import ImageUploadInput from '~/components/ui/image-upload-input';
 import ImageEdit from '~/components/ui/imageEdit';
 import { Input } from '~/components/ui/input';
 import Loader from '~/components/ui/loader';
 import { displayToast } from '~/components/ui/toast';
+import { useConditionalRender } from '~/hooks/useAuthorization';
 import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 import { Routes } from '~/lib/constants/routes.constent';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
 import PromotionNavigation from '../_app.customise_.$promotionId/promotion-navigation';
 import { getMyPromotionById, updatePromotion } from './edit-promotion.server';
-import { NumberPlusOnly } from '~/lib/constants/regex.constant';
-import FullPageLoading from '~/components/ui/fullPageLoading';
-import { useConditionalRender } from '~/hooks/useAuthorization';
-import { getUserDetails } from '~/lib/utils/user-session.server';
+import { AuthError } from '~/components/ui/authError';
+import { encrypt } from '~/lib/utils/cryptoUtils';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -81,7 +82,7 @@ export type EditFormFieldNameType = keyof EditFormType;
  * @param param0 request | params
  * @returns json
  */
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ context, request, params }: ActionFunctionArgs) {
   const data = await request.formData();
   let formData = Object.fromEntries(data);
   formData = { ...formData };
@@ -89,7 +90,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { userDetails } = await getUserDetails(request);
 
   const customerId = userDetails.id;
-  await updatePromotion(formData, bannerId, customerId);
+  await updatePromotion(context, request, formData, bannerId, customerId);
 
   return json({});
 }
@@ -99,9 +100,11 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
   const promotionId = params?.promotionId as string;
   const { userDetails } = await getUserDetails(request);
 
+  const accessTocken = (await getAccessToken(context)) as string;
+
   const customerId = userDetails.id;
 
-  const response = await getMyPromotionById(promotionId, customerId);
+  const response = await getMyPromotionById(context, request, promotionId, customerId);
 
   if (response?.payload) {
     const results = response?.payload;
@@ -170,12 +173,14 @@ const PromotionEdit = () => {
     html2canvas(canvasRef, {
       allowTaint: true,
       useCORS: true,
+      scale: 2,
       width: canvasRef.offsetWidth - 1,
+      height: canvasRef.offsetHeight - 1
     }).then((canvas) => {
       const link = document.createElement('a');
       document.body.appendChild(link);
       link.download = 'preview.png';
-      link.href = canvas.toDataURL();
+      link.href = canvas.toDataURL('image/jpeg', 0.8);
       setImage(link.href);
     });
   };
@@ -204,9 +209,11 @@ const PromotionEdit = () => {
       const canvas = await html2canvas(canvasRef.current, {
         allowTaint: true,
         useCORS: true,
+        scale: 2,
         width: canvasRef.current.offsetWidth - 1,
+        height: canvasRef.current.offsetHeight - 1
       });
-      formData.append("image", canvas.toDataURL());
+      formData.append("image", canvas.toDataURL('image/jpeg', 0.8));
     } catch (error) {
       console.error("An error occurred:", error);
       alert("An error has occured while creating the image");
@@ -216,7 +223,7 @@ const PromotionEdit = () => {
     try {
       const response = await fetch(`/edit/${promotionId}`, {
         method: 'POST',
-        body: formData
+        body: formData,
       });
       if (response.ok) {
         displayToast({ message: "Promotion Edited Successfully", type: "success" });
@@ -241,6 +248,12 @@ const PromotionEdit = () => {
   let imageName = companyInfo?.companyName;
   imageName = imageName && imageName.replace(/ /g, '_');
   const shouldRender = useConditionalRender('edit_promotions');
+  const [validationError, setValidationError] = useState(false);
+  useEffect(() => {
+    if (validationError) {
+      setOpenAccordian('company-information');
+    }
+  }, [validationError]);
 
 
   return (
@@ -354,6 +367,7 @@ const PromotionEdit = () => {
                         value={companyInfo.companyName}
                         className="w-full"
                         placeholder="company name"
+                        setValidationError={setValidationError}
                         onInput={(e) =>
                           handleChange('companyName', e.currentTarget.value)
                         }
@@ -368,6 +382,7 @@ const PromotionEdit = () => {
                         className="w-full"
                         label='Company Email'
                         placeholder="company email"
+                        setValidationError={setValidationError}
                         onInput={(e) =>
                           handleChange('companyEmail', e.currentTarget.value)
                         }
@@ -382,6 +397,7 @@ const PromotionEdit = () => {
                         className="w-full"
                         label="Company Website"
                         placeholder="company website"
+                        setValidationError={setValidationError}
                         onInput={(e) =>
                           handleChange('companyWebsite', e.currentTarget.value)
                         }
@@ -395,6 +411,7 @@ const PromotionEdit = () => {
                         label="Company Phone"
                         placeholder="company phone"
                         value={companyInfo.companyPhone}
+                        setValidationError={setValidationError}
                         onInput={(e) =>
                           handleChange('companyPhone', e.currentTarget.value)
                         }
@@ -409,6 +426,7 @@ const PromotionEdit = () => {
                         className="w-full"
                         placeholder="company fax"
                         label="Company Fax"
+                        setValidationError={setValidationError}
                         onInput={(e) =>
                           handleChange('companyFax', e.currentTarget.value)
                         }
@@ -450,6 +468,7 @@ const PromotionEdit = () => {
                           variant="secondary"
                           name="action"
                           disabled={isLoading}
+                          onClick={() => validationError && setOpenAccordian('company-information')}
                         >
                           save changes
                         </Button>
@@ -460,9 +479,9 @@ const PromotionEdit = () => {
               )}
             </ValidatedForm>
           </div>
-        </div>
-      </section>
-    </div>)
+        </div >
+      </section >
+    </div >)
   );
 };
 
@@ -480,6 +499,9 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
+    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
+      return <AuthError errorMessage={error.message} />;
+    }
     return (
       <div className="container pt-6">
         <div className="min-h-[400px] flex justify-center items-center ">
