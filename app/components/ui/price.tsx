@@ -27,7 +27,7 @@ export const Price = ({
               className="cursor-pointer"
               data-tooltip={`${variant === 'base'
                 ? 'Buy Price is your account specific price, including all contracted prices or discounts'
-                : 'Recommended retail price'
+                : 'Recommended Retail Price'
                 }`}
             >
               <span>
@@ -42,7 +42,7 @@ export const Price = ({
           }`}
       >
         <span className="text-lg font-medium">
-          {currency ? currency : '$'}{' '}
+          {currency ? currency : '$'}&nbsp;
         </span>
         {price && price < PRODUCT_MAX_PRICE ? price?.toFixed(2) : 'N/A'}
       </h3>
@@ -50,7 +50,7 @@ export const Price = ({
         className={`text-sm leading-4 ${variant === 'base' ? 'text-grey-500' : 'text-grey-300'
           }`}
       >
-        {variant === 'base' ? '(Excl. GST)' : '(inc. GST)'}
+        {variant === 'base' ? '(Excl. GST)' : '(Incl. GST)'}
       </p>
     </div>
   );
