@@ -139,7 +139,7 @@ export function useMyWishListColumn() {
                 isNaN(product?.quantity) ? (
                   <>
                     <button
-                      className="uppercase flex justify-center items-center text-xs max-h-[unset] lg:max-h-[28px] min-w-[86px] cursor-not-allowed bg-grey-200 text-grey-400 px-6 py-2"
+                      className="uppercase flex justify-center items-center text-xs max-h-[unset] lg:max-h-[28px] min-w-[86px] cursor-not-allowed bg-grey-200 text-grey-400 px-6 py-2 text-nowrap"
                       disabled
                     >
                       Add to cart
@@ -197,7 +197,7 @@ export function useMyWishListColumn() {
                         />
 
                         <Button
-                          className="uppercase flex-grow max-h-[unset] text-xs lg:max-h-[28px] min-w-[86px]"
+                          className="uppercase flex-grow max-h-[unset] text-xs lg:max-h-[28px] min-w-[86px] text-nowrap"
                           variant="primary"
                           disabled={!allowed}
                         >
