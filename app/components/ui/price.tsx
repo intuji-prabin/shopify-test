@@ -5,12 +5,14 @@ export const Price = ({
   currency,
   price,
   variant = 'base',
+  originalPrice,
   className,
 }: {
   currency: string;
   price: number;
   variant?: 'base' | 'rrp';
   className?: string;
+  originalPrice: number;
 }) => {
   return (
     <div className={`space-y-0.5 ${className}`}>
@@ -44,7 +46,7 @@ export const Price = ({
         <span className="text-lg font-medium">
           {currency ? currency : '$'}&nbsp;
         </span>
-        {price && price < PRODUCT_MAX_PRICE ? price?.toFixed(2) : 'N/A'}
+        {originalPrice && originalPrice < PRODUCT_MAX_PRICE ? price?.toFixed(2) : 'N/A'}
       </h3>
       <p
         className={`text-sm leading-4 ${variant === 'base' ? 'text-grey-500' : 'text-grey-300'
