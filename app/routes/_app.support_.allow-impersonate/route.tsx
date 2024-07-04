@@ -86,12 +86,6 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 export default function AllowImpersonatePage() {
   const { impersonateDetails } = useLoaderData<typeof loader>();
-  console.log("impersonateDetails", impersonateDetails)
-  const [defaultValues, setDefaultValues] = useState(impersonateDetails);
-
-  useEffect(() => {
-    setDefaultValues(impersonateDetails);
-  }, [impersonateDetails]);
 
   const shouldRender = useConditionalRender('allow_impersonation');
 
@@ -117,7 +111,7 @@ export default function AllowImpersonatePage() {
           provides an efficient way to address problems without the need for
           physical presence.
         </p>
-        <AllowImpersonateForm defaultValues={defaultValues} />
+        <AllowImpersonateForm defaultValues={impersonateDetails} />
       </section>
     )
   );

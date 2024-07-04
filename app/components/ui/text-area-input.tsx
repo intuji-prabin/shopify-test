@@ -1,8 +1,8 @@
 import React from 'react';
-import {useField} from 'remix-validated-form';
-import {DangerAlert} from '../icons/alert';
-import {ImpersonateFormFieldNameType} from '~/routes/_app.support_.allow-impersonate/allow-impersonate-form';
-import {CreateTicketFormFieldNameType} from '~/routes/_app.support_.create-ticket/create-ticket-form';
+import { useField } from 'remix-validated-form';
+import { DangerAlert } from '../icons/alert';
+import { ImpersonateFormFieldNameType } from '~/routes/_app.support_.allow-impersonate/allow-impersonate-form';
+import { CreateTicketFormFieldNameType } from '~/routes/_app.support_.create-ticket/create-ticket-form';
 
 type TextAreaInputType = {
   name: ImpersonateFormFieldNameType | CreateTicketFormFieldNameType;
@@ -20,7 +20,8 @@ export function TextAreaInput({
   icon,
   ...props
 }: TextAreaInputType) {
-  const {error, getInputProps} = useField(name);
+  const { error, getInputProps } = useField(name);
+  console.log("getInputProps", getInputProps({ id: name }))
   return (
     <div>
       <label htmlFor={name}>
@@ -30,12 +31,11 @@ export function TextAreaInput({
       <div className="relative">
         <textarea
           {...props}
-          {...getInputProps({id: name})}
+          {...getInputProps({ id: name, onChange: (e) => console.log("e", e.target.value) })}
           rows={8}
           placeholder={placeholder}
-          className={`${error ? 'invalid' : ''} ${
-            icon ? 'with-icon' : ''
-          } w-full text-grey-400`}
+          className={`${error ? 'invalid' : ''} ${icon ? 'with-icon' : ''
+            } w-full text-grey-400`}
         ></textarea>
         {icon && (
           <span className="absolute -translate-y-1/2 top-1/2 left-3">

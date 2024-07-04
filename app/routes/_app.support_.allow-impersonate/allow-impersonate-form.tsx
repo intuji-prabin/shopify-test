@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Link } from '@remix-run/react';
+import { Form, Link } from '@remix-run/react';
 import { withZod } from '@remix-validated-form/with-zod';
 import { ValidatedForm, useIsSubmitting } from 'remix-validated-form';
 import { Button } from '~/components/ui/button';
@@ -31,14 +31,26 @@ export function AllowImpersonateForm({
 
   const isSubmitting = useIsSubmitting('impersonate-form');
   const [isActive, setIsActive] = useState(defaultValues.impersonateActive);
+  const [isBtnEnabled, setIsBtnEnabled] = useState(true);
 
   const handleActiveChange = () =>
     setIsActive((previousState) => !previousState);
-  console.log("first", defaultValues)
+  console.log("defaultValues.impersonateActive", defaultValues.impersonateActive)
+  console.log("isActive", isActive)
+
+  useEffect(() => {
+    if (defaultValues.impersonateActive === isActive) {
+      setIsBtnEnabled(true);
+    } else {
+      setIsBtnEnabled(false);
+    }
+  }, [isActive, defaultValues.impersonateActive]);
+  console.log("isBtnEnabled", isBtnEnabled)
+
   return (
     <div className="grid gap-6 p-6 bg-neutral-white sm:grid-cols-2">
       <div>
-        <ValidatedForm
+        {/* <ValidatedForm
           method="POST"
           id="impersonate-form"
           defaultValues={defaultValues}
@@ -76,7 +88,59 @@ export function AllowImpersonateForm({
               and work on your account.
             </p>
           </div>
-        </ValidatedForm>
+        </ValidatedForm> */}
+        <Form method="POST"
+          id="impersonate-form">
+          <label htmlFor="allow-impersonate">
+            Allow impersonate
+            <span className="required">*</span>
+          </label>
+          <Switch
+            type="button"
+            checked={isActive}
+            onCheckedChange={handleActiveChange}
+          />
+          <label htmlFor="reason">
+            Reason to Impersonate
+          </label>
+          {isActive ? <textarea
+            name="reason"
+            placeholder="Reason here"
+            defaultValue={defaultValues.reason}
+            disabled={isBtnEnabled}
+            className={`${isBtnEnabled && 'pointer-events-none opacity-50'}`}
+          ></textarea>
+            :
+            <p>sjdfois</p>
+          }
+          {/* <label htmlFor="reason">
+            Reason to Impersonate
+          </label>
+          <textarea
+            name="reason"
+            placeholder="Reason here"
+            defaultValue={defaultValues.reason}
+            disabled={!isActive}
+            className={`${!isActive && 'pointer-events-none opacity-50'}`}
+          >
+          </textarea> */}
+          <div className={`flex items-center space-x-4 ${!isActive && "mt-5"}`}>
+            <Button
+              type="submit"
+              variant="primary"
+              name="_action"
+              disabled={isBtnEnabled}
+              value={`${isActive ? 'allow_impersonate' : 'disallow_impersonate'
+                }`}
+            >
+              send
+            </Button>
+            <p>
+              By clicking send, you are granting permission to Cigweld to access
+              and work on your account.
+            </p>
+          </div>
+        </Form>
       </div>
       <div className="p-6 bg-primary-50">
         <h4>What will happen?</h4>
