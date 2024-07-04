@@ -181,7 +181,7 @@ const ProductDetailsSection = ({
             <img src={brandImage} alt="brand" className="object-contain max-h-7" />
           }
         </figure>
-        {productPrice && productPrice < PRODUCT_MAX_PRICE ?
+        {originalPrice && originalPrice < PRODUCT_MAX_PRICE ?
           <ul className="flex gap-[7px] info-block">
             <li className="w-[36px] h-[36px] flex justify-center items-center border-grey-50 border-[1px]" data-tooltip="Compare Product">
               <Link to={`/product-comparison/${productId}`}>
@@ -270,11 +270,13 @@ const ProductDetailsSection = ({
           <Price
             currency={currency}
             price={productPrice}
+            originalPrice={originalPrice}
             className="relative"
           />
           <Price
             currency={currency}
             price={productPrice && productPrice < PRODUCT_MAX_PRICE ? originalPrice : 0}
+            originalPrice={productPrice && productPrice < PRODUCT_MAX_PRICE ? originalPrice : 0}
             variant="rrp"
             className="relative"
           />
@@ -301,73 +303,73 @@ const ProductDetailsSection = ({
         )}
       </Can>
       {shortDescription && <p className='mt-4' dangerouslySetInnerHTML={{ __html: shortDescription }}></p>}
-      {productPrice && productPrice < PRODUCT_MAX_PRICE ?
-        <div className="flex flex-col items-start gap-4 pt-6 sm:flex-row">
-          <div>
-            <div className="flex cart__list--quantity">
-              <button
-                className={`border-[1px] border-grey-500 flex justify-center items-center w-14 aspect-square ${quantity - 1 < moq && 'cursor-not-allowed'
-                  }`}
-                onClick={decreaseQuantity}
-                disabled={quantity - 1 < moq}
-              >
-                -
-              </button>
-              <input
-                type="number"
-                className="w-20 min-h-14 h-full text-center border-x-0 !border-grey-500"
-                value={quantity}
-                onChange={handleInputChange}
-                min={moq || 1}
-                max={CART_QUANTITY_MAX}
-                required
-              />
-              <button
-                className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-14"
-                onClick={increaseQuantity}
-              >
-                +
-              </button>
-            </div>
-            <p className="text-sm text-grey-700 pt-2.5 flex gap-x-1">
-              <Info />
-              Minimum Order Quantity: {moq || 1}
-            </p>
-          </div>
-          <div className="flex flex-col">
-            <select
-              name="filter_by"
-              className="w-full min-w-[120px] min-h-14 place-order h-full !border-grey-500 filter-select"
-              onChange={(e: any) => handleUOM(e.target.value)}
-              value={UOM}
+      <div className="flex flex-col items-start gap-4 pt-6 sm:flex-row">
+        <div>
+          <div className="flex cart__list--quantity">
+            <button
+              className={`border-[1px] border-grey-500 flex justify-center items-center w-14 aspect-square ${quantity - 1 < moq && 'cursor-not-allowed'
+                }`}
+              onClick={decreaseQuantity}
+              disabled={quantity - 1 < moq}
             >
-              {unitOfMeasure.length > 0 ? (
-                unitOfMeasure?.map((uom: any, index: number) => (
-                  <option value={uom.code} key={index + 'uom'}>
-                    {uom.unit}
-                  </option>
-                ))
-              ) : (
-                <option value={UOM}>{box}</option>
-              )}
-            </select>
-          </div>
-          <Form
-            method="POST"
-            className="w-full"
-            onSubmit={(event) => {
-              submit(event.currentTarget);
-            }}
-          >
-            <input type="hidden" name="productId" value={productId} />
+              -
+            </button>
             <input
-              type="hidden"
-              name="productVariantId"
-              value={productVariantId}
+              type="number"
+              className="w-20 min-h-14 h-full text-center border-x-0 !border-grey-500"
+              value={quantity}
+              onChange={handleInputChange}
+              min={moq || 1}
+              max={CART_QUANTITY_MAX}
+              required
             />
-            <input type="hidden" name="quantity" value={quantity} />
-            <input type="hidden" name="selectUOM" value={UOM} />
-            {quantity < moq ||
+            <button
+              className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-14"
+              onClick={increaseQuantity}
+            >
+              +
+            </button>
+          </div>
+          <p className="text-sm text-grey-700 pt-2.5 flex gap-x-1">
+            <Info />
+            Minimum Order Quantity: {moq || 1}
+          </p>
+        </div>
+        <div className="flex flex-col">
+          <select
+            name="filter_by"
+            className="w-full min-w-[120px] min-h-14 place-order h-full !border-grey-500 filter-select"
+            onChange={(e: any) => handleUOM(e.target.value)}
+            value={UOM}
+          >
+            {unitOfMeasure.length > 0 ? (
+              unitOfMeasure?.map((uom: any, index: number) => (
+                <option value={uom.code} key={index + 'uom'}>
+                  {uom.unit}
+                </option>
+              ))
+            ) : (
+              <option value={UOM}>{box}</option>
+            )}
+          </select>
+        </div>
+        <Form
+          method="POST"
+          className="w-full"
+          onSubmit={(event) => {
+            submit(event.currentTarget);
+          }}
+        >
+          <input type="hidden" name="productId" value={productId} />
+          <input
+            type="hidden"
+            name="productVariantId"
+            value={productVariantId}
+          />
+          <input type="hidden" name="quantity" value={quantity} />
+          <input type="hidden" name="selectUOM" value={UOM} />
+          {originalPrice && originalPrice < PRODUCT_MAX_PRICE ?
+            quantity < moq ||
               quantity < 1 ||
               quantity > CART_QUANTITY_MAX ||
               isNaN(quantity) ? (
@@ -397,10 +399,11 @@ const ProductDetailsSection = ({
                   {addToCart}
                 </Button>
               </Can>
-            )}
-          </Form>
-        </div>
-        : null}
+            )
+            : null}
+        </Form>
+      </div>
+
     </div>
   );
 };
