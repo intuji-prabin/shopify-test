@@ -1,5 +1,6 @@
 import {
   isRouteErrorResponse,
+  useActionData,
   useLoaderData,
   useRouteError
 } from '@remix-run/react';
@@ -8,8 +9,7 @@ import {
   LoaderFunctionArgs,
   json,
 } from '@remix-run/server-runtime';
-import { useEffect, useState } from 'react';
-import { setFormDefaults, validationError } from 'remix-validated-form';
+import { setFormDefaults } from 'remix-validated-form';
 import { AuthError } from '~/components/ui/authError';
 import { BackButton } from '~/components/ui/back-button';
 import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
@@ -20,8 +20,7 @@ import { AllowedHTTPMethods } from '~/lib/enums/api.enum';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import {
-  AllowImpersonateForm,
-  ImpersonateFormFieldValidator,
+  AllowImpersonateForm
 } from '~/routes/_app.support_.allow-impersonate/allow-impersonate-form';
 import {
   getImpersonateDetails,
@@ -48,18 +47,11 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
   const formData = await request.formData();
 
-  const results = await ImpersonateFormFieldValidator.validate(formData);
-
-  if (results.error) {
-    return validationError(results.error);
-  }
-  const { reason } = results.data;
-
   const action = formData.get('_action') as
     | 'allow_impersonate'
     | 'disallow_impersonate';
 
-  const body = JSON.stringify({ impersonateReason: reason });
+  const body = JSON.stringify({ impersonateReason: String(formData?.get('reason'))?.trim() });
 
   switch (action) {
     case 'allow_impersonate':

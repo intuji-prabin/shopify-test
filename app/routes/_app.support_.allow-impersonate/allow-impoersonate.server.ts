@@ -23,6 +23,7 @@ interface ImpersonateResponse extends BaseResponse {
   payload: {
     impersonateActive: boolean;
     reason: string;
+    status: string;
   };
 }
 
@@ -102,10 +103,11 @@ export async function updateImpersonateStatus({
       },
     );
   } catch (error) {
+    console.log('error', error);
     if (error instanceof Error) {
       setErrorMessage(messageSession, error.message);
       return json(
-        {error},
+        {status: false},
         {
           headers: {
             'Set-Cookie': await messageCommitSession(messageSession),
@@ -115,7 +117,7 @@ export async function updateImpersonateStatus({
     }
     setErrorMessage(messageSession, DEFAULT_ERRROR_MESSAGE);
     return json(
-      {error},
+      {status: false},
       {
         headers: {
           'Set-Cookie': await messageCommitSession(messageSession),

@@ -1,24 +1,8 @@
-import { z } from 'zod';
-import { Form, Link } from '@remix-run/react';
-import { withZod } from '@remix-validated-form/with-zod';
-import { ValidatedForm, useIsSubmitting } from 'remix-validated-form';
-import { Button } from '~/components/ui/button';
-import { TextAreaInput } from '~/components/ui/text-area-input';
-import { Routes } from '~/lib/constants/routes.constent';
-import { Switch } from '~/components/ui/switch';
+import { Form, Link, useNavigate, useSubmit } from '@remix-run/react';
 import { useEffect, useState } from 'react';
-
-const ImpersonateFormFieldSchema = z.object({
-  reason: z.string().max(900).trim().optional(),
-});
-
-export const ImpersonateFormFieldValidator = withZod(
-  ImpersonateFormFieldSchema,
-);
-
-export type ImpersonateFormType = z.infer<typeof ImpersonateFormFieldSchema>;
-
-export type ImpersonateFormFieldNameType = keyof ImpersonateFormType;
+import { Button } from '~/components/ui/button';
+import { Switch } from '~/components/ui/switch';
+import { Routes } from '~/lib/constants/routes.constent';
 
 export function AllowImpersonateForm({
   defaultValues
@@ -26,17 +10,15 @@ export function AllowImpersonateForm({
   defaultValues: {
     impersonateActive: boolean;
     reason: string;
+    status: string;
   };
 }) {
-
-  const isSubmitting = useIsSubmitting('impersonate-form');
   const [isActive, setIsActive] = useState(defaultValues.impersonateActive);
   const [isBtnEnabled, setIsBtnEnabled] = useState(true);
 
-  const handleActiveChange = () =>
+  const handleActiveChange = () => {
     setIsActive((previousState) => !previousState);
-  console.log("defaultValues.impersonateActive", defaultValues.impersonateActive)
-  console.log("isActive", isActive)
+  }
 
   useEffect(() => {
     if (defaultValues.impersonateActive === isActive) {
@@ -45,16 +27,12 @@ export function AllowImpersonateForm({
       setIsBtnEnabled(false);
     }
   }, [isActive, defaultValues.impersonateActive]);
-  console.log("isBtnEnabled", isBtnEnabled)
 
   return (
     <div className="grid gap-6 p-6 bg-neutral-white sm:grid-cols-2">
       <div>
-        {/* <ValidatedForm
-          method="POST"
+        <Form method="POST"
           id="impersonate-form"
-          defaultValues={defaultValues}
-          validator={ImpersonateFormFieldValidator}
         >
           <label htmlFor="allow-impersonate">
             Allow impersonate
@@ -64,67 +42,25 @@ export function AllowImpersonateForm({
             type="button"
             checked={isActive}
             onCheckedChange={handleActiveChange}
+            disabled={defaultValues.status === 'LOGGEDIN'}
           />
-          {isActive &&
-            <TextAreaInput
-              label="Reason to Impersonate"
+          <label htmlFor="reason" className={`${!isActive && "opacity-50"}`}>
+            Reason to Impersonate
+          </label>
+          {isActive ?
+            <textarea
               name="reason"
               placeholder="Reason here"
-            />
-          }
-          <div className={`flex items-center space-x-4 ${!isActive && "mt-5"}`}>
-            <Button
-              type="submit"
-              variant="primary"
-              disabled={isSubmitting}
-              name="_action"
-              value={`${isActive ? 'allow_impersonate' : 'disallow_impersonate'
-                }`}
-            >
-              send
-            </Button>
-            <p>
-              By clicking send, you are granting permission to Cigweld to access
-              and work on your account.
-            </p>
-          </div>
-        </ValidatedForm> */}
-        <Form method="POST"
-          id="impersonate-form">
-          <label htmlFor="allow-impersonate">
-            Allow impersonate
-            <span className="required">*</span>
-          </label>
-          <Switch
-            type="button"
-            checked={isActive}
-            onCheckedChange={handleActiveChange}
-          />
-          <label htmlFor="reason">
-            Reason to Impersonate
-          </label>
-          {isActive ? <textarea
-            name="reason"
-            placeholder="Reason here"
-            defaultValue={defaultValues.reason}
-            disabled={isBtnEnabled}
-            className={`${isBtnEnabled && 'pointer-events-none opacity-50'}`}
-          ></textarea>
+              rows={8}
+              maxLength={900}
+              defaultValue={defaultValues.reason}
+              disabled={isBtnEnabled}
+              className={`${isBtnEnabled && 'pointer-events-none opacity-50'} w-full`}
+            ></textarea>
             :
-            <p>sjdfois</p>
+            <p className='border border-solid border-grey-300/50 h-[178px] pointer-events-none mb-1.5'></p>
           }
-          {/* <label htmlFor="reason">
-            Reason to Impersonate
-          </label>
-          <textarea
-            name="reason"
-            placeholder="Reason here"
-            defaultValue={defaultValues.reason}
-            disabled={!isActive}
-            className={`${!isActive && 'pointer-events-none opacity-50'}`}
-          >
-          </textarea> */}
-          <div className={`flex items-center space-x-4 ${!isActive && "mt-5"}`}>
+          <div className="flex items-center space-x-4">
             <Button
               type="submit"
               variant="primary"

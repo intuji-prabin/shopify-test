@@ -1,11 +1,10 @@
 import React from 'react';
 import { useField } from 'remix-validated-form';
 import { DangerAlert } from '../icons/alert';
-import { ImpersonateFormFieldNameType } from '~/routes/_app.support_.allow-impersonate/allow-impersonate-form';
 import { CreateTicketFormFieldNameType } from '~/routes/_app.support_.create-ticket/create-ticket-form';
 
 type TextAreaInputType = {
-  name: ImpersonateFormFieldNameType | CreateTicketFormFieldNameType;
+  name: CreateTicketFormFieldNameType;
   label: string;
   placeholder?: string;
   required?: boolean;
@@ -21,7 +20,6 @@ export function TextAreaInput({
   ...props
 }: TextAreaInputType) {
   const { error, getInputProps } = useField(name);
-  console.log("getInputProps", getInputProps({ id: name }))
   return (
     <div>
       <label htmlFor={name}>
