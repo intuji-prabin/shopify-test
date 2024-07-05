@@ -1,5 +1,5 @@
-import {FormEvent} from 'react';
-import {Form, useSearchParams, useSubmit} from '@remix-run/react';
+import { FormEvent } from 'react';
+import { Form, useSearchParams, useSubmit } from '@remix-run/react';
 import {
   PaginationContent,
   Pagination,
@@ -14,10 +14,10 @@ type PaginationPropsType = {
 
 function range(start: number, end: number) {
   const length = end - start + 1;
-  return Array.from({length}, (_, index) => index + start);
+  return Array.from({ length }, (_, index) => index + start);
 }
 
-export function PaginationWrapper({totalCount, pageSize}: PaginationPropsType) {
+export function PaginationWrapper({ totalCount, pageSize }: PaginationPropsType) {
   const pageParam = 'page';
 
   const submit = useSubmit();
@@ -35,7 +35,7 @@ export function PaginationWrapper({totalCount, pageSize}: PaginationPropsType) {
   const nextQuery = new URLSearchParams(queryParams);
   nextQuery.set(pageParam, String(currentPage + 1));
 
-  if (currentPage === 0 || (paginationRange && paginationRange.length < 2)) {
+  if (currentPage === 0) {
     return null;
   }
 
@@ -52,11 +52,11 @@ export function PaginationWrapper({totalCount, pageSize}: PaginationPropsType) {
 
   return (
     <div
-      className="bg-neutral-white py-4 px-6 border-t flex items-center justify-between"
+      className="flex items-center justify-between px-6 py-4 border-t bg-neutral-white"
       data-cy="pagination-wrapper"
     >
       <p
-        className="w-40 text-grey-400 font-medium hidden sm:block"
+        className="hidden w-40 font-medium text-grey-400 sm:block"
         data-cy="pagination-items-count"
       >
         {startIndex}-{endIndex} of {totalCount} Items
@@ -83,7 +83,7 @@ export function PaginationWrapper({totalCount, pageSize}: PaginationPropsType) {
             <select
               name="page"
               value={currentPage} // default value doesn't work
-              onChange={() => {}}
+              onChange={() => { }}
               className=" !py-1.5 appearance-none !border-grey-50 text-base font-medium text-grey-900"
             >
               {paginationRange &&
@@ -102,7 +102,7 @@ export function PaginationWrapper({totalCount, pageSize}: PaginationPropsType) {
               tabIndex={isPreviousButtonDisabled ? -1 : undefined}
               data-cy="pagination-previous-button"
             />
-            <p className="font-medium text-grey-400 text-center whitespace-nowrap">
+            <p className="font-medium text-center text-grey-400 whitespace-nowrap">
               <span className="text-grey-900" data-cy="pagination-page-count">
                 {currentPage}
               </span>{' '}

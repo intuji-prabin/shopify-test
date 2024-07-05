@@ -202,16 +202,22 @@ function renderProductItem(
           key={product.id}
         >
           <div className="size-14">
-            <img
-              src={product?.featuredPriceImageUrl}
-              alt="product"
-              className="object-cover object-center size-full"
-            />
+            <Link
+              prefetch="intent"
+              to={product.handle ? `/product/${product.handle}` : "#"}
+              onClick={handleClose}
+            >
+              <img
+                src={product?.featuredPriceImageUrl}
+                alt="product"
+                className="object-cover object-center size-full"
+              />
+            </Link>
           </div>
           <figcaption className="w-[calc(100%_-_72px)]">
             <Link
               prefetch="intent"
-              to={`/product/${product.handle}`}
+              to={product.handle ? `/product/${product.handle}` : "#"}
               onClick={handleClose}
               className="text-base font-bold text-grey-900"
             >
@@ -232,11 +238,17 @@ function renderProductItem(
         >
           <div className="flex flex-wrap items-center gap-3 sm:w-4/6">
             <div className="size-16">
-              <img
-                src={product?.featuredPriceImageUrl}
-                alt="product"
-                className="object-contain object-center size-full"
-              />
+              <Link
+                prefetch="intent"
+                to={product.handle ? `/product/${product.handle}` : "#"}
+                onClick={handleClose}
+              >
+                <img
+                  src={product?.featuredPriceImageUrl}
+                  alt="product"
+                  className="object-contain object-center size-full"
+                />
+              </Link>
             </div>
             <div className="w-[calc(100%_-_76px)]">
               <p className="text-sm text-primary-500">
@@ -245,7 +257,7 @@ function renderProductItem(
               <p>
                 <Link
                   prefetch="intent"
-                  to={`/product/${product.handle}`}
+                  to={product.handle ? `/product/${product.handle}` : "#"}
                   onClick={handleClose}
                   className="text-base font-medium text-grey-900"
                 >
@@ -352,11 +364,17 @@ function renderProductItem(
         >
           <div className="flex flex-wrap items-center gap-3 sm:w-4/6">
             <div className="size-16">
-              <img
-                src={product?.featuredPriceImageUrl}
-                alt="product"
-                className="object-contain object-center size-full"
-              />
+              <Link
+                prefetch="intent"
+                to={product.handle ? `/product/${product.handle}` : "#"}
+                onClick={handleClose}
+              >
+                <img
+                  src={product?.featuredPriceImageUrl}
+                  alt="product"
+                  className="object-contain object-center size-full"
+                />
+              </Link>
             </div>
             <div className="w-[calc(100%_-_76px)]">
               <p className="text-sm text-primary-500">
@@ -365,7 +383,7 @@ function renderProductItem(
               <p>
                 <Link
                   prefetch="intent"
-                  to={`/product/${product.handle}`}
+                  to={product.handle ? `/product/${product.handle}` : "#"}
                   onClick={handleClose}
                   className="text-base font-medium text-grey-900"
                 >
@@ -463,11 +481,17 @@ function renderProductItem(
           className="flex flex-wrap items-center space-x-4"
         >
           <div className="size-14">
-            <img
-              src={product?.featuredPriceImageUrl}
-              alt="product"
-              className="object-cover object-center size-full"
-            />
+            <Link
+              prefetch="intent"
+              to={product.id}
+              onClick={handleClose}
+            >
+              <img
+                src={product?.featuredPriceImageUrl}
+                alt="product"
+                className="object-cover object-center size-full"
+              />
+            </Link>
           </div>
           <figcaption className="w-[calc(100%_-_72px)]">
             <Link
@@ -497,11 +521,17 @@ function renderProductItem(
         >
           <div className="flex flex-wrap items-center gap-3 sm:w-2/5">
             <div className="size-16">
-              <img
-                src={product?.featuredPriceImageUrl}
-                alt="product"
-                className="object-contain object-center size-full"
-              />
+              <Link
+                prefetch="intent"
+                to={product.handle ? `/product/${product.handle}` : "#"}
+                onClick={handleClose}
+              >
+                <img
+                  src={product?.featuredPriceImageUrl}
+                  alt="product"
+                  className="object-contain object-center size-full"
+                />
+              </Link>
             </div>
             <div className="w-[calc(100%_-_76px)]">
               <p className="text-sm text-primary-500">
@@ -510,7 +540,7 @@ function renderProductItem(
               <p>
                 <Link
                   prefetch="intent"
-                  to={`/product/${product.handle}`}
+                  to={product.handle ? `/product/${product.handle}` : "#"}
                   onClick={handleClose}
                   className="text-base font-medium text-grey-900"
                 >
@@ -634,16 +664,22 @@ function renderProductItem(
           key={product.id}
         >
           <div className="size-14">
-            <img
-              src={product?.featuredPriceImageUrl}
-              alt="product"
-              className="object-cover object-center size-full"
-            />
+            <Link
+              prefetch="intent"
+              to={product.handle ? `/product/${product.handle}` : "#"}
+              onClick={handleClose}
+            >
+              <img
+                src={product?.featuredPriceImageUrl}
+                alt="product"
+                className="object-cover object-center size-full"
+              />
+            </Link>
           </div>
           <figcaption className="w-[calc(100%_-_72px)]">
             <Link
               prefetch="intent"
-              to={`/product/${product.handle}`}
+              to={product.handle ? `/product/${product.handle}` : "#"}
               onClick={handleClose}
               className="text-base font-bold text-grey-900"
             >
