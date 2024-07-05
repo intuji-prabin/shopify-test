@@ -120,7 +120,7 @@ export function PredictiveSearch({
           className={`${searchVariant === 'mobile' ? 'top-[65px]' : 'top-[calc(100%_+_4px)]'
             } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${searchVariant === 'normal' || searchVariant === 'mobile'
               ? null
-              : 'max-w-[600px] max-h-[350px] overflow-y-auto shadow-lg'
+              : 'max-w-[650px] max-h-[350px] overflow-y-auto shadow-lg'
             }`}
         >
           {fetcher.state === 'loading' ? (
@@ -234,7 +234,7 @@ function renderProductItem(
       return (
         <div
           key={product.id}
-          className="flex flex-col justify-between gap-4 sm:flex-row"
+          className="flex flex-col items-center justify-between gap-4 pb-4 border-b sm:flex-row"
         >
           <div className="flex flex-wrap items-center gap-3 sm:w-4/6">
             <div className="size-16">
@@ -264,7 +264,7 @@ function renderProductItem(
                   {product.title}
                 </Link>
               </p>
-              <p className="text-2xl italic font-bold text-grey-900">
+              <p className="text-2xl italic font-bold text-grey-900 whitespace-nowrap">
                 {product?.currency || '$'}&nbsp;
                 {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? product?.price : "N/A"}
                 <span className="text-sm italic font-bold text-grey-500">
@@ -360,7 +360,7 @@ function renderProductItem(
       return (
         <div
           key={product.id}
-          className="flex flex-col justify-between gap-4 sm:flex-row"
+          className="flex flex-col items-center justify-between gap-4 pb-4 border-b sm:flex-row"
         >
           <div className="flex flex-wrap items-center gap-3 sm:w-4/6">
             <div className="size-16">
@@ -390,7 +390,7 @@ function renderProductItem(
                   {product.title}
                 </Link>
               </p>
-              <p className="text-2xl italic font-bold text-grey-900">
+              <p className="text-2xl italic font-bold text-grey-900 whitespace-nowrap">
                 {product?.currency || '$'}&nbsp;
                 {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? product?.price : 'N/A'}
                 <span className="text-sm italic font-bold text-grey-500">
@@ -517,7 +517,7 @@ function renderProductItem(
       return (
         <div
           key={product.id}
-          className="flex flex-col items-start justify-between gap-4 sm:flex-row"
+          className="flex flex-col items-center justify-between gap-4 pb-4 border-b sm:flex-row"
         >
           <div className="flex flex-wrap items-center gap-3 sm:w-2/5">
             <div className="size-16">
@@ -547,7 +547,7 @@ function renderProductItem(
                   {product.title}
                 </Link>
               </p>
-              <p className="text-2xl italic font-bold text-grey-900">
+              <p className="text-2xl italic font-bold text-grey-900 whitespace-nowrap">
                 {product?.currency || '$'}&nbsp;
                 {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? product?.price : 'N/A'}
                 <span className="text-sm italic font-bold text-grey-500">
@@ -558,31 +558,8 @@ function renderProductItem(
             </div>
           </div>
           {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ?
-            <div className="grid grid-cols-1 items-start gap-x-4 w-full gap-y-2 sm:grid-cols-2 sm:w-[calc(60%_-_1rem)]">
-              <select
-                name="filter_by"
-                className="w-full min-w-[120px] place-order !border-grey-500 filter-select"
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                  handleUOM(e.target.value)
-                }
-                defaultValue={UOM}
-              >
-                {product.unitOfMeasure?.length > 0 ? (
-                  product.unitOfMeasure?.map(
-                    (uom: { unit: string; code: string }, index: number) => (
-                      <option
-                        className="px-4"
-                        value={uom.code}
-                        key={index + 'uom'}
-                      >
-                        {uom.unit}
-                      </option>
-                    ),
-                  )
-                ) : (
-                  <option value={UOM}>{product.defaultUomValue}</option>
-                )}
-              </select>
+            <div className="grid grid-cols-1 gap-x-4 w-full gap-y-2 sm:grid-cols-2 sm:w-[calc(60%_-_1rem)] items-end">
+              <p className='font-medium'>Unit of Measure</p>
               <div className="flex cart__list--quantity">
                 <button
                   className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < Number(product.moq) || quantity - 1 < 1
@@ -609,7 +586,30 @@ function renderProductItem(
                   +
                 </button>
               </div>
-              <div className="hidden sm:block"></div>
+              <select
+                name="filter_by"
+                className="w-full min-w-[120px] place-order !border-grey-500 filter-select !py-[9px]"
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  handleUOM(e.target.value)
+                }
+                defaultValue={UOM}
+              >
+                {product.unitOfMeasure?.length > 0 ? (
+                  product.unitOfMeasure?.map(
+                    (uom: { unit: string; code: string }, index: number) => (
+                      <option
+                        className="px-4"
+                        value={uom.code}
+                        key={index + 'uom'}
+                      >
+                        {uom.unit}
+                      </option>
+                    ),
+                  )
+                ) : (
+                  <option value={UOM}>{product.defaultUomValue}</option>
+                )}
+              </select>
               {quantity < Number(product.moq) ||
                 quantity < 1 ||
                 quantity > CART_QUANTITY_MAX ||
@@ -617,7 +617,7 @@ function renderProductItem(
                 <>
                   <Button
                     variant="primary"
-                    className="px-8 mt-2 cursor-not-allowed bg-grey-500 whitespace-nowrap"
+                    className="px-8 cursor-not-allowed bg-grey-500 whitespace-nowrap"
                     disabled
                   >
                     Add to List
@@ -644,7 +644,7 @@ function renderProductItem(
                   <Button
                     type="submit"
                     variant="primary"
-                    className="w-full px-8 mt-2 whitespace-nowrap"
+                    className="w-full px-8 whitespace-nowrap"
                     name="_action"
                     value="add_product"
                   >
