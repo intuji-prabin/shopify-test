@@ -18,6 +18,8 @@ function range(start: number, end: number) {
 }
 
 export function PaginationWrapper({ totalCount, pageSize }: PaginationPropsType) {
+  console.log("totalCount", totalCount)
+
   const pageParam = 'page';
 
   const submit = useSubmit();
@@ -35,7 +37,7 @@ export function PaginationWrapper({ totalCount, pageSize }: PaginationPropsType)
   const nextQuery = new URLSearchParams(queryParams);
   nextQuery.set(pageParam, String(currentPage + 1));
 
-  if (currentPage === 0) {
+  if (currentPage === 0 || totalCount === 0) {
     return null;
   }
 
