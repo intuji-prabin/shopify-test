@@ -194,11 +194,13 @@ export function ItemsColumn({
   return (
     <div className="flex flex-wrap items-center space-x-2">
       <figure className="w-20 p-3 bg-grey-25 max-h-20">
-        <img
-          src={featuredImage ?? DEFAULT_IMAGE.IMAGE}
-          alt="featured"
-          className="object-contain w-14 h-14"
-        />
+        <Link to={handle ? `/product/${handle}` : "#"}>
+          <img
+            src={featuredImage ?? DEFAULT_IMAGE.IMAGE}
+            alt="featured"
+            className="object-contain w-14 h-14"
+          />
+        </Link>
       </figure>
       <figcaption className="flex flex-col gap-y-1 w-[calc(100%_-_88px)] text-wrap">
         <h5>
@@ -212,7 +214,7 @@ export function ItemsColumn({
               {(allowed) => (
                 <>
                   {allowed ? (
-                    <Link to={`/product/${handle}`}>
+                    <Link to={handle ? `/product/${handle}` : "#"}>
                       {(title && title) || '--'}
                     </Link>
                   ) : (
