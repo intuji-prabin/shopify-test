@@ -2,11 +2,11 @@ import {AppLoadContext, json} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
-import { ImpersonationMessage } from '~/lib/constants/event.toast.message';
-import { EVENTS } from '~/lib/constants/events.contstent';
+import {ImpersonationMessage} from '~/lib/constants/event.toast.message';
+import {EVENTS} from '~/lib/constants/events.contstent';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {isImpersonating} from '~/lib/utils/auth-session.server';
-import { emitter } from '~/lib/utils/emitter.server';
+import {emitter} from '~/lib/utils/emitter.server';
 import {
   getMessageSession,
   messageCommitSession,
@@ -22,10 +22,12 @@ interface BaseResponse {
 interface ImpersonateResponse extends BaseResponse {
   payload: {
     impersonateActive: boolean;
+    reason: string;
+    status: string;
   };
 }
 
-export async function getImpersonateStatus(
+export async function getImpersonateDetails(
   context: AppLoadContext,
   request: Request,
   customerId: string,
@@ -43,7 +45,7 @@ export async function getImpersonateStatus(
     if (!response.status) {
       throw new Error(response.message);
     }
-    
+
     return response.payload;
   } catch (error) {
     if (error instanceof Error) {
@@ -90,7 +92,7 @@ export async function updateImpersonateStatus({
       customerId: customerId,
       message: ImpersonationMessage,
     });
-  // }
+    // }
     setSuccessMessage(messageSession, response.message);
     return json(
       {},
@@ -101,10 +103,11 @@ export async function updateImpersonateStatus({
       },
     );
   } catch (error) {
+    console.log('error', error);
     if (error instanceof Error) {
       setErrorMessage(messageSession, error.message);
       return json(
-        {error},
+        {status: false},
         {
           headers: {
             'Set-Cookie': await messageCommitSession(messageSession),
@@ -114,7 +117,7 @@ export async function updateImpersonateStatus({
     }
     setErrorMessage(messageSession, DEFAULT_ERRROR_MESSAGE);
     return json(
-      {error},
+      {status: false},
       {
         headers: {
           'Set-Cookie': await messageCommitSession(messageSession),
