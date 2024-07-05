@@ -16,13 +16,13 @@ export default function OrderNumberDetails({
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h4 className="text-2xl italic font-bold leading-[29px] flex flex-wrap gap-x-1">
           <span>
-            Shopify ID: {orderNumber}
+            Portal ID: {orderNumber}
           </span>
           <span>
             {' | '}
           </span>
           <span>
-            iScala ID:{' '} {iscalaOrderId.length > 0 ? iscalaOrderId : '-'}
+            Cigweld ID:{' '} {iscalaOrderId.length > 0 ? iscalaOrderId : '-'}
           </span>
         </h4>
         <div>

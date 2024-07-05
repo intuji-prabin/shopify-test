@@ -1,43 +1,42 @@
-import { z } from 'zod';
-import { Link } from '@remix-run/react';
-import { withZod } from '@remix-validated-form/with-zod';
-import { ValidatedForm, useIsSubmitting } from 'remix-validated-form';
+import { Form, Link, useRevalidator } from '@remix-run/react';
+import { useEffect, useState } from 'react';
 import { Button } from '~/components/ui/button';
-import { TextAreaInput } from '~/components/ui/text-area-input';
-import { Routes } from '~/lib/constants/routes.constent';
 import { Switch } from '~/components/ui/switch';
-import { useState } from 'react';
-
-const ImpersonateFormFieldSchema = z.object({
-  reason: z.string().max(900).trim().optional(),
-});
-
-export const ImpersonateFormFieldValidator = withZod(
-  ImpersonateFormFieldSchema,
-);
-
-export type ImpersonateFormType = z.infer<typeof ImpersonateFormFieldSchema>;
-
-export type ImpersonateFormFieldNameType = keyof ImpersonateFormType;
+import { Routes } from '~/lib/constants/routes.constent';
 
 export function AllowImpersonateForm({
-  isImpersonateActive,
+  defaultValues
 }: {
-  isImpersonateActive: boolean;
+  defaultValues: {
+    impersonateActive: boolean;
+    reason: string;
+    status: string;
+  };
 }) {
-  const isSubmitting = useIsSubmitting('impersonate-form');
-  const [isActive, setIsActive] = useState(isImpersonateActive);
+  const [isActive, setIsActive] = useState(defaultValues.impersonateActive);
+  const [isBtnEnabled, setIsBtnEnabled] = useState(true);
 
-  const handleActiveChange = () =>
+  const handleActiveChange = () => {
     setIsActive((previousState) => !previousState);
+  }
+
+  useEffect(() => {
+    if (defaultValues.impersonateActive === isActive) {
+      setIsBtnEnabled(true);
+    } else {
+      setIsBtnEnabled(false);
+    }
+  }, [isActive, defaultValues.impersonateActive]);
+
+  useEffect(() => {
+    setIsActive(defaultValues.impersonateActive);
+  }, [defaultValues]);
 
   return (
     <div className="grid gap-6 p-6 bg-neutral-white sm:grid-cols-2">
       <div>
-        <ValidatedForm
-          method="POST"
+        <Form method="POST"
           id="impersonate-form"
-          validator={ImpersonateFormFieldValidator}
         >
           <label htmlFor="allow-impersonate">
             Allow impersonate
@@ -47,18 +46,30 @@ export function AllowImpersonateForm({
             type="button"
             checked={isActive}
             onCheckedChange={handleActiveChange}
+            disabled={defaultValues.status === 'LOGGEDIN'}
           />
-          <TextAreaInput
-            label="Reason to Impersonate"
-            name="reason"
-            placeholder="Reason here"
-          />
+          <label htmlFor="reason" className={`${!isActive && "opacity-50"}`}>
+            Reason to Impersonate
+          </label>
+          {isActive ?
+            <textarea
+              name="reason"
+              placeholder="Reason here"
+              rows={8}
+              maxLength={900}
+              defaultValue={defaultValues.reason}
+              disabled={isBtnEnabled}
+              className={`${isBtnEnabled && 'pointer-events-none opacity-50'} w-full`}
+            ></textarea>
+            :
+            <p className='border border-solid border-grey-300/50 h-[178px] pointer-events-none mb-1.5'></p>
+          }
           <div className="flex items-center space-x-4">
             <Button
               type="submit"
               variant="primary"
-              disabled={isSubmitting}
               name="_action"
+              disabled={isBtnEnabled}
               value={`${isActive ? 'allow_impersonate' : 'disallow_impersonate'
                 }`}
             >
@@ -69,7 +80,7 @@ export function AllowImpersonateForm({
               and work on your account.
             </p>
           </div>
-        </ValidatedForm>
+        </Form>
       </div>
       <div className="p-6 bg-primary-50">
         <h4>What will happen?</h4>
