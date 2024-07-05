@@ -3,7 +3,7 @@ import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
 import {status} from 'nprogress';
 import {EVENTS} from '~/lib/constants/events.contstent';
 import {permissionAuthorization} from '~/lib/constants/permisson.api.authorization';
-import {emitter2} from '~/lib/utils/emitter.server';
+import {emitter} from '~/lib/utils/emitter.server';
 
 /**
  * Action function to handle permissions updates.
@@ -63,7 +63,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const permissionData = await request.json();
 
     // Emit the permission data to subscribers
-    emitter2.emit(EVENTS.PERMISSIONS_UPDATED.KEY, permissionData);
+    emitter.emit(EVENTS.PERMISSIONS_UPDATED.KEY, permissionData);
 
     // Return true to indicate successful execution
     return json(
