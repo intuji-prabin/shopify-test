@@ -164,7 +164,7 @@ function capitalizeStringRegex(str: string) {
 
 async function getSearchProduct({
   request,
-  limit = 6,
+  limit = 10,
   context,
   searchTerm,
   customerId,
@@ -198,9 +198,26 @@ async function getSearchProduct({
     customerId,
   );
   if (results?.length > 0) {
+    // const productsData = results?.[0]?.items;
+    // const finalProducts = productsData?.filter((list: NormalizedPredictiveSearchResultItem) => capitalizeStringRegex(list?.title)?.includes(capitalizeStringRegex(searchTerm)) || capitalizeStringRegex(list?.sku)?.includes(capitalizeStringRegex(searchTerm)));
+    // results[0].items = finalProducts;
     const productsData = results?.[0]?.items;
-    const finalProducts = productsData?.filter((list: NormalizedPredictiveSearchResultItem) => capitalizeStringRegex(list?.title)?.includes(capitalizeStringRegex(searchTerm)) || capitalizeStringRegex(list?.sku)?.includes(capitalizeStringRegex(searchTerm)));
-    results[0].items = finalProducts;
+
+    // Utility function to prioritize relevance
+    const relevanceScore = (item: NormalizedPredictiveSearchResultItem, searchTerm: string) => {
+      const titleMatch = capitalizeStringRegex(item?.title).includes(capitalizeStringRegex(searchTerm));
+      const skuMatch = capitalizeStringRegex(item?.sku).includes(capitalizeStringRegex(searchTerm));
+
+      if (titleMatch && skuMatch) return 2;
+      if (titleMatch) return 1;
+      if (skuMatch) return 0;
+      return -1; // This should ideally never be the case if you're only sorting relevant items
+    };
+
+    // Sorting products based on the relevance
+    const sortedProducts = productsData?.sort((a, b) => relevanceScore(b, searchTerm) - relevanceScore(a, searchTerm));
+
+    results[0].items = sortedProducts;
   }
 
   return results;
