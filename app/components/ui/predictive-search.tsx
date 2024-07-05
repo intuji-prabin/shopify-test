@@ -1,18 +1,17 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
-import { FaSearch } from 'react-icons/fa';
 import { Form, Link, useFetcher, useSubmit } from '@remix-run/react';
-import { debounce } from '~/lib/helpers/general.helper';
-import { Button } from '~/components/ui/button';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { useOutsideClick } from '~/hooks/useOutsideClick';
+import { FormEvent, useRef, useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
 import CloseMenu from '~/components/icons/closeMenu';
+import { Button } from '~/components/ui/button';
+import { useOutsideClick } from '~/hooks/useOutsideClick';
+import { CART_QUANTITY_MAX, PRODUCT_MAX_PRICE } from '~/lib/constants/cartInfo.constant';
+import { Can } from '~/lib/helpers/Can';
+import { debounce } from '~/lib/helpers/general.helper';
 import {
   NormalizedPredictiveSearch,
   NormalizedPredictiveSearchResultItem,
 } from '~/routes/_app.predictive-search/route';
 import { CompareSearch } from '../icons/compareSearch';
-import { CART_QUANTITY_MAX, PRODUCT_MAX_PRICE } from '~/lib/constants/cartInfo.constant';
-import { Can } from '~/lib/helpers/Can';
 
 export type SearchVariant =
   | 'normal'
@@ -234,7 +233,7 @@ function renderProductItem(
       return (
         <div
           key={product.id}
-          className="flex flex-col items-center justify-between gap-4 pb-4 border-b sm:flex-row"
+          className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 sm:flex-row"
         >
           <div className="flex flex-wrap items-center gap-3 sm:w-4/6">
             <div className="size-16">
@@ -272,6 +271,7 @@ function renderProductItem(
                   (Excl. GST)
                 </span>
               </p>
+              <p className="text-sm text-grey-300">Minimum Order Quantity: {product.moq || 1}</p>
             </div>
           </div>
           {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ?
@@ -360,7 +360,7 @@ function renderProductItem(
       return (
         <div
           key={product.id}
-          className="flex flex-col items-center justify-between gap-4 pb-4 border-b sm:flex-row"
+          className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 sm:flex-row"
         >
           <div className="flex flex-wrap items-center gap-3 sm:w-4/6">
             <div className="size-16">
@@ -398,6 +398,7 @@ function renderProductItem(
                   (Excl. GST)
                 </span>
               </p>
+              <p className="text-sm text-grey-300">Minimum Order Quantity: {product.moq || 1}</p>
             </div>
           </div>
           {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ?
@@ -517,7 +518,7 @@ function renderProductItem(
       return (
         <div
           key={product.id}
-          className="flex flex-col items-center justify-between gap-4 pb-4 border-b sm:flex-row"
+          className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 sm:flex-row"
         >
           <div className="flex flex-wrap items-center gap-3 sm:w-2/5">
             <div className="size-16">
@@ -555,6 +556,7 @@ function renderProductItem(
                   (Excl. GST)
                 </span>
               </p>
+              <p className="text-sm text-grey-300">Minimum Order Quantity: {product.moq || 1}</p>
             </div>
           </div>
           {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ?
