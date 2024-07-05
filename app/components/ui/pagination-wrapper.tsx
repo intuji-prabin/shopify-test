@@ -18,7 +18,6 @@ function range(start: number, end: number) {
 }
 
 export function PaginationWrapper({ totalCount, pageSize }: PaginationPropsType) {
-  console.log("totalCount", totalCount)
 
   const pageParam = 'page';
 
