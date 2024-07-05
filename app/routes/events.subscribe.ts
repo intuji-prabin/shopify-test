@@ -1,4 +1,4 @@
-import {  emitter, emitter2, emitter3 } from '~/lib/utils/emitter.server';
+import {  emitter } from '~/lib/utils/emitter.server';
 import { EVENTS } from '~/lib/constants/events.contstent';
 import { eventStream } from 'remix-utils/sse/server';
 import { LoaderFunctionArgs } from "@remix-run/server-runtime";
@@ -27,14 +27,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
   
       // Add listeners for both permission and notification events
       emitter.addListener(EVENTS.LOGOUT.KEY, handleLogout);
-      emitter2.addListener(EVENTS.PERMISSIONS_UPDATED.KEY, handlePermissions);
-      emitter3.addListener(EVENTS.NOTIFICATIONS_UPDATED.KEY, handleNotifications);
+      emitter.addListener(EVENTS.PERMISSIONS_UPDATED.KEY, handlePermissions);
+      emitter.addListener(EVENTS.NOTIFICATIONS_UPDATED.KEY, handleNotifications);
   
       // Remove the event listeners when the event stream is closed
       return () => {
-        emitter.addListener(EVENTS.LOGOUT.KEY, handleLogout);
-        emitter2.removeListener(EVENTS.PERMISSIONS_UPDATED.KEY, handlePermissions);
-        emitter3.removeListener(EVENTS.NOTIFICATIONS_UPDATED.KEY, handleNotifications);
+        emitter.removeListener(EVENTS.LOGOUT.KEY, handleLogout);
+        emitter.removeListener(EVENTS.PERMISSIONS_UPDATED.KEY, handlePermissions);
+        emitter.removeListener(EVENTS.NOTIFICATIONS_UPDATED.KEY, handleNotifications);
       };
     });
   }

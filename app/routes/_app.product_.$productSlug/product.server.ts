@@ -7,7 +7,6 @@ import {getUserDetails} from '~/lib/utils/user-session.server';
 import {GET_CART_LIST} from '~/routes/_app.cart-list/cart.server';
 import {useFormatCart} from '~/hooks/useFormatCart';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {emitter3} from '~/lib/utils/emitter.server';
 import {EVENTS} from '~/lib/constants/events.contstent';
 import {StockStatus} from '~/routes/_app.cart-list/order-my-products/use-column';
 import {
@@ -17,6 +16,7 @@ import {
 } from '~/lib/utils/auth-session.server';
 import {AppLoadContext} from '@remix-run/server-runtime';
 import {encrypt} from '~/lib/utils/cryptoUtils';
+import { emitter } from '~/lib/utils/emitter.server';
 
 export interface relatedProductsType {
   productId: string;
@@ -286,7 +286,7 @@ export const addProductToCart = async (
     variables: {cartId: sessionCartInfo?.cartId},
   });
 
-  emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
+  emitter.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
     payload: {
       type: 'cart',
       totalNumber: finalCartLine.lineItems,

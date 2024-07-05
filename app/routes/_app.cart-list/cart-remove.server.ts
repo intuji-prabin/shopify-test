@@ -2,7 +2,7 @@ import {useFormatCart} from '~/hooks/useFormatCart';
 import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
 import {EVENTS} from '~/lib/constants/events.contstent';
 import {USER_SESSION_ID} from '~/lib/utils/auth-session.server';
-import {emitter3} from '~/lib/utils/emitter.server';
+import {emitter} from '~/lib/utils/emitter.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import {getCartList} from './cart.server';
 import {removeCart} from './order-place.server';
@@ -47,7 +47,7 @@ export const removeItemFromCart = async (
   await getCartList(context, request, cartSession);
 
   //this is use to emit notification for the cart on
-  emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
+  emitter.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
     payload: {
       type: 'cart',
       totalNumber: cartRemoveResponse,
