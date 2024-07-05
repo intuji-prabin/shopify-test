@@ -1,4 +1,4 @@
-import { Form, Link, useNavigate, useSubmit } from '@remix-run/react';
+import { Form, Link, useRevalidator } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { Switch } from '~/components/ui/switch';
@@ -27,6 +27,10 @@ export function AllowImpersonateForm({
       setIsBtnEnabled(false);
     }
   }, [isActive, defaultValues.impersonateActive]);
+
+  useEffect(() => {
+    setIsActive(defaultValues.impersonateActive);
+  }, [defaultValues]);
 
   return (
     <div className="grid gap-6 p-6 bg-neutral-white sm:grid-cols-2">
