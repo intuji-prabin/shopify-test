@@ -8,9 +8,10 @@ import { AppLoadContext } from '@shopify/remix-oxygen';
 import {
   PredictiveCollectionFragment,
   PredictiveProductFragment,
-  PredictiveQueryFragment,
-  PredictiveSearchQuery,
+  PredictiveSearchQuery
 } from 'storefrontapi.generated';
+import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
@@ -18,12 +19,10 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import { addProductToCart } from '../_app.product_.$productSlug/product.server';
-import { getCartList } from '../_app.cart-list/cart.server';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 import { getUserDetails } from '~/lib/utils/user-session.server';
+import { getCartList } from '../_app.cart-list/cart.server';
 import { getPrices } from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/productList.server';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 
 type PredicticeSearchResultItemImage =
   | PredictiveCollectionFragment['image']

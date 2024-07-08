@@ -52,8 +52,8 @@ export function PredictiveSearch({
     300,
   );
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) =>
-    debounceSubmit(event.currentTarget);
+  const handleSubmit = (event: React.KeyboardEvent<HTMLInputElement> | FormEvent<HTMLFormElement>) =>
+    debounceSubmit(event.currentTarget as HTMLFormElement);
 
   const handleClose = () => {
     setSearchProduct(false);
@@ -102,8 +102,12 @@ export function PredictiveSearch({
                 ? 'font-normal'
                 : 'font-bold placeholder:italic'
                 } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
-              onKeyDown={(event) => {
-                console.log("heelo keydown", event.key);
+              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  handleSubmit(event);
+                  setSearchProduct(true);
+                }
               }}
             />
           </>
