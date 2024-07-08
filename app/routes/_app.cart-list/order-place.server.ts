@@ -5,7 +5,7 @@ import {useFetch} from '~/hooks/useFetch';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {useFormatCart} from '~/hooks/useFormatCart';
-import {emitter3} from '~/lib/utils/emitter.server';
+import {emitter} from '~/lib/utils/emitter.server';
 import {EVENTS} from '~/lib/constants/events.contstent';
 import {
   USER_SESSION_ID,
@@ -68,7 +68,7 @@ export const placeOrder = async (
     }
     const finalCartSession = useFormatCart(cartSession);
     context.session.set(CART_SESSION_KEY, finalCartSession);
-    emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
+    emitter.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
       payload: {
         type: 'cart',
         totalNumber: cartRemoveResponse === true ? 0 : cartRemoveResponse,

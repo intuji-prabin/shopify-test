@@ -23,7 +23,7 @@ import {
   viewNotification,
 } from '~/routes/_app.notification/notification.server';
 import { getNewNotificationCount } from '../_app/app.server';
-import { emitter3 } from '~/lib/utils/emitter.server';
+import { emitter } from '~/lib/utils/emitter.server';
 import { EVENTS } from '~/lib/constants/events.contstent';
 import { AuthError } from '~/components/ui/authError';
 
@@ -77,7 +77,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
     customerId,
     request,
   });
-  emitter3.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
+  emitter.emit(EVENTS.NOTIFICATIONS_UPDATED.KEY, {
     payload: {
       type: 'notification',
       action: 'view',

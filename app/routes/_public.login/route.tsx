@@ -27,6 +27,7 @@ import StorageService from '~/services/storage.service';
 import { LOCAL_STORAGE_KEYS } from '~/lib/constants/general.constant';
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { useWindowFocusRevalidator } from '~/hooks/useWindowFocusRevalidator';
 
 export const loader = async ({ context }: LoaderFunctionArgs) => {
   const accessToken = await getAccessToken(context);
@@ -93,5 +94,6 @@ export default function LoginPage() {
       storageService.remove(LOCAL_STORAGE_KEYS.PERMISSIONS); // Remove permission from localStorage
     }
   }, []);
+  useWindowFocusRevalidator();
   return <LoginForm />;
 }

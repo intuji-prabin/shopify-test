@@ -1,18 +1,17 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
-import { FaSearch } from 'react-icons/fa';
 import { Form, Link, useFetcher, useSubmit } from '@remix-run/react';
-import { debounce } from '~/lib/helpers/general.helper';
-import { Button } from '~/components/ui/button';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { useOutsideClick } from '~/hooks/useOutsideClick';
+import { FormEvent, useRef, useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
 import CloseMenu from '~/components/icons/closeMenu';
+import { Button } from '~/components/ui/button';
+import { useOutsideClick } from '~/hooks/useOutsideClick';
+import { CART_QUANTITY_MAX, PRODUCT_MAX_PRICE } from '~/lib/constants/cartInfo.constant';
+import { Can } from '~/lib/helpers/Can';
+import { debounce } from '~/lib/helpers/general.helper';
 import {
   NormalizedPredictiveSearch,
   NormalizedPredictiveSearchResultItem,
 } from '~/routes/_app.predictive-search/route';
 import { CompareSearch } from '../icons/compareSearch';
-import { CART_QUANTITY_MAX, PRODUCT_MAX_PRICE } from '~/lib/constants/cartInfo.constant';
-import { Can } from '~/lib/helpers/Can';
 
 export type SearchVariant =
   | 'normal'
@@ -120,7 +119,7 @@ export function PredictiveSearch({
           className={`${searchVariant === 'mobile' ? 'top-[65px]' : 'top-[calc(100%_+_4px)]'
             } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${searchVariant === 'normal' || searchVariant === 'mobile'
               ? null
-              : 'max-w-[600px] max-h-[350px] overflow-y-auto shadow-lg'
+              : 'max-w-[650px] max-h-[350px] overflow-y-auto shadow-lg'
             }`}
         >
           {fetcher.state === 'loading' ? (
@@ -202,16 +201,22 @@ function renderProductItem(
           key={product.id}
         >
           <div className="size-14">
-            <img
-              src={product?.featuredPriceImageUrl}
-              alt="product"
-              className="object-cover object-center size-full"
-            />
+            <Link
+              prefetch="intent"
+              to={product.handle ? `/product/${product.handle}` : "#"}
+              onClick={handleClose}
+            >
+              <img
+                src={product?.featuredPriceImageUrl}
+                alt="product"
+                className="object-cover object-center size-full"
+              />
+            </Link>
           </div>
           <figcaption className="w-[calc(100%_-_72px)]">
             <Link
               prefetch="intent"
-              to={`/product/${product.handle}`}
+              to={product.handle ? `/product/${product.handle}` : "#"}
               onClick={handleClose}
               className="text-base font-bold text-grey-900"
             >
@@ -228,15 +233,21 @@ function renderProductItem(
       return (
         <div
           key={product.id}
-          className="flex flex-col justify-between gap-4 sm:flex-row"
+          className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 sm:flex-row"
         >
           <div className="flex flex-wrap items-center gap-3 sm:w-4/6">
             <div className="size-16">
-              <img
-                src={product?.featuredPriceImageUrl}
-                alt="product"
-                className="object-contain object-center size-full"
-              />
+              <Link
+                prefetch="intent"
+                to={product.handle ? `/product/${product.handle}` : "#"}
+                onClick={handleClose}
+              >
+                <img
+                  src={product?.featuredPriceImageUrl}
+                  alt="product"
+                  className="object-contain object-center size-full"
+                />
+              </Link>
             </div>
             <div className="w-[calc(100%_-_76px)]">
               <p className="text-sm text-primary-500">
@@ -245,14 +256,14 @@ function renderProductItem(
               <p>
                 <Link
                   prefetch="intent"
-                  to={`/product/${product.handle}`}
+                  to={product.handle ? `/product/${product.handle}` : "#"}
                   onClick={handleClose}
                   className="text-base font-medium text-grey-900"
                 >
                   {product.title}
                 </Link>
               </p>
-              <p className="text-2xl italic font-bold text-grey-900">
+              <p className="text-2xl italic font-bold text-grey-900 whitespace-nowrap">
                 {product?.currency || '$'}&nbsp;
                 {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? product?.price : "N/A"}
                 <span className="text-sm italic font-bold text-grey-500">
@@ -260,6 +271,7 @@ function renderProductItem(
                   (Excl. GST)
                 </span>
               </p>
+              <p className="text-sm text-grey-300">Minimum Order Quantity: {product.moq || 1}</p>
             </div>
           </div>
           {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ?
@@ -348,15 +360,21 @@ function renderProductItem(
       return (
         <div
           key={product.id}
-          className="flex flex-col justify-between gap-4 sm:flex-row"
+          className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 sm:flex-row"
         >
           <div className="flex flex-wrap items-center gap-3 sm:w-4/6">
             <div className="size-16">
-              <img
-                src={product?.featuredPriceImageUrl}
-                alt="product"
-                className="object-contain object-center size-full"
-              />
+              <Link
+                prefetch="intent"
+                to={product.handle ? `/product/${product.handle}` : "#"}
+                onClick={handleClose}
+              >
+                <img
+                  src={product?.featuredPriceImageUrl}
+                  alt="product"
+                  className="object-contain object-center size-full"
+                />
+              </Link>
             </div>
             <div className="w-[calc(100%_-_76px)]">
               <p className="text-sm text-primary-500">
@@ -365,14 +383,14 @@ function renderProductItem(
               <p>
                 <Link
                   prefetch="intent"
-                  to={`/product/${product.handle}`}
+                  to={product.handle ? `/product/${product.handle}` : "#"}
                   onClick={handleClose}
                   className="text-base font-medium text-grey-900"
                 >
                   {product.title}
                 </Link>
               </p>
-              <p className="text-2xl italic font-bold text-grey-900">
+              <p className="text-2xl italic font-bold text-grey-900 whitespace-nowrap">
                 {product?.currency || '$'}&nbsp;
                 {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? product?.price : 'N/A'}
                 <span className="text-sm italic font-bold text-grey-500">
@@ -380,6 +398,7 @@ function renderProductItem(
                   (Excl. GST)
                 </span>
               </p>
+              <p className="text-sm text-grey-300">Minimum Order Quantity: {product.moq || 1}</p>
             </div>
           </div>
           {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ?
@@ -463,11 +482,17 @@ function renderProductItem(
           className="flex flex-wrap items-center space-x-4"
         >
           <div className="size-14">
-            <img
-              src={product?.featuredPriceImageUrl}
-              alt="product"
-              className="object-cover object-center size-full"
-            />
+            <Link
+              prefetch="intent"
+              to={product.id}
+              onClick={handleClose}
+            >
+              <img
+                src={product?.featuredPriceImageUrl}
+                alt="product"
+                className="object-cover object-center size-full"
+              />
+            </Link>
           </div>
           <figcaption className="w-[calc(100%_-_72px)]">
             <Link
@@ -493,15 +518,21 @@ function renderProductItem(
       return (
         <div
           key={product.id}
-          className="flex flex-col items-start justify-between gap-4 sm:flex-row"
+          className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 sm:flex-row"
         >
           <div className="flex flex-wrap items-center gap-3 sm:w-2/5">
             <div className="size-16">
-              <img
-                src={product?.featuredPriceImageUrl}
-                alt="product"
-                className="object-contain object-center size-full"
-              />
+              <Link
+                prefetch="intent"
+                to={product.handle ? `/product/${product.handle}` : "#"}
+                onClick={handleClose}
+              >
+                <img
+                  src={product?.featuredPriceImageUrl}
+                  alt="product"
+                  className="object-contain object-center size-full"
+                />
+              </Link>
             </div>
             <div className="w-[calc(100%_-_76px)]">
               <p className="text-sm text-primary-500">
@@ -510,14 +541,14 @@ function renderProductItem(
               <p>
                 <Link
                   prefetch="intent"
-                  to={`/product/${product.handle}`}
+                  to={product.handle ? `/product/${product.handle}` : "#"}
                   onClick={handleClose}
                   className="text-base font-medium text-grey-900"
                 >
                   {product.title}
                 </Link>
               </p>
-              <p className="text-2xl italic font-bold text-grey-900">
+              <p className="text-2xl italic font-bold text-grey-900 whitespace-nowrap">
                 {product?.currency || '$'}&nbsp;
                 {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? product?.price : 'N/A'}
                 <span className="text-sm italic font-bold text-grey-500">
@@ -525,34 +556,12 @@ function renderProductItem(
                   (Excl. GST)
                 </span>
               </p>
+              <p className="text-sm text-grey-300">Minimum Order Quantity: {product.moq || 1}</p>
             </div>
           </div>
           {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ?
-            <div className="grid grid-cols-1 items-start gap-x-4 w-full gap-y-2 sm:grid-cols-2 sm:w-[calc(60%_-_1rem)]">
-              <select
-                name="filter_by"
-                className="w-full min-w-[120px] place-order !border-grey-500 filter-select"
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                  handleUOM(e.target.value)
-                }
-                defaultValue={UOM}
-              >
-                {product.unitOfMeasure?.length > 0 ? (
-                  product.unitOfMeasure?.map(
-                    (uom: { unit: string; code: string }, index: number) => (
-                      <option
-                        className="px-4"
-                        value={uom.code}
-                        key={index + 'uom'}
-                      >
-                        {uom.unit}
-                      </option>
-                    ),
-                  )
-                ) : (
-                  <option value={UOM}>{product.defaultUomValue}</option>
-                )}
-              </select>
+            <div className="grid grid-cols-1 gap-x-4 w-full gap-y-2 sm:grid-cols-2 sm:w-[calc(60%_-_1rem)] items-end">
+              <p className='font-medium'>Unit of Measure</p>
               <div className="flex cart__list--quantity">
                 <button
                   className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < Number(product.moq) || quantity - 1 < 1
@@ -579,7 +588,30 @@ function renderProductItem(
                   +
                 </button>
               </div>
-              <div className="hidden sm:block"></div>
+              <select
+                name="filter_by"
+                className="w-full min-w-[120px] place-order !border-grey-500 filter-select !py-[9px]"
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  handleUOM(e.target.value)
+                }
+                defaultValue={UOM}
+              >
+                {product.unitOfMeasure?.length > 0 ? (
+                  product.unitOfMeasure?.map(
+                    (uom: { unit: string; code: string }, index: number) => (
+                      <option
+                        className="px-4"
+                        value={uom.code}
+                        key={index + 'uom'}
+                      >
+                        {uom.unit}
+                      </option>
+                    ),
+                  )
+                ) : (
+                  <option value={UOM}>{product.defaultUomValue}</option>
+                )}
+              </select>
               {quantity < Number(product.moq) ||
                 quantity < 1 ||
                 quantity > CART_QUANTITY_MAX ||
@@ -587,7 +619,7 @@ function renderProductItem(
                 <>
                   <Button
                     variant="primary"
-                    className="px-8 mt-2 cursor-not-allowed bg-grey-500 whitespace-nowrap"
+                    className="px-8 cursor-not-allowed bg-grey-500 whitespace-nowrap"
                     disabled
                   >
                     Add to List
@@ -614,7 +646,7 @@ function renderProductItem(
                   <Button
                     type="submit"
                     variant="primary"
-                    className="w-full px-8 mt-2 whitespace-nowrap"
+                    className="w-full px-8 whitespace-nowrap"
                     name="_action"
                     value="add_product"
                   >
@@ -634,16 +666,22 @@ function renderProductItem(
           key={product.id}
         >
           <div className="size-14">
-            <img
-              src={product?.featuredPriceImageUrl}
-              alt="product"
-              className="object-cover object-center size-full"
-            />
+            <Link
+              prefetch="intent"
+              to={product.handle ? `/product/${product.handle}` : "#"}
+              onClick={handleClose}
+            >
+              <img
+                src={product?.featuredPriceImageUrl}
+                alt="product"
+                className="object-cover object-center size-full"
+              />
+            </Link>
           </div>
           <figcaption className="w-[calc(100%_-_72px)]">
             <Link
               prefetch="intent"
-              to={`/product/${product.handle}`}
+              to={product.handle ? `/product/${product.handle}` : "#"}
               onClick={handleClose}
               className="text-base font-bold text-grey-900"
             >

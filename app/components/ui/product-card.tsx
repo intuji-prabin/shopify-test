@@ -34,6 +34,7 @@ export function ProductCard({
           imageBackgroundColor={imageBackgroundColor ?? ''}
           id={id}
           visibility={companyPrice && companyPrice < PRODUCT_MAX_PRICE ? true : false}
+          handle={handle}
         />
         <ProductCardInfo
           sku={variants?.sku}
@@ -121,10 +122,11 @@ function ProductCardImage({
   liked,
   imageBackgroundColor,
   id,
-  visibility
+  visibility,
+  handle
 }: Pick<
   ProductList,
-  'featuredImageUrl' | 'volumePrice' | 'liked' | 'imageBackgroundColor' | 'id'
+  'featuredImageUrl' | 'volumePrice' | 'liked' | 'imageBackgroundColor' | 'id' | 'handle'
 > & { visibility: boolean }) {
   return (
     <div
@@ -151,11 +153,13 @@ function ProductCardImage({
         }
       </Can>
       <figure className="mt-3">
-        <img
-          src={featuredImageUrl}
-          className="object-contain h-48 max-h-48"
-          alt={featuredImageUrl}
-        />
+        <Link to={handle ? `/product/${handle}` : "#"}>
+          <img
+            src={featuredImageUrl}
+            className="object-contain h-48 max-h-48"
+            alt={featuredImageUrl}
+          />
+        </Link>
       </figure>
     </div>
   );
@@ -177,7 +181,7 @@ function ProductCardButtons({
     <div className={`grid justify-center grid-cols-1 gap-2 mt-4 ${visibility && "sm:grid-cols-2"} product-button`}>
       <Can I="view" a="view_product_detail">
         <Link
-          to={`/product/${handle}`}
+          to={handle ? `/product/${handle}` : "#"}
           className="flex items-center justify-center w-full gap-2 p-2 px-3 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600"
         >
           product details
