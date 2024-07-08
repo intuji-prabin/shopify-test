@@ -1,4 +1,4 @@
-import { Form, Link, useRevalidator } from '@remix-run/react';
+import { Form, Link } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { Switch } from '~/components/ui/switch';
@@ -10,7 +10,6 @@ export function AllowImpersonateForm({
   defaultValues: {
     impersonateActive: boolean;
     reason: string;
-    status: string;
   };
 }) {
   const [isActive, setIsActive] = useState(defaultValues.impersonateActive);
@@ -46,7 +45,6 @@ export function AllowImpersonateForm({
             type="button"
             checked={isActive}
             onCheckedChange={handleActiveChange}
-            disabled={defaultValues.status === 'LOGGEDIN'}
           />
           <label htmlFor="reason" className={`${!isActive && "opacity-50"}`}>
             Reason to Impersonate
