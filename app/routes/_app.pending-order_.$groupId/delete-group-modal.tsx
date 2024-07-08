@@ -1,7 +1,7 @@
-import {useSubmit} from '@remix-run/react';
-import {Button} from '~/components/ui/button';
+import { useSubmit } from '@remix-run/react';
+import { Button } from '~/components/ui/button';
 import RemoveItem from '~/components/icons/removeItem';
-import {Delete} from '~/components/icons/delete';
+import { Delete } from '~/components/icons/delete';
 import {
   DialogHeader,
   DialogFooter,
@@ -12,7 +12,7 @@ import {
   DialogClose,
 } from '~/components/ui/dialog';
 
-export function DeleteGroupModal({groupName}: {groupName: string}) {
+export function DeleteGroupModal({ groupName }: { groupName: string }) {
   const submit = useSubmit();
 
   const handleDelete = () => {
@@ -37,13 +37,13 @@ export function DeleteGroupModal({groupName}: {groupName: string}) {
         id="wishlist-remove-dialogue"
       >
         <DialogHeader>
-          <DialogTitle className="leading-6 font-bold italic text-lg text-grey-900 flex p-4 justify-center items-center flex-col gap-4">
+          <DialogTitle className="flex flex-col items-center justify-center gap-4 p-4 text-lg italic font-bold leading-6 text-grey-900">
             <div className="bg-semantic-danger-100 p-[10px] rounded-[50%]">
               <RemoveItem />
             </div>
-            <div className="flex items-center justify-center flex-col gap-1">
+            <div className="flex flex-col items-center justify-center gap-1">
               <h3 className=" text-grey-800 leading-[22px] text-lg font-medium">
-                Delete Group "{groupName}"
+                Delete Group <span className='capitalize'>"{groupName}"</span>
               </h3>
               <p className="text-center font-normal leading-[21px] text-base text-neutral-400">
                 All products will be removed from your List. Are you sure you
@@ -53,9 +53,9 @@ export function DeleteGroupModal({groupName}: {groupName: string}) {
           </DialogTitle>
         </DialogHeader>
 
-        <DialogFooter className="px-4 pb-4 flex">
+        <DialogFooter className="flex px-4 pb-4">
           <DialogClose asChild>
-            <Button type="button" className="uppercase w-full" variant="ghost">
+            <Button type="button" className="w-full uppercase" variant="ghost">
               cancel
             </Button>
           </DialogClose>
@@ -63,7 +63,7 @@ export function DeleteGroupModal({groupName}: {groupName: string}) {
             <Button
               type="submit"
               variant="primary"
-              className="w-full italic font-bold uppercase leading6 text-sm "
+              className="w-full text-sm italic font-bold uppercase leading6 "
               onClick={() => {
                 handleDelete();
               }}
