@@ -300,20 +300,16 @@ export function QuantityColumn({
     updateQuantity(inputQuantity);
   };
 
-  useEffect(() => {
-    setQuantityError(quantity >= moq);
-  }, [quantity]);
-
   return (
     <>
       <div className="flex flex-col gap-[11.5px] mt-[2.2rem] cart__list--quantity">
         <div className="flex items-center">
           <button
-            className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${quantity - 1 < moq && 'cursor-not-allowed'
+            className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${quantity - 1 < 1 && 'cursor-not-allowed'
               }`}
             type="button"
             onClick={handleDecreaseQuantity}
-            disabled={quantity - 1 < moq}
+            disabled={quantity - 1 < 1}
           >
             -
           </button>
@@ -323,7 +319,7 @@ export function QuantityColumn({
             value={quantity}
             name="quantity"
             onChange={handleInputChange}
-            min={moq || 1}
+            min={1}
             max={CART_QUANTITY_MAX}
             required
           />
@@ -331,7 +327,6 @@ export function QuantityColumn({
             className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
             type="button"
             onClick={handleIncreaseQuantity}
-          // disabled={quantity + 1 < moq}
           >
             +
           </button>
@@ -339,7 +334,7 @@ export function QuantityColumn({
         {!quantityError ||
           (quantity > CART_QUANTITY_MAX && (
             <p className="text-sm text-red-500 max-w-40 text-wrap">
-              Quantity cannot be less than MOQ i.e {moq} or greater than{' '}
+              Quantity cannot be less than MOQ i.e 1 or greater than{' '}
               {CART_QUANTITY_MAX} or empty
             </p>
           ))}

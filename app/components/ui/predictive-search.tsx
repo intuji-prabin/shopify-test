@@ -172,15 +172,11 @@ function renderProductItem(
   searchVariant: SearchVariant,
   handleClose: () => void,
 ) {
-  // const productUrl = product.image?.url
-  //   ? product.image.url
-  //   : DEFAULT_IMAGE.IMAGE;
-
-  const [quantity, setQuantity] = useState(parseFloat(product.moq) || 1);
+  const [quantity, setQuantity] = useState(1);
 
   function decreaseQuantity() {
     if (isNaN(quantity - 1)) {
-      setQuantity(parseFloat(product.moq) || 1);
+      setQuantity(1);
       return;
     }
     setQuantity(quantity - 1);
@@ -188,7 +184,7 @@ function renderProductItem(
 
   function increaseQuantity() {
     if (isNaN(quantity + 1)) {
-      setQuantity(parseFloat(product.moq) || 1);
+      setQuantity(1);
       return;
     }
     setQuantity(quantity + 1);
@@ -286,14 +282,12 @@ function renderProductItem(
             <div className="sm:w-[calc(33.33%_-_1rem)]">
               <div className="flex cart__list--quantity">
                 <button
-                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < Number(product.moq) || quantity - 1 < 1
+                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < 1
                     ? 'cursor-not-allowed'
                     : ''
                     }`}
                   onClick={decreaseQuantity}
-                  disabled={
-                    quantity - 1 < Number(product.moq) || quantity - 1 < 1
-                  }
+                  disabled={quantity - 1 < 1}
                 >
                   -
                 </button>
@@ -310,8 +304,7 @@ function renderProductItem(
                   +
                 </button>
               </div>
-              {quantity < Number(product.moq) ||
-                quantity < 1 ||
+              {quantity < 1 ||
                 quantity > CART_QUANTITY_MAX ||
                 isNaN(quantity) ? (
                 <>
@@ -325,14 +318,13 @@ function renderProductItem(
                     </Button>
                   </Can>
                   <p className="text-xs text-red-500">
-                    Minimum Order Quantity {product?.moq || 1}
+                    Minimum Order Quantity 1
                     <br />
                     Maximum Quantity {CART_QUANTITY_MAX}
                   </p>
                 </>
               ) : (
                 <Can I="view" a="add_to_cart">
-
                   <Form
                     method="POST"
                     action="/predictive-search"
@@ -413,14 +405,12 @@ function renderProductItem(
             <div className="sm:w-[calc(33.33%_-_1rem)]">
               <div className="flex cart__list--quantity">
                 <button
-                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < Number(product.moq) || quantity - 1 < 1
+                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < 1
                     ? 'cursor-not-allowed'
                     : ''
                     }`}
                   onClick={decreaseQuantity}
-                  disabled={
-                    quantity - 1 < Number(product.moq) || quantity - 1 < 1
-                  }
+                  disabled={quantity - 1 < 1}
                 >
                   -
                 </button>
@@ -437,8 +427,7 @@ function renderProductItem(
                   +
                 </button>
               </div>
-              {quantity < Number(product.moq) ||
-                quantity < 1 ||
+              {quantity < 1 ||
                 quantity > CART_QUANTITY_MAX ||
                 isNaN(quantity) ? (
                 <>
@@ -450,7 +439,7 @@ function renderProductItem(
                     Add to List
                   </Button>
                   <p className="text-xs text-red-500">
-                    Minimum Order Quantity {product?.moq || 1}
+                    Minimum Order Quantity 1
                     <br />
                     Maximum Quantity {CART_QUANTITY_MAX}
                   </p>
@@ -572,14 +561,12 @@ function renderProductItem(
               <p className='font-medium'>Unit of Measure</p>
               <div className="flex cart__list--quantity">
                 <button
-                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < Number(product.moq) || quantity - 1 < 1
+                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < 1
                     ? 'cursor-not-allowed'
                     : ''
                     }`}
                   onClick={decreaseQuantity}
-                  disabled={
-                    quantity - 1 < Number(product.moq) || quantity - 1 < 1
-                  }
+                  disabled={quantity - 1 < 1}
                 >
                   -
                 </button>
@@ -620,8 +607,7 @@ function renderProductItem(
                   <option value={UOM}>{product.defaultUomValue}</option>
                 )}
               </select>
-              {quantity < Number(product.moq) ||
-                quantity < 1 ||
+              {quantity < 1 ||
                 quantity > CART_QUANTITY_MAX ||
                 isNaN(quantity) ? (
                 <>
@@ -634,7 +620,7 @@ function renderProductItem(
                   </Button>
                   <div className="hidden sm:block"></div>
                   <p className="w-full text-xs text-red-500">
-                    Minimum Order Quantity {product?.moq || 1}
+                    Minimum Order Quantity 1
                     <br />
                     Maximum Quantity {CART_QUANTITY_MAX}
                   </p>
