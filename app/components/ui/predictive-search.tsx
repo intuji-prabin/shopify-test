@@ -12,6 +12,7 @@ import {
   NormalizedPredictiveSearchResultItem,
 } from '~/routes/_app.predictive-search/route';
 import { CompareSearch } from '../icons/compareSearch';
+import { Routes } from '~/lib/constants/routes.constent';
 
 export type SearchVariant =
   | 'normal'
@@ -51,8 +52,8 @@ export function PredictiveSearch({
     300,
   );
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) =>
-    debounceSubmit(event.currentTarget);
+  const handleSubmit = (event: React.KeyboardEvent<HTMLInputElement> | FormEvent<HTMLFormElement>) =>
+    debounceSubmit(event.currentTarget as HTMLFormElement);
 
   const handleClose = () => {
     setSearchProduct(false);
@@ -101,6 +102,13 @@ export function PredictiveSearch({
                 ? 'font-normal'
                 : 'font-bold placeholder:italic'
                 } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
+              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  handleSubmit(event);
+                  setSearchProduct(true);
+                }
+              }}
             />
           </>
         )}
@@ -118,7 +126,7 @@ export function PredictiveSearch({
         <div
           className={`${searchVariant === 'mobile' ? 'top-[65px]' : 'top-[calc(100%_+_4px)]'
             } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${searchVariant === 'normal' || searchVariant === 'mobile'
-              ? null
+              ? "max-h-[calc(100vh_-_350px)] md:max-h-[calc(100vh_-_500px)] overflow-y-auto"
               : 'max-w-[650px] max-h-[350px] overflow-y-auto shadow-lg'
             }`}
         >
@@ -715,11 +723,16 @@ function SearchResultsProductsGrid({
   handleClose: () => void;
 }) {
   return (
-    <div className="grid gap-y-4">
-      {searchVariant === 'cart' && <h5>Recommended Products</h5>}
-      {products.map((product) => {
-        return renderProductItem(product, searchVariant, handleClose);
-      })}
-    </div>
+    <>
+      <div className="grid gap-y-4">
+        {searchVariant === 'cart' && <h5>Recommended Products</h5>}
+        {products.map((product) => {
+          return renderProductItem(product, searchVariant, handleClose);
+        })}
+      </div>
+      <div>
+        <Link to={Routes.CATEGORIES} onClick={handleClose} className='flex items-center justify-center px-6 py-2 text-sm font-bold leading-6 uppercase duration-150 border-solid cursor-pointer bg-secondary-500 hover:bg-secondary-500 text-grey-900'>View all</Link>
+      </div>
+    </>
   );
 }
