@@ -2,7 +2,6 @@ import { Link } from '@remix-run/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
 import { TooltipInfo } from '~/components/icons/orderStatus';
-import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
 import { StockStatusChip } from '~/components/ui/stock-status-chip';
@@ -53,10 +52,12 @@ export function useMyProductColumn({
   currency,
   setPlaceOrder,
   setUpdateCart,
+  setFrieghtCharge,
 }: {
   currency?: string;
   setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>;
   setPlaceOrder?: React.Dispatch<React.SetStateAction<boolean>>;
+  setFrieghtCharge?: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const columns = useMemo<ColumnDef<BulkOrderColumn>[]>(
     () => [
@@ -118,6 +119,7 @@ export function useMyProductColumn({
               lineItemId={product.id}
               setUpdateCart={setUpdateCart}
               setPlaceOrder={setPlaceOrder}
+              setFrieghtCharge={setFrieghtCharge}
             />
           );
         },
@@ -252,6 +254,7 @@ type QuantityColumnType = Pick<
   lineItemId?: string;
   setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>;
   setPlaceOrder?: React.Dispatch<React.SetStateAction<boolean>>;
+  setFrieghtCharge?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 export function QuantityColumn({
   quantity,
@@ -262,16 +265,46 @@ export function QuantityColumn({
   lineItemId,
   setUpdateCart,
   setPlaceOrder,
+  setFrieghtCharge
 }: QuantityColumnType) {
   const meta = info.table.options.meta;
-  const [quantityError, setQuantityError] = useState(true);
+  // const [quantityError, setQuantityError] = useState(true);
 
+  // const updateQuantity = (newQuantity: any) => {
+  //   meta?.updateData(info.row.index, info.column.id, Math.max(newQuantity, 1));
+  //   setUpdateCart && setUpdateCart(true);
+  //   console.log("newQuantity", newQuantity, moq)
+  //   const updateCartCase = newQuantity >= moq;
+  //   console.log("updateCart", updateCartCase)
+  //   setQuantityError(updateCartCase);
+  //   console.log("quantityError", quantityError)
+  //   setPlaceOrder && setPlaceOrder(updateCartCase);
+  // };
+  // const handleIncreaseQuantity = () => {
+  //   if (isNaN(quantity + 1)) {
+  //     meta?.updateData(info.row.index, info.column.id, Math.max(moq, 1));
+  //     return;
+  //   }
+  //   meta?.updateData(info.row.index, info.column.id, Math.max(quantity + 1, 1));
+  // };
+  // const handleDecreaseQuantity = () => {
+  //   if (isNaN(quantity + 1)) {
+  //     meta?.updateData(info.row.index, info.column.id, Math.max(moq, 1));
+  //     return;
+  //   }
+  //   meta?.updateData(info.row.index, info.column.id, Math.max(quantity - 1, 1));
+  // };
+  // const handleInputChange = (event: any) => {
+  //   const inputQuantity = parseInt(event.target.value);
+  //   meta?.updateData(info.row.index, info.column.id, Math.max(inputQuantity, 1));
+  // };
+
+  setPlaceOrder && setPlaceOrder(quantity > 0 && quantity <= CART_QUANTITY_MAX);
   const updateQuantity = (newQuantity: any) => {
     meta?.updateData(info.row.index, info.column.id, Math.max(newQuantity, 1));
-    const updateCart = newQuantity >= moq;
-    setUpdateCart && setUpdateCart(updateCart);
-    setQuantityError(updateCart);
-    setPlaceOrder && setPlaceOrder(updateCart);
+    const updateQty = newQuantity > 0 && newQuantity <= CART_QUANTITY_MAX;
+    setUpdateCart && setUpdateCart(updateQty);
+    // const updateCart = newQuantity >= moq;
   };
   const handleIncreaseQuantity = () => {
     if (isNaN(quantity + 1)) {
@@ -291,6 +324,11 @@ export function QuantityColumn({
     const inputQuantity = parseInt(event.target.value);
     updateQuantity(inputQuantity);
   };
+
+  useEffect(() => {
+    setPlaceOrder && setPlaceOrder(quantity > 0 && quantity <= CART_QUANTITY_MAX);
+    setFrieghtCharge && setFrieghtCharge(quantity < moq);
+  }, [quantity]);
 
   return (
     <>
@@ -323,13 +361,6 @@ export function QuantityColumn({
             +
           </button>
         </div>
-        {!quantityError ||
-          (quantity > CART_QUANTITY_MAX && (
-            <p className="text-sm text-red-500 max-w-40 text-wrap">
-              Quantity cannot be less than MOQ i.e 1 or greater than{' '}
-              {CART_QUANTITY_MAX} or empty
-            </p>
-          ))}
         <div className="flex items-center gap-1">
           <div className="info-block">
             <div className="flex items-center justify-center h-5 min-w-5 ">
@@ -348,6 +379,23 @@ export function QuantityColumn({
           </p>
         </div>
       </div>
+      <p className="text-sm leading-tight text-red-500 pt-1.5">
+        {(quantity < moq && quantity >= 1) && (
+          <>
+            Orders below MOQ ({moq}) will incur<br /> additional surcharges
+          </>
+        )}
+        {(quantity < 1 || isNaN(quantity)) && (
+          <>
+            Minimum order quantity<br /> should be greater than 0
+          </>
+        )}
+        {(quantity > CART_QUANTITY_MAX) && (
+          <>
+            Maximum order quantity<br /> is {CART_QUANTITY_MAX}
+          </>
+        )}
+      </p>
       <input
         type="hidden"
         name={`${productId + info.row.index}_productId`}

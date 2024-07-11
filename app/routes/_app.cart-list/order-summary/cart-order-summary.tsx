@@ -17,7 +17,8 @@ export default function OrderSummary({
   discountMessage,
   totalPriceWithDiscount,
   actionData,
-  fetcher
+  fetcher,
+  frieghtCharge
 }: any) {
 
   return (
@@ -33,6 +34,7 @@ export default function OrderSummary({
         discountMessage={discountMessage}
         totalPriceWithDiscount={totalPriceWithDiscount}
         fetcher={fetcher}
+        frieghtCharge={frieghtCharge}
       />
       {shippingAddresses ?
         <Form method="POST">

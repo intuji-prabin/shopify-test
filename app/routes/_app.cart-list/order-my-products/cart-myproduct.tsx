@@ -23,12 +23,14 @@ export default function MyProducts({
   setUpdateCart,
   updateCart,
   setPlaceOrder,
-  fetcher
+  fetcher,
+  setFrieghtCharge
 }: any) {
   const { columns } = useMyProductColumn({
     currency,
     setUpdateCart,
     setPlaceOrder,
+    setFrieghtCharge,
   });
   const { table } = useTable(columns, products);
 

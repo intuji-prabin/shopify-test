@@ -98,9 +98,17 @@ const ProductDetailsSection = ({
   categories,
   volumePrice,
 }: any) => {
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(parseFloat(moq) || 1);
   const [UOM, setUOM] = useState(uomCode);
-  const [productPrice, setProductPrice] = useState(companyDefaultPrice);
+  const firstPrice = getProductPriceByQty(
+    quantity,
+    unitOfMeasure,
+    UOM,
+    uomCode,
+    priceRange,
+    companyDefaultPrice
+  );
+  const [productPrice, setProductPrice] = useState(firstPrice);
 
   const submit = useSubmit();
 
@@ -329,8 +337,13 @@ const ProductDetailsSection = ({
                 +
               </button>
             </div>
-            <p className="text-sm text-grey-700 pt-2.5 flex gap-x-1">
-              <Info />
+            <p className="text-sm text-grey-700 pt-2.5 flex gap-x-1 info-block">
+              <div
+                data-tooltip={`The minimum order quantity is ${moq || 1}. Orders below this quantity will incur additional surcharges.`}
+                className="cursor-pointer"
+              >
+                <Info />
+              </div>
               Minimum Order Quantity: {moq || 1}
             </p>
           </div>
@@ -367,36 +380,40 @@ const ProductDetailsSection = ({
             />
             <input type="hidden" name="quantity" value={quantity} />
             <input type="hidden" name="selectUOM" value={UOM} />
-            {quantity < 1 ||
-              quantity > CART_QUANTITY_MAX ||
-              isNaN(quantity) ? (
-              <>
-                <Can I="view" a="add_to_cart">
-                  <button
-                    className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-not-allowed text-grey-400 bg-grey-200 min-h-14"
-                    disabled
-                  >
-                    {addToCart}
-                  </button>
-                </Can>
-                <p className="text-red-500">
-                  Minimum order quantity is 1 and maximum quantity is{' '}
-                  {CART_QUANTITY_MAX}
-                </p>
-              </>
-            ) : (
-              <Can I="view" a="add_to_cart">
-                <Button
-                  className="flex-grow w-full uppercase min-h-14"
-                  variant="primary"
-                  type="submit"
-                  value="addToCart"
-                  name="action"
-                >
-                  {addToCart}
-                </Button>
-              </Can>
-            )}
+            <Can I="view" a="add_to_cart">
+              <Button
+                className={`flex-grow w-full uppercase min-h-14 ${quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity)
+                  ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
+                  : 'cursor-pointer'
+                  }`}
+                disabled={quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity)}
+                type={quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity) ? 'button' : 'submit'}
+                name="action"
+                value="addToCart"
+                variant="primary"
+              >
+                {addToCart}
+              </Button>
+              <p className="font-medium text-red-500">
+                {(quantity < moq && quantity >= 1) && (
+                  <>
+                    Minimum order quantity is {moq}
+                    <br />
+                    <span className="text-sm text-grey-400">Orders below MOQ ({moq}) will incur additional surcharges</span>
+                  </>
+                )}
+                {(quantity < 1 || isNaN(quantity)) && (
+                  <>
+                    Minimum order quantity should be greater than 0
+                  </>
+                )}
+                {(quantity > CART_QUANTITY_MAX) && (
+                  <>
+                    Maximum order quantity is {CART_QUANTITY_MAX}
+                  </>
+                )}
+              </p>
+            </Can>
           </Form>
         </div>
         : null}

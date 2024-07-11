@@ -322,7 +322,7 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder, act
             <p className='pt-1 text-lg italic text-red-500'>TO "PLACE ORDER":</p>
             <ul className='pl-5 list-disc'>
               <li>Press UPDATE CART button.</li>
-              <li>Update quantity to be greater than Minimum Order Quantity (MOQ) or zero.</li>
+              <li>Update quantity to be greater than or zero.</li>
               <li>Update quantity to be less than {CART_QUANTITY_MAX}.</li>
             </ul>
           </div>}
