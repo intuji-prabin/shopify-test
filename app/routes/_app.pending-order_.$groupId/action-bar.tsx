@@ -22,10 +22,12 @@ import { Can } from '~/lib/helpers/Can';
 export function ActionBar({
   table,
   isProductUpdate,
+  setIsProductUpdate,
   group,
 }: {
   table: Table<Product>;
   isProductUpdate: boolean;
+  setIsProductUpdate: any;
   group: Group;
 }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -48,8 +50,8 @@ export function ActionBar({
           <BackButton title="" />
           <div
             className={`${isEditing
-                ? 'bg-primary-25 border border-primary-500 hover:bg-primary-25 '
-                : 'border-none'
+              ? 'bg-primary-25 border border-primary-500 hover:bg-primary-25 '
+              : 'border-none'
               }`}
           >
             {isEditing ? (
@@ -111,7 +113,10 @@ export function ActionBar({
             <Button
               disabled={fetcher.state === 'submitting'}
               variant={!isProductUpdate ? 'disabled' : 'primary'}
-              onClick={handleProductUpdate}
+              onClick={() => {
+                setIsProductUpdate(false);
+                handleProductUpdate();
+              }}
             >
               update
             </Button>

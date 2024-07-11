@@ -341,9 +341,9 @@ export default function CartList() {
   const checkQuantityAgainstMOQ = (finalProductList: any) => {
     for (let item of finalProductList) {
       if (
-        item.quantity < item.moq ||
-        item.quantity > CART_QUANTITY_MAX ||
-        item.quantity <= 0
+        item.quantity >= item.moq
+        // item.quantity > CART_QUANTITY_MAX ||
+        // item.quantity <= 0
       ) {
         return false;
       }
@@ -352,17 +352,24 @@ export default function CartList() {
   };
   let result = checkQuantityAgainstMOQ(finalProductList);
 
-  useEffect(() => {
-    result = checkQuantityAgainstMOQ(finalProductList);
-    setPlaceOrder(result);
-  }, [finalProductList]);
+  // useEffect(() => {
+  //   result = checkQuantityAgainstMOQ(finalProductList);
+  //   console.log("result", result)
+  //   setPlaceOrder(result);
+  // }, [finalProductList]);
 
   const [updateCart, setUpdateCart] = useState(false);
-  const [placeOrder, setPlaceOrder] = useState(result);
+  const [placeOrder, setPlaceOrder] = useState(false);
+  const [frieghtCharge, setFrieghtCharge] = useState(false);
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const fetcher = useFetcher();
   const isLoading = navigation.state === 'submitting' || navigation.state === 'loading' || fetcher.state === 'submitting' || fetcher.state === 'loading';
+
+  useEffect(() => {
+    result = checkQuantityAgainstMOQ(finalProductList);
+    setFrieghtCharge(result);
+  }, [finalProductList]);
 
   return (
     <>
@@ -378,6 +385,7 @@ export default function CartList() {
               updateCart={updateCart}
               setUpdateCart={setUpdateCart}
               setPlaceOrder={setPlaceOrder}
+              setFrieghtCharge={setFrieghtCharge}
               fetcher={fetcher}
             />
             <OrderSummary
@@ -396,6 +404,7 @@ export default function CartList() {
               totalPriceWithDiscount={cartList?.totalPriceWithDiscount}
               actionData={actionData}
               fetcher={fetcher}
+              frieghtCharge={frieghtCharge}
             />
           </div>
         </div>
