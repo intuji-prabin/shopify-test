@@ -54,7 +54,7 @@ export function useColumn(sessionAccessTocken: string, impersonateEnableCheck: s
       //   cell: (info) => info.getValue() ?? 'N/A',
       // },
       {
-        accessorKey: 'wareHouseNo',
+        accessorKey: 'wareHouseName',
         header: 'Warehouse',
         cell: (info) => info.getValue() ?? 'N/A',
       },
