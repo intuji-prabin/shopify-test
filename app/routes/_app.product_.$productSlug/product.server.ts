@@ -1,22 +1,21 @@
+import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
+import {useFormatCart} from '~/hooks/useFormatCart';
 import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {EVENTS} from '~/lib/constants/events.contstent';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {CONSTANT} from '~/lib/constants/product.session';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
-import {getUserDetails} from '~/lib/utils/user-session.server';
-import {GET_CART_LIST} from '~/routes/_app.cart-list/cart.server';
-import {useFormatCart} from '~/hooks/useFormatCart';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
-import {EVENTS} from '~/lib/constants/events.contstent';
-import {StockStatus} from '~/routes/_app.cart-list/order-my-products/use-column';
 import {
   USER_SESSION_ID,
   getAccessToken,
   isImpersonating,
 } from '~/lib/utils/auth-session.server';
-import {AppLoadContext} from '@remix-run/server-runtime';
-import {encrypt} from '~/lib/utils/cryptoUtils';
-import { emitter } from '~/lib/utils/emitter.server';
+import {emitter} from '~/lib/utils/emitter.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {GET_CART_LIST} from '~/routes/_app.cart-list/cart.server';
+import {StockStatus} from '~/routes/_app.cart-list/order-my-products/use-column';
 
 export interface relatedProductsType {
   productId: string;
@@ -34,6 +33,7 @@ export interface relatedProductsType {
   featuredImage: string;
   liked: boolean;
   priceRange: any;
+  currencySymbol: string;
 }
 
 export interface ProductType {
@@ -62,6 +62,7 @@ export interface ProductType {
   uomCode: string;
   unitOfMeasure: uomType[];
   currency: string;
+  currencySymbol: string;
   imageUrl: imageType[];
   brand: string;
   liked: boolean;
@@ -78,6 +79,7 @@ export interface ProductType {
   relatedProducts: relatedProductsType[];
   alternativeProduct: relatedProductsType[];
   categories: Category[];
+  warehouse: string;
 }
 
 type Category = {
@@ -170,6 +172,7 @@ const formatResponse = async (response: ProductType) => {
       sku: item.sku,
       moq: item.moq,
     },
+    currencySymbol: item?.currencySymbol,
   });
   const finalResponse = {
     productInfo: {
@@ -198,6 +201,8 @@ const formatResponse = async (response: ProductType) => {
       brandImage: response?.brandImage,
       productType: response?.productType,
       categories: response?.categories,
+      currencySymbol: response?.currencySymbol,
+      warehouse: response?.warehouse,
     },
     productTab: {
       description: response?.description === 'N/A' ? '' : response?.description,

@@ -1,17 +1,17 @@
-import {ColumnDef} from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import * as React from 'react';
-import {Button} from '~/components/ui/button';
-import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
+import { Button } from '~/components/ui/button';
+import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
 import {
   ItemsColumn,
   ProductMeasurement,
   ProductTotal,
   QuantityColumn,
 } from '../_app.cart-list/order-my-products/use-column';
-import {Form, useSubmit} from '@remix-run/react';
-import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
-import {AbilityContext, Can} from '~/lib/helpers/Can';
-import {useContext} from 'react';
+import { Form, useSubmit } from '@remix-run/react';
+import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
+import { AbilityContext, Can } from '~/lib/helpers/Can';
+import { useContext } from 'react';
 
 export function useMyWishListColumn() {
   const submit = useSubmit();
@@ -22,7 +22,7 @@ export function useMyWishListColumn() {
       const baseColumns: ColumnDef<any>[] = [
         {
           id: 'select',
-          header: ({table}) => (
+          header: ({ table }) => (
             <IndeterminateCheckbox
               {...{
                 checked: table.getIsAllRowsSelected(),
@@ -31,7 +31,7 @@ export function useMyWishListColumn() {
               }}
             />
           ),
-          cell: ({row}) => (
+          cell: ({ row }) => (
             <div className="px-1">
               <IndeterminateCheckbox
                 {...{
@@ -50,6 +50,7 @@ export function useMyWishListColumn() {
           enableSorting: false,
           cell: (info) => {
             const product = info.row.original;
+            const warehouse = info.row.original.warehouse;
             return (
               <ItemsColumn
                 title={product?.title}
@@ -58,6 +59,7 @@ export function useMyWishListColumn() {
                 moq={product?.moq || 1}
                 handle={product?.productHandle}
                 inventory={product.inventory}
+                warehouse={warehouse}
               />
             );
           },
@@ -73,6 +75,7 @@ export function useMyWishListColumn() {
               info.row.original.quantity || info.row.original.moq || 1;
             const product = info?.row?.original;
             const UOM = info?.row?.original?.uom;
+            const currencySymbol = info.row.original.currencySymbol;
             return (
               <ProductTotal
                 totalPrice={productTotal}
@@ -85,6 +88,7 @@ export function useMyWishListColumn() {
                 setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
                 isRowChecked={info?.row?.getIsSelected()}
                 currency={product?.currency || '$'}
+                currencySymbol={currencySymbol}
               />
             );
           },
@@ -135,8 +139,8 @@ export function useMyWishListColumn() {
             return (
               <>
                 {product?.quantity < product?.moq ||
-                product?.quantity > CART_QUANTITY_MAX ||
-                isNaN(product?.quantity) ? (
+                  product?.quantity > CART_QUANTITY_MAX ||
+                  isNaN(product?.quantity) ? (
                   <>
                     <button
                       className="uppercase flex justify-center items-center text-xs max-h-[unset] lg:max-h-[28px] min-w-[86px] cursor-not-allowed bg-grey-200 text-grey-400 px-6 py-2 text-nowrap"
@@ -218,5 +222,5 @@ export function useMyWishListColumn() {
     [], // Include ability in the dependencies array
   );
 
-  return {columns};
+  return { columns };
 }

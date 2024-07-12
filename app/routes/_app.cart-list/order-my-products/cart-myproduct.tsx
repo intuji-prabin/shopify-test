@@ -19,14 +19,12 @@ import { useMyProductColumn } from './use-column';
 
 export default function MyProducts({
   products,
-  currency,
   setUpdateCart,
   updateCart,
   setPlaceOrder,
   fetcher
 }: any) {
   const { columns } = useMyProductColumn({
-    currency,
     setUpdateCart,
     setPlaceOrder,
   });
