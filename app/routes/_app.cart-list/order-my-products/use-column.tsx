@@ -302,9 +302,8 @@ export function QuantityColumn({
   setPlaceOrder && setPlaceOrder(quantity > 0 && quantity <= CART_QUANTITY_MAX);
   const updateQuantity = (newQuantity: any) => {
     meta?.updateData(info.row.index, info.column.id, Math.max(newQuantity, 1));
-    const updateQty = newQuantity > 0 && newQuantity <= CART_QUANTITY_MAX;
+    const updateQty = newQuantity > 0;
     setUpdateCart && setUpdateCart(updateQty);
-    // const updateCart = newQuantity >= moq;
   };
   const handleIncreaseQuantity = () => {
     if (isNaN(quantity + 1)) {

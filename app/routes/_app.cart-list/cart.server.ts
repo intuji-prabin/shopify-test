@@ -1,5 +1,6 @@
 import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
+import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {isImpersonating} from '~/lib/utils/auth-session.server';
@@ -36,6 +37,7 @@ const formateCartList = async (
   fronOrder: boolean,
 ) => {
   const cartLine = cartResponse?.cart?.lines?.nodes;
+  let orderPlaceStatus = true;
   let productList = [] as any;
   if (cartLine.length < 1) {
     return {productList: []};
@@ -50,6 +52,13 @@ const formateCartList = async (
       'gid://shopify/Product/',
       '',
     );
+    if (
+      !items?.quantity ||
+      items?.quantity <= 0 ||
+      items?.quantity > CART_QUANTITY_MAX
+    )
+      orderPlaceStatus = false;
+
     productList.push({
       id: items?.id,
       productId,
@@ -75,7 +84,7 @@ const formateCartList = async (
     productList,
   );
   // console.log('werwerwed ', productWithPrice);
-  return productWithPrice;
+  return {productWithPrice, orderPlaceStatus};
 };
 
 const getPrice = async (
