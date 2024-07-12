@@ -214,6 +214,7 @@ const formattedResponse = async (
         currency: priceList?.[productId]
           ? priceList?.[productId]?.currency
           : null,
+        currencySymbol: priceList?.[productId]?.currencySymbol,
         defaultPrice: priceList?.[productId]
           ? priceList?.[productId]?.default_price
           : null,

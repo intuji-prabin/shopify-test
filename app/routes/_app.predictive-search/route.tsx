@@ -47,6 +47,7 @@ export type NormalizedPredictiveSearchResultItem = {
   unitOfMeasure: { unit: string; code: string; conversionFactor: number }[];
   defaultUomValue: string;
   featuredPriceImageUrl: string;
+  currencySymbol: string;
 };
 
 type NormalizedPredictiveSearchResults = Array<
@@ -89,7 +90,6 @@ async function normalizePredictiveSearchResults(
       predictiveSearch.products,
       customerId,
     );
-
     results.push({
       type: 'products',
       items: predictiveSearch.products.map(
@@ -111,6 +111,7 @@ async function normalizePredictiveSearchResults(
             uom: product?.uom?.value,
             url: '',
             currency: prices?.[productId] ? prices?.[productId]?.currency : '$',
+            currencySymbol: prices?.[productId]?.currencySymbol,
             price: prices?.[productId]
               ? prices?.[productId]?.company_price
               : null,

@@ -10,15 +10,15 @@ import {
 import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Price } from '~/components/ui/price';
+import { Separator } from '~/components/ui/separator';
+import { StockStatus } from '~/components/ui/stockStatus';
 import { CART_QUANTITY_MAX, PRODUCT_MAX_PRICE } from '~/lib/constants/cartInfo.constant';
+import { Routes } from '~/lib/constants/routes.constent';
+import { Can } from '~/lib/helpers/Can';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import CarouselThumb from './carouselThumb';
 import { getProductPriceByQty } from './product-detail';
 import { ProductInfoTable } from './productInfoTable';
-import { Can } from '~/lib/helpers/Can';
-import { StockStatusChip } from '~/components/ui/stock-status-chip';
-import { Separator } from '~/components/ui/separator';
-import { Routes } from '~/lib/constants/routes.constent';
 
 export default function ProductInformation({ product }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
@@ -57,6 +57,8 @@ export default function ProductInformation({ product }: any) {
           moq={product?.moq || 1}
           uomCode={product?.uomCode}
           currency={product?.currency}
+          currencySymbol={product?.currencySymbol}
+          warehouse={product?.warehouse}
           inventory={product?.inventory}
           tags={product?.tags}
           brandImage={product?.brandImage}
@@ -95,7 +97,9 @@ const ProductDetailsSection = ({
   shortDescription,
   productType,
   productRank,
-  categories
+  categories,
+  currencySymbol,
+  warehouse
 }: any) => {
   const [quantity, setQuantity] = useState(parseFloat(moq) || 1);
   const [UOM, setUOM] = useState(uomCode);
@@ -247,7 +251,7 @@ const ProductDetailsSection = ({
         </div>
       }
       <Separator className='mt-4' />
-      <div className="flex flex-col justify-between pt-4 sm:flex-row gap-y-2">
+      <div className="flex flex-col justify-between pt-4 sm:flex-row gap-y-2 gap-x-4">
         <div className="flex flex-wrap gap-x-5 gap-y-2">
           <div className="flex items-center gap-1 text-base">
             <p className="font-semibold leading-6 ">{sku}: </p>
@@ -263,7 +267,10 @@ const ProductDetailsSection = ({
             </div>
           </div>
         </div>
-        <StockStatusChip status={inventory} />
+        <div className='py-2 pl-4 pr-3 text-right border border-solid rounded-lg bg-grey-25 border-grey-50 w-max'>
+          {warehouse && <p><span className='font-semibold'>Warehouse:</span> {warehouse}</p>}
+          <StockStatus status={inventory} />
+        </div>
       </div>
       <Can I="view" a="view_product_price">
         <div className="flex flex-wrap gap-12 pt-6 product_det__pricing">
@@ -272,6 +279,7 @@ const ProductDetailsSection = ({
             price={productPrice}
             originalPrice={originalPrice}
             className="relative"
+            currencySymbol={currencySymbol}
           />
           <Price
             currency={currency}
@@ -279,6 +287,7 @@ const ProductDetailsSection = ({
             originalPrice={productPrice && productPrice < PRODUCT_MAX_PRICE ? originalPrice : 0}
             variant="rrp"
             className="relative"
+            currencySymbol={currencySymbol}
           />
         </div>
       </Can>
