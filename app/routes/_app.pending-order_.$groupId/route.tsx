@@ -162,7 +162,6 @@ export default function PendingOrderDetailsPage() {
   const { columns } = useMyProductColumn({ setUpdateCart: setIsProductUpdate });
 
   const { table } = useTable(columns, groupDetails.products, 'placeId');
-  console.log("isProductUpdate", isProductUpdate)
 
   return (
     <>

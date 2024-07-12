@@ -284,7 +284,9 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder, act
     defaultAddress1,
     defaultAddress2,
   );
-
+  console.log("updateCart", updateCart)
+  console.log("placeOrder", placeOrder)
+  console.log("logic", !updateCart && placeOrder)
   return (
     <div className="flex flex-col gap-4 p-6 border-b order border-grey-50">
       <h3 className="font-bold leading-[29px] text-2xl capitalize">

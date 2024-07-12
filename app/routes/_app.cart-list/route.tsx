@@ -65,7 +65,7 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   };
   await context.session.set(CART_SESSION_KEY, finalCartSession);
   return json(
-    { cartList, shippingAddresses },
+    { cartList: cartList?.productWithPrice, orderPlaceStatus: cartList?.orderPlaceStatus, shippingAddresses },
     {
       headers: [['Set-Cookie', await context.session.commit({})]],
     },
@@ -336,27 +336,39 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function CartList() {
-  const { cartList, shippingAddresses }: any = useLoaderData<typeof loader>();
+  const { cartList, orderPlaceStatus, shippingAddresses }: any = useLoaderData<typeof loader>();
+  console.log("orderPlaceStatus", orderPlaceStatus)
   const finalProductList = useSort({ items: cartList?.productList });
-  const checkQuantityAgainstMOQ = (finalProductList: any) => {
-    for (let item of finalProductList) {
-      if (
-        item.quantity >= item.moq
-        // item.quantity > CART_QUANTITY_MAX ||
-        // item.quantity <= 0
-      ) {
-        return false;
-      }
-    }
-    return true;
-  };
-  let result = checkQuantityAgainstMOQ(finalProductList);
+  // const checkQuantityAgainstMOQ = (finalProductList: any) => {
+  //   for (let item of finalProductList) {
+  //     if (
+  //       item.quantity >= item.moq
+  //       // item.quantity > CART_QUANTITY_MAX ||
+  //       // item.quantity <= 0
+  //     ) {
+  //       return false;
+  //     }
+  //   }
+  //   return true;
+  // };
+  // let result = checkQuantityAgainstMOQ(finalProductList);
+  // const checkQuantity = (finalProductList: any) => {
+  //   for (let item of finalProductList) {
+  //     if (
+  //       item.quantity > CART_QUANTITY_MAX ||
+  //       item.quantity <= 0
+  //     ) {
+  //       return false;
+  //     }
+  //   }
+  //   return true;
+  // };
+  // let resultQty = checkQuantity(finalProductList);
 
   // useEffect(() => {
-  //   result = checkQuantityAgainstMOQ(finalProductList);
-  //   console.log("result", result)
-  //   setPlaceOrder(result);
-  // }, [finalProductList]);
+  //   resultQty = checkQuantity(finalProductList);
+  //   setPlaceOrder(resultQty);
+  // }, []);
 
   const [updateCart, setUpdateCart] = useState(false);
   const [placeOrder, setPlaceOrder] = useState(false);
@@ -366,10 +378,10 @@ export default function CartList() {
   const fetcher = useFetcher();
   const isLoading = navigation.state === 'submitting' || navigation.state === 'loading' || fetcher.state === 'submitting' || fetcher.state === 'loading';
 
-  useEffect(() => {
-    result = checkQuantityAgainstMOQ(finalProductList);
-    setFrieghtCharge(result);
-  }, [finalProductList]);
+  // useEffect(() => {
+  //   result = checkQuantityAgainstMOQ(finalProductList);
+  //   setFrieghtCharge(result);
+  // }, [finalProductList]);
 
   return (
     <>
