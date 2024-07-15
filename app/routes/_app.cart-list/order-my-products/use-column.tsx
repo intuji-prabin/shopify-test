@@ -51,13 +51,9 @@ export type BulkOrderColumn = {
 };
 
 export function useMyProductColumn({
-  setPlaceOrder,
   setUpdateCart,
-  setFrieghtCharge,
 }: {
   setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>;
-  setPlaceOrder?: React.Dispatch<React.SetStateAction<boolean>>;
-  setFrieghtCharge?: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const columns = useMemo<ColumnDef<BulkOrderColumn>[]>(
     () => [
@@ -120,8 +116,6 @@ export function useMyProductColumn({
               moq={product.moq || 1}
               lineItemId={product.id}
               setUpdateCart={setUpdateCart}
-              setPlaceOrder={setPlaceOrder}
-              setFrieghtCharge={setFrieghtCharge}
             />
           );
         },
@@ -261,8 +255,6 @@ type QuantityColumnType = Pick<
   info: any;
   lineItemId?: string;
   setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>;
-  setPlaceOrder?: React.Dispatch<React.SetStateAction<boolean>>;
-  setFrieghtCharge?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 export function QuantityColumn({
   quantity,
@@ -272,42 +264,9 @@ export function QuantityColumn({
   moq,
   lineItemId,
   setUpdateCart,
-  setPlaceOrder,
-  setFrieghtCharge
 }: QuantityColumnType) {
   const meta = info.table.options.meta;
-  // const [quantityError, setQuantityError] = useState(true);
 
-  // const updateQuantity = (newQuantity: any) => {
-  //   meta?.updateData(info.row.index, info.column.id, Math.max(newQuantity, 1));
-  //   setUpdateCart && setUpdateCart(true);
-  //   console.log("newQuantity", newQuantity, moq)
-  //   const updateCartCase = newQuantity >= moq;
-  //   console.log("updateCart", updateCartCase)
-  //   setQuantityError(updateCartCase);
-  //   console.log("quantityError", quantityError)
-  //   setPlaceOrder && setPlaceOrder(updateCartCase);
-  // };
-  // const handleIncreaseQuantity = () => {
-  //   if (isNaN(quantity + 1)) {
-  //     meta?.updateData(info.row.index, info.column.id, Math.max(moq, 1));
-  //     return;
-  //   }
-  //   meta?.updateData(info.row.index, info.column.id, Math.max(quantity + 1, 1));
-  // };
-  // const handleDecreaseQuantity = () => {
-  //   if (isNaN(quantity + 1)) {
-  //     meta?.updateData(info.row.index, info.column.id, Math.max(moq, 1));
-  //     return;
-  //   }
-  //   meta?.updateData(info.row.index, info.column.id, Math.max(quantity - 1, 1));
-  // };
-  // const handleInputChange = (event: any) => {
-  //   const inputQuantity = parseInt(event.target.value);
-  //   meta?.updateData(info.row.index, info.column.id, Math.max(inputQuantity, 1));
-  // };
-
-  setPlaceOrder && setPlaceOrder(quantity > 0 && quantity <= CART_QUANTITY_MAX);
   const updateQuantity = (newQuantity: any) => {
     meta?.updateData(info.row.index, info.column.id, Math.max(newQuantity, 1));
     const updateQty = newQuantity > 0;
@@ -332,14 +291,26 @@ export function QuantityColumn({
     updateQuantity(inputQuantity);
   };
 
-  useEffect(() => {
-    setPlaceOrder && setPlaceOrder(quantity > 0 && quantity <= CART_QUANTITY_MAX);
-    setFrieghtCharge && setFrieghtCharge(quantity < moq);
-  }, [quantity]);
-
   return (
     <>
-      <div className="flex flex-col gap-[11.5px] mt-[2.2rem] cart__list--quantity">
+      <p className="text-sm leading-none text-red-500">
+        {(quantity < moq && quantity >= 1) && (
+          <>
+            Orders below MOQ ({moq}) will incur<br /> additional surcharges
+          </>
+        )}
+        {(quantity < 1 || isNaN(quantity)) && (
+          <>
+            Minimum order quantity<br /> should be greater than 0
+          </>
+        )}
+        {(quantity > CART_QUANTITY_MAX) && (
+          <>
+            Maximum order quantity<br /> is {CART_QUANTITY_MAX}
+          </>
+        )}
+      </p>
+      <div className={`flex flex-col gap-[11.5px] cart__list--quantity ${(quantity < moq && quantity >= 1) || (quantity < 1 || isNaN(quantity)) || (quantity > CART_QUANTITY_MAX) ? "mt-[5px]" : "mt-[2.2rem]"}`}>
         <div className="flex items-center">
           <button
             className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${quantity - 1 < 1 && 'cursor-not-allowed'
@@ -386,23 +357,6 @@ export function QuantityColumn({
           </p>
         </div>
       </div>
-      <p className="text-sm leading-tight text-red-500 pt-1.5">
-        {(quantity < moq && quantity >= 1) && (
-          <>
-            Orders below MOQ ({moq}) will incur<br /> additional surcharges
-          </>
-        )}
-        {(quantity < 1 || isNaN(quantity)) && (
-          <>
-            Minimum order quantity<br /> should be greater than 0
-          </>
-        )}
-        {(quantity > CART_QUANTITY_MAX) && (
-          <>
-            Maximum order quantity<br /> is {CART_QUANTITY_MAX}
-          </>
-        )}
-      </p>
       <input
         type="hidden"
         name={`${productId + info.row.index}_productId`}
