@@ -1,6 +1,6 @@
 import { PromoCode } from "./order-shopping-details";
 
-export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, freight, surcharges, gst, currency, promoCodeApplied, discountPrice, discountMessage, totalPriceWithDiscount, fetcher, frieghtCharge }: any) {
+export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, freight, surcharges, gst, currency, promoCodeApplied, discountPrice, discountMessage, totalPriceWithDiscount, fetcher, frieghtCharge, isLoading }: any) {
 
   return (
     <div className="flex flex-col gap-4 p-6 border-b order border-grey-50">
@@ -60,7 +60,7 @@ export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, frei
           <p className="total_amout"><span className="text-base">{currency ? currency : '$'}</span>&nbsp;{totalPriceWithDiscount?.toFixed(2)}</p>
         </div>
       }
-      {frieghtCharge &&
+      {frieghtCharge && !isLoading &&
         <div className="flex gap-3 py-2 pl-2 pr-4 border-l-4 border-r-0 bg-semantic-danger-100 border-semantic-danger-500 border-y-0">
           <span className="flex items-center text-semantic-danger-500">*</span>
           <p className="text-base font-normal leading-[21px]">

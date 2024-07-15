@@ -65,7 +65,7 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   };
   await context.session.set(CART_SESSION_KEY, finalCartSession);
   return json(
-    { cartList: cartList?.productWithPrice, orderPlaceStatus: cartList?.orderPlaceStatus, shippingAddresses },
+    { cartList: cartList?.productWithPrice, orderPlaceStatus: cartList?.orderPlaceStatus, frieghtChargeInit: cartList?.frieghtChargeInit, shippingAddresses },
     {
       headers: [['Set-Cookie', await context.session.commit({})]],
     },
@@ -336,52 +336,14 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function CartList() {
-  const { cartList, orderPlaceStatus, shippingAddresses }: any = useLoaderData<typeof loader>();
-  console.log("orderPlaceStatus", orderPlaceStatus)
+  const { cartList, orderPlaceStatus, shippingAddresses, frieghtChargeInit }: any = useLoaderData<typeof loader>();
   const finalProductList = useSort({ items: cartList?.productList });
-  // const checkQuantityAgainstMOQ = (finalProductList: any) => {
-  //   for (let item of finalProductList) {
-  //     if (
-  //       item.quantity >= item.moq
-  //       // item.quantity > CART_QUANTITY_MAX ||
-  //       // item.quantity <= 0
-  //     ) {
-  //       return false;
-  //     }
-  //   }
-  //   return true;
-  // };
-  // let result = checkQuantityAgainstMOQ(finalProductList);
-  // const checkQuantity = (finalProductList: any) => {
-  //   for (let item of finalProductList) {
-  //     if (
-  //       item.quantity > CART_QUANTITY_MAX ||
-  //       item.quantity <= 0
-  //     ) {
-  //       return false;
-  //     }
-  //   }
-  //   return true;
-  // };
-  // let resultQty = checkQuantity(finalProductList);
-
-  // useEffect(() => {
-  //   resultQty = checkQuantity(finalProductList);
-  //   setPlaceOrder(resultQty);
-  // }, []);
 
   const [updateCart, setUpdateCart] = useState(false);
-  const [placeOrder, setPlaceOrder] = useState(false);
-  const [frieghtCharge, setFrieghtCharge] = useState(false);
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const fetcher = useFetcher();
   const isLoading = navigation.state === 'submitting' || navigation.state === 'loading' || fetcher.state === 'submitting' || fetcher.state === 'loading';
-
-  // useEffect(() => {
-  //   result = checkQuantityAgainstMOQ(finalProductList);
-  //   setFrieghtCharge(result);
-  // }, [finalProductList]);
 
   return (
     <>
@@ -395,10 +357,8 @@ export default function CartList() {
             <MyProducts
               products={finalProductList}
               currency={cartList?.currency}
-              updateCart={updateCart}
               setUpdateCart={setUpdateCart}
-              setPlaceOrder={setPlaceOrder}
-              setFrieghtCharge={setFrieghtCharge}
+              updateCart={updateCart}
               fetcher={fetcher}
             />
             <OrderSummary
@@ -410,14 +370,15 @@ export default function CartList() {
               currency={cartList?.currency}
               shippingAddresses={shippingAddresses}
               updateCart={updateCart}
-              placeOrder={placeOrder}
               promoCodeApplied={cartList?.promoCode}
               discountPrice={cartList?.discountPrice}
               discountMessage={cartList?.discountMessage}
               totalPriceWithDiscount={cartList?.totalPriceWithDiscount}
               actionData={actionData}
               fetcher={fetcher}
-              frieghtCharge={frieghtCharge}
+              frieghtCharge={frieghtChargeInit}
+              isLoading={isLoading}
+              orderPlaceStatus={orderPlaceStatus}
             />
           </div>
         </div>

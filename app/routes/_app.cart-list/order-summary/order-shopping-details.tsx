@@ -271,7 +271,7 @@ export function ShippingAddress({
   );
 }
 
-export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder, actionData }: any) {
+export function ShoppingDetails({ shippingAddresses, updateCart, orderPlaceStatus, actionData }: any) {
   const addressList = shippingAddresses.addresses;
   const defaultAddress = shippingAddresses.defaultAddress;
   const mergedAddressList = [shippingAddresses.defaultAddress, ...shippingAddresses.addresses];
@@ -284,9 +284,6 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder, act
     defaultAddress1,
     defaultAddress2,
   );
-  console.log("updateCart", updateCart)
-  console.log("placeOrder", placeOrder)
-  console.log("logic", !updateCart && placeOrder)
   return (
     <div className="flex flex-col gap-4 p-6 border-b order border-grey-50">
       <h3 className="font-bold leading-[29px] text-2xl capitalize">
@@ -309,7 +306,7 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder, act
       </div>
       {/* place order starts here */}
       <Can I='view' a='place_order'>
-        {!updateCart && placeOrder ?
+        {!updateCart && orderPlaceStatus ?
           <Button className="text-lg min-h-14" variant="primary" type="submit" value="place_order"
             name="action">
             Place order
@@ -324,7 +321,7 @@ export function ShoppingDetails({ shippingAddresses, updateCart, placeOrder, act
             <p className='pt-1 text-lg italic text-red-500'>TO "PLACE ORDER":</p>
             <ul className='pl-5 list-disc'>
               <li>Press UPDATE CART button.</li>
-              <li>Update quantity to be greater than or zero.</li>
+              <li>Update quantity to be greater than zero.</li>
               <li>Update quantity to be less than {CART_QUANTITY_MAX}.</li>
             </ul>
           </div>}

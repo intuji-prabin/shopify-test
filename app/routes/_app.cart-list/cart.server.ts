@@ -38,6 +38,7 @@ const formateCartList = async (
 ) => {
   const cartLine = cartResponse?.cart?.lines?.nodes;
   let orderPlaceStatus = true;
+  let frieghtChargeInit = false;
   let productList = [] as any;
   if (cartLine.length < 1) {
     return {productList: []};
@@ -52,12 +53,6 @@ const formateCartList = async (
       'gid://shopify/Product/',
       '',
     );
-    if (
-      !items?.quantity ||
-      items?.quantity <= 0 ||
-      items?.quantity > CART_QUANTITY_MAX
-    )
-      orderPlaceStatus = false;
 
     productList.push({
       id: items?.id,
@@ -77,14 +72,26 @@ const formateCartList = async (
   if (fronOrder) {
     return productList;
   }
+
   const productWithPrice = await getPrice(
     context,
     request,
     customerId,
     productList,
   );
+  productWithPrice.productList.map((item: any) => {
+    if (
+      !item?.quantity ||
+      item?.quantity > CART_QUANTITY_MAX ||
+      item?.quantity <= 0
+    ) {
+      orderPlaceStatus = false;
+    } else if (!item?.quantity || item?.quantity < item?.moq) {
+      frieghtChargeInit = true;
+    }
+  });
   // console.log('werwerwed ', productWithPrice);
-  return {productWithPrice, orderPlaceStatus};
+  return {productWithPrice, orderPlaceStatus, frieghtChargeInit};
 };
 
 const getPrice = async (
@@ -101,7 +108,6 @@ const getPrice = async (
     impersonateEnableCheck: isImpersonatingCheck,
     context,
   });
-  // console.log('firstwewe', priceResponse);
   if (!priceResponse?.status) {
     throw new Error(priceResponse?.message);
   }

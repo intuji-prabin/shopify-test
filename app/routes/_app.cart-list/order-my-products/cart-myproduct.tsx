@@ -1,4 +1,4 @@
-import { Form, useFetcher, useSubmit } from '@remix-run/react';
+import { Form, useSubmit } from '@remix-run/react';
 import { useState } from 'react';
 import RemoveItem from '~/components/icons/removeItem';
 import { Button } from '~/components/ui/button';
@@ -22,15 +22,11 @@ export default function MyProducts({
   currency,
   setUpdateCart,
   updateCart,
-  setPlaceOrder,
   fetcher,
-  setFrieghtCharge
 }: any) {
   const { columns } = useMyProductColumn({
     currency,
     setUpdateCart,
-    setPlaceOrder,
-    setFrieghtCharge,
   });
   const { table } = useTable(columns, products);
 
