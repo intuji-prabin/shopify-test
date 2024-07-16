@@ -2,7 +2,6 @@ import { Link } from '@remix-run/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
 import { TooltipInfo } from '~/components/icons/orderStatus';
-import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
 import { StockStatusChip } from '~/components/ui/stock-status-chip';
@@ -51,12 +50,10 @@ export type BulkOrderColumn = {
 
 export function useMyProductColumn({
   currency,
-  setPlaceOrder,
   setUpdateCart,
 }: {
   currency?: string;
   setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>;
-  setPlaceOrder?: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const columns = useMemo<ColumnDef<BulkOrderColumn>[]>(
     () => [
@@ -117,7 +114,6 @@ export function useMyProductColumn({
               moq={product.moq || 1}
               lineItemId={product.id}
               setUpdateCart={setUpdateCart}
-              setPlaceOrder={setPlaceOrder}
             />
           );
         },
@@ -251,7 +247,6 @@ type QuantityColumnType = Pick<
   info: any;
   lineItemId?: string;
   setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>;
-  setPlaceOrder?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 export function QuantityColumn({
   quantity,
@@ -261,17 +256,13 @@ export function QuantityColumn({
   moq,
   lineItemId,
   setUpdateCart,
-  setPlaceOrder,
 }: QuantityColumnType) {
   const meta = info.table.options.meta;
-  const [quantityError, setQuantityError] = useState(true);
 
   const updateQuantity = (newQuantity: any) => {
     meta?.updateData(info.row.index, info.column.id, Math.max(newQuantity, 1));
-    const updateCart = newQuantity >= moq;
-    setUpdateCart && setUpdateCart(updateCart);
-    setQuantityError(updateCart);
-    setPlaceOrder && setPlaceOrder(updateCart);
+    const updateQty = newQuantity > 0;
+    setUpdateCart && setUpdateCart(updateQty);
   };
   const handleIncreaseQuantity = () => {
     if (isNaN(quantity + 1)) {
@@ -292,20 +283,33 @@ export function QuantityColumn({
     updateQuantity(inputQuantity);
   };
 
-  useEffect(() => {
-    setQuantityError(quantity >= moq);
-  }, [quantity]);
-
   return (
     <>
-      <div className="flex flex-col gap-[11.5px] mt-[2.2rem] cart__list--quantity">
+      <p className="text-sm leading-none text-red-500">
+        {(quantity < moq && quantity >= 1) && (
+          <>
+            Orders below MOQ ({moq}) will incur<br /> additional surcharges
+          </>
+        )}
+        {(quantity < 1 || isNaN(quantity)) && (
+          <>
+            Minimum order quantity<br /> should be greater than 0
+          </>
+        )}
+        {(quantity > CART_QUANTITY_MAX) && (
+          <>
+            Maximum order quantity<br /> is {CART_QUANTITY_MAX}
+          </>
+        )}
+      </p>
+      <div className={`flex flex-col gap-[11.5px] cart__list--quantity ${(quantity < moq && quantity >= 1) || (quantity < 1 || isNaN(quantity)) || (quantity > CART_QUANTITY_MAX) ? "mt-1.5" : "mt-[2.2rem]"}`}>
         <div className="flex items-center">
           <button
-            className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${quantity - 1 < moq && 'cursor-not-allowed'
+            className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${quantity - 1 < 1 && 'cursor-not-allowed'
               }`}
             type="button"
             onClick={handleDecreaseQuantity}
-            disabled={quantity - 1 < moq}
+            disabled={quantity - 1 < 1}
           >
             -
           </button>
@@ -315,7 +319,7 @@ export function QuantityColumn({
             value={quantity}
             name="quantity"
             onChange={handleInputChange}
-            min={moq || 1}
+            min={1}
             max={CART_QUANTITY_MAX}
             required
           />
@@ -323,18 +327,10 @@ export function QuantityColumn({
             className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
             type="button"
             onClick={handleIncreaseQuantity}
-          // disabled={quantity + 1 < moq}
           >
             +
           </button>
         </div>
-        {!quantityError ||
-          (quantity > CART_QUANTITY_MAX && (
-            <p className="text-sm text-red-500 max-w-40 text-wrap">
-              Quantity cannot be less than MOQ i.e {moq} or greater than{' '}
-              {CART_QUANTITY_MAX} or empty
-            </p>
-          ))}
         <div className="flex items-center gap-1">
           <div className="info-block">
             <div className="flex items-center justify-center h-5 min-w-5 ">
