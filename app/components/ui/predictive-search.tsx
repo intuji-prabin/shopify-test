@@ -125,7 +125,7 @@ export function PredictiveSearch({
       {searchProduct && (
         <div
           className={`${searchVariant === 'mobile' ? 'top-[65px]' : 'top-[calc(100%_+_4px)]'
-            } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${searchVariant === 'normal' || searchVariant === 'mobile'
+            } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${searchVariant === 'normal' || searchVariant === 'mobile' || searchVariant === 'compare'
               ? "max-h-[calc(100vh_-_350px)] md:max-h-[calc(100vh_-_500px)] overflow-y-auto"
               : 'max-w-[650px] max-h-[350px] overflow-y-auto shadow-lg'
             }`}
