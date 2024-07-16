@@ -33,7 +33,6 @@ export default function ProductInformation({ product }: any) {
               images={product?.imageUrl}
               thumbNailCarouseloptions={{ axis: matches ? 'y' : 'x' }}
               mainCarouseloptions={{}}
-              volumePrice={volumePrice}
             />
           </div>
         )}
@@ -64,6 +63,7 @@ export default function ProductInformation({ product }: any) {
           productType={product?.productType}
           productRank={product?.productRank}
           categories={product?.categories}
+          volumePrice={volumePrice}
         />
       </div>
     </section>
@@ -95,7 +95,8 @@ const ProductDetailsSection = ({
   shortDescription,
   productType,
   productRank,
-  categories
+  categories,
+  volumePrice,
 }: any) => {
   const [quantity, setQuantity] = useState(parseFloat(moq) || 1);
   const [UOM, setUOM] = useState(uomCode);
@@ -219,6 +220,11 @@ const ProductDetailsSection = ({
           </ul>
         </div>
       }
+      {volumePrice && (
+        <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase inline-block mt-2.5 text-base italic font-normal leading-[19px] z-10">
+          QTY Buy Available
+        </div>
+      )}
       <div className='flex gap-x-4 pt-3.5 items-center'>
         <h3>{productName}</h3>
         {productRank &&

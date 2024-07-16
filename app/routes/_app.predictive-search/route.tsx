@@ -8,9 +8,10 @@ import { AppLoadContext } from '@shopify/remix-oxygen';
 import {
   PredictiveCollectionFragment,
   PredictiveProductFragment,
-  PredictiveQueryFragment,
-  PredictiveSearchQuery,
+  PredictiveSearchQuery
 } from 'storefrontapi.generated';
+import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
@@ -18,12 +19,10 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import { addProductToCart } from '../_app.product_.$productSlug/product.server';
-import { getCartList } from '../_app.cart-list/cart.server';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 import { getUserDetails } from '~/lib/utils/user-session.server';
+import { getCartList } from '../_app.cart-list/cart.server';
 import { getPrices } from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/productList.server';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 
 type PredicticeSearchResultItemImage =
   | PredictiveCollectionFragment['image']
@@ -164,7 +163,7 @@ function capitalizeStringRegex(str: string) {
 
 async function getSearchProduct({
   request,
-  limit = 6,
+  limit = 10,
   context,
   searchTerm,
   customerId,
@@ -198,9 +197,26 @@ async function getSearchProduct({
     customerId,
   );
   if (results?.length > 0) {
+    // const productsData = results?.[0]?.items;
+    // const finalProducts = productsData?.filter((list: NormalizedPredictiveSearchResultItem) => capitalizeStringRegex(list?.title)?.includes(capitalizeStringRegex(searchTerm)) || capitalizeStringRegex(list?.sku)?.includes(capitalizeStringRegex(searchTerm)));
+    // results[0].items = finalProducts;
     const productsData = results?.[0]?.items;
-    const finalProducts = productsData?.filter((list: NormalizedPredictiveSearchResultItem) => capitalizeStringRegex(list?.title)?.includes(capitalizeStringRegex(searchTerm)) || capitalizeStringRegex(list?.sku)?.includes(capitalizeStringRegex(searchTerm)));
-    results[0].items = finalProducts;
+
+    // Utility function to prioritize relevance
+    const relevanceScore = (item: NormalizedPredictiveSearchResultItem, searchTerm: string) => {
+      const titleMatch = capitalizeStringRegex(item?.title).includes(capitalizeStringRegex(searchTerm));
+      const skuMatch = capitalizeStringRegex(item?.sku).includes(capitalizeStringRegex(searchTerm));
+
+      if (titleMatch && skuMatch) return 2;
+      if (titleMatch) return 1;
+      if (skuMatch) return 0;
+      return -1; // This should ideally never be the case if you're only sorting relevant items
+    };
+
+    // Sorting products based on the relevance
+    const sortedProducts = productsData?.sort((a, b) => relevanceScore(b, searchTerm) - relevanceScore(a, searchTerm));
+
+    results[0].items = sortedProducts;
   }
 
   return results;

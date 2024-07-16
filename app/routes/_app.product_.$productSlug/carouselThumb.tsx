@@ -15,14 +15,12 @@ type PropType = {
   thumbNailCarouseloptions: EmblaOptionsType;
   mainCarouseloptions: EmblaOptionsType;
   images: ImageType[];
-  volumePrice: boolean;
 };
 
 const CarouselThumb = ({
   thumbNailCarouseloptions,
   mainCarouseloptions,
   images,
-  volumePrice
 }: PropType) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [emblaMainRef, emblaMainApi] = useEmblaCarousel(mainCarouseloptions, [AutoHeight()]);
@@ -156,11 +154,6 @@ const CarouselThumb = ({
 
       {/* Main Product Image Carousel Begins Here */}
       <div className='w-full lg:max-w-[calc(100%_-_95px)] lg:w-[unset] relative'>
-        {volumePrice && (
-          <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase absolute top-0 left-0 text-base italic font-normal leading-[19px] z-10">
-            QTY Buy Available
-          </div>
-        )}
         <div className="embla lg:h-[532px] overflow-hidden">
           <div className="flex items-center h-full embla__viewport" ref={emblaMainRef}>
             <div className="flex h-full embla__container">
