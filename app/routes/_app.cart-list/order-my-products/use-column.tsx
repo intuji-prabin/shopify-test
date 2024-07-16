@@ -310,7 +310,7 @@ export function QuantityColumn({
           </>
         )}
       </p>
-      <div className={`flex flex-col gap-[11.5px] cart__list--quantity ${(quantity < moq && quantity >= 1) || (quantity < 1 || isNaN(quantity)) || (quantity > CART_QUANTITY_MAX) ? "mt-[5px]" : "mt-[2.2rem]"}`}>
+      <div className={`flex flex-col gap-[11.5px] cart__list--quantity ${(quantity < moq && quantity >= 1) || (quantity < 1 || isNaN(quantity)) || (quantity > CART_QUANTITY_MAX) ? "mt-1.5" : "mt-[2.2rem]"}`}>
         <div className="flex items-center">
           <button
             className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${quantity - 1 < 1 && 'cursor-not-allowed'
