@@ -17,13 +17,12 @@ export default function TabletNavmenu({ profileName, profileImage }: { profileNa
 
   return (
     <>
-      {/* <figure
-        className="flex xl:hidden border border-[#313535] bg-transparent max-w-10 max-h-10 hover:bg-transparent p-2"
+      <p
+        className='flex italic font-medium text-secondary-500 xl:hidden'
         onClick={() => toggleMenu(!isOpen)}
       >
-        <TabletHamburger />
-      </figure> */}
-      <p className='font-medium text-secondary-500 italic border border-solid border-secondary-500 px-2.5 py-1'>MENU</p>
+        MENU
+      </p>
       <div className={`${isOpen ? "block xl:hidden" : "hidden"} absolute top-0 z-30 left-0 right-0 bg-black/80`}>
         <div className="w-40 bg-primary-500 min-w-[310px] h-screen" ref={tabletSectionRef}>
           <div className="flex items-center justify-between p-4 bg-grey-900 tab-header">

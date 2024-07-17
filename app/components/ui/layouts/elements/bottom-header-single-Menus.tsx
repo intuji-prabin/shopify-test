@@ -18,7 +18,6 @@ export const SingleNavItem = ({
   setActiveMenu: React.Dispatch<React.SetStateAction<string>>;
   categories: Payload[];
 }) => {
-  const menuRef = useRef<HTMLLIElement>(null);
   const location = useLocation();
   const currentPageRoute = location.pathname;
   const [disableHover, setDisableHover] = useState(false);
@@ -33,7 +32,6 @@ export const SingleNavItem = ({
         ? 'bg-primary-600 [&>a]:text-secondary-500 [&_svg]:fill-secondary-500 hover:bg-primary-600 [&_path]:fill-secondary-500'
         : ''
         }`}
-      ref={menuRef}
       key={menu.title}
     >
       <Link
@@ -70,9 +68,6 @@ export const SingleNavItem = ({
               </span>
             </button>
             <div
-              onClick={(e) => {
-                e.preventDefault();
-              }}
               className={`group-hover:inline-block hidden absolute ${disableHover ? 'disable-hover' : ''}`}
             >
               <DropdownMenu
