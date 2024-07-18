@@ -137,81 +137,54 @@ export function useMyWishListColumn() {
           cell: (info) => {
             const product = info?.row?.original;
             return (
-              <>
-                {product?.quantity < product?.moq ||
-                  product?.quantity > CART_QUANTITY_MAX ||
-                  isNaN(product?.quantity) ? (
-                  <>
-                    <button
-                      className="uppercase flex justify-center items-center text-xs max-h-[unset] lg:max-h-[28px] min-w-[86px] cursor-not-allowed bg-grey-200 text-grey-400 px-6 py-2 text-nowrap"
-                      disabled
+              <Can I="view" a="add_wishlist_to_cart" passThrough>
+                {(allowed) => (
+                  <Form
+                    method="POST"
+                    onSubmit={(event) => {
+                      submit(event.currentTarget);
+                    }}
+                    className="w-full"
+                  >
+                    <input
+                      type="hidden"
+                      name="productId"
+                      value={product.productId}
+                    />
+                    <input
+                      type="hidden"
+                      name="productVariantId"
+                      value={product.variantId}
+                    />
+                    <input
+                      type="number"
+                      className="hidden"
+                      name="quantity"
+                      value={product.quantity || product.moq || 1}
+                    />
+                    <input
+                      type="hidden"
+                      name="selectUOM"
+                      value={product.uom}
+                    />
+
+                    <Button
+                      className={`uppercase flex-grow max-h-[unset] text-xs lg:max-h-[28px] min-w-[86px] text-nowrap
+                         ${(!allowed ||
+                          product?.quantity > CART_QUANTITY_MAX ||
+                          isNaN(product?.quantity)) ? 'cursor-not-allowed' : null}`}
+                      variant="primary"
+                      disabled={
+                        !allowed ||
+                        product?.quantity > CART_QUANTITY_MAX ||
+                        isNaN(product?.quantity)
+                      }
                     >
                       Add to cart
-                    </button>
-                    {product?.quantity < product?.moq && (
-                      <p className="text-[13px] text-red-500">
-                        Minimum Order Quantity
-                        <br />
-                        MOQ: {product?.moq || 1}
-                      </p>
-                    )}
-                    {product?.quantity > CART_QUANTITY_MAX && (
-                      <p className="text-[13px] text-red-500">
-                        Quantity cannot be
-                        <br />
-                        greater than {CART_QUANTITY_MAX}
-                      </p>
-                    )}
-                    {isNaN(product?.quantity) && (
-                      <p className="text-[13px] text-red-500">
-                        Quantity cannot be empty
-                      </p>
-                    )}
-                  </>
-                ) : (
-                  <Can I="view" a="add_wishlist_to_cart" passThrough>
-                    {(allowed) => (
-                      <Form
-                        method="POST"
-                        onSubmit={(event) => {
-                          submit(event.currentTarget);
-                        }}
-                        className="w-full"
-                      >
-                        <input
-                          type="hidden"
-                          name="productId"
-                          value={product.productId}
-                        />
-                        <input
-                          type="hidden"
-                          name="productVariantId"
-                          value={product.variantId}
-                        />
-                        <input
-                          type="number"
-                          className="hidden"
-                          name="quantity"
-                          value={product.quantity || product.moq || 1}
-                        />
-                        <input
-                          type="hidden"
-                          name="selectUOM"
-                          value={product.uom}
-                        />
-
-                        <Button
-                          className="uppercase flex-grow max-h-[unset] text-xs lg:max-h-[28px] min-w-[86px] text-nowrap"
-                          variant="primary"
-                          disabled={!allowed}
-                        >
-                          Add to cart
-                        </Button>
-                      </Form>
-                    )}
-                  </Can>
+                    </Button>
+                  </Form>
                 )}
-              </>
+              </Can>
             );
           },
         });

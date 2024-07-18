@@ -65,7 +65,7 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   };
   await context.session.set(CART_SESSION_KEY, finalCartSession);
   return json(
-    { cartList, shippingAddresses },
+    { cartList: cartList?.productWithPrice, orderPlaceStatus: cartList?.orderPlaceStatus, frieghtChargeInit: cartList?.frieghtChargeInit, shippingAddresses },
     {
       headers: [['Set-Cookie', await context.session.commit({})]],
     },
@@ -336,29 +336,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function CartList() {
-  const { cartList, shippingAddresses }: any = useLoaderData<typeof loader>();
+  const { cartList, orderPlaceStatus, shippingAddresses, frieghtChargeInit }: any = useLoaderData<typeof loader>();
   const finalProductList = useSort({ items: cartList?.productList });
-  const checkQuantityAgainstMOQ = (finalProductList: any) => {
-    for (let item of finalProductList) {
-      if (
-        item.quantity < item.moq ||
-        item.quantity > CART_QUANTITY_MAX ||
-        item.quantity <= 0
-      ) {
-        return false;
-      }
-    }
-    return true;
-  };
-  let result = checkQuantityAgainstMOQ(finalProductList);
-
-  useEffect(() => {
-    result = checkQuantityAgainstMOQ(finalProductList);
-    setPlaceOrder(result);
-  }, [finalProductList]);
 
   const [updateCart, setUpdateCart] = useState(false);
-  const [placeOrder, setPlaceOrder] = useState(result);
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const fetcher = useFetcher();
@@ -375,9 +356,8 @@ export default function CartList() {
           <div className="flex flex-col flex-wrap items-start gap-6 my-6 xl:flex-row cart__list">
             <MyProducts
               products={finalProductList}
-              updateCart={updateCart}
               setUpdateCart={setUpdateCart}
-              setPlaceOrder={setPlaceOrder}
+              updateCart={updateCart}
               fetcher={fetcher}
             />
             <OrderSummary
@@ -389,13 +369,15 @@ export default function CartList() {
               currency={cartList?.currency}
               shippingAddresses={shippingAddresses}
               updateCart={updateCart}
-              placeOrder={placeOrder}
               promoCodeApplied={cartList?.promoCode}
               discountPrice={cartList?.discountPrice}
               discountMessage={cartList?.discountMessage}
               totalPriceWithDiscount={cartList?.totalPriceWithDiscount}
               actionData={actionData}
               fetcher={fetcher}
+              frieghtCharge={frieghtChargeInit}
+              isLoading={isLoading}
+              orderPlaceStatus={orderPlaceStatus}
             />
           </div>
         </div>
