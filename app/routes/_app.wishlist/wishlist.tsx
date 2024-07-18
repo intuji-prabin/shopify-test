@@ -181,25 +181,6 @@ export function useMyWishListColumn() {
                     >
                       Add to cart
                     </Button>
-                    {product?.quantity < product?.moq && (
-                      <p className="text-[13px] text-red-500">
-                        Minimum Order Quantity
-                        <br />
-                        MOQ: {product?.moq || 1}
-                      </p>
-                    )}
-                    {product?.quantity > CART_QUANTITY_MAX && (
-                      <p className="text-[13px] text-red-500">
-                        Quantity cannot be
-                        <br />
-                        greater than {CART_QUANTITY_MAX}
-                      </p>
-                    )}
-                    {isNaN(product?.quantity) && (
-                      <p className="text-[13px] text-red-500">
-                        Quantity cannot be empty
-                      </p>
-                    )}
                   </Form>
                 )}
               </Can>

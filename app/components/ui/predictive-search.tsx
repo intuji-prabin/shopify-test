@@ -333,12 +333,10 @@ function renderProductItem(
                   >
                     Add to Cart
                   </Button>
-                  <p className="font-medium text-red-500">
+                  <p className="font-medium leading-none text-red-500 pt-1.5">
                     {(quantity < Number(product.moq) && quantity >= 1) && (
                       <>
-                        Minimum order quantity is {product.moq}
-                        <br />
-                        <span className="text-sm text-grey-400">Orders below MOQ ({product.moq}) will incur additional surcharges</span>
+                        Orders below MOQ ({product.moq}) will incur additional surcharges
                       </>
                     )}
                     {(quantity < 1 || isNaN(quantity)) && (
@@ -454,12 +452,10 @@ function renderProductItem(
                 >
                   Add to List
                 </Button>
-                <p className="font-medium text-red-500">
+                <p className="font-medium text-red-500 leading-none pt-1.5">
                   {(quantity < Number(product.moq) && quantity >= 1) && (
                     <>
-                      Minimum order quantity is {product.moq}
-                      <br />
-                      <span className="text-sm text-grey-400">Orders below MOQ ({product.moq}) will incur additional surcharges</span>
+                      Orders below MOQ ({product.moq}) will incur additional surcharges
                     </>
                   )}
                   {(quantity < 1 || isNaN(quantity)) && (
@@ -640,12 +636,10 @@ function renderProductItem(
                 >
                   Add to List
                 </Button>
-                <p className="font-medium text-red-500">
+                <p className="font-medium text-red-500 leading-none pt-1.5">
                   {(quantity < Number(product.moq) && quantity >= 1) && (
                     <>
-                      Minimum order quantity is {product.moq}
-                      <br />
-                      <span className="text-sm text-grey-400">Orders below MOQ ({product.moq}) will incur additional surcharges</span>
+                      Orders below MOQ ({product.moq}) will incur additional surcharges
                     </>
                   )}
                   {(quantity < 1 || isNaN(quantity)) && (
