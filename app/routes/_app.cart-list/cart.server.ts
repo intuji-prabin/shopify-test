@@ -1,5 +1,6 @@
 import {AppLoadContext} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
+import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
 import {ENDPOINT} from '~/lib/constants/endpoint.constant';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
 import {isImpersonating} from '~/lib/utils/auth-session.server';
@@ -36,6 +37,8 @@ const formateCartList = async (
   fronOrder: boolean,
 ) => {
   const cartLine = cartResponse?.cart?.lines?.nodes;
+  let orderPlaceStatus = true;
+  let frieghtChargeInit = false;
   let productList = [] as any;
   if (cartLine.length < 1) {
     return {productList: []};
@@ -50,6 +53,7 @@ const formateCartList = async (
       'gid://shopify/Product/',
       '',
     );
+
     productList.push({
       id: items?.id,
       productId,
@@ -68,14 +72,26 @@ const formateCartList = async (
   if (fronOrder) {
     return productList;
   }
+
   const productWithPrice = await getPrice(
     context,
     request,
     customerId,
     productList,
   );
+  productWithPrice.productList.map((item: any) => {
+    if (
+      !item?.quantity ||
+      item?.quantity > CART_QUANTITY_MAX ||
+      item?.quantity <= 0
+    ) {
+      orderPlaceStatus = false;
+    } else if (!item?.quantity || item?.quantity < item?.moq) {
+      frieghtChargeInit = true;
+    }
+  });
   // console.log('werwerwed ', productWithPrice);
-  return productWithPrice;
+  return {productWithPrice, orderPlaceStatus, frieghtChargeInit};
 };
 
 const getPrice = async (
@@ -92,7 +108,6 @@ const getPrice = async (
     impersonateEnableCheck: isImpersonatingCheck,
     context,
   });
-  // console.log('firstwewe', priceResponse);
   if (!priceResponse?.status) {
     throw new Error(priceResponse?.message);
   }

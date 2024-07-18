@@ -12,6 +12,7 @@ import {
   NormalizedPredictiveSearchResultItem,
 } from '~/routes/_app.predictive-search/route';
 import { CompareSearch } from '../icons/compareSearch';
+import { Routes } from '~/lib/constants/routes.constent';
 
 export type SearchVariant =
   | 'normal'
@@ -51,8 +52,8 @@ export function PredictiveSearch({
     300,
   );
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) =>
-    debounceSubmit(event.currentTarget);
+  const handleSubmit = (event: React.KeyboardEvent<HTMLInputElement> | FormEvent<HTMLFormElement>) =>
+    debounceSubmit(event.currentTarget as HTMLFormElement);
 
   const handleClose = () => {
     setSearchProduct(false);
@@ -101,6 +102,13 @@ export function PredictiveSearch({
                 ? 'font-normal'
                 : 'font-bold placeholder:italic'
                 } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
+              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  handleSubmit(event);
+                  setSearchProduct(true);
+                }
+              }}
             />
           </>
         )}
@@ -117,9 +125,9 @@ export function PredictiveSearch({
       {searchProduct && (
         <div
           className={`${searchVariant === 'mobile' ? 'top-[65px]' : 'top-[calc(100%_+_4px)]'
-            } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${searchVariant === 'normal' || searchVariant === 'mobile'
-              ? null
-              : 'max-w-[650px] max-h-[350px] overflow-y-auto shadow-lg'
+            } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 ${searchVariant === 'normal' || searchVariant === 'mobile' || searchVariant === 'compare'
+              ? "max-h-[calc(100vh_-_350px)] md:max-h-[calc(100vh_-_500px)] overflow-y-auto"
+              : 'max-w-full lg:max-w-[70%] max-h-[350px] overflow-y-auto shadow-lg'
             }`}
         >
           {fetcher.state === 'loading' ? (
@@ -164,10 +172,6 @@ function renderProductItem(
   searchVariant: SearchVariant,
   handleClose: () => void,
 ) {
-  // const productUrl = product.image?.url
-  //   ? product.image.url
-  //   : DEFAULT_IMAGE.IMAGE;
-
   const [quantity, setQuantity] = useState(parseFloat(product.moq) || 1);
 
   function decreaseQuantity() {
@@ -233,9 +237,9 @@ function renderProductItem(
       return (
         <div
           key={product.id}
-          className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 sm:flex-row"
+          className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 md:flex-row"
         >
-          <div className="flex flex-wrap items-center gap-3 sm:w-4/6">
+          <div className="flex flex-wrap items-center w-full gap-3 md:w-4/6">
             <div className="size-16">
               <Link
                 prefetch="intent"
@@ -275,17 +279,15 @@ function renderProductItem(
             </div>
           </div>
           {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ?
-            <div className="sm:w-[calc(33.33%_-_1rem)]">
+            <div className="w-full md:w-[calc(33.33%_-_1rem)]">
               <div className="flex cart__list--quantity">
                 <button
-                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < Number(product.moq) || quantity - 1 < 1
+                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < 1
                     ? 'cursor-not-allowed'
                     : ''
                     }`}
                   onClick={decreaseQuantity}
-                  disabled={
-                    quantity - 1 < Number(product.moq) || quantity - 1 < 1
-                  }
+                  disabled={quantity - 1 < 1}
                 >
                   -
                 </button>
@@ -302,55 +304,54 @@ function renderProductItem(
                   +
                 </button>
               </div>
-              {quantity < Number(product.moq) ||
-                quantity < 1 ||
-                quantity > CART_QUANTITY_MAX ||
-                isNaN(quantity) ? (
-                <>
-                  <Can I="view" a="add_to_cart">
-                    <Button
-                      variant="primary"
-                      className="w-full mt-2 cursor-not-allowed bg-grey-500"
-                      disabled
-                    >
-                      Add to Cart
-                    </Button>
-                  </Can>
-                  <p className="text-xs text-red-500">
-                    Minimum Order Quantity {product?.moq || 1}
-                    <br />
-                    Maximum Quantity {CART_QUANTITY_MAX}
-                  </p>
-                </>
-              ) : (
-                <Can I="view" a="add_to_cart">
-
-                  <Form
-                    method="POST"
-                    action="/predictive-search"
-                    onSubmit={(event) => {
-                      submit(event.currentTarget);
-                      handleClose();
-                    }}
-                    className="w-full"
+              <Can I="view" a="add_to_cart">
+                <Form
+                  method="POST"
+                  action="/predictive-search"
+                  onSubmit={(event) => {
+                    submit(event.currentTarget);
+                    handleClose();
+                  }}
+                  className="w-full"
+                >
+                  <input type="hidden" name="productId" value={product?.id} />
+                  <input
+                    type="hidden"
+                    name="productVariantId"
+                    value={product?.variantId}
+                  />
+                  <input type="hidden" name="quantity" value={quantity} />
+                  <input type="hidden" name="selectUOM" value={product?.uom} />
+                  <Button
+                    className={`w-full mt-2 ${quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity)
+                      ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
+                      : 'cursor-pointer'
+                      }`}
+                    disabled={quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity)}
+                    type={quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity) ? 'button' : 'submit'}
+                    variant="primary"
                   >
-                    <input type="hidden" name="productId" value={product?.id} />
-                    <input
-                      type="hidden"
-                      name="productVariantId"
-                      value={product?.variantId}
-                    />
-                    <input type="hidden" name="quantity" value={quantity} />
-                    <input type="hidden" name="selectUOM" value={product?.uom} />
-                    <Button
-                      variant="primary"
-                      className="w-full px-8 mt-2 whitespace-nowrap"
-                    >
-                      Add to Cart
-                    </Button>
-                  </Form>
-                </Can>
-              )}
+                    Add to Cart
+                  </Button>
+                  <p className="font-medium leading-none text-red-500 pt-1.5">
+                    {(quantity < Number(product.moq) && quantity >= 1) && (
+                      <>
+                        Orders below MOQ ({product.moq}) will incur additional surcharges
+                      </>
+                    )}
+                    {(quantity < 1 || isNaN(quantity)) && (
+                      <>
+                        Minimum order quantity should be greater than 0
+                      </>
+                    )}
+                    {(quantity > CART_QUANTITY_MAX) && (
+                      <>
+                        Maximum order quantity is {CART_QUANTITY_MAX}
+                      </>
+                    )}
+                  </p>
+                </Form>
+              </Can>
             </div>
             : null}
         </div>
@@ -360,9 +361,9 @@ function renderProductItem(
       return (
         <div
           key={product.id}
-          className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 sm:flex-row"
+          className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 md:flex-row"
         >
-          <div className="flex flex-wrap items-center gap-3 sm:w-4/6">
+          <div className="flex flex-wrap items-center gap-3 md:w-4/6">
             <div className="size-16">
               <Link
                 prefetch="intent"
@@ -402,17 +403,15 @@ function renderProductItem(
             </div>
           </div>
           {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ?
-            <div className="sm:w-[calc(33.33%_-_1rem)]">
+            <div className="md:w-[calc(33.33%_-_1rem)]">
               <div className="flex cart__list--quantity">
                 <button
-                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < Number(product.moq) || quantity - 1 < 1
+                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < 1
                     ? 'cursor-not-allowed'
                     : ''
                     }`}
                   onClick={decreaseQuantity}
-                  disabled={
-                    quantity - 1 < Number(product.moq) || quantity - 1 < 1
-                  }
+                  disabled={quantity - 1 < 1}
                 >
                   -
                 </button>
@@ -429,47 +428,48 @@ function renderProductItem(
                   +
                 </button>
               </div>
-              {quantity < Number(product.moq) ||
-                quantity < 1 ||
-                quantity > CART_QUANTITY_MAX ||
-                isNaN(quantity) ? (
-                <>
-                  <Button
-                    variant="primary"
-                    className="w-full mt-2 cursor-not-allowed bg-grey-500"
-                    disabled
-                  >
-                    Add to List
-                  </Button>
-                  <p className="text-xs text-red-500">
-                    Minimum Order Quantity {product?.moq || 1}
-                    <br />
-                    Maximum Quantity {CART_QUANTITY_MAX}
-                  </p>
-                </>
-              ) : (
-                <Form
-                  method="POST"
-                  onSubmit={(event) => {
-                    submit(event.currentTarget);
-                    handleClose();
-                  }}
-                  className="w-full"
+              <Form
+                method="POST"
+                onSubmit={(event) => {
+                  submit(event.currentTarget);
+                  handleClose();
+                }}
+                className="w-full"
+              >
+                <input type="hidden" name="productId" value={product.id} />
+                <input type="hidden" name="quantity" value={quantity} />
+                <input type="hidden" name="uom" value={product.uom} />
+                <Button
+                  className={`w-full mt-2 ${quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity)
+                    ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
+                    : 'cursor-pointer'
+                    }`}
+                  disabled={quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity)}
+                  type={quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity) ? 'button' : 'submit'}
+                  variant="primary"
+                  name="_action"
+                  value="add_product"
                 >
-                  <input type="hidden" name="productId" value={product.id} />
-                  <input type="hidden" name="quantity" value={quantity} />
-                  <input type="hidden" name="uom" value={product.uom} />
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    className="w-full px-8 mt-2 whitespace-nowrap"
-                    name="_action"
-                    value="add_product"
-                  >
-                    Add to List
-                  </Button>
-                </Form>
-              )}
+                  Add to List
+                </Button>
+                <p className="font-medium text-red-500 leading-none pt-1.5">
+                  {(quantity < Number(product.moq) && quantity >= 1) && (
+                    <>
+                      Orders below MOQ ({product.moq}) will incur additional surcharges
+                    </>
+                  )}
+                  {(quantity < 1 || isNaN(quantity)) && (
+                    <>
+                      Minimum order quantity should be greater than 0
+                    </>
+                  )}
+                  {(quantity > CART_QUANTITY_MAX) && (
+                    <>
+                      Maximum order quantity is {CART_QUANTITY_MAX}
+                    </>
+                  )}
+                </p>
+              </Form>
             </div>
             : null}
         </div>
@@ -518,9 +518,9 @@ function renderProductItem(
       return (
         <div
           key={product.id}
-          className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 sm:flex-row"
+          className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 xl:flex-row"
         >
-          <div className="flex flex-wrap items-center gap-3 sm:w-2/5">
+          <div className="flex flex-wrap items-center w-full gap-3 xl:w-2/5">
             <div className="size-16">
               <Link
                 prefetch="intent"
@@ -560,18 +560,18 @@ function renderProductItem(
             </div>
           </div>
           {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ?
-            <div className="grid grid-cols-1 gap-x-4 w-full gap-y-2 sm:grid-cols-2 sm:w-[calc(60%_-_1rem)] items-end">
-              <p className='font-medium'>Unit of Measure</p>
+            <div className="grid grid-cols-1 gap-x-4 w-full gap-y-2 sm:grid-cols-2 xl:w-[calc(60%_-_1rem)] items-start">
+              <div className='flex h-full'>
+                <p className='mt-auto font-medium'>Unit of Measure</p>
+              </div>
               <div className="flex cart__list--quantity">
                 <button
-                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < Number(product.moq) || quantity - 1 < 1
+                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < 1
                     ? 'cursor-not-allowed'
                     : ''
                     }`}
                   onClick={decreaseQuantity}
-                  disabled={
-                    quantity - 1 < Number(product.moq) || quantity - 1 < 1
-                  }
+                  disabled={quantity - 1 < 1}
                 >
                   -
                 </button>
@@ -612,48 +612,48 @@ function renderProductItem(
                   <option value={UOM}>{product.defaultUomValue}</option>
                 )}
               </select>
-              {quantity < Number(product.moq) ||
-                quantity < 1 ||
-                quantity > CART_QUANTITY_MAX ||
-                isNaN(quantity) ? (
-                <>
-                  <Button
-                    variant="primary"
-                    className="px-8 cursor-not-allowed bg-grey-500 whitespace-nowrap"
-                    disabled
-                  >
-                    Add to List
-                  </Button>
-                  <div className="hidden sm:block"></div>
-                  <p className="w-full text-xs text-red-500">
-                    Minimum Order Quantity {product?.moq || 1}
-                    <br />
-                    Maximum Quantity {CART_QUANTITY_MAX}
-                  </p>
-                </>
-              ) : (
-                <Form
-                  method="POST"
-                  onSubmit={(event) => {
-                    submit(event.currentTarget);
-                    handleClose();
-                  }}
-                  className="w-full"
+              <Form
+                method="POST"
+                onSubmit={(event) => {
+                  submit(event.currentTarget);
+                  handleClose();
+                }}
+                className="w-full"
+              >
+                <input type="hidden" name="productId" value={product.id} />
+                <input type="hidden" name="quantity" value={quantity} />
+                <input type="hidden" name="uom" value={UOM} />
+                <Button
+                  className={`w-full ${quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity)
+                    ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
+                    : 'cursor-pointer'
+                    }`}
+                  disabled={quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity)}
+                  type={quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity) ? 'button' : 'submit'}
+                  variant="primary"
+                  name="_action"
+                  value="add_product"
                 >
-                  <input type="hidden" name="productId" value={product.id} />
-                  <input type="hidden" name="quantity" value={quantity} />
-                  <input type="hidden" name="uom" value={UOM} />
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    className="w-full px-8 whitespace-nowrap"
-                    name="_action"
-                    value="add_product"
-                  >
-                    Add to List
-                  </Button>
-                </Form>
-              )}
+                  Add to List
+                </Button>
+                <p className="font-medium text-red-500 leading-none pt-1.5">
+                  {(quantity < Number(product.moq) && quantity >= 1) && (
+                    <>
+                      Orders below MOQ ({product.moq}) will incur additional surcharges
+                    </>
+                  )}
+                  {(quantity < 1 || isNaN(quantity)) && (
+                    <>
+                      Minimum order quantity should be greater than 0
+                    </>
+                  )}
+                  {(quantity > CART_QUANTITY_MAX) && (
+                    <>
+                      Maximum order quantity is {CART_QUANTITY_MAX}
+                    </>
+                  )}
+                </p>
+              </Form>
             </div>
             : null}
         </div>
@@ -715,11 +715,16 @@ function SearchResultsProductsGrid({
   handleClose: () => void;
 }) {
   return (
-    <div className="grid gap-y-4">
-      {searchVariant === 'cart' && <h5>Recommended Products</h5>}
-      {products.map((product) => {
-        return renderProductItem(product, searchVariant, handleClose);
-      })}
-    </div>
+    <>
+      <div className="grid gap-y-4">
+        {searchVariant === 'cart' && <h5>Recommended Products</h5>}
+        {products.map((product) => {
+          return renderProductItem(product, searchVariant, handleClose);
+        })}
+      </div>
+      <div>
+        <Link to={Routes.CATEGORIES} onClick={handleClose} className='flex items-center justify-center px-6 py-2 text-sm font-bold leading-6 uppercase duration-150 border-solid cursor-pointer bg-secondary-500 hover:bg-secondary-500 text-grey-900'>View all</Link>
+      </div>
+    </>
   );
 }
