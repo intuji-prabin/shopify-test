@@ -224,11 +224,6 @@ const ProductDetailsSection = ({
           </ul>
         </div>
       }
-      {volumePrice && (
-        <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase inline-block mt-2.5 text-base italic font-normal leading-[19px] z-10">
-          QTY Buy Available
-        </div>
-      )}
       <div className='flex gap-x-4 pt-3.5 items-center'>
         <h3>{productName}</h3>
         {productRank &&
