@@ -71,8 +71,7 @@ export function useMyWishListColumn() {
           cell: (info) => {
             const productTotal = info?.row?.original?.companyPrice;
             const priceRange = info?.row?.original?.priceRange;
-            const quantity =
-              info.row.original.quantity || info.row.original.moq || 1;
+            const quantity = info.row.original.quantity;
             const product = info?.row?.original;
             const UOM = info?.row?.original?.uom;
             const currencySymbol = info.row.original.currencySymbol;

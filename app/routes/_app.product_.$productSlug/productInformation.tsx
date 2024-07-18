@@ -110,7 +110,7 @@ const ProductDetailsSection = ({
     UOM,
     uomCode,
     priceRange,
-    companyDefaultPrice,
+    companyDefaultPrice
   );
   const [productPrice, setProductPrice] = useState(firstPrice);
 
@@ -289,8 +289,8 @@ const ProductDetailsSection = ({
           />
           <Price
             currency={currency}
-            price={productPrice && productPrice < PRODUCT_MAX_PRICE ? originalPrice : 0}
-            originalPrice={productPrice && productPrice < PRODUCT_MAX_PRICE ? originalPrice : 0}
+            price={productPrice ? originalPrice : 0}
+            originalPrice={productPrice ? originalPrice : 0}
             variant="rrp"
             className="relative"
             currencySymbol={currencySymbol}
@@ -346,8 +346,13 @@ const ProductDetailsSection = ({
                 +
               </button>
             </div>
-            <p className="text-sm text-grey-700 pt-2.5 flex gap-x-1">
-              <Info />
+            <p className="text-sm text-grey-700 pt-2.5 flex gap-x-1 info-block">
+              <div
+                data-tooltip={`The minimum order quantity is ${moq || 1}. Orders below this quantity will incur additional surcharges.`}
+                className="cursor-pointer"
+              >
+                <Info />
+              </div>
               Minimum Order Quantity: {moq || 1}
             </p>
           </div>

@@ -2,7 +2,6 @@ import { Link } from '@remix-run/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
 import { TooltipInfo } from '~/components/icons/orderStatus';
-import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
 import { StockStatusChip } from '~/components/ui/stock-status-chip';
@@ -205,7 +204,7 @@ export function ItemsColumn({
         </Link>
       </figure>
       <figcaption className="flex flex-col gap-y-1 w-[calc(100%_-_88px)] text-wrap">
-        <h5>
+        <h5 data-cy="product-name">
           {handle ? (
             <Can
               // key={subMenu.id}
@@ -232,7 +231,7 @@ export function ItemsColumn({
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
           <p>
             <span className="font-semibold text-grey-900 ">SKU: </span>
-            {(sku && sku) || 'N/A'}
+            <span data-cy="product-sku">{(sku && sku) || 'N/A'}</span>
           </p>
           <StockStatusChip status={inventory} />
         </div>
