@@ -10,15 +10,15 @@ import {
 import { badgeVariants } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Price } from '~/components/ui/price';
+import { Separator } from '~/components/ui/separator';
+import { StockStatus } from '~/components/ui/stockStatus';
 import { CART_QUANTITY_MAX, PRODUCT_MAX_PRICE } from '~/lib/constants/cartInfo.constant';
+import { Routes } from '~/lib/constants/routes.constent';
+import { Can } from '~/lib/helpers/Can';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import CarouselThumb from './carouselThumb';
 import { getProductPriceByQty } from './product-detail';
 import { ProductInfoTable } from './productInfoTable';
-import { Can } from '~/lib/helpers/Can';
-import { StockStatusChip } from '~/components/ui/stock-status-chip';
-import { Separator } from '~/components/ui/separator';
-import { Routes } from '~/lib/constants/routes.constent';
 
 export default function ProductInformation({ product }: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
@@ -33,6 +33,7 @@ export default function ProductInformation({ product }: any) {
               images={product?.imageUrl}
               thumbNailCarouseloptions={{ axis: matches ? 'y' : 'x' }}
               mainCarouseloptions={{}}
+              volumePrice={volumePrice}
             />
           </div>
         )}
@@ -40,7 +41,7 @@ export default function ProductInformation({ product }: any) {
         <ProductDetailsSection
           productName={product?.title}
           isFavorited={product?.liked}
-          sku={'Sku'}
+          sku={'SKU'}
           skuUnits={product?.supplierSku}
           unitOfMeasurement={'Unit Of Measurement:'}
           box={product?.uom}
@@ -56,6 +57,8 @@ export default function ProductInformation({ product }: any) {
           moq={product?.moq || 1}
           uomCode={product?.uomCode}
           currency={product?.currency}
+          currencySymbol={product?.currencySymbol}
+          warehouse={product?.warehouse}
           inventory={product?.inventory}
           tags={product?.tags}
           brandImage={product?.brandImage}
@@ -63,7 +66,6 @@ export default function ProductInformation({ product }: any) {
           productType={product?.productType}
           productRank={product?.productRank}
           categories={product?.categories}
-          volumePrice={volumePrice}
         />
       </div>
     </section>
@@ -96,7 +98,8 @@ const ProductDetailsSection = ({
   productType,
   productRank,
   categories,
-  volumePrice,
+  currencySymbol,
+  warehouse
 }: any) => {
   const [quantity, setQuantity] = useState(parseFloat(moq) || 1);
   const [UOM, setUOM] = useState(uomCode);
@@ -106,7 +109,7 @@ const ProductDetailsSection = ({
     UOM,
     uomCode,
     priceRange,
-    companyDefaultPrice
+    companyDefaultPrice,
   );
   const [productPrice, setProductPrice] = useState(firstPrice);
 
@@ -220,11 +223,6 @@ const ProductDetailsSection = ({
           </ul>
         </div>
       }
-      {volumePrice && (
-        <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase inline-block mt-2.5 text-base italic font-normal leading-[19px] z-10">
-          QTY Buy Available
-        </div>
-      )}
       <div className='flex gap-x-4 pt-3.5 items-center'>
         <h3>{productName}</h3>
         {productRank &&
@@ -253,7 +251,7 @@ const ProductDetailsSection = ({
         </div>
       }
       <Separator className='mt-4' />
-      <div className="flex flex-col justify-between pt-4 sm:flex-row gap-y-2">
+      <div className="flex flex-col justify-between pt-4 sm:flex-row gap-y-2 gap-x-4">
         <div className="flex flex-wrap gap-x-5 gap-y-2">
           <div className="flex items-center gap-1 text-base">
             <p className="font-semibold leading-6 ">{sku}: </p>
@@ -269,7 +267,10 @@ const ProductDetailsSection = ({
             </div>
           </div>
         </div>
-        <StockStatusChip status={inventory} />
+        <div className='py-2 pl-4 pr-3 text-right border border-solid rounded-lg bg-grey-25 border-grey-50 w-max'>
+          {warehouse && <p><span className='font-semibold'>Warehouse:</span> {warehouse}</p>}
+          <StockStatus status={inventory} />
+        </div>
       </div>
       <Can I="view" a="view_product_price">
         <div className="flex flex-wrap gap-12 pt-6 product_det__pricing">
@@ -278,13 +279,15 @@ const ProductDetailsSection = ({
             price={productPrice}
             originalPrice={originalPrice}
             className="relative"
+            currencySymbol={currencySymbol}
           />
           <Price
             currency={currency}
-            price={productPrice ? originalPrice : 0}
-            originalPrice={productPrice ? originalPrice : 0}
+            price={productPrice && productPrice < PRODUCT_MAX_PRICE ? originalPrice : 0}
+            originalPrice={productPrice && productPrice < PRODUCT_MAX_PRICE ? originalPrice : 0}
             variant="rrp"
             className="relative"
+            currencySymbol={currencySymbol}
           />
         </div>
       </Can>
@@ -309,112 +312,107 @@ const ProductDetailsSection = ({
         )}
       </Can>
       {shortDescription && <p className='mt-4' dangerouslySetInnerHTML={{ __html: shortDescription }}></p>}
-      {originalPrice && originalPrice < PRODUCT_MAX_PRICE ?
-        <div className="flex flex-col items-start gap-4 pt-6 sm:flex-row">
-          <div>
-            <div className="flex cart__list--quantity">
-              <button
-                className={`border-[1px] border-grey-500 flex justify-center items-center w-14 aspect-square ${quantity - 1 < 1 && 'cursor-not-allowed'
-                  }`}
-                onClick={decreaseQuantity}
-                disabled={quantity - 1 < 1}
-              >
-                -
-              </button>
-              <input
-                type="number"
-                className="w-20 min-h-14 h-full text-center border-x-0 !border-grey-500"
-                value={quantity}
-                onChange={handleInputChange}
-                min={1}
-                max={CART_QUANTITY_MAX}
-                required
-              />
-              <button
-                className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-14"
-                onClick={increaseQuantity}
-              >
-                +
-              </button>
-            </div>
-            <p className="text-sm text-grey-700 pt-2.5 flex gap-x-1 info-block">
-              <div
-                data-tooltip={`The minimum order quantity is ${moq || 1}. Orders below this quantity will incur additional surcharges.`}
-                className="cursor-pointer"
-              >
-                <Info />
-              </div>
-              Minimum Order Quantity: {moq || 1}
-            </p>
-          </div>
-          <div className="flex flex-col">
-            <select
-              name="filter_by"
-              className="w-full min-w-[120px] min-h-14 place-order h-full !border-grey-500 filter-select"
-              onChange={(e: any) => handleUOM(e.target.value)}
-              value={UOM}
+      <div className="flex flex-col items-start gap-4 pt-6 sm:flex-row">
+        <div>
+          <div className="flex cart__list--quantity">
+            <button
+              className={`border-[1px] border-grey-500 flex justify-center items-center w-14 aspect-square ${quantity - 1 < moq && 'cursor-not-allowed'
+                }`}
+              onClick={decreaseQuantity}
+              disabled={quantity - 1 < moq}
             >
-              {unitOfMeasure.length > 0 ? (
-                unitOfMeasure?.map((uom: any, index: number) => (
-                  <option value={uom.code} key={index + 'uom'}>
-                    {uom.unit}
-                  </option>
-                ))
-              ) : (
-                <option value={UOM}>{box}</option>
-              )}
-            </select>
-          </div>
-          <Form
-            method="POST"
-            className="w-full"
-            onSubmit={(event) => {
-              submit(event.currentTarget);
-            }}
-          >
-            <input type="hidden" name="productId" value={productId} />
+              -
+            </button>
             <input
-              type="hidden"
-              name="productVariantId"
-              value={productVariantId}
+              type="number"
+              className="w-20 min-h-14 h-full text-center border-x-0 !border-grey-500"
+              value={quantity}
+              onChange={handleInputChange}
+              min={moq || 1}
+              max={CART_QUANTITY_MAX}
+              required
             />
-            <input type="hidden" name="quantity" value={quantity} />
-            <input type="hidden" name="selectUOM" value={UOM} />
-            <Can I="view" a="add_to_cart">
-              <Button
-                className={`flex-grow w-full uppercase min-h-14 ${quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity)
-                  ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
-                  : 'cursor-pointer'
-                  }`}
-                disabled={quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity)}
-                type={quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity) ? 'button' : 'submit'}
-                name="action"
-                value="addToCart"
-                variant="primary"
-              >
-                {addToCart}
-              </Button>
-              <p className="font-medium text-red-500 leading-none pt-1.5">
-                {(quantity < moq && quantity >= 1) && (
-                  <>
-                    Orders below MOQ ({moq}) will incur additional surcharges
-                  </>
-                )}
-                {(quantity < 1 || isNaN(quantity)) && (
-                  <>
-                    Minimum order quantity should be greater than 0
-                  </>
-                )}
-                {(quantity > CART_QUANTITY_MAX) && (
-                  <>
-                    Maximum order quantity is {CART_QUANTITY_MAX}
-                  </>
-                )}
-              </p>
-            </Can>
-          </Form>
+            <button
+              className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-14"
+              onClick={increaseQuantity}
+            >
+              +
+            </button>
+          </div>
+          <p className="text-sm text-grey-700 pt-2.5 flex gap-x-1">
+            <Info />
+            Minimum Order Quantity: {moq || 1}
+          </p>
         </div>
-        : null}
+        <div className="flex flex-col">
+          <select
+            name="filter_by"
+            className="w-full min-w-[120px] min-h-14 place-order h-full !border-grey-500 filter-select"
+            onChange={(e: any) => handleUOM(e.target.value)}
+            value={UOM}
+          >
+            {unitOfMeasure.length > 0 ? (
+              unitOfMeasure?.map((uom: any, index: number) => (
+                <option value={uom.code} key={index + 'uom'}>
+                  {uom.unit}
+                </option>
+              ))
+            ) : (
+              <option value={UOM}>{box}</option>
+            )}
+          </select>
+        </div>
+        <Form
+          method="POST"
+          className="w-full"
+          onSubmit={(event) => {
+            submit(event.currentTarget);
+          }}
+        >
+          <input type="hidden" name="productId" value={productId} />
+          <input
+            type="hidden"
+            name="productVariantId"
+            value={productVariantId}
+          />
+          <input type="hidden" name="quantity" value={quantity} />
+          <input type="hidden" name="selectUOM" value={UOM} />
+          {originalPrice && originalPrice < PRODUCT_MAX_PRICE ?
+            quantity < moq ||
+              quantity < 1 ||
+              quantity > CART_QUANTITY_MAX ||
+              isNaN(quantity) ? (
+              <>
+                <Can I="view" a="add_to_cart">
+                  <button
+                    className="flex items-center justify-center w-full gap-2 p-2 px-6 py-2 text-sm italic font-bold leading-6 uppercase duration-150 border border-solid cursor-not-allowed text-grey-400 bg-grey-200 min-h-14"
+                    disabled
+                  >
+                    {addToCart}
+                  </button>
+                </Can>
+                <p className="text-red-500">
+                  Minimum order quantity is {moq || 1} and maximum quantity is{' '}
+                  {CART_QUANTITY_MAX}
+                </p>
+              </>
+            ) : (
+              <Can I="view" a="add_to_cart">
+                <Button
+                  className="flex-grow w-full uppercase min-h-14"
+                  variant="primary"
+                  type="submit"
+                  value="addToCart"
+                  name="action"
+                >
+                  {addToCart}
+                </Button>
+              </Can>
+            )
+            : null}
+        </Form>
+      </div>
+
     </div>
   );
 };

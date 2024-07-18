@@ -29,6 +29,7 @@ export type ProductFinalResponse = {
   productVariantId: string;
   quantity: number;
   selectedUOM: number;
+  currencySymbol: string;
 };
 
 type productResponse = {
@@ -76,9 +77,9 @@ export default function ComparisonWrapper(productResponse: finalProductResponse)
             </p>
           </div>
           <div className="pt-2 pb-6">
-            <Price currency={product1?.currency} price={product1?.companyPrice} originalPrice={product1?.companyPrice} />
+            <Price currency={product1?.currency} price={product1?.companyPrice} originalPrice={product1?.companyPrice} currencySymbol={product1.currencySymbol} />
             <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
-            <Price currency={product1?.currency} price={product1?.companyPrice && product1?.companyPrice < PRODUCT_MAX_PRICE ? product1?.defaultPrice : 0} originalPrice={product1?.companyPrice && product1?.companyPrice < PRODUCT_MAX_PRICE ? product1?.defaultPrice : 0} variant="rrp" />
+            <Price currency={product1?.currency} price={product1?.companyPrice && product1?.companyPrice < PRODUCT_MAX_PRICE ? product1?.defaultPrice : 0} originalPrice={product1?.companyPrice && product1?.companyPrice < PRODUCT_MAX_PRICE ? product1?.defaultPrice : 0} variant="rrp" currencySymbol={product1.currencySymbol} />
             <Can I="view" a="add_to_cart">
               {product1?.companyPrice && product1?.companyPrice < PRODUCT_MAX_PRICE ?
                 <Form method="post">
@@ -141,9 +142,9 @@ export function ProductDetailDiv({ productDetails, clearSelectedProduct }: { pro
             </p>
           </div>
           <div className="pt-2 pb-6">
-            <Price currency={productDetails?.currency} price={productDetails?.companyPrice} originalPrice={productDetails?.companyPrice} />
+            <Price currency={productDetails?.currency} price={productDetails?.companyPrice} originalPrice={productDetails?.companyPrice} currencySymbol={productDetails.currencySymbol} />
             <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
-            <Price currency={productDetails?.currency} price={productDetails?.companyPrice && productDetails?.companyPrice < PRODUCT_MAX_PRICE ? productDetails?.defaultPrice : 0} originalPrice={productDetails?.companyPrice && productDetails?.companyPrice < PRODUCT_MAX_PRICE ? productDetails?.defaultPrice : 0} variant="rrp" />
+            <Price currency={productDetails?.currency} price={productDetails?.companyPrice && productDetails?.companyPrice < PRODUCT_MAX_PRICE ? productDetails?.defaultPrice : 0} originalPrice={productDetails?.companyPrice && productDetails?.companyPrice < PRODUCT_MAX_PRICE ? productDetails?.defaultPrice : 0} variant="rrp" currencySymbol={productDetails.currencySymbol} />
             <Can I="view" a="add_to_cart">
               {productDetails?.companyPrice && productDetails?.companyPrice < PRODUCT_MAX_PRICE ?
                 <Form method="post">
