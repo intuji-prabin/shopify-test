@@ -199,7 +199,7 @@ export function ItemsColumn({
         </Link>
       </figure>
       <figcaption className="flex flex-col gap-y-1 w-[calc(100%_-_88px)] text-wrap">
-        <h5>
+        <h5 data-cy="product-name">
           {handle ? (
             <Can
               // key={subMenu.id}
@@ -226,7 +226,7 @@ export function ItemsColumn({
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
           <p>
             <span className="font-semibold text-grey-900 ">SKU: </span>
-            {(sku && sku) || 'N/A'}
+            <span data-cy="product-sku">{(sku && sku) || 'N/A'}</span>
           </p>
           <StockStatusChip status={inventory} />
         </div>
@@ -321,6 +321,7 @@ export function QuantityColumn({
             onChange={handleInputChange}
             min={1}
             max={CART_QUANTITY_MAX}
+            data-cy="product-quantity"
             required
           />
           <button
@@ -345,7 +346,7 @@ export function QuantityColumn({
             </div>
           </div>
           <p className="text-sm font-normal capitalize  leading-[16px] text-grey-700">
-            Minimum Order Quantity {moq}
+            Minimum Order Quantity <span data-cy="product-moq">{moq}</span>
           </p>
         </div>
       </div>

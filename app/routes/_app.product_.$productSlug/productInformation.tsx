@@ -394,12 +394,10 @@ const ProductDetailsSection = ({
               >
                 {addToCart}
               </Button>
-              <p className="font-medium text-red-500">
+              <p className="font-medium text-red-500 leading-none pt-1.5">
                 {(quantity < moq && quantity >= 1) && (
                   <>
-                    Minimum order quantity is {moq}
-                    <br />
-                    <span className="text-sm text-grey-400">Orders below MOQ ({moq}) will incur additional surcharges</span>
+                    Orders below MOQ ({moq}) will incur additional surcharges
                   </>
                 )}
                 {(quantity < 1 || isNaN(quantity)) && (
