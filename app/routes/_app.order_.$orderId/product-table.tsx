@@ -11,7 +11,7 @@ export function ProductTable({
   orderProductDetails: OrderDetails;
 }) {
   const prefixWithCurrency = (price: string) =>
-    `${orderProductDetails.currency} ${parseFloat(price).toFixed(2)}`;
+    `${orderProductDetails.currency} ${orderProductDetails.currencySymbol}${parseFloat(price).toFixed(2)}`;
 
   const { columns } = useColumn({ prefixWithCurrency });
 

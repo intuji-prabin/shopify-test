@@ -378,6 +378,7 @@ export default function CartList() {
               frieghtCharge={frieghtChargeInit}
               isLoading={isLoading}
               orderPlaceStatus={orderPlaceStatus}
+              currencySymbol={cartList?.currencySymbol}
             />
           </div>
         </div>
