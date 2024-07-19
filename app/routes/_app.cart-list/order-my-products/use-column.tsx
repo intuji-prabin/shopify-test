@@ -236,7 +236,7 @@ export function ItemsColumn({
           <StockStatusChip status={inventory} />
         </div>
         <div>
-          {warehouse && <p className='text-[13px] font-medium text-primary-500'>WAREHOUSE: {warehouse}</p>}
+          {warehouse && inventory === 'In Stock' && <p className='text-[13px] font-medium text-primary-500'>WAREHOUSE: {warehouse}</p>}
           <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize ">
             minimum order({moq})
           </p>

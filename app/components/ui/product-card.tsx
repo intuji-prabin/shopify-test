@@ -74,7 +74,6 @@ export function ProductCardInfo({
   Pick<Variants, 'moq' | 'sku'> & { productName: string } & {
     productVariantId: string;
   }) {
-  console.log("currencySymbol", currencySymbol)
   return (
     <div className="p-4">
       <div className="sm:pb-14">

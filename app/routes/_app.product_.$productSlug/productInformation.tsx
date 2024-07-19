@@ -273,8 +273,8 @@ const ProductDetailsSection = ({
             </div>
           </div>
         </div>
-        <div className='py-2 pl-4 pr-3 text-right border border-solid rounded-lg bg-grey-25 border-grey-50 w-max'>
-          {warehouse && <p><span className='font-semibold'>Warehouse:</span> {warehouse}</p>}
+        <div className={`py-2 pl-4 pr-3 text-right border border-solid rounded-lg bg-grey-25 border-grey-50 w-max ${inventory !== 'In Stock' && "leading-none"}`}>
+          {warehouse && inventory === 'In Stock' && <p><span className='font-semibold'>Warehouse:</span> {warehouse}</p>}
           <StockStatus status={inventory} />
         </div>
       </div>

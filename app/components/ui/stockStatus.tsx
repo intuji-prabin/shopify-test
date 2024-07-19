@@ -25,7 +25,7 @@ export function StockStatus({ status }: { status: StockStatus }) {
             return 'N/A';
     }
     return (
-        <div className={`inline-flex items-center pt-[5px] text-sm font-medium uppercase leading-4 whitespace-nowrap ${statusClass}`}>
+        <div className={`inline-flex items-center ${status === "In Stock" && 'pt-[5px]'} text-sm font-medium uppercase leading-4 whitespace-nowrap ${statusClass}`}>
             <span className="w-2 h-2 mr-1.5 bg-current rounded-full"></span>
             {statusText}
         </div>
