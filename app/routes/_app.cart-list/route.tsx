@@ -356,8 +356,8 @@ export default function CartList() {
           <div className="flex flex-col flex-wrap items-start gap-6 my-6 xl:flex-row cart__list">
             <MyProducts
               products={finalProductList}
-              updateCart={updateCart}
               setUpdateCart={setUpdateCart}
+              updateCart={updateCart}
               fetcher={fetcher}
             />
             <OrderSummary
