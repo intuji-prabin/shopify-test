@@ -18,7 +18,7 @@ export default function TabletNavmenu({ profileName, profileImage }: { profileNa
   return (
     <>
       <p
-        className='flex italic font-medium text-secondary-500 xl:hidden'
+        className='flex italic font-medium text-secondary-500 xl:hidden border border-[#313535] py-2 px-3'
         onClick={() => toggleMenu(!isOpen)}
       >
         MENU
