@@ -23,6 +23,7 @@ export function ProductCard({
   defaultPrice,
   liked,
   imageBackgroundColor,
+  currencySymbol
 }: ProductList) {
   return (
     <div className="bg-white single-product-card">
@@ -47,6 +48,7 @@ export function ProductCard({
           uom={uom}
           productVariantId={variants?.id}
           moq={variants?.moq}
+          currencySymbol={currencySymbol}
         />
       </div>
     </div>
@@ -64,9 +66,10 @@ export function ProductCardInfo({
   productVariantId,
   moq,
   currency,
+  currencySymbol
 }: Pick<
   ProductList,
-  'defaultPrice' | 'companyPrice' | 'handle' | 'id' | 'uom' | 'currency'
+  'defaultPrice' | 'companyPrice' | 'handle' | 'id' | 'uom' | 'currency' | 'currencySymbol'
 > &
   Pick<Variants, 'moq' | 'sku'> & { productName: string } & {
     productVariantId: string;
@@ -96,9 +99,9 @@ export function ProductCardInfo({
         </div>
         <Can I="view" a="view_product_price">
           <div className="pt-2">
-            <Price currency={currency} price={companyPrice} originalPrice={companyPrice} />
+            <Price currency={currency} price={companyPrice} originalPrice={companyPrice} currencySymbol={currencySymbol} />
             <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
-            <Price currency={currency} price={companyPrice && companyPrice < PRODUCT_MAX_PRICE ? defaultPrice : 0} originalPrice={companyPrice && companyPrice < PRODUCT_MAX_PRICE ? defaultPrice : 0} variant="rrp" />
+            <Price currency={currency} price={companyPrice && companyPrice < PRODUCT_MAX_PRICE ? defaultPrice : 0} originalPrice={companyPrice && companyPrice < PRODUCT_MAX_PRICE ? defaultPrice : 0} variant="rrp" currencySymbol={currencySymbol} />
           </div>
         </Can>
         <div className="sm:absolute bottom-4 inset-x-4">

@@ -60,6 +60,7 @@ export interface OrderDetails {
   productTotalPrice: string;
   errorStatus: boolean;
   errorMessage: string;
+  currencySymbol: string;
   products: Product[];
 }
 

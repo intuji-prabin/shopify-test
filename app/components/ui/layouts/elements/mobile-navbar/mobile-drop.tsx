@@ -130,6 +130,12 @@ export function ResourcesDropdownMobile() {
       url: Routes.CERTIFICATE_GENERATION,
       icon: <Invoice fillColor="#fff" />,
     },
+    {
+      title: 'Cigweld MSDS Dashboard',
+      url: "https://jr.chemwatch.net/outb/dashboard",
+      icon: <Invoice fillColor="#fff" />,
+      external: true,
+    },
   ];
 
   return (
@@ -154,6 +160,7 @@ export function ResourcesDropdownMobile() {
                   to={account.url}
                   className="relative flex items-center gap-1 menu-links"
                   onClick={() => toggleMenu(!isOpen)}
+                  target={account.external ? '_blank' : ''}
                 >
                   {' '}
                   {account.icon}

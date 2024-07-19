@@ -131,7 +131,7 @@ const DetailChart = ({
                     <span className="flex items-center justify-center w-12 h-12 bg-primary-200">
                       <Dollar />
                     </span>
-                    <h4>Total Spend</h4>
+                    <h4>Total Order Spend</h4>
                   </div>
                 </div>
                 <div className="w-full sm:w-auto sm:min-w-[280px]">
@@ -171,7 +171,7 @@ const DetailChart = ({
                     <span className="flex items-center justify-center w-12 h-12 bg-primary-200">
                       <Invoicing />
                     </span>
-                    <h4>Total Invoicing</h4>
+                    <h4>Total Invoiced</h4>
                   </div>
                 </div>
                 <div className="w-full sm:w-auto sm:min-w-[280px]">
