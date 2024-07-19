@@ -231,27 +231,7 @@ const ProductDetailsSection = ({
           <p className='flex items-center justify-center h-8 font-bold rounded-full bg-secondary-500 min-w-8'>{productRank}</p>
         }
       </div>
-      {tags.length > 0 &&
-        <div className='flex mt-2 gap-x-1'>
-          <p className='text-sm font-semibold'>TAGS:</p>
-          <ul className='flex flex-wrap'>
-            {tags?.map((tagslist: string, index: number) => {
-              return (
-                <li className='text-sm tag-list' key={index + 'tags'}>
-                  <div className='[&>*]:text-sm' dangerouslySetInnerHTML={{ __html: tagslist }}></div>
-                </li>
-              )
-            }
-            )}
-          </ul>
-        </div>
-      }
-      {productType &&
-        <div className='flex mt-2 gap-x-1'>
-          <p className='text-sm font-semibold'>TYPE:</p>
-          <p className='text-sm'>{productType}</p>
-        </div>
-      }
+      {shortDescription && <p className='mt-4' dangerouslySetInnerHTML={{ __html: shortDescription }}></p>}
       <Separator className='mt-4' />
       <div className="flex flex-col justify-between pt-4 sm:flex-row gap-y-2">
         <div className="flex flex-wrap gap-x-5 gap-y-2">
@@ -308,7 +288,6 @@ const ProductDetailsSection = ({
           </>
         )}
       </Can>
-      {shortDescription && <p className='mt-4' dangerouslySetInnerHTML={{ __html: shortDescription }}></p>}
       <div className="flex flex-col items-start gap-4 pt-6 sm:flex-row">
         <div>
           <div className="flex cart__list--quantity">

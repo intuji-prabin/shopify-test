@@ -1,25 +1,24 @@
-import { FaSearch } from 'react-icons/fa';
 import { Form, Link } from '@remix-run/react';
-import { Heart, Logout, UserProfile } from '~/components/icons/orderStatus';
 import { useState } from 'react';
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import { Note } from '~/components/icons/note';
+import { NotificationIcon } from '~/components/icons/notification';
+import OrderIcon from '~/components/icons/orderIcon';
+import { Heart, Logout, UserProfile } from '~/components/icons/orderStatus';
 import { Button } from '~/components/ui/button';
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuLabel,
+  DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
-import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
-import { Routes } from '~/lib/constants/routes.constent';
-import { CartIcon } from '~/components/icons/cartIcon';
-import { TrackAnOrderButton } from './elements/track-an-order-dialog';
-import { Note } from '~/components/icons/note';
-import { NotificationIcon } from '~/components/icons/notification';
-import { CustomerData } from '~/routes/_public.login/login.server';
-import TabletNavmenu from './tablet-navbar/tablet-navmenu';
-import { useHamburgerMenu } from './elements/HamburgerMenuContext';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 import { PredictiveSearch } from '~/components/ui/predictive-search';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { Routes } from '~/lib/constants/routes.constent';
+import { CustomerData } from '~/routes/_public.login/login.server';
+import { useHamburgerMenu } from './elements/HamburgerMenuContext';
+import { TrackAnOrderButton } from './elements/track-an-order-dialog';
+import TabletNavmenu from './tablet-navbar/tablet-navmenu';
 
 export function PlaceOrder() {
   const { isOpen, toggleMenu } = useHamburgerMenu();
@@ -64,12 +63,12 @@ export function NotificationNavbar({
   pendingOrderCount: number;
   notificationCount: number;
 }) {
-  const { isOpen, toggleMenu } = useHamburgerMenu();
+  const { toggleMenu } = useHamburgerMenu();
 
   const navIcons = [
     {
       id: 1,
-      icon: <CartIcon width={'20px'} height={'20px'} />,
+      icon: <OrderIcon/>,
       url: Routes.CART_LIST,
       title: 'Cart',
       notification: cartCount,
