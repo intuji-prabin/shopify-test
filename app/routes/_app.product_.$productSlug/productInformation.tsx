@@ -224,6 +224,11 @@ const ProductDetailsSection = ({
           </ul>
         </div>
       }
+      {volumePrice && (
+        <div className="bg-secondary-500 px-2 py-1 text-grey-900 uppercase inline-block mt-2.5 text-base italic font-normal leading-[19px] z-10">
+          QTY Buy Available
+        </div>
+      )}
       <div className='flex gap-x-4 pt-3.5 items-center'>
         <h3>{productName}</h3>
         {productRank &&
@@ -301,6 +306,8 @@ const ProductDetailsSection = ({
                 price={'Price'}
                 volumePrice={priceRange}
                 className="product_det__table"
+                currency={currency}
+                currencySymbol={currencySymbol}
               />
             </div>
             <div className="flex gap-2 px-4 py-2 mt-3 border-l-4 border-r-0 bg-semantic-info-100 border-semantic-info-500 border-y-0">
