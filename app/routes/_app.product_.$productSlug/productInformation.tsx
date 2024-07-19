@@ -100,7 +100,7 @@ const ProductDetailsSection = ({
   categories,
   currencySymbol,
   warehouse,
-  volumePrice
+  volumePrice,
 }: any) => {
   const [quantity, setQuantity] = useState(parseFloat(moq) || 1);
   const [UOM, setUOM] = useState(uomCode);
@@ -306,6 +306,8 @@ const ProductDetailsSection = ({
                 price={'Price'}
                 volumePrice={priceRange}
                 className="product_det__table"
+                currency={currency}
+                currencySymbol={currencySymbol}
               />
             </div>
             <div className="flex gap-2 px-4 py-2 mt-3 border-l-4 border-r-0 bg-semantic-info-100 border-semantic-info-500 border-y-0">

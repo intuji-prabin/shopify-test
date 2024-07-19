@@ -149,6 +149,8 @@ export const renderSubComponent = ({ row }: any) => {
       product={row.original.priceRange}
       quantity={'Quantity'}
       price={'Price'}
+      currency={row.original.currency}
+      currencySymbol={row.original.currencySymbol}
     />
   );
 };

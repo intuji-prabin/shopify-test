@@ -1,6 +1,6 @@
 import { PromoCode } from "./order-shopping-details";
 
-export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, freight, surcharges, gst, currency, promoCodeApplied, discountPrice, discountMessage, totalPriceWithDiscount, fetcher, frieghtCharge, isLoading }: any) {
+export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, freight, surcharges, gst, currency, promoCodeApplied, discountPrice, discountMessage, totalPriceWithDiscount, fetcher, frieghtCharge, isLoading, currencySymbol }: any) {
 
   return (
     <div className="flex flex-col gap-4 p-6 border-b order border-grey-50">
@@ -12,25 +12,25 @@ export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, frei
         <li className="flex justify-between">
           <p className="capitalize">subtotal</p>
           <span className="text-lg font-medium">
-            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{cartSubTotalPrice?.toFixed(2)}
+            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{currencySymbol && currencySymbol}{cartSubTotalPrice?.toFixed(2)}
           </span>
         </li>
         <li className="flex justify-between">
           <p className="capitalize before:content-['*'] before:text-red-500">freight</p>
           <span className="text-lg font-medium">
-            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{freight}
+            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{currencySymbol && currencySymbol}{freight}
           </span>
         </li>
         <li className="flex justify-between">
           <p className="capitalize before:content-['*'] before:text-red-500">surcharges</p>
           <span className="text-lg font-medium">
-            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{surcharges}
+            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{currencySymbol && currencySymbol}{surcharges}
           </span>
         </li>
         <li className="flex justify-between">
           <p className="capitalize">Total Excl. GST</p>
           <span className="text-lg font-medium">
-            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{gst}
+            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{currencySymbol && currencySymbol}{gst}
           </span>
         </li>
         {promoCodeApplied &&
@@ -45,19 +45,19 @@ export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, frei
           <li className="flex justify-between">
             <p className="capitalize">Discounted Amount</p>
             <span className="text-lg font-medium">
-              <span className="text-base">{currency ? currency : '$'} {discountPrice}</span>
+              <span className="text-base">{currency ? currency : '$'} {currencySymbol && currencySymbol}{discountPrice}</span>
             </span>
           </li>
         }
       </ul>
       <div className="flex justify-between [&>p]:font-medium [&>p]:text-2xl [&>p]:text-grey-900">
         <p>Estimated Total</p>
-        <p className="total_amount"><span className="text-base">{currency ? currency : '$'}</span>&nbsp;{cartTotalPrice?.toFixed(2)}</p>
+        <p className="total_amount"><span className="text-base">{currency ? currency : '$'}&nbsp;{currencySymbol && currencySymbol}</span>{cartTotalPrice?.toFixed(2)}</p>
       </div>
       {discountPrice !== 0 &&
         <div className="flex justify-between [&>p]:font-medium [&>p]:text-2xl [&>p]:text-grey-900">
           <p>Estimated Total After Discount</p>
-          <p className="total_discount"><span className="text-base">{currency ? currency : '$'}</span>&nbsp;{totalPriceWithDiscount?.toFixed(2)}</p>
+          <p className="total_discount"><span className="text-base">{currency ? currency : '$'}&nbsp;{currencySymbol && currencySymbol}</span>{totalPriceWithDiscount?.toFixed(2)}</p>
         </div>
       }
       {frieghtCharge && !isLoading &&
