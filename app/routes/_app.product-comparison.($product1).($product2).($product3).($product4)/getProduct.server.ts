@@ -81,6 +81,7 @@ const formatProduct = (product: ProductResponse, prices: any) => {
       ? prices?.[productId]?.company_price
       : 'N/A',
     currency: prices?.[productId] ? prices?.[productId]?.currency : '$',
+    currencySymbol: prices?.[productId]?.currencySymbol,
     defaultPrice: prices?.[productId]
       ? prices?.[productId]?.default_price
       : 'N/A',

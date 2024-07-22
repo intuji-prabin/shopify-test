@@ -228,7 +228,7 @@ export default function route() {
                           )
                           const quantityVal = Number(formData.get(`${item.original.productId}_quantity`));
                           const moqVal = Number(formData.get(`${item.original.productId}_moq`));
-                          if (quantityVal && moqVal && quantityVal < moqVal || quantityVal && quantityVal > CART_QUANTITY_MAX) {
+                          if (quantityVal && quantityVal < 1 || quantityVal && quantityVal > CART_QUANTITY_MAX) {
                             canSubmit = false;
                             displayToast({ message: CART_QUANTITY_ERROR, type: "error" });
                           }
@@ -325,6 +325,8 @@ const renderSubComponent = ({ row }: any) => {
       product={row.original.priceRange}
       quantity={'Quantity'}
       price={'Price'}
+      currency={row.original.currency}
+      currencySymbol={row.original.currencySymbol}
     />
   );
 };

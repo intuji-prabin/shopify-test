@@ -41,11 +41,15 @@ export function ProductInfoTable({
   price,
   volumePrice,
   className,
+  currencySymbol,
+  currency
 }: {
   quantity: string;
   price: string;
   volumePrice?: any;
   className?: string;
+  currency: string;
+  currencySymbol: string;
 }) {
   const [showAllRows, setShowAllRows] = useState(false);
   const defaultRowCount = 2;
@@ -73,14 +77,13 @@ export function ProductInfoTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {volumePriceList.map((priceLIst: any, index: any) => (
+        {volumePriceList.map((priceLIst: any) => (
           <TableRow key={priceLIst?.minQty} className="hover:bg-white">
             <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
-              {`${priceLIst?.minQty} - ${priceLIst?.maxQty ? priceLIst?.maxQty : 'above'
-                }`}
+              {`${priceLIst?.minQty} - ${priceLIst?.maxQty ? priceLIst?.maxQty : 'above'}`}
             </TableCell>
             <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
-              {priceLIst?.price}
+            {currency}&nbsp;{currencySymbol}{priceLIst?.price}
             </TableCell>
           </TableRow>
         ))}

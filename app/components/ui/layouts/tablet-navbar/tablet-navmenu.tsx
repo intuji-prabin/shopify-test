@@ -1,6 +1,6 @@
 import { useRef } from 'react';
-import { TabletHamburger } from '~/components/icons/orderStatus';
 import CloseMenu from '~/components/icons/closeMenu';
+import { TabletHamburger } from '~/components/icons/orderStatus';
 import { useOutsideClick } from '~/hooks/useOutsideClick';
 import { Button } from '../../button';
 import { useHamburgerMenu } from '../elements/HamburgerMenuContext';
@@ -17,12 +17,12 @@ export default function TabletNavmenu({ profileName, profileImage, cartCount }: 
 
   return (
     <>
-      <figure
-        className="flex xl:hidden border border-[#313535] bg-transparent max-w-10 max-h-10 hover:bg-transparent p-2"
+      <p
+        className='flex italic font-medium text-secondary-500 xl:hidden border border-[#313535] py-2 px-3'
         onClick={() => toggleMenu(!isOpen)}
       >
-        <TabletHamburger />
-      </figure>
+        MENU
+      </p>
       <div className={`${isOpen ? "block xl:hidden" : "hidden"} absolute top-0 z-30 left-0 right-0 bg-black/80`}>
         <div className="w-40 bg-primary-500 min-w-[310px] h-screen" ref={tabletSectionRef}>
           <div className="flex items-center justify-between p-4 bg-grey-900 tab-header">
