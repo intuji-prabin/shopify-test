@@ -21,6 +21,7 @@ import { Routes } from '~/lib/constants/routes.constent';
 import { AbilityContext, DEFAULT_ABILITIES } from '~/lib/helpers/Can';
 import { defineAbilitiesForUser } from '~/lib/helpers/roles';
 import { USER_SESSION_ID, isAuthenticate } from '~/lib/utils/auth-session.server';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 import {
   getMessageSession,
   messageCommitSession,
@@ -391,8 +392,8 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return (
       <div className="container pt-6">

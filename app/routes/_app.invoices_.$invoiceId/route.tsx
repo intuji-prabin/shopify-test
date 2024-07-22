@@ -15,6 +15,7 @@ import { useDownload } from '~/hooks/useDownload';
 import { PDF } from '~/lib/constants/pdf.constent';
 import { Routes } from '~/lib/constants/routes.constent';
 import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 import { encrypt } from '~/lib/utils/cryptoUtils';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getInvoiceDetails } from '~/routes/_app.invoices_.$invoiceId/invoices-detatils.server';
@@ -93,8 +94,8 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return (
       <div className="flex items-center justify-center">
