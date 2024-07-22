@@ -34,6 +34,7 @@ import {
   updateGroupProduct,
 } from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
 import { AuthError } from '~/components/ui/authError';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Pending Order Details' }];
@@ -210,8 +211,8 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <RouteError />;
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return <RouteError errorMessage={error.message} />;
   } else {

@@ -35,6 +35,7 @@ import { addToWishlist, removeFromWishlist } from './wishlist.server';
 import { AuthError } from '~/components/ui/authError';
 import { encrypt } from '~/lib/utils/cryptoUtils';
 import { RouteError } from '~/components/ui/route-error';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 
 interface ProductDetailType {
   productPage: string;
@@ -344,8 +345,8 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return (
       <div className="container">

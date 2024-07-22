@@ -22,6 +22,7 @@ import {
 import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 import { AuthError } from '~/components/ui/authError';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 
 export const loader = async ({
   params,
@@ -158,8 +159,8 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return (
       <div className="container pt-6">
