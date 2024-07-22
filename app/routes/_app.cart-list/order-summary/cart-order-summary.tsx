@@ -19,7 +19,8 @@ export default function OrderSummary({
   fetcher,
   frieghtCharge,
   isLoading,
-  orderPlaceStatus
+  orderPlaceStatus,
+  currencySymbol
 }: any) {
 
   return (
@@ -37,6 +38,7 @@ export default function OrderSummary({
         fetcher={fetcher}
         frieghtCharge={frieghtCharge}
         isLoading={isLoading}
+        currencySymbol={currencySymbol}
       />
       {shippingAddresses ?
         <Form method="POST">

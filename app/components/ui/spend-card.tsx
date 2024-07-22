@@ -87,7 +87,7 @@ const SpendCard = ({ data }: { data: any }) => {
           <Can I="view" a="view_total_spending">
             <div className="p-6 space-y-8 bg-white">
               <div className="grid items-center grid-cols-1 mxs:grid-cols-2 gap-y-1 gap-x-3">
-                <h4>Total Spend (Year-to-Date) </h4>
+                <h4>Total Order Spend (Year-to-Date) </h4>
                 <ul className="text-base font-medium lg:text-lg text-grey-900 mxs:text-right">
                   <li>
                     Jan 1 - {currentDate.currentDate}{' '}
