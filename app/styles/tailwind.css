@@ -652,7 +652,7 @@ input[type='checkbox']:before {
   @apply content-[""] absolute right-1/2 top-[45%] w-1 h-2.5 border-solid border-neutral-white border-t-0 border-r-2 border-b-2 border-l-0 -m-px -mx-1 mb-0  rotate-45 -translate-x-1/2 -translate-y-1/2 z-10;
 }
 
-.nav-list li:last-child div {
+.nav-list li:last-child div.absolute {
   right: -5px;
 }
 

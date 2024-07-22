@@ -6,15 +6,25 @@ import {
   type MetaFunction,
 } from '@remix-run/react';
 import { type LoaderFunctionArgs } from '@shopify/remix-oxygen';
+import { Suspense, useEffect, useMemo, useState } from 'react';
+import { useEventSource } from 'remix-utils/sse/react';
 import { Expenditure } from '~/components/icons/expenditure';
+import { Button } from '~/components/ui/button';
 import Carousel from '~/components/ui/carousel';
 import CtaHome from '~/components/ui/cta-home';
+import { DataTable } from '~/components/ui/data-table';
 import DetailChart from '~/components/ui/detailChart';
 import ExpenditureCard from '~/components/ui/expenditureCard';
 import Profile from '~/components/ui/profile';
+import { Separator } from '~/components/ui/separator';
 import SpendCard from '~/components/ui/spend-card';
+import { useTable } from '~/hooks/useTable';
+import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
+import { EVENTS } from '~/lib/constants/events.contstent';
+import { Routes } from '~/lib/constants/routes.constent';
 import { Can } from '~/lib/helpers/Can';
-import { USER_SESSION_ID, getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
+import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
+import { encrypt } from '~/lib/utils/cryptoUtils';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import {
   getChartData,
@@ -22,19 +32,10 @@ import {
 } from '~/routes/_app._index/data-sets.server';
 import { getSlides } from '~/routes/_app._index/index.server';
 import { getAllInvoices } from '../_app.invoices/invoices.server';
-import { DataTable } from '~/components/ui/data-table';
-import { useTable } from '~/hooks/useTable';
-import { useColumn } from './use-column';
-import { Button } from '~/components/ui/button';
-import { Routes } from '~/lib/constants/routes.constent';
-import { Suspense, useEffect, useMemo, useState } from 'react';
-import ProductTable from './productTable';
-import { Separator } from '~/components/ui/separator';
 import { getNewNotificationCount } from '../_app/app.server';
 import { Handlers, Payload } from '../_app/route';
-import { useEventSource } from 'remix-utils/sse/react';
-import { EVENTS } from '~/lib/constants/events.contstent';
-import { encrypt } from '~/lib/utils/cryptoUtils';
+import ProductTable from './productTable';
+import { useColumn } from './use-column';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Cigweld | Home' }];
@@ -42,14 +43,12 @@ export const meta: MetaFunction = () => {
 
 export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
-  const { session } = context;
 
   const { userDetails } = await getUserDetails(request);
   const chartData = getChartData(context, request, userDetails?.id);
   const expenditureData = getExpenditureData(context, request, userDetails?.id);
   const slides = await getSlides({ context });
   const customerId = userDetails.id;
-  const userSessionId = session.get(USER_SESSION_ID);
 
   const { searchParams } = new URL(request.url);
 
@@ -68,6 +67,8 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   const impersonateEnableCheck = await isImpersonating(request);
   const sessionAccessTocken = (await getAccessToken(context)) as string;
   const encryptedSession = encrypt(sessionAccessTocken);
+  const sessionCartInfo = await context.session.get(CART_SESSION_KEY);
+  const cartCount = sessionCartInfo?.lineItems;
 
   return defer({
     slides,
@@ -76,9 +77,9 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     expenditureData,
     invoiceList,
     totalNotifications,
-    userSessionId,
     encryptedSession,
-    impersonateEnableCheck
+    impersonateEnableCheck,
+    cartCount
   });
 }
 
@@ -87,9 +88,9 @@ export default function Homepage() {
     expenditureData,
     invoiceList, userDetails,
     totalNotifications,
-    userSessionId,
     encryptedSession,
-    impersonateEnableCheck
+    impersonateEnableCheck,
+    cartCount
   } = useLoaderData<typeof loader>();
   const { columns } = useColumn(encryptedSession, impersonateEnableCheck);
   const [notificationCounts, setNotificationCounts] = useState(
@@ -152,7 +153,7 @@ export default function Homepage() {
         <Carousel images={slides} sectionClass="mt-0 home-banner" />
       ) : null}
       <Profile profileInfo={userDetails} />
-      <CtaHome totalNotificationCount={notificationCounts} />
+      <CtaHome totalNotificationCount={notificationCounts} cartCount={cartCount} />
       <Suspense fallback={<div className='container'>Loading...</div>}>
         <Await resolve={chartData} errorElement={<div></div>}>
           {(resolvedValue) => {
