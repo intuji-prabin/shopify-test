@@ -191,7 +191,7 @@ export function useMyWishListColumn() {
 
       return baseColumns;
     },
-    [], // Include ability in the dependencies array
+    [ability], // Include ability in the dependencies array
   );
 
   return { columns };
