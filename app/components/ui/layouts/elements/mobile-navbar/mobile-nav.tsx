@@ -53,12 +53,12 @@ export default function MobileNav({
             </Button>
 
             <Button
-              className="border border-[#313535] p-2 bg-transparent max-w-10 max-h-10 hover:bg-transparent"
+              className="border border-[#313535] py-2 px-3 bg-transparent w-[52px] text-secondary-500 max-h-10 hover:bg-transparent"
               onClick={() => {
                 toggleMenu(!isOpen);
               }}
             >
-              {isOpen ? <CloseMenu /> : <HamburgerIcon />}
+              {isOpen ? "CLOSE" : "MENU"}
             </Button>
           </div>
         </div>
@@ -75,7 +75,6 @@ export default function MobileNav({
                 <UserProfile user_name={userDetails?.firstName} image_url={imageUrl ?? '/niel.png'} />
                 {/* notification menu bar starts */}
                 <NotificationNavbar
-                  cartCount={cartCount}
                   wishlistCount={wishlistCount}
                   pendingOrderCount={pendingOrderCount}
                   notificationCount={notificationCount}
@@ -85,7 +84,7 @@ export default function MobileNav({
               <NavMenu />
 
               {/*  order track starts here */}
-              <OrderTrackMobile />
+              <OrderTrackMobile cartCount={cartCount} />
             </div>
             {/* user logout starts here */}
             <LogoutForm />

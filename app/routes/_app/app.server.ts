@@ -7,6 +7,7 @@ import {generateUrlWithParams} from '~/lib/helpers/url.helper';
 import {getAccessToken, isImpersonating} from '~/lib/utils/auth-session.server';
 import {getNotifications} from '~/routes/_app.notification/notification.server';
 import {CustomerData} from '../_public.login/login.server';
+import { getCartListData } from '../_app.cart-list/cart.server';
 
 export interface CategoriesType {
   status: boolean;
@@ -197,6 +198,39 @@ const formateCartSessionResponse = (
     });
   }
   return cartListed;
+};
+
+export const getSessionCart = async (
+  request: Request,
+  customerId: string,
+  context: AppLoadContext,
+) => {
+  const isImpersonatingCheck = await isImpersonating(request);
+
+  const cartResults = await useFetch<any>({
+    method: AllowedHTTPMethods.GET,
+    url: `${ENDPOINT.PRODUCT.CART}/${customerId}`,
+    impersonateEnableCheck: isImpersonatingCheck,
+    context,
+  });
+
+  if (!cartResults?.status) {
+    return false;
+  }
+  const accessTocken = (await getAccessToken(context)) as string;
+
+  const sessionResponse = await context.storefront.mutate(
+    UPDATE_CART_ACCESS_TOCKEN,
+    {
+      variables: {
+        buyerIdentity: {
+          customerAccessToken: accessTocken,
+        },
+        cartId: cartResults?.payload?.sessionId,
+      },
+    },
+  );
+  return formateCartSessionResponse(sessionResponse, accessTocken);
 };
 
 export async function getNewNotificationCount({

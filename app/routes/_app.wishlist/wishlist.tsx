@@ -50,6 +50,7 @@ export function useMyWishListColumn() {
           enableSorting: false,
           cell: (info) => {
             const product = info.row.original;
+            const warehouse = info.row.original.warehouse;
             return (
               <ItemsColumn
                 title={product?.title}
@@ -58,6 +59,7 @@ export function useMyWishListColumn() {
                 moq={product?.moq || 1}
                 handle={product?.productHandle}
                 inventory={product.inventory}
+                warehouse={warehouse}
               />
             );
           },
@@ -72,6 +74,7 @@ export function useMyWishListColumn() {
             const quantity = info.row.original.quantity;
             const product = info?.row?.original;
             const UOM = info?.row?.original?.uom;
+            const currencySymbol = info.row.original.currencySymbol;
             return (
               <ProductTotal
                 totalPrice={productTotal}
@@ -84,6 +87,7 @@ export function useMyWishListColumn() {
                 setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
                 isRowChecked={info?.row?.getIsSelected()}
                 currency={product?.currency || '$'}
+                currencySymbol={currencySymbol}
               />
             );
           },
@@ -187,7 +191,7 @@ export function useMyWishListColumn() {
 
       return baseColumns;
     },
-    [], // Include ability in the dependencies array
+    [ability], // Include ability in the dependencies array
   );
 
   return { columns };

@@ -19,13 +19,11 @@ import { useMyProductColumn } from './use-column';
 
 export default function MyProducts({
   products,
-  currency,
   setUpdateCart,
   updateCart,
   fetcher,
 }: any) {
   const { columns } = useMyProductColumn({
-    currency,
     setUpdateCart,
   });
   const { table } = useTable(columns, products);
@@ -151,6 +149,8 @@ export const renderSubComponent = ({ row }: any) => {
       product={row.original.priceRange}
       quantity={'Quantity'}
       price={'Price'}
+      currency={row.original.currency}
+      currencySymbol={row.original.currencySymbol}
     />
   );
 };

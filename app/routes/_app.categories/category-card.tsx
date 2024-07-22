@@ -30,17 +30,17 @@ export function CategoryCard({ category }: { category: CategoryType }) {
         <div className="grid md:col-start-2 md:col-end-5 sm:grid-cols-3 gap-x-6 bg-neutral-white">
           {child_categories?.map((subCategoryItem) => (
             <div className="p-7" key={subCategoryItem.id}>
-              {subCategoryItem?.child_categories?.length > 0 ? (
-                <h4 className="mb-4">{subCategoryItem.title}</h4>
-              ) : (
-                <h4 className="mb-4 text-primary-500">
+              <h4 className="mb-4">
+                {subCategoryItem?.child_categories?.length > 0 ? 
+                  subCategoryItem.title
+                :(
                   <Link
                     to={`/category/${identifier}/${subCategoryItem?.identifier}`}
                   >
                     {subCategoryItem.title}
                   </Link>
-                </h4>
-              )}
+                )}
+              </h4>
               <ul>
                 {subCategoryItem?.child_categories?.map((childCategoryItem) => (
                   <Can

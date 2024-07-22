@@ -1,45 +1,45 @@
-import { FaSearch } from 'react-icons/fa';
 import { Form, Link } from '@remix-run/react';
-import { Heart, Logout, UserProfile } from '~/components/icons/orderStatus';
 import { useState } from 'react';
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import { Note } from '~/components/icons/note';
+import { NotificationIcon } from '~/components/icons/notification';
+import OrderIcon from '~/components/icons/orderIcon';
+import { Heart, Logout, UserProfile } from '~/components/icons/orderStatus';
 import { Button } from '~/components/ui/button';
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuLabel,
+  DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
-import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
-import { Routes } from '~/lib/constants/routes.constent';
-import { CartIcon } from '~/components/icons/cartIcon';
-import { TrackAnOrderButton } from './elements/track-an-order-dialog';
-import { Note } from '~/components/icons/note';
-import { NotificationIcon } from '~/components/icons/notification';
-import { CustomerData } from '~/routes/_public.login/login.server';
-import TabletNavmenu from './tablet-navbar/tablet-navmenu';
-import { useHamburgerMenu } from './elements/HamburgerMenuContext';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
 import { PredictiveSearch } from '~/components/ui/predictive-search';
+import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
+import { Routes } from '~/lib/constants/routes.constent';
+import { CustomerData } from '~/routes/_public.login/login.server';
+import { useHamburgerMenu } from './elements/HamburgerMenuContext';
+import { TrackAnOrderButton } from './elements/track-an-order-dialog';
+import TabletNavmenu from './tablet-navbar/tablet-navmenu';
 
-export function PlaceOrder() {
+export function PlaceOrder({cartCount}: {cartCount: number}) {
   const { isOpen, toggleMenu } = useHamburgerMenu();
 
   return (
-    <Link to={Routes.PLACE_AN_ORDER} prefetch="intent">
+    <Link to={Routes.CART_LIST} prefetch="intent">
       <Button
-        className="h-full px-6 place-order bg-secondary-500 hover:bg-secondary-500 min-h-12 text-grey-900"
+        className="h-full px-6 place-order bg-secondary-500 hover:bg-secondary-500 min-h-12 text-grey-900 relative"
         onClick={() => toggleMenu(!isOpen)}
       >
         Place an order
+        <div className="absolute bg-semantic-danger-500 h-[14px] min-w-[16px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium py-2 px-1">{cartCount}</div>
       </Button>
     </Link>
   );
 }
-export function OrderTrack() {
+export function OrderTrack({cartCount}: {cartCount: number}) {
   return (
     <div className="items-center hidden gap-4 pl-4 border border-t-0 border-b-0 border-l-2 xl:flex border-grey-800 ">
       <TrackAnOrderButton />
-      <PlaceOrder />
+      <PlaceOrder cartCount={cartCount} />
     </div>
   );
 }
@@ -54,25 +54,22 @@ export function LogoIcon({ logo_url }: { logo_url: string }) {
 }
 
 export function NotificationNavbar({
-  cartCount,
   wishlistCount,
   pendingOrderCount,
   notificationCount,
 }: {
-  cartCount: number;
   wishlistCount: number;
   pendingOrderCount: number;
   notificationCount: number;
 }) {
-  const { isOpen, toggleMenu } = useHamburgerMenu();
+  const { toggleMenu } = useHamburgerMenu();
 
   const navIcons = [
     {
       id: 1,
-      icon: <CartIcon width={'20px'} height={'20px'} />,
-      url: Routes.CART_LIST,
-      title: 'Cart',
-      notification: cartCount,
+      icon: <OrderIcon/>,
+      url: Routes.PLACE_AN_ORDER,
+      title: 'Place An Order',
     },
     {
       id: 2,
@@ -108,9 +105,11 @@ export function NotificationNavbar({
             >
               {' '}
               <div data-tooltip={navIcon.title}>
+              {navIcon.title !== 'Place An Order' &&
                 <div className="absolute bg-semantic-danger-500 h-[14px] min-w-[16px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium py-2 px-1">
                   {navIcon.notification}
                 </div>
+              }
                 <div className="nav-link">{navIcon.icon}</div>
               </div>
             </Link>
@@ -145,7 +144,7 @@ export default function TopHeader({
     <div className="bg-grey-900">
       <div className="container flex items-center gap-3 py-5 justify-normal md:justify-between">
         <div className="flex items-center gap-4">
-          <TabletNavmenu profileName={userDetails.firstName} profileImage={imageUrl} />
+          <TabletNavmenu profileName={userDetails.firstName} profileImage={imageUrl} cartCount={cartCount} />
           {/* home logo begins here */}
           <LogoIcon logo_url={'/myCigweldWhite.svg'} />
         </div>
@@ -158,7 +157,6 @@ export default function TopHeader({
 
           {/* notification menu starts here */}
           <NotificationNavbar
-            cartCount={cartCount}
             wishlistCount={wishlistCount}
             pendingOrderCount={pendingOrderCount}
             notificationCount={notificationCount}
@@ -166,7 +164,7 @@ export default function TopHeader({
         </div>
 
         {/* order track begins here  */}
-        <OrderTrack />
+        <OrderTrack cartCount={cartCount} />
 
         {/* user profile begins here  */}
         <div className="items-center hidden gap-1 xl:flex">

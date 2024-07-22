@@ -634,8 +634,8 @@ label .required {
   transition: max-height 0.2s ease-out;
 }
 @media (max-width: 1279px) {
-  .navbar .info-block [data-tooltip]:before,
-  .navbar .info-block [data-tooltip]:after {
+  .info-block [data-tooltip]:before,
+  .info-block [data-tooltip]:after {
     @apply hidden;
   }
 }
@@ -652,7 +652,7 @@ input[type='checkbox']:before {
   @apply content-[""] absolute right-1/2 top-[45%] w-1 h-2.5 border-solid border-neutral-white border-t-0 border-r-2 border-b-2 border-l-0 -m-px -mx-1 mb-0  rotate-45 -translate-x-1/2 -translate-y-1/2 z-10;
 }
 
-.nav-list li:last-child div {
+.nav-list li:last-child div.absolute {
   right: -5px;
 }
 
@@ -697,7 +697,7 @@ div[data-state='open'].fixed.inset-0 {
   @apply shadow-[unset];
 }
 /* underline for lsubmenu  of reosurces in bottom header */
-.menus li:nth-child(7):hover ul li a h5 {
+.menus li:nth-child(7):hover ul li h5 {
   text-decoration: underline;
 }
 
