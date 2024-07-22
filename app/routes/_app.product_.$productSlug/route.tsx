@@ -33,9 +33,6 @@ import {
 import ProductInformation from './productInformation';
 import ProductTab from './productTabs';
 import { addToWishlist, removeFromWishlist } from './wishlist.server';
-import { AuthError } from '~/components/ui/authError';
-import { encrypt } from '~/lib/utils/cryptoUtils';
-import { RouteError } from '~/components/ui/route-error';
 import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 
 interface ProductDetailType {
