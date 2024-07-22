@@ -53,12 +53,12 @@ export default function MobileNav({
             </Button>
 
             <Button
-              className="border border-[#313535] p-2 bg-transparent max-w-10 max-h-10 hover:bg-transparent"
+              className="border border-[#313535] py-2 px-3 bg-transparent w-[52px] text-secondary-500 max-h-10 hover:bg-transparent"
               onClick={() => {
                 toggleMenu(!isOpen);
               }}
             >
-              {isOpen ? <CloseMenu /> : <HamburgerIcon />}
+              {isOpen ? "CLOSE" : "MENU"}
             </Button>
           </div>
         </div>

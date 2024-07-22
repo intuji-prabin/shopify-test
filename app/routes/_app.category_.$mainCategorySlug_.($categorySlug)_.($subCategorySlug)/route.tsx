@@ -461,6 +461,7 @@ export interface ProductList {
   defaultPrice: number;
   liked: boolean;
   imageBackgroundColor?: string;
+  currencySymbol: string;
 }
 export interface Variants {
   id: string;

@@ -634,8 +634,8 @@ label .required {
   transition: max-height 0.2s ease-out;
 }
 @media (max-width: 1279px) {
-  .navbar .info-block [data-tooltip]:before,
-  .navbar .info-block [data-tooltip]:after {
+  .info-block [data-tooltip]:before,
+  .info-block [data-tooltip]:after {
     @apply hidden;
   }
 }
@@ -697,7 +697,7 @@ div[data-state='open'].fixed.inset-0 {
   @apply shadow-[unset];
 }
 /* underline for lsubmenu  of reosurces in bottom header */
-.menus li:nth-child(7):hover ul li a h5 {
+.menus li:nth-child(7):hover ul li h5 {
   text-decoration: underline;
 }
 
