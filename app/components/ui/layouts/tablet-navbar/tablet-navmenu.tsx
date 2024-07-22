@@ -9,7 +9,7 @@ import NavMenu from '../elements/mobile-navbar/nav-menu';
 import OrderTrackMobile from '../elements/mobile-navbar/order-track';
 import UserProfile from '../elements/mobile-navbar/user-profle';
 
-export default function TabletNavmenu({ profileName, profileImage }: { profileName: string; profileImage: string }) {
+export default function TabletNavmenu({ profileName, profileImage, cartCount }: { profileName: string; profileImage: string, cartCount:number }) {
   const tabletSectionRef = useRef<HTMLDivElement>(null);
   useOutsideClick(tabletSectionRef, () => toggleMenu(false));
 
@@ -39,7 +39,7 @@ export default function TabletNavmenu({ profileName, profileImage }: { profileNa
           <div className="flex flex-col p-4 bg-primary-500 justify-between h-[calc(100%_-_78px)] overflow-y-auto gap-y-11">
             <div className='flex flex-col gap-4'>
               <NavMenu />
-              <OrderTrackMobile />
+              <OrderTrackMobile cartCount={cartCount} />
             </div>
             <LogoutForm />
           </div>

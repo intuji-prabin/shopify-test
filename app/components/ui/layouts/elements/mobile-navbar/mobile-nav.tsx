@@ -75,7 +75,6 @@ export default function MobileNav({
                 <UserProfile user_name={userDetails?.firstName} image_url={imageUrl ?? '/niel.png'} />
                 {/* notification menu bar starts */}
                 <NotificationNavbar
-                  cartCount={cartCount}
                   wishlistCount={wishlistCount}
                   pendingOrderCount={pendingOrderCount}
                   notificationCount={notificationCount}
@@ -85,7 +84,7 @@ export default function MobileNav({
               <NavMenu />
 
               {/*  order track starts here */}
-              <OrderTrackMobile />
+              <OrderTrackMobile cartCount={cartCount} />
             </div>
             {/* user logout starts here */}
             <LogoutForm />
