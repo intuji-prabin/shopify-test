@@ -19,7 +19,6 @@ import Profile from '~/components/ui/profile';
 import { Separator } from '~/components/ui/separator';
 import SpendCard from '~/components/ui/spend-card';
 import { useTable } from '~/hooks/useTable';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 import { EVENTS } from '~/lib/constants/events.contstent';
 import { Routes } from '~/lib/constants/routes.constent';
 import { Can } from '~/lib/helpers/Can';
@@ -32,7 +31,7 @@ import {
 } from '~/routes/_app._index/data-sets.server';
 import { getSlides } from '~/routes/_app._index/index.server';
 import { getAllInvoices } from '../_app.invoices/invoices.server';
-import { getNewNotificationCount } from '../_app/app.server';
+import { getNewNotificationCount, getSessionCart } from '../_app/app.server';
 import { Handlers, Payload } from '../_app/route';
 import ProductTable from './productTable';
 import { useColumn } from './use-column';
@@ -63,12 +62,12 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     customerId,
     request,
   });
+  const cartCountSession = await getSessionCart(request, customerId, context);
+  const cartCount = cartCountSession?.lineItems;
 
   const impersonateEnableCheck = await isImpersonating(request);
   const sessionAccessTocken = (await getAccessToken(context)) as string;
   const encryptedSession = encrypt(sessionAccessTocken);
-  const sessionCartInfo = await context.session.get(CART_SESSION_KEY);
-  const cartCount = sessionCartInfo?.lineItems;
 
   return defer({
     slides,
