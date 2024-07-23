@@ -31,6 +31,7 @@ import { InvoiceError } from '~/routes/_app.invoices/invoice-error';
 import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
 import { AuthError } from '~/components/ui/authError';
 import { encrypt } from '~/lib/utils/cryptoUtils';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Invoices List' }];
@@ -127,8 +128,8 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <InvoiceError />;
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return <InvoiceError errorMessage={error.message} />;
   } else {

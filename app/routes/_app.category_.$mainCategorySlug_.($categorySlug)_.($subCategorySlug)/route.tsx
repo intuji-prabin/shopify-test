@@ -45,6 +45,7 @@ import { FilterForm } from './filterForm';
 import { getProductFilterList } from './productFilter.server';
 import { getProducts } from './productList.server';
 import { AuthError } from '~/components/ui/authError';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -461,6 +462,7 @@ export interface ProductList {
   defaultPrice: number;
   liked: boolean;
   imageBackgroundColor?: string;
+  currencySymbol: string;
 }
 export interface Variants {
   id: string;
@@ -564,8 +566,8 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return (
       <div className="min-h-[calc(100vh_-_140px)] flex justify-center items-center">

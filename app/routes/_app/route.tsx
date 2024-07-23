@@ -30,6 +30,7 @@ import {
   isAuthenticate,
   logout,
 } from '~/lib/utils/auth-session.server';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 import {
   getMessageSession,
   messageCommitSession,
@@ -71,6 +72,10 @@ export async function loader({request, context}: ActionFunctionArgs) {
   const accessToken = await isAuthenticate(context);
 
   let {userDetails} = await getUserDetails(request);
+  
+  if(!userDetails) {
+    throw new Error('User not found');
+  }
 
   /*check if the user is deactivated while being in offline*/
   const customerData = await getCustomerByEmail({
@@ -434,11 +439,8 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if (
-      error.message.includes('Un-Authorize access') ||
-      error.message.includes('Impersonation already deactivate')
-    ) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return (
       <div className="container pt-6">

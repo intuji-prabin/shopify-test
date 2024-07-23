@@ -9,12 +9,14 @@ import {
   LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
 import { ReactNode } from 'react';
+import { AuthError } from '~/components/ui/authError';
 import { BackButton } from '~/components/ui/back-button';
 import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
 import { ProductCard } from '~/components/ui/product-card';
+import { RouteError } from '~/components/ui/route-error';
 import { useConditionalRender } from '~/hooks/useAuthorization';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
 import { getAccessToken, isImpersonating } from '~/lib/utils/auth-session.server';
+import { encrypt } from '~/lib/utils/cryptoUtils';
 import {
   getMessageSession,
   messageCommitSession,
@@ -22,7 +24,6 @@ import {
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
-import { GET_CART_LIST } from '../_app.cart-list/cart.server';
 import { ProductList } from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/route';
 import {
   ProductType,
@@ -32,9 +33,7 @@ import {
 import ProductInformation from './productInformation';
 import ProductTab from './productTabs';
 import { addToWishlist, removeFromWishlist } from './wishlist.server';
-import { AuthError } from '~/components/ui/authError';
-import { encrypt } from '~/lib/utils/cryptoUtils';
-import { RouteError } from '~/components/ui/route-error';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 
 interface ProductDetailType {
   productPage: string;
@@ -344,8 +343,8 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return (
       <div className="container">

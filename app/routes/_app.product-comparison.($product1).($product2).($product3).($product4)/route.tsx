@@ -1,27 +1,27 @@
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from '@remix-run/server-runtime';
-import ComparisonBreadcrumb from './comparison-breadcrumb';
-import ComparisonWrapper from './comparison-main-wrapper';
 import {
-  Link,
   isRouteErrorResponse,
   useLoaderData,
   useNavigation,
-  useRouteError,
+  useRouteError
 } from '@remix-run/react';
-import { getSingleProduct } from './getProduct.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { Button } from '~/components/ui/button';
-import { Routes } from '~/lib/constants/routes.constent';
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from '@remix-run/server-runtime';
+import { AuthError } from '~/components/ui/authError';
 import FullPageLoading from '~/components/ui/fullPageLoading';
+import { PredictiveSearch } from '~/components/ui/predictive-search';
+import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
+import { getUserDetails } from '~/lib/utils/user-session.server';
 import { addProductToCart } from '../_app.product_.$productSlug/product.server';
-import { AuthError } from '~/components/ui/authError';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
+import ComparisonBreadcrumb from './comparison-breadcrumb';
+import ComparisonWrapper from './comparison-main-wrapper';
+import { getSingleProduct } from './getProduct.server';
+import ComparisonEmpty from './comparison-empty';
 
 export const loader = async ({
   params,
@@ -132,14 +132,26 @@ export default function route() {
             <ComparisonWrapper productResponse={productResponse} />
           </>
         ) : (
-          <div>
-            <h4 className="text-center">
-              Please add initial product to compare from product detail page
-            </h4>
-            <Link to={Routes.CATEGORIES}>
-              <Button className="mx-auto mt-4">Go to categories</Button>
-            </Link>
-          </div>
+          <>
+            <ComparisonBreadcrumb title={'compare'} />
+            <div className='mt-6 overflow-x-auto bg-white'>
+              <div className='flex gap-6 p-6'>
+                <div className='min-w-[290px] w-full max-w-[290px]'>
+                  <ComparisonEmpty />
+                  <div className='h-[50vh]'></div>
+                </div>
+                <div className='min-w-[290px] w-full max-w-[290px]'>
+                  <ComparisonEmpty />
+                </div>
+                <div className='min-w-[290px] w-full max-w-[290px]'>
+                  <ComparisonEmpty />
+                </div>
+                <div className='min-w-[290px] w-full max-w-[290px]'>
+                  <ComparisonEmpty />
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </section>
     </>
@@ -158,8 +170,8 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return (
       <div className="container pt-6">
