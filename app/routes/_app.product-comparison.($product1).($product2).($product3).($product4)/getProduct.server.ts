@@ -1,5 +1,5 @@
 import {CONSTANT} from '~/lib/constants/product.session';
-import {getPrices} from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/productList.server';
+import {getPrices} from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/productList-old.server';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {AppLoadContext} from '@remix-run/server-runtime';
 

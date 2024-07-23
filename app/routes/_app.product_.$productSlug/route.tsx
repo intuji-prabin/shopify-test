@@ -23,7 +23,7 @@ import {
 } from '~/lib/utils/toast-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { GET_CART_LIST } from '../_app.cart-list/cart.server';
-import { ProductList } from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/route';
+import { ProductList } from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/route-old';
 import {
   ProductType,
   addProductToCart,

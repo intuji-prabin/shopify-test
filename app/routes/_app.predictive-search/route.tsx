@@ -21,7 +21,7 @@ import {
 } from '~/lib/utils/toast-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { getCartList } from '../_app.cart-list/cart.server';
-import { getPrices } from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/productList.server';
+import { getPrices } from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/productList-old.server';
 import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 
 type PredicticeSearchResultItemImage =
