@@ -5,36 +5,49 @@ import {
   useRouteError,
   useSubmit,
 } from '@remix-run/react';
-import { ActionFunctionArgs, json } from '@remix-run/server-runtime';
-import { useEffect, useState } from 'react';
-import { useEventSource } from 'remix-utils/sse/react';
+import {ActionFunctionArgs, json} from '@remix-run/server-runtime';
+import {useEffect, useState} from 'react';
+import {useEventSource} from 'remix-utils/sse/react';
 import BottomHeader from '~/components/ui/layouts/bottom-header';
 import DesktopFooter from '~/components/ui/layouts/desktopFooter';
-import { HamburgerMenuProvider } from '~/components/ui/layouts/elements/HamburgerMenuContext';
+import {HamburgerMenuProvider} from '~/components/ui/layouts/elements/HamburgerMenuContext';
 import MobileNav from '~/components/ui/layouts/elements/mobile-navbar/mobile-nav';
 import TopHeader from '~/components/ui/layouts/top-header';
-import { useMediaQuery } from '~/hooks/useMediaQuery';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
-import { ImpersonationMessage, UserRoleChangedMessage, UserStatusChangedMessage } from '~/lib/constants/event.toast.message';
-import { EVENTS } from '~/lib/constants/events.contstent';
-import { Routes } from '~/lib/constants/routes.constent';
-import { AbilityContext, DEFAULT_ABILITIES } from '~/lib/helpers/Can';
-import { defineAbilitiesForUser } from '~/lib/helpers/roles';
-import { USER_SESSION_ID, isAuthenticate } from '~/lib/utils/auth-session.server';
-import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
+import {useMediaQuery} from '~/hooks/useMediaQuery';
+import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
+import {
+  ImpersonationMessage,
+  UserDeactivatedLogoutMessage,
+  UserRoleChangedMessage,
+  UserStatusChangedMessage,
+} from '~/lib/constants/event.toast.message';
+import {EVENTS} from '~/lib/constants/events.contstent';
+import {Routes} from '~/lib/constants/routes.constent';
+import {AbilityContext, DEFAULT_ABILITIES} from '~/lib/helpers/Can';
+import {defineAbilitiesForUser} from '~/lib/helpers/roles';
+import {
+  USER_SESSION_ID,
+  isAuthenticate,
+  logout,
+} from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
 } from '~/lib/utils/toast-session.server';
-import { USER_DETAILS_KEY, getUserDetails, getUserDetailsSession } from '~/lib/utils/user-session.server';
 import {
-  getCagetoryList,
-  getSessionData
-} from '~/routes/_app/app.server';
-import { CustomerData, getCustomerByEmail } from '~/routes/_public.login/login.server';
-import { AuthError } from '../../components/ui/authError';
-import { getFooter } from './footer.server';
+  USER_DETAILS_KEY,
+  getUserDetails,
+  getUserDetailsSession,
+} from '~/lib/utils/user-session.server';
+import {getCagetoryList, getSessionData} from '~/routes/_app/app.server';
+import {
+  CustomerData,
+  getCustomerByEmail,
+  isUserActive,
+} from '~/routes/_public.login/login.server';
+import {AuthError} from '../../components/ui/authError';
+import {getFooter} from './footer.server';
 
 export interface Payload {
   type: 'cart' | 'wishlist' | 'productGroup ' | 'notification';
@@ -54,15 +67,32 @@ interface Data {
   // Add other properties if present in your data
 }
 
-export async function loader({ request, context }: ActionFunctionArgs) {
-  await isAuthenticate(context);
-  let { userDetails } = await getUserDetails(request);
+export async function loader({request, context}: ActionFunctionArgs) {
+  const accessToken = await isAuthenticate(context);
+
+  let {userDetails} = await getUserDetails(request);
   if(!userDetails) {
     throw new Error('User not found');
   }
+  /*check if the user is deactivated while being in offline*/
+  const customerData = await getCustomerByEmail({
+    context,
+    email: userDetails.email,
+    accessToken,
+  });
+
+  const isActive = isUserActive(customerData.meta.status);
+
+  if (!isActive) {
+    return logout({
+      context,
+      request,
+      logoutMessage: UserDeactivatedLogoutMessage,
+    });
+  }
   // to get the total wishlist, pending order, cart and notification count in the header
   const sessionData: any = await getSessionData(request, userDetails, context);
-  const { session } = context;
+  const {session} = context;
   const impersonateCheck = userDetails?.impersonateEnable;
   if (!impersonateCheck) {
     const userDetailsSession = await getUserDetailsSession(request);
@@ -174,27 +204,32 @@ export default function PublicPageLayout() {
   useEffect(() => {
     if (userData) {
       const dataObject = JSON.parse(userData) as Data;
-      if (dataObject.customerId === userDetails.id && (dataObject.message === UserRoleChangedMessage || dataObject.message === UserStatusChangedMessage)) {
+      if (
+        dataObject.customerId === userDetails.id &&
+        (dataObject.message === UserRoleChangedMessage ||
+          dataObject.message === UserStatusChangedMessage)
+      ) {
         submit(
-          { message: dataObject.message },
-          { method: 'POST', action: '/logout' },
+          {message: dataObject.message},
+          {method: 'POST', action: '/logout'},
         );
-      }
-      else if (dataObject.customerId === userDetails.id && dataObject.message === ImpersonationMessage && userDetails.impersonateEnable === true && userDetails.impersonatingUser) {
+      } else if (
+        dataObject.customerId === userDetails.id &&
+        dataObject.message === ImpersonationMessage &&
+        userDetails.impersonateEnable === true &&
+        userDetails.impersonatingUser
+      ) {
         submit(
-          { message: dataObject.message },
-          { method: 'POST', action: '/logout' },
+          {message: dataObject.message},
+          {method: 'POST', action: '/logout'},
         );
       }
     }
   }, [userData]);
 
-  const hasPermissionBeenUpdated = useEventSource(
-    Routes.EVENTS_SUBSCRIBE,
-    {
-      event: EVENTS.PERMISSIONS_UPDATED.NAME,
-    },
-  );
+  const hasPermissionBeenUpdated = useEventSource(Routes.EVENTS_SUBSCRIBE, {
+    event: EVENTS.PERMISSIONS_UPDATED.NAME,
+  });
 
   useEffect(() => {
     // Extract the user role from userDetails
@@ -204,7 +239,7 @@ export default function PublicPageLayout() {
       // Parse the string into an object
       const parsedData = JSON.parse(hasPermissionBeenUpdated) as {
         permissionData: {
-          payload: { user_role: string; permission: string[] };
+          payload: {user_role: string; permission: string[]};
         };
       };
 
@@ -214,7 +249,7 @@ export default function PublicPageLayout() {
 
       // If permissions are empty, logout the user
       if (eventUserRolePermissions.permission.length === 0) {
-        submit({}, { method: 'POST', action: '/logout' });
+        submit({}, {method: 'POST', action: '/logout'});
       }
 
       // Check if the event role matches the user's role
@@ -230,20 +265,16 @@ export default function PublicPageLayout() {
 
         // Update user session with returnUrl
         submit(
-          { returnUrl: currentUrl },
-          { method: 'GET', action: '/update-user-session' },
+          {returnUrl: currentUrl},
+          {method: 'GET', action: '/update-user-session'},
         );
       }
     }
   }, [hasPermissionBeenUpdated]);
 
-
-  const hasNotificationBeenUpdated = useEventSource(
-    Routes.EVENTS_SUBSCRIBE,
-    {
-      event: EVENTS.NOTIFICATIONS_UPDATED.NAME,
-    },
-  );
+  const hasNotificationBeenUpdated = useEventSource(Routes.EVENTS_SUBSCRIBE, {
+    event: EVENTS.NOTIFICATIONS_UPDATED.NAME,
+  });
 
   useEffect(() => {
     if (typeof hasNotificationBeenUpdated === 'string') {
@@ -253,7 +284,7 @@ export default function PublicPageLayout() {
         };
       };
 
-      const { type, totalNumber, customerId, companyId, sessionId, action } =
+      const {type, totalNumber, customerId, companyId, sessionId, action} =
         parsedData.notificationData.payload;
       const currentUrl = window.location.pathname; // Capture the current URL
       const handlers: Handlers = {
@@ -261,8 +292,8 @@ export default function PublicPageLayout() {
           if (userDetails.id === customerId && userSessionId !== sessionId) {
             cartCount = totalNumber | 0;
             submit(
-              { returnUrl: currentUrl, type, totalNumber },
-              { method: 'GET', action: '/update-notifications-session' },
+              {returnUrl: currentUrl, type, totalNumber},
+              {method: 'GET', action: '/update-notifications-session'},
             );
           }
         },
@@ -270,8 +301,8 @@ export default function PublicPageLayout() {
           if (userDetails?.meta.company_id.companyId === companyId) {
             wishlistCount = totalNumber;
             submit(
-              { returnUrl: currentUrl, type, totalNumber },
-              { method: 'GET', action: '/update-notifications-session' },
+              {returnUrl: currentUrl, type, totalNumber},
+              {method: 'GET', action: '/update-notifications-session'},
             );
           }
         },
@@ -290,9 +321,10 @@ export default function PublicPageLayout() {
             } else {
               return;
             }
-          }
-          else {
-            const customer = totalNumber.find((c: { customerId: string; }) => c.customerId === loginCustomerId)
+          } else {
+            const customer = totalNumber.find(
+              (c: {customerId: string}) => c.customerId === loginCustomerId,
+            );
             if (customer) {
               setNotificationCounts(customer.notification);
             }
@@ -306,7 +338,6 @@ export default function PublicPageLayout() {
       }
     }
   }, [hasNotificationBeenUpdated]);
-
 
   return (
     <AbilityContext.Provider value={ability}>
@@ -348,13 +379,22 @@ const Layout = ({
   const impersonateEnableCheck = userDetails?.impersonateEnable;
   return (
     <HamburgerMenuProvider>
-      {impersonateEnableCheck &&
-        <div className='bg-secondary-500'>
-          <div className='container'>
-            <p className='py-2 font-medium text-center'>IMPERSONATING AS <span className='font-semibold capitalize'>{userDetails?.displayName}</span> BY <span className='font-semibold capitalize'>{userDetails?.impersonatingUser?.name}</span></p>
+      {impersonateEnableCheck && (
+        <div className="bg-secondary-500">
+          <div className="container">
+            <p className="py-2 font-medium text-center">
+              IMPERSONATING AS{' '}
+              <span className="font-semibold capitalize">
+                {userDetails?.displayName}
+              </span>{' '}
+              BY{' '}
+              <span className="font-semibold capitalize">
+                {userDetails?.impersonatingUser?.name}
+              </span>
+            </p>
           </div>
         </div>
-      }
+      )}
       {matches ? (
         <header>
           <TopHeader
