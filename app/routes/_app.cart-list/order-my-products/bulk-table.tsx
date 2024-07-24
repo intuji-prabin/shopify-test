@@ -38,10 +38,18 @@ export function BulkTable({
   quantity,
   price,
   product,
+  currencySymbol,
+  currency
 }: {
   quantity: string;
   price: string;
-  product: any;
+  product: {
+    minQty: number;
+    maxQty: number;
+    price: number;
+  }[];
+  currencySymbol: string;
+  currency: string;
 }) {
   return (
     <div className="flex w-full space-x-6">
@@ -57,13 +65,13 @@ export function BulkTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {product.map((product: any, index: number) => (
+          {product.map((product: {minQty: number; maxQty: number; price: number}, index: number) => (
             <TableRow key={'volumentric' + index} className="hover:bg-white">
               <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
-                {product.minQty} - {product.maxQty}
+                <span className='whitespace-nowrap'>{product.minQty} - {product.maxQty? product.maxQty : 'above'}</span>
               </TableCell>
               <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
-                {product.price}
+                {currency}&nbsp;{currencySymbol}{product.price}
               </TableCell>
             </TableRow>
           ))}

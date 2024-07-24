@@ -356,7 +356,6 @@ export default function CartList() {
           <div className="flex flex-col flex-wrap items-start gap-6 my-6 xl:flex-row cart__list">
             <MyProducts
               products={finalProductList}
-              currency={cartList?.currency}
               setUpdateCart={setUpdateCart}
               updateCart={updateCart}
               fetcher={fetcher}
@@ -379,6 +378,7 @@ export default function CartList() {
               frieghtCharge={frieghtChargeInit}
               isLoading={isLoading}
               orderPlaceStatus={orderPlaceStatus}
+              currencySymbol={cartList?.currencySymbol}
             />
           </div>
         </div>

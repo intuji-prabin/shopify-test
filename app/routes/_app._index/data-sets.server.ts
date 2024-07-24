@@ -34,6 +34,7 @@ interface Payload {
   ytd: PeriodData;
   totalSpend: {[key: string]: Total};
   totalInvoice: {[key: string]: Total};
+  currencySymbol: string;
 }
 interface ChartDataResponse {
   status: boolean;
@@ -88,7 +89,8 @@ export async function getChartData(
     }
     const finalAreaResponse = formatAreaResponse(response?.payload);
     const finalBarResponse = formatBarResponse(response?.payload);
-    return {finalAreaResponse, finalBarResponse};
+    const currencySymbol = response?.payload?.currencySymbol;
+    return {finalAreaResponse, finalBarResponse, currencySymbol};
   } catch (error) {
     console.log('error', error);
     if (error instanceof Error) {
@@ -299,7 +301,8 @@ const formatExpenditureResponse = async (response: any): Promise<any> => {
     spending_by_product: response?.spending_by_product,
     expenditure_brands: formatChartData(response?.expenditure_brands),
     expenditure_category: formatChartData(response?.expenditure_category),
-    currency: response?.currency_code || '$',
+    currency: response?.currency_code,
+    currencySymbol: response?.currencySymbol,
   };
 };
 

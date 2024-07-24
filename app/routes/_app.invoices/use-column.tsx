@@ -1,23 +1,26 @@
-import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { ColumnDef } from '@tanstack/react-table';
-import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
-import { Routes } from '~/lib/constants/routes.constent';
-import { Button } from '~/components/ui/button';
-import { EyeOn } from '~/components/icons/eye';
-import { DownloadIcon } from '~/components/icons/download-icon';
-import { Invoices } from '~/routes/_app.invoices/invoices.server';
-import { formatDateToLocaleDateString } from '~/lib/helpers/dateTime.helper';
-import { useDownload } from '~/hooks/useDownload';
-import { PDF } from '~/lib/constants/pdf.constent';
-import { OrderStatusChip } from '~/components/ui/order-status-chip';
+import {useMemo} from 'react';
+import {Link} from 'react-router-dom';
+import {ColumnDef} from '@tanstack/react-table';
+import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
+import {Routes} from '~/lib/constants/routes.constent';
+import {Button} from '~/components/ui/button';
+import {EyeOn} from '~/components/icons/eye';
+import {DownloadIcon} from '~/components/icons/download-icon';
+import {Invoices} from '~/routes/_app.invoices/invoices.server';
+import {formatDateToLocaleDateString} from '~/lib/helpers/dateTime.helper';
+import {useDownload} from '~/hooks/useDownload';
+import {PDF} from '~/lib/constants/pdf.constent';
+import {OrderStatusChip} from '~/components/ui/order-status-chip';
 
-export function useColumn(sessionAccessTocken: string, impersonateEnableCheck: string) {
+export function useColumn(
+  sessionAccessTocken: string,
+  impersonateEnableCheck: string,
+) {
   const columns = useMemo<ColumnDef<Invoices>[]>(
     () => [
       {
         id: 'select',
-        header: ({ table }) => (
+        header: ({table}) => (
           <IndeterminateCheckbox
             {...{
               checked: table.getIsAllRowsSelected(),
@@ -26,7 +29,7 @@ export function useColumn(sessionAccessTocken: string, impersonateEnableCheck: s
             }}
           />
         ),
-        cell: ({ row }) => (
+        cell: ({row}) => (
           <IndeterminateCheckbox
             {...{
               checked: row.getIsSelected(),
@@ -54,7 +57,7 @@ export function useColumn(sessionAccessTocken: string, impersonateEnableCheck: s
       //   cell: (info) => info.getValue() ?? 'N/A',
       // },
       {
-        accessorKey: 'wareHouseNo',
+        accessorKey: 'wareHouseName',
         header: 'Warehouse',
         cell: (info) => info.getValue() ?? 'N/A',
       },
@@ -88,7 +91,11 @@ export function useColumn(sessionAccessTocken: string, impersonateEnableCheck: s
         accessorKey: 'invoiceAmount',
         header: 'Invoice Amount',
         enableSorting: false,
-        cell: (info) => info.getValue() ?? 'N/A',
+        cell: (info) =>
+          (info.row.original.currency ?? '') +
+          ' ' +
+          (info.row.original.currencySymbol ?? '') +
+          (info.getValue() ?? 'N/A'),
       },
       {
         accessorKey: 'invoiceStatus',
@@ -114,7 +121,7 @@ export function useColumn(sessionAccessTocken: string, impersonateEnableCheck: s
           const fileURL = info.row.original.files;
           const invoiceDetailsRoute = `${Routes.INVOICES}/${invoiceId}`;
 
-          const { handleDownload } = useDownload();
+          const {handleDownload} = useDownload();
 
           return (
             <div className="flex justify-start gap-x-2">
@@ -147,5 +154,5 @@ export function useColumn(sessionAccessTocken: string, impersonateEnableCheck: s
     [],
   );
 
-  return { columns };
+  return {columns};
 }

@@ -31,6 +31,8 @@ export type BulkOrderColumn = {
   uomName: string;
   handle: string;
   placeId: number;
+  currencySymbol: string;
+  warehouse: string;
   unitOfMeasure: [
     {
       unit: string;
@@ -49,10 +51,8 @@ export type BulkOrderColumn = {
 };
 
 export function useMyProductColumn({
-  currency,
   setUpdateCart,
 }: {
-  currency?: string;
   setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const columns = useMemo<ColumnDef<BulkOrderColumn>[]>(
@@ -87,6 +87,7 @@ export function useMyProductColumn({
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
+          const warehouse = info.row.original.warehouse;
           return (
             <ItemsColumn
               title={product.title}
@@ -95,6 +96,7 @@ export function useMyProductColumn({
               moq={product.moq || 1}
               handle={product?.handle}
               inventory={product.inventory}
+              warehouse={warehouse}
             />
           );
         },
@@ -147,6 +149,7 @@ export function useMyProductColumn({
           const quantity = info.row.original.quantity;
           const product = info.row.original;
           const UOM = info.row.original.uom;
+          const currencySymbol = info.row.original.currencySymbol;
           return (
             <ProductTotal
               totalPrice={productTotal}
@@ -155,10 +158,11 @@ export function useMyProductColumn({
               unitOfMeasure={product.unitOfMeasure}
               defaultUOM={product.defaultUOM}
               priceRange={priceRange}
+              currencySymbol={currencySymbol}
               isBulkDetailVisible={info?.row?.getIsExpanded()}
               setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
               isRowChecked={info?.row?.getIsSelected()}
-              currency={currency || '$'}
+              currency={info.row.original.currency || '$'}
               discount={product?.discountMessage}
             />
           );
@@ -176,7 +180,7 @@ export function useMyProductColumn({
  */
 type ItemsColumnType = Pick<
   BulkOrderColumn,
-  'title' | 'sku' | 'featuredImage' | 'moq'
+  'title' | 'sku' | 'featuredImage' | 'moq' | 'warehouse'
 > & { handle?: string; inventory: StockStatus };
 
 export function ItemsColumn({
@@ -186,6 +190,7 @@ export function ItemsColumn({
   moq,
   handle,
   inventory,
+  warehouse
 }: ItemsColumnType) {
   return (
     <div className="flex flex-wrap items-center space-x-2">
@@ -230,9 +235,12 @@ export function ItemsColumn({
           </p>
           <StockStatusChip status={inventory} />
         </div>
-        <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize ">
-          minimum order({moq})
-        </p>
+        <div>
+          {warehouse && inventory === 'In Stock' && <p className='text-[13px] font-medium text-primary-500'>WAREHOUSE: {warehouse}</p>}
+          <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize ">
+            minimum order({moq})
+          </p>
+        </div>
       </figcaption>
     </div>
   );
@@ -449,6 +457,7 @@ export function ProductTotal({
   UOM,
   currency,
   discount,
+  currencySymbol
 }: {
   totalPrice: string;
   isBulkDetailVisible: boolean;
@@ -467,6 +476,7 @@ export function ProductTotal({
   UOM: any;
   currency: string;
   discount?: string;
+  currencySymbol: string;
 }) {
   const prices = getProductPriceByQty(
     quantity,
@@ -499,7 +509,7 @@ export function ProductTotal({
         </div>
         <p className="text-grey-900 text-lg leading-5.5 italic">
           {currency}
-          &nbsp;{prices?.toFixed(2) || 'N/A'}
+          &nbsp;{currencySymbol}{prices?.toFixed(2) || 'N/A'}
         </p>
         <p className="text-sm italic font-bold leading-normal text-grey-500">
           (Excl. GST)
