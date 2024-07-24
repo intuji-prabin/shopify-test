@@ -1,9 +1,19 @@
-import { Can } from '~/lib/helpers/Can';
-import { Expenditure } from "../icons/expenditure";
+import {Can} from '~/lib/helpers/Can';
+import {Expenditure} from '../icons/expenditure';
 import ExpenditureChart from './expenditureChart';
-import { Separator } from './separator';
+import {Separator} from './separator';
 
-const ExpenditureCard = ({ brand, category, currency }: { brand: any, category: any, currency: string }) => {
+const ExpenditureCard = ({
+  brand,
+  category,
+  currency,
+  currencySymbol,
+}: {
+  brand: any;
+  category: any;
+  currency: string;
+  currencySymbol: string;
+}) => {
   return (
     <Can I="view" a="view_expenditure">
       <section className="container">
@@ -34,34 +44,39 @@ const ExpenditureCard = ({ brand, category, currency }: { brand: any, category: 
                 <div className="absolute space-y-2 transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
                   <p className="text-center">Total Spending</p>
                   <p className="text-2xl italic font-bold text-center">
-                    {currency} <span className="text-3xl">{category?.totalSpending && category?.totalSpending > 999 ? (category?.totalSpending / 1000).toFixed(2) + 'k' : category?.totalSpending}</span>
+                    {currency}{' '}
+                    <span className="text-3xl">
+                      {currencySymbol && currencySymbol}
+                      {category?.totalSpending && category?.totalSpending > 999
+                        ? (category?.totalSpending / 1000).toFixed(2) + 'k'
+                        : category?.totalSpending}
+                    </span>
                   </p>
                 </div>
               </div>
               <div>
                 <ul>
-                  {category.labels.map(
-                    (label: string, index: number) => (
-                      <li
-                        className="flex items-center justify-between pb-2 mb-2 border-b border-solid border-gray-50"
-                        key={'label' + index}
-                      >
-                        <p>
-                          <span
-                            className="inline-block w-3 h-3 mr-2 rounded-full"
-                            style={{
-                              backgroundColor:
-                                category?.datasets[0]?.backgroundColor[
-                                index
-                                ],
-                            }}
-                          ></span>
-                          {label}
-                        </p>
-                        <h5>{currency} {category?.datasets[0]?.price[index]}</h5>
-                      </li>
-                    ),
-                  )}
+                  {category.labels.map((label: string, index: number) => (
+                    <li
+                      className="flex items-center justify-between pb-2 mb-2 border-b border-solid border-gray-50"
+                      key={'label' + index}
+                    >
+                      <p>
+                        <span
+                          className="inline-block w-3 h-3 mr-2 rounded-full"
+                          style={{
+                            backgroundColor:
+                              category?.datasets[0]?.backgroundColor[index],
+                          }}
+                        ></span>
+                        {label}
+                      </p>
+                      <h5>
+                        {currency} {currencySymbol && currencySymbol}
+                        {category?.datasets[0]?.price[index]}
+                      </h5>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -79,34 +94,39 @@ const ExpenditureCard = ({ brand, category, currency }: { brand: any, category: 
                 <div className="absolute space-y-2 transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
                   <p className="text-center">Total Spending</p>
                   <p className="text-2xl italic font-bold text-center">
-                    {currency} <span className="text-3xl">{brand?.totalSpending && brand?.totalSpending > 999 ? (brand?.totalSpending / 1000).toFixed(2) + 'k' : brand?.totalSpending}</span>
+                    {currency}{' '}
+                    <span className="text-3xl">
+                      {currencySymbol && currencySymbol}
+                      {brand?.totalSpending && brand?.totalSpending > 999
+                        ? (brand?.totalSpending / 1000).toFixed(2) + 'k'
+                        : brand?.totalSpending}
+                    </span>
                   </p>
                 </div>
               </div>
               <div>
                 <ul>
-                  {brand.labels.map(
-                    (label: string, index: number) => (
-                      <li
-                        className="flex items-center justify-between pb-2 mb-2 border-b border-solid border-gray-50"
-                        key={'label' + index}
-                      >
-                        <p>
-                          <span
-                            className="inline-block w-3 h-3 mr-2 rounded-full"
-                            style={{
-                              backgroundColor:
-                                brand?.datasets[0]?.backgroundColor[
-                                index
-                                ],
-                            }}
-                          ></span>
-                          {label}
-                        </p>
-                        <h5>{currency} {brand?.datasets[0]?.price[index]}</h5>
-                      </li>
-                    ),
-                  )}
+                  {brand.labels.map((label: string, index: number) => (
+                    <li
+                      className="flex items-center justify-between pb-2 mb-2 border-b border-solid border-gray-50"
+                      key={'label' + index}
+                    >
+                      <p>
+                        <span
+                          className="inline-block w-3 h-3 mr-2 rounded-full"
+                          style={{
+                            backgroundColor:
+                              brand?.datasets[0]?.backgroundColor[index],
+                          }}
+                        ></span>
+                        {label}
+                      </p>
+                      <h5>
+                        {currency} {currencySymbol && currencySymbol}
+                        {brand?.datasets[0]?.price[index]}
+                      </h5>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>

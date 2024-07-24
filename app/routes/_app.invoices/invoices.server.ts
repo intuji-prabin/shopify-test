@@ -22,6 +22,8 @@ export type Invoices = {
   invoiceAmount: string;
   invoiceStatus: InvoiceStatus;
   poNumber: string;
+  currency: string;
+  currencySymbol: string;
 };
 
 type ResponseData = {

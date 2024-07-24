@@ -2,13 +2,17 @@ import {
   isRouteErrorResponse,
   useLoaderData,
   useNavigation,
-  useRouteError
+  useRouteError,
 } from '@remix-run/react';
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from '@remix-run/server-runtime';
-import { AuthError } from '~/components/ui/authError';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  json,
+} from '@remix-run/server-runtime';
+import {AuthError} from '~/components/ui/authError';
 import FullPageLoading from '~/components/ui/fullPageLoading';
-import { PredictiveSearch } from '~/components/ui/predictive-search';
-import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
+import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
+import {AuthErrorHandling} from '~/lib/utils/authErrorHandling';
 import {
   getMessageSession,
   messageCommitSession,
@@ -19,9 +23,9 @@ import { getUserDetails } from '~/lib/utils/user-session.server';
 import { addProductToCart } from '../_app.product_.$productSlug/product.server';
 import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 import ComparisonBreadcrumb from './comparison-breadcrumb';
-import ComparisonWrapper from './comparison-main-wrapper';
-import { getSingleProduct } from './getProduct.server';
 import ComparisonEmpty from './comparison-empty';
+import ComparisonWrapper from './comparison-main-wrapper';
+import {getSingleProduct} from './getProduct.server';
 
 export const loader = async ({
   params,
@@ -30,7 +34,7 @@ export const loader = async ({
 }: LoaderFunctionArgs) => {
   await isAuthenticate(context);
   const productResponse = {} as any;
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
   if (params?.product1) {
     productResponse.product1 = await getSingleProduct(
       request,
@@ -63,10 +67,10 @@ export const loader = async ({
       userDetails?.id,
     );
   }
-  return { productResponse };
+  return {productResponse};
 };
 
-export const action = async ({ request, context }: ActionFunctionArgs) => {
+export const action = async ({request, context}: ActionFunctionArgs) => {
   const messageSession = await getMessageSession(request);
   const fromData = await request.formData();
   try {
@@ -117,10 +121,10 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
       },
     );
   }
-}
+};
 
 export default function route() {
-  const { productResponse } = useLoaderData<typeof loader>();
+  const {productResponse} = useLoaderData<typeof loader>();
   const navigation = useNavigation();
   return (
     <>
@@ -128,25 +132,28 @@ export default function route() {
       <section className="container py-12">
         {Object.keys(productResponse).length > 0 ? (
           <>
-            <ComparisonBreadcrumb title={'compare'} link={`${productResponse.product1.product.handle}`} />
+            <ComparisonBreadcrumb
+              title={'compare'}
+              link={`${productResponse.product1.product.handle}`}
+            />
             <ComparisonWrapper productResponse={productResponse} />
           </>
         ) : (
           <>
             <ComparisonBreadcrumb title={'compare'} />
-            <div className='mt-6 overflow-x-auto bg-white'>
-              <div className='flex gap-6 p-6'>
-                <div className='min-w-[290px] w-full max-w-[290px]'>
+            <div className="mt-6 overflow-x-auto bg-white">
+              <div className="flex gap-6 p-6">
+                <div className="min-w-[290px] w-full max-w-[290px]">
                   <ComparisonEmpty />
-                  <div className='h-[50vh]'></div>
+                  <div className="h-[50vh]"></div>
                 </div>
-                <div className='min-w-[290px] w-full max-w-[290px]'>
-                  <ComparisonEmpty />
-                </div>
-                <div className='min-w-[290px] w-full max-w-[290px]'>
+                <div className="min-w-[290px] w-full max-w-[290px]">
                   <ComparisonEmpty />
                 </div>
-                <div className='min-w-[290px] w-full max-w-[290px]'>
+                <div className="min-w-[290px] w-full max-w-[290px]">
+                  <ComparisonEmpty />
+                </div>
+                <div className="min-w-[290px] w-full max-w-[290px]">
                   <ComparisonEmpty />
                 </div>
               </div>
@@ -170,8 +177,8 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if(AuthErrorHandling( error.message )){ 
-      return <AuthError errorMessage={error.message} />
+    if (AuthErrorHandling(error.message)) {
+      return <AuthError errorMessage={error.message} />;
     }
     return (
       <div className="container pt-6">
