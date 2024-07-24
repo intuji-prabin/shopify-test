@@ -30,6 +30,7 @@ import {
   isAuthenticate,
   logout,
 } from '~/lib/utils/auth-session.server';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 import {
   getMessageSession,
   messageCommitSession,
