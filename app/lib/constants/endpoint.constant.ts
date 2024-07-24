@@ -1,4 +1,4 @@
-const BASE_URL = 'https://cig-backuat.webo.dev/api'; //test 1 
+const BASE_URL = 'https://cig-backend.webo.dev/api'; //test 1
 
 export const ENDPOINT = {
   REPORT: {
