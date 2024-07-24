@@ -29,35 +29,44 @@ import {
   getChartData,
   getExpenditureData,
 } from '~/routes/_app._index/data-sets.server';
-import { getSlides } from '~/routes/_app._index/index.server';
-import { getAllInvoices } from '../_app.invoices/invoices.server';
-import { getNewNotificationCount, getSessionCart } from '../_app/app.server';
-import { Handlers, Payload } from '../_app/route';
+import {getSlides} from '~/routes/_app._index/index.server';
+import {getAllInvoices} from '../_app.invoices/invoices.server';
+import {DataTable} from '~/components/ui/data-table';
+import {useTable} from '~/hooks/useTable';
+import {useColumn} from './use-column';
+import {Button} from '~/components/ui/button';
+import {Routes} from '~/lib/constants/routes.constent';
+import {Suspense, useEffect, useMemo, useState} from 'react';
 import ProductTable from './productTable';
-import { useColumn } from './use-column';
+import {Separator} from '~/components/ui/separator';
+import {getNewNotificationCount} from '../_app/app.server';
+import {Handlers, Payload} from '../_app/route';
+import {useEventSource} from 'remix-utils/sse/react';
+import {EVENTS} from '~/lib/constants/events.contstent';
+import {encrypt} from '~/lib/utils/cryptoUtils';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Cigweld | Home' }];
+  return [{title: 'Cigweld | Home'}];
 };
 
-export async function loader({ context, request }: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
   const chartData = getChartData(context, request, userDetails?.id);
   const expenditureData = getExpenditureData(context, request, userDetails?.id);
-  const slides = await getSlides({ context });
+  const slides = await getSlides({context});
   const customerId = userDetails.id;
 
-  const { searchParams } = new URL(request.url);
+  const {searchParams} = new URL(request.url);
 
-  const { invoiceList } = await getAllInvoices({
+  const {invoiceList} = await getAllInvoices({
     context,
     request,
     customerId,
     searchParams,
   });
-  const { totalNotifications } = await getNewNotificationCount({
+  const {totalNotifications} = await getNewNotificationCount({
     context,
     customerId,
     request,
@@ -83,30 +92,30 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 }
 
 export default function Homepage() {
-  const { slides, chartData,
+  const {
+    slides,
+    chartData,
     expenditureData,
-    invoiceList, userDetails,
+    invoiceList,
+    userDetails,
     totalNotifications,
     encryptedSession,
     impersonateEnableCheck,
     cartCount
   } = useLoaderData<typeof loader>();
-  const { columns } = useColumn(encryptedSession, impersonateEnableCheck);
+  const {columns} = useColumn(encryptedSession, impersonateEnableCheck);
   const [notificationCounts, setNotificationCounts] = useState(
     totalNotifications | 0,
   );
   const latestFiveInvoices = useMemo(() => {
-    return invoiceList.slice(0, 5)
+    return invoiceList.slice(0, 5);
   }, [invoiceList]);
 
-  const { table } = useTable(columns, latestFiveInvoices);
+  const {table} = useTable(columns, latestFiveInvoices);
 
-  const hasNotificationBeenUpdated = useEventSource(
-    Routes.EVENTS_SUBSCRIBE,
-    {
-      event: EVENTS.NOTIFICATIONS_UPDATED.NAME,
-    },
-  );
+  const hasNotificationBeenUpdated = useEventSource(Routes.EVENTS_SUBSCRIBE, {
+    event: EVENTS.NOTIFICATIONS_UPDATED.NAME,
+  });
 
   useEffect(() => {
     if (typeof hasNotificationBeenUpdated === 'string') {
@@ -115,7 +124,7 @@ export default function Homepage() {
           payload: Payload;
         };
       };
-      const { type, totalNumber, companyId, customerId, sessionId, action } =
+      const {type, totalNumber, companyId, customerId, sessionId, action} =
         parsedData.notificationData.payload;
       const handlers: Handlers = {
         notification: () => {
@@ -128,9 +137,10 @@ export default function Homepage() {
             } else {
               return;
             }
-          }
-          else {
-            const customer = totalNumber.find((c: { customerId: string; }) => c.customerId === loginCustomerId)
+          } else {
+            const customer = totalNumber.find(
+              (c: {customerId: string}) => c.customerId === loginCustomerId,
+            );
             if (customer) {
               setNotificationCounts(customer.notification);
             }
@@ -145,7 +155,6 @@ export default function Homepage() {
     }
   }, [hasNotificationBeenUpdated]);
 
-
   return (
     <article className="home">
       {slides.length > 0 ? (
@@ -156,37 +165,60 @@ export default function Homepage() {
       <Suspense fallback={<div className='container'>Loading...</div>}>
         <Await resolve={chartData} errorElement={<div></div>}>
           {(resolvedValue) => {
-            return (<SpendCard data={resolvedValue?.finalAreaResponse} />)
+            return (
+              <SpendCard
+                data={resolvedValue?.finalAreaResponse}
+                currencySymbol={resolvedValue?.currencySymbol}
+              />
+            );
           }}
         </Await>
       </Suspense>
-      <Suspense fallback={<div className='container'>Loading...</div>}>
+      <Suspense fallback={<div className="container">Loading...</div>}>
         <Await resolve={chartData} errorElement={<div></div>}>
           {(resolvedValue) => {
-            return (<DetailChart barChartData={resolvedValue?.finalBarResponse} />)
+            return (
+              <DetailChart
+                barChartData={resolvedValue?.finalBarResponse}
+                currencySymbol={resolvedValue?.currencySymbol}
+              />
+            );
           }}
         </Await>
       </Suspense>
-      <Suspense fallback={<div className='container'>Loading...</div>}>
+      <Suspense fallback={<div className="container">Loading...</div>}>
         <Await resolve={expenditureData} errorElement={<div></div>}>
           {(resolvedValue) => {
-            return (<ExpenditureCard brand={resolvedValue?.expenditure_brands} category={resolvedValue?.expenditure_category} currency={resolvedValue?.currency} />)
+            return (
+              <ExpenditureCard
+                brand={resolvedValue?.expenditure_brands}
+                category={resolvedValue?.expenditure_category}
+                currency={resolvedValue?.currency}
+                currencySymbol={resolvedValue?.currencySymbol}
+              />
+            );
           }}
         </Await>
       </Suspense>
-      <Suspense fallback={<div className='container'>Loading...</div>}>
+      <Suspense fallback={<div className="container">Loading...</div>}>
         <Await resolve={expenditureData} errorElement={<div></div>}>
           {(resolvedValue) => {
-            return (<ProductTable productList={resolvedValue?.spending_by_product} currency={resolvedValue?.currency} />)
+            return (
+              <ProductTable
+                productList={resolvedValue?.spending_by_product}
+                currency={resolvedValue?.currency}
+                currencySymbol={resolvedValue?.currencySymbol}
+              />
+            );
           }}
         </Await>
       </Suspense>
-      {latestFiveInvoices.length > 0 &&
+      {latestFiveInvoices.length > 0 && (
         <section className="container">
           <Separator className="mt-6 " />
           <Can I="view" a="view_transaction_history">
             <div className="p-6 mt-6 space-y-3 bg-white mxs:space-y-6">
-              <div className='flex flex-wrap justify-between gap-3'>
+              <div className="flex flex-wrap justify-between gap-3">
                 <div className="flex items-center gap-x-2 gap-y-1">
                   <span className="flex items-center justify-center w-12 h-12 bg-primary-200">
                     <Expenditure />
@@ -201,7 +233,7 @@ export default function Homepage() {
             </div>
           </Can>
         </section>
-      }
-    </article >
+      )}
+    </article>
   );
 }
