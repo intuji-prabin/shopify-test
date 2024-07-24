@@ -6,6 +6,7 @@ import EmptyList from '~/components/ui/empty-list';
 import { RouteError } from '~/components/ui/route-error';
 import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
 import { AuthError } from '~/components/ui/authError';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 
 export async function loader({ context, request }: LoaderFunctionArgs) {
   await isAuthenticate(context);
@@ -25,8 +26,8 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <RouteError />;
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return <RouteError errorMessage={error.message} />;
   } else {

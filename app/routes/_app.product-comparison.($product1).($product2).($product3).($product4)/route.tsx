@@ -17,6 +17,8 @@ import {
 } from '~/lib/utils/toast-session.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import { addProductToCart } from '../_app.product_.$productSlug/product.server';
+import { AuthError } from '~/components/ui/authError';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 import ComparisonBreadcrumb from './comparison-breadcrumb';
 import ComparisonWrapper from './comparison-main-wrapper';
 import { getSingleProduct } from './getProduct.server';
@@ -169,8 +171,8 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return (
       <div className="container pt-6">

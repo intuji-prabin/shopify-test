@@ -22,6 +22,7 @@ import { UserRoleChangedMessage } from '~/lib/constants/event.toast.message';
 import { EVENTS } from '~/lib/constants/events.contstent';
 import { Routes } from '~/lib/constants/routes.constent';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 import { emitter } from '~/lib/utils/emitter.server';
 import {
   getMessageSession,
@@ -206,8 +207,8 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <EditTeamError />;
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return <EditTeamError errorMessage={error.message} />;
   } else {

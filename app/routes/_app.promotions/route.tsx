@@ -12,6 +12,7 @@ import { Separator } from '~/components/ui/separator';
 import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
 import { Routes } from '~/lib/constants/routes.constent';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 import PromotionHeader from '~/routes/_app.promotions/promotion-header';
 
 export const meta: MetaFunction = () => {
@@ -80,8 +81,8 @@ export function ErrorBoundary() {
       </section>
     );
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return (
       <section className="container ">

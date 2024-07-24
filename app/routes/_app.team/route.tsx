@@ -31,6 +31,7 @@ import {
   json,
 } from '@remix-run/server-runtime';
 import { AuthError } from '~/components/ui/authError';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Team List' }];
@@ -165,8 +166,8 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <TeamError />;
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return <TeamError errorMessage={error.message} />;
   } else {

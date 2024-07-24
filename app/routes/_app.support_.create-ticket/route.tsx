@@ -20,6 +20,7 @@ import {
 import { useConditionalRender } from '~/hooks/useAuthorization';
 import { createTicket } from './create-ticket.server';
 import { AuthError } from '~/components/ui/authError';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Create Ticket' }];
@@ -102,8 +103,8 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return (
       <div className="flex items-center justify-center">

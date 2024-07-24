@@ -18,6 +18,7 @@ import { useConditionalRender } from '~/hooks/useAuthorization';
 import { Routes } from '~/lib/constants/routes.constent';
 import { AllowedHTTPMethods } from '~/lib/enums/api.enum';
 import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 import { getUserDetails } from '~/lib/utils/user-session.server';
 import {
   AllowImpersonateForm
@@ -131,8 +132,8 @@ export function ErrorBoundary() {
       </section>
     );
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return (
       <section className="container">
