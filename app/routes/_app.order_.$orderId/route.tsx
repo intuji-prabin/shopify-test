@@ -31,6 +31,7 @@ import { BackButton } from '~/components/ui/back-button';
 import { RouteError } from '~/components/ui/route-error';
 import { OrderInformationError } from '~/routes/_app.order_.$orderId/order-information-error';
 import { AuthError } from '~/components/ui/authError';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Order Details' }];
@@ -179,8 +180,8 @@ export function ErrorBoundary() {
       </section>
     );
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return (
       <section className="container">

@@ -29,6 +29,7 @@ import {
   getProductGroupOptions,
 } from '~/routes/_app.place-an-order.list/place-an-order-list.server';
 import { AuthError } from '~/components/ui/authError';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 
 const PAGE_LIMIT = 10;
 
@@ -118,8 +119,8 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <RouteError />;
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return <RouteError errorMessage={error.message} />;
   } else {

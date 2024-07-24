@@ -24,6 +24,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '~/co
 import { HorizontalHamburgerIcon } from '~/components/icons/hamburgerIcon';
 import { Separator } from '~/components/ui/separator';
 import StatementsFilterForm from './filter-form';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 
 export const meta: MetaFunction = () => {
     return [{ title: 'Statement List' }];
@@ -137,8 +138,8 @@ export function ErrorBoundary() {
             </div>
         );
     } else if (error instanceof Error) {
-        if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-            return <AuthError errorMessage={error.message} />;
+        if(AuthErrorHandling( error.message )){ 
+            return <AuthError errorMessage={error.message} />
         }
         return (
             <div className="container order-error min-h-[calc(100vh_-_140px)] flex justify-center items-center">

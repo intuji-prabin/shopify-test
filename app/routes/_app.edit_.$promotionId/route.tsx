@@ -37,6 +37,7 @@ import PromotionNavigation from '../_app.customise_.$promotionId/promotion-navig
 import { getMyPromotionById, updatePromotion } from './edit-promotion.server';
 import { AuthError } from '~/components/ui/authError';
 import { encrypt } from '~/lib/utils/cryptoUtils';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 
 const MAX_FILE_SIZE_MB = 15;
 const ACCEPTED_IMAGE_TYPES = [
@@ -499,8 +500,8 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return (
       <div className="container pt-6">

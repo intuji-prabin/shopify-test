@@ -44,6 +44,7 @@ import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.co
 import { OrderError } from '~/routes/_app.order/order-error';
 import { AuthError } from '~/components/ui/authError';
 import { encrypt } from '~/lib/utils/cryptoUtils';
+import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Orders List' }];
@@ -201,8 +202,8 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <OrderError />;
   } else if (error instanceof Error) {
-    if (error.message.includes("Un-Authorize access") || error.message.includes("Impersonation already deactivate")) {
-      return <AuthError errorMessage={error.message} />;
+    if(AuthErrorHandling( error.message )){ 
+      return <AuthError errorMessage={error.message} />
     }
     return <OrderError errorMessage={error.message} />;
   } else {
