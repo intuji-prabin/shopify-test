@@ -5,45 +5,40 @@ import {
   useLoaderData,
   type MetaFunction,
 } from '@remix-run/react';
-import { type LoaderFunctionArgs } from '@shopify/remix-oxygen';
-import { Suspense, useEffect, useMemo, useState } from 'react';
-import { useEventSource } from 'remix-utils/sse/react';
-import { Expenditure } from '~/components/icons/expenditure';
-import { Button } from '~/components/ui/button';
+import {type LoaderFunctionArgs} from '@shopify/remix-oxygen';
+import {Suspense, useEffect, useMemo, useState} from 'react';
+import {useEventSource} from 'remix-utils/sse/react';
+import {Expenditure} from '~/components/icons/expenditure';
+import {Button} from '~/components/ui/button';
 import Carousel from '~/components/ui/carousel';
 import CtaHome from '~/components/ui/cta-home';
-import { DataTable } from '~/components/ui/data-table';
+import {DataTable} from '~/components/ui/data-table';
 import DetailChart from '~/components/ui/detailChart';
 import ExpenditureCard from '~/components/ui/expenditureCard';
 import Profile from '~/components/ui/profile';
-import { Separator } from '~/components/ui/separator';
+import {Separator} from '~/components/ui/separator';
 import SpendCard from '~/components/ui/spend-card';
-import { useTable } from '~/hooks/useTable';
-import { EVENTS } from '~/lib/constants/events.contstent';
-import { Routes } from '~/lib/constants/routes.constent';
-import { Can } from '~/lib/helpers/Can';
-import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
-import { encrypt } from '~/lib/utils/cryptoUtils';
-import { getUserDetails } from '~/lib/utils/user-session.server';
+import {useTable} from '~/hooks/useTable';
+import {EVENTS} from '~/lib/constants/events.contstent';
+import {Routes} from '~/lib/constants/routes.constent';
+import {Can} from '~/lib/helpers/Can';
+import {
+  getAccessToken,
+  isAuthenticate,
+  isImpersonating,
+} from '~/lib/utils/auth-session.server';
+import {encrypt} from '~/lib/utils/cryptoUtils';
+import {getUserDetails} from '~/lib/utils/user-session.server';
 import {
   getChartData,
   getExpenditureData,
 } from '~/routes/_app._index/data-sets.server';
 import {getSlides} from '~/routes/_app._index/index.server';
 import {getAllInvoices} from '../_app.invoices/invoices.server';
-import {DataTable} from '~/components/ui/data-table';
-import {useTable} from '~/hooks/useTable';
 import {useColumn} from './use-column';
-import {Button} from '~/components/ui/button';
-import {Routes} from '~/lib/constants/routes.constent';
-import {Suspense, useEffect, useMemo, useState} from 'react';
 import ProductTable from './productTable';
-import {Separator} from '~/components/ui/separator';
-import {getNewNotificationCount} from '../_app/app.server';
+import {getNewNotificationCount, getSessionCart} from '../_app/app.server';
 import {Handlers, Payload} from '../_app/route';
-import {useEventSource} from 'remix-utils/sse/react';
-import {EVENTS} from '~/lib/constants/events.contstent';
-import {encrypt} from '~/lib/utils/cryptoUtils';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Cigweld | Home'}];
@@ -87,7 +82,7 @@ export async function loader({context, request}: LoaderFunctionArgs) {
     totalNotifications,
     encryptedSession,
     impersonateEnableCheck,
-    cartCount
+    cartCount,
   });
 }
 
@@ -101,7 +96,7 @@ export default function Homepage() {
     totalNotifications,
     encryptedSession,
     impersonateEnableCheck,
-    cartCount
+    cartCount,
   } = useLoaderData<typeof loader>();
   const {columns} = useColumn(encryptedSession, impersonateEnableCheck);
   const [notificationCounts, setNotificationCounts] = useState(
@@ -161,8 +156,11 @@ export default function Homepage() {
         <Carousel images={slides} sectionClass="mt-0 home-banner" />
       ) : null}
       <Profile profileInfo={userDetails} />
-      <CtaHome totalNotificationCount={notificationCounts} cartCount={cartCount} />
-      <Suspense fallback={<div className='container'>Loading...</div>}>
+      <CtaHome
+        totalNotificationCount={notificationCounts}
+        cartCount={cartCount}
+      />
+      <Suspense fallback={<div className="container">Loading...</div>}>
         <Await resolve={chartData} errorElement={<div></div>}>
           {(resolvedValue) => {
             return (
