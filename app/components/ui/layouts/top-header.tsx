@@ -144,7 +144,7 @@ export default function TopHeader({
   return (
     <div className="bg-grey-900">
       <div className="container flex items-center gap-3 py-5 justify-normal md:justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-[22px]">
           <TabletNavmenu profileName={userDetails.firstName} profileImage={imageUrl} />
           {/* home logo begins here */}
           <LogoIcon logo_url={'/myCigweldWhite.svg'} />
