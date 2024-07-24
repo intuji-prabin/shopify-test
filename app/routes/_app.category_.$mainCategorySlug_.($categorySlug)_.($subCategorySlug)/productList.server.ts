@@ -73,3 +73,29 @@ export async function getProducts({
     });
   }
 }
+
+export const getPrices = async (
+  context: AppLoadContext,
+  request: Request,
+  productId: any,
+  customerId: string,
+) => {
+  const isImpersonatingCheck = await isImpersonating(request);
+  const customerID = customerId;
+  const results = await useFetch<any>({
+    method: AllowedHTTPMethods.GET,
+    url: `${ENDPOINT.PRODUCT.GET_PRICE}/${customerID}?productIds=${productId}`,
+    impersonateEnableCheck: isImpersonatingCheck,
+    context,
+  });
+
+  if (results?.errors) {
+    throw new Error('Somthing error occured.');
+  }
+
+  if (!results?.status) {
+    throw new Error(`Price not found due to ${results?.message}`);
+  }
+
+  return results?.payload;
+};
