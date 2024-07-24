@@ -48,6 +48,7 @@ import {
 } from '~/routes/_public.login/login.server';
 import {AuthError} from '../../components/ui/authError';
 import {getFooter} from './footer.server';
+import {AuthErrorHandling} from '~/lib/utils/authErrorHandling';
 
 export interface Payload {
   type: 'cart' | 'wishlist' | 'productGroup ' | 'notification';
@@ -71,7 +72,7 @@ export async function loader({request, context}: ActionFunctionArgs) {
   const accessToken = await isAuthenticate(context);
 
   let {userDetails} = await getUserDetails(request);
-  if(!userDetails) {
+  if (!userDetails) {
     throw new Error('User not found');
   }
   /*check if the user is deactivated while being in offline*/
@@ -435,8 +436,8 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if(AuthErrorHandling( error.message )){ 
-      return <AuthError errorMessage={error.message} />
+    if (AuthErrorHandling(error.message)) {
+      return <AuthError errorMessage={error.message} />;
     }
     return (
       <div className="container pt-6">

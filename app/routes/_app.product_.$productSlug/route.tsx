@@ -8,23 +8,23 @@ import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
-import { ReactNode } from 'react';
-import { AuthError } from '~/components/ui/authError';
-import { BackButton } from '~/components/ui/back-button';
-import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
-import { ProductCard } from '~/components/ui/product-card';
-import { RouteError } from '~/components/ui/route-error';
-import { useConditionalRender } from '~/hooks/useAuthorization';
-import { getAccessToken, isImpersonating } from '~/lib/utils/auth-session.server';
-import { encrypt } from '~/lib/utils/cryptoUtils';
+import {ReactNode} from 'react';
+import {AuthError} from '~/components/ui/authError';
+import {BackButton} from '~/components/ui/back-button';
+import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import {ProductCard} from '~/components/ui/product-card';
+import {RouteError} from '~/components/ui/route-error';
+import {useConditionalRender} from '~/hooks/useAuthorization';
+import {getAccessToken, isImpersonating} from '~/lib/utils/auth-session.server';
+import {encrypt} from '~/lib/utils/cryptoUtils';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { ProductList } from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/route';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {ProductList} from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/route';
 import {
   ProductType,
   addProductToCart,
@@ -32,15 +32,12 @@ import {
 } from './product.server';
 import ProductInformation from './productInformation';
 import ProductTab from './productTabs';
-import { addToWishlist, removeFromWishlist } from './wishlist.server';
-import { AuthError } from '~/components/ui/authError';
-import { encrypt } from '~/lib/utils/cryptoUtils';
-import { RouteError } from '~/components/ui/route-error';
-import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
+import {addToWishlist, removeFromWishlist} from './wishlist.server';
+import {AuthErrorHandling} from '~/lib/utils/authErrorHandling';
 
 interface ProductDetailType {
   productPage: string;
-  encryptedSession: string,
+  encryptedSession: string;
   impersonateEnableCheck: string;
   product: {
     productInfo: ProductInfoType;
@@ -100,8 +97,8 @@ export const loader = async ({
   context,
 }: LoaderFunctionArgs) => {
   try {
-    const { productSlug } = params;
-    const { userDetails } = await getUserDetails(request);
+    const {productSlug} = params;
+    const {userDetails} = await getUserDetails(request);
     const impersonateEnableCheck = await isImpersonating(request);
     const sessionAccessTocken = (await getAccessToken(context)) as string;
     const encryptedSession = encrypt(sessionAccessTocken);
@@ -119,7 +116,7 @@ export const loader = async ({
       product,
       productPage,
       encryptedSession,
-      impersonateEnableCheck
+      impersonateEnableCheck,
     });
   } catch (error) {
     console.log('first', error);
@@ -128,7 +125,8 @@ export const loader = async ({
 };
 
 export default function route() {
-  const { product, productPage, encryptedSession, impersonateEnableCheck } = useLoaderData<ProductDetailType>();
+  const {product, productPage, encryptedSession, impersonateEnableCheck} =
+    useLoaderData<ProductDetailType>();
 
   const shouldRender = useConditionalRender('view_product_detail');
 
@@ -150,7 +148,8 @@ export default function route() {
         <ProductTab
           productTab={product?.productTab}
           alternateProduct={product.alternativeProduct}
-          sessionAccessTocken={encryptedSession} impersonateEnableCheck={impersonateEnableCheck}
+          sessionAccessTocken={encryptedSession}
+          impersonateEnableCheck={impersonateEnableCheck}
         />
         {product?.relatedProducts?.length > 0 && (
           <section className="py-12 bg-white">
@@ -171,11 +170,11 @@ export default function route() {
   );
 }
 
-const ProductDetailPageWrapper = ({ children }: { children: ReactNode }) => {
+const ProductDetailPageWrapper = ({children}: {children: ReactNode}) => {
   return <div className="container">{children}</div>;
 };
 
-export const action = async ({ request, context }: ActionFunctionArgs) => {
+export const action = async ({request, context}: ActionFunctionArgs) => {
   const messageSession = await getMessageSession(request);
 
   const fromData = await request.formData();
@@ -346,13 +345,13 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if(AuthErrorHandling( error.message )){ 
-      return <AuthError errorMessage={error.message} />
+    if (AuthErrorHandling(error.message)) {
+      return <AuthError errorMessage={error.message} />;
     }
     return (
       <div className="container">
         <RouteError errorMessage={error.message} />
-      </div >
+      </div>
     );
   } else {
     return (
