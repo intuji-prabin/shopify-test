@@ -67,7 +67,7 @@ export async function loader({context, request}: LoaderFunctionArgs) {
     request,
   });
   const cartCountSession = await getSessionCart(request, customerId, context);
-  const cartCount = cartCountSession?.lineItems;
+  const cartCount = cartCountSession?.lineItems ?? 0;
 
   const impersonateEnableCheck = await isImpersonating(request);
   const sessionAccessTocken = (await getAccessToken(context)) as string;
