@@ -1,18 +1,25 @@
-import { Form, Link, useFetcher, useSubmit } from '@remix-run/react';
-import { FormEvent, useRef, useState } from 'react';
-import { FaSearch } from 'react-icons/fa';
+import {Form, Link, useFetcher, useSubmit} from '@remix-run/react';
+import {FormEvent, useRef, useState} from 'react';
+import {FaSearch} from 'react-icons/fa';
 import CloseMenu from '~/components/icons/closeMenu';
-import { Button } from '~/components/ui/button';
-import { useOutsideClick } from '~/hooks/useOutsideClick';
-import { CART_QUANTITY_MAX, PRODUCT_MAX_PRICE } from '~/lib/constants/cartInfo.constant';
-import { Can } from '~/lib/helpers/Can';
-import { debounce } from '~/lib/helpers/general.helper';
+import {Button} from '~/components/ui/button';
+import {useOutsideClick} from '~/hooks/useOutsideClick';
+import {
+  CART_QUANTITY_MAX,
+  PRODUCT_MAX_PRICE,
+} from '~/lib/constants/cartInfo.constant';
+import {Routes} from '~/lib/constants/routes.constent';
+import {Can} from '~/lib/helpers/Can';
+import {debounce} from '~/lib/helpers/general.helper';
 import {
   NormalizedPredictiveSearch,
   NormalizedPredictiveSearchResultItem,
 } from '~/routes/_app.predictive-search/route';
-import { CompareSearch } from '../icons/compareSearch';
-import { Routes } from '~/lib/constants/routes.constent';
+import {CompareSearch} from '../icons/compareSearch';
+import {PredictiveProductDetail} from './predictiveSearchDetail';
+import {PredictiveSearchMain} from './predictiveSearchMain';
+import {PredictiveSearchQtyBtn} from './predictiveSearchQtyBtn';
+import {PredictiveSearchFormError} from './predictiveSearchFormError';
 
 export type SearchVariant =
   | 'normal'
@@ -52,8 +59,9 @@ export function PredictiveSearch({
     300,
   );
 
-  const handleSubmit = (event: React.KeyboardEvent<HTMLInputElement> | FormEvent<HTMLFormElement>) =>
-    debounceSubmit(event.currentTarget as HTMLFormElement);
+  const handleSubmit = (
+    event: React.KeyboardEvent<HTMLInputElement> | FormEvent<HTMLFormElement>,
+  ) => debounceSubmit(event.currentTarget as HTMLFormElement);
 
   const handleClose = () => {
     setSearchProduct(false);
@@ -98,10 +106,11 @@ export function PredictiveSearch({
               type="text"
               name="searchTerm"
               placeholder={inputPlaceholder}
-              className={`!pl-6 border-none w-full text-base ${searchVariant === 'compare'
-                ? 'font-normal'
-                : 'font-bold placeholder:italic'
-                } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
+              className={`!pl-6 border-none w-full text-base ${
+                searchVariant === 'compare'
+                  ? 'font-normal'
+                  : 'font-bold placeholder:italic'
+              } text-grey-900 placeholder:text-grey-900 focus:bg-white`}
               onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
                 if (event.key === 'Enter') {
                   event.preventDefault();
@@ -124,11 +133,15 @@ export function PredictiveSearch({
       </fetcher.Form>
       {searchProduct && (
         <div
-          className={`${searchVariant === 'mobile' ? 'top-[65px]' : 'top-[calc(100%_+_4px)]'
-            } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 overflow-y-auto shadow-lg ${searchVariant === 'normal' || searchVariant === 'mobile' || searchVariant === 'compare'
-              ? "max-h-[calc(100vh_-_350px)] md:max-h-[calc(100vh_-_500px)]"
+          className={`${
+            searchVariant === 'mobile' ? 'top-[65px]' : 'top-[calc(100%_+_4px)]'
+          } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 overflow-y-auto shadow-lg ${
+            searchVariant === 'normal' ||
+            searchVariant === 'mobile' ||
+            searchVariant === 'compare'
+              ? 'max-h-[calc(100vh_-_350px)] md:max-h-[calc(100vh_-_500px)]'
               : 'max-w-[650px] max-h-[350px]'
-            }`}
+          }`}
         >
           {fetcher.state === 'loading' ? (
             <p className="text-base font-bold text-center text-grey-400">
@@ -164,6 +177,9 @@ export function PredictiveSearch({
   );
 }
 
+export const isPriceValid = (price: number) => {
+  return price && Number(price) < PRODUCT_MAX_PRICE;
+};
 /**
  * @returns rendered grid of product search results based on search variant type.
  */
@@ -174,63 +190,14 @@ function renderProductItem(
 ) {
   const [quantity, setQuantity] = useState(parseFloat(product.moq) || 1);
 
-  function decreaseQuantity() {
-    if (isNaN(quantity - 1)) {
-      setQuantity(parseFloat(product.moq) || 1);
-      return;
-    }
-    setQuantity(quantity - 1);
-  }
-
-  function increaseQuantity() {
-    if (isNaN(quantity + 1)) {
-      setQuantity(parseFloat(product.moq) || 1);
-      return;
-    }
-    setQuantity(quantity + 1);
-  }
-
-  function handleInputChange(event?: any) {
-    const inputQuantity = parseInt(event.target.value);
-    setQuantity(inputQuantity);
-  }
-
   const submit = useSubmit();
+  const isValidPrice = isPriceValid(Number(product?.price));
 
   switch (searchVariant) {
+    case 'mobile':
     case 'normal': {
       return (
-        <figure
-          className="flex flex-wrap items-center space-x-4"
-          key={product.id}
-        >
-          <div className="size-14">
-            <Link
-              prefetch="intent"
-              to={product.handle ? `/product/${product.handle}` : "#"}
-              onClick={handleClose}
-            >
-              <img
-                src={product?.featuredPriceImageUrl}
-                alt="product"
-                className="object-cover object-center size-full"
-              />
-            </Link>
-          </div>
-          <figcaption className="w-[calc(100%_-_72px)]">
-            <Link
-              prefetch="intent"
-              to={product.handle ? `/product/${product.handle}` : "#"}
-              onClick={handleClose}
-              className="text-base font-bold text-grey-900"
-            >
-              {product.title}
-            </Link>
-            <p className="text-sm text-primary-500">
-              SKU: <span>{product.sku}</span>
-            </p>
-          </figcaption>
-        </figure>
+        <PredictiveSearchMain product={product} handleClose={handleClose} />
       );
     }
     case 'cart': {
@@ -240,69 +207,19 @@ function renderProductItem(
           className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 md:flex-row"
         >
           <div className="flex flex-wrap items-center w-full gap-3 md:w-4/6">
-            <div className="size-16">
-              <Link
-                prefetch="intent"
-                to={product.handle ? `/product/${product.handle}` : "#"}
-                onClick={handleClose}
-              >
-                <img
-                  src={product?.featuredPriceImageUrl}
-                  alt="product"
-                  className="object-contain object-center size-full"
-                />
-              </Link>
-            </div>
-            <div className="w-[calc(100%_-_76px)]">
-              <p className="text-sm text-primary-500">
-                SKU: <span>{product.sku}</span>
-              </p>
-              <p>
-                <Link
-                  prefetch="intent"
-                  to={product.handle ? `/product/${product.handle}` : "#"}
-                  onClick={handleClose}
-                  className="text-base font-medium text-grey-900"
-                >
-                  {product.title}
-                </Link>
-              </p>
-              <p className="text-2xl italic font-bold text-grey-900 whitespace-nowrap">
-                {product?.currency || '$'}&nbsp;{product?.currencySymbol}
-                {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? product?.price : "N/A"}
-                <span className="text-sm italic font-bold text-grey-500">
-                  {' '}
-                  (Excl. GST)
-                </span>
-              </p>
-              <p className="text-sm text-grey-300">Minimum Order Quantity: {product.moq || 1}</p>
-            </div>
+            <PredictiveProductDetail
+              product={product}
+              handleClose={handleClose}
+            />
           </div>
-          {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ?
+          {isValidPrice ? (
             <div className="w-full md:w-[calc(33.33%_-_1rem)]">
               <div className="flex cart__list--quantity">
-                <button
-                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < 1
-                    ? 'cursor-not-allowed'
-                    : ''
-                    }`}
-                  onClick={decreaseQuantity}
-                  disabled={quantity - 1 < 1}
-                >
-                  -
-                </button>
-                <input
-                  type="number"
-                  className="flex-1 text-center border-x-0 !border-grey-500 sm:min-w-20"
-                  value={quantity}
-                  onChange={handleInputChange}
+                <PredictiveSearchQtyBtn
+                  moq={product.moq}
+                  quantity={quantity}
+                  setQuantity={setQuantity}
                 />
-                <button
-                  className="flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial"
-                  onClick={increaseQuantity}
-                >
-                  +
-                </button>
               </div>
               <Can I="view" a="add_to_cart">
                 <Form
@@ -323,37 +240,37 @@ function renderProductItem(
                   <input type="hidden" name="quantity" value={quantity} />
                   <input type="hidden" name="selectUOM" value={product?.uom} />
                   <Button
-                    className={`w-full mt-2 ${quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity)
-                      ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
-                      : 'cursor-pointer'
-                      }`}
-                    disabled={quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity)}
-                    type={quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity) ? 'button' : 'submit'}
+                    className={`w-full mt-2 ${
+                      quantity < 1 ||
+                      quantity > CART_QUANTITY_MAX ||
+                      isNaN(quantity)
+                        ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
+                        : 'cursor-pointer'
+                    }`}
+                    disabled={
+                      quantity < 1 ||
+                      quantity > CART_QUANTITY_MAX ||
+                      isNaN(quantity)
+                    }
+                    type={
+                      quantity < 1 ||
+                      quantity > CART_QUANTITY_MAX ||
+                      isNaN(quantity)
+                        ? 'button'
+                        : 'submit'
+                    }
                     variant="primary"
                   >
                     Add to Cart
                   </Button>
-                  <p className="font-medium leading-none text-red-500 pt-1.5">
-                    {(quantity < Number(product.moq) && quantity >= 1) && (
-                      <>
-                        Orders below MOQ ({product.moq}) will incur additional surcharges
-                      </>
-                    )}
-                    {(quantity < 1 || isNaN(quantity)) && (
-                      <>
-                        Minimum order quantity should be greater than 0
-                      </>
-                    )}
-                    {(quantity > CART_QUANTITY_MAX) && (
-                      <>
-                        Maximum order quantity is {CART_QUANTITY_MAX}
-                      </>
-                    )}
-                  </p>
+                  <PredictiveSearchFormError
+                    quantity={quantity}
+                    moq={product.moq}
+                  />
                 </Form>
               </Can>
             </div>
-            : null}
+          ) : null}
         </div>
       );
     }
@@ -364,69 +281,19 @@ function renderProductItem(
           className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 md:flex-row"
         >
           <div className="flex flex-wrap items-center gap-3 md:w-4/6">
-            <div className="size-16">
-              <Link
-                prefetch="intent"
-                to={product.handle ? `/product/${product.handle}` : "#"}
-                onClick={handleClose}
-              >
-                <img
-                  src={product?.featuredPriceImageUrl}
-                  alt="product"
-                  className="object-contain object-center size-full"
-                />
-              </Link>
-            </div>
-            <div className="w-[calc(100%_-_76px)]">
-              <p className="text-sm text-primary-500">
-                SKU: <span>{product.sku}</span>
-              </p>
-              <p>
-                <Link
-                  prefetch="intent"
-                  to={product.handle ? `/product/${product.handle}` : "#"}
-                  onClick={handleClose}
-                  className="text-base font-medium text-grey-900"
-                >
-                  {product.title}
-                </Link>
-              </p>
-              <p className="text-2xl italic font-bold text-grey-900 whitespace-nowrap">
-                {product?.currency || '$'}&nbsp;{product?.currencySymbol}
-                {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? product?.price : 'N/A'}
-                <span className="text-sm italic font-bold text-grey-500">
-                  {' '}
-                  (Excl. GST)
-                </span>
-              </p>
-              <p className="text-sm text-grey-300">Minimum Order Quantity: {product.moq || 1}</p>
-            </div>
+            <PredictiveProductDetail
+              product={product}
+              handleClose={handleClose}
+            />
           </div>
-          {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ?
+          {isValidPrice ? (
             <div className="md:w-[calc(33.33%_-_1rem)]">
               <div className="flex cart__list--quantity">
-                <button
-                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < 1
-                    ? 'cursor-not-allowed'
-                    : ''
-                    }`}
-                  onClick={decreaseQuantity}
-                  disabled={quantity - 1 < 1}
-                >
-                  -
-                </button>
-                <input
-                  type="number"
-                  className="flex-1 text-center border-x-0 !border-grey-500 sm:min-w-20"
-                  value={quantity}
-                  onChange={handleInputChange}
+                <PredictiveSearchQtyBtn
+                  moq={product.moq}
+                  quantity={quantity}
+                  setQuantity={setQuantity}
                 />
-                <button
-                  className="flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial"
-                  onClick={increaseQuantity}
-                >
-                  +
-                </button>
               </div>
               <Form
                 method="POST"
@@ -440,74 +307,48 @@ function renderProductItem(
                 <input type="hidden" name="quantity" value={quantity} />
                 <input type="hidden" name="uom" value={product.uom} />
                 <Button
-                  className={`w-full mt-2 ${quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity)
-                    ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
-                    : 'cursor-pointer'
-                    }`}
-                  disabled={quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity)}
-                  type={quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity) ? 'button' : 'submit'}
+                  className={`w-full mt-2 ${
+                    quantity < 1 ||
+                    quantity > CART_QUANTITY_MAX ||
+                    isNaN(quantity)
+                      ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
+                      : 'cursor-pointer'
+                  }`}
+                  disabled={
+                    quantity < 1 ||
+                    quantity > CART_QUANTITY_MAX ||
+                    isNaN(quantity)
+                  }
+                  type={
+                    quantity < 1 ||
+                    quantity > CART_QUANTITY_MAX ||
+                    isNaN(quantity)
+                      ? 'button'
+                      : 'submit'
+                  }
                   variant="primary"
                   name="_action"
                   value="add_product"
                 >
                   Add to List
                 </Button>
-                <p className="font-medium text-red-500 leading-none pt-1.5">
-                  {(quantity < Number(product.moq) && quantity >= 1) && (
-                    <>
-                      Orders below MOQ ({product.moq}) will incur additional surcharges
-                    </>
-                  )}
-                  {(quantity < 1 || isNaN(quantity)) && (
-                    <>
-                      Minimum order quantity should be greater than 0
-                    </>
-                  )}
-                  {(quantity > CART_QUANTITY_MAX) && (
-                    <>
-                      Maximum order quantity is {CART_QUANTITY_MAX}
-                    </>
-                  )}
-                </p>
+                <PredictiveSearchFormError
+                  quantity={quantity}
+                  moq={product.moq}
+                />
               </Form>
             </div>
-            : null}
+          ) : null}
         </div>
       );
     }
     case 'compare': {
       return (
-        <figure
-          key={product.id}
-          className="flex flex-wrap items-center space-x-4"
-        >
-          <div className="size-14">
-            <Link
-              prefetch="intent"
-              to={product.id}
-              onClick={handleClose}
-            >
-              <img
-                src={product?.featuredPriceImageUrl}
-                alt="product"
-                className="object-cover object-center size-full"
-              />
-            </Link>
-          </div>
-          <figcaption className="w-[calc(100%_-_72px)]">
-            <Link
-              prefetch="intent"
-              to={product.id}
-              onClick={handleClose}
-              className="text-base font-bold text-grey-900"
-            >
-              {product.title}
-            </Link>
-            <p className="text-sm text-primary-500">
-              SKU: <span>{product.sku}</span>
-            </p>
-          </figcaption>
-        </figure>
+        <PredictiveSearchMain
+          product={product}
+          handleClose={handleClose}
+          isCompare={true}
+        />
       );
     }
     case 'place_an_order': {
@@ -521,72 +362,22 @@ function renderProductItem(
           className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 xl:flex-row"
         >
           <div className="flex flex-wrap items-center w-full gap-3 xl:w-2/5">
-            <div className="size-16">
-              <Link
-                prefetch="intent"
-                to={product.handle ? `/product/${product.handle}` : "#"}
-                onClick={handleClose}
-              >
-                <img
-                  src={product?.featuredPriceImageUrl}
-                  alt="product"
-                  className="object-contain object-center size-full"
-                />
-              </Link>
-            </div>
-            <div className="w-[calc(100%_-_76px)]">
-              <p className="text-sm text-primary-500">
-                SKU: <span>{product.sku}</span>
-              </p>
-              <p>
-                <Link
-                  prefetch="intent"
-                  to={product.handle ? `/product/${product.handle}` : "#"}
-                  onClick={handleClose}
-                  className="text-base font-medium text-grey-900"
-                >
-                  {product.title}
-                </Link>
-              </p>
-              <p className="text-2xl italic font-bold text-grey-900 whitespace-nowrap">
-                {product?.currency || '$'}&nbsp;{product?.currencySymbol}
-                {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? product?.price : 'N/A'}
-                <span className="text-sm italic font-bold text-grey-500">
-                  {' '}
-                  (Excl. GST)
-                </span>
-              </p>
-              <p className="text-sm text-grey-300">Minimum Order Quantity: {product.moq || 1}</p>
-            </div>
+            <PredictiveProductDetail
+              product={product}
+              handleClose={handleClose}
+            />
           </div>
-          {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ?
+          {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? (
             <div className="grid grid-cols-1 gap-x-4 w-full gap-y-2 sm:grid-cols-2 xl:w-[calc(60%_-_1rem)] items-start">
-              <div className='flex h-full'>
-                <p className='mt-auto font-medium'>Unit of Measure</p>
+              <div className="flex h-full">
+                <p className="mt-auto font-medium">Unit of Measure</p>
               </div>
               <div className="flex cart__list--quantity">
-                <button
-                  className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${quantity - 1 < 1
-                    ? 'cursor-not-allowed'
-                    : ''
-                    }`}
-                  onClick={decreaseQuantity}
-                  disabled={quantity - 1 < 1}
-                >
-                  -
-                </button>
-                <input
-                  type="number"
-                  className="flex-1 text-center border-x-0 !border-grey-500 sm:min-w-20"
-                  value={quantity}
-                  onChange={handleInputChange}
+                <PredictiveSearchQtyBtn
+                  moq={product.moq}
+                  quantity={quantity}
+                  setQuantity={setQuantity}
                 />
-                <button
-                  className="flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial"
-                  onClick={increaseQuantity}
-                >
-                  +
-                </button>
               </div>
               <select
                 name="filter_by"
@@ -598,7 +389,7 @@ function renderProductItem(
               >
                 {product.unitOfMeasure?.length > 0 ? (
                   product.unitOfMeasure?.map(
-                    (uom: { unit: string; code: string }, index: number) => (
+                    (uom: {unit: string; code: string}, index: number) => (
                       <option
                         className="px-4"
                         value={uom.code}
@@ -624,74 +415,39 @@ function renderProductItem(
                 <input type="hidden" name="quantity" value={quantity} />
                 <input type="hidden" name="uom" value={UOM} />
                 <Button
-                  className={`w-full ${quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity)
-                    ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
-                    : 'cursor-pointer'
-                    }`}
-                  disabled={quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity)}
-                  type={quantity < 1 || quantity > CART_QUANTITY_MAX || isNaN(quantity) ? 'button' : 'submit'}
+                  className={`w-full ${
+                    quantity < 1 ||
+                    quantity > CART_QUANTITY_MAX ||
+                    isNaN(quantity)
+                      ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
+                      : 'cursor-pointer'
+                  }`}
+                  disabled={
+                    quantity < 1 ||
+                    quantity > CART_QUANTITY_MAX ||
+                    isNaN(quantity)
+                  }
+                  type={
+                    quantity < 1 ||
+                    quantity > CART_QUANTITY_MAX ||
+                    isNaN(quantity)
+                      ? 'button'
+                      : 'submit'
+                  }
                   variant="primary"
                   name="_action"
                   value="add_product"
                 >
                   Add to List
                 </Button>
-                <p className="font-medium text-red-500 leading-none pt-1.5">
-                  {(quantity < Number(product.moq) && quantity >= 1) && (
-                    <>
-                      Orders below MOQ ({product.moq}) will incur additional surcharges
-                    </>
-                  )}
-                  {(quantity < 1 || isNaN(quantity)) && (
-                    <>
-                      Minimum order quantity should be greater than 0
-                    </>
-                  )}
-                  {(quantity > CART_QUANTITY_MAX) && (
-                    <>
-                      Maximum order quantity is {CART_QUANTITY_MAX}
-                    </>
-                  )}
-                </p>
+                <PredictiveSearchFormError
+                  quantity={quantity}
+                  moq={product.moq}
+                />
               </Form>
             </div>
-            : null}
+          ) : null}
         </div>
-      );
-    }
-    case 'mobile': {
-      return (
-        <figure
-          className="flex flex-wrap items-center space-x-4"
-          key={product.id}
-        >
-          <div className="size-14">
-            <Link
-              prefetch="intent"
-              to={product.handle ? `/product/${product.handle}` : "#"}
-              onClick={handleClose}
-            >
-              <img
-                src={product?.featuredPriceImageUrl}
-                alt="product"
-                className="object-cover object-center size-full"
-              />
-            </Link>
-          </div>
-          <figcaption className="w-[calc(100%_-_72px)]">
-            <Link
-              prefetch="intent"
-              to={product.handle ? `/product/${product.handle}` : "#"}
-              onClick={handleClose}
-              className="text-base font-bold text-grey-900"
-            >
-              {product.title}
-            </Link>
-            <p className="text-sm text-primary-500">
-              SKU: <span>{product.sku}</span>
-            </p>
-          </figcaption>
-        </figure>
       );
     }
     default:
@@ -723,7 +479,13 @@ function SearchResultsProductsGrid({
         })}
       </div>
       <div>
-        <Link to={Routes.CATEGORIES} onClick={handleClose} className='flex items-center justify-center px-6 py-2 text-sm font-bold leading-6 uppercase duration-150 border-solid cursor-pointer bg-secondary-500 hover:bg-secondary-500 text-grey-900'>View all</Link>
+        <Link
+          to={Routes.CATEGORIES}
+          onClick={handleClose}
+          className="flex items-center justify-center px-6 py-2 text-sm font-bold leading-6 uppercase duration-150 border-solid cursor-pointer bg-secondary-500 hover:bg-secondary-500 text-grey-900"
+        >
+          View all
+        </Link>
       </div>
     </>
   );

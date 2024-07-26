@@ -19,9 +19,8 @@ import {
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { addProductToCart } from '../_app.product_.$productSlug/product.server';
-import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {addProductToCart} from '../_app.product_.$productSlug/product.server';
 import ComparisonBreadcrumb from './comparison-breadcrumb';
 import ComparisonEmpty from './comparison-empty';
 import ComparisonWrapper from './comparison-main-wrapper';
