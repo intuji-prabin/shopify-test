@@ -49,6 +49,7 @@ import {
 } from '~/routes/_public.login/login.server';
 import {AuthError} from '../../components/ui/authError';
 import {getFooter} from './footer.server';
+
 export interface Payload {
   type: 'cart' | 'wishlist' | 'productGroup ' | 'notification';
   totalNumber: any;
