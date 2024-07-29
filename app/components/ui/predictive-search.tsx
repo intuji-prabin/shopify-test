@@ -75,6 +75,21 @@ export function PredictiveSearch({
 
   useOutsideClick(searchResultRef, () => handleClose());
 
+  // Search class based on search variant
+  let searchClass;
+  switch (searchVariant) {
+    case 'cart':
+    case 'pending_order':
+      searchClass = 'max-w-[50%] max-h-[350px]';
+      break;
+    case 'place_an_order':
+      searchClass = 'max-w-[80%] max-h-[350px]';
+      break;
+    default:
+      searchClass =
+        'max-h-[calc(100vh_-_350px)] md:max-h-[calc(100vh_-_500px)]';
+  }
+
   return (
     <div ref={searchResultRef} className="w-full">
       <fetcher.Form
@@ -135,13 +150,7 @@ export function PredictiveSearch({
         <div
           className={`${
             searchVariant === 'mobile' ? 'top-[65px]' : 'top-[calc(100%_+_4px)]'
-          } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 overflow-y-auto shadow-lg ${
-            searchVariant === 'normal' ||
-            searchVariant === 'mobile' ||
-            searchVariant === 'compare'
-              ? 'max-h-[calc(100vh_-_350px)] md:max-h-[calc(100vh_-_500px)]'
-              : 'max-w-[650px] max-h-[350px]'
-          }`}
+          } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 overflow-y-auto shadow-lg ${searchClass}`}
         >
           {fetcher.state === 'loading' ? (
             <p className="text-base font-bold text-center text-grey-400">
