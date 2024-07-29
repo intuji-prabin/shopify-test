@@ -22,7 +22,9 @@ export function useDownload() {
 
       const contentDisposition = response.headers.get('Content-Disposition');
       const matches = contentDisposition?.match(/filename=(.*)/);
-      const suggestedFilename = matches ? matches[1] : 'downloaded-file';
+      const suggestedFilename = matches
+        ? matches[1]
+        : url.split('/').pop() ?? 'download-file';
 
       const blob = await response.blob();
       if (isBlob(blob) && blob.size > 0) {

@@ -150,7 +150,7 @@ export function PredictiveSearch({
         <div
           className={`${
             searchVariant === 'mobile' ? 'top-[65px]' : 'top-[calc(100%_+_4px)]'
-          } bg-white absolute left-0 w-full z-20 py-4 px-6 space-y-4 overflow-y-auto shadow-lg ${searchClass}`}
+          } bg-white absolute left-0 w-full z-50 py-4 px-6 space-y-4 overflow-y-auto shadow-lg ${searchClass}`}
         >
           {fetcher.state === 'loading' ? (
             <p className="text-base font-bold text-center text-grey-400">

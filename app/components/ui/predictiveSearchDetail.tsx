@@ -60,17 +60,20 @@ export const PredictiveProductDetailImage = ({
   handleClose,
   handle,
   featuredPriceImageUrl,
+  isCompare = false,
 }: {
   handleClose: () => void;
   handle: string;
   featuredPriceImageUrl: string;
+  isCompare?: boolean;
 }) => {
+  const productLink = isCompare
+    ? `${handle}`
+    : handle
+    ? `/product/${handle}`
+    : '#';
   return (
-    <Link
-      prefetch="intent"
-      to={handle ? `/product/${handle}` : '#'}
-      onClick={handleClose}
-    >
+    <Link prefetch="intent" to={productLink} onClick={handleClose}>
       <img
         src={featuredPriceImageUrl}
         alt="product"
