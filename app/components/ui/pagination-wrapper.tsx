@@ -70,7 +70,14 @@ export function PaginationWrapper({ totalCount, pageSize }: PaginationPropsType)
           <Form
             method="get"
             onChange={(event: FormEvent<HTMLFormElement>) => {
-              submit(event.currentTarget);
+              const formData = new FormData(event.currentTarget);
+              const newPage = formData.get('page');
+              if (newPage) {
+                const newQueryParams = new URLSearchParams(queryParams);
+                newQueryParams.set(pageParam, newPage.toString());
+                submit(newQueryParams, {method: 'get'});
+              }
+              // submit(event.currentTarget);
             }}
             className="flex items-center space-x-2"
             data-cy="pagination-select-form"

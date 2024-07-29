@@ -9,7 +9,7 @@ import {
   TOTAL,
 } from '~/lib/constants/product.session';
 import {AllowedHTTPMethods} from '~/lib/enums/api.enum';
-import {getProducts} from './productList.server';
+import {getProducts} from './productList-old.server';
 import {isImpersonating} from '~/lib/utils/auth-session.server';
 
 export const getFilterProduct = async (

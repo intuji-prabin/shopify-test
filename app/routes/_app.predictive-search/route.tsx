@@ -4,25 +4,25 @@ import {
   json,
   redirect,
 } from '@remix-run/server-runtime';
-import { AppLoadContext } from '@shopify/remix-oxygen';
+import {AppLoadContext} from '@shopify/remix-oxygen';
 import {
   PredictiveCollectionFragment,
   PredictiveProductFragment,
-  PredictiveSearchQuery
+  PredictiveSearchQuery,
 } from 'storefrontapi.generated';
-import { CART_SESSION_KEY } from '~/lib/constants/cartInfo.constant';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { getAccessToken, isAuthenticate } from '~/lib/utils/auth-session.server';
+import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { getCartList } from '../_app.cart-list/cart.server';
-import { getPrices } from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/productList.server';
-import { addProductToCart } from '../_app.product_.$productSlug/product.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {getCartList} from '../_app.cart-list/cart.server';
+import {getPrices} from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/productList.server';
+import {addProductToCart} from '../_app.product_.$productSlug/product.server';
 
 type PredicticeSearchResultItemImage =
   | PredictiveCollectionFragment['image']
@@ -43,15 +43,15 @@ export type NormalizedPredictiveSearchResultItem = {
   uom: string;
   uomCode: string;
   variantId: string;
-  unitOfMeasure: { unit: string; code: string; conversionFactor: number }[];
+  unitOfMeasure: {unit: string; code: string; conversionFactor: number}[];
   defaultUomValue: string;
   featuredPriceImageUrl: string;
   currencySymbol: string;
 };
 
 type NormalizedPredictiveSearchResults = Array<
-  | { type: 'queries'; items: Array<NormalizedPredictiveSearchResultItem> }
-  | { type: 'products'; items: Array<NormalizedPredictiveSearchResultItem> }
+  | {type: 'queries'; items: Array<NormalizedPredictiveSearchResultItem>}
+  | {type: 'products'; items: Array<NormalizedPredictiveSearchResultItem>}
 >;
 
 export type NormalizedPredictiveSearch = {
@@ -59,8 +59,8 @@ export type NormalizedPredictiveSearch = {
 };
 
 const NO_PREDICTIVE_SEARCH_RESULTS: NormalizedPredictiveSearchResults = [
-  { type: 'queries', items: [] },
-  { type: 'products', items: [] },
+  {type: 'queries', items: []},
+  {type: 'products', items: []},
 ];
 
 /**
@@ -116,8 +116,8 @@ async function normalizePredictiveSearchResults(
               : null,
             featuredPriceImageUrl:
               prices &&
-                prices?.[productId].featuredImage &&
-                prices?.[productId].featuredImage != ''
+              prices?.[productId].featuredImage &&
+              prices?.[productId].featuredImage != ''
                 ? prices?.[productId].featuredImage
                 : DEFAULT_IMAGE.IMAGE,
             //@ts-ignore
@@ -133,7 +133,7 @@ async function normalizePredictiveSearchResults(
     });
   }
 
-  return { results };
+  return {results};
 }
 
 const formattedProductPrice = async (
@@ -191,7 +191,7 @@ async function getSearchProduct({
     throw new Error('No data returned from Shopify API');
   }
 
-  const { results } = await normalizePredictiveSearchResults(
+  const {results} = await normalizePredictiveSearchResults(
     context,
     request,
     searchData.predictiveSearch,
@@ -204,9 +204,16 @@ async function getSearchProduct({
     const productsData = results?.[0]?.items;
 
     // Utility function to prioritize relevance
-    const relevanceScore = (item: NormalizedPredictiveSearchResultItem, searchTerm: string) => {
-      const titleMatch = capitalizeStringRegex(item?.title).includes(capitalizeStringRegex(searchTerm));
-      const skuMatch = capitalizeStringRegex(item?.sku).includes(capitalizeStringRegex(searchTerm));
+    const relevanceScore = (
+      item: NormalizedPredictiveSearchResultItem,
+      searchTerm: string,
+    ) => {
+      const titleMatch = capitalizeStringRegex(item?.title).includes(
+        capitalizeStringRegex(searchTerm),
+      );
+      const skuMatch = capitalizeStringRegex(item?.sku).includes(
+        capitalizeStringRegex(searchTerm),
+      );
 
       if (titleMatch && skuMatch) return 2;
       if (titleMatch) return 1;
@@ -215,7 +222,9 @@ async function getSearchProduct({
     };
 
     // Sorting products based on the relevance
-    const sortedProducts = productsData?.sort((a, b) => relevanceScore(b, searchTerm) - relevanceScore(a, searchTerm));
+    const sortedProducts = productsData?.sort(
+      (a, b) => relevanceScore(b, searchTerm) - relevanceScore(a, searchTerm),
+    );
 
     results[0].items = sortedProducts;
   }
@@ -223,11 +232,11 @@ async function getSearchProduct({
   return results;
 }
 
-export async function loader({ context, request }: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const { searchParams } = new URL(request.url);
-  const { userDetails } = await getUserDetails(request);
+  const {searchParams} = new URL(request.url);
+  const {userDetails} = await getUserDetails(request);
   const searchTerm = searchParams.get('searchTerm');
   if (searchTerm) {
     const results = await getSearchProduct({
@@ -237,12 +246,12 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
       customerId: userDetails?.id,
     });
 
-    return json({ results });
+    return json({results});
   }
   return null;
 }
 
-export const action = async ({ request, context }: ActionFunctionArgs) => {
+export const action = async ({request, context}: ActionFunctionArgs) => {
   const messageSession = await getMessageSession(request);
   const fromData = await request.formData();
   let sessionCartInfo = await context.session.get(CART_SESSION_KEY);

@@ -12,7 +12,6 @@ import {
 import {AuthError} from '~/components/ui/authError';
 import FullPageLoading from '~/components/ui/fullPageLoading';
 import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
-import {AuthErrorHandling} from '~/lib/utils/authErrorHandling';
 import {
   getMessageSession,
   messageCommitSession,
@@ -21,6 +20,7 @@ import {
 } from '~/lib/utils/toast-session.server';
 import {getUserDetails} from '~/lib/utils/user-session.server';
 import {addProductToCart} from '../_app.product_.$productSlug/product.server';
+import {AuthErrorHandling} from '~/lib/utils/authErrorHandling';
 import ComparisonBreadcrumb from './comparison-breadcrumb';
 import ComparisonEmpty from './comparison-empty';
 import ComparisonWrapper from './comparison-main-wrapper';
