@@ -24,8 +24,8 @@ export const ENCRYPT_SECRET = 'uRKwjZ4EIXRjRxyNO1nc8BX9ioZRO0JVfvjg/RIQ8wU=';
 export const ADMIN_ACCESS_TOKEN = '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';
 
 export const SESSION_MAX_AGE = {
-  '30_DAYS': 60 * 60 * 24,
-  '7_DAYS': 60 * 60 * 12,
+  '30_DAYS': 60 * 60 * 24 * 30,
+  '7_DAYS': 60 * 60 * 24 * 7,
 };
 
 export const FILTER_SECRET = 'reueBmScUt29/V9J77k9Qj3gWsG0miX7928+D4s78AI=';
