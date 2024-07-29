@@ -1,4 +1,4 @@
-import {AppLoadContext} from '@remix-run/server-runtime';
+import {AppLoadContext, redirect} from '@remix-run/server-runtime';
 import {useFetch} from '~/hooks/useFetch';
 import {useFormatCart} from '~/hooks/useFormatCart';
 import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
@@ -143,13 +143,15 @@ export async function getProductDetails(
     if (!response?.status) {
       throw new Error(response?.message);
     }
-
     const finalResponse = await formatResponse(response?.payload);
     return finalResponse;
   } catch (error) {
-    throw new Error(
-      'Oops! Something went wrong. Please hold tight and try again in a little while. Thank you for your understanding.',
-    );
+    let errorMessage =
+      'Oops! Something went wrong. Please hold tight and try again in a little while. Thank you for your understanding.';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    throw new Error(errorMessage);
   }
 }
 
