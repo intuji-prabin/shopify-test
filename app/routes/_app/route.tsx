@@ -30,6 +30,7 @@ import {
   isAuthenticate,
   logout,
 } from '~/lib/utils/auth-session.server';
+import {AuthErrorHandling} from '~/lib/utils/authErrorHandling';
 import {
   getMessageSession,
   messageCommitSession,
@@ -48,7 +49,6 @@ import {
 } from '~/routes/_public.login/login.server';
 import {AuthError} from '../../components/ui/authError';
 import {getFooter} from './footer.server';
-import {AuthErrorHandling} from '~/lib/utils/authErrorHandling';
 
 export interface Payload {
   type: 'cart' | 'wishlist' | 'productGroup ' | 'notification';
