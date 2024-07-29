@@ -91,11 +91,14 @@ export function useColumn(
         accessorKey: 'invoiceAmount',
         header: 'Invoice Amount',
         enableSorting: false,
-        cell: (info) =>
-          (info.row.original.currency ?? '') +
-          ' ' +
-          (info.row.original.currencySymbol ?? '') +
-          (info.getValue() ?? 'N/A'),
+        cell: (info) => {
+          return info.getValue()
+            ? (info.row.original.currency ?? '') +
+                ' ' +
+                (info.row.original.currencySymbol ?? '') +
+                info.getValue()
+            : 'N/A';
+        },
       },
       {
         accessorKey: 'invoiceStatus',
