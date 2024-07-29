@@ -119,8 +119,11 @@ export const loader = async ({
       impersonateEnableCheck,
     });
   } catch (error) {
-    console.log('first', error);
-    return json({});
+    let message = "Couldn't load the product details. Please try again later.";
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    throw new Error(message);
   }
 };
 
