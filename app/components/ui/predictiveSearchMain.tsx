@@ -12,7 +12,7 @@ export const PredictiveSearchMain = ({
   isCompare?: boolean;
 }) => {
   const productLink = isCompare
-    ? `/product/${product.id}`
+    ? `${product.id}`
     : product.handle
     ? `/product/${product.handle}`
     : '#';
@@ -23,6 +23,7 @@ export const PredictiveSearchMain = ({
           handleClose={handleClose}
           handle={productLink}
           featuredPriceImageUrl={product?.featuredPriceImageUrl}
+          isCompare={true}
         />
       </div>
       <figcaption className="w-[calc(100%_-_72px)]">
