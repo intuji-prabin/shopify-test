@@ -11,6 +11,7 @@ import {formatDateToLocaleDateString} from '~/lib/helpers/dateTime.helper';
 import {useDownload} from '~/hooks/useDownload';
 import {PDF} from '~/lib/constants/pdf.constent';
 import {OrderStatusChip} from '~/components/ui/order-status-chip';
+import Loader from '~/components/ui/loader';
 
 export function useColumn(
   sessionAccessTocken: string,
@@ -124,7 +125,7 @@ export function useColumn(
           const fileURL = info.row.original.files;
           const invoiceDetailsRoute = `${Routes.INVOICES}/${invoiceId}`;
 
-          const {handleDownload} = useDownload();
+          const {handleDownload, loading} = useDownload();
 
           return (
             <div className="flex justify-start gap-x-2">
@@ -136,6 +137,7 @@ export function useColumn(
               <Button
                 size="icon"
                 variant="icon"
+                className={`${loading && 'pointer-events-none'}`}
                 onClick={() =>
                   handleDownload({
                     url: fileURL,
@@ -147,7 +149,7 @@ export function useColumn(
                   })
                 }
               >
-                <DownloadIcon />
+                {loading ? <Loader /> : <DownloadIcon />}
               </Button>
             </div>
           );

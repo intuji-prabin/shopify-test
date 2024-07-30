@@ -1,14 +1,15 @@
-import { Table } from '@tanstack/react-table';
-import { UploadIcon } from '~/components/icons/upload';
-import { BackButton } from '~/components/ui/back-button';
-import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
-import { Button } from '~/components/ui/button';
-import { Routes } from '~/lib/constants/routes.constent';
-import { Order } from '~/routes/_app.order/order.server';
-import { useTableRowSelect } from '~/hooks/useTableRowSelect';
-import { ENDPOINT } from '~/lib/constants/endpoint.constant';
-import { useDownload } from '~/hooks/useDownload';
-import { displayToast } from '~/components/ui/toast';
+import {Table} from '@tanstack/react-table';
+import {UploadIcon} from '~/components/icons/upload';
+import {BackButton} from '~/components/ui/back-button';
+import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import {Button} from '~/components/ui/button';
+import {Routes} from '~/lib/constants/routes.constent';
+import {Order} from '~/routes/_app.order/order.server';
+import {useTableRowSelect} from '~/hooks/useTableRowSelect';
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {useDownload} from '~/hooks/useDownload';
+import {displayToast} from '~/components/ui/toast';
+import Loader from '~/components/ui/loader';
 
 export function ActionBar({
   table,
@@ -21,9 +22,9 @@ export function ActionBar({
   sessionAccessTocken: string;
   impersonateEnableCheck: string;
 }) {
-  const { selectedItem, numberOfSelectedRows } = useTableRowSelect({ table });
+  const {selectedItem, numberOfSelectedRows} = useTableRowSelect({table});
 
-  const { handleDownload } = useDownload();
+  const {handleDownload, loading} = useDownload();
 
   const handleExport = () => {
     if (numberOfSelectedRows === 0) {
@@ -34,15 +35,16 @@ export function ActionBar({
       return;
     }
 
-    const downloadCSVLink = `${ENDPOINT.ORDERS.EXPORT
-      }/${customerId}?orderIds=${selectedItem.join(',')}`;
+    const downloadCSVLink = `${
+      ENDPOINT.ORDERS.EXPORT
+    }/${customerId}?orderIds=${selectedItem.join(',')}`;
 
     handleDownload({
       url: downloadCSVLink,
       headers: {
         Authorization: sessionAccessTocken,
         'Impersonate-Enable': impersonateEnableCheck,
-      }
+      },
     });
   };
 
@@ -60,11 +62,16 @@ export function ActionBar({
       <div className="flex items-center justify-between gap-2">
         {numberOfSelectedRows > 0 && (
           <p className="text-lg font-bold leading-[22px] text-grey-900 italic max-w-[281px] lg:max-w-[unset]">
-            {`${numberOfSelectedRows} ${numberOfSelectedRows > 1 ? 'Items' : 'Item'} `}
+            {`${numberOfSelectedRows} ${
+              numberOfSelectedRows > 1 ? 'Items' : 'Item'
+            } `}
           </p>
         )}
-        <Button onClick={handleExport}>
-          <UploadIcon /> Export
+        <Button
+          onClick={handleExport}
+          className={`${loading && 'pointer-events-none'}`}
+        >
+          {loading ? <Loader /> : <UploadIcon />} Export
         </Button>
       </div>
     </div>
