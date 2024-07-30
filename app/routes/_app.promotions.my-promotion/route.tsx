@@ -1,58 +1,57 @@
-import {
-  Form,
-  NavLink,
-  json,
-  useLoaderData,
-  useSubmit
-} from '@remix-run/react';
+import {Form, NavLink, json, useLoaderData, useSubmit} from '@remix-run/react';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
 } from '@remix-run/server-runtime';
-import { MetaFunction } from '@shopify/remix-oxygen';
-import React, { FormEvent, useState } from 'react';
-import { UploadIcon } from '~/components/icons/upload';
-import { Button } from '~/components/ui/button';
-import { useDownload } from '~/hooks/useDownload';
-import { useLoadMore } from '~/hooks/useLoadMore';
-import { ENDPOINT } from '~/lib/constants/endpoint.constant';
-import { Can } from '~/lib/helpers/Can';
-import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
-import { encrypt } from '~/lib/utils/cryptoUtils';
+import {MetaFunction} from '@shopify/remix-oxygen';
+import React, {FormEvent, useState} from 'react';
+import {UploadIcon} from '~/components/icons/upload';
+import {Button} from '~/components/ui/button';
+import Loader from '~/components/ui/loader';
+import {useDownload} from '~/hooks/useDownload';
+import {useLoadMore} from '~/hooks/useLoadMore';
+import {ENDPOINT} from '~/lib/constants/endpoint.constant';
+import {Can} from '~/lib/helpers/Can';
+import {
+  getAccessToken,
+  isAuthenticate,
+  isImpersonating,
+} from '~/lib/utils/auth-session.server';
+import {encrypt} from '~/lib/utils/cryptoUtils';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { deletePromotion } from '~/routes/_app.promotions.my-promotion/my-promotion.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {deletePromotion} from '~/routes/_app.promotions.my-promotion/my-promotion.server';
 import PromotionCard from '~/routes/_app.promotions/promotion-card';
-import { filterOptions } from '~/routes/_app.promotions/promotion-constants';
+import {filterOptions} from '~/routes/_app.promotions/promotion-constants';
 import {
   Promotion,
   getPromotions,
 } from '~/routes/_app.promotions/promotion.server';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'My Promotion' }];
+  return [{title: 'My Promotion'}];
 };
 
-export async function loader({ context, request }: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
   const impersonateEnableCheck = await isImpersonating(request);
   const sessionAccessTocken = (await getAccessToken(context)) as string;
   const encryptedSession = encrypt(sessionAccessTocken);
 
-  const { searchParams } = new URL(request.url);
+  const {searchParams} = new URL(request.url);
 
   const paramsList = Object.fromEntries(searchParams);
 
   const customerId = userDetails?.id;
 
-  const { promotions, totalPromotionCount } = await getPromotions({
+  const {promotions, totalPromotionCount} = await getPromotions({
     context,
     request,
     customerId,
@@ -60,13 +59,18 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     paramsList,
   });
 
-  return json({ promotions, totalPromotionCount, impersonateEnableCheck, encryptedSession });
+  return json({
+    promotions,
+    totalPromotionCount,
+    impersonateEnableCheck,
+    encryptedSession,
+  });
 }
 
-export async function action({ request, context }: ActionFunctionArgs) {
+export async function action({request, context}: ActionFunctionArgs) {
   await isAuthenticate(context);
 
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
   const customerId = userDetails?.id;
 
   const messageSession = await getMessageSession(request);
@@ -85,7 +89,12 @@ export async function action({ request, context }: ActionFunctionArgs) {
   });
 
   try {
-    const response = await deletePromotion(context, request, promotionId, customerId);
+    const response = await deletePromotion(
+      context,
+      request,
+      promotionId,
+      customerId,
+    );
     if (!response.status) {
       setErrorMessage(messageSession, response.message);
     }
@@ -106,13 +115,18 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function MyPromotionsPage() {
-  const { promotions, totalPromotionCount, impersonateEnableCheck, encryptedSession } = useLoaderData<typeof loader>();
+  const {
+    promotions,
+    totalPromotionCount,
+    impersonateEnableCheck,
+    encryptedSession,
+  } = useLoaderData<typeof loader>();
 
   const [checkedPromotions, setCheckedPromotions] = useState<string[]>([]);
 
   const submit = useSubmit();
 
-  const { isLoading, isLoadMoreDisabled, handleLoadMore } = useLoadMore({
+  const {isLoading, isLoadMoreDisabled, handleLoadMore} = useLoadMore({
     totalPromotionCount,
   });
 
@@ -129,19 +143,19 @@ export default function MyPromotionsPage() {
         : prevItems.filter((promotion) => promotion !== value),
     );
   };
-  const { handleDownload } = useDownload();
+  const {handleDownload, loading} = useDownload();
 
   const handleExport = () => {
-
-    const exportUrl = `${ENDPOINT.PROMOTION.BULK_EXPORT
-      }?promotion_id=${checkedPromotions.join(',')}`;
+    const exportUrl = `${
+      ENDPOINT.PROMOTION.BULK_EXPORT
+    }?promotion_id=${checkedPromotions.join(',')}`;
 
     handleDownload({
       url: exportUrl,
       headers: {
         Authorization: encryptedSession,
         'Impersonate-Enable': impersonateEnableCheck,
-      }
+      },
     });
   };
 
@@ -195,11 +209,16 @@ export default function MyPromotionsPage() {
                     className="font-bold text-lg leading-5.5 italic basis-full sm:basis-auto"
                     data-cy="item-selected"
                   >
-                    {checkedPromotions.length} {checkedPromotions.length > 1 ? 'Items' : 'Item'} selected
+                    {checkedPromotions.length}{' '}
+                    {checkedPromotions.length > 1 ? 'Items' : 'Item'} selected
                   </p>
                   <Can I="view" a="export_promotions">
-                    <Button type='button' onClick={handleExport}>
-                      <UploadIcon /> Export
+                    <Button
+                      type="button"
+                      onClick={handleExport}
+                      className={`${loading && 'pointer-events-none'}`}
+                    >
+                      {loading ? <Loader /> : <UploadIcon />} Export
                     </Button>
                   </Can>
                   <Can I="view" a="delete_promotions">

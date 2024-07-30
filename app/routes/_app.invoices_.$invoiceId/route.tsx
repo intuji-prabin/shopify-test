@@ -4,47 +4,63 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react';
-import { LoaderFunctionArgs, json } from '@remix-run/server-runtime';
-import { UploadIcon } from '~/components/icons/upload';
-import { AuthError } from '~/components/ui/authError';
-import { BackButton } from '~/components/ui/back-button';
-import { Breadcrumb, BreadcrumbItem } from '~/components/ui/breadcrumb';
-import { Button } from '~/components/ui/button';
-import { PDFViewer } from '~/components/ui/pdf-viewer';
-import { useDownload } from '~/hooks/useDownload';
-import { PDF } from '~/lib/constants/pdf.constent';
-import { Routes } from '~/lib/constants/routes.constent';
-import { getAccessToken, isAuthenticate, isImpersonating } from '~/lib/utils/auth-session.server';
-import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
-import { encrypt } from '~/lib/utils/cryptoUtils';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { getInvoiceDetails } from '~/routes/_app.invoices_.$invoiceId/invoices-detatils.server';
+import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
+import {UploadIcon} from '~/components/icons/upload';
+import {AuthError} from '~/components/ui/authError';
+import {BackButton} from '~/components/ui/back-button';
+import {Breadcrumb, BreadcrumbItem} from '~/components/ui/breadcrumb';
+import {Button} from '~/components/ui/button';
+import Loader from '~/components/ui/loader';
+import {PDFViewer} from '~/components/ui/pdf-viewer';
+import {useDownload} from '~/hooks/useDownload';
+import {PDF} from '~/lib/constants/pdf.constent';
+import {Routes} from '~/lib/constants/routes.constent';
+import {
+  getAccessToken,
+  isAuthenticate,
+  isImpersonating,
+} from '~/lib/utils/auth-session.server';
+import {AuthErrorHandling} from '~/lib/utils/authErrorHandling';
+import {encrypt} from '~/lib/utils/cryptoUtils';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {getInvoiceDetails} from '~/routes/_app.invoices_.$invoiceId/invoices-detatils.server';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Invoices Detail' }];
+  return [{title: 'Invoices Detail'}];
 };
 
-export async function loader({ context, params, request }: LoaderFunctionArgs) {
+export async function loader({context, params, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
   const invoiceId = params.invoiceId as string;
 
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
   const impersonateEnableCheck = await isImpersonating(request);
   const sessionAccessTocken = (await getAccessToken(context)) as string;
   const encryptedSession = encrypt(sessionAccessTocken);
 
   const customerId = userDetails.id;
 
-  const invoiceDetails = await getInvoiceDetails({ context, request, invoiceId, customerId });
+  const invoiceDetails = await getInvoiceDetails({
+    context,
+    request,
+    invoiceId,
+    customerId,
+  });
 
-  return json({ invoiceId, invoiceDetails, encryptedSession, impersonateEnableCheck });
+  return json({
+    invoiceId,
+    invoiceDetails,
+    encryptedSession,
+    impersonateEnableCheck,
+  });
 }
 
 export default function InvoiceDetailsPage() {
-  const { invoiceId, invoiceDetails, encryptedSession, impersonateEnableCheck } = useLoaderData<typeof loader>();
+  const {invoiceId, invoiceDetails, encryptedSession, impersonateEnableCheck} =
+    useLoaderData<typeof loader>();
 
-  const { handleDownload } = useDownload();
+  const {handleDownload, loading} = useDownload();
 
   return (
     <section className="container">
@@ -62,6 +78,7 @@ export default function InvoiceDetailsPage() {
           </Breadcrumb>
         </div>
         <Button
+          className={`${loading && 'pointer-events-none'}`}
           onClick={() =>
             handleDownload({
               url: invoiceDetails.files,
@@ -73,7 +90,7 @@ export default function InvoiceDetailsPage() {
             })
           }
         >
-          <UploadIcon /> Export
+          {loading ? <Loader /> : <UploadIcon />} Export
         </Button>
       </div>
       <PDFViewer pdfURL={invoiceDetails.files} />
@@ -94,8 +111,8 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if(AuthErrorHandling( error.message )){ 
-      return <AuthError errorMessage={error.message} />
+    if (AuthErrorHandling(error.message)) {
+      return <AuthError errorMessage={error.message} />;
     }
     return (
       <div className="flex items-center justify-center">
