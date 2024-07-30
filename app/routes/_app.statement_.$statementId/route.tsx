@@ -86,7 +86,7 @@ export default function StatementDetailsPage() {
             })
           }
         >
-          {loading ? <Loader /> : <UploadIcon />} Export Export
+          {loading ? <Loader /> : <UploadIcon />} Export
         </Button>
       </div>
       <PDFViewer pdfURL={statementDetails.files} />
