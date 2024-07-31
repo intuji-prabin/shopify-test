@@ -4,14 +4,12 @@ import ProductFaq from './productFaq';
 import {useDownload} from '~/hooks/useDownload';
 import {Can} from '~/lib/helpers/Can';
 
-const ProductTab = ({
+export const ProductTab = ({
   productTab,
   alternateProduct,
   sessionAccessTocken,
   impersonateEnableCheck,
 }: any) => {
-  const {handleDownload, loading} = useDownload();
-
   return (
     <section className="bg-white tab-wrapper">
       <Tabs.Root className="flex flex-col p-6" defaultValue="description-tab">
@@ -182,23 +180,11 @@ const ProductTab = ({
                     {item?.title}
                   </h5>
                 </div>
-                <button
-                  type="button"
-                  className={`flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50 ${
-                    loading && 'pointer-events-none'
-                  }`}
-                  onClick={() =>
-                    handleDownload({
-                      url: item?.url,
-                      headers: {
-                        Authorization: sessionAccessTocken,
-                        'Impersonate-Enable': impersonateEnableCheck,
-                      },
-                    })
-                  }
-                >
-                  {loading ? 'Downloading' : 'Download'}
-                </button>
+                <DownloadBtn
+                  url={item?.url}
+                  sessionAccessTocken={sessionAccessTocken}
+                  impersonateEnableCheck={impersonateEnableCheck}
+                />
               </div>
             ))}
           </Tabs.Content>
@@ -274,23 +260,11 @@ const ProductTab = ({
                     {item?.title}
                   </h5>
                 </div>
-                <button
-                  type="button"
-                  className={`flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50 ${
-                    loading && 'pointer-events-none'
-                  }`}
-                  onClick={() =>
-                    handleDownload({
-                      url: item?.url,
-                      headers: {
-                        Authorization: sessionAccessTocken,
-                        'Impersonate-Enable': impersonateEnableCheck,
-                      },
-                    })
-                  }
-                >
-                  {loading ? 'Downloading' : 'Download'}
-                </button>
+                <DownloadBtn
+                  url={item?.url}
+                  sessionAccessTocken={sessionAccessTocken}
+                  impersonateEnableCheck={impersonateEnableCheck}
+                />
               </div>
             ))}
           </Tabs.Content>
@@ -314,23 +288,11 @@ const ProductTab = ({
                       {item?.title}
                     </h5>
                   </div>
-                  <button
-                    type="button"
-                    className={`flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50 ${
-                      loading && 'pointer-events-none'
-                    }`}
-                    onClick={() =>
-                      handleDownload({
-                        url: item?.url,
-                        headers: {
-                          Authorization: sessionAccessTocken,
-                          'Impersonate-Enable': impersonateEnableCheck,
-                        },
-                      })
-                    }
-                  >
-                    {loading ? 'Downloading' : 'Download'}
-                  </button>
+                  <DownloadBtn
+                    url={item?.url}
+                    sessionAccessTocken={sessionAccessTocken}
+                    impersonateEnableCheck={impersonateEnableCheck}
+                  />
                 </div>
               ))}
             </Tabs.Content>
@@ -353,23 +315,11 @@ const ProductTab = ({
                     {item?.title}
                   </h5>
                 </div>
-                <button
-                  type="button"
-                  className={`flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50 ${
-                    loading && 'pointer-events-none'
-                  }`}
-                  onClick={() =>
-                    handleDownload({
-                      url: item?.url,
-                      headers: {
-                        Authorization: sessionAccessTocken,
-                        'Impersonate-Enable': impersonateEnableCheck,
-                      },
-                    })
-                  }
-                >
-                  {loading ? 'Downloading' : 'Download'}
-                </button>
+                <DownloadBtn
+                  url={item?.url}
+                  sessionAccessTocken={sessionAccessTocken}
+                  impersonateEnableCheck={impersonateEnableCheck}
+                />
               </div>
             ))}
           </Tabs.Content>
@@ -379,4 +329,33 @@ const ProductTab = ({
   );
 };
 
-export default ProductTab;
+export const DownloadBtn = ({
+  url,
+  sessionAccessTocken,
+  impersonateEnableCheck,
+}: {
+  url: string;
+  sessionAccessTocken: string;
+  impersonateEnableCheck: string;
+}) => {
+  const {handleDownload, loading} = useDownload();
+  return (
+    <button
+      type="button"
+      className={`flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50 ${
+        loading && 'pointer-events-none'
+      }`}
+      onClick={() =>
+        handleDownload({
+          url: url,
+          headers: {
+            Authorization: sessionAccessTocken,
+            'Impersonate-Enable': impersonateEnableCheck,
+          },
+        })
+      }
+    >
+      {loading ? 'Downloading' : 'Download'}
+    </button>
+  );
+};

@@ -30,10 +30,10 @@ import {
   getProductDetails,
 } from './product.server';
 import ProductInformation from './productInformation';
-import ProductTab from './productTabs';
 import {addToWishlist, removeFromWishlist} from './wishlist.server';
 import {AuthErrorHandling} from '~/lib/utils/authErrorHandling';
 import {ProductList} from '../_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/productList.server';
+import {ProductTab} from './productTabs';
 
 interface ProductDetailType {
   productPage: string;
