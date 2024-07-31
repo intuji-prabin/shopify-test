@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom';
 import {DownloadIcon} from '~/components/icons/download-icon';
 import {EyeOn} from '~/components/icons/eye';
 import {Button} from '~/components/ui/button';
+import Loader from '~/components/ui/loader';
 import {OrderStatusChip} from '~/components/ui/order-status-chip';
 import {useDownload} from '~/hooks/useDownload';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
@@ -161,7 +162,7 @@ export function useColumn(
           const fileURL = info.row.original.files;
           const invoiceDetailsRoute = `${Routes.INVOICES}/${invoiceId}`;
 
-          const {handleDownload} = useDownload();
+          const {handleDownload, loading} = useDownload();
 
           return (
             <div className="flex justify-start gap-x-2">
@@ -173,6 +174,7 @@ export function useColumn(
               <Button
                 size="icon"
                 variant="icon"
+                className={`${loading && 'pointer-events-none'}`}
                 onClick={() =>
                   handleDownload({
                     url: fileURL,
@@ -184,7 +186,7 @@ export function useColumn(
                   })
                 }
               >
-                <DownloadIcon />
+                {loading ? <Loader /> : <DownloadIcon />}
               </Button>
             </div>
           );

@@ -1,12 +1,15 @@
 import * as Tabs from '@radix-ui/react-tabs';
-import { ProductCard } from '~/components/ui/product-card';
+import {ProductCard} from '~/components/ui/product-card';
 import ProductFaq from './productFaq';
-import { useDownload } from '~/hooks/useDownload';
-import { Can } from '~/lib/helpers/Can';
+import {useDownload} from '~/hooks/useDownload';
+import {Can} from '~/lib/helpers/Can';
 
-const ProductTab = ({ productTab, alternateProduct, sessionAccessTocken, impersonateEnableCheck }: any) => {
-  const { handleDownload } = useDownload();
-
+export const ProductTab = ({
+  productTab,
+  alternateProduct,
+  sessionAccessTocken,
+  impersonateEnableCheck,
+}: any) => {
   return (
     <section className="bg-white tab-wrapper">
       <Tabs.Root className="flex flex-col p-6" defaultValue="description-tab">
@@ -165,32 +168,13 @@ const ProductTab = ({ productTab, alternateProduct, sessionAccessTocken, imperso
             value="downloads-tab"
           >
             {productTab?.download.map((item: any, index: number) => (
-              <div
-                className="py-4 flex gap-8 max-w-[500px] justify-between border-[1px] border-b-grey-50 border-x-0 border-t-0"
-                key={index}
-              >
-                <div className="flex items-center gap-[13px] w-full">
-                  <figure className="flex items-center justify-center w-full h-full bg-grey-25 max-w-14">
-                    <img src="/downloadFiles.png" className="" alt="pdf" />
-                  </figure>
-                  <h5 className="text-lg italic font-bold leading-6 text-grey-900">
-                    {item?.title}
-                  </h5>
-                </div>
-                <button
-                  type="button"
-                  className="flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50"
-                  onClick={() => handleDownload({
-                    url: item?.url,
-                    headers: {
-                      Authorization: sessionAccessTocken,
-                      'Impersonate-Enable': impersonateEnableCheck,
-                    }
-                  })}
-                >
-                  Download
-                </button>
-              </div>
+              <DownloadSkeleton
+                key={index + 'download'}
+                title={item?.title}
+                url={item?.url}
+                sessionAccessTocken={sessionAccessTocken}
+                impersonateEnableCheck={impersonateEnableCheck}
+              />
             ))}
           </Tabs.Content>
         )}
@@ -253,32 +237,13 @@ const ProductTab = ({ productTab, alternateProduct, sessionAccessTocken, imperso
             value="brochure-tab"
           >
             {productTab?.brochure.map((item: any, index: number) => (
-              <div
-                className="py-4 flex gap-8 max-w-[500px] justify-between border-[1px] border-b-grey-50 border-x-0 border-t-0"
-                key={index}
-              >
-                <div className="flex items-center gap-[13px] w-full">
-                  <figure className="flex items-center justify-center w-full h-full bg-grey-25 max-w-14">
-                    <img src="/downloadFiles.png" className="" alt="pdf" />
-                  </figure>
-                  <h5 className="text-lg italic font-bold leading-6 text-grey-900">
-                    {item?.title}
-                  </h5>
-                </div>
-                <button
-                  type="button"
-                  className="flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50"
-                  onClick={() => handleDownload({
-                    url: item?.url,
-                    headers: {
-                      Authorization: sessionAccessTocken,
-                      'Impersonate-Enable': impersonateEnableCheck,
-                    }
-                  })}
-                >
-                  Download
-                </button>
-              </div>
+              <DownloadSkeleton
+                key={index + 'brochure'}
+                title={item?.title}
+                url={item?.url}
+                sessionAccessTocken={sessionAccessTocken}
+                impersonateEnableCheck={impersonateEnableCheck}
+              />
             ))}
           </Tabs.Content>
         )}
@@ -289,32 +254,13 @@ const ProductTab = ({ productTab, alternateProduct, sessionAccessTocken, imperso
               value="operating-tab"
             >
               {productTab?.operatingManual.map((item: any, index: number) => (
-                <div
-                  className="py-4 flex gap-8 max-w-[500px] justify-between border-[1px] border-b-grey-50 border-x-0 border-t-0"
-                  key={index}
-                >
-                  <div className="flex items-center gap-[13px] w-full">
-                    <figure className="flex items-center justify-center w-full h-full bg-grey-25 max-w-14">
-                      <img src="/downloadFiles.png" className="" alt="pdf" />
-                    </figure>
-                    <h5 className="text-lg italic font-bold leading-6 text-grey-900">
-                      {item?.title}
-                    </h5>
-                  </div>
-                  <button
-                    type="button"
-                    className="flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50"
-                    onClick={() => handleDownload({
-                      url: item?.url,
-                      headers: {
-                        Authorization: sessionAccessTocken,
-                        'Impersonate-Enable': impersonateEnableCheck,
-                      }
-                    })}
-                  >
-                    Download
-                  </button>
-                </div>
+                <DownloadSkeleton
+                  key={index + 'operatingManual'}
+                  title={item?.title}
+                  url={item?.url}
+                  sessionAccessTocken={sessionAccessTocken}
+                  impersonateEnableCheck={impersonateEnableCheck}
+                />
               ))}
             </Tabs.Content>
           )}
@@ -324,32 +270,13 @@ const ProductTab = ({ productTab, alternateProduct, sessionAccessTocken, imperso
             value="service-tab"
           >
             {productTab?.serviceManual.map((item: any, index: number) => (
-              <div
-                className="py-4 flex gap-8 max-w-[500px] justify-between border-[1px] border-b-grey-50 border-x-0 border-t-0"
-                key={index}
-              >
-                <div className="flex items-center gap-[13px] w-full">
-                  <figure className="flex items-center justify-center w-full h-full bg-grey-25 max-w-14">
-                    <img src="/downloadFiles.png" className="" alt="pdf" />
-                  </figure>
-                  <h5 className="text-lg italic font-bold leading-6 text-grey-900">
-                    {item?.title}
-                  </h5>
-                </div>
-                <button
-                  type="button"
-                  className="flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50"
-                  onClick={() => handleDownload({
-                    url: item?.url,
-                    headers: {
-                      Authorization: sessionAccessTocken,
-                      'Impersonate-Enable': impersonateEnableCheck,
-                    }
-                  })}
-                >
-                  Download
-                </button>
-              </div>
+              <DownloadSkeleton
+                key={index + 'serviceManual'}
+                title={item?.title}
+                url={item?.url}
+                sessionAccessTocken={sessionAccessTocken}
+                impersonateEnableCheck={impersonateEnableCheck}
+              />
             ))}
           </Tabs.Content>
         )}
@@ -358,4 +285,63 @@ const ProductTab = ({ productTab, alternateProduct, sessionAccessTocken, imperso
   );
 };
 
-export default ProductTab;
+export const DownloadBtn = ({
+  url,
+  sessionAccessTocken,
+  impersonateEnableCheck,
+}: {
+  url: string;
+  sessionAccessTocken: string;
+  impersonateEnableCheck: string;
+}) => {
+  const {handleDownload, loading} = useDownload();
+  return (
+    <button
+      type="button"
+      className={`flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50 max-w-52 ${
+        loading && 'pointer-events-none'
+      }`}
+      onClick={() =>
+        handleDownload({
+          url: url,
+          headers: {
+            Authorization: sessionAccessTocken,
+            'Impersonate-Enable': impersonateEnableCheck,
+          },
+        })
+      }
+    >
+      {loading ? 'Downloading' : 'Download'}
+    </button>
+  );
+};
+
+export const DownloadSkeleton = ({
+  title,
+  url,
+  sessionAccessTocken,
+  impersonateEnableCheck,
+}: {
+  title: string;
+  url: string;
+  sessionAccessTocken: string;
+  impersonateEnableCheck: string;
+}) => {
+  return (
+    <div className="py-4 items-baseline flex gap-y-3 gap-x-8 max-w-[500px] flex-col sm:flex-row justify-between border-[1px] border-b-grey-50 border-x-0 border-t-0">
+      <div className="flex flex-wrap items-center gap-[13px] w-full">
+        <figure className="flex items-center justify-center w-full bg-grey-25 max-w-14 h-10">
+          <img src="/downloadFiles.png" alt="pdf" />
+        </figure>
+        <h5 className="text-lg italic font-bold leading-6 text-grey-900 w-[calc(100%_-_69px)] break-words">
+          {title}
+        </h5>
+      </div>
+      <DownloadBtn
+        url={url}
+        sessionAccessTocken={sessionAccessTocken}
+        impersonateEnableCheck={impersonateEnableCheck}
+      />
+    </div>
+  );
+};
