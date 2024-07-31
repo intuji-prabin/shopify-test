@@ -168,24 +168,13 @@ export const ProductTab = ({
             value="downloads-tab"
           >
             {productTab?.download.map((item: any, index: number) => (
-              <div
-                className="py-4 flex gap-8 max-w-[500px] justify-between border-[1px] border-b-grey-50 border-x-0 border-t-0"
-                key={index}
-              >
-                <div className="flex items-center gap-[13px] w-full">
-                  <figure className="flex items-center justify-center w-full h-full bg-grey-25 max-w-14">
-                    <img src="/downloadFiles.png" className="" alt="pdf" />
-                  </figure>
-                  <h5 className="text-lg italic font-bold leading-6 text-grey-900">
-                    {item?.title}
-                  </h5>
-                </div>
-                <DownloadBtn
-                  url={item?.url}
-                  sessionAccessTocken={sessionAccessTocken}
-                  impersonateEnableCheck={impersonateEnableCheck}
-                />
-              </div>
+              <DownloadSkeleton
+                key={index + 'download'}
+                title={item?.title}
+                url={item?.url}
+                sessionAccessTocken={sessionAccessTocken}
+                impersonateEnableCheck={impersonateEnableCheck}
+              />
             ))}
           </Tabs.Content>
         )}
@@ -248,24 +237,13 @@ export const ProductTab = ({
             value="brochure-tab"
           >
             {productTab?.brochure.map((item: any, index: number) => (
-              <div
-                className="py-4 flex gap-8 max-w-[500px] justify-between border-[1px] border-b-grey-50 border-x-0 border-t-0"
-                key={index}
-              >
-                <div className="flex items-center gap-[13px] w-full">
-                  <figure className="flex items-center justify-center w-full h-full bg-grey-25 max-w-14">
-                    <img src="/downloadFiles.png" className="" alt="pdf" />
-                  </figure>
-                  <h5 className="text-lg italic font-bold leading-6 text-grey-900">
-                    {item?.title}
-                  </h5>
-                </div>
-                <DownloadBtn
-                  url={item?.url}
-                  sessionAccessTocken={sessionAccessTocken}
-                  impersonateEnableCheck={impersonateEnableCheck}
-                />
-              </div>
+              <DownloadSkeleton
+                key={index + 'brochure'}
+                title={item?.title}
+                url={item?.url}
+                sessionAccessTocken={sessionAccessTocken}
+                impersonateEnableCheck={impersonateEnableCheck}
+              />
             ))}
           </Tabs.Content>
         )}
@@ -276,24 +254,13 @@ export const ProductTab = ({
               value="operating-tab"
             >
               {productTab?.operatingManual.map((item: any, index: number) => (
-                <div
-                  className="py-4 flex gap-8 max-w-[500px] justify-between border-[1px] border-b-grey-50 border-x-0 border-t-0"
-                  key={index}
-                >
-                  <div className="flex items-center gap-[13px] w-full">
-                    <figure className="flex items-center justify-center w-full h-full bg-grey-25 max-w-14">
-                      <img src="/downloadFiles.png" className="" alt="pdf" />
-                    </figure>
-                    <h5 className="text-lg italic font-bold leading-6 text-grey-900">
-                      {item?.title}
-                    </h5>
-                  </div>
-                  <DownloadBtn
-                    url={item?.url}
-                    sessionAccessTocken={sessionAccessTocken}
-                    impersonateEnableCheck={impersonateEnableCheck}
-                  />
-                </div>
+                <DownloadSkeleton
+                  key={index + 'operatingManual'}
+                  title={item?.title}
+                  url={item?.url}
+                  sessionAccessTocken={sessionAccessTocken}
+                  impersonateEnableCheck={impersonateEnableCheck}
+                />
               ))}
             </Tabs.Content>
           )}
@@ -303,24 +270,13 @@ export const ProductTab = ({
             value="service-tab"
           >
             {productTab?.serviceManual.map((item: any, index: number) => (
-              <div
-                className="py-4 flex gap-8 max-w-[500px] justify-between border-[1px] border-b-grey-50 border-x-0 border-t-0"
-                key={index}
-              >
-                <div className="flex items-center gap-[13px] w-full">
-                  <figure className="flex items-center justify-center w-full h-full bg-grey-25 max-w-14">
-                    <img src="/downloadFiles.png" className="" alt="pdf" />
-                  </figure>
-                  <h5 className="text-lg italic font-bold leading-6 text-grey-900">
-                    {item?.title}
-                  </h5>
-                </div>
-                <DownloadBtn
-                  url={item?.url}
-                  sessionAccessTocken={sessionAccessTocken}
-                  impersonateEnableCheck={impersonateEnableCheck}
-                />
-              </div>
+              <DownloadSkeleton
+                key={index + 'serviceManual'}
+                title={item?.title}
+                url={item?.url}
+                sessionAccessTocken={sessionAccessTocken}
+                impersonateEnableCheck={impersonateEnableCheck}
+              />
             ))}
           </Tabs.Content>
         )}
@@ -342,7 +298,7 @@ export const DownloadBtn = ({
   return (
     <button
       type="button"
-      className={`flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50 ${
+      className={`flex items-center justify-center gap-2 p-2 px-6 py-2 text-sm italic leading-6 uppercase duration-150 border-solid cursor-pointer text-neutral-white bg-primary-500 hover:bg-primary-600 disabled:bg-grey-50 max-w-52 ${
         loading && 'pointer-events-none'
       }`}
       onClick={() =>
@@ -357,5 +313,35 @@ export const DownloadBtn = ({
     >
       {loading ? 'Downloading' : 'Download'}
     </button>
+  );
+};
+
+export const DownloadSkeleton = ({
+  title,
+  url,
+  sessionAccessTocken,
+  impersonateEnableCheck,
+}: {
+  title: string;
+  url: string;
+  sessionAccessTocken: string;
+  impersonateEnableCheck: string;
+}) => {
+  return (
+    <div className="py-4 items-baseline flex gap-y-3 gap-x-8 max-w-[500px] flex-col sm:flex-row justify-between border-[1px] border-b-grey-50 border-x-0 border-t-0">
+      <div className="flex flex-wrap items-center gap-[13px] w-full">
+        <figure className="flex items-center justify-center w-full bg-grey-25 max-w-14 h-10">
+          <img src="/downloadFiles.png" alt="pdf" />
+        </figure>
+        <h5 className="text-lg italic font-bold leading-6 text-grey-900 w-[calc(100%_-_69px)] break-words">
+          {title}
+        </h5>
+      </div>
+      <DownloadBtn
+        url={url}
+        sessionAccessTocken={sessionAccessTocken}
+        impersonateEnableCheck={impersonateEnableCheck}
+      />
+    </div>
   );
 };
