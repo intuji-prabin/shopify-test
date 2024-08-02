@@ -129,5 +129,5 @@ export async function viewNotification({
     ? urlBuilder(response.payload.notifications)
     : Routes.NOTIFICATIONS_NEW;
 
-  return {redirectLink};
+  return {redirectLink, message: response?.message};
 }
