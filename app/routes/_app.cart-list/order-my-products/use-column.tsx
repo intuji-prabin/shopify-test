@@ -273,8 +273,7 @@ export function QuantityColumn({
 
   const updateQuantity = (newQuantity: any) => {
     meta?.updateData(info.row.index, info.column.id, Math.max(newQuantity, 1));
-    const updateQty = newQuantity > 0;
-    setUpdateCart && setUpdateCart(updateQty);
+    setUpdateCart && setUpdateCart(true);
   };
   const handleIncreaseQuantity = () => {
     if (isNaN(quantity + 1)) {
