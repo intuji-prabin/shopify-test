@@ -85,4 +85,7 @@ export const ENDPOINT = {
   NOTIFICATIONS: {
     GET: `${BASE_URL}/notifications`,
   },
+  PREDICTIVE_SEARCH: {
+    GET: `${BASE_URL}/product/search`,
+  },
 };
