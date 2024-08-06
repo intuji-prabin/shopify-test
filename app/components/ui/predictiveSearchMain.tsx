@@ -1,6 +1,7 @@
 import {NormalizedPredictiveSearchResultItem} from '~/routes/_app.predictive-search/route';
 import {PredictiveProductDetailImage} from './predictiveSearchDetail';
 import {Link} from '@remix-run/react';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 
 export const PredictiveSearchMain = ({
   product,
@@ -22,7 +23,9 @@ export const PredictiveSearchMain = ({
         <PredictiveProductDetailImage
           handleClose={handleClose}
           handle={productLink}
-          featuredPriceImageUrl={product?.featuredPriceImageUrl}
+          featuredPriceImageUrl={
+            product?.featuredImageUrl || DEFAULT_IMAGE.IMAGE
+          }
           isCompare={true}
         />
       </div>

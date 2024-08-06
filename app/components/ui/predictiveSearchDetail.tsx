@@ -1,6 +1,7 @@
 import {Link} from '@remix-run/react';
 import {NormalizedPredictiveSearchResultItem} from '~/routes/_app.predictive-search/route';
 import {isPriceValid} from './predictive-search';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 
 export const PredictiveProductDetail = ({
   product,
@@ -16,7 +17,9 @@ export const PredictiveProductDetail = ({
         <PredictiveProductDetailImage
           handleClose={handleClose}
           handle={product?.handle}
-          featuredPriceImageUrl={product?.featuredPriceImageUrl}
+          featuredPriceImageUrl={
+            product?.featuredImageUrl || DEFAULT_IMAGE.IMAGE
+          }
         />
       </div>
       <div className="w-[calc(100%_-_76px)]">

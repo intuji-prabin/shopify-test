@@ -156,25 +156,12 @@ export function PredictiveSearch({
             <p className="text-base font-bold text-center text-grey-400">
               Loading...
             </p>
-          ) : searchResults?.results?.length > 0 ? (
-            searchResults?.results.map((result) => {
-              switch (result.type) {
-                case 'products':
-                  return (
-                    <SearchResultsProductsGrid
-                      key={result.type}
-                      handleClose={handleClose}
-                      products={result.items}
-                      searchVariant={searchVariant}
-                    />
-                  );
-                case 'queries':
-                  // Suggestions product goes here if we need to integrate
-                  break;
-                default:
-                  break;
-              }
-            })
+          ) : searchResults?.results?.items?.length > 0 ? (
+            <SearchResultsProductsGrid
+              handleClose={handleClose}
+              products={searchResults?.results?.items}
+              searchVariant={searchVariant}
+            />
           ) : (
             <p className="text-base font-bold text-center text-grey-400">
               No results found
