@@ -1,4 +1,4 @@
-const BASE_URL = 'http://10.230.1.24:5000/api'; //test 1
+const BASE_URL = 'http://cigbackenduat.mycigweld.com.au:5000/api'; //test 1
 
 export const ENDPOINT = {
   REPORT: {
