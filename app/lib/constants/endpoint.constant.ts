@@ -1,4 +1,4 @@
-const BASE_URL = 'https://cig-backend.webo.dev/api'; //test 1
+const BASE_URL = 'https://cig-backuat.webo.dev/api'; //test 1
 
 export const ENDPOINT = {
   REPORT: {
@@ -53,6 +53,7 @@ export const ENDPOINT = {
     CART_DETAIL: `${BASE_URL}/cart-detail`,
     ORDER: `${BASE_URL}/order`,
     FILTER: `${BASE_URL}/product/filter`,
+    GET_PRODUCTS: `${BASE_URL}/products`,
   },
   BULK: {
     GET_PRODUCT: `${BASE_URL}/bulk/product-id`,
@@ -83,5 +84,8 @@ export const ENDPOINT = {
   },
   NOTIFICATIONS: {
     GET: `${BASE_URL}/notifications`,
+  },
+  PREDICTIVE_SEARCH: {
+    GET: `${BASE_URL}/product/search`,
   },
 };

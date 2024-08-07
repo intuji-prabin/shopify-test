@@ -30,7 +30,7 @@ import {
   isAuthenticate,
   logout,
 } from '~/lib/utils/auth-session.server';
-import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
+import {AuthErrorHandling} from '~/lib/utils/authErrorHandling';
 import {
   getMessageSession,
   messageCommitSession,
@@ -72,11 +72,9 @@ export async function loader({request, context}: ActionFunctionArgs) {
   const accessToken = await isAuthenticate(context);
 
   let {userDetails} = await getUserDetails(request);
-  
-  if(!userDetails) {
+  if (!userDetails) {
     throw new Error('User not found');
   }
-
   /*check if the user is deactivated while being in offline*/
   const customerData = await getCustomerByEmail({
     context,
@@ -93,7 +91,6 @@ export async function loader({request, context}: ActionFunctionArgs) {
       logoutMessage: UserDeactivatedLogoutMessage,
     });
   }
-
   // to get the total wishlist, pending order, cart and notification count in the header
   const sessionData: any = await getSessionData(request, userDetails, context);
   const {session} = context;
@@ -439,8 +436,8 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if(AuthErrorHandling( error.message )){ 
-      return <AuthError errorMessage={error.message} />
+    if (AuthErrorHandling(error.message)) {
+      return <AuthError errorMessage={error.message} />;
     }
     return (
       <div className="container pt-6">

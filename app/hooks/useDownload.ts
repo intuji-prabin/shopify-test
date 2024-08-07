@@ -1,9 +1,17 @@
+import {useState} from 'react';
 import {displayToast} from '~/components/ui/toast';
+import {
+  DOWNLOAD_ERROR_MSG,
+  NO_ACCESS_MSG,
+  DOWNLOAD_SUCCESS_MSG,
+} from '~/lib/constants/downloadMessage.constants';
 
 type CustomHeaders = HeadersInit & {
   callEncrypted?: string;
 };
 export function useDownload() {
+  const [loading, setLoading] = useState(false);
+
   const handleDownload = async ({
     url,
     headers,
@@ -12,6 +20,7 @@ export function useDownload() {
     headers?: CustomHeaders;
   }) => {
     try {
+      setLoading(true);
       headers && (headers.callEncrypted = 'true');
       const response = await fetch(url, {headers});
 
@@ -22,7 +31,9 @@ export function useDownload() {
 
       const contentDisposition = response.headers.get('Content-Disposition');
       const matches = contentDisposition?.match(/filename=(.*)/);
-      const suggestedFilename = matches ? matches[1] : 'downloaded-file';
+      const suggestedFilename = matches
+        ? matches[1]
+        : url.split('/').pop() ?? 'download-file';
 
       const blob = await response.blob();
       if (isBlob(blob) && blob.size > 0) {
@@ -47,18 +58,21 @@ export function useDownload() {
         document.body.removeChild(a);
 
         window.URL.revokeObjectURL(_url);
+        displayToast({message: DOWNLOAD_SUCCESS_MSG, type: 'success'});
       } else {
-        throw new Error('No access');
+        throw new Error(NO_ACCESS_MSG);
       }
     } catch (error) {
-      let message = 'Failed to download the file';
+      let message = DOWNLOAD_ERROR_MSG;
       if (error instanceof Error) {
         message = error.message;
       }
       displayToast({message, type: 'error'});
+    } finally {
+      setLoading(false);
     }
   };
-  return {handleDownload};
+  return {handleDownload, loading};
 }
 
 function isBlob(obj: any) {

@@ -1,14 +1,14 @@
-import { Link } from '@remix-run/react';
-import { ColumnDef } from '@tanstack/react-table';
-import { useEffect, useMemo, useState } from 'react';
-import { TooltipInfo } from '~/components/icons/orderStatus';
-import { Button } from '~/components/ui/button';
-import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
-import { StockStatusChip } from '~/components/ui/stock-status-chip';
-import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { Can } from '~/lib/helpers/Can';
-import { getProductPriceByQty } from '~/routes/_app.product_.$productSlug/product-detail';
+import {Link} from '@remix-run/react';
+import {ColumnDef} from '@tanstack/react-table';
+import {useEffect, useMemo, useState} from 'react';
+import {TooltipInfo} from '~/components/icons/orderStatus';
+import {Button} from '~/components/ui/button';
+import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
+import {StockStatusChip} from '~/components/ui/stock-status-chip';
+import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {Can} from '~/lib/helpers/Can';
+import {getProductPriceByQty} from '~/routes/_app.product_.$productSlug/product-detail';
 
 export type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock';
 
@@ -59,7 +59,7 @@ export function useMyProductColumn({
     () => [
       {
         id: 'select',
-        header: ({ table }) => (
+        header: ({table}) => (
           <IndeterminateCheckbox
             {...{
               checked: table.getIsAllRowsSelected(),
@@ -68,7 +68,7 @@ export function useMyProductColumn({
             }}
           />
         ),
-        cell: ({ row }) => (
+        cell: ({row}) => (
           <div className="px-1">
             <IndeterminateCheckbox
               {...{
@@ -172,7 +172,7 @@ export function useMyProductColumn({
     [],
   );
 
-  return { columns };
+  return {columns};
 }
 
 /**
@@ -181,7 +181,7 @@ export function useMyProductColumn({
 type ItemsColumnType = Pick<
   BulkOrderColumn,
   'title' | 'sku' | 'featuredImage' | 'moq' | 'warehouse'
-> & { handle?: string; inventory: StockStatus };
+> & {handle?: string; inventory: StockStatus};
 
 export function ItemsColumn({
   title,
@@ -190,12 +190,12 @@ export function ItemsColumn({
   moq,
   handle,
   inventory,
-  warehouse
+  warehouse,
 }: ItemsColumnType) {
   return (
     <div className="flex flex-wrap items-center space-x-2">
       <figure className="w-20 p-3 bg-grey-25 max-h-20">
-        <Link to={handle ? `/product/${handle}` : "#"}>
+        <Link to={handle ? `/product/${handle}` : '#'}>
           <img
             src={featuredImage ?? DEFAULT_IMAGE.IMAGE}
             alt="featured"
@@ -215,7 +215,7 @@ export function ItemsColumn({
               {(allowed) => (
                 <>
                   {allowed ? (
-                    <Link to={handle ? `/product/${handle}` : "#"}>
+                    <Link to={handle ? `/product/${handle}` : '#'}>
                       {(title && title) || '--'}
                     </Link>
                   ) : (
@@ -236,7 +236,11 @@ export function ItemsColumn({
           <StockStatusChip status={inventory} />
         </div>
         <div>
-          {warehouse && inventory === 'In Stock' && <p className='text-[13px] font-medium text-primary-500'>WAREHOUSE: {warehouse}</p>}
+          {warehouse && inventory === 'In Stock' && (
+            <p className="text-[13px] font-medium text-primary-500">
+              WAREHOUSE: {warehouse}
+            </p>
+          )}
           <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize ">
             minimum order({moq})
           </p>
@@ -269,8 +273,7 @@ export function QuantityColumn({
 
   const updateQuantity = (newQuantity: any) => {
     meta?.updateData(info.row.index, info.column.id, Math.max(newQuantity, 1));
-    const updateQty = newQuantity > 0;
-    setUpdateCart && setUpdateCart(updateQty);
+    setUpdateCart && setUpdateCart(true);
   };
   const handleIncreaseQuantity = () => {
     if (isNaN(quantity + 1)) {
@@ -294,27 +297,40 @@ export function QuantityColumn({
   return (
     <>
       <p className="text-sm leading-none text-red-500">
-        {(quantity < moq && quantity >= 1) && (
+        {quantity < moq && quantity >= 1 && (
           <>
-            Orders below MOQ ({moq}) will incur<br /> additional surcharges
+            Orders below MOQ ({moq}) will incur
+            <br /> additional surcharges
           </>
         )}
         {(quantity < 1 || isNaN(quantity)) && (
           <>
-            Minimum order quantity<br /> should be greater than 0
+            Minimum order quantity
+            <br /> should be greater than 0
           </>
         )}
-        {(quantity > CART_QUANTITY_MAX) && (
+        {quantity > CART_QUANTITY_MAX && (
           <>
-            Maximum order quantity<br /> is {CART_QUANTITY_MAX}
+            Maximum order quantity
+            <br /> is {CART_QUANTITY_MAX}
           </>
         )}
       </p>
-      <div className={`flex flex-col gap-[11.5px] cart__list--quantity ${(quantity < moq && quantity >= 1) || (quantity < 1 || isNaN(quantity)) || (quantity > CART_QUANTITY_MAX) ? "mt-1.5" : "mt-[2.2rem]"}`}>
+      <div
+        className={`flex flex-col gap-[11.5px] cart__list--quantity ${
+          (quantity < moq && quantity >= 1) ||
+          quantity < 1 ||
+          isNaN(quantity) ||
+          quantity > CART_QUANTITY_MAX
+            ? 'mt-1.5'
+            : 'mt-[2.2rem]'
+        }`}
+      >
         <div className="flex items-center">
           <button
-            className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${quantity - 1 < 1 && 'cursor-not-allowed'
-              }`}
+            className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${
+              quantity - 1 < 1 && 'cursor-not-allowed'
+            }`}
             type="button"
             onClick={handleDecreaseQuantity}
             disabled={quantity - 1 < 1}
@@ -457,7 +473,7 @@ export function ProductTotal({
   UOM,
   currency,
   discount,
-  currencySymbol
+  currencySymbol,
 }: {
   totalPrice: string;
   isBulkDetailVisible: boolean;
@@ -509,13 +525,20 @@ export function ProductTotal({
         </div>
         <p className="text-grey-900 text-lg leading-5.5 italic">
           {currency}
-          &nbsp;{currencySymbol}{prices?.toFixed(2) || 'N/A'}
+          &nbsp;{currencySymbol}
+          {prices?.toFixed(2) || 'N/A'}
         </p>
         <p className="text-sm italic font-bold leading-normal text-grey-500">
           (Excl. GST)
         </p>
         {discount && (
-          <p className={`${discount === "Discount Applied" ? "bg-secondary-500" : "bg-red-500 text-white"} uppercase text-xs py-1 px-2.5 font-semibold`}>
+          <p
+            className={`${
+              discount === 'Discount Applied'
+                ? 'bg-secondary-500'
+                : 'bg-red-500 text-white'
+            } uppercase text-xs py-1 px-2.5 font-semibold`}
+          >
             {discount}
           </p>
         )}
@@ -524,8 +547,9 @@ export function ProductTotal({
         <Button
           onClick={setIsBulkDetailsVisible}
           type="button"
-          className={`${isRowChecked ? 'bg-white' : 'bg-primary-200'
-            }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
+          className={`${
+            isRowChecked ? 'bg-white' : 'bg-primary-200'
+          }text-[14px] italic font-bold leading-6 uppercase p-0 bg-white text-grey-900 underline hover:bg-white decoration-primary-500 underline-offset-4`}
         >
           {isBulkDetailVisible ? 'Hide' : 'View'} BULK PRICE
         </Button>
