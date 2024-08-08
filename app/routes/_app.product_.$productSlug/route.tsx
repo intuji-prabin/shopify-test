@@ -40,7 +40,7 @@ interface ProductDetailType {
   encryptedSession: string;
   impersonateEnableCheck: string;
   product: {
-    productInfo: ProductInfoType;
+    productInfo: any;
     productTab: ProductTabType;
     relatedProducts: ProductList[];
     alternativeProduct: ProductList[];
@@ -110,11 +110,8 @@ export const loader = async ({
       productSlug as string,
     );
 
-    const productPage = params.productSlug;
-
     return json({
       product,
-      productPage,
       encryptedSession,
       impersonateEnableCheck,
     });
@@ -128,7 +125,7 @@ export const loader = async ({
 };
 
 export default function route() {
-  const {product, productPage, encryptedSession, impersonateEnableCheck} =
+  const {product, encryptedSession, impersonateEnableCheck} =
     useLoaderData<ProductDetailType>();
 
   const shouldRender = useConditionalRender('view_product_detail');
@@ -143,7 +140,7 @@ export default function route() {
               Products
             </BreadcrumbItem>
             <BreadcrumbItem className="capitalize text-grey-800">
-              {productPage?.split('-').join(' ')}
+              {product?.productInfo?.title}
             </BreadcrumbItem>
           </Breadcrumb>
         </div>

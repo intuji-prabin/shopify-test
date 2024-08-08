@@ -1,27 +1,27 @@
-import { Form, Link } from '@remix-run/react';
-import { useState } from 'react';
-import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
-import { Note } from '~/components/icons/note';
-import { NotificationIcon } from '~/components/icons/notification';
+import {Form, Link} from '@remix-run/react';
+import {useState} from 'react';
+import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
+import {Note} from '~/components/icons/note';
+import {NotificationIcon} from '~/components/icons/notification';
 import OrderIcon from '~/components/icons/orderIcon';
-import { Heart, Logout, UserProfile } from '~/components/icons/orderStatus';
-import { Button } from '~/components/ui/button';
+import {Heart, Logout, UserProfile} from '~/components/icons/orderStatus';
+import {Button} from '~/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
-import { PredictiveSearch } from '~/components/ui/predictive-search';
-import { DEFAULT_IMAGE } from '~/lib/constants/general.constant';
-import { Routes } from '~/lib/constants/routes.constent';
-import { CustomerData } from '~/routes/_public.login/login.server';
-import { useHamburgerMenu } from './elements/HamburgerMenuContext';
-import { TrackAnOrderButton } from './elements/track-an-order-dialog';
+import {PredictiveSearch} from '~/components/ui/predictive-search';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {Routes} from '~/lib/constants/routes.constent';
+import {CustomerData} from '~/routes/_public.login/login.server';
+import {useHamburgerMenu} from './elements/HamburgerMenuContext';
+import {TrackAnOrderButton} from './elements/track-an-order-dialog';
 import TabletNavmenu from './tablet-navbar/tablet-navmenu';
 
 export function PlaceOrder({cartCount}: {cartCount: number}) {
-  const { isOpen, toggleMenu } = useHamburgerMenu();
+  const {isOpen, toggleMenu} = useHamburgerMenu();
 
   return (
     <Link to={Routes.CART_LIST} prefetch="intent">
@@ -30,7 +30,9 @@ export function PlaceOrder({cartCount}: {cartCount: number}) {
         onClick={() => toggleMenu(!isOpen)}
       >
         Place an order
-        <div className="absolute bg-semantic-danger-500 h-[14px] min-w-[16px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium py-2 px-1">{cartCount}</div>
+        <div className="absolute bg-semantic-danger-500 h-[14px] min-w-[16px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium py-2 px-1">
+          {cartCount}
+        </div>
       </Button>
     </Link>
   );
@@ -43,7 +45,7 @@ export function OrderTrack({cartCount}: {cartCount: number}) {
     </div>
   );
 }
-export function LogoIcon({ logo_url }: { logo_url: string }) {
+export function LogoIcon({logo_url}: {logo_url: string}) {
   return (
     <Link to={Routes.HOME}>
       <figure className="w-40 ">
@@ -62,12 +64,12 @@ export function NotificationNavbar({
   pendingOrderCount: number;
   notificationCount: number;
 }) {
-  const { toggleMenu } = useHamburgerMenu();
+  const {toggleMenu} = useHamburgerMenu();
 
   const navIcons = [
     {
       id: 1,
-      icon: <OrderIcon/>,
+      icon: <OrderIcon />,
       url: Routes.PLACE_AN_ORDER,
       title: 'Place An Order',
     },
@@ -105,11 +107,11 @@ export function NotificationNavbar({
             >
               {' '}
               <div data-tooltip={navIcon.title}>
-              {navIcon.title !== 'Place An Order' &&
-                <div className="absolute bg-semantic-danger-500 h-[14px] min-w-[16px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium py-2 px-1">
-                  {navIcon.notification}
-                </div>
-              }
+                {navIcon.title !== 'Place An Order' && (
+                  <div className="absolute bg-semantic-danger-500 h-[14px] min-w-[16px] rounded-[50%] right-[-9px] top-[-9px] flex items-center justify-center text-xs text-white font-medium py-2 px-1">
+                    {navIcon.notification}
+                  </div>
+                )}
                 <div className="nav-link">{navIcon.icon}</div>
               </div>
             </Link>
@@ -144,7 +146,11 @@ export default function TopHeader({
     <div className="bg-grey-900">
       <div className="container flex items-center gap-3 py-5 justify-normal md:justify-between">
         <div className="flex items-center gap-4">
-          <TabletNavmenu profileName={userDetails.firstName} profileImage={imageUrl} cartCount={cartCount} />
+          <TabletNavmenu
+            profileName={userDetails.firstName}
+            profileImage={imageUrl}
+            cartCount={cartCount}
+          />
           {/* home logo begins here */}
           <LogoIcon logo_url={'/myCigweldWhite.svg'} />
         </div>
@@ -177,8 +183,14 @@ export default function TopHeader({
           </figure>
           <DropdownMenu open={isClicked} onOpenChange={setIsClicked}>
             <DropdownMenuTrigger asChild>
-              <Button className="p-0 text-base italic font-bold capitalize bg-transparent border-none outline-none hover:bg-transparent focus:border-transparent focus-visible:border-transparent focus:outline-none" data-cy="menu-profile">
-                {userDetails?.firstName}
+              <Button
+                className="p-0 text-base italic font-bold capitalize bg-transparent border-none outline-none hover:bg-transparent focus:border-transparent focus-visible:border-transparent focus:outline-none"
+                data-cy="menu-profile"
+                title={userDetails?.firstName}
+              >
+                <span className="max-w-[60px] whitespace-nowrap overflow-x-hidden text-ellipsis">
+                  {userDetails?.firstName}
+                </span>
                 {isClicked ? <IoIosArrowUp /> : <IoIosArrowDown />}
               </Button>
             </DropdownMenuTrigger>
@@ -188,7 +200,9 @@ export default function TopHeader({
                   <Link
                     onClick={() => setIsClicked(false)}
                     to={Routes.PROFILE}
-                    className={`flex items-center justify-start w-full gap-2 p-2 transition duration-500 ease-in-out delay-75 bg-white hover:bg-primary-100 my-profile ${impersonateEnableCheck && 'opacity-65 pointer-events-none'}`}
+                    className={`flex items-center justify-start w-full gap-2 p-2 transition duration-500 ease-in-out delay-75 bg-white hover:bg-primary-100 my-profile ${
+                      impersonateEnableCheck && 'opacity-65 pointer-events-none'
+                    }`}
                   >
                     <UserProfile />
                     <h5 className="text-lg italic font-bold text-grey-900">
