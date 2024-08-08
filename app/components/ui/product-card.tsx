@@ -1,14 +1,13 @@
 import {Form, Link, useSubmit} from '@remix-run/react';
 import {ProductLoveRed, ProductLoveWhite} from '~/components/icons/orderStatus';
 import {Button} from '~/components/ui/button';
-import {Price} from './price';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {Can} from '~/lib/helpers/Can';
-import {PRODUCT_MAX_PRICE} from '~/lib/constants/cartInfo.constant';
 import {
   ProductList,
   Variants,
 } from '~/routes/_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/productList.server';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {Price} from './price';
 
 export function ProductCard({
   id,
@@ -35,9 +34,7 @@ export function ProductCard({
           featuredImageUrl={featuredImageUrl}
           imageBackgroundColor={imageBackgroundColor}
           id={id}
-          visibility={
-            companyPrice && companyPrice < PRODUCT_MAX_PRICE ? true : false
-          }
+          visibility={companyPrice ? true : false}
           handle={handle}
         />
         <ProductCardInfo
@@ -111,21 +108,13 @@ export function ProductCardInfo({
             <Price
               currency={currency}
               price={companyPrice}
-              originalPrice={companyPrice}
               currencySymbol={currencySymbol}
             />
             <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
             <Price
               currency={currency}
               price={
-                companyPrice && companyPrice < PRODUCT_MAX_PRICE
-                  ? defaultPrice
-                  : 0
-              }
-              originalPrice={
-                companyPrice && companyPrice < PRODUCT_MAX_PRICE
-                  ? defaultPrice
-                  : 0
+                defaultPrice ? defaultPrice : companyPrice ? companyPrice : 0
               }
               variant="rrp"
               currencySymbol={currencySymbol}
@@ -139,9 +128,7 @@ export function ProductCardInfo({
             uom={uom}
             moq={moq}
             productVariantId={productVariantId}
-            visibility={
-              companyPrice && companyPrice < PRODUCT_MAX_PRICE ? true : false
-            }
+            visibility={companyPrice ? true : false}
           />
         </div>
       </div>

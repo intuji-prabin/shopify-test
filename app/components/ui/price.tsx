@@ -1,11 +1,9 @@
-import {PRODUCT_MAX_PRICE} from '~/lib/constants/cartInfo.constant';
 import {TooltipInfo} from '../icons/orderStatus';
 
 export const Price = ({
   currency,
   price,
   variant = 'base',
-  originalPrice,
   currencySymbol,
   className,
 }: {
@@ -13,7 +11,6 @@ export const Price = ({
   price: number;
   variant?: 'base' | 'rrp';
   className?: string;
-  originalPrice: number;
   currencySymbol?: string;
 }) => {
   return (
@@ -48,17 +45,17 @@ export const Price = ({
           variant === 'rrp' && 'text-grey-300'
         }`}
       >
-        {originalPrice && originalPrice < PRODUCT_MAX_PRICE ? (
+        {price ? (
           <>
             <span className="text-lg font-medium">
               {currency && currency}&nbsp;
             </span>
             {currencySymbol && currencySymbol}
+            {price?.toFixed(2)}
           </>
-        ) : null}
-        {originalPrice && originalPrice < PRODUCT_MAX_PRICE
-          ? price?.toFixed(2)
-          : 'N/A'}
+        ) : (
+          '--'
+        )}
       </h3>
       <p
         className={`text-sm leading-4 ${

@@ -526,7 +526,7 @@ export function ProductTotal({
         <p className="text-grey-900 text-lg leading-5.5 italic">
           {currency}
           &nbsp;{currencySymbol}
-          {prices?.toFixed(2) || 'N/A'}
+          {prices?.toFixed(2) || '--'}
         </p>
         <p className="text-sm italic font-bold leading-normal text-grey-500">
           (Excl. GST)
