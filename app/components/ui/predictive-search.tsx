@@ -4,10 +4,7 @@ import {FaSearch} from 'react-icons/fa';
 import CloseMenu from '~/components/icons/closeMenu';
 import {Button} from '~/components/ui/button';
 import {useOutsideClick} from '~/hooks/useOutsideClick';
-import {
-  CART_QUANTITY_MAX,
-  PRODUCT_MAX_PRICE,
-} from '~/lib/constants/cartInfo.constant';
+import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
 import {Routes} from '~/lib/constants/routes.constent';
 import {Can} from '~/lib/helpers/Can';
 import {debounce} from '~/lib/helpers/general.helper';
@@ -17,9 +14,9 @@ import {
 } from '~/routes/_app.predictive-search/route';
 import {CompareSearch} from '../icons/compareSearch';
 import {PredictiveProductDetail} from './predictiveSearchDetail';
+import {PredictiveSearchFormError} from './predictiveSearchFormError';
 import {PredictiveSearchMain} from './predictiveSearchMain';
 import {PredictiveSearchQtyBtn} from './predictiveSearchQtyBtn';
-import {PredictiveSearchFormError} from './predictiveSearchFormError';
 
 export type SearchVariant =
   | 'normal'
@@ -173,9 +170,6 @@ export function PredictiveSearch({
   );
 }
 
-export const isPriceValid = (price: number) => {
-  return price && Number(price) < PRODUCT_MAX_PRICE;
-};
 /**
  * @returns rendered grid of product search results based on search variant type.
  */
@@ -187,7 +181,6 @@ function renderProductItem(
   const [quantity, setQuantity] = useState(parseFloat(product.moq) || 1);
 
   const submit = useSubmit();
-  const isValidPrice = isPriceValid(Number(product?.price));
 
   switch (searchVariant) {
     case 'mobile':
@@ -208,7 +201,7 @@ function renderProductItem(
               handleClose={handleClose}
             />
           </div>
-          {isValidPrice ? (
+          {product?.price ? (
             <div className="w-full md:w-[calc(33.33%_-_1rem)]">
               <div className="flex cart__list--quantity">
                 <PredictiveSearchQtyBtn
@@ -282,7 +275,7 @@ function renderProductItem(
               handleClose={handleClose}
             />
           </div>
-          {isValidPrice ? (
+          {product?.price ? (
             <div className="md:w-[calc(33.33%_-_1rem)]">
               <div className="flex cart__list--quantity">
                 <PredictiveSearchQtyBtn
@@ -363,7 +356,7 @@ function renderProductItem(
               handleClose={handleClose}
             />
           </div>
-          {product?.price && Number(product?.price) < PRODUCT_MAX_PRICE ? (
+          {product?.price ? (
             <div className="grid grid-cols-1 gap-x-4 w-full gap-y-2 sm:grid-cols-2 xl:w-[calc(60%_-_1rem)] items-start">
               <div className="flex h-full">
                 <p className="mt-auto font-medium">Unit of Measure</p>

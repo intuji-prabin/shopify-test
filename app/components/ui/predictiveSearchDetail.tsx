@@ -1,7 +1,6 @@
 import {Link} from '@remix-run/react';
-import {NormalizedPredictiveSearchResultItem} from '~/routes/_app.predictive-search/route';
-import {isPriceValid} from './predictive-search';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {NormalizedPredictiveSearchResultItem} from '~/routes/_app.predictive-search/route';
 
 export const PredictiveProductDetail = ({
   product,
@@ -10,7 +9,6 @@ export const PredictiveProductDetail = ({
   product: NormalizedPredictiveSearchResultItem;
   handleClose: () => void;
 }) => {
-  const isValidPrice = isPriceValid(Number(product?.price));
   return (
     <>
       <div className="size-16">
@@ -37,14 +35,14 @@ export const PredictiveProductDetail = ({
           </Link>
         </p>
         <p className="text-2xl italic font-bold text-grey-900 whitespace-nowrap">
-          {isValidPrice ? (
+          {product?.price ? (
             <>
               {product.currency}&nbsp;
               {product.currencySymbol}
               {product.price}
             </>
           ) : (
-            'N/A'
+            '--'
           )}
           <span className="text-sm italic font-bold text-grey-500">
             {' '}
