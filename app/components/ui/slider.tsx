@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import * as SliderPrimitive from '@radix-ui/react-slider';
-import { cn } from '~/lib/utils/utils';
+import {cn} from '~/lib/utils/utils';
 
 type SliderProps = {
   className?: string;
@@ -35,7 +35,6 @@ const Slider = React.forwardRef(
   ) => {
     const initialValue = Array.isArray(value) ? value : [min, max];
     const [localValues, setLocalValues] = useState(initialValue);
-
     const handleValueChange = (newValues: number[]) => {
       setLocalValues(newValues);
       if (onValueChange) {
@@ -61,6 +60,10 @@ const Slider = React.forwardRef(
         setRange(newRange);
       }
     };
+
+    useEffect(() => {
+      setLocalValues(initialValue);
+    }, [value]);
 
     return (
       <div className="flex flex-col space-y-6">
@@ -128,4 +131,4 @@ const Slider = React.forwardRef(
 
 Slider.displayName = SliderPrimitive.Root.displayName;
 
-export { Slider };
+export {Slider};
