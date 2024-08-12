@@ -24,6 +24,7 @@ export interface Product {
   selectedUOM: string;
   defaultUOM: string;
   itemLineNumber: string;
+  sku: string;
 }
 
 export interface OrderDetails {
