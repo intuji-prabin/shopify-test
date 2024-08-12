@@ -60,7 +60,9 @@ export function ProductTable({
                 <tr>
                   <th className="text-left"> Total Excl GST</th>
                   <td>
-                    {prefixWithCurrency(orderProductDetails.productSubTotal)}
+                    {prefixWithCurrency(
+                      orderProductDetails.productSubTotalExclGST,
+                    )}
                   </td>
                 </tr>
                 <tr>
@@ -114,18 +116,20 @@ export function ProductTable({
                   <td>{prefixWithCurrency(orderProductDetails.surCharges)}</td>
                 </tr>
                 <tr>
+                  <th className="text-left">Discount</th>
+                  <td>{prefixWithCurrency(orderProductDetails.discount)}</td>
+                </tr>
+                <tr>
                   <th className="text-left"> Total Excl GST</th>
                   <td>
-                    {prefixWithCurrency(orderProductDetails.shippedSubTotal)}
+                    {prefixWithCurrency(
+                      orderProductDetails.shippedSubTotalExclGST,
+                    )}
                   </td>
                 </tr>
                 <tr>
                   <th className="text-left">GST</th>
                   <td>{prefixWithCurrency(orderProductDetails.shippedGST)}</td>
-                </tr>
-                <tr>
-                  <th className="text-left">Discount</th>
-                  <td>{prefixWithCurrency(orderProductDetails.discount)}</td>
                 </tr>
                 <tr className="leading-7.5 text-[22px]">
                   <th className="text-left">Total</th>
