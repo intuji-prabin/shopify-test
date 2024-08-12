@@ -27,6 +27,15 @@ export function useColumn({
         },
         {
           accessorKey: 'name',
+          header: 'SKU',
+          enableSorting: false,
+          cell: (info) => {
+            const sku = info.row.original.sku || <span className="text-center">{' - '}</span>;
+            return sku;
+          },
+        },
+        {
+          accessorKey: 'name',
           header: 'Product',
           enableSorting: false,
           cell: (info) => info.getValue(),
