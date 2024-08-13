@@ -93,7 +93,6 @@ export function useMyProductColumn({
               title={product.title}
               sku={product.sku}
               featuredImage={product.featuredImage}
-              moq={product.moq || 1}
               handle={product?.handle}
               inventory={product.inventory}
               warehouse={warehouse}
@@ -180,14 +179,13 @@ export function useMyProductColumn({
  */
 type ItemsColumnType = Pick<
   BulkOrderColumn,
-  'title' | 'sku' | 'featuredImage' | 'moq' | 'warehouse'
+  'title' | 'sku' | 'featuredImage' | 'warehouse'
 > & {handle?: string; inventory: StockStatus};
 
 export function ItemsColumn({
   title,
   sku,
   featuredImage,
-  moq,
   handle,
   inventory,
   warehouse,
@@ -241,9 +239,6 @@ export function ItemsColumn({
               WAREHOUSE: {warehouse}
             </p>
           )}
-          <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize ">
-            minimum order({moq})
-          </p>
         </div>
       </figcaption>
     </div>
