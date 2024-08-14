@@ -18,19 +18,19 @@ export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, frei
         <li className="flex justify-between">
           <p className="capitalize before:content-['*'] before:text-red-500">freight</p>
           <span className="text-lg font-medium">
-            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{currencySymbol && currencySymbol}{freight}
+            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{currencySymbol && currencySymbol}{freight?.toFixed(2)}
           </span>
         </li>
         <li className="flex justify-between">
           <p className="capitalize before:content-['*'] before:text-red-500">surcharges</p>
           <span className="text-lg font-medium">
-            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{currencySymbol && currencySymbol}{surcharges}
+            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{currencySymbol && currencySymbol}{surcharges?.toFixed(2)}
           </span>
         </li>
         <li className="flex justify-between">
           <p className="capitalize">Total Excl. GST</p>
           <span className="text-lg font-medium">
-            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{currencySymbol && currencySymbol}{gst}
+            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;{currencySymbol && currencySymbol}{gst?.toFixed(2)}
           </span>
         </li>
         {promoCodeApplied &&
@@ -45,7 +45,7 @@ export default function EstimatedTotal({ cartSubTotalPrice, cartTotalPrice, frei
           <li className="flex justify-between">
             <p className="capitalize">Discounted Amount</p>
             <span className="text-lg font-medium">
-              <span className="text-base">{currency ? currency : '$'} {currencySymbol && currencySymbol}{discountPrice}</span>
+              <span className="text-base">{currency ? currency : '$'} {currencySymbol && currencySymbol}{discountPrice?.toFixed(2)}</span>
             </span>
           </li>
         }
