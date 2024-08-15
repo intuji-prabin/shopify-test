@@ -41,7 +41,7 @@ export const Price = ({
         </div>
       </div>
       <h3
-        className={`price leading-6 font-medium ${
+        className={`price leading-10 font-medium ${
           variant === 'rrp' && 'text-grey-300'
         }`}
       >

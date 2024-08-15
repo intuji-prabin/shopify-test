@@ -9,6 +9,7 @@ import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {Can} from '~/lib/helpers/Can';
 import {getProductPriceByQty} from '~/routes/_app.product_.$productSlug/product-detail';
+import {getUnitProductPrice} from './unitPrice';
 
 export type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock';
 
@@ -34,6 +35,7 @@ export type BulkOrderColumn = {
   currencySymbol: string;
   warehouse: string;
   type3DiscountPriceAppliedStatus: boolean;
+  unitPrice: number;
   unitOfMeasure: [
     {
       unit: string;
@@ -94,7 +96,6 @@ export function useMyProductColumn({
               title={product.title}
               sku={product.sku}
               featuredImage={product.featuredImage}
-              moq={product.moq || 1}
               handle={product?.handle}
               inventory={product.inventory}
               warehouse={warehouse}
@@ -147,28 +148,49 @@ export function useMyProductColumn({
         cell: (info) => {
           const product = info.row.original;
           const currencySymbol = info.row.original.currencySymbol;
+          const quantity = info.row.original?.quantity;
+          const finalUOM = info.row.original?.uom;
+          const priceRange = info.row.original?.priceRange;
+          const uomRange = info.row.original?.unitOfMeasure;
+          const defaultUom = info.row.original?.defaultUOM;
+          const totalPrice = info.row.original?.companyPrice;
+          const finalUnitPrice = getUnitProductPrice({
+            quantity,
+            finalUOM,
+            defaultUom,
+            priceRange,
+            uomRange,
+            totalPrice,
+          });
           return (
             <p className="text-grey-900 text-lg leading-5.5 italic">
               {product?.currency}&nbsp;
               {currencySymbol}
-              {product.companyPrice}
+              {priceRange.length > 0 ? (
+                <>{finalUnitPrice}</>
+              ) : (
+                <>
+                  {product?.unitPrice?.toFixed(2) ||
+                    Number(product?.companyPrice).toFixed(2)}
+                </>
+              )}
             </p>
           );
         },
       },
       {
         accessorKey: 'total',
-        header: 'Price',
+        header: 'Total Price',
         enableSorting: false,
         cell: (info) => {
-          const productTotal = info.row.original.companyPrice;
-          const priceRange = info.row.original.priceRange;
-          const quantity = info.row.original.quantity;
+          const productTotal = info.row.original?.companyPrice;
+          const priceRange = info.row.original?.priceRange;
+          const quantity = info.row.original?.quantity;
           const product = info.row.original;
-          const UOM = info.row.original.uom;
-          const currencySymbol = info.row.original.currencySymbol;
+          const UOM = info.row.original?.uom;
+          const currencySymbol = info.row.original?.currencySymbol;
           const discountStatus =
-            info.row.original.type3DiscountPriceAppliedStatus;
+            info.row.original?.type3DiscountPriceAppliedStatus;
           return (
             <ProductTotal
               totalPrice={productTotal}
@@ -200,14 +222,13 @@ export function useMyProductColumn({
  */
 type ItemsColumnType = Pick<
   BulkOrderColumn,
-  'title' | 'sku' | 'featuredImage' | 'moq' | 'warehouse'
+  'title' | 'sku' | 'featuredImage' | 'warehouse'
 > & {handle?: string; inventory: StockStatus};
 
 export function ItemsColumn({
   title,
   sku,
   featuredImage,
-  moq,
   handle,
   inventory,
   warehouse,
@@ -248,7 +269,7 @@ export function ItemsColumn({
             (title && title) || '--'
           )}
         </h5>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <div className="space-y-2">
           <p>
             <span className="font-semibold text-grey-900 ">SKU: </span>
             <span data-cy="product-sku">{(sku && sku) || 'N/A'}</span>
@@ -261,9 +282,6 @@ export function ItemsColumn({
               WAREHOUSE: {warehouse}
             </p>
           )}
-          <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize ">
-            minimum order({moq})
-          </p>
         </div>
       </figcaption>
     </div>
@@ -359,7 +377,7 @@ export function QuantityColumn({
           </button>
           <input
             type="number"
-            className="flex items-center justify-center w-20 text-center border-solid appearance-none border-x-0 border-grey-200 min-h-10"
+            className="flex items-center justify-center w-16 text-center border-solid appearance-none border-x-0 border-grey-200 min-h-10"
             value={quantity}
             name="quantity"
             onChange={handleInputChange}

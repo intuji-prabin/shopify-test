@@ -12,6 +12,7 @@ import {Form, useSubmit} from '@remix-run/react';
 import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
 import {AbilityContext, Can} from '~/lib/helpers/Can';
 import {useContext} from 'react';
+import {getUnitProductPrice} from '../_app.cart-list/order-my-products/unitPrice';
 
 export function useMyWishListColumn() {
   const submit = useSubmit();
@@ -71,18 +72,39 @@ export function useMyWishListColumn() {
           cell: (info) => {
             const product = info.row.original;
             const currencySymbol = info.row.original.currencySymbol;
+            const quantity = info.row.original?.quantity;
+            const finalUOM = info.row.original?.uom;
+            const priceRange = info.row.original?.priceRange;
+            const uomRange = info.row.original?.unitOfMeasure;
+            const defaultUom = info.row.original?.defaultUOM;
+            const totalPrice = info.row.original?.companyPrice;
+            const finalUnitPrice = getUnitProductPrice({
+              quantity,
+              finalUOM,
+              defaultUom,
+              priceRange,
+              uomRange,
+              totalPrice,
+            });
             return (
               <p className="text-grey-900 text-lg leading-5.5 italic">
                 {product?.currency}&nbsp;
                 {currencySymbol}
-                {product.companyPrice}
+                {priceRange.length > 0 ? (
+                  <>{finalUnitPrice}</>
+                ) : (
+                  <>
+                    {product?.unitPrice?.toFixed(2) ||
+                      Number(product?.companyPrice).toFixed(2)}
+                  </>
+                )}
               </p>
             );
           },
         },
         {
           accessorKey: 'total',
-          header: 'Price',
+          header: 'Total Price',
           enableSorting: false,
           cell: (info) => {
             const productTotal = info?.row?.original?.companyPrice;
