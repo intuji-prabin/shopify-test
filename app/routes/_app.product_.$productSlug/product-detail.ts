@@ -1,12 +1,24 @@
-export function getProductPriceByQty(
-  qty: any,
-  uomList: any,
-  selectedUOM: any,
-  defaultUom: any,
-  priceRange: any,
-  companyDefaultPrice: any,
-) {
+export function getProductPriceByQty({
+  qty,
+  uomList,
+  selectedUOM,
+  defaultUom,
+  priceRange,
+  companyDefaultPrice,
+  discountStatus = false,
+}: {
+  qty: number;
+  uomList: any;
+  selectedUOM: number;
+  defaultUom: any;
+  priceRange: any;
+  companyDefaultPrice: any;
+  discountStatus?: boolean;
+}) {
   let finalQty = qty;
+  if (discountStatus) {
+    return qty * companyDefaultPrice;
+  }
   if (defaultUom != selectedUOM && uomList.length > 0) {
     const selectUomWithConversion = uomList.find((item: any) => {
       return item?.code == selectedUOM;
