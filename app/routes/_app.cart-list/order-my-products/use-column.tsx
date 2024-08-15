@@ -33,6 +33,7 @@ export type BulkOrderColumn = {
   placeId: number;
   currencySymbol: string;
   warehouse: string;
+  type3DiscountPriceAppliedStatus: boolean;
   unitOfMeasure: [
     {
       unit: string;
@@ -149,6 +150,8 @@ export function useMyProductColumn({
           const product = info.row.original;
           const UOM = info.row.original.uom;
           const currencySymbol = info.row.original.currencySymbol;
+          const discountStatus =
+            info.row.original.type3DiscountPriceAppliedStatus;
           return (
             <ProductTotal
               totalPrice={productTotal}
@@ -163,6 +166,7 @@ export function useMyProductColumn({
               isRowChecked={info?.row?.getIsSelected()}
               currency={info.row.original.currency || '$'}
               discount={product?.discountMessage}
+              discountStatus={discountStatus}
             />
           );
         },
@@ -469,6 +473,7 @@ export function ProductTotal({
   currency,
   discount,
   currencySymbol,
+  discountStatus,
 }: {
   totalPrice: string;
   isBulkDetailVisible: boolean;
@@ -488,15 +493,17 @@ export function ProductTotal({
   currency: string;
   discount?: string;
   currencySymbol: string;
+  discountStatus: boolean;
 }) {
-  const prices = getProductPriceByQty(
-    quantity,
-    unitOfMeasure,
-    UOM,
-    defaultUOM,
+  const prices = getProductPriceByQty({
+    qty: quantity,
+    uomList: unitOfMeasure,
+    selectedUOM: UOM,
+    defaultUom: defaultUOM,
     priceRange,
-    totalPrice,
-  );
+    companyDefaultPrice: totalPrice,
+    discountStatus,
+  });
 
   return (
     <div className="flex flex-col gap-4 items-baseline min-w-[110px]">
