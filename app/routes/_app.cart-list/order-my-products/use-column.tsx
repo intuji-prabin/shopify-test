@@ -9,6 +9,7 @@ import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {Can} from '~/lib/helpers/Can';
 import {getProductPriceByQty} from '~/routes/_app.product_.$productSlug/product-detail';
+import {getUnitProductPrice} from './unitPrice';
 
 export type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock';
 
@@ -34,6 +35,7 @@ export type BulkOrderColumn = {
   currencySymbol: string;
   warehouse: string;
   type3DiscountPriceAppliedStatus: boolean;
+  unitPrice: number;
   unitOfMeasure: [
     {
       unit: string;
@@ -147,28 +149,49 @@ export function useMyProductColumn({
         cell: (info) => {
           const product = info.row.original;
           const currencySymbol = info.row.original.currencySymbol;
+          const quantity = info.row.original?.quantity;
+          const finalUOM = info.row.original?.uom;
+          const priceRange = info.row.original?.priceRange;
+          const uomRange = info.row.original?.unitOfMeasure;
+          const defaultUom = info.row.original?.defaultUOM;
+          const totalPrice = info.row.original?.companyPrice;
+          const finalUnitPrice = getUnitProductPrice({
+            quantity,
+            finalUOM,
+            defaultUom,
+            priceRange,
+            uomRange,
+            totalPrice,
+          });
           return (
             <p className="text-grey-900 text-lg leading-5.5 italic">
               {product?.currency}&nbsp;
               {currencySymbol}
-              {product.companyPrice}
+              {priceRange.length > 0 ? (
+                <>{finalUnitPrice}</>
+              ) : (
+                <>
+                  {product?.unitPrice?.toFixed(2) ||
+                    Number(product?.companyPrice).toFixed(2)}
+                </>
+              )}
             </p>
           );
         },
       },
       {
         accessorKey: 'total',
-        header: 'Price',
+        header: 'Total Price',
         enableSorting: false,
         cell: (info) => {
-          const productTotal = info.row.original.companyPrice;
-          const priceRange = info.row.original.priceRange;
-          const quantity = info.row.original.quantity;
+          const productTotal = info.row.original?.companyPrice;
+          const priceRange = info.row.original?.priceRange;
+          const quantity = info.row.original?.quantity;
           const product = info.row.original;
-          const UOM = info.row.original.uom;
-          const currencySymbol = info.row.original.currencySymbol;
+          const UOM = info.row.original?.uom;
+          const currencySymbol = info.row.original?.currencySymbol;
           const discountStatus =
-            info.row.original.type3DiscountPriceAppliedStatus;
+            info.row.original?.type3DiscountPriceAppliedStatus;
           return (
             <ProductTotal
               totalPrice={productTotal}

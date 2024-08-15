@@ -341,7 +341,7 @@ function renderProductItem(
       );
     }
     case 'place_an_order': {
-      const [UOM, setUOM] = useState(product.uomCode);
+      const [UOM, setUOM] = useState(product.uom);
       function handleUOM(selectedUOM: string) {
         setUOM(selectedUOM);
       }
