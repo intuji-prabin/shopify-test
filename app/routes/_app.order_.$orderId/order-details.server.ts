@@ -65,6 +65,7 @@ export interface OrderDetails {
   productSubTotalExclGST: string;
   shippedSubTotalExclGST: string;
   products: Product[];
+  promoCode: number;
 }
 
 interface ResponseData {

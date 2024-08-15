@@ -880,10 +880,10 @@ div[data-state='open'].fixed.inset-0 {
   margin: 0;
 }
 .data__table table thead tr th:nth-child(2) {
-  @apply min-w-[500px];
+  @apply min-w-[300px];
 }
 .cart__list .data__table table thead tr th:nth-child(2) {
-  @apply min-w-[329px];
+  @apply min-w-[225px];
 }
 .order-error .track-order {
   @apply mx-auto bg-primary-500 py-3 px-4;

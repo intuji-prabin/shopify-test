@@ -14,8 +14,9 @@ export function getUnitProductPrice({
   totalPrice: string;
 }) {
   let finalQty = quantity;
+  let selectUomWithConversion;
   if (defaultUom != finalUOM && uomRange.length > 0) {
-    const selectUomWithConversion = uomRange.find((item: any) => {
+    selectUomWithConversion = uomRange.find((item: any) => {
       return item?.code == finalUOM;
     });
     finalQty = quantity * selectUomWithConversion?.conversionFactor;
@@ -29,7 +30,10 @@ export function getUnitProductPrice({
     });
 
     if (priceRan) {
-      return priceRan?.price;
+      return (
+        Number(priceRan?.price) *
+        Number(selectUomWithConversion?.conversionFactor || 1)
+      );
     }
   }
   return totalPrice;

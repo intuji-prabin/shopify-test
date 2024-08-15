@@ -271,7 +271,7 @@ export function ItemsColumn({
             (title && title) || '--'
           )}
         </h5>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <div className="space-y-2">
           <p>
             <span className="font-semibold text-grey-900 ">SKU: </span>
             <span data-cy="product-sku">{(sku && sku) || 'N/A'}</span>
@@ -382,7 +382,7 @@ export function QuantityColumn({
           </button>
           <input
             type="number"
-            className="flex items-center justify-center w-20 text-center border-solid appearance-none border-x-0 border-grey-200 min-h-10"
+            className="flex items-center justify-center w-16 text-center border-solid appearance-none border-x-0 border-grey-200 min-h-10"
             value={quantity}
             name="quantity"
             onChange={handleInputChange}
