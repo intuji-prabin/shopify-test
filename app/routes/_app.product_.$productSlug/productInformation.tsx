@@ -104,27 +104,27 @@ const ProductDetailsSection = ({
 }: any) => {
   const [quantity, setQuantity] = useState(parseFloat(moq) || 1);
   const [UOM, setUOM] = useState(uomCode);
-  const firstPrice = getProductPriceByQty(
-    quantity,
-    unitOfMeasure,
-    UOM,
-    uomCode,
+  const firstPrice = getProductPriceByQty({
+    qty: quantity,
+    uomList: unitOfMeasure,
+    selectedUOM: UOM,
+    defaultUom: uomCode,
     priceRange,
     companyDefaultPrice,
-  );
+  });
   const [productPrice, setProductPrice] = useState(firstPrice);
 
   const submit = useSubmit();
 
   function decreaseQuantity() {
-    const prices = getProductPriceByQty(
-      quantity > 1 ? quantity - 1 : 1,
-      unitOfMeasure,
-      UOM,
-      box,
+    const prices = getProductPriceByQty({
+      qty: quantity > 1 ? quantity - 1 : 1,
+      uomList: unitOfMeasure,
+      selectedUOM: UOM,
+      defaultUom: box,
       priceRange,
       companyDefaultPrice,
-    );
+    });
     setProductPrice(prices);
     if (isNaN(quantity - 1)) {
       setQuantity(parseFloat(moq));
@@ -133,14 +133,14 @@ const ProductDetailsSection = ({
     setQuantity(quantity > 0 ? quantity - 1 : 0);
   }
   function increaseQuantity() {
-    const prices = getProductPriceByQty(
-      quantity + 1,
-      unitOfMeasure,
-      UOM,
-      box,
+    const prices = getProductPriceByQty({
+      qty: quantity + 1,
+      uomList: unitOfMeasure,
+      selectedUOM: UOM,
+      defaultUom: box,
       priceRange,
       companyDefaultPrice,
-    );
+    });
     setProductPrice(prices);
     if (isNaN(quantity + 1)) {
       setQuantity(parseFloat(moq));
@@ -150,27 +150,27 @@ const ProductDetailsSection = ({
   }
   function handleInputChange(event?: any) {
     const inputQuantity = parseInt(event.target.value);
-    const prices = getProductPriceByQty(
-      inputQuantity,
-      unitOfMeasure,
-      UOM,
-      box,
+    const prices = getProductPriceByQty({
+      qty: inputQuantity,
+      uomList: unitOfMeasure,
+      selectedUOM: UOM,
+      defaultUom: box,
       priceRange,
       companyDefaultPrice,
-    );
+    });
     setProductPrice(prices);
     setQuantity(inputQuantity);
   }
 
   function handleUOM(selectedUOM: any) {
-    const prices = getProductPriceByQty(
-      quantity,
-      unitOfMeasure,
+    const prices = getProductPriceByQty({
+      qty: quantity,
+      uomList: unitOfMeasure,
       selectedUOM,
-      box,
+      defaultUom: box,
       priceRange,
       companyDefaultPrice,
-    );
+    });
     setProductPrice(prices);
     setUOM(selectedUOM);
   }
