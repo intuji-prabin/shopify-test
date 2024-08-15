@@ -1,22 +1,18 @@
-import {Form, Link, useFetcher, useSubmit} from '@remix-run/react';
+import {Link, useFetcher} from '@remix-run/react';
 import {FormEvent, useRef, useState} from 'react';
 import {FaSearch} from 'react-icons/fa';
 import CloseMenu from '~/components/icons/closeMenu';
 import {Button} from '~/components/ui/button';
 import {useOutsideClick} from '~/hooks/useOutsideClick';
-import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
 import {Routes} from '~/lib/constants/routes.constent';
-import {Can} from '~/lib/helpers/Can';
 import {debounce} from '~/lib/helpers/general.helper';
 import {
   NormalizedPredictiveSearch,
   NormalizedPredictiveSearchResultItem,
 } from '~/routes/_app.predictive-search/route';
 import {CompareSearch} from '../icons/compareSearch';
-import {PredictiveProductDetail} from './predictiveSearchDetail';
-import {PredictiveSearchFormError} from './predictiveSearchFormError';
 import {PredictiveSearchMain} from './predictiveSearchMain';
-import {PredictiveSearchQtyBtn} from './predictiveSearchQtyBtn';
+import {PredictiveSearchOther} from './PredictiveSearchOther';
 
 export type SearchVariant =
   | 'normal'
@@ -75,11 +71,9 @@ export function PredictiveSearch({
   // Search class based on search variant
   let searchClass;
   switch (searchVariant) {
+    case 'place_an_order':
     case 'cart':
     case 'pending_order':
-      searchClass = 'max-w-[50%] max-h-[350px]';
-      break;
-    case 'place_an_order':
       searchClass = 'max-w-[80%] max-h-[350px]';
       break;
     default:
@@ -179,156 +173,16 @@ function renderProductItem(
   handleClose: () => void,
 ) {
   const [quantity, setQuantity] = useState(parseFloat(product.moq) || 1);
-
-  const submit = useSubmit();
+  const [UOM, setUOM] = useState(product.uom);
+  function handleUOM(selectedUOM: string) {
+    setUOM(selectedUOM);
+  }
 
   switch (searchVariant) {
     case 'mobile':
     case 'normal': {
       return (
         <PredictiveSearchMain product={product} handleClose={handleClose} />
-      );
-    }
-    case 'cart': {
-      return (
-        <div
-          key={product.id}
-          className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 md:flex-row"
-        >
-          <div className="flex flex-wrap items-center w-full gap-3 md:w-4/6">
-            <PredictiveProductDetail
-              product={product}
-              handleClose={handleClose}
-            />
-          </div>
-          {product?.price ? (
-            <div className="w-full md:w-[calc(33.33%_-_1rem)]">
-              <div className="flex cart__list--quantity">
-                <PredictiveSearchQtyBtn
-                  moq={product.moq}
-                  quantity={quantity}
-                  setQuantity={setQuantity}
-                />
-              </div>
-              <Can I="view" a="add_to_cart">
-                <Form
-                  method="POST"
-                  action="/predictive-search"
-                  onSubmit={(event) => {
-                    submit(event.currentTarget);
-                    handleClose();
-                  }}
-                  className="w-full"
-                >
-                  <input type="hidden" name="productId" value={product?.id} />
-                  <input
-                    type="hidden"
-                    name="productVariantId"
-                    value={product?.variantId}
-                  />
-                  <input type="hidden" name="quantity" value={quantity} />
-                  <input type="hidden" name="selectUOM" value={product?.uom} />
-                  <Button
-                    className={`w-full mt-2 ${
-                      quantity < 1 ||
-                      quantity > CART_QUANTITY_MAX ||
-                      isNaN(quantity)
-                        ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
-                        : 'cursor-pointer'
-                    }`}
-                    disabled={
-                      quantity < 1 ||
-                      quantity > CART_QUANTITY_MAX ||
-                      isNaN(quantity)
-                    }
-                    type={
-                      quantity < 1 ||
-                      quantity > CART_QUANTITY_MAX ||
-                      isNaN(quantity)
-                        ? 'button'
-                        : 'submit'
-                    }
-                    variant="primary"
-                  >
-                    Add to Cart
-                  </Button>
-                  <PredictiveSearchFormError
-                    quantity={quantity}
-                    moq={product.moq}
-                  />
-                </Form>
-              </Can>
-            </div>
-          ) : null}
-        </div>
-      );
-    }
-    case 'pending_order': {
-      return (
-        <div
-          key={product.id}
-          className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 md:flex-row"
-        >
-          <div className="flex flex-wrap items-center gap-3 md:w-4/6">
-            <PredictiveProductDetail
-              product={product}
-              handleClose={handleClose}
-            />
-          </div>
-          {product?.price ? (
-            <div className="md:w-[calc(33.33%_-_1rem)]">
-              <div className="flex cart__list--quantity">
-                <PredictiveSearchQtyBtn
-                  moq={product.moq}
-                  quantity={quantity}
-                  setQuantity={setQuantity}
-                />
-              </div>
-              <Form
-                method="POST"
-                onSubmit={(event) => {
-                  submit(event.currentTarget);
-                  handleClose();
-                }}
-                className="w-full"
-              >
-                <input type="hidden" name="productId" value={product.id} />
-                <input type="hidden" name="quantity" value={quantity} />
-                <input type="hidden" name="uom" value={product.uom} />
-                <Button
-                  className={`w-full mt-2 ${
-                    quantity < 1 ||
-                    quantity > CART_QUANTITY_MAX ||
-                    isNaN(quantity)
-                      ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
-                      : 'cursor-pointer'
-                  }`}
-                  disabled={
-                    quantity < 1 ||
-                    quantity > CART_QUANTITY_MAX ||
-                    isNaN(quantity)
-                  }
-                  type={
-                    quantity < 1 ||
-                    quantity > CART_QUANTITY_MAX ||
-                    isNaN(quantity)
-                      ? 'button'
-                      : 'submit'
-                  }
-                  variant="primary"
-                  name="_action"
-                  value="add_product"
-                >
-                  Add to List
-                </Button>
-                <PredictiveSearchFormError
-                  quantity={quantity}
-                  moq={product.moq}
-                />
-              </Form>
-            </div>
-          ) : null}
-        </div>
       );
     }
     case 'compare': {
@@ -340,103 +194,24 @@ function renderProductItem(
         />
       );
     }
+    case 'cart':
+    case 'pending_order':
     case 'place_an_order': {
       const [UOM, setUOM] = useState(product.uom);
       function handleUOM(selectedUOM: string) {
         setUOM(selectedUOM);
       }
       return (
-        <div
+        <PredictiveSearchOther
           key={product.id}
-          className="flex flex-col items-center justify-between gap-4 pb-4 border-b last:border-0 xl:flex-row"
-        >
-          <div className="flex flex-wrap items-center w-full gap-3 xl:w-2/5">
-            <PredictiveProductDetail
-              product={product}
-              handleClose={handleClose}
-            />
-          </div>
-          {product?.price ? (
-            <div className="grid grid-cols-1 gap-x-4 w-full gap-y-2 sm:grid-cols-2 xl:w-[calc(60%_-_1rem)] items-start">
-              <div className="flex h-full">
-                <p className="mt-auto font-medium">Unit of Measure</p>
-              </div>
-              <div className="flex cart__list--quantity">
-                <PredictiveSearchQtyBtn
-                  moq={product.moq}
-                  quantity={quantity}
-                  setQuantity={setQuantity}
-                />
-              </div>
-              <select
-                name="filter_by"
-                className="w-full min-w-[120px] place-order !border-grey-500 filter-select !py-[9px]"
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                  handleUOM(e.target.value)
-                }
-                defaultValue={UOM}
-              >
-                {product.unitOfMeasure?.length > 0 ? (
-                  product.unitOfMeasure?.map(
-                    (uom: {unit: string; code: string}, index: number) => (
-                      <option
-                        className="px-4"
-                        value={uom.code}
-                        key={index + 'uom'}
-                      >
-                        {uom.unit}
-                      </option>
-                    ),
-                  )
-                ) : (
-                  <option value={UOM}>{product.defaultUomValue}</option>
-                )}
-              </select>
-              <Form
-                method="POST"
-                onSubmit={(event) => {
-                  submit(event.currentTarget);
-                  handleClose();
-                }}
-                className="w-full"
-              >
-                <input type="hidden" name="productId" value={product.id} />
-                <input type="hidden" name="quantity" value={quantity} />
-                <input type="hidden" name="uom" value={UOM} />
-                <Button
-                  className={`w-full ${
-                    quantity < 1 ||
-                    quantity > CART_QUANTITY_MAX ||
-                    isNaN(quantity)
-                      ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
-                      : 'cursor-pointer'
-                  }`}
-                  disabled={
-                    quantity < 1 ||
-                    quantity > CART_QUANTITY_MAX ||
-                    isNaN(quantity)
-                  }
-                  type={
-                    quantity < 1 ||
-                    quantity > CART_QUANTITY_MAX ||
-                    isNaN(quantity)
-                      ? 'button'
-                      : 'submit'
-                  }
-                  variant="primary"
-                  name="_action"
-                  value="add_product"
-                >
-                  Add to List
-                </Button>
-                <PredictiveSearchFormError
-                  quantity={quantity}
-                  moq={product.moq}
-                />
-              </Form>
-            </div>
-          ) : null}
-        </div>
+          product={product}
+          handleClose={handleClose}
+          quantity={quantity}
+          setQuantity={setQuantity}
+          UOM={UOM}
+          handleUOM={handleUOM}
+          actionType={searchVariant}
+        />
       );
     }
     default:
