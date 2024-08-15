@@ -140,6 +140,22 @@ export function useMyProductColumn({
         },
       },
       {
+        accessorKey: 'unitPrice',
+        header: 'Unit Price',
+        enableSorting: false,
+        cell: (info) => {
+          const product = info.row.original;
+          const currencySymbol = info.row.original.currencySymbol;
+          return (
+            <p className="text-grey-900 text-lg leading-5.5 italic">
+              {product?.currency}&nbsp;
+              {currencySymbol}
+              {product.companyPrice}
+            </p>
+          );
+        },
+      },
+      {
         accessorKey: 'total',
         header: 'Price',
         enableSorting: false,
