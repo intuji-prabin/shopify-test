@@ -1,17 +1,17 @@
-import { ColumnDef } from '@tanstack/react-table';
+import {ColumnDef} from '@tanstack/react-table';
 import * as React from 'react';
-import { Button } from '~/components/ui/button';
-import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
+import {Button} from '~/components/ui/button';
+import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
 import {
   ItemsColumn,
   ProductMeasurement,
   ProductTotal,
   QuantityColumn,
 } from '../_app.cart-list/order-my-products/use-column';
-import { Form, useSubmit } from '@remix-run/react';
-import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
-import { AbilityContext, Can } from '~/lib/helpers/Can';
-import { useContext } from 'react';
+import {Form, useSubmit} from '@remix-run/react';
+import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
+import {AbilityContext, Can} from '~/lib/helpers/Can';
+import {useContext} from 'react';
 
 export function useMyWishListColumn() {
   const submit = useSubmit();
@@ -22,7 +22,7 @@ export function useMyWishListColumn() {
       const baseColumns: ColumnDef<any>[] = [
         {
           id: 'select',
-          header: ({ table }) => (
+          header: ({table}) => (
             <IndeterminateCheckbox
               {...{
                 checked: table.getIsAllRowsSelected(),
@@ -31,7 +31,7 @@ export function useMyWishListColumn() {
               }}
             />
           ),
-          cell: ({ row }) => (
+          cell: ({row}) => (
             <div className="px-1">
               <IndeterminateCheckbox
                 {...{
@@ -65,6 +65,22 @@ export function useMyWishListColumn() {
           },
         },
         {
+          accessorKey: 'unitPrice',
+          header: 'Unit Price',
+          enableSorting: false,
+          cell: (info) => {
+            const product = info.row.original;
+            const currencySymbol = info.row.original.currencySymbol;
+            return (
+              <p className="text-grey-900 text-lg leading-5.5 italic">
+                {product?.currency}&nbsp;
+                {currencySymbol}
+                {product.companyPrice}
+              </p>
+            );
+          },
+        },
+        {
           accessorKey: 'total',
           header: 'Price',
           enableSorting: false,
@@ -75,6 +91,8 @@ export function useMyWishListColumn() {
             const product = info?.row?.original;
             const UOM = info?.row?.original?.uom;
             const currencySymbol = info.row.original.currencySymbol;
+            const discountStatus =
+              info.row.original.type3DiscountPriceAppliedStatus;
             return (
               <ProductTotal
                 totalPrice={productTotal}
@@ -88,6 +106,7 @@ export function useMyWishListColumn() {
                 isRowChecked={info?.row?.getIsSelected()}
                 currency={product?.currency || '$'}
                 currencySymbol={currencySymbol}
+                discountStatus={discountStatus}
               />
             );
           },
@@ -161,17 +180,17 @@ export function useMyWishListColumn() {
                       name="quantity"
                       value={product.quantity || product.moq || 1}
                     />
-                    <input
-                      type="hidden"
-                      name="selectUOM"
-                      value={product.uom}
-                    />
+                    <input type="hidden" name="selectUOM" value={product.uom} />
 
                     <Button
                       className={`uppercase flex-grow max-h-[unset] text-xs lg:max-h-[28px] min-w-[86px] text-nowrap
-                         ${(!allowed ||
-                          product?.quantity > CART_QUANTITY_MAX ||
-                          isNaN(product?.quantity)) ? 'cursor-not-allowed' : null}`}
+                         ${
+                           !allowed ||
+                           product?.quantity > CART_QUANTITY_MAX ||
+                           isNaN(product?.quantity)
+                             ? 'cursor-not-allowed'
+                             : null
+                         }`}
                       variant="primary"
                       disabled={
                         !allowed ||
@@ -194,5 +213,5 @@ export function useMyWishListColumn() {
     [ability], // Include ability in the dependencies array
   );
 
-  return { columns };
+  return {columns};
 }
