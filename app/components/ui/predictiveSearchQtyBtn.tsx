@@ -31,7 +31,7 @@ export const PredictiveSearchQtyBtn = ({
   return (
     <>
       <button
-        className={`flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${
+        className={`flex items-center max-w-[38px] justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${
           quantity - 1 < 1 ? 'cursor-not-allowed' : ''
         }`}
         onClick={decreaseQuantity}
@@ -46,7 +46,7 @@ export const PredictiveSearchQtyBtn = ({
         onChange={handleInputChange}
       />
       <button
-        className="flex items-center justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial"
+        className="flex items-center max-w-[38px] justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial"
         onClick={increaseQuantity}
       >
         +

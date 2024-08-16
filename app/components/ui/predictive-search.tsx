@@ -74,7 +74,7 @@ export function PredictiveSearch({
     case 'place_an_order':
     case 'cart':
     case 'pending_order':
-      searchClass = 'max-w-[80%] max-h-[350px]';
+      searchClass = 'max-h-[350px]';
       break;
     default:
       searchClass =
