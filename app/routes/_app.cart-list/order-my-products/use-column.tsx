@@ -147,13 +147,17 @@ export function useMyProductColumn({
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
-          const currencySymbol = info.row.original.currencySymbol;
-          const quantity = info.row.original?.quantity;
-          const finalUOM = info.row.original?.uom;
-          const priceRange = info.row.original?.priceRange;
-          const uomRange = info.row.original?.unitOfMeasure;
-          const defaultUom = info.row.original?.defaultUOM;
-          const totalPrice = info.row.original?.companyPrice;
+          const currencySymbol = product.currencySymbol;
+          const quantity = product?.quantity;
+          const finalUOM = product?.uom;
+          const priceRange = product?.priceRange;
+          const uomRange = product?.unitOfMeasure;
+          const defaultUom = product?.defaultUOM;
+          const totalPrice = product?.companyPrice;
+          const currency = product?.currency;
+          const companyPrice = product?.companyPrice;
+          const unitPrice = product?.unitPrice;
+          const discount = product?.discountMessage;
           const finalUnitPrice = getUnitProductPrice({
             quantity,
             finalUOM,
@@ -163,23 +167,15 @@ export function useMyProductColumn({
             totalPrice,
           });
           return (
-            <>
-              <p className="text-grey-900 text-lg leading-5.5 italic">
-                {product?.currency}&nbsp;
-                {currencySymbol}
-                {priceRange.length > 0 ? (
-                  <>{Number(finalUnitPrice).toFixed(2)}</>
-                ) : (
-                  <>
-                    {product?.unitPrice?.toFixed(2) ||
-                      Number(product?.companyPrice).toFixed(2)}
-                  </>
-                )}
-              </p>
-              <p className="text-sm italic font-bold leading-normal text-grey-500">
-                (Excl. GST)
-              </p>
-            </>
+            <UnitPrice
+              currency={currency}
+              currencySymbol={currencySymbol}
+              priceRange={priceRange}
+              finalUnitPrice={finalUnitPrice}
+              unitPrice={unitPrice}
+              companyPrice={companyPrice}
+              discount={discount}
+            />
           );
         },
       },
@@ -552,23 +548,7 @@ export function ProductTotal({
   return (
     <div className="flex flex-col gap-4 items-baseline min-w-[110px]">
       <div className="flex flex-col gap-1">
-        <div className="">
-          <div className="flex mb-1.5 text-semantic-success-500 font-medium text-sm uppercase">
-            BUY PRICE
-            <div className="info-block">
-              <div className="flex items-center justify-center w-5 h-5 text-xs">
-                <div
-                  className="cursor-pointer price-tooltip"
-                  data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts"
-                >
-                  <span>
-                    <TooltipInfo />
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {discount && <del>AUD $85.34</del>}
         <p className="text-grey-900 text-lg leading-5.5 italic">
           {currency}
           &nbsp;{currencySymbol}
@@ -600,6 +580,48 @@ export function ProductTotal({
           {isBulkDetailVisible ? 'Hide' : 'View'} BULK PRICE
         </Button>
       )}
+    </div>
+  );
+}
+
+export function UnitPrice({
+  currency,
+  currencySymbol,
+  priceRange,
+  finalUnitPrice,
+  unitPrice,
+  companyPrice,
+  discount,
+}: {
+  currency: string;
+  currencySymbol: string;
+  priceRange: any;
+  finalUnitPrice: any;
+  unitPrice: any;
+  companyPrice: any;
+  discount: string;
+}) {
+  return (
+    <div
+      className={`flex flex-col gap-4 items-baseline ${
+        discount && 'mb-[43px]'
+      }`}
+    >
+      <div className="flex flex-col gap-1">
+        {discount && <del>AUD $85.34</del>}
+        <p className="text-grey-900 text-lg leading-5.5 italic">
+          {currency}&nbsp;
+          {currencySymbol}
+          {priceRange.length > 0 ? (
+            <>{Number(finalUnitPrice).toFixed(2)}</>
+          ) : (
+            <>{unitPrice?.toFixed(2) || Number(companyPrice).toFixed(2)}</>
+          )}
+        </p>
+        <p className="text-sm italic font-bold leading-normal text-grey-500">
+          (Excl. GST)
+        </p>
+      </div>
     </div>
   );
 }

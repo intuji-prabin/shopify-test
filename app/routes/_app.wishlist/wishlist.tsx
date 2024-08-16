@@ -7,6 +7,7 @@ import {
   ProductMeasurement,
   ProductTotal,
   QuantityColumn,
+  UnitPrice,
 } from '../_app.cart-list/order-my-products/use-column';
 import {Form, useSubmit} from '@remix-run/react';
 import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
@@ -70,13 +71,17 @@ export function useMyWishListColumn() {
           enableSorting: false,
           cell: (info) => {
             const product = info.row.original;
-            const currencySymbol = info.row.original.currencySymbol;
-            const quantity = info.row.original?.quantity;
-            const finalUOM = info.row.original?.uom;
-            const priceRange = info.row.original?.priceRange;
-            const uomRange = info.row.original?.unitOfMeasure;
-            const defaultUom = info.row.original?.defaultUOM;
-            const totalPrice = info.row.original?.companyPrice;
+            const currencySymbol = product.currencySymbol;
+            const quantity = product?.quantity;
+            const finalUOM = product?.uom;
+            const priceRange = product?.priceRange;
+            const uomRange = product?.unitOfMeasure;
+            const defaultUom = product?.defaultUOM;
+            const totalPrice = product?.companyPrice;
+            const currency = product?.currency;
+            const companyPrice = product?.companyPrice;
+            const unitPrice = product?.unitPrice;
+            const discount = product?.discountMessage;
             const finalUnitPrice = getUnitProductPrice({
               quantity,
               finalUOM,
@@ -86,23 +91,15 @@ export function useMyWishListColumn() {
               totalPrice,
             });
             return (
-              <>
-                <p className="text-grey-900 text-lg leading-5.5 italic">
-                  {product?.currency}&nbsp;
-                  {currencySymbol}
-                  {priceRange.length > 0 ? (
-                    <>{Number(finalUnitPrice).toFixed(2)}</>
-                  ) : (
-                    <>
-                      {product?.unitPrice?.toFixed(2) ||
-                        Number(product?.companyPrice).toFixed(2)}
-                    </>
-                  )}
-                </p>
-                <p className="text-sm italic font-bold leading-normal text-grey-500">
-                  (Excl. GST)
-                </p>
-              </>
+              <UnitPrice
+                currency={currency}
+                currencySymbol={currencySymbol}
+                priceRange={priceRange}
+                finalUnitPrice={finalUnitPrice}
+                unitPrice={unitPrice}
+                companyPrice={companyPrice}
+                discount={discount}
+              />
             );
           },
         },
