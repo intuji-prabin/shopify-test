@@ -155,6 +155,9 @@ label .required {
 .steps li.active span:first-of-type {
   @apply bg-primary-500;
 }
+/* .steps li.subactive span:first-of-type {
+  @apply bg-[#66CAF0];
+} */
 .steps li.active p {
   @apply text-status-back_order;
 }

@@ -35,37 +35,44 @@ export const PredictiveSearchOther = ({
         <PredictiveProductDetail product={product} handleClose={handleClose} />
       </div>
       {product?.price ? (
-        <div className="grid grid-cols-1 gap-x-4 w-full gap-y-2 sm:grid-cols-2 xl:w-[calc(60%_-_1rem)] items-start">
-          <div className="flex h-full">
-            <p className="mt-auto font-medium">Unit of Measure</p>
+        <div className="grid gap-x-4 w-full gap-y-2 grid-cols-1 md:grid-cols-3 xl:w-[calc(60%_-_1rem)] items-end">
+          <div>
+            <p className="md:mb-2 font-medium">Quantity</p>
+            <div className="flex cart__list--quantity">
+              <PredictiveSearchQtyBtn
+                moq={product.moq}
+                quantity={quantity}
+                setQuantity={setQuantity}
+              />
+            </div>
           </div>
-          <div className="flex cart__list--quantity">
-            <PredictiveSearchQtyBtn
-              moq={product.moq}
-              quantity={quantity}
-              setQuantity={setQuantity}
-            />
+          <div>
+            <p className="md:mb-2 font-medium">Unit of Measure</p>
+            <select
+              name="filter_by"
+              className="w-full min-w-[120px] place-order !border-grey-500 filter-select !py-[9px]"
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                handleUOM(e.target.value)
+              }
+              defaultValue={UOM}
+            >
+              {product.unitOfMeasure?.length > 0 ? (
+                product.unitOfMeasure?.map(
+                  (uom: {unit: string; code: string}, index: number) => (
+                    <option
+                      className="px-4"
+                      value={uom.code}
+                      key={index + 'uom'}
+                    >
+                      {uom.unit}
+                    </option>
+                  ),
+                )
+              ) : (
+                <option value={UOM}>{product.defaultUomValue}</option>
+              )}
+            </select>
           </div>
-          <select
-            name="filter_by"
-            className="w-full min-w-[120px] place-order !border-grey-500 filter-select !py-[9px]"
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-              handleUOM(e.target.value)
-            }
-            defaultValue={UOM}
-          >
-            {product.unitOfMeasure?.length > 0 ? (
-              product.unitOfMeasure?.map(
-                (uom: {unit: string; code: string}, index: number) => (
-                  <option className="px-4" value={uom.code} key={index + 'uom'}>
-                    {uom.unit}
-                  </option>
-                ),
-              )
-            ) : (
-              <option value={UOM}>{product.defaultUomValue}</option>
-            )}
-          </select>
           {isCart ? (
             <Can I="view" a="add_to_cart">
               <Form
@@ -85,6 +92,10 @@ export const PredictiveSearchOther = ({
                 />
                 <input type="hidden" name="quantity" value={quantity} />
                 <input type="hidden" name="selectUOM" value={UOM} />
+                <PredictiveSearchFormError
+                  quantity={quantity}
+                  moq={product.moq}
+                />
                 <Button
                   className={`w-full ${
                     quantity < 1 ||
@@ -109,10 +120,6 @@ export const PredictiveSearchOther = ({
                 >
                   Add to cart
                 </Button>
-                <PredictiveSearchFormError
-                  quantity={quantity}
-                  moq={product.moq}
-                />
               </Form>
             </Can>
           ) : (
@@ -127,6 +134,10 @@ export const PredictiveSearchOther = ({
               <input type="hidden" name="productId" value={product.id} />
               <input type="hidden" name="quantity" value={quantity} />
               <input type="hidden" name="uom" value={UOM} />
+              <PredictiveSearchFormError
+                quantity={quantity}
+                moq={product.moq}
+              />
               <Button
                 className={`w-full ${
                   quantity < 1 ||
@@ -153,10 +164,6 @@ export const PredictiveSearchOther = ({
               >
                 Add to List
               </Button>
-              <PredictiveSearchFormError
-                quantity={quantity}
-                moq={product.moq}
-              />
             </Form>
           )}
         </div>

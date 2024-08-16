@@ -57,7 +57,6 @@ export function useMyWishListColumn() {
                 title={product?.title}
                 sku={product?.sku}
                 featuredImage={product?.featuredImage}
-                moq={product?.moq || 1}
                 handle={product?.productHandle}
                 inventory={product.inventory}
                 warehouse={warehouse}
@@ -87,18 +86,23 @@ export function useMyWishListColumn() {
               totalPrice,
             });
             return (
-              <p className="text-grey-900 text-lg leading-5.5 italic">
-                {product?.currency}&nbsp;
-                {currencySymbol}
-                {priceRange.length > 0 ? (
-                  <>{finalUnitPrice}</>
-                ) : (
-                  <>
-                    {product?.unitPrice?.toFixed(2) ||
-                      Number(product?.companyPrice).toFixed(2)}
-                  </>
-                )}
-              </p>
+              <>
+                <p className="text-grey-900 text-lg leading-5.5 italic">
+                  {product?.currency}&nbsp;
+                  {currencySymbol}
+                  {priceRange.length > 0 ? (
+                    <>{Number(finalUnitPrice).toFixed(2)}</>
+                  ) : (
+                    <>
+                      {product?.unitPrice?.toFixed(2) ||
+                        Number(product?.companyPrice).toFixed(2)}
+                    </>
+                  )}
+                </p>
+                <p className="text-sm italic font-bold leading-normal text-grey-500">
+                  (Excl. GST)
+                </p>
+              </>
             );
           },
         },
