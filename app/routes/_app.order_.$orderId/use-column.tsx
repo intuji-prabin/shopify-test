@@ -30,7 +30,9 @@ export function useColumn({
           header: 'SKU',
           enableSorting: false,
           cell: (info) => {
-            const sku = info.row.original.sku || <span className="text-center">{' - '}</span>;
+            const sku = info.row.original.sku || (
+              <span className="text-center">{' - '}</span>
+            );
             return sku;
           },
         },
@@ -64,7 +66,7 @@ export function useColumn({
         },
         {
           accessorKey: 'amount',
-          header: 'Amount',
+          header: 'Unit Price',
           enableSorting: false,
           cell: (info) => {
             const amount = prefixWithCurrency(info.getValue() as string);
