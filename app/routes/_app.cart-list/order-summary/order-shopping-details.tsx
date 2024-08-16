@@ -169,7 +169,7 @@ export function PurchaseOrder({
         required
         pattern="[^' ']+"
         title="Purchase Order Number Or Order Number cannot have space."
-        maxLength={10}
+        maxLength={20}
         onChange={() => actionData?.message && setActionDataState('')}
       />
       {actionData && actionDataState && actionData?.type === 'PONO' && (
