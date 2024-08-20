@@ -9,7 +9,6 @@ import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {Can} from '~/lib/helpers/Can';
 import {getProductPriceByQty} from '~/routes/_app.product_.$productSlug/product-detail';
-import {getUnitProductPrice} from './unitPrice';
 
 export type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock';
 
@@ -51,6 +50,7 @@ export type BulkOrderColumn = {
   ];
   totalPrice: number;
   discountMessage: string;
+  unitTotalPrice: number;
 };
 
 export function useMyProductColumn({
@@ -149,23 +149,34 @@ export function useMyProductColumn({
           const product = info.row.original;
           const currencySymbol = product.currencySymbol;
           const quantity = product?.quantity;
-          const finalUOM = product?.uom;
+          const finalUOM = Number(product?.uom);
           const priceRange = product?.priceRange;
           const uomRange = product?.unitOfMeasure;
           const defaultUom = product?.defaultUOM;
-          const totalPrice = product?.companyPrice;
           const currency = product?.currency;
           const companyPrice = product?.companyPrice;
           const unitPrice = product?.unitPrice;
           const discount = product?.discountMessage;
-          const finalUnitPrice = getUnitProductPrice({
-            quantity,
-            finalUOM,
-            defaultUom,
+          const discountStatus = product?.type3DiscountPriceAppliedStatus;
+          const prices = getProductPriceByQty({
+            qty: quantity,
+            uomList: uomRange,
+            selectedUOM: finalUOM,
+            defaultUom: defaultUom,
             priceRange,
-            uomRange,
-            totalPrice,
+            companyDefaultPrice: companyPrice,
+            discountStatus,
           });
+          const priceBeforeDiscount = getProductPriceByQty({
+            qty: quantity,
+            uomList: uomRange,
+            selectedUOM: finalUOM,
+            defaultUom: defaultUom,
+            priceRange,
+            companyDefaultPrice: unitPrice,
+          });
+          const finalUnitPrice = priceBeforeDiscount / quantity;
+          const finalCompanyUsedPrice = prices / quantity;
           return (
             <UnitPrice
               currency={currency}
@@ -173,7 +184,7 @@ export function useMyProductColumn({
               priceRange={priceRange}
               finalUnitPrice={finalUnitPrice}
               unitPrice={unitPrice}
-              companyPrice={companyPrice}
+              companyPrice={finalCompanyUsedPrice}
               discount={discount}
             />
           );
@@ -192,6 +203,7 @@ export function useMyProductColumn({
           const currencySymbol = info.row.original?.currencySymbol;
           const discountStatus =
             info.row.original?.type3DiscountPriceAppliedStatus;
+          const unitPrice = product?.unitPrice;
           return (
             <ProductTotal
               totalPrice={productTotal}
@@ -207,6 +219,7 @@ export function useMyProductColumn({
               currency={info.row.original.currency || '$'}
               discount={product?.discountMessage}
               discountStatus={discountStatus}
+              unitPrice={unitPrice}
             />
           );
         },
@@ -514,6 +527,7 @@ export function ProductTotal({
   discount,
   currencySymbol,
   discountStatus,
+  unitPrice,
 }: {
   totalPrice: string;
   isBulkDetailVisible: boolean;
@@ -534,6 +548,7 @@ export function ProductTotal({
   discount?: string;
   currencySymbol: string;
   discountStatus: boolean;
+  unitPrice: number;
 }) {
   const prices = getProductPriceByQty({
     qty: quantity,
@@ -545,13 +560,28 @@ export function ProductTotal({
     discountStatus,
   });
 
+  const priceBeforeDiscount = getProductPriceByQty({
+    qty: quantity,
+    uomList: unitOfMeasure,
+    selectedUOM: UOM,
+    defaultUom: defaultUOM,
+    priceRange,
+    companyDefaultPrice: unitPrice,
+  });
+
   return (
     <div className="flex flex-col gap-4 items-baseline min-w-[110px]">
       <div className="flex flex-col gap-1">
-        {discount && <del>AUD $85.34</del>}
+        {discount && (
+          <del>
+            {currency}
+            &nbsp;{currencySymbol}
+            {priceBeforeDiscount?.toFixed(2) || '--'}
+          </del>
+        )}
         <p className="text-grey-900 text-lg leading-5.5 italic">
-          {currency}
-          &nbsp;{currencySymbol}
+          {currency}&nbsp;
+          {currencySymbol}
           {prices?.toFixed(2) || '--'}
         </p>
         <p className="text-sm italic font-bold leading-normal text-grey-500">
@@ -604,19 +634,30 @@ export function UnitPrice({
   return (
     <div
       className={`flex flex-col gap-4 items-baseline ${
-        discount && 'mb-[43px]'
+        discount && 'mb-[66px]'
       }`}
     >
       <div className="flex flex-col gap-1">
-        {discount && <del>AUD $85.34</del>}
+        {discount && (
+          <del>
+            {currency}&nbsp;
+            {currencySymbol}
+            {priceRange.length > 0 ? (
+              <>{Number(finalUnitPrice).toFixed(2)}</>
+            ) : (
+              <>{unitPrice?.toFixed(2) || Number(companyPrice).toFixed(2)}</>
+            )}
+          </del>
+        )}
         <p className="text-grey-900 text-lg leading-5.5 italic">
           {currency}&nbsp;
           {currencySymbol}
-          {priceRange.length > 0 ? (
+          {/* {priceRange.length > 0 ? (
             <>{Number(finalUnitPrice).toFixed(2)}</>
           ) : (
             <>{unitPrice?.toFixed(2) || Number(companyPrice).toFixed(2)}</>
-          )}
+          )} */}
+          {companyPrice.toFixed(2)}
         </p>
         <p className="text-sm italic font-bold leading-normal text-grey-500">
           (Excl. GST)

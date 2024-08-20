@@ -13,7 +13,7 @@ import {Form, useSubmit} from '@remix-run/react';
 import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
 import {AbilityContext, Can} from '~/lib/helpers/Can';
 import {useContext} from 'react';
-import {getUnitProductPrice} from '../_app.cart-list/order-my-products/unitPrice';
+import {getProductPriceByQty} from '../_app.product_.$productSlug/product-detail';
 
 export function useMyWishListColumn() {
   const submit = useSubmit();
@@ -77,19 +77,28 @@ export function useMyWishListColumn() {
             const priceRange = product?.priceRange;
             const uomRange = product?.unitOfMeasure;
             const defaultUom = product?.defaultUOM;
-            const totalPrice = product?.companyPrice;
             const currency = product?.currency;
             const companyPrice = product?.companyPrice;
             const unitPrice = product?.unitPrice;
             const discount = product?.discountMessage;
-            const finalUnitPrice = getUnitProductPrice({
-              quantity,
-              finalUOM,
-              defaultUom,
+            const prices = getProductPriceByQty({
+              qty: quantity,
+              uomList: uomRange,
+              selectedUOM: finalUOM,
+              defaultUom: defaultUom,
               priceRange,
-              uomRange,
-              totalPrice,
+              companyDefaultPrice: companyPrice,
             });
+            const priceBeforeDiscount = getProductPriceByQty({
+              qty: quantity,
+              uomList: uomRange,
+              selectedUOM: finalUOM,
+              defaultUom: defaultUom,
+              priceRange,
+              companyDefaultPrice: unitPrice,
+            });
+            const finalUnitPrice = priceBeforeDiscount / quantity;
+            const finalCompanyUsedPrice = prices / quantity;
             return (
               <UnitPrice
                 currency={currency}
@@ -97,7 +106,7 @@ export function useMyWishListColumn() {
                 priceRange={priceRange}
                 finalUnitPrice={finalUnitPrice}
                 unitPrice={unitPrice}
-                companyPrice={companyPrice}
+                companyPrice={finalCompanyUsedPrice}
                 discount={discount}
               />
             );
@@ -116,20 +125,23 @@ export function useMyWishListColumn() {
             const currencySymbol = info.row.original.currencySymbol;
             const discountStatus =
               info.row.original.type3DiscountPriceAppliedStatus;
+            const unitPrice = product?.unitPrice;
             return (
               <ProductTotal
                 totalPrice={productTotal}
                 quantity={quantity}
                 UOM={UOM}
-                unitOfMeasure={product?.unitOfMeasure}
-                defaultUOM={product?.uom}
+                unitOfMeasure={product.unitOfMeasure}
+                defaultUOM={product.defaultUOM}
                 priceRange={priceRange}
+                currencySymbol={currencySymbol}
                 isBulkDetailVisible={info?.row?.getIsExpanded()}
                 setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
                 isRowChecked={info?.row?.getIsSelected()}
-                currency={product?.currency || '$'}
-                currencySymbol={currencySymbol}
+                currency={info.row.original.currency || '$'}
+                discount={product?.discountMessage}
                 discountStatus={discountStatus}
+                unitPrice={unitPrice}
               />
             );
           },

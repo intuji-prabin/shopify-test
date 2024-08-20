@@ -1,6 +1,6 @@
-import { Fragment } from 'react';
-import { useSearchParams } from '@remix-run/react';
-import { ColumnDef, Row, Table, flexRender } from '@tanstack/react-table';
+import {Fragment} from 'react';
+import {useSearchParams} from '@remix-run/react';
+import {ColumnDef, Row, Table, flexRender} from '@tanstack/react-table';
 import {
   TableBody,
   TableCell,
@@ -18,7 +18,7 @@ import {
 export type DataTableProps<T> = {
   table: Table<T>;
   columns?: ColumnDef<T>[];
-  renderSubComponent?: (props: { row: Row<T> }) => React.ReactElement;
+  renderSubComponent?: (props: {row: Row<T>}) => React.ReactElement;
   getRowCanExpand?: (row: Row<T>) => boolean;
   className?: string;
   bulkColSpan?: number;
@@ -72,7 +72,6 @@ export function DataTable<T>({
     }
     return <ArrowUpDown />;
   };
-
 
   return (
     <TableShadcn className={`${className} bg-neutral-white`} data-cy="table">
@@ -135,8 +134,9 @@ export function DataTable<T>({
                 </TableRow>
                 {row.getIsExpanded() && (
                   <TableRow
-                    className={` ${row.getIsSelected() ? 'bg-primary-200 ' : ''
-                      } hover:bg-primary-200`}
+                    className={` ${
+                      row.getIsSelected() ? 'bg-primary-200 ' : ''
+                    } hover:bg-primary-200`}
                   >
                     <TableCell
                       valign="bottom"
@@ -150,11 +150,13 @@ export function DataTable<T>({
                           you find the perfect fit for your business and
                           maximize your savings
                         </p>
+                        <i className="inline-block mt-1">
+                          NOTE: THIS PRICE TABLE IS FOR DEFAULT UOM
+                        </i>
                       </div>
                     </TableCell>
                     <TableCell colSpan={bulkColSpan}>
-                      {/* <BulkTable quantity={'Quantity'} price={'Price'} /> */}
-                      {renderSubComponent && renderSubComponent({ row })}
+                      {renderSubComponent && renderSubComponent({row})}
                     </TableCell>
                   </TableRow>
                 )}
