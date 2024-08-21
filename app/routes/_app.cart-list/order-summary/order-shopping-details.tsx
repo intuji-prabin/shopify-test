@@ -233,7 +233,7 @@ export function PromoCode({
       <fetcher.Form
         method={promoCodeApplied ? 'DELETE' : 'POST'}
         onSubmit={(event: any) => {
-          setUpdateCart(true);
+          setUpdateCart(false);
           fetcher.submit(event.currentTarget);
         }}
       >
