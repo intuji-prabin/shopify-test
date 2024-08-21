@@ -186,7 +186,6 @@ export function useMyProductColumn({
               unitPrice={unitPrice}
               companyPrice={finalCompanyUsedPrice}
               discount={discount}
-              discountStatus={discountStatus}
             />
           );
         },
@@ -573,7 +572,7 @@ export function ProductTotal({
   return (
     <div className="flex flex-col gap-4 items-baseline min-w-[110px]">
       <div className="flex flex-col gap-1">
-        {discount && discountStatus && (
+        {discount && (
           <del>
             {currency}
             &nbsp;{currencySymbol}
@@ -623,7 +622,6 @@ export function UnitPrice({
   unitPrice,
   companyPrice,
   discount,
-  discountStatus = false,
 }: {
   currency: string;
   currencySymbol: string;
@@ -632,7 +630,6 @@ export function UnitPrice({
   unitPrice: any;
   companyPrice: any;
   discount: string;
-  discountStatus?: boolean;
 }) {
   return (
     <div
@@ -641,7 +638,7 @@ export function UnitPrice({
       } ${discount && priceRange.length === 0 && 'mb-[28px]'}`}
     >
       <div className="flex flex-col gap-1">
-        {discount && discountStatus && (
+        {discount && (
           <del>
             {currency}&nbsp;
             {currencySymbol}
