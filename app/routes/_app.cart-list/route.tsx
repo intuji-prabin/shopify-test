@@ -12,40 +12,37 @@ import {
   json,
   redirect,
 } from '@remix-run/server-runtime';
-import { useEffect, useState } from 'react';
+import {useState} from 'react';
+import {AuthError} from '~/components/ui/authError';
 import EmptyList from '~/components/ui/empty-list';
 import HeroBanner from '~/components/ui/hero-section';
 import UploadSearchbar from '~/components/ui/upload-csv-searchbar';
 import useSort from '~/hooks/useSort';
-import {
-  CART_QUANTITY_MAX,
-  CART_SESSION_KEY,
-} from '~/lib/constants/cartInfo.constant';
-import { Routes } from '~/lib/constants/routes.constent';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
+import {CART_SESSION_KEY} from '~/lib/constants/cartInfo.constant';
+import {Routes} from '~/lib/constants/routes.constent';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {AuthErrorHandling} from '~/lib/utils/authErrorHandling';
 import {
   getMessageSession,
   messageCommitSession,
   setErrorMessage,
   setSuccessMessage,
 } from '~/lib/utils/toast-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { getAllCompanyShippingAddresses } from '../_app.shipping-address/shipping-address.server';
-import { getOrderId } from '../_app/app.server';
-import { removeItemFromCart } from './cart-remove.server';
-import { cartUpdate } from './cart-update.server';
-import { getCartList } from './cart.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {getAllCompanyShippingAddresses} from '../_app.shipping-address/shipping-address.server';
+import {getOrderId} from '../_app/app.server';
+import {removeItemFromCart} from './cart-remove.server';
+import {cartUpdate} from './cart-update.server';
+import {getCartList} from './cart.server';
 import MyProducts from './order-my-products/cart-myproduct';
-import { placeOrder } from './order-place.server';
+import {placeOrder} from './order-place.server';
 import OrderSummary from './order-summary/cart-order-summary';
-import { promoCodeApply } from './promoCode.server';
-import { promoCodeRemove } from './promoCodeRemove.server';
-import { AuthError } from '~/components/ui/authError';
-import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
+import {promoCodeApply} from './promoCode.server';
+import {promoCodeRemove} from './promoCodeRemove.server';
 
-export const loader = async ({ context, request }: LoaderFunctionArgs) => {
+export const loader = async ({context, request}: LoaderFunctionArgs) => {
   await isAuthenticate(context);
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
 
   const metaParentValue = userDetails.meta.parent.value;
 
@@ -55,7 +52,12 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   if (!sessionCartInfo) {
     throw new Error('Cart not found');
   }
-  const shippingAddresses = await getAllCompanyShippingAddresses(context, request, customerId, true);
+  const shippingAddresses = await getAllCompanyShippingAddresses(
+    context,
+    request,
+    customerId,
+    true,
+  );
   const cartList = await getCartList(context, request, sessionCartInfo);
   if (cartList?.productList?.length === 0) {
     await getCartList(context, request, sessionCartInfo);
@@ -66,14 +68,19 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
   };
   await context.session.set(CART_SESSION_KEY, finalCartSession);
   return json(
-    { cartList: cartList?.productWithPrice, orderPlaceStatus: cartList?.orderPlaceStatus, frieghtChargeInit: cartList?.frieghtChargeInit, shippingAddresses },
+    {
+      cartList: cartList?.productWithPrice,
+      orderPlaceStatus: cartList?.orderPlaceStatus,
+      frieghtChargeInit: cartList?.frieghtChargeInit,
+      shippingAddresses,
+    },
     {
       headers: [['Set-Cookie', await context.session.commit({})]],
     },
   );
 };
 
-export async function action({ request, context }: ActionFunctionArgs) {
+export async function action({request, context}: ActionFunctionArgs) {
   const messageSession = await getMessageSession(request);
   let res;
   switch (request.method) {
@@ -83,7 +90,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         case 'place_order': {
           try {
             const poNumber = formData.get('poNumber') as string;
-            const { userDetails } = await getUserDetails(request);
+            const {userDetails} = await getUserDetails(request);
             const trackAnOrderResponse = await getOrderId(
               context,
               request,
@@ -97,7 +104,12 @@ export async function action({ request, context }: ActionFunctionArgs) {
                 'Purchase Order Number or Order Number already taken. Please use another one.',
               );
               return json(
-                { status: false, type: "PONO", message: "Purchase Order Number or Order Number already taken. Please use another one." },
+                {
+                  status: false,
+                  type: 'PONO',
+                  message:
+                    'Purchase Order Number or Order Number already taken. Please use another one.',
+                },
                 {
                   headers: [
                     ['Set-Cookie', await context.session.commit({})],
@@ -150,7 +162,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           }
         }
         case 'promo_code': {
-          console.log("apply code")
+          console.log('apply code');
           try {
             const promoCode = formData.get('promoCode') as string;
             res = await promoCodeApply(promoCode, context, request);
@@ -158,7 +170,9 @@ export async function action({ request, context }: ActionFunctionArgs) {
             return json(
               {},
               {
-                headers: [['Set-Cookie', await messageCommitSession(messageSession)]],
+                headers: [
+                  ['Set-Cookie', await messageCommitSession(messageSession)],
+                ],
               },
             );
           } catch (error) {
@@ -166,7 +180,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
               console.log('this is err', error?.message);
               setErrorMessage(messageSession, error?.message);
               return json(
-                { message: error?.message },
+                {message: error?.message},
                 {
                   headers: [
                     ['Set-Cookie', await messageCommitSession(messageSession)],
@@ -239,7 +253,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
           }
         }
         case 'promo_code_delete': {
-          console.log("remove code")
+          console.log('remove code');
           try {
             res = await promoCodeRemove(context, request);
             setSuccessMessage(messageSession, res?.message);
@@ -337,14 +351,23 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function CartList() {
-  const { cartList, orderPlaceStatus, shippingAddresses, frieghtChargeInit }: any = useLoaderData<typeof loader>();
-  const finalProductList = useSort({ items: cartList?.productList });
+  const {
+    cartList,
+    orderPlaceStatus,
+    shippingAddresses,
+    frieghtChargeInit,
+  }: any = useLoaderData<typeof loader>();
+  const finalProductList = useSort({items: cartList?.productList});
 
   const [updateCart, setUpdateCart] = useState(false);
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const fetcher = useFetcher();
-  const isLoading = navigation.state === 'submitting' || navigation.state === 'loading' || fetcher.state === 'submitting' || fetcher.state === 'loading';
+  const isLoading =
+    navigation.state === 'submitting' ||
+    navigation.state === 'loading' ||
+    fetcher.state === 'submitting' ||
+    fetcher.state === 'loading';
 
   return (
     <>
@@ -353,7 +376,7 @@ export default function CartList() {
       {finalProductList?.length === 0 ? (
         <EmptyList placeholder="cart" />
       ) : (
-        <div className={`container ${isLoading && "loading-state"}`}>
+        <div className={`container ${isLoading && 'loading-state'}`}>
           <div className="flex flex-col flex-wrap items-start gap-6 my-6 xl:flex-row cart__list">
             <MyProducts
               products={finalProductList}
@@ -373,13 +396,14 @@ export default function CartList() {
               promoCodeApplied={cartList?.promoCode}
               discountPrice={cartList?.discountPrice}
               discountMessage={cartList?.discountMessage}
-              totalPriceWithDiscount={cartList?.totalPriceWithDiscount}
+              cartTotalExclGST={cartList?.cartTotalExclGST}
               actionData={actionData}
               fetcher={fetcher}
               frieghtCharge={frieghtChargeInit}
               isLoading={isLoading}
               orderPlaceStatus={orderPlaceStatus}
               currencySymbol={cartList?.currencySymbol}
+              setUpdateCart={setUpdateCart}
             />
           </div>
         </div>
@@ -400,14 +424,17 @@ export function ErrorBoundary() {
       </div>
     );
   } else if (error instanceof Error) {
-    if(AuthErrorHandling( error.message )){ 
-      return <AuthError errorMessage={error.message} />
+    if (AuthErrorHandling(error.message)) {
+      return <AuthError errorMessage={error.message} />;
     }
     return (
       <>
-        <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
+        <HeroBanner
+          imageUrl={'/place-order.png'}
+          sectionName={'SHOPPING CART'}
+        />
         <UploadSearchbar searchVariant="cart" action="/bulkCsvUpload" />
-        <EmptyList placeholder='Cart' />
+        <EmptyList placeholder="Cart" />
       </>
     );
   } else {

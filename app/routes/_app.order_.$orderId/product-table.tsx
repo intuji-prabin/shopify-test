@@ -53,12 +53,14 @@ export function ProductTable({
                   <th className="text-left">Surcharges</th>
                   <td>{prefixWithCurrency(orderProductDetails.surCharges)}</td>
                 </tr>
-                <tr>
-                  <th className="text-left">Discount</th>
-                  <td>{prefixWithCurrency(orderProductDetails.discount)}</td>
+                <tr className="text-semantic-danger-500">
+                  <th className="text-left">Discount&nbsp;(-)</th>
+                  <td className="font-bold">
+                    {prefixWithCurrency(orderProductDetails.discount)}
+                  </td>
                 </tr>
                 <tr>
-                  <th className="text-left"> Total Excl GST</th>
+                  <th className="text-left">Total Excl. GST</th>
                   <td>
                     {prefixWithCurrency(
                       orderProductDetails.productSubTotalExclGST,
@@ -115,12 +117,14 @@ export function ProductTable({
                   <th className="text-left">Surcharges</th>
                   <td>{prefixWithCurrency(orderProductDetails.surCharges)}</td>
                 </tr>
-                <tr>
-                  <th className="text-left">Discount</th>
-                  <td>{prefixWithCurrency(orderProductDetails.discount)}</td>
+                <tr className="text-semantic-danger-500">
+                  <th className="text-left">Discount&nbsp;(-)</th>
+                  <td className="font-bold">
+                    {prefixWithCurrency(orderProductDetails.discount)}
+                  </td>
                 </tr>
                 <tr>
-                  <th className="text-left"> Total Excl GST</th>
+                  <th className="text-left">Total Excl. GST</th>
                   <td>
                     {prefixWithCurrency(
                       orderProductDetails.shippedSubTotalExclGST,

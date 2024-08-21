@@ -9,7 +9,7 @@ export function getProductPriceByQty({
 }: {
   qty: number;
   uomList: any;
-  selectedUOM: number;
+  selectedUOM: number | string;
   defaultUom: any;
   priceRange: any;
   companyDefaultPrice: any;
