@@ -188,7 +188,7 @@ export function useMyProductColumn({
               unitPrice={unitPrice}
               companyPrice={finalCompanyUsedPrice}
               discount={discount}
-              discountStatus={discountStatus && discountStatusType2}
+              discountStatus={discountStatus || discountStatusType2}
             />
           );
         },
@@ -235,7 +235,7 @@ export function useMyProductColumn({
               currency={info.row.original.currency || '$'}
               discount={product?.discountMessage}
               currencySymbol={currencySymbol}
-              discountStatus={discountStatus && discountStatusType2}
+              discountStatus={discountStatus || discountStatusType2}
               prices={prices}
               priceBeforeDiscount={priceBeforeDiscount}
             />
