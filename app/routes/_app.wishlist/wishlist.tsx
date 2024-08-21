@@ -125,23 +125,39 @@ export function useMyWishListColumn() {
             const currencySymbol = info.row.original.currencySymbol;
             const discountStatus =
               info.row.original.type3DiscountPriceAppliedStatus;
+            const discountStatusType2 =
+              product?.type2DiscountPriceAppliedStatus;
             const unitPrice = product?.unitPrice;
+            const prices = getProductPriceByQty({
+              qty: quantity,
+              uomList: product.unitOfMeasure,
+              selectedUOM: UOM,
+              defaultUom: product.defaultUOM,
+              priceRange,
+              companyDefaultPrice: productTotal,
+              discountStatus,
+            });
+
+            const priceBeforeDiscount = getProductPriceByQty({
+              qty: quantity,
+              uomList: product.unitOfMeasure,
+              selectedUOM: UOM,
+              defaultUom: product.defaultUOM,
+              priceRange,
+              companyDefaultPrice: unitPrice,
+            });
             return (
               <ProductTotal
-                totalPrice={productTotal}
-                quantity={quantity}
-                UOM={UOM}
-                unitOfMeasure={product.unitOfMeasure}
-                defaultUOM={product.defaultUOM}
-                priceRange={priceRange}
-                currencySymbol={currencySymbol}
                 isBulkDetailVisible={info?.row?.getIsExpanded()}
                 setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
                 isRowChecked={info?.row?.getIsSelected()}
+                priceRange={priceRange}
                 currency={info.row.original.currency || '$'}
                 discount={product?.discountMessage}
-                discountStatus={discountStatus}
-                unitPrice={unitPrice}
+                currencySymbol={currencySymbol}
+                discountStatus={discountStatus && discountStatusType2}
+                prices={prices}
+                priceBeforeDiscount={priceBeforeDiscount}
               />
             );
           },
