@@ -143,7 +143,7 @@ export function DataTable<T>({
                       colSpan={2}
                       className="align-bottom"
                     >
-                      <div>
+                      <div className="max-w-64">
                         <h3 className="capitalize">bulk prices</h3>
                         <p>
                           Explore the pricing options today! We're here to help

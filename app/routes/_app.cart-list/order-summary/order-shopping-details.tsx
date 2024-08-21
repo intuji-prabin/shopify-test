@@ -254,10 +254,22 @@ export function PromoCode({
               setPromoError('');
             }}
           />
-          <div className="flex items-center gap-1">
+          <div
+            className={`
+              ${
+                fetcher.state === 'submitting' || fetcher.state === 'loading'
+                  ? 'flex items-center gap-1'
+                  : ''
+              }
+             w-full sm:w-[unset]`}
+          >
             <Button
               variant="secondary"
-              className="w-full sm:min-w-[99px] sm:w-auto"
+              className={`${
+                fetcher.state === 'submitting' || fetcher.state === 'loading'
+                  ? 'w-[calc(100%_-_28px)]'
+                  : 'w-full'
+              } sm:min-w-[99px] sm:w-auto`}
               type="submit"
               value={promoCodeApplied ? 'promo_code_delete' : 'promo_code'}
               name="action"

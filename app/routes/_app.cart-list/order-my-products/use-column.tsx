@@ -186,6 +186,7 @@ export function useMyProductColumn({
               unitPrice={unitPrice}
               companyPrice={finalCompanyUsedPrice}
               discount={discount}
+              discountStatus={discountStatus}
             />
           );
         },
@@ -572,7 +573,7 @@ export function ProductTotal({
   return (
     <div className="flex flex-col gap-4 items-baseline min-w-[110px]">
       <div className="flex flex-col gap-1">
-        {discount && (
+        {discount && discountStatus && (
           <del>
             {currency}
             &nbsp;{currencySymbol}
@@ -622,6 +623,7 @@ export function UnitPrice({
   unitPrice,
   companyPrice,
   discount,
+  discountStatus = false,
 }: {
   currency: string;
   currencySymbol: string;
@@ -630,15 +632,16 @@ export function UnitPrice({
   unitPrice: any;
   companyPrice: any;
   discount: string;
+  discountStatus?: boolean;
 }) {
   return (
     <div
       className={`flex flex-col gap-4 items-baseline ${
-        discount && 'mb-[66px]'
-      }`}
+        discount && priceRange.length > 0 && 'mb-[66px]'
+      } ${discount && priceRange.length === 0 && 'mb-[28px]'}`}
     >
       <div className="flex flex-col gap-1">
-        {discount && (
+        {discount && discountStatus && (
           <del>
             {currency}&nbsp;
             {currencySymbol}
@@ -652,11 +655,6 @@ export function UnitPrice({
         <p className="text-grey-900 text-lg leading-5.5 italic">
           {currency}&nbsp;
           {currencySymbol}
-          {/* {priceRange.length > 0 ? (
-            <>{Number(finalUnitPrice).toFixed(2)}</>
-          ) : (
-            <>{unitPrice?.toFixed(2) || Number(companyPrice).toFixed(2)}</>
-          )} */}
           {companyPrice.toFixed(2)}
         </p>
         <p className="text-sm italic font-bold leading-normal text-grey-500">
