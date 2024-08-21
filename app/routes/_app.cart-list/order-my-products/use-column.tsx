@@ -36,6 +36,7 @@ export type BulkOrderColumn = {
   type3DiscountPriceAppliedStatus: boolean;
   type2DiscountPriceAppliedStatus: boolean;
   unitPrice: number;
+  discountPrice: number;
   unitOfMeasure: [
     {
       unit: string;
@@ -160,6 +161,7 @@ export function useMyProductColumn({
           const discount = product?.discountMessage;
           const discountStatus = product?.type3DiscountPriceAppliedStatus;
           const discountStatusType2 = product?.type2DiscountPriceAppliedStatus;
+          const discountPrice = product?.discountPrice;
           const prices = getProductPriceByQty({
             qty: quantity,
             uomList: uomRange,
@@ -168,6 +170,7 @@ export function useMyProductColumn({
             priceRange,
             companyDefaultPrice: companyPrice,
             discountStatus,
+            discountPrice,
           });
           const priceBeforeDiscount = getProductPriceByQty({
             qty: quantity,
@@ -208,6 +211,7 @@ export function useMyProductColumn({
             info.row.original?.type3DiscountPriceAppliedStatus;
           const unitPrice = product?.unitPrice;
           const discountStatusType2 = product?.type2DiscountPriceAppliedStatus;
+          const discountPrice = product?.discountPrice;
           const prices = getProductPriceByQty({
             qty: quantity,
             uomList: product.unitOfMeasure,
@@ -216,6 +220,7 @@ export function useMyProductColumn({
             priceRange,
             companyDefaultPrice: productTotal,
             discountStatus,
+            discountPrice,
           });
 
           const priceBeforeDiscount = getProductPriceByQty({
