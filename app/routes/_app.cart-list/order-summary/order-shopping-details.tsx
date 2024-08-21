@@ -200,10 +200,12 @@ export function PromoCode({
   promoCodeApplied,
   discountMessage,
   fetcher,
+  setUpdateCart,
 }: {
   promoCodeApplied: string;
   discountMessage: string;
   fetcher: any;
+  setUpdateCart: any;
 }) {
   const [promoCode, setPromoCode] = useState(promoCodeApplied);
   useEffect(() => {
@@ -231,6 +233,7 @@ export function PromoCode({
       <fetcher.Form
         method={promoCodeApplied ? 'DELETE' : 'POST'}
         onSubmit={(event: any) => {
+          setUpdateCart(true);
           fetcher.submit(event.currentTarget);
         }}
       >

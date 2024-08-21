@@ -114,7 +114,7 @@ export function useColumn({
       if (ability.can('view', 'view_tracked_order_price')) {
         baseColumns.push({
           accessorKey: isShippedProduct ? 'shippedTotalPrice' : 'total',
-          header: 'Total',
+          header: 'Total Excl. GST',
           enableSorting: false,
           cell: (info) => {
             const totalAmount = prefixWithCurrency(info.getValue() as string);

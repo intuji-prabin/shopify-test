@@ -10,11 +10,12 @@ export default function EstimatedTotal({
   promoCodeApplied,
   discountPrice,
   discountMessage,
-  totalPriceWithDiscount,
   fetcher,
   frieghtCharge,
   isLoading,
   currencySymbol,
+  cartTotalExclGST,
+  setUpdateCart,
 }: any) {
   return (
     <div className="flex flex-col gap-4 p-6 border-b order border-grey-50">
@@ -22,6 +23,7 @@ export default function EstimatedTotal({
         promoCodeApplied={promoCodeApplied}
         discountMessage={discountMessage}
         fetcher={fetcher}
+        setUpdateCart={setUpdateCart}
       />
       <h3 className="font-bold leading-[29px] text-2xl">YOUR ORDER SUMMARY</h3>
       <ul
@@ -56,25 +58,11 @@ export default function EstimatedTotal({
             {surcharges?.toFixed(2)}
           </span>
         </li>
-        <li className="flex justify-between">
-          <p className="capitalize">Total Excl. GST</p>
-          <span className="text-lg font-medium">
-            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;
-            {currencySymbol && currencySymbol}
-            {gst?.toFixed(2)}
-          </span>
-        </li>
-        {promoCodeApplied && (
-          <li className="flex justify-between">
-            <p className="capitalize">Applied Promo Code</p>
-            <span className="text-lg font-medium">
-              <span className="text-base">{promoCodeApplied}</span>
-            </span>
-          </li>
-        )}
         {discountPrice !== 0 && (
-          <li className="flex justify-between">
-            <p className="capitalize">Discounted Amount</p>
+          <li className="flex justify-between text-semantic-danger-500">
+            <p className="capitalize text-semantic-danger-500 font-medium">
+              Discount&nbsp;(-)
+            </p>
             <span className="text-lg font-medium">
               <span className="text-base">
                 {currency ? currency : '$'} {currencySymbol && currencySymbol}
@@ -83,28 +71,30 @@ export default function EstimatedTotal({
             </span>
           </li>
         )}
+        <li className="flex justify-between">
+          <p className="capitalize">Total Excl. GST</p>
+          <span className="text-lg font-medium">
+            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;
+            {currencySymbol && currencySymbol}
+            {cartTotalExclGST?.toFixed(2)}
+          </span>
+        </li>
+        <li className="flex justify-between">
+          <p className="capitalize">GST</p>
+          <span className="text-lg font-medium">
+            <span className="text-base">{currency ? currency : '$'}</span>&nbsp;
+            {currencySymbol && currencySymbol}
+            {gst?.toFixed(2)}
+          </span>
+        </li>
       </ul>
       <div className="flex justify-between [&>p]:font-medium [&>p]:text-2xl [&>p]:text-grey-900">
         <p>Total</p>
         <p className="total_amount">
-          <span className="text-base">
-            {currency ? currency : '$'}&nbsp;{currencySymbol && currencySymbol}
-          </span>
+          {currency ? currency : '$'}&nbsp;{currencySymbol && currencySymbol}
           {cartTotalPrice?.toFixed(2)}
         </p>
       </div>
-      {discountPrice !== 0 && (
-        <div className="flex justify-between [&>p]:font-medium [&>p]:text-2xl [&>p]:text-grey-900">
-          <p>Total After Discount</p>
-          <p className="total_discount">
-            <span className="text-base">
-              {currency ? currency : '$'}&nbsp;
-              {currencySymbol && currencySymbol}
-            </span>
-            {totalPriceWithDiscount?.toFixed(2)}
-          </p>
-        </div>
-      )}
       {frieghtCharge && !isLoading && (
         <div className="flex gap-3 py-2 pl-2 pr-4 border-l-4 border-r-0 bg-semantic-danger-100 border-semantic-danger-500 border-y-0">
           <span className="flex items-center text-semantic-danger-500">*</span>

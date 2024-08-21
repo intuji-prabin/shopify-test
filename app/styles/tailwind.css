@@ -155,13 +155,17 @@ label .required {
 .steps li.active span:first-of-type {
   @apply bg-primary-500;
 }
-/* .steps li.subactive span:first-of-type {
-  @apply bg-[#66CAF0];
-} */
+.steps li.subactive span:first-of-type {
+  @apply bg-status-invoice;
+}
+.steps li.subactive span svg path {
+  @apply fill-white;
+}
 .steps li.active p {
   @apply text-status-back_order;
 }
-.steps li.active p:first-of-type {
+.steps li.active p:first-of-type,
+.steps li.subactive p:first-of-type {
   @apply text-[#202223];
 }
 .steps__order li:first-of-type,
