@@ -6,6 +6,7 @@ export function getProductPriceByQty({
   priceRange,
   companyDefaultPrice,
   discountStatus = false,
+  discountPrice = 0,
 }: {
   qty: number;
   uomList: any;
@@ -14,6 +15,7 @@ export function getProductPriceByQty({
   priceRange: any;
   companyDefaultPrice: any;
   discountStatus?: boolean;
+  discountPrice?: number;
 }) {
   let finalQty = qty;
   let selectUomWithConversion;
@@ -36,7 +38,8 @@ export function getProductPriceByQty({
     });
 
     if (priceRan) {
-      return finalQty * priceRan?.price;
+      // prettier-ignore
+      return (finalQty * priceRan?.price) - discountPrice;
     }
   }
 
