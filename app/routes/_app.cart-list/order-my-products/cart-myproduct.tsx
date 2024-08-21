@@ -1,8 +1,8 @@
-import { Form, useSubmit } from '@remix-run/react';
-import { useState } from 'react';
+import {Form, useSubmit} from '@remix-run/react';
+import {useState} from 'react';
 import RemoveItem from '~/components/icons/removeItem';
-import { Button } from '~/components/ui/button';
-import { DataTable } from '~/components/ui/data-table';
+import {Button} from '~/components/ui/button';
+import {DataTable} from '~/components/ui/data-table';
 import {
   Dialog,
   DialogClose,
@@ -13,9 +13,9 @@ import {
   DialogTrigger,
 } from '~/components/ui/dialog';
 import Loader from '~/components/ui/loader';
-import { useTable } from '~/hooks/useTable';
-import { BulkTable } from './bulk-table';
-import { useMyProductColumn } from './use-column';
+import {useTable} from '~/hooks/useTable';
+import {BulkTable} from './bulk-table';
+import {useMyProductColumn} from './use-column';
 
 export default function MyProducts({
   products,
@@ -23,10 +23,10 @@ export default function MyProducts({
   updateCart,
   fetcher,
 }: any) {
-  const { columns } = useMyProductColumn({
+  const {columns} = useMyProductColumn({
     setUpdateCart,
   });
-  const { table } = useTable(columns, products);
+  const {table} = useTable(columns, products);
 
   let isLoading = fetcher.formData?.get('cartList-0');
 
@@ -94,8 +94,8 @@ export default function MyProducts({
                               item.original.id,
                             ),
                           );
-                        formData.append('action', 'order_delete')
-                        fetcher.submit(formData, { method: 'DELETE' });
+                        formData.append('action', 'order_delete');
+                        fetcher.submit(formData, {method: 'DELETE'});
                         table.resetRowSelection();
                         setOpen(false);
                       }}
@@ -143,7 +143,7 @@ export default function MyProducts({
   );
 }
 
-export const renderSubComponent = ({ row }: any) => {
+export const renderSubComponent = ({row}: any) => {
   return (
     <BulkTable
       product={row.original.priceRange}
@@ -151,6 +151,7 @@ export const renderSubComponent = ({ row }: any) => {
       price={'Price'}
       currency={row.original.currency}
       currencySymbol={row.original.currencySymbol}
+      defaultUOM={row.original.defaultUOMName}
     />
   );
 };

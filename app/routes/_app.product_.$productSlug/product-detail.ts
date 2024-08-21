@@ -16,15 +16,17 @@ export function getProductPriceByQty({
   discountStatus?: boolean;
 }) {
   let finalQty = qty;
+  let selectUomWithConversion;
   if (discountStatus) {
     return qty * companyDefaultPrice;
   }
   if (defaultUom != selectedUOM && uomList.length > 0) {
-    const selectUomWithConversion = uomList.find((item: any) => {
+    selectUomWithConversion = uomList.find((item: any) => {
       return item?.code == selectedUOM;
     });
     finalQty = qty * selectUomWithConversion?.conversionFactor;
   }
+  finalQty = Math.round(finalQty);
   if (priceRange.length > 0) {
     const priceRan = priceRange.find((items: any) => {
       return (

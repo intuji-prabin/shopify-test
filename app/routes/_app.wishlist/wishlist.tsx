@@ -7,12 +7,13 @@ import {
   ProductMeasurement,
   ProductTotal,
   QuantityColumn,
+  UnitPrice,
 } from '../_app.cart-list/order-my-products/use-column';
 import {Form, useSubmit} from '@remix-run/react';
 import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
 import {AbilityContext, Can} from '~/lib/helpers/Can';
 import {useContext} from 'react';
-import {getUnitProductPrice} from '../_app.cart-list/order-my-products/unitPrice';
+import {getProductPriceByQty} from '../_app.product_.$productSlug/product-detail';
 
 export function useMyWishListColumn() {
   const submit = useSubmit();
@@ -70,39 +71,44 @@ export function useMyWishListColumn() {
           enableSorting: false,
           cell: (info) => {
             const product = info.row.original;
-            const currencySymbol = info.row.original.currencySymbol;
-            const quantity = info.row.original?.quantity;
-            const finalUOM = info.row.original?.uom;
-            const priceRange = info.row.original?.priceRange;
-            const uomRange = info.row.original?.unitOfMeasure;
-            const defaultUom = info.row.original?.defaultUOM;
-            const totalPrice = info.row.original?.companyPrice;
-            const finalUnitPrice = getUnitProductPrice({
-              quantity,
-              finalUOM,
-              defaultUom,
+            const currencySymbol = product.currencySymbol;
+            const quantity = product?.quantity;
+            const finalUOM = product?.uom;
+            const priceRange = product?.priceRange;
+            const uomRange = product?.unitOfMeasure;
+            const defaultUom = product?.defaultUOM;
+            const currency = product?.currency;
+            const companyPrice = product?.companyPrice;
+            const unitPrice = product?.unitPrice;
+            const discount = product?.discountMessage;
+            const prices = getProductPriceByQty({
+              qty: quantity,
+              uomList: uomRange,
+              selectedUOM: finalUOM,
+              defaultUom: defaultUom,
               priceRange,
-              uomRange,
-              totalPrice,
+              companyDefaultPrice: companyPrice,
             });
+            const priceBeforeDiscount = getProductPriceByQty({
+              qty: quantity,
+              uomList: uomRange,
+              selectedUOM: finalUOM,
+              defaultUom: defaultUom,
+              priceRange,
+              companyDefaultPrice: unitPrice,
+            });
+            const finalUnitPrice = priceBeforeDiscount / quantity;
+            const finalCompanyUsedPrice = prices / quantity;
             return (
-              <>
-                <p className="text-grey-900 text-lg leading-5.5 italic">
-                  {product?.currency}&nbsp;
-                  {currencySymbol}
-                  {priceRange.length > 0 ? (
-                    <>{Number(finalUnitPrice).toFixed(2)}</>
-                  ) : (
-                    <>
-                      {product?.unitPrice?.toFixed(2) ||
-                        Number(product?.companyPrice).toFixed(2)}
-                    </>
-                  )}
-                </p>
-                <p className="text-sm italic font-bold leading-normal text-grey-500">
-                  (Excl. GST)
-                </p>
-              </>
+              <UnitPrice
+                currency={currency}
+                currencySymbol={currencySymbol}
+                priceRange={priceRange}
+                finalUnitPrice={finalUnitPrice}
+                unitPrice={unitPrice}
+                companyPrice={finalCompanyUsedPrice}
+                discount={discount}
+              />
             );
           },
         },
@@ -119,20 +125,23 @@ export function useMyWishListColumn() {
             const currencySymbol = info.row.original.currencySymbol;
             const discountStatus =
               info.row.original.type3DiscountPriceAppliedStatus;
+            const unitPrice = product?.unitPrice;
             return (
               <ProductTotal
                 totalPrice={productTotal}
                 quantity={quantity}
                 UOM={UOM}
-                unitOfMeasure={product?.unitOfMeasure}
-                defaultUOM={product?.uom}
+                unitOfMeasure={product.unitOfMeasure}
+                defaultUOM={product.defaultUOM}
                 priceRange={priceRange}
+                currencySymbol={currencySymbol}
                 isBulkDetailVisible={info?.row?.getIsExpanded()}
                 setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
                 isRowChecked={info?.row?.getIsSelected()}
-                currency={product?.currency || '$'}
-                currencySymbol={currencySymbol}
+                currency={info.row.original.currency || '$'}
+                discount={product?.discountMessage}
                 discountStatus={discountStatus}
+                unitPrice={unitPrice}
               />
             );
           },

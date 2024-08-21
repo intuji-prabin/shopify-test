@@ -39,7 +39,8 @@ export function BulkTable({
   price,
   product,
   currencySymbol,
-  currency
+  currency,
+  defaultUOM,
 }: {
   quantity: string;
   price: string;
@@ -50,14 +51,16 @@ export function BulkTable({
   }[];
   currencySymbol: string;
   currency: string;
+  defaultUOM: string;
 }) {
   return (
     <div className="flex w-full space-x-6">
-      <Table className="min-w-[266px] border-[1px] border-grey-50 h-full transition-all duration-700 ease-in-out delay-200">
+      <Table className="min-w-[266px] border-[1px] border-grey-50 h-full transition-all duration-700 ease-in-out delay-200 bulk-table">
         <TableHeader>
           <TableRow className="bg-secondary-500 hover:bg-secondary-500">
             <TableHead className="text-base font-medium leading-[21px] text-grey-900 text-center">
-              {quantity}
+              {quantity}&nbsp;
+              <span className="text-sm">(DEFAULT UOM:{defaultUOM})</span>
             </TableHead>
             <TableHead className="text-base font-medium leading-[21px] text-grey-900 text-center uppercase">
               {price}
@@ -65,16 +68,25 @@ export function BulkTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {product.map((product: {minQty: number; maxQty: number; price: number}, index: number) => (
-            <TableRow key={'volumentric' + index} className="hover:bg-white">
-              <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
-                <span className='whitespace-nowrap'>{product.minQty} - {product.maxQty? product.maxQty : 'above'}</span>
-              </TableCell>
-              <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
-                {currency}&nbsp;{currencySymbol}{product.price}
-              </TableCell>
-            </TableRow>
-          ))}
+          {product.map(
+            (
+              product: {minQty: number; maxQty: number; price: number},
+              index: number,
+            ) => (
+              <TableRow key={'volumentric' + index} className="hover:bg-white">
+                <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
+                  <span className="whitespace-nowrap">
+                    {product.minQty} -{' '}
+                    {product.maxQty ? product.maxQty : 'above'}
+                  </span>
+                </TableCell>
+                <TableCell className="text-base font-medium leading-[21px] text-grey-900 text-center">
+                  {currency}&nbsp;{currencySymbol}
+                  {product.price}
+                </TableCell>
+              </TableRow>
+            ),
+          )}
         </TableBody>
       </Table>
     </div>
