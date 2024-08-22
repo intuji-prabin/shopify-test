@@ -82,9 +82,11 @@ function mergeCSVItemWithSameStockCode(csvArray: CSVFileType[]) {
 export const BulkCsvUpload = ({
   btnSecondary,
   action,
+  setUpdateCart,
 }: {
   btnSecondary?: boolean;
   action: string;
+  setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [isProgressBarShow, setIsProgressBarShow] = useState(false);
 
@@ -215,6 +217,7 @@ export const BulkCsvUpload = ({
       csvArrayPayload,
       {method: 'POST', encType: 'application/json', action},
     );
+    setUpdateCart && setUpdateCart(false);
   };
 
   useEffect(() => {

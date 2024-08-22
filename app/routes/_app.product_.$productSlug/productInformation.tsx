@@ -19,6 +19,7 @@ import {useMediaQuery} from '../../hooks/useMediaQuery';
 import CarouselThumb from './carouselThumb';
 import {getProductPriceByQty} from './product-detail';
 import {ProductInfoTable} from './productInfoTable';
+import {InputQuantity, InputQuantityError} from '~/components/ui/inputQuantity';
 
 export default function ProductInformation({product}: any) {
   const matches = useMediaQuery('(min-width: 1025px)');
@@ -116,51 +117,51 @@ const ProductDetailsSection = ({
 
   const submit = useSubmit();
 
-  function decreaseQuantity() {
-    const prices = getProductPriceByQty({
-      qty: quantity > 1 ? quantity - 1 : 1,
-      uomList: unitOfMeasure,
-      selectedUOM: UOM,
-      defaultUom: box,
-      priceRange,
-      companyDefaultPrice,
-    });
-    setProductPrice(prices);
-    if (isNaN(quantity - 1)) {
-      setQuantity(parseFloat(moq));
-      return;
-    }
-    setQuantity(quantity > 0 ? quantity - 1 : 0);
-  }
-  function increaseQuantity() {
-    const prices = getProductPriceByQty({
-      qty: quantity + 1,
-      uomList: unitOfMeasure,
-      selectedUOM: UOM,
-      defaultUom: box,
-      priceRange,
-      companyDefaultPrice,
-    });
-    setProductPrice(prices);
-    if (isNaN(quantity + 1)) {
-      setQuantity(parseFloat(moq));
-      return;
-    }
-    setQuantity(quantity + 1);
-  }
-  function handleInputChange(event?: any) {
-    const inputQuantity = parseInt(event.target.value);
-    const prices = getProductPriceByQty({
-      qty: inputQuantity,
-      uomList: unitOfMeasure,
-      selectedUOM: UOM,
-      defaultUom: box,
-      priceRange,
-      companyDefaultPrice,
-    });
-    setProductPrice(prices);
-    setQuantity(inputQuantity);
-  }
+  // function decreaseQuantity() {
+  //   const prices = getProductPriceByQty({
+  //     qty: quantity > 1 ? quantity - 1 : 1,
+  //     uomList: unitOfMeasure,
+  //     selectedUOM: UOM,
+  //     defaultUom: box,
+  //     priceRange,
+  //     companyDefaultPrice,
+  //   });
+  //   setProductPrice(prices);
+  //   if (isNaN(quantity - 1)) {
+  //     setQuantity(parseFloat(moq));
+  //     return;
+  //   }
+  //   setQuantity(quantity > 0 ? quantity - 1 : 0);
+  // }
+  // function increaseQuantity() {
+  //   const prices = getProductPriceByQty({
+  //     qty: quantity + 1,
+  //     uomList: unitOfMeasure,
+  //     selectedUOM: UOM,
+  //     defaultUom: box,
+  //     priceRange,
+  //     companyDefaultPrice,
+  //   });
+  //   setProductPrice(prices);
+  //   if (isNaN(quantity + 1)) {
+  //     setQuantity(parseFloat(moq));
+  //     return;
+  //   }
+  //   setQuantity(quantity + 1);
+  // }
+  // function handleInputChange(event?: any) {
+  //   const inputQuantity = parseInt(event.target.value);
+  //   const prices = getProductPriceByQty({
+  //     qty: inputQuantity,
+  //     uomList: unitOfMeasure,
+  //     selectedUOM: UOM,
+  //     defaultUom: box,
+  //     priceRange,
+  //     companyDefaultPrice,
+  //   });
+  //   setProductPrice(prices);
+  //   setQuantity(inputQuantity);
+  // }
 
   function handleUOM(selectedUOM: any) {
     const prices = getProductPriceByQty({
@@ -338,43 +339,17 @@ const ProductDetailsSection = ({
       {originalPrice ? (
         <div className="flex flex-col items-start gap-4 pt-6 sm:flex-row">
           <div>
-            <div className="flex cart__list--quantity">
-              <button
-                className={`border-[1px] border-grey-500 flex justify-center items-center w-14 aspect-square ${
-                  quantity - 1 < 1 && 'cursor-not-allowed'
-                }`}
-                onClick={decreaseQuantity}
-                disabled={quantity - 1 < 1}
-              >
-                -
-              </button>
-              <input
-                type="number"
-                className="w-20 min-h-14 h-full text-center border-x-0 !border-grey-500"
-                value={quantity}
-                onChange={handleInputChange}
-                min={1}
-                max={CART_QUANTITY_MAX}
-                required
-              />
-              <button
-                className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-14"
-                onClick={increaseQuantity}
-              >
-                +
-              </button>
-            </div>
-            <p className="text-sm text-grey-700 pt-2.5 flex gap-x-1 info-block">
-              <div
-                data-tooltip={`The minimum order quantity is ${
-                  moq || 1
-                }. Orders below this quantity will incur additional surcharges.`}
-                className="cursor-pointer"
-              >
-                <Info />
-              </div>
-              Minimum Order Quantity: {moq || 1}
-            </p>
+            <InputQuantity
+              quantity={quantity}
+              setQuantity={setQuantity}
+              unitOfMeasure={unitOfMeasure}
+              UOM={UOM}
+              box={box}
+              priceRange={priceRange}
+              companyDefaultPrice={companyDefaultPrice}
+              setProductPrice={setProductPrice}
+              moq={moq}
+            />
           </div>
           <div className="flex flex-col">
             <select
@@ -414,19 +389,22 @@ const ProductDetailsSection = ({
                 className={`flex-grow w-full uppercase min-h-14 ${
                   quantity < 1 ||
                   quantity > CART_QUANTITY_MAX ||
-                  isNaN(quantity)
+                  isNaN(quantity) ||
+                  quantity % moq !== 0
                     ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
                     : 'cursor-pointer'
                 }`}
                 disabled={
                   quantity < 1 ||
                   quantity > CART_QUANTITY_MAX ||
-                  isNaN(quantity)
+                  isNaN(quantity) ||
+                  quantity % moq !== 0
                 }
                 type={
                   quantity < 1 ||
                   quantity > CART_QUANTITY_MAX ||
-                  isNaN(quantity)
+                  isNaN(quantity) ||
+                  quantity % moq !== 0
                     ? 'button'
                     : 'submit'
                 }
@@ -436,17 +414,7 @@ const ProductDetailsSection = ({
               >
                 {addToCart}
               </Button>
-              <p className="font-medium text-red-500 leading-none pt-1.5">
-                {quantity < moq && quantity >= 1 && (
-                  <>Orders below MOQ ({moq}) will incur additional surcharges</>
-                )}
-                {(quantity < 1 || isNaN(quantity)) && (
-                  <>Minimum order quantity should be greater than 0</>
-                )}
-                {quantity > CART_QUANTITY_MAX && (
-                  <>Maximum order quantity is {CART_QUANTITY_MAX}</>
-                )}
-              </p>
+              <InputQuantityError quantity={quantity} moq={moq} />
             </Can>
           </Form>
         </div>

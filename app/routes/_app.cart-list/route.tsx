@@ -372,7 +372,11 @@ export default function CartList() {
   return (
     <>
       <HeroBanner imageUrl={'/place-order.png'} sectionName={'SHOPPING CART'} />
-      <UploadSearchbar searchVariant="cart" action="/bulkCsvUpload" />
+      <UploadSearchbar
+        searchVariant="cart"
+        action="/bulkCsvUpload"
+        setUpdateCart={setUpdateCart}
+      />
       {finalProductList?.length === 0 ? (
         <EmptyList placeholder="cart" />
       ) : (
