@@ -39,9 +39,17 @@ export function getProductPriceByQty({
 
     if (priceRan) {
       // prettier-ignore
-      return (finalQty * priceRan?.price) - discountPrice;
+      const totalPrice = (finalQty * priceRan?.price) - discountPrice;
+      return validateTotalPrce( qty, totalPrice)
     }
   }
 
-  return finalQty * companyDefaultPrice;
+  return validateTotalPrce( qty, finalQty * companyDefaultPrice );
+}
+
+const validateTotalPrce = ( qty : number, totalPrice : number ) => {
+  const pricePerQty = Number( ( totalPrice / qty ).toFixed(2) );
+  const newTotalPrice = qty * pricePerQty;
+
+  return Number( newTotalPrice.toFixed(2) );
 }
