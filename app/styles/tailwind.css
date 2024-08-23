@@ -172,6 +172,12 @@ label .required {
 .steps li:last-of-type {
   @apply before:bg-white before:w-[calc(50%_-_32px)] before:h-full before:content-[''] before:absolute before:left-0 before:z-10;
 }
+.steps li.subactive .back-order p:first-of-type {
+  @apply text-grey-100;
+}
+.steps li.subactive .back-order span:first-of-type {
+  @apply bg-grey-100;
+}
 .steps li:last-of-type {
   @apply before:left-[unset] before:right-0;
 }

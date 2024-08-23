@@ -115,7 +115,7 @@ export default function OrderSteps({
             {step.label}
           </p>
           {step.status === 'Processing' && products.length > 0 && (
-            <div className="mb-2 bg-white">
+            <div className="mb-2 bg-white back-order">
               <div className="bg-status-back_order h-5 w-0.5 mx-auto"></div>
               <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-grey-100">
                 <BackOrder fillColor="#fff" />
