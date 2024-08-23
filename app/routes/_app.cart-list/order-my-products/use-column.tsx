@@ -9,6 +9,9 @@ import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {Can} from '~/lib/helpers/Can';
 import {getProductPriceByQty} from '~/routes/_app.product_.$productSlug/product-detail';
+import {validateDiscountPrice} from '../validateDiscountPrice';
+import {validDecrementQty, validIncrementQty} from '~/components/ui/validQty';
+import {InputQuantityError} from '~/components/ui/inputQuantity';
 
 export type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock';
 
@@ -92,15 +95,14 @@ export function useMyProductColumn({
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
-          const warehouse = info.row.original.warehouse;
           return (
             <ItemsColumn
-              title={product.title}
-              sku={product.sku}
-              featuredImage={product.featuredImage}
+              title={product?.title}
+              sku={product?.sku}
+              featuredImage={product?.featuredImage}
               handle={product?.handle}
-              inventory={product.inventory}
-              warehouse={warehouse}
+              inventory={product?.inventory}
+              warehouse={product?.warehouse}
             />
           );
         },
@@ -113,12 +115,12 @@ export function useMyProductColumn({
           const product = info.row.original;
           return (
             <QuantityColumn
-              quantity={product.quantity}
+              quantity={product?.quantity}
               info={info}
-              productId={product.productId}
-              variantId={product.variantId}
-              moq={product.moq || 1}
-              lineItemId={product.id}
+              productId={product?.productId}
+              variantId={product?.variantId}
+              moq={product?.moq || 1}
+              lineItemId={product?.id}
               setUpdateCart={setUpdateCart}
             />
           );
@@ -130,14 +132,13 @@ export function useMyProductColumn({
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
-
           return (
             <ProductMeasurement
-              uom={product.uom}
-              unitOfMeasure={product.unitOfMeasure}
+              uom={product?.uom}
+              unitOfMeasure={product?.unitOfMeasure}
               info={info}
-              selectedUOMName={product.uomName}
-              productId={product.productId}
+              selectedUOMName={product?.uomName}
+              productId={product?.productId}
               setUpdateCart={setUpdateCart}
             />
           );
@@ -161,7 +162,11 @@ export function useMyProductColumn({
           const discount = product?.discountMessage;
           const discountStatus = product?.type3DiscountPriceAppliedStatus;
           const discountStatusType2 = product?.type2DiscountPriceAppliedStatus;
-          const discountPrice = product?.discountPrice;
+          const discountPrice = validateDiscountPrice(
+            discountStatus,
+            discountStatusType2,
+            product?.discountPrice,
+          );
           const prices = getProductPriceByQty({
             qty: quantity,
             uomList: uomRange,
@@ -201,17 +206,20 @@ export function useMyProductColumn({
         header: 'Total Price',
         enableSorting: false,
         cell: (info) => {
-          const productTotal = info.row.original?.companyPrice;
-          const priceRange = info.row.original?.priceRange;
-          const quantity = info.row.original?.quantity;
           const product = info.row.original;
-          const UOM = info.row.original?.uom;
-          const currencySymbol = info.row.original?.currencySymbol;
-          const discountStatus =
-            info.row.original?.type3DiscountPriceAppliedStatus;
+          const productTotal = product?.companyPrice;
+          const priceRange = product?.priceRange;
+          const quantity = product?.quantity;
+          const UOM = product?.uom;
+          const currencySymbol = product?.currencySymbol;
+          const discountStatus = product?.type3DiscountPriceAppliedStatus;
           const unitPrice = product?.unitPrice;
           const discountStatusType2 = product?.type2DiscountPriceAppliedStatus;
-          const discountPrice = product?.discountPrice;
+          const discountPrice = validateDiscountPrice(
+            discountStatus,
+            discountStatusType2,
+            product?.discountPrice,
+          );
           const prices = getProductPriceByQty({
             qty: quantity,
             uomList: product.unitOfMeasure,
@@ -351,18 +359,12 @@ export function QuantityColumn({
     setUpdateCart && setUpdateCart(true);
   };
   const handleIncreaseQuantity = () => {
-    if (isNaN(quantity + 1)) {
-      updateQuantity(moq);
-      return;
-    }
-    updateQuantity(quantity + 1);
+    const newQuantity = validIncrementQty(moq, quantity);
+    updateQuantity(newQuantity);
   };
   const handleDecreaseQuantity = () => {
-    if (isNaN(quantity + 1)) {
-      updateQuantity(moq);
-      return;
-    }
-    updateQuantity(quantity - 1);
+    const newQuantity = validDecrementQty(moq, quantity);
+    updateQuantity(newQuantity);
   };
   const handleInputChange = (event: any) => {
     const inputQuantity = parseInt(event.target.value);
@@ -371,32 +373,17 @@ export function QuantityColumn({
 
   return (
     <>
-      <p className="text-sm leading-none text-red-500">
-        {quantity < moq && quantity >= 1 && (
-          <>
-            Orders below MOQ ({moq}) will incur
-            <br /> additional surcharges
-          </>
-        )}
-        {(quantity < 1 || isNaN(quantity)) && (
-          <>
-            Minimum order quantity
-            <br /> should be greater than 0
-          </>
-        )}
-        {quantity > CART_QUANTITY_MAX && (
-          <>
-            Maximum order quantity
-            <br /> is {CART_QUANTITY_MAX}
-          </>
-        )}
-      </p>
+      <InputQuantityError
+        quantity={quantity}
+        moq={moq}
+        className="!pt-0 !font-normal max-w-36 text-sm"
+      />
       <div
         className={`flex flex-col gap-[11.5px] cart__list--quantity ${
-          (quantity < moq && quantity >= 1) ||
-          quantity < 1 ||
+          quantity < moq ||
+          quantity > CART_QUANTITY_MAX ||
           isNaN(quantity) ||
-          quantity > CART_QUANTITY_MAX
+          quantity % moq !== 0
             ? 'mt-1.5'
             : 'mt-[2.2rem]'
         }`}
@@ -404,11 +391,11 @@ export function QuantityColumn({
         <div className="flex items-center">
           <button
             className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${
-              quantity - 1 < 1 && 'cursor-not-allowed'
+              quantity - Number(moq) < Number(moq) && 'cursor-not-allowed'
             }`}
             type="button"
             onClick={handleDecreaseQuantity}
-            disabled={quantity - 1 < 1}
+            disabled={quantity - Number(moq) < Number(moq)}
           >
             -
           </button>
@@ -418,15 +405,21 @@ export function QuantityColumn({
             value={quantity}
             name="quantity"
             onChange={handleInputChange}
-            min={1}
+            min={moq || 1}
             max={CART_QUANTITY_MAX}
+            step={moq || 1}
             data-cy="product-quantity"
             required
           />
           <button
-            className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
+            className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${
+              quantity + Number(moq) > CART_QUANTITY_MAX
+                ? 'cursor-not-allowed'
+                : ''
+            }`}
             type="button"
             onClick={handleIncreaseQuantity}
+            disabled={quantity + Number(moq) > CART_QUANTITY_MAX}
           >
             +
           </button>
@@ -561,7 +554,7 @@ export function ProductTotal({
   currency: string;
   discount?: string;
   currencySymbol: string;
-  discountStatus: boolean;
+  discountStatus?: boolean;
   prices: number;
   priceBeforeDiscount: number;
 }) {
@@ -626,7 +619,7 @@ export function UnitPrice({
   finalUnitPrice: any;
   unitPrice: any;
   companyPrice: any;
-  discount: string;
+  discount?: string;
   discountStatus?: boolean;
 }) {
   return (

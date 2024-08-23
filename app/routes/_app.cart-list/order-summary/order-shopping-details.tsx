@@ -356,7 +356,6 @@ export function ShoppingDetails({
     shippingAddresses.defaultAddress,
     ...shippingAddresses.addresses,
   ];
-  // console.log("defaultAddress", defaultAddress)
 
   const defaultAddress1 = defaultAddress.address1 ?? '';
   const defaultAddress2 = defaultAddress.address2 ?? '';
@@ -421,8 +420,11 @@ export function ShoppingDetails({
             </p>
             <ul className="pl-5 list-disc">
               <li>Press UPDATE CART button.</li>
-              <li>Update quantity to be greater than zero.</li>
-              <li>Update quantity to be less than {CART_QUANTITY_MAX}.</li>
+              <li>
+                Quantity must be greater than zero OR less than{' '}
+                {CART_QUANTITY_MAX}.
+              </li>
+              <li>Quantity must be multiple of its respective MOQ.</li>
             </ul>
           </div>
         )}

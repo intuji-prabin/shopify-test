@@ -1,11 +1,11 @@
-import React from 'react';
-import {PredictiveProductDetail} from './predictiveSearchDetail';
-import {PredictiveSearchQtyBtn} from './predictiveSearchQtyBtn';
 import {Form, useSubmit} from '@remix-run/react';
+import React from 'react';
+import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
 import {Can} from '~/lib/helpers/Can';
 import {Button} from './button';
-import {PredictiveSearchFormError} from './predictiveSearchFormError';
-import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
+import {InputQuantityError} from './inputQuantity';
+import {PredictiveProductDetail} from './predictiveSearchDetail';
+import {PredictiveSearchQtyBtn} from './predictiveSearchQtyBtn';
 
 export const PredictiveSearchOther = ({
   product,
@@ -92,27 +92,31 @@ export const PredictiveSearchOther = ({
                 />
                 <input type="hidden" name="quantity" value={quantity} />
                 <input type="hidden" name="selectUOM" value={UOM} />
-                <PredictiveSearchFormError
+                <InputQuantityError
                   quantity={quantity}
                   moq={product.moq}
+                  className="text-sm pb-1.5 !pt-0"
                 />
                 <Button
                   className={`w-full ${
-                    quantity < 1 ||
+                    quantity < product.moq ||
                     quantity > CART_QUANTITY_MAX ||
-                    isNaN(quantity)
+                    isNaN(quantity) ||
+                    quantity % product.moq !== 0
                       ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
                       : 'cursor-pointer'
                   }`}
                   disabled={
-                    quantity < 1 ||
+                    quantity < product.moq ||
                     quantity > CART_QUANTITY_MAX ||
-                    isNaN(quantity)
+                    isNaN(quantity) ||
+                    quantity % product.moq !== 0
                   }
                   type={
-                    quantity < 1 ||
+                    quantity < product.moq ||
                     quantity > CART_QUANTITY_MAX ||
-                    isNaN(quantity)
+                    isNaN(quantity) ||
+                    quantity % product.moq !== 0
                       ? 'button'
                       : 'submit'
                   }
@@ -134,27 +138,31 @@ export const PredictiveSearchOther = ({
               <input type="hidden" name="productId" value={product.id} />
               <input type="hidden" name="quantity" value={quantity} />
               <input type="hidden" name="uom" value={UOM} />
-              <PredictiveSearchFormError
+              <InputQuantityError
                 quantity={quantity}
                 moq={product.moq}
+                className="text-sm pb-1.5 !pt-0"
               />
               <Button
                 className={`w-full ${
-                  quantity < 1 ||
+                  quantity < product.moq ||
                   quantity > CART_QUANTITY_MAX ||
-                  isNaN(quantity)
+                  isNaN(quantity) ||
+                  quantity % product.moq !== 0
                     ? 'cursor-not-allowed text-grey-400 !bg-grey-200'
                     : 'cursor-pointer'
                 }`}
                 disabled={
-                  quantity < 1 ||
+                  quantity < product.moq ||
                   quantity > CART_QUANTITY_MAX ||
-                  isNaN(quantity)
+                  isNaN(quantity) ||
+                  quantity % product.moq !== 0
                 }
                 type={
-                  quantity < 1 ||
+                  quantity < product.moq ||
                   quantity > CART_QUANTITY_MAX ||
-                  isNaN(quantity)
+                  isNaN(quantity) ||
+                  quantity % product.moq !== 0
                     ? 'button'
                     : 'submit'
                 }

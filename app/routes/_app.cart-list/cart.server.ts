@@ -83,7 +83,9 @@ const formateCartList = async (
     if (
       !item?.quantity ||
       item?.quantity > CART_QUANTITY_MAX ||
-      item?.quantity <= 0
+      item?.quantity < item.moq ||
+      isNaN(item?.quantity) ||
+      item?.quantity % item.moq !== 0
     ) {
       orderPlaceStatus = false;
     } else if (!item?.quantity || item?.quantity < item?.moq) {

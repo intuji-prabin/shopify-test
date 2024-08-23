@@ -1,3 +1,6 @@
+import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
+import {validDecrementQty, validIncrementQty} from './validQty';
+
 export const PredictiveSearchQtyBtn = ({
   moq,
   quantity,
@@ -8,19 +11,13 @@ export const PredictiveSearchQtyBtn = ({
   setQuantity: any;
 }) => {
   function decreaseQuantity() {
-    if (isNaN(quantity - 1)) {
-      setQuantity(parseFloat(moq) || 1);
-      return;
-    }
-    setQuantity(quantity - 1);
+    const newQuantity = validDecrementQty(moq, quantity);
+    setQuantity(newQuantity);
   }
 
   function increaseQuantity() {
-    if (isNaN(quantity + 1)) {
-      setQuantity(parseFloat(moq) || 1);
-      return;
-    }
-    setQuantity(quantity + 1);
+    const newQuantity = validIncrementQty(moq, quantity);
+    setQuantity(newQuantity);
   }
 
   function handleInputChange(event?: any) {
@@ -32,10 +29,10 @@ export const PredictiveSearchQtyBtn = ({
     <>
       <button
         className={`flex items-center max-w-[38px] justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${
-          quantity - 1 < 1 ? 'cursor-not-allowed' : ''
+          quantity - Number(moq) < Number(moq) ? 'cursor-not-allowed' : ''
         }`}
         onClick={decreaseQuantity}
-        disabled={quantity - 1 < 1}
+        disabled={quantity - Number(moq) < Number(moq)}
       >
         -
       </button>
@@ -43,11 +40,17 @@ export const PredictiveSearchQtyBtn = ({
         type="number"
         className="flex-1 text-center border-x-0 !border-grey-500 sm:min-w-20"
         value={quantity}
+        min={moq || 1}
+        max={CART_QUANTITY_MAX}
+        step={moq || 1}
         onChange={handleInputChange}
       />
       <button
-        className="flex items-center max-w-[38px] justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial"
+        className={`flex items-center max-w-[38px] justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${
+          quantity + Number(moq) > CART_QUANTITY_MAX ? 'cursor-not-allowed' : ''
+        }`}
         onClick={increaseQuantity}
+        disabled={quantity + Number(moq) > CART_QUANTITY_MAX}
       >
         +
       </button>

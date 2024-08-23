@@ -52,15 +52,14 @@ export function useMyWishListColumn() {
           enableSorting: false,
           cell: (info) => {
             const product = info.row.original;
-            const warehouse = info.row.original.warehouse;
             return (
               <ItemsColumn
                 title={product?.title}
                 sku={product?.sku}
                 featuredImage={product?.featuredImage}
-                handle={product?.productHandle}
-                inventory={product.inventory}
-                warehouse={warehouse}
+                handle={product?.handle}
+                inventory={product?.inventory}
+                warehouse={product?.warehouse}
               />
             );
           },
@@ -80,7 +79,6 @@ export function useMyWishListColumn() {
             const currency = product?.currency;
             const companyPrice = product?.companyPrice;
             const unitPrice = product?.unitPrice;
-            const discount = product?.discountMessage;
             const prices = getProductPriceByQty({
               qty: quantity,
               uomList: uomRange,
@@ -107,7 +105,6 @@ export function useMyWishListColumn() {
                 finalUnitPrice={finalUnitPrice}
                 unitPrice={unitPrice}
                 companyPrice={finalCompanyUsedPrice}
-                discount={discount}
               />
             );
           },
@@ -123,10 +120,6 @@ export function useMyWishListColumn() {
             const product = info?.row?.original;
             const UOM = info?.row?.original?.uom;
             const currencySymbol = info.row.original.currencySymbol;
-            const discountStatus =
-              info.row.original.type3DiscountPriceAppliedStatus;
-            const discountStatusType2 =
-              product?.type2DiscountPriceAppliedStatus;
             const unitPrice = product?.unitPrice;
             const prices = getProductPriceByQty({
               qty: quantity,
@@ -135,7 +128,6 @@ export function useMyWishListColumn() {
               defaultUom: product.defaultUOM,
               priceRange,
               companyDefaultPrice: productTotal,
-              discountStatus,
             });
 
             const priceBeforeDiscount = getProductPriceByQty({
@@ -153,9 +145,7 @@ export function useMyWishListColumn() {
                 isRowChecked={info?.row?.getIsSelected()}
                 priceRange={priceRange}
                 currency={info.row.original.currency || '$'}
-                discount={product?.discountMessage}
                 currencySymbol={currencySymbol}
-                discountStatus={discountStatus && discountStatusType2}
                 prices={prices}
                 priceBeforeDiscount={priceBeforeDiscount}
               />
@@ -175,6 +165,7 @@ export function useMyWishListColumn() {
                 productId={product?.productId}
                 variantId={product?.variantId}
                 moq={product?.moq || 1}
+                lineItemId={product?.id}
               />
             );
           },
@@ -238,7 +229,9 @@ export function useMyWishListColumn() {
                          ${
                            !allowed ||
                            product?.quantity > CART_QUANTITY_MAX ||
-                           isNaN(product?.quantity)
+                           isNaN(product?.quantity) ||
+                           product.quantity < product.moq ||
+                           product.quantity % product.moq !== 0
                              ? 'cursor-not-allowed'
                              : null
                          }`}
@@ -246,7 +239,9 @@ export function useMyWishListColumn() {
                       disabled={
                         !allowed ||
                         product?.quantity > CART_QUANTITY_MAX ||
-                        isNaN(product?.quantity)
+                        isNaN(product?.quantity) ||
+                        product.quantity < product.moq ||
+                        product.quantity % product.moq !== 0
                       }
                     >
                       Add to cart
