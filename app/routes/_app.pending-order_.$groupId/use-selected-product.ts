@@ -1,17 +1,17 @@
-import {z} from 'zod';
-import {useContext, useEffect, useState} from 'react';
-import {Table} from '@tanstack/react-table';
 import {useFetcher, useSubmit} from '@remix-run/react';
+import {Table} from '@tanstack/react-table';
+import {useContext, useEffect, useState} from 'react';
+import {z} from 'zod';
 import {displayToast} from '~/components/ui/toast';
+import {
+  CART_QUANTITY_ERROR_GEN,
+  CART_QUANTITY_MAX,
+} from '~/lib/constants/cartInfo.constant';
+import {Product} from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
 import {
   GroupItem,
   SelectProductContext,
 } from '~/routes/_app.pending-order_.$groupId/select-product-context';
-import {Product} from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
-import {
-  CART_QUANTITY_ERROR,
-  CART_QUANTITY_MAX,
-} from '~/lib/constants/cartInfo.constant';
 
 export const UpdateGroupSchema = z.object({
   group: z
@@ -57,11 +57,17 @@ export function useSelectedProduct({table}: {table: Table<Product>}) {
   const displayQuantityMaxError = () => {
     const isSelectedRowQuanityValid = table
       .getSelectedRowModel()
-      .flatRows.some((item) => item.original.quantity > CART_QUANTITY_MAX);
+      .flatRows.some(
+        (item) =>
+          item.original.quantity > CART_QUANTITY_MAX ||
+          item.original.quantity < item.original.moq ||
+          isNaN(item.original.quantity) ||
+          item.original.quantity % item.original.moq !== 0,
+      );
 
     if (isSelectedRowQuanityValid) {
       displayToast({
-        message: CART_QUANTITY_ERROR,
+        message: CART_QUANTITY_ERROR_GEN,
         type: 'error',
       });
       return true;
@@ -126,11 +132,17 @@ export function useSelectedProduct({table}: {table: Table<Product>}) {
   const handleProductUpdate = () => {
     const isRowQuanityValid = table
       .getRowModel()
-      .flatRows.some((item) => item.original.quantity > CART_QUANTITY_MAX);
+      .flatRows.some(
+        (item) =>
+          item.original.quantity > CART_QUANTITY_MAX ||
+          item.original.quantity < item.original.moq ||
+          isNaN(item.original.quantity) ||
+          item.original.quantity % item.original.moq !== 0,
+      );
 
     if (isRowQuanityValid) {
       displayToast({
-        message: CART_QUANTITY_ERROR,
+        message: CART_QUANTITY_ERROR_GEN,
         type: 'error',
       });
       return;

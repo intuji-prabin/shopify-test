@@ -6,10 +6,22 @@ import {
   useSubmit,
 } from '@remix-run/react';
 import {LoaderFunctionArgs, json} from '@remix-run/server-runtime';
+import {AuthError} from '~/components/ui/authError';
+import {BackButton} from '~/components/ui/back-button';
 import {Button} from '~/components/ui/button';
 import {DataTable} from '~/components/ui/data-table';
+import {displayToast} from '~/components/ui/toast';
+import useSort from '~/hooks/useSort';
 import {useTable} from '~/hooks/useTable';
+import {
+  CART_QUANTITY_ERROR_GEN,
+  CART_QUANTITY_MAX,
+} from '~/lib/constants/cartInfo.constant';
+import {Routes} from '~/lib/constants/routes.constent';
+import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
+import {Can} from '~/lib/helpers/Can';
 import {getAccessToken, isAuthenticate} from '~/lib/utils/auth-session.server';
+import {AuthErrorHandling} from '~/lib/utils/authErrorHandling';
 import {
   getMessageSession,
   messageCommitSession,
@@ -21,18 +33,6 @@ import {addProductToCart} from '../_app.product_.$productSlug/product.server';
 import {addedBulkCart} from './bulk.cart.server';
 import {useMyWishListColumn} from './wishlist';
 import {getWishlist, removeBulkFromWishlist} from './wishlist.server';
-import useSort from '~/hooks/useSort';
-import {displayToast} from '~/components/ui/toast';
-import {Routes} from '~/lib/constants/routes.constent';
-import {
-  CART_QUANTITY_ERROR,
-  CART_QUANTITY_MAX,
-} from '~/lib/constants/cartInfo.constant';
-import {BackButton} from '~/components/ui/back-button';
-import {Can} from '~/lib/helpers/Can';
-import {WISHLIST_SESSION_KEY} from '~/lib/constants/wishlist.constant';
-import {AuthError} from '~/components/ui/authError';
-import {AuthErrorHandling} from '~/lib/utils/authErrorHandling';
 
 export interface WishListResponse {
   productId: string;
@@ -250,12 +250,14 @@ export default function route() {
                           formData.get(`${item.original.productId}_moq`),
                         );
                         if (
-                          (quantityVal && quantityVal < 1) ||
-                          (quantityVal && quantityVal > CART_QUANTITY_MAX)
+                          (quantityVal && quantityVal < moqVal) ||
+                          (quantityVal && quantityVal > CART_QUANTITY_MAX) ||
+                          isNaN(quantityVal) ||
+                          quantityVal % moqVal !== 0
                         ) {
                           canSubmit = false;
                           displayToast({
-                            message: CART_QUANTITY_ERROR,
+                            message: CART_QUANTITY_ERROR_GEN,
                             type: 'error',
                           });
                         }

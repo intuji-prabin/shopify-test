@@ -1,4 +1,5 @@
 import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
+import {validDecrementQty, validIncrementQty} from './validQty';
 
 export const PredictiveSearchQtyBtn = ({
   moq,
@@ -10,19 +11,13 @@ export const PredictiveSearchQtyBtn = ({
   setQuantity: any;
 }) => {
   function decreaseQuantity() {
-    if (isNaN(quantity - 1)) {
-      setQuantity(parseFloat(moq) || 1);
-      return;
-    }
-    setQuantity(quantity - 1);
+    const newQuantity = validDecrementQty(moq, quantity);
+    setQuantity(newQuantity);
   }
 
   function increaseQuantity() {
-    if (isNaN(quantity + 1)) {
-      setQuantity(parseFloat(moq) || 1);
-      return;
-    }
-    setQuantity(quantity + 1);
+    const newQuantity = validIncrementQty(moq, quantity);
+    setQuantity(newQuantity);
   }
 
   function handleInputChange(event?: any) {
@@ -51,8 +46,11 @@ export const PredictiveSearchQtyBtn = ({
         onChange={handleInputChange}
       />
       <button
-        className="flex items-center max-w-[38px] justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial"
+        className={`flex items-center max-w-[38px] justify-center flex-1 border border-grey-500 sm:w-10 sm:flex-initial ${
+          quantity + Number(moq) > CART_QUANTITY_MAX ? 'cursor-not-allowed' : ''
+        }`}
         onClick={increaseQuantity}
+        disabled={quantity + Number(moq) > CART_QUANTITY_MAX}
       >
         +
       </button>

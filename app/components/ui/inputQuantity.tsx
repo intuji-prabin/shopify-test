@@ -1,6 +1,7 @@
 import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
 import {getProductPriceByQty} from '~/routes/_app.product_.$productSlug/product-detail';
 import Info from '../icons/info';
+import {validDecrementQty, validIncrementQty} from './validQty';
 
 export const InputQuantity = ({
   quantity,
@@ -26,17 +27,7 @@ export const InputQuantity = ({
   className?: string;
 }) => {
   function decreaseQuantity() {
-    const validMOQ = moq ? Number(moq) : 1;
-    let newQuantity;
-    if (quantity % validMOQ !== 0 && quantity > 0) {
-      let moqValidate =
-        quantity > 0 ? Math.floor(quantity / validMOQ) : validMOQ;
-      newQuantity = moqValidate > 0 ? moqValidate * validMOQ : validMOQ;
-    } else if (quantity <= 0) {
-      newQuantity = validMOQ;
-    } else {
-      newQuantity = quantity > validMOQ ? quantity - validMOQ : validMOQ;
-    }
+    const newQuantity = validDecrementQty(moq, quantity);
     const prices = getProductPriceByQty({
       qty: newQuantity,
       uomList: unitOfMeasure,
@@ -51,18 +42,7 @@ export const InputQuantity = ({
   }
 
   function increaseQuantity() {
-    const validMOQ = moq ? Number(moq) : 1;
-    let newQuantity;
-    if (quantity % validMOQ !== 0 && quantity > 0) {
-      let moqValidate =
-        quantity > 0 ? Math.ceil(quantity / validMOQ) : validMOQ;
-      newQuantity = moqValidate > 0 ? moqValidate * validMOQ : validMOQ;
-    } else if (quantity <= 0) {
-      newQuantity = validMOQ;
-    } else {
-      newQuantity = quantity + validMOQ;
-    }
-
+    const newQuantity = validIncrementQty(moq, quantity);
     const prices = getProductPriceByQty({
       qty: newQuantity,
       uomList: unitOfMeasure,
@@ -113,8 +93,13 @@ export const InputQuantity = ({
           required
         />
         <button
-          className="border-[1px] border-grey-500  flex justify-center items-center aspect-square w-14"
+          className={`border-[1px] border-grey-500  flex justify-center items-center aspect-square w-14 ${
+            quantity + Number(moq) > CART_QUANTITY_MAX
+              ? 'cursor-not-allowed'
+              : ''
+          }`}
           onClick={increaseQuantity}
+          disabled={quantity + Number(moq) > CART_QUANTITY_MAX}
         >
           +
         </button>
@@ -137,24 +122,24 @@ export const InputQuantity = ({
 export const InputQuantityError = ({
   quantity,
   moq,
+  className,
 }: {
   quantity: number;
   moq: number;
+  className?: string;
 }) => {
+  const style = `font-medium text-red-500 leading-none pt-1.5 qty-error ${className}`;
   return (
-    <p className="font-medium text-red-500 leading-none pt-1.5">
-      {/* {quantity < moq && quantity >= 1 && (
-        <>Orders below MOQ ({moq}) will incur additional surcharges</>
-      )} */}
+    <>
       {quantity % moq !== 0 && quantity >= 1 && (
-        <>Quantity should be multiple of MOQ: {moq}</>
+        <p className={style}>Quantity should be multiple of MOQ: {moq}</p>
       )}
       {(quantity < 1 || isNaN(quantity)) && (
-        <>Minimum order quantity should be greater than 0</>
+        <p className={style}>Minimum order quantity should be greater than 0</p>
       )}
       {quantity > CART_QUANTITY_MAX && (
-        <>Maximum order quantity is {CART_QUANTITY_MAX}</>
+        <p className={style}>Maximum order quantity is {CART_QUANTITY_MAX}</p>
       )}
-    </p>
+    </>
   );
 };
