@@ -582,7 +582,7 @@ export function ProductTotal({
               discount === 'Discount Applied'
                 ? 'bg-secondary-500'
                 : 'bg-red-500 text-white'
-            } uppercase text-xs py-1 px-2.5 font-semibold`}
+            } uppercase text-xs py-1 px-2.5 font-semibold whitespace-nowrap`}
           >
             {discount}
           </p>
