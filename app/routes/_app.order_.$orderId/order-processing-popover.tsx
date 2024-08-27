@@ -11,7 +11,7 @@ export default function ProcessingPopover({products}: {products: Product[]}) {
           View Details
         </h4>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[552px] [&>button]:-top-2 [&>button]:-right-3 [&>button]:bg-semantic-danger-500 process p-4">
+      <DialogContent className="sm:max-w-[552px] [&>button]:top-0 [&>button]:right-0  md:[&>button]:-top-2 md:[&>button]:-right-3 [&>button]:bg-semantic-danger-500 process p-4 pt-5">
         <table className="w-full border-collapse">
           <thead className="bg-secondary-500">
             <tr>
