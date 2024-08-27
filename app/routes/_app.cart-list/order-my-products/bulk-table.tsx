@@ -62,7 +62,7 @@ export function BulkTable({
               {quantity}&nbsp;
               <span className="text-sm">(DEFAULT UOM:{defaultUOM})</span>
             </TableHead>
-            <TableHead className="text-base font-medium leading-[21px] text-grey-900 text-center uppercase">
+            <TableHead className="text-base font-medium leading-[21px] text-grey-900 text-center">
               {price}
             </TableHead>
           </TableRow>
