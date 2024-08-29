@@ -40,6 +40,12 @@ export function useTable<T>(
           }),
         );
       },
+      removeRowSelection(rowIndex: number) {
+        setRowSelection((prevSelection) => {
+          const {[rowIndex]: ignored, ...newSelection} = prevSelection;
+          return newSelection;
+        });
+      },
     },
   });
 

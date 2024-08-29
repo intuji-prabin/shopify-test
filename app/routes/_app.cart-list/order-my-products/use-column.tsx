@@ -359,14 +359,17 @@ export function QuantityColumn({
     setUpdateCart && setUpdateCart(true);
   };
   const handleIncreaseQuantity = () => {
+    meta?.removeRowSelection(info.row.original.placeId);
     const newQuantity = validIncrementQty(moq, quantity);
     updateQuantity(newQuantity);
   };
   const handleDecreaseQuantity = () => {
+    meta?.removeRowSelection(info.row.original.placeId);
     const newQuantity = validDecrementQty(moq, quantity);
     updateQuantity(newQuantity);
   };
   const handleInputChange = (event: any) => {
+    meta?.removeRowSelection(info.row.original.placeId);
     const inputQuantity = parseInt(event.target.value);
     updateQuantity(inputQuantity);
   };
