@@ -4,20 +4,20 @@ import {
   json,
   redirect,
 } from '@remix-run/server-runtime';
-import { useTable } from '~/hooks/useTable';
-import { MetaFunction } from '@shopify/remix-oxygen';
-import { DataTable } from '~/components/ui/data-table';
-import { Routes } from '~/lib/constants/routes.constent';
-import { RouteError } from '~/components/ui/route-error';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { PaginationWrapper } from '~/components/ui/pagination-wrapper';
-import { ActionBar } from '~/routes/_app.place-an-order.list/action-bar';
-import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
-import { useMyProductColumn } from '~/routes/_app.cart-list/order-my-products/use-column';
-import { renderSubComponent } from '~/routes/_app.cart-list/order-my-products/cart-myproduct';
-import { addToCart } from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
-import { SelectProductProvider } from '~/routes/_app.pending-order_.$groupId/select-product-context';
+import {useTable} from '~/hooks/useTable';
+import {MetaFunction} from '@shopify/remix-oxygen';
+import {DataTable} from '~/components/ui/data-table';
+import {Routes} from '~/lib/constants/routes.constent';
+import {RouteError} from '~/components/ui/route-error';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
+import {ActionBar} from '~/routes/_app.place-an-order.list/action-bar';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import {useMyProductColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
+import {renderSubComponent} from '~/routes/_app.cart-list/order-my-products/cart-myproduct';
+import {addToCart} from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
+import {SelectProductProvider} from '~/routes/_app.pending-order_.$groupId/select-product-context';
 import {
   isRouteErrorResponse,
   useLoaderData,
@@ -28,27 +28,31 @@ import {
   getPlaceAnOrderList,
   getProductGroupOptions,
 } from '~/routes/_app.place-an-order.list/place-an-order-list.server';
-import { AuthError } from '~/components/ui/authError';
-import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
+import {AuthError} from '~/components/ui/authError';
+import {AuthErrorHandling} from '~/lib/utils/authErrorHandling';
 
 const PAGE_LIMIT = 10;
 
 type ActionType = 'add_to_cart';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Place an Order List' }];
+  return [{title: 'Place an Order List'}];
 };
 
-export async function loader({ context, request }: LoaderFunctionArgs) {
+export async function loader({context, request}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
 
   const customerId = userDetails.id.split('/').pop() as string;
 
-  const productGroupOptions = await getProductGroupOptions({ context, request, customerId });
+  const productGroupOptions = await getProductGroupOptions({
+    context,
+    request,
+    customerId,
+  });
 
-  const { searchParams } = new URL(request.url);
+  const {searchParams} = new URL(request.url);
 
   const placeAnOrderList = await getPlaceAnOrderList({
     context,
@@ -61,10 +65,10 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     return redirect(Routes.PLACE_AN_ORDER);
   }
 
-  return json({ productGroupOptions, placeAnOrderList });
+  return json({productGroupOptions, placeAnOrderList});
 }
 
-export async function action({ context, request }: ActionFunctionArgs) {
+export async function action({context, request}: ActionFunctionArgs) {
   await isAuthenticate(context);
 
   const contentType = request.headers.get('Content-Type');
@@ -81,7 +85,7 @@ export async function action({ context, request }: ActionFunctionArgs) {
 
   switch (action) {
     case 'add_to_cart': {
-      return await addToCart({ context, formData, request });
+      return await addToCart({context, formData, request});
     }
     default:
       throw new Error('Unexpected action');
@@ -89,12 +93,12 @@ export async function action({ context, request }: ActionFunctionArgs) {
 }
 
 export default function PlaceAnOrderListPage() {
-  const { productGroupOptions, placeAnOrderList } =
+  const {productGroupOptions, placeAnOrderList} =
     useLoaderData<typeof loader>();
 
-  const { columns } = useMyProductColumn({});
+  const {columns} = useMyProductColumn({resetSelectedRows: true});
 
-  const { table } = useTable(columns, placeAnOrderList.products, 'placeId');
+  const {table} = useTable(columns, placeAnOrderList.products, 'placeId');
   return (
     <section className="container data__table">
       <SelectProductProvider>
@@ -119,8 +123,8 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <RouteError />;
   } else if (error instanceof Error) {
-    if(AuthErrorHandling( error.message )){ 
-      return <AuthError errorMessage={error.message} />
+    if (AuthErrorHandling(error.message)) {
+      return <AuthError errorMessage={error.message} />;
     }
     return <RouteError errorMessage={error.message} />;
   } else {

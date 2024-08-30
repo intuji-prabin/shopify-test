@@ -60,8 +60,10 @@ export type BulkOrderColumn = {
 
 export function useMyProductColumn({
   setUpdateCart,
+  resetSelectedRows = false,
 }: {
   setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>;
+  resetSelectedRows?: boolean;
 }) {
   const columns = useMemo<ColumnDef<BulkOrderColumn>[]>(
     () => [
@@ -122,6 +124,7 @@ export function useMyProductColumn({
               moq={product?.moq || 1}
               lineItemId={product?.id}
               setUpdateCart={setUpdateCart}
+              resetSelectedRows={resetSelectedRows}
             />
           );
         },
@@ -140,6 +143,7 @@ export function useMyProductColumn({
               selectedUOMName={product?.uomName}
               productId={product?.productId}
               setUpdateCart={setUpdateCart}
+              resetSelectedRows={resetSelectedRows}
             />
           );
         },
@@ -342,6 +346,7 @@ type QuantityColumnType = Pick<
   info: any;
   lineItemId?: string;
   setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>;
+  resetSelectedRows?: boolean;
 };
 export function QuantityColumn({
   quantity,
@@ -351,6 +356,7 @@ export function QuantityColumn({
   moq,
   lineItemId,
   setUpdateCart,
+  resetSelectedRows,
 }: QuantityColumnType) {
   const meta = info.table.options.meta;
 
@@ -359,17 +365,20 @@ export function QuantityColumn({
     setUpdateCart && setUpdateCart(true);
   };
   const handleIncreaseQuantity = () => {
-    meta?.removeRowSelection(info.row.original.placeId);
+    // For pending order and place an order page only to remove selection when quantity is updated
+    resetSelectedRows && meta?.removeRowSelection(info.row.original.placeId);
     const newQuantity = validIncrementQty(moq, quantity);
     updateQuantity(newQuantity);
   };
   const handleDecreaseQuantity = () => {
-    meta?.removeRowSelection(info.row.original.placeId);
+    // For pending order and place an order page only to remove selection when quantity is updated
+    resetSelectedRows && meta?.removeRowSelection(info.row.original.placeId);
     const newQuantity = validDecrementQty(moq, quantity);
     updateQuantity(newQuantity);
   };
   const handleInputChange = (event: any) => {
-    meta?.removeRowSelection(info.row.original.placeId);
+    // For pending order and place an order page only to remove selection when quantity is updated
+    resetSelectedRows && meta?.removeRowSelection(info.row.original.placeId);
     const inputQuantity = parseInt(event.target.value);
     updateQuantity(inputQuantity);
   };
@@ -481,6 +490,7 @@ type MeasurementColumnType = Pick<BulkOrderColumn, 'uom' | 'unitOfMeasure'> & {
   selectedUOMName: any;
   productId?: string;
   setUpdateCart?: React.Dispatch<React.SetStateAction<boolean>>;
+  resetSelectedRows?: boolean;
 };
 
 export function ProductMeasurement({
@@ -490,6 +500,7 @@ export function ProductMeasurement({
   selectedUOMName,
   productId,
   setUpdateCart,
+  resetSelectedRows,
 }: MeasurementColumnType) {
   const [finalUOM, setUom] = useState(uom);
   const meta = info.table.options.meta;
@@ -498,6 +509,8 @@ export function ProductMeasurement({
     setUpdateCart && setUpdateCart(true);
     setUom(selectedUOM);
     meta?.updateData(info.row.index, info.column.id, selectedUOM);
+    // For pending order and place an order page only to remove selection when UOM is updated
+    resetSelectedRows && meta?.removeRowSelection(info.row.original.placeId);
   };
   useEffect(() => {
     setUom(uom);
