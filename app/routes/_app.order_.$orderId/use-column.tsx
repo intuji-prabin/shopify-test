@@ -27,6 +27,17 @@ export function useColumn({
         },
         {
           accessorKey: 'name',
+          header: 'SKU',
+          enableSorting: false,
+          cell: (info) => {
+            const sku = info.row.original.sku || (
+              <span className="text-center">{' - '}</span>
+            );
+            return sku;
+          },
+        },
+        {
+          accessorKey: 'name',
           header: 'Product',
           enableSorting: false,
           cell: (info) => info.getValue(),
@@ -55,7 +66,7 @@ export function useColumn({
         },
         {
           accessorKey: 'amount',
-          header: 'Amount',
+          header: 'Unit Price',
           enableSorting: false,
           cell: (info) => {
             const amount = prefixWithCurrency(info.getValue() as string);
@@ -103,7 +114,7 @@ export function useColumn({
       if (ability.can('view', 'view_tracked_order_price')) {
         baseColumns.push({
           accessorKey: isShippedProduct ? 'shippedTotalPrice' : 'total',
-          header: 'Total',
+          header: 'Total Excl. GST',
           enableSorting: false,
           cell: (info) => {
             const totalAmount = prefixWithCurrency(info.getValue() as string);

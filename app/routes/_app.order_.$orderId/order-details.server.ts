@@ -24,6 +24,7 @@ export interface Product {
   selectedUOM: string;
   defaultUOM: string;
   itemLineNumber: string;
+  sku: string;
 }
 
 export interface OrderDetails {
@@ -61,7 +62,10 @@ export interface OrderDetails {
   errorStatus: boolean;
   errorMessage: string;
   currencySymbol: string;
+  productSubTotalExclGST: string;
+  shippedSubTotalExclGST: string;
   products: Product[];
+  promoCode: number;
 }
 
 interface ResponseData {

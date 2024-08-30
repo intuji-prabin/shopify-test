@@ -1,6 +1,6 @@
-import { OrderDetails } from '~/routes/_app.order_.$orderId/order-details.server';
-import { OrderStatusChip } from '~/components/ui/order-status-chip';
-import { Link } from '@remix-run/react';
+import {OrderDetails} from '~/routes/_app.order_.$orderId/order-details.server';
+import {OrderStatusChip} from '~/components/ui/order-status-chip';
+import {Link} from '@remix-run/react';
 import {
   Carrier,
   CopyLink,
@@ -26,6 +26,10 @@ export default function OrderInformation({
     {
       title: 'Purchase Order No',
       value: orderInformation.poNumber || 'N/A',
+    },
+    {
+      title: 'PromoCode Applied',
+      value: orderInformation.promoCode || 'Not used',
     },
   ];
 
@@ -109,32 +113,28 @@ export default function OrderInformation({
             </div>
             <div className="flex flex-wrap items-center gap-2">
               {orderInformation.shipmentDocumentUrl ||
-                orderInformation.shipmentTrackingUrl ? (
+              orderInformation.shipmentTrackingUrl ? (
                 <>
                   {orderInformation.shipmentDocumentUrl && (
-                    <div className='flex items-center gap-2'>
+                    <div className="flex items-center gap-2">
                       <Link
                         to={orderInformation.shipmentDocumentUrl}
                         className="p-2 bg-primary-500"
                       >
                         <CopyLink />
                       </Link>
-                      <p className="text-base font-normal">
-                        Shipment Document
-                      </p>
+                      <p className="text-base font-normal">Shipment Document</p>
                     </div>
                   )}
                   {orderInformation.shipmentTrackingUrl && (
-                    <div className='flex items-center gap-2'>
+                    <div className="flex items-center gap-2">
                       <Link
                         to={orderInformation.shipmentTrackingUrl}
                         className="p-2 bg-primary-500"
                       >
                         <CopyLink />
                       </Link>
-                      <p className="text-base font-normal">
-                        Shipment Tracking
-                      </p>
+                      <p className="text-base font-normal">Shipment Tracking</p>
                     </div>
                   )}
                 </>

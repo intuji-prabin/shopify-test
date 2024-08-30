@@ -1,9 +1,9 @@
-import { Form, useSearchParams, useSubmit } from '@remix-run/react';
-import { FormEvent, Fragment, useState } from 'react';
+import {Form, useNavigate, useSearchParams, useSubmit} from '@remix-run/react';
+import {FormEvent, Fragment, useEffect, useState} from 'react';
 import AccordionCustom from '~/components/ui/accordionCustom';
-import { Button } from '~/components/ui/button';
-import { Separator } from '~/components/ui/separator';
-import { Slider } from '~/components/ui/slider';
+import {Button} from '~/components/ui/button';
+import {Separator} from '~/components/ui/separator';
+import {Slider} from '~/components/ui/slider';
 
 export function FilterForm({
   filterList,
@@ -24,15 +24,26 @@ export function FilterForm({
     value: string[];
   }[] = [];
   searchKey.map((value) => {
-    searchList.push({ key: value, value: searchParams.getAll(value) });
+    searchList.push({key: value, value: searchParams.getAll(value)});
   });
   const filteredData = searchList.filter((item) => item.key !== 'warranty');
   const filteredValues = filteredData.map((item) => item.value);
 
-  const initialRange = [1, 50000];
+  const minPrice =
+    Number(searchParams.get('minPrice')) !== 0
+      ? Number(searchParams.get('minPrice'))
+      : 1;
+  const maxPrice =
+    Number(searchParams.get('maxPrice')) !== 0
+      ? Number(searchParams.get('maxPrice'))
+      : 50000;
+
+  const initialRange = [minPrice, maxPrice];
   const [range, setRange] = useState(initialRange);
   const [isMinChecked, setIsMinChecked] = useState(false);
   const [isMaxChecked, setIsMaxChecked] = useState(false);
+
+  const [reset, setReset] = useState(false);
 
   const [selectedWarrantyValue, setSelectedWarrantyValue] = useState(
     searchParams.get('warranty'),
@@ -47,12 +58,34 @@ export function FilterForm({
     filterdata && filterdata.filter((item) => item.filterKey === 'warranty');
   const otherFilters =
     filterdata && filterdata.filter((item) => item.filterKey !== 'warranty');
+  const input = otherFilters.flatMap((filter) => filter.filterValue);
+
+  const [checkedItems, setCheckedItems] = useState<{[key: string]: boolean}>(
+    Object.fromEntries(filteredValues.map((value) => [value, true])),
+  );
+  const handleCheckboxChange = (inputValue: string) => {
+    setCheckedItems((prev) => ({
+      ...prev,
+      [inputValue]: !prev[inputValue],
+    }));
+  };
 
   const [openAccordian, setOpenAccordian] = useState<any>('');
 
   const handleWarranty = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedWarrantyValue(e.target.value);
   };
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (reset) {
+      setRange([1, 50000]);
+      setSelectedWarrantyValue('');
+      setIsMinChecked(false);
+      setIsMaxChecked(false);
+      setCheckedItems(Object.fromEntries(input.map((value) => [value, false])));
+      setReset(false);
+    }
+  }, [reset]);
 
   return (
     <>
@@ -66,12 +99,8 @@ export function FilterForm({
               <div
                 className="text-xs lg:text-sm !leading-none italic font-bold cursor-pointer text-grey-500 border-b border-solid !border-grey-500"
                 onClick={() => {
-                  window.history.replaceState(
-                    {},
-                    document.title,
-                    window.location.pathname,
-                  );
-                  window.location.reload();
+                  navigate(window.location.pathname);
+                  setReset(true);
                 }}
               >
                 CLEAR FILTER
@@ -87,14 +116,6 @@ export function FilterForm({
                     accordionTitle={form.filterLabel}
                   >
                     {form?.filterValue?.map((input, index) => {
-                      const [isChecked, setIsChecked] = useState(
-                        filteredValues.flat().includes(input),
-                      );
-                      const handleChange = (
-                        event: React.ChangeEvent<HTMLInputElement>,
-                      ) => {
-                        setIsChecked(event.target.checked);
-                      };
                       return (
                         <div
                           key={index}
@@ -105,8 +126,8 @@ export function FilterForm({
                             id={input}
                             name={form?.filterKey}
                             value={input}
-                            checked={isChecked ? true : false}
-                            onChange={handleChange}
+                            checked={checkedItems[input] || false}
+                            onChange={() => handleCheckboxChange(input)}
                           />
                           <label
                             htmlFor={input}
@@ -159,7 +180,7 @@ export function FilterForm({
                 name="minPrice"
                 value={range[0]}
                 checked={isMinChecked}
-                onChange={() => { }}
+                onChange={() => {}}
               />
               <input
                 type="checkbox"
@@ -168,7 +189,7 @@ export function FilterForm({
                 name="maxPrice"
                 value={range[1]}
                 checked={isMaxChecked}
-                onChange={() => { }}
+                onChange={() => {}}
               />
 
               <Button
@@ -183,8 +204,8 @@ export function FilterForm({
             <h5 className="mb-16">Price</h5>
             <Slider
               minStepsBetweenThumbs={2}
-              max={initialRange[1]}
-              min={initialRange[0]}
+              max={50000}
+              min={1}
               step={1}
               value={range}
               onValueChange={handleRangeChange}
@@ -217,7 +238,7 @@ export function SortByFilterForm() {
       <select
         name="sort-by"
         value={queryParams.get('sort-by') as string}
-        onChange={() => { }}
+        onChange={() => {}}
         className="!p-2 !border-grey-500 text-base bg-transparent text-grey-800"
       >
         <option value="">Sort By</option>

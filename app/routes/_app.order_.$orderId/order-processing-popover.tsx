@@ -11,31 +11,43 @@ export default function ProcessingPopover({products}: {products: Product[]}) {
           View Details
         </h4>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[552px] [&>button]:-top-2 [&>button]:-right-3 [&>button]:bg-semantic-danger-500 process p-4">
+      <DialogContent className="sm:max-w-[552px] [&>button]:top-0 [&>button]:right-0  md:[&>button]:-top-2 md:[&>button]:-right-3 [&>button]:bg-semantic-danger-500 process p-4 pt-5">
         <table className="w-full border-collapse">
           <thead className="bg-secondary-500">
             <tr>
               <th
                 scope="col"
-                className="px-4 py-[6px] text-grey-900 font-medium text-base"
+                className="px-4 py-1.5 text-grey-900 font-medium text-base text-left"
               >
-                Product Name
+                iScala Line Item ID
               </th>
               <th
                 scope="col"
-                className="px-4 py-[6px] text-grey-900 font-medium text-base"
+                className="px-4 py-1.5 text-grey-900 font-medium text-base text-left"
               >
-                Status
+                SKU
+              </th>
+              <th
+                scope="col"
+                className="px-4 py-1.5 text-grey-900 font-medium text-base text-left"
+              >
+                Product
+              </th>
+              <th
+                scope="col"
+                className="px-4 py-1.5 text-grey-900 font-medium text-base text-left"
+              >
+                Ordered Quantity
               </th>
             </tr>
           </thead>
           <tbody>
             {products.map((product, index) => (
               <tr key={index} className="border-x">
+                <td className="px-4 py-3 border-b">{product.itemLineNumber}</td>
+                <td className="px-4 py-3 border-b">{product.sku}</td>
                 <td className="px-4 py-3 border-b">{product.name}</td>
-                <td className="px-4 py-3 border-b">
-                  <OrderStatusChip status={product.shippingStatus} />
-                </td>
+                <td className="px-4 py-3 border-b">{product.quantity}</td>
               </tr>
             ))}
           </tbody>

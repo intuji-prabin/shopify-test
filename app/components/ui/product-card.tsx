@@ -1,14 +1,14 @@
 import {Form, Link, useSubmit} from '@remix-run/react';
 import {ProductLoveRed, ProductLoveWhite} from '~/components/icons/orderStatus';
 import {Button} from '~/components/ui/button';
-import {Price} from './price';
+import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {Can} from '~/lib/helpers/Can';
-import {PRODUCT_MAX_PRICE} from '~/lib/constants/cartInfo.constant';
 import {
   ProductList,
   Variants,
 } from '~/routes/_app.category_.$mainCategorySlug_.($categorySlug)_.($subCategorySlug)/productList.server';
-import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
+import {Price} from './price';
+import {AsyncImage} from 'loadable-image';
 
 export function ProductCard({
   id,
@@ -35,9 +35,7 @@ export function ProductCard({
           featuredImageUrl={featuredImageUrl}
           imageBackgroundColor={imageBackgroundColor}
           id={id}
-          visibility={
-            companyPrice && companyPrice < PRODUCT_MAX_PRICE ? true : false
-          }
+          visibility={companyPrice ? true : false}
           handle={handle}
         />
         <ProductCardInfo
@@ -111,21 +109,13 @@ export function ProductCardInfo({
             <Price
               currency={currency}
               price={companyPrice}
-              originalPrice={companyPrice}
               currencySymbol={currencySymbol}
             />
             <div className="pt-3 mb-3 border-b border-solid border-grey-50"></div>
             <Price
               currency={currency}
               price={
-                companyPrice && companyPrice < PRODUCT_MAX_PRICE
-                  ? defaultPrice
-                  : 0
-              }
-              originalPrice={
-                companyPrice && companyPrice < PRODUCT_MAX_PRICE
-                  ? defaultPrice
-                  : 0
+                defaultPrice ? defaultPrice : companyPrice ? companyPrice : 0
               }
               variant="rrp"
               currencySymbol={currencySymbol}
@@ -139,9 +129,7 @@ export function ProductCardInfo({
             uom={uom}
             moq={moq}
             productVariantId={productVariantId}
-            visibility={
-              companyPrice && companyPrice < PRODUCT_MAX_PRICE ? true : false
-            }
+            visibility={companyPrice ? true : false}
           />
         </div>
       </div>
@@ -191,12 +179,24 @@ function ProductCardImage({
           </Form>
         )}
       </Can>
-      <figure className="mt-3">
-        <Link to={handle ? `/product/${handle}` : '#'}>
-          <img
+      <figure className="mt-3 w-full">
+        <Link to={handle ? `/product/${handle}` : '#'} className="w-full">
+          <AsyncImage
+            loader={
+              <div className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96 dark:bg-gray-700 animate-pulse">
+                <svg
+                  className="w-10 h-10 text-gray-200 dark:text-gray-600"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 20 18"
+                >
+                  <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" />
+                </svg>
+              </div>
+            }
             src={featuredImageUrl ?? DEFAULT_IMAGE.IMAGE}
-            className="object-contain h-48 max-h-48"
-            alt={featuredImageUrl ?? DEFAULT_IMAGE.IMAGE}
+            className="object-contain w-full h-48"
           />
         </Link>
       </figure>

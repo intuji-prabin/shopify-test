@@ -155,15 +155,28 @@ label .required {
 .steps li.active span:first-of-type {
   @apply bg-primary-500;
 }
+.steps li.subactive span:first-of-type {
+  @apply bg-status-invoice;
+}
+.steps li.subactive span svg path {
+  @apply fill-white;
+}
 .steps li.active p {
   @apply text-status-back_order;
 }
-.steps li.active p:first-of-type {
+.steps li.active p:first-of-type,
+.steps li.subactive p:first-of-type {
   @apply text-[#202223];
 }
 .steps__order li:first-of-type,
 .steps li:last-of-type {
   @apply before:bg-white before:w-[calc(50%_-_32px)] before:h-full before:content-[''] before:absolute before:left-0 before:z-10;
+}
+.steps li.subactive .back-order p:first-of-type {
+  @apply text-grey-100;
+}
+.steps li.subactive .back-order span:first-of-type {
+  @apply bg-grey-100;
 }
 .steps li:last-of-type {
   @apply before:left-[unset] before:right-0;
@@ -880,10 +893,13 @@ div[data-state='open'].fixed.inset-0 {
   margin: 0;
 }
 .data__table table thead tr th:nth-child(2) {
-  @apply min-w-[500px];
+  @apply min-w-[300px];
 }
 .cart__list .data__table table thead tr th:nth-child(2) {
-  @apply min-w-[329px];
+  @apply min-w-[225px];
+}
+.cart__list .data__table table.bulk-table thead tr th:nth-child(2) {
+  @apply min-w-[180px];
 }
 .order-error .track-order {
   @apply mx-auto bg-primary-500 py-3 px-4;
@@ -964,5 +980,23 @@ div[data-state='open'].fixed.inset-0 {
 @media (max-width: 639px) {
   .flex-col-sm {
     @apply flex-col;
+  }
+}
+
+.animate-btn:after {
+  content: '';
+  animation-duration: 3s;
+  animation-name: pulse;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  @apply absolute w-full h-full block top-0 left-0;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(177, 218, 235, 0.8);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(177, 218, 235, 0);
   }
 }

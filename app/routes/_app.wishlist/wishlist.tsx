@@ -1,17 +1,19 @@
-import { ColumnDef } from '@tanstack/react-table';
+import {ColumnDef} from '@tanstack/react-table';
 import * as React from 'react';
-import { Button } from '~/components/ui/button';
-import { IndeterminateCheckbox } from '~/components/ui/intermediate-checkbox';
+import {Button} from '~/components/ui/button';
+import {IndeterminateCheckbox} from '~/components/ui/intermediate-checkbox';
 import {
   ItemsColumn,
   ProductMeasurement,
   ProductTotal,
   QuantityColumn,
+  UnitPrice,
 } from '../_app.cart-list/order-my-products/use-column';
-import { Form, useSubmit } from '@remix-run/react';
-import { CART_QUANTITY_MAX } from '~/lib/constants/cartInfo.constant';
-import { AbilityContext, Can } from '~/lib/helpers/Can';
-import { useContext } from 'react';
+import {Form, useSubmit} from '@remix-run/react';
+import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
+import {AbilityContext, Can} from '~/lib/helpers/Can';
+import {useContext} from 'react';
+import {getProductPriceByQty} from '../_app.product_.$productSlug/product-detail';
 
 export function useMyWishListColumn() {
   const submit = useSubmit();
@@ -22,7 +24,7 @@ export function useMyWishListColumn() {
       const baseColumns: ColumnDef<any>[] = [
         {
           id: 'select',
-          header: ({ table }) => (
+          header: ({table}) => (
             <IndeterminateCheckbox
               {...{
                 checked: table.getIsAllRowsSelected(),
@@ -31,7 +33,7 @@ export function useMyWishListColumn() {
               }}
             />
           ),
-          cell: ({ row }) => (
+          cell: ({row}) => (
             <div className="px-1">
               <IndeterminateCheckbox
                 {...{
@@ -50,23 +52,66 @@ export function useMyWishListColumn() {
           enableSorting: false,
           cell: (info) => {
             const product = info.row.original;
-            const warehouse = info.row.original.warehouse;
             return (
               <ItemsColumn
                 title={product?.title}
                 sku={product?.sku}
                 featuredImage={product?.featuredImage}
-                moq={product?.moq || 1}
-                handle={product?.productHandle}
-                inventory={product.inventory}
-                warehouse={warehouse}
+                handle={product?.handle}
+                inventory={product?.inventory}
+                warehouse={product?.warehouse}
+              />
+            );
+          },
+        },
+        {
+          accessorKey: 'unitPrice',
+          header: 'Unit Price',
+          enableSorting: false,
+          cell: (info) => {
+            const product = info.row.original;
+            const currencySymbol = product.currencySymbol;
+            const quantity = product?.quantity;
+            const finalUOM = product?.uom;
+            const priceRange = product?.priceRange;
+            const uomRange = product?.unitOfMeasure;
+            const defaultUom = product?.defaultUOM;
+            const currency = product?.currency;
+            const companyPrice = product?.companyPrice;
+            const unitPrice = product?.unitPrice;
+            const prices = getProductPriceByQty({
+              qty: quantity,
+              uomList: uomRange,
+              selectedUOM: finalUOM,
+              defaultUom: defaultUom,
+              priceRange,
+              companyDefaultPrice: companyPrice,
+            });
+            const priceBeforeDiscount = getProductPriceByQty({
+              qty: quantity,
+              uomList: uomRange,
+              selectedUOM: finalUOM,
+              defaultUom: defaultUom,
+              priceRange,
+              companyDefaultPrice: unitPrice,
+            });
+            const finalUnitPrice = priceBeforeDiscount / quantity;
+            const finalCompanyUsedPrice = prices / quantity;
+            return (
+              <UnitPrice
+                currency={currency}
+                currencySymbol={currencySymbol}
+                priceRange={priceRange}
+                finalUnitPrice={finalUnitPrice}
+                unitPrice={unitPrice}
+                companyPrice={finalCompanyUsedPrice}
               />
             );
           },
         },
         {
           accessorKey: 'total',
-          header: 'Price',
+          header: 'Total Price',
           enableSorting: false,
           cell: (info) => {
             const productTotal = info?.row?.original?.companyPrice;
@@ -75,19 +120,34 @@ export function useMyWishListColumn() {
             const product = info?.row?.original;
             const UOM = info?.row?.original?.uom;
             const currencySymbol = info.row.original.currencySymbol;
+            const unitPrice = product?.unitPrice;
+            const prices = getProductPriceByQty({
+              qty: quantity,
+              uomList: product.unitOfMeasure,
+              selectedUOM: UOM,
+              defaultUom: product.defaultUOM,
+              priceRange,
+              companyDefaultPrice: productTotal,
+            });
+
+            const priceBeforeDiscount = getProductPriceByQty({
+              qty: quantity,
+              uomList: product.unitOfMeasure,
+              selectedUOM: UOM,
+              defaultUom: product.defaultUOM,
+              priceRange,
+              companyDefaultPrice: unitPrice,
+            });
             return (
               <ProductTotal
-                totalPrice={productTotal}
-                quantity={quantity}
-                UOM={UOM}
-                unitOfMeasure={product?.unitOfMeasure}
-                defaultUOM={product?.uom}
-                priceRange={priceRange}
                 isBulkDetailVisible={info?.row?.getIsExpanded()}
                 setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
                 isRowChecked={info?.row?.getIsSelected()}
-                currency={product?.currency || '$'}
+                priceRange={priceRange}
+                currency={info.row.original.currency || '$'}
                 currencySymbol={currencySymbol}
+                prices={prices}
+                priceBeforeDiscount={priceBeforeDiscount}
               />
             );
           },
@@ -105,6 +165,7 @@ export function useMyWishListColumn() {
                 productId={product?.productId}
                 variantId={product?.variantId}
                 moq={product?.moq || 1}
+                lineItemId={product?.id}
               />
             );
           },
@@ -161,22 +222,26 @@ export function useMyWishListColumn() {
                       name="quantity"
                       value={product.quantity || product.moq || 1}
                     />
-                    <input
-                      type="hidden"
-                      name="selectUOM"
-                      value={product.uom}
-                    />
+                    <input type="hidden" name="selectUOM" value={product.uom} />
 
                     <Button
                       className={`uppercase flex-grow max-h-[unset] text-xs lg:max-h-[28px] min-w-[86px] text-nowrap
-                         ${(!allowed ||
-                          product?.quantity > CART_QUANTITY_MAX ||
-                          isNaN(product?.quantity)) ? 'cursor-not-allowed' : null}`}
+                         ${
+                           !allowed ||
+                           product?.quantity > CART_QUANTITY_MAX ||
+                           isNaN(product?.quantity) ||
+                           product.quantity < product.moq ||
+                           product.quantity % product.moq !== 0
+                             ? 'cursor-not-allowed'
+                             : null
+                         }`}
                       variant="primary"
                       disabled={
                         !allowed ||
                         product?.quantity > CART_QUANTITY_MAX ||
-                        isNaN(product?.quantity)
+                        isNaN(product?.quantity) ||
+                        product.quantity < product.moq ||
+                        product.quantity % product.moq !== 0
                       }
                     >
                       Add to cart
@@ -194,5 +259,5 @@ export function useMyWishListColumn() {
     [ability], // Include ability in the dependencies array
   );
 
-  return { columns };
+  return {columns};
 }

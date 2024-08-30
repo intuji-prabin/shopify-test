@@ -1,9 +1,9 @@
-import { useTable } from '~/hooks/useTable';
-import { OrderDetails } from '~/routes/_app.order_.$orderId/order-details.server';
-import { useColumn } from '~/routes/_app.order_.$orderId/use-column';
-import { DataTable } from '~/components/ui/data-table';
-import { Separator } from '~/components/ui/separator';
-import { Can } from '~/lib/helpers/Can';
+import {useTable} from '~/hooks/useTable';
+import {OrderDetails} from '~/routes/_app.order_.$orderId/order-details.server';
+import {useColumn} from '~/routes/_app.order_.$orderId/use-column';
+import {DataTable} from '~/components/ui/data-table';
+import {Separator} from '~/components/ui/separator';
+import {Can} from '~/lib/helpers/Can';
 
 export function ProductTable({
   orderProductDetails,
@@ -11,18 +11,20 @@ export function ProductTable({
   orderProductDetails: OrderDetails;
 }) {
   const prefixWithCurrency = (price: string) =>
-    `${orderProductDetails.currency} ${orderProductDetails.currencySymbol}${parseFloat(price).toFixed(2)}`;
+    `${orderProductDetails.currency} ${
+      orderProductDetails.currencySymbol
+    }${parseFloat(price).toFixed(2)}`;
 
-  const { columns } = useColumn({ prefixWithCurrency });
+  const {columns} = useColumn({prefixWithCurrency});
 
-  const { table } = useTable(columns, orderProductDetails.products);
+  const {table} = useTable(columns, orderProductDetails.products);
 
-  const { columns: shippedProductColumns } = useColumn({
+  const {columns: shippedProductColumns} = useColumn({
     prefixWithCurrency,
     isShippedProduct: true,
   });
 
-  const { table: shippedProductTable } = useTable(
+  const {table: shippedProductTable} = useTable(
     columns,
     orderProductDetails.shippedProduct,
   );
@@ -51,19 +53,23 @@ export function ProductTable({
                   <th className="text-left">Surcharges</th>
                   <td>{prefixWithCurrency(orderProductDetails.surCharges)}</td>
                 </tr>
+                <tr className="text-semantic-danger-500">
+                  <th className="text-left">Discount&nbsp;(-)</th>
+                  <td className="font-bold">
+                    {prefixWithCurrency(orderProductDetails.discount)}
+                  </td>
+                </tr>
                 <tr>
-                  <th className="text-left"> Total Excl GST</th>
+                  <th className="text-left">Total Excl. GST</th>
                   <td>
-                    {prefixWithCurrency(orderProductDetails.productSubTotal)}
+                    {prefixWithCurrency(
+                      orderProductDetails.productSubTotalExclGST,
+                    )}
                   </td>
                 </tr>
                 <tr>
                   <th className="text-left">GST</th>
                   <td>{prefixWithCurrency(orderProductDetails.productGST)}</td>
-                </tr>
-                <tr>
-                  <th className="text-left">Discount</th>
-                  <td>{prefixWithCurrency(orderProductDetails.discount)}</td>
                 </tr>
                 <tr className="leading-7.5 text-[22px]">
                   <th className="text-left">Total</th>
@@ -111,19 +117,23 @@ export function ProductTable({
                   <th className="text-left">Surcharges</th>
                   <td>{prefixWithCurrency(orderProductDetails.surCharges)}</td>
                 </tr>
+                <tr className="text-semantic-danger-500">
+                  <th className="text-left">Discount&nbsp;(-)</th>
+                  <td className="font-bold">
+                    {prefixWithCurrency(orderProductDetails.discount)}
+                  </td>
+                </tr>
                 <tr>
-                  <th className="text-left"> Total Excl GST</th>
+                  <th className="text-left">Total Excl. GST</th>
                   <td>
-                    {prefixWithCurrency(orderProductDetails.shippedSubTotal)}
+                    {prefixWithCurrency(
+                      orderProductDetails.shippedSubTotalExclGST,
+                    )}
                   </td>
                 </tr>
                 <tr>
                   <th className="text-left">GST</th>
                   <td>{prefixWithCurrency(orderProductDetails.shippedGST)}</td>
-                </tr>
-                <tr>
-                  <th className="text-left">Discount</th>
-                  <td>{prefixWithCurrency(orderProductDetails.discount)}</td>
                 </tr>
                 <tr className="leading-7.5 text-[22px]">
                   <th className="text-left">Total</th>

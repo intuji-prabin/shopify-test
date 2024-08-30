@@ -9,6 +9,9 @@ import {CART_QUANTITY_MAX} from '~/lib/constants/cartInfo.constant';
 import {DEFAULT_IMAGE} from '~/lib/constants/general.constant';
 import {Can} from '~/lib/helpers/Can';
 import {getProductPriceByQty} from '~/routes/_app.product_.$productSlug/product-detail';
+import {validateDiscountPrice} from '../validateDiscountPrice';
+import {validDecrementQty, validIncrementQty} from '~/components/ui/validQty';
+import {InputQuantityError} from '~/components/ui/inputQuantity';
 
 export type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock';
 
@@ -33,6 +36,10 @@ export type BulkOrderColumn = {
   placeId: number;
   currencySymbol: string;
   warehouse: string;
+  type3DiscountPriceAppliedStatus: boolean;
+  type2DiscountPriceAppliedStatus: boolean;
+  unitPrice: number;
+  discountPrice: number;
   unitOfMeasure: [
     {
       unit: string;
@@ -48,6 +55,7 @@ export type BulkOrderColumn = {
   ];
   totalPrice: number;
   discountMessage: string;
+  unitTotalPrice: number;
 };
 
 export function useMyProductColumn({
@@ -87,16 +95,14 @@ export function useMyProductColumn({
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
-          const warehouse = info.row.original.warehouse;
           return (
             <ItemsColumn
-              title={product.title}
-              sku={product.sku}
-              featuredImage={product.featuredImage}
-              moq={product.moq || 1}
+              title={product?.title}
+              sku={product?.sku}
+              featuredImage={product?.featuredImage}
               handle={product?.handle}
-              inventory={product.inventory}
-              warehouse={warehouse}
+              inventory={product?.inventory}
+              warehouse={product?.warehouse}
             />
           );
         },
@@ -109,12 +115,12 @@ export function useMyProductColumn({
           const product = info.row.original;
           return (
             <QuantityColumn
-              quantity={product.quantity}
+              quantity={product?.quantity}
               info={info}
-              productId={product.productId}
-              variantId={product.variantId}
-              moq={product.moq || 1}
-              lineItemId={product.id}
+              productId={product?.productId}
+              variantId={product?.variantId}
+              moq={product?.moq || 1}
+              lineItemId={product?.id}
               setUpdateCart={setUpdateCart}
             />
           );
@@ -126,44 +132,125 @@ export function useMyProductColumn({
         enableSorting: false,
         cell: (info) => {
           const product = info.row.original;
-
           return (
             <ProductMeasurement
-              uom={product.uom}
-              unitOfMeasure={product.unitOfMeasure}
+              uom={product?.uom}
+              unitOfMeasure={product?.unitOfMeasure}
               info={info}
-              selectedUOMName={product.uomName}
-              productId={product.productId}
+              selectedUOMName={product?.uomName}
+              productId={product?.productId}
               setUpdateCart={setUpdateCart}
             />
           );
         },
       },
       {
-        accessorKey: 'total',
-        header: 'Price',
+        accessorKey: 'unitPrice',
+        header: 'Unit Price',
         enableSorting: false,
         cell: (info) => {
-          const productTotal = info.row.original.companyPrice;
-          const priceRange = info.row.original.priceRange;
-          const quantity = info.row.original.quantity;
           const product = info.row.original;
-          const UOM = info.row.original.uom;
-          const currencySymbol = info.row.original.currencySymbol;
+          const currencySymbol = product.currencySymbol;
+          const quantity = product?.quantity;
+          const finalUOM = Number(product?.uom);
+          const priceRange = product?.priceRange;
+          const uomRange = product?.unitOfMeasure;
+          const defaultUom = product?.defaultUOM;
+          const currency = product?.currency;
+          const companyPrice = product?.companyPrice;
+          const unitPrice = product?.unitPrice;
+          const discount = product?.discountMessage;
+          const discountStatus = product?.type3DiscountPriceAppliedStatus;
+          const discountStatusType2 = product?.type2DiscountPriceAppliedStatus;
+          const discountPrice = validateDiscountPrice(
+            discountStatus,
+            discountStatusType2,
+            product?.discountPrice,
+          );
+          const prices = getProductPriceByQty({
+            qty: quantity,
+            uomList: uomRange,
+            selectedUOM: finalUOM,
+            defaultUom: defaultUom,
+            priceRange,
+            companyDefaultPrice: companyPrice,
+            discountStatus,
+            discountPrice,
+          });
+          const priceBeforeDiscount = getProductPriceByQty({
+            qty: quantity,
+            uomList: uomRange,
+            selectedUOM: finalUOM,
+            defaultUom: defaultUom,
+            priceRange,
+            companyDefaultPrice: unitPrice,
+          });
+          const finalUnitPrice = priceBeforeDiscount / quantity;
+          const finalCompanyUsedPrice = prices / quantity;
+          return (
+            <UnitPrice
+              currency={currency}
+              currencySymbol={currencySymbol}
+              priceRange={priceRange}
+              finalUnitPrice={finalUnitPrice}
+              unitPrice={unitPrice}
+              companyPrice={finalCompanyUsedPrice}
+              discount={discount}
+              discountStatus={discountStatus || discountStatusType2}
+            />
+          );
+        },
+      },
+      {
+        accessorKey: 'total',
+        header: 'Total Price',
+        enableSorting: false,
+        cell: (info) => {
+          const product = info.row.original;
+          const productTotal = product?.companyPrice;
+          const priceRange = product?.priceRange;
+          const quantity = product?.quantity;
+          const UOM = product?.uom;
+          const currencySymbol = product?.currencySymbol;
+          const discountStatus = product?.type3DiscountPriceAppliedStatus;
+          const unitPrice = product?.unitPrice;
+          const discountStatusType2 = product?.type2DiscountPriceAppliedStatus;
+          const discountPrice = validateDiscountPrice(
+            discountStatus,
+            discountStatusType2,
+            product?.discountPrice,
+          );
+          const prices = getProductPriceByQty({
+            qty: quantity,
+            uomList: product.unitOfMeasure,
+            selectedUOM: UOM,
+            defaultUom: product.defaultUOM,
+            priceRange,
+            companyDefaultPrice: productTotal,
+            discountStatus,
+            discountPrice,
+          });
+
+          const priceBeforeDiscount = getProductPriceByQty({
+            qty: quantity,
+            uomList: product.unitOfMeasure,
+            selectedUOM: UOM,
+            defaultUom: product.defaultUOM,
+            priceRange,
+            companyDefaultPrice: unitPrice,
+          });
           return (
             <ProductTotal
-              totalPrice={productTotal}
-              quantity={quantity}
-              UOM={UOM}
-              unitOfMeasure={product.unitOfMeasure}
-              defaultUOM={product.defaultUOM}
-              priceRange={priceRange}
-              currencySymbol={currencySymbol}
               isBulkDetailVisible={info?.row?.getIsExpanded()}
               setIsBulkDetailsVisible={() => info?.row?.toggleExpanded()}
               isRowChecked={info?.row?.getIsSelected()}
+              priceRange={priceRange}
               currency={info.row.original.currency || '$'}
               discount={product?.discountMessage}
+              currencySymbol={currencySymbol}
+              discountStatus={discountStatus || discountStatusType2}
+              prices={prices}
+              priceBeforeDiscount={priceBeforeDiscount}
             />
           );
         },
@@ -180,14 +267,13 @@ export function useMyProductColumn({
  */
 type ItemsColumnType = Pick<
   BulkOrderColumn,
-  'title' | 'sku' | 'featuredImage' | 'moq' | 'warehouse'
+  'title' | 'sku' | 'featuredImage' | 'warehouse'
 > & {handle?: string; inventory: StockStatus};
 
 export function ItemsColumn({
   title,
   sku,
   featuredImage,
-  moq,
   handle,
   inventory,
   warehouse,
@@ -228,7 +314,7 @@ export function ItemsColumn({
             (title && title) || '--'
           )}
         </h5>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <div className="space-y-2">
           <p>
             <span className="font-semibold text-grey-900 ">SKU: </span>
             <span data-cy="product-sku">{(sku && sku) || 'N/A'}</span>
@@ -241,9 +327,6 @@ export function ItemsColumn({
               WAREHOUSE: {warehouse}
             </p>
           )}
-          <p className="!p-0 !m-0 font-normal leading-4 text-[14px] text-grey-800 capitalize ">
-            minimum order({moq})
-          </p>
         </div>
       </figcaption>
     </div>
@@ -276,18 +359,12 @@ export function QuantityColumn({
     setUpdateCart && setUpdateCart(true);
   };
   const handleIncreaseQuantity = () => {
-    if (isNaN(quantity + 1)) {
-      updateQuantity(moq);
-      return;
-    }
-    updateQuantity(quantity + 1);
+    const newQuantity = validIncrementQty(moq, quantity);
+    updateQuantity(newQuantity);
   };
   const handleDecreaseQuantity = () => {
-    if (isNaN(quantity + 1)) {
-      updateQuantity(moq);
-      return;
-    }
-    updateQuantity(quantity - 1);
+    const newQuantity = validDecrementQty(moq, quantity);
+    updateQuantity(newQuantity);
   };
   const handleInputChange = (event: any) => {
     const inputQuantity = parseInt(event.target.value);
@@ -296,32 +373,17 @@ export function QuantityColumn({
 
   return (
     <>
-      <p className="text-sm leading-none text-red-500">
-        {quantity < moq && quantity >= 1 && (
-          <>
-            Orders below MOQ ({moq}) will incur
-            <br /> additional surcharges
-          </>
-        )}
-        {(quantity < 1 || isNaN(quantity)) && (
-          <>
-            Minimum order quantity
-            <br /> should be greater than 0
-          </>
-        )}
-        {quantity > CART_QUANTITY_MAX && (
-          <>
-            Maximum order quantity
-            <br /> is {CART_QUANTITY_MAX}
-          </>
-        )}
-      </p>
+      <InputQuantityError
+        quantity={quantity}
+        moq={moq}
+        className="!pt-0 !font-normal max-w-36 text-sm"
+      />
       <div
         className={`flex flex-col gap-[11.5px] cart__list--quantity ${
-          (quantity < moq && quantity >= 1) ||
-          quantity < 1 ||
+          quantity < moq ||
+          quantity > CART_QUANTITY_MAX ||
           isNaN(quantity) ||
-          quantity > CART_QUANTITY_MAX
+          quantity % moq !== 0
             ? 'mt-1.5'
             : 'mt-[2.2rem]'
         }`}
@@ -329,29 +391,35 @@ export function QuantityColumn({
         <div className="flex items-center">
           <button
             className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${
-              quantity - 1 < 1 && 'cursor-not-allowed'
+              quantity - Number(moq) < Number(moq) && 'cursor-not-allowed'
             }`}
             type="button"
             onClick={handleDecreaseQuantity}
-            disabled={quantity - 1 < 1}
+            disabled={quantity - Number(moq) < Number(moq)}
           >
             -
           </button>
           <input
             type="number"
-            className="flex items-center justify-center w-20 text-center border-solid appearance-none border-x-0 border-grey-200 min-h-10"
+            className="flex items-center justify-center w-16 text-center border-solid appearance-none border-x-0 border-grey-200 min-h-10"
             value={quantity}
             name="quantity"
             onChange={handleInputChange}
-            min={1}
+            min={moq || 1}
             max={CART_QUANTITY_MAX}
+            step={moq || 1}
             data-cy="product-quantity"
             required
           />
           <button
-            className="flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10"
+            className={`flex items-center justify-center w-10 border border-solid border-grey-200 min-h-10 ${
+              quantity + Number(moq) > CART_QUANTITY_MAX
+                ? 'cursor-not-allowed'
+                : ''
+            }`}
             type="button"
             onClick={handleIncreaseQuantity}
+            disabled={quantity + Number(moq) > CART_QUANTITY_MAX}
           >
             +
           </button>
@@ -462,20 +530,17 @@ export function ProductMeasurement({
  * @description Total Column Component
  */
 export function ProductTotal({
-  totalPrice,
   isBulkDetailVisible,
   setIsBulkDetailsVisible,
   isRowChecked,
   priceRange,
-  quantity,
-  unitOfMeasure,
-  defaultUOM,
-  UOM,
   currency,
   discount,
   currencySymbol,
+  discountStatus,
+  prices,
+  priceBeforeDiscount,
 }: {
-  totalPrice: string;
   isBulkDetailVisible: boolean;
   isRowChecked: boolean;
   setIsBulkDetailsVisible: () => void;
@@ -486,47 +551,27 @@ export function ProductTotal({
       price: string;
     },
   ];
-  unitOfMeasure: any;
-  defaultUOM: any;
-  quantity: number;
-  UOM: any;
   currency: string;
   discount?: string;
   currencySymbol: string;
+  discountStatus?: boolean;
+  prices: number;
+  priceBeforeDiscount: number;
 }) {
-  const prices = getProductPriceByQty(
-    quantity,
-    unitOfMeasure,
-    UOM,
-    defaultUOM,
-    priceRange,
-    totalPrice,
-  );
-
   return (
     <div className="flex flex-col gap-4 items-baseline min-w-[110px]">
       <div className="flex flex-col gap-1">
-        <div className="">
-          <div className="flex mb-1.5 text-semantic-success-500 font-medium text-sm uppercase">
-            BUY PRICE
-            <div className="info-block">
-              <div className="flex items-center justify-center w-5 h-5 text-xs">
-                <div
-                  className="cursor-pointer price-tooltip"
-                  data-tooltip="Buy Price is your account specific price, including all contracted prices or discounts"
-                >
-                  <span>
-                    <TooltipInfo />
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {discount && discountStatus && (
+          <del>
+            {currency}
+            &nbsp;{currencySymbol}
+            {priceBeforeDiscount?.toFixed(2) || '--'}
+          </del>
+        )}
         <p className="text-grey-900 text-lg leading-5.5 italic">
-          {currency}
-          &nbsp;{currencySymbol}
-          {prices?.toFixed(2) || 'N/A'}
+          {currency}&nbsp;
+          {currencySymbol}
+          {prices?.toFixed(2) || '--'}
         </p>
         <p className="text-sm italic font-bold leading-normal text-grey-500">
           (Excl. GST)
@@ -537,7 +582,7 @@ export function ProductTotal({
               discount === 'Discount Applied'
                 ? 'bg-secondary-500'
                 : 'bg-red-500 text-white'
-            } uppercase text-xs py-1 px-2.5 font-semibold`}
+            } uppercase text-xs py-1 px-2.5 font-semibold whitespace-nowrap`}
           >
             {discount}
           </p>
@@ -554,6 +599,56 @@ export function ProductTotal({
           {isBulkDetailVisible ? 'Hide' : 'View'} BULK PRICE
         </Button>
       )}
+    </div>
+  );
+}
+
+export function UnitPrice({
+  currency,
+  currencySymbol,
+  priceRange,
+  finalUnitPrice,
+  unitPrice,
+  companyPrice,
+  discount,
+  discountStatus = false,
+}: {
+  currency: string;
+  currencySymbol: string;
+  priceRange: any;
+  finalUnitPrice: any;
+  unitPrice: any;
+  companyPrice: any;
+  discount?: string;
+  discountStatus?: boolean;
+}) {
+  return (
+    <div
+      className={`flex flex-col gap-4 items-baseline ${
+        discount && priceRange.length > 0 && 'mb-[66px]'
+      } ${discount && priceRange.length === 0 && 'mb-[28px]'}`}
+    >
+      <div className="flex flex-col gap-1">
+        {discount && discountStatus && (
+          <del>
+            {currency}&nbsp;
+            {currencySymbol}
+            {priceRange.length > 0 ? (
+              <>{Number(finalUnitPrice).toFixed(2)}</>
+            ) : (
+              <>{unitPrice?.toFixed(2) || Number(companyPrice).toFixed(2)}</>
+            )}
+          </del>
+        )}
+        <p className="text-grey-900 text-lg leading-5.5 italic">
+          {currency}&nbsp;
+          {currencySymbol}
+          {companyPrice.toFixed(2)}
+        </p>
+        <p className="text-sm italic font-bold leading-normal text-grey-500">
+          (Excl. GST)
+        </p>
+      </div>
     </div>
   );
 }
