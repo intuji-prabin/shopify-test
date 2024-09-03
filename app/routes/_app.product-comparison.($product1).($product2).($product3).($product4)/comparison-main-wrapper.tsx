@@ -29,6 +29,7 @@ export type ProductFinalResponse = {
   quantity: number;
   selectedUOM: number;
   currencySymbol: string;
+  customAttribute: {key: string; value: string}[];
 };
 
 type productResponse = {
@@ -191,6 +192,9 @@ export function ProductDetailDiv({
           <ProductDetailInfo
             productInfo={productDetails?.finalProductInfoArray}
           />
+          {productDetails?.customAttribute.length > 0 && (
+            <ProductDetailInfo productInfo={productDetails?.customAttribute} />
+          )}
         </>
       ) : (
         <ComparisonEmpty />
