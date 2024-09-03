@@ -143,7 +143,7 @@ export default function MyProducts({
               />
               {updateCart && (
                 <Button
-                  className="absolute top-[22px] sm:top-[31px] right-6 sm:right-40 animate-btn"
+                  className="absolute top-[75px] sm:top-[31px] right-6 sm:right-40 animate-btn"
                   variant="primary"
                   type="submit"
                 >

@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { Can } from '~/lib/helpers/Can';
-import { useTable } from '~/hooks/useTable';
-import { DataTable } from '~/components/ui/data-table';
+import {useState} from 'react';
+import {Can} from '~/lib/helpers/Can';
+import {useTable} from '~/hooks/useTable';
+import {DataTable} from '~/components/ui/data-table';
 import HeroBanner from '~/components/ui/hero-section';
-import { RouteError } from '~/components/ui/route-error';
-import { isAuthenticate } from '~/lib/utils/auth-session.server';
-import { getUserDetails } from '~/lib/utils/user-session.server';
-import { ActionBar } from '~/routes/_app.pending-order_.$groupId/action-bar';
-import { PredictiveSearch } from '~/components/ui/predictive-search';
-import { PaginationWrapper } from '~/components/ui/pagination-wrapper';
-import { DEFAULT_ERRROR_MESSAGE } from '~/lib/constants/default-error-message.constants';
-import { useMyProductColumn } from '~/routes/_app.cart-list/order-my-products/use-column';
-import { renderSubComponent } from '~/routes/_app.cart-list/order-my-products/cart-myproduct';
-import { SelectProductProvider } from '~/routes/_app.pending-order_.$groupId/select-product-context';
+import {RouteError} from '~/components/ui/route-error';
+import {isAuthenticate} from '~/lib/utils/auth-session.server';
+import {getUserDetails} from '~/lib/utils/user-session.server';
+import {ActionBar} from '~/routes/_app.pending-order_.$groupId/action-bar';
+import {PredictiveSearch} from '~/components/ui/predictive-search';
+import {PaginationWrapper} from '~/components/ui/pagination-wrapper';
+import {DEFAULT_ERRROR_MESSAGE} from '~/lib/constants/default-error-message.constants';
+import {useMyProductColumn} from '~/routes/_app.cart-list/order-my-products/use-column';
+import {renderSubComponent} from '~/routes/_app.cart-list/order-my-products/cart-myproduct';
+import {SelectProductProvider} from '~/routes/_app.pending-order_.$groupId/select-product-context';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -33,11 +33,11 @@ import {
   updateGroup,
   updateGroupProduct,
 } from '~/routes/_app.pending-order_.$groupId/pending-order-details.server';
-import { AuthError } from '~/components/ui/authError';
-import { AuthErrorHandling } from '~/lib/utils/authErrorHandling';
+import {AuthError} from '~/components/ui/authError';
+import {AuthErrorHandling} from '~/lib/utils/authErrorHandling';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Pending Order Details' }];
+  return [{title: 'Pending Order Details'}];
 };
 
 type ActionType =
@@ -49,16 +49,16 @@ type ActionType =
 
 const PAGE_LIMIT = 10;
 
-export async function loader({ context, request, params }: LoaderFunctionArgs) {
+export async function loader({context, request, params}: LoaderFunctionArgs) {
   await isAuthenticate(context);
 
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
 
   const customerId = userDetails.id.split('/').pop() as string;
 
   const groupId = params.groupId as string;
 
-  const { searchParams } = new URL(request.url);
+  const {searchParams} = new URL(request.url);
 
   const groupDetails = await getGroupDetails({
     context,
@@ -68,15 +68,15 @@ export async function loader({ context, request, params }: LoaderFunctionArgs) {
     searchParams,
   });
 
-  return json({ groupDetails });
+  return json({groupDetails});
 }
 
-export async function action({ request, context, params }: ActionFunctionArgs) {
+export async function action({request, context, params}: ActionFunctionArgs) {
   await isAuthenticate(context);
 
   const groupId = Number(params.groupId);
 
-  const { userDetails } = await getUserDetails(request);
+  const {userDetails} = await getUserDetails(request);
   const customerId = userDetails.id.split('/').pop() as string;
 
   const contentType = request.headers.get('Content-Type');
@@ -130,7 +130,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
     }
 
     case 'add_to_cart': {
-      return await addToCart({ context, formData, request });
+      return await addToCart({context, formData, request});
     }
 
     case 'add_product': {
@@ -156,13 +156,15 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 }
 
 export default function PendingOrderDetailsPage() {
-  const { groupDetails } = useLoaderData<typeof loader>();
+  const {groupDetails} = useLoaderData<typeof loader>();
 
   const [isProductUpdate, setIsProductUpdate] = useState(false);
 
-  const { columns } = useMyProductColumn({ setUpdateCart: setIsProductUpdate });
+  const {columns} = useMyProductColumn({
+    setUpdateCart: setIsProductUpdate,
+  });
 
-  const { table } = useTable(columns, groupDetails.products, 'placeId');
+  const {table} = useTable(columns, groupDetails.products, 'placeId');
 
   return (
     <>
@@ -211,8 +213,8 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     return <RouteError />;
   } else if (error instanceof Error) {
-    if(AuthErrorHandling( error.message )){ 
-      return <AuthError errorMessage={error.message} />
+    if (AuthErrorHandling(error.message)) {
+      return <AuthError errorMessage={error.message} />;
     }
     return <RouteError errorMessage={error.message} />;
   } else {
