@@ -93,10 +93,10 @@ export function ProductDetailInfo({
       {productInfo.map((item) => (
         <div key={item.key}>
           <p className="px-6 py-3 text-lg font-semibold leading-6 capitalize text-grey-900 bg-primary-50">
-            {item.key}
+            {item.key.replaceAll('_', ' ')}
           </p>
           <p className="px-6 py-3 text-lg font-medium leading-6 capitalize text-grey-900">
-            {item.value}
+            {item.value || 'N/A'}
           </p>
         </div>
       ))}

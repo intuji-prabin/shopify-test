@@ -14,6 +14,7 @@ export async function getSingleProduct(
   const products = await storefront.query(
     STOREFRONT_SINGLE_PRODUCT_GET_QUERY(`gid://shopify/Product/${productID}`),
   );
+  console.log('first product', products);
   if (products?.product === null) {
     console.log('error has occured');
     throw new Error('Invalid Product ID');
@@ -69,7 +70,7 @@ const formatProduct = (product: ProductResponse, prices: any) => {
   ];
   let customAttrArray =
     product?.custom_attributes?.value &&
-    (JSON.parse(product?.custom_attributes?.value) as string[]);
+    (JSON.parse(product?.custom_attributes?.value) || ([] as string[]));
   return {
     id: productId,
     handle: product?.handle,
@@ -81,9 +82,7 @@ const formatProduct = (product: ProductResponse, prices: any) => {
         ? prices?.[productId].featuredImage
         : DEFAULT_IMAGE.IMAGE,
     finalProductInfoArray: finalProductInfoArray,
-    customAttribute:
-      (customAttrArray && customAttrArray?.map((item) => JSON.parse(item))) ||
-      [],
+    customAttribute: customAttrArray,
     companyPrice: prices?.[productId]
       ? prices?.[productId]?.company_price
       : 'N/A',
