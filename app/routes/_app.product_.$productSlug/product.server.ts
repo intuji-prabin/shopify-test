@@ -143,6 +143,7 @@ export async function getProductDetails(
     if (!response?.status) {
       throw new Error(response?.message);
     }
+    console.log('first response', response?.payload);
     const finalResponse = await formatResponse(response?.payload);
     return finalResponse;
   } catch (error) {
