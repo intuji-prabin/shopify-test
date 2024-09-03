@@ -84,17 +84,47 @@ export function useSelectedProduct({table}: {table: Table<Product>}) {
 
     const formData = new FormData();
 
-    selectedProduct.map((item, index) => {
-      formData.append(`${item.productId + index}_productId`, item.productId);
+    // selectedProduct.map((item, index) => {
+    //   formData.append(`${item.productId + index}_productId`, item.productId);
 
-      formData.append(`${item.productId + index}_variantId`, item.variantId!);
+    //   formData.append(`${item.productId + index}_variantId`, item.variantId!);
 
+    //   formData.append(
+    //     `${item.productId + index}_quantity`,
+    //     item.quantity.toString(),
+    //   );
+
+    //   formData.append(`${item.productId + index}_uom`, item.uom);
+
+    //   formData.append('bulkCart', 'true');
+
+    //   formData.append('_action', 'add_to_cart');
+
+    //   submit(formData, {method: 'POST'});
+
+    //   table.resetRowSelection();
+    // });
+
+    table.getSelectedRowModel().flatRows.map((item, index) => {
       formData.append(
-        `${item.productId + index}_quantity`,
-        item.quantity.toString(),
+        `${item.original.productId + index}_productId`,
+        item.original.productId,
       );
 
-      formData.append(`${item.productId + index}_uom`, item.uom);
+      formData.append(
+        `${item.original.productId + index}_variantId`,
+        item.original.variantId!,
+      );
+
+      formData.append(
+        `${item.original.productId + index}_quantity`,
+        item.original.quantity.toString(),
+      );
+
+      formData.append(
+        `${item.original.productId + index}_uom`,
+        item.original.uom,
+      );
 
       formData.append('bulkCart', 'true');
 

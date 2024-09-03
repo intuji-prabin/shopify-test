@@ -162,7 +162,6 @@ export default function PendingOrderDetailsPage() {
 
   const {columns} = useMyProductColumn({
     setUpdateCart: setIsProductUpdate,
-    resetSelectedRows: true,
   });
 
   const {table} = useTable(columns, groupDetails.products, 'placeId');

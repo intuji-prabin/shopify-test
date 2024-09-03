@@ -96,7 +96,7 @@ export default function PlaceAnOrderListPage() {
   const {productGroupOptions, placeAnOrderList} =
     useLoaderData<typeof loader>();
 
-  const {columns} = useMyProductColumn({resetSelectedRows: true});
+  const {columns} = useMyProductColumn({});
 
   const {table} = useTable(columns, placeAnOrderList.products, 'placeId');
   return (
