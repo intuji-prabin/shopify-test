@@ -50,6 +50,7 @@ export type ProductResponse = {
   currency: string;
   defaultPrice: string;
   vendor: string;
+  custom_attributes: {value: string};
 };
 
 const formatProduct = (product: ProductResponse, prices: any) => {
@@ -66,6 +67,9 @@ const formatProduct = (product: ProductResponse, prices: any) => {
     },
     {key: 'SKU', value: product?.variants?.edges[0]?.node?.sku || 'N/A'},
   ];
+  let customAttrArray =
+    product?.custom_attributes?.value &&
+    (JSON.parse(product?.custom_attributes?.value) as string[]);
   return {
     id: productId,
     handle: product?.handle,
@@ -77,6 +81,9 @@ const formatProduct = (product: ProductResponse, prices: any) => {
         ? prices?.[productId].featuredImage
         : DEFAULT_IMAGE.IMAGE,
     finalProductInfoArray: finalProductInfoArray,
+    customAttribute:
+      (customAttrArray && customAttrArray?.map((item) => JSON.parse(item))) ||
+      [],
     companyPrice: prices?.[productId]
       ? prices?.[productId]?.company_price
       : 'N/A',
@@ -104,6 +111,7 @@ const STOREFRONT_SINGLE_PRODUCT_GET_QUERY = (productID: string) => {
       material : metafield( namespace: "material", key: "material" ) { value }
       product_weight : metafield( namespace: "product_weight", key: "product_weight" ) { value }
       supplier : metafield( namespace: "supplier", key: "supplier" ) { value }
+      custom_attributes : metafield( namespace: "custom_attributes", key: "custom_attributes" ) { value }
       vendor
       featuredImage {
         url
