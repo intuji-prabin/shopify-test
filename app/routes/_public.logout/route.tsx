@@ -24,11 +24,12 @@ export async function action({ context, request }: ActionFunctionArgs) {
   if (isImpersonatingCheck === "true" && action !== "unauthorized") {
     return getLogoutImpersonate({ request, context, customerId, impersonateId });
   }
-
-  emitter.emit(EVENTS.LOGOUT.KEY, {
+  console.log("emiter start")
+  emitter.emit("logout", {
     customerId: customerId,
     message: "logout request accepted",
   })
+  console.log("emiter end", customerId)
   return logout({
     context,
     request,

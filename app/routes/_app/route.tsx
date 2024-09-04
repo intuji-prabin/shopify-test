@@ -203,12 +203,13 @@ export default function PublicPageLayout() {
   });
 
   useEffect(() => {
+    console.log(userData)
     if (userData) {
       const dataObject = JSON.parse(userData) as Data;
       if (
         dataObject.customerId === userDetails.id &&
         (dataObject.message === UserRoleChangedMessage ||
-          dataObject.message === UserStatusChangedMessage || dataObject.message === "logout request accepted")
+          dataObject.message === UserStatusChangedMessage || dataObject.message === UserStatusChangedMessage || dataObject.message === "logout request accepted" )
       ) {
         submit(
           {message: dataObject.message},

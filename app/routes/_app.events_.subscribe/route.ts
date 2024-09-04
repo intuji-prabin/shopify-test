@@ -24,23 +24,23 @@ export async function loader({ request }: LoaderFunctionArgs) {
       const handleLogout = ( data: { customerId: string, message: string }) => {
         const eventData = JSON.stringify({ customerId: data.customerId, message: data.message });
 
-      send({ event: EVENTS.LOGOUT.NAME, data: eventData });
+      send({ event: "logout-event", data: eventData });
       };
 
       // Send a heartbeat message every 15 seconds
       const heartbeatInterval = setInterval(() => {
         send({ event: 'heartbeat', data: JSON.stringify({ date: Date.now() }) });
-    }, 15000);
+      }, 15000);
 
   
       // Add listeners for both permission and notification events
-      emitter.addListener(EVENTS.LOGOUT.KEY, handleLogout);
+      emitter.addListener("logout", handleLogout);
       emitter.addListener(EVENTS.PERMISSIONS_UPDATED.KEY, handlePermissions);
       emitter.addListener(EVENTS.NOTIFICATIONS_UPDATED.KEY, handleNotifications);
   
       // Remove the event listeners when the event stream is closed
       return () => {
-        emitter.removeListener(EVENTS.LOGOUT.KEY, handleLogout);
+        emitter.removeListener("logout", handleLogout);
         emitter.removeListener(EVENTS.PERMISSIONS_UPDATED.KEY, handlePermissions);
         emitter.removeListener(EVENTS.NOTIFICATIONS_UPDATED.KEY, handleNotifications);
         clearInterval(heartbeatInterval);
