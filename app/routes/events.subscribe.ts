@@ -25,10 +25,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
       send({ event: EVENTS.LOGOUT.NAME, data: eventData });
       };
 
-      // Send a heartbeat message every 3 seconds
+      // Send a heartbeat message every 15 seconds
       const heartbeatInterval = setInterval(() => {
         send({ event: 'heartbeat', data: JSON.stringify({ date: Date.now() }) });
-    }, 3000);
+    }, 15000);
 
   
       // Add listeners for both permission and notification events
