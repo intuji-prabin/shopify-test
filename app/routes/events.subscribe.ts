@@ -24,6 +24,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
       send({ event: EVENTS.LOGOUT.NAME, data: eventData });
       };
+
+      // Send a heartbeat message every 3 seconds
+      const heartbeatInterval = setInterval(() => {
+        send({ event: 'heartbeat', data: JSON.stringify({ date: Date.now() }) });
+    }, 3000);
+
   
       // Add listeners for both permission and notification events
       emitter.addListener(EVENTS.LOGOUT.KEY, handleLogout);
@@ -35,6 +41,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
         emitter.removeListener(EVENTS.LOGOUT.KEY, handleLogout);
         emitter.removeListener(EVENTS.PERMISSIONS_UPDATED.KEY, handlePermissions);
         emitter.removeListener(EVENTS.NOTIFICATIONS_UPDATED.KEY, handleNotifications);
+        clearInterval(heartbeatInterval);
+
       };
     });
   }
