@@ -2,8 +2,10 @@ import {  emitter } from '~/lib/utils/emitter.server';
 import { EVENTS } from '~/lib/constants/events.contstent';
 import { eventStream } from 'remix-utils/sse/server';
 import { LoaderFunctionArgs } from "@remix-run/server-runtime";
+import { json } from '@remix-run/react';
 
 export async function loader({ request }: LoaderFunctionArgs) {
+    // return json({name : "sanchya"})
     return eventStream(request.signal, function setup(send) {
   
       // Handle permissions updates

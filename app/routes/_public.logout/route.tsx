@@ -2,6 +2,8 @@ import { ActionFunctionArgs, redirect } from '@remix-run/server-runtime';
 import { isImpersonating, logout } from '~/lib/utils/auth-session.server';
 import { getLogoutImpersonate } from '../_public.impersonate_.$customerId_.$staffId/impersonate.server';
 import { getUserDetails } from '~/lib/utils/user-session.server';
+import { emitter } from '~/lib/utils/emitter.server';
+import { EVENTS } from '~/lib/constants/events.contstent';
 
 export async function loader() {
   return redirect('/');
@@ -23,6 +25,10 @@ export async function action({ context, request }: ActionFunctionArgs) {
     return getLogoutImpersonate({ request, context, customerId, impersonateId });
   }
 
+  emitter.emit(EVENTS.LOGOUT.KEY, {
+    customerId: customerId,
+    message: "logout request accepted",
+  })
   return logout({
     context,
     request,

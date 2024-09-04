@@ -208,7 +208,7 @@ export default function PublicPageLayout() {
       if (
         dataObject.customerId === userDetails.id &&
         (dataObject.message === UserRoleChangedMessage ||
-          dataObject.message === UserStatusChangedMessage)
+          dataObject.message === UserStatusChangedMessage || dataObject.message === "logout request accepted")
       ) {
         submit(
           {message: dataObject.message},
